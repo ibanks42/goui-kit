@@ -19,6 +19,7 @@ Badge_VT :: struct {
 }
 
 badge :: proc(loc := #caller_location) -> Badge {
+	use_component_badge()
 	e := Badge{new_node(594, loc), &badge_vt}
 	return e
 }

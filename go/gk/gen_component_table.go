@@ -142,6 +142,7 @@ func (e DataTableEl) node() *node { return e.n }
 
 // DataTable is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::new.
 func DataTable(state TableState) DataTableEl {
+	useComponentTable()
 	n := newNode(805)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -215,6 +216,7 @@ func (e TableEl) node() *node { return e.n }
 
 // Table is <gpui_kit::component::table::Table>::new.
 func Table(st ...Style) TableEl {
+	useComponentTable()
 	n := newNode(774)
 	tokens(n, st)
 	return TableEl{n}
@@ -397,6 +399,7 @@ func (e TableBodyEl) node() *node { return e.n }
 
 // TableBody is <gpui_kit::component::table::TableBody>::new.
 func TableBody(st ...Style) TableBodyEl {
+	useComponentTable()
 	n := newNode(775)
 	tokens(n, st)
 	return TableBodyEl{n}
@@ -593,6 +596,7 @@ func (e TableCaptionEl) node() *node { return e.n }
 
 // TableCaption is <gpui_kit::component::table::TableCaption>::new.
 func TableCaption(st ...Style) TableCaptionEl {
+	useComponentTable()
 	n := newNode(776)
 	tokens(n, st)
 	return TableCaptionEl{n}
@@ -844,6 +848,7 @@ func (e TableCellEl) node() *node { return e.n }
 
 // TableCell is <gpui_kit::component::table::TableCell>::new.
 func TableCell(st ...Style) TableCellEl {
+	useComponentTable()
 	n := newNode(777)
 	tokens(n, st)
 	return TableCellEl{n}
@@ -1062,6 +1067,7 @@ func (e TableFooterEl) node() *node { return e.n }
 
 // TableFooter is <gpui_kit::component::table::TableFooter>::new.
 func TableFooter(st ...Style) TableFooterEl {
+	useComponentTable()
 	n := newNode(778)
 	tokens(n, st)
 	return TableFooterEl{n}
@@ -1282,6 +1288,7 @@ func (e TableHeadEl) node() *node { return e.n }
 
 // TableHead is <gpui_kit::component::table::TableHead>::new.
 func TableHead(st ...Style) TableHeadEl {
+	useComponentTable()
 	n := newNode(779)
 	tokens(n, st)
 	return TableHeadEl{n}
@@ -1500,6 +1507,7 @@ func (e TableHeaderEl) node() *node { return e.n }
 
 // TableHeader is <gpui_kit::component::table::TableHeader>::new.
 func TableHeader(st ...Style) TableHeaderEl {
+	useComponentTable()
 	n := newNode(780)
 	tokens(n, st)
 	return TableHeaderEl{n}
@@ -1720,6 +1728,7 @@ func (e TableRowEl) node() *node { return e.n }
 
 // TableRow is <gpui_kit::component::table::TableRow>::new.
 func TableRow(st ...Style) TableRowEl {
+	useComponentTable()
 	n := newNode(781)
 	tokens(n, st)
 	return TableRowEl{n}

@@ -11,6 +11,7 @@ func (e RatingEl) node() *node { return e.n }
 
 // Rating is <gpui_kit::component::rating::Rating>::new.
 func Rating(id ID, st ...Style) RatingEl {
+	useComponentRating()
 	n := newNode(738)
 	o := nodeArgs(n)
 	putID(o, id)

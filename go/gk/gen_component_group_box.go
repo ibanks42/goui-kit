@@ -11,6 +11,7 @@ func (e GroupBoxEl) node() *node { return e.n }
 
 // GroupBox is <gpui_kit::component::group_box::GroupBox>::new.
 func GroupBox(st ...Style) GroupBoxEl {
+	useComponentGroupBox()
 	n := newNode(672)
 	tokens(n, st)
 	return GroupBoxEl{n}

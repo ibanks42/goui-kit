@@ -11,6 +11,7 @@ func (e TreeEl) node() *node { return e.n }
 
 // KitTree is gpui_kit::component::tree::tree.
 func KitTree(state TreeState, renderItem RowSource, st ...Style) TreeEl {
+	useComponentTree()
 	n := newNode(807)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -21,6 +22,7 @@ func KitTree(state TreeState, renderItem RowSource, st ...Style) TreeEl {
 
 // Tree is <gpui_kit::component::tree::Tree>::new.
 func Tree(state TreeState, renderItem RowSource, st ...Style) TreeEl {
+	useComponentTree()
 	n := newNode(806)
 	o := nodeArgs(n)
 	o.u64(state.h)

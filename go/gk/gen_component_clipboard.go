@@ -15,6 +15,7 @@ func (e ClipboardEl) node() *node { return e.n }
 
 // Clipboard is <gpui_kit::component::clipboard::Clipboard>::new.
 func Clipboard(id ID) ClipboardEl {
+	useComponentClipboard()
 	n := newNode(621)
 	o := nodeArgs(n)
 	putID(o, id)

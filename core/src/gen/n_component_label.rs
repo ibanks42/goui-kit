@@ -4,33 +4,3 @@
 use crate::genapi::{self, Dx, R};
 use super::*;
 
-pub fn build_component_label(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::label::Label> {
-    let (ty, args, first) = dx.node(n);
-    make_component_label(dx, ty, args, first)
-}
-pub fn make_component_label(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::label::Label> {
-    let r = &mut dx.args(args);
-    let el: gpui_kit::component::label::Label = match ty {
-        685 => { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::label::Label>::new(a0) }
-        _ => return bad_node("Label", ty),
-    };
-    Some(apply_component_label(dx, el, first))
-}
-#[inline]
-pub fn apply_component_label(dx: &mut Dx, mut el: gpui_kit::component::label::Label, first: u32) -> gpui_kit::component::label::Label {
-    let mut at = first;
-    while let Some((op, mut r)) = dx.op(&mut at) {
-        let r = &mut r;
-        match op {
-            256 => { el = { let Some((a0,)) = (|| Some((in_34(r, dx)?,)))() else { continue }; <gpui_kit::component::label::Label>::highlights(el, a0) }; }
-            257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::label::Label>::masked(el, a0) }; }
-            258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::label::Label>::secondary(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
-            16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            _ => bad_op("Label", op),
-        }
-    }
-    el
-}

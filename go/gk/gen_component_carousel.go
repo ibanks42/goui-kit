@@ -11,6 +11,7 @@ func (e CarouselEl) node() *node { return e.n }
 
 // Carousel is <gpui_kit::component::carousel::Carousel>::new.
 func Carousel(id ID, state CarouselState, st ...Style) CarouselEl {
+	useComponentCarousel()
 	n := newNode(612)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -216,6 +217,7 @@ func (e CarouselContentEl) node() *node { return e.n }
 
 // CarouselContent is <gpui_kit::component::carousel::CarouselContent>::new.
 func CarouselContent(state CarouselState, st ...Style) CarouselContentEl {
+	useComponentCarousel()
 	n := newNode(613)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -541,6 +543,7 @@ func (e CarouselItemEl) node() *node { return e.n }
 
 // CarouselItem is <gpui_kit::component::carousel::CarouselItem>::new.
 func CarouselItem(id ID, index int, state CarouselState, st ...Style) CarouselItemEl {
+	useComponentCarousel()
 	n := newNode(614)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -796,6 +799,7 @@ func (e CarouselNextEl) node() *node { return e.n }
 
 // CarouselNext is <gpui_kit::component::carousel::CarouselNext>::new.
 func CarouselNext(state CarouselState, st ...Style) CarouselNextEl {
+	useComponentCarousel()
 	n := newNode(615)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -1054,6 +1058,7 @@ func (e CarouselPaginationEl) node() *node { return e.n }
 
 // CarouselPagination is <gpui_kit::component::carousel::CarouselPagination>::new.
 func CarouselPagination(st ...Style) CarouselPaginationEl {
+	useComponentCarousel()
 	n := newNode(616)
 	tokens(n, st)
 	return CarouselPaginationEl{n}
@@ -1461,6 +1466,7 @@ func (e CarouselPaginationItemEl) node() *node { return e.n }
 
 // CarouselPaginationItem is <gpui_kit::component::carousel::CarouselPaginationItem>::new.
 func CarouselPaginationItem(id ID, index int, state CarouselState, st ...Style) CarouselPaginationItemEl {
+	useComponentCarousel()
 	n := newNode(617)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -1934,6 +1940,7 @@ func (e CarouselPreviousEl) node() *node { return e.n }
 
 // CarouselPrevious is <gpui_kit::component::carousel::CarouselPrevious>::new.
 func CarouselPrevious(state CarouselState, st ...Style) CarouselPreviousEl {
+	useComponentCarousel()
 	n := newNode(618)
 	o := nodeArgs(n)
 	o.u64(state.h)

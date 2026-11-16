@@ -35,18 +35,19 @@ script=$out/hello.script
 limit() { "$@" & local pid=$! rc=0; ( sleep 120; kill $pid 2> /dev/null ) & local w=$!
   wait $pid || rc=$?; kill $w 2> /dev/null || true; return $rc; }
 native() { if [ $os = windows ]; then cygpath -m "$1"; else echo "$1"; fi; }
-run() { # NAME BINARY: runs it offscreen against the diagnostic library, in its own folder
+run() { # NAME BINARY: runs it offscreen (a build linked against the diagnostic library), in its own folder
   local name=$1 bin=$2 dir=$out/$1 rc=0
   mkdir -p "$dir"
   case $os in
     # Windows loads gpuikit.dll from the program's folder first: a copy of the program beside the
     # diagnostic DLL.
-    windows) cp "$bin" "$dir/"; cp "$diag/gpuikit.dll" "$dir/"
-      # The manifest the program needs to start (common controls 6), beside it.
+    windows) cp "$bin" "$dir/"
+      # The manifest the program needs to start (common controls 6), beside it (a Go program has it
+      # linked in already; then this copy is not read).
       cp "$dl/windows/gpuikit.manifest" "$dir/$(basename "$bin").manifest"
       (cd "$dir" && GK_SCRIPT=$(native "$script") limit "./$(basename "$bin")") > "$dir/log" 2>&1 || rc=$? ;;
-    macos) (cd "$dir" && DYLD_LIBRARY_PATH=$diag GK_SCRIPT=$script limit "$bin") > "$dir/log" 2>&1 || rc=$? ;;
-    linux) (cd "$dir" && LD_LIBRARY_PATH=$diag GK_SCRIPT=$script limit "$bin") > "$dir/log" 2>&1 || rc=$? ;;
+    macos) (cd "$dir" && GK_SCRIPT=$script limit "$bin") > "$dir/log" 2>&1 || rc=$? ;;
+    linux) (cd "$dir" && GK_SCRIPT=$script limit "$bin") > "$dir/log" 2>&1 || rc=$? ;;
   esac
   tail -5 "$dir/log"
   if [ $rc != 0 ]; then echo "dist-test: FAIL $name: exit $rc (log $dir/log)"; return 1; fi
@@ -56,15 +57,10 @@ run() { # NAME BINARY: runs it offscreen against the diagnostic library, in its 
 # macOS: the universal library's slices, and which architecture is the other one here.
 other=
 if [ $os = macos ]; then
-  for f in "$dl/lib/libgpuikit.dylib" "$diag/libgpuikit.dylib"; do
+  for f in "$dl/lib/libgpuikit_static.a" "$diag/libgpuikit_static.a"; do
     lipo -info "$f"
     got=$(lipo -archs "$f" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' ')
     [ "$got" = "arm64 x86_64 " ] || { echo "dist-test: FAIL $f has the slices '$got', not arm64 and x86_64"; exit 1; }
-    for a in arm64 x86_64; do
-      id=$(otool -arch $a -D "$f" | tail -1)
-      [ "$id" = @rpath/libgpuikit.dylib ] || { echo "dist-test: FAIL $f's $a slice has install name $id"; exit 1; }
-      echo "dist-test: $f: $a slice, install name $id, minimum macOS $(otool -arch $a -l "$f" | awk '/LC_BUILD_VERSION/{b=1} b&&/minos/&&!d{print $2; d=1}')"
-    done
   done
   here=$(uname -m)
   case $here in
@@ -90,25 +86,51 @@ arch_of() { # BINARY ARCH: the binary is that one architecture alone
 for lang in "$@"; do
   case $lang in
     odin) start=$(date +%s); "$dl/examples/build.sh" hello
-      echo "dist-test: odin hello built in $(( $(date +%s) - start )) s"
+      echo "dist-test: odin hello built in $(( $(date +%s) - start )) s, $(( $(wc -c < "$dl/examples/hello$ext") / 1000000 )) MB, one file"
       [ $os != macos ] || arch_of "$dl/examples/hello$ext" "$here"
-      run odin "$dl/examples/hello$ext"
+      # The library is linked into the program: the offscreen run uses a second build of hello,
+      # linked the same way against the diagnostic download's static library.
+      odindiag() { # OUT [ODIN-FLAG...]
+        local o=$1; shift
+        if [ $os = windows ]; then
+          odin build "$(native "$dl/examples/hello")" -o:minimal -linker:"${ODIN_LINKER:-lld}" -collection:gpuikit="$(native "$dl/odin")" \
+            "-extra-linker-flags:/LIBPATH:$(native "$diag")" -out:"$(native "$o")" "$@"
+        else
+          odin build "$dl/examples/hello" -o:minimal -collection:gpuikit="$dl/odin" "-extra-linker-flags:-L$diag" -out:"$o" "$@"
+        fi
+      }
+      odindiag "$out/hello-odin-diag$ext"
+      run odin "$out/hello-odin-diag$ext"
       if [ -n "$other" ]; then
         start=$(date +%s); "$dl/examples/build.sh" hello "-target:$odin_other"
         echo "dist-test: odin hello for $other built in $(( $(date +%s) - start )) s"
         arch_of "$dl/examples/hello$ext" "$other"
-        if [ -n "$other_runs" ]; then run "odin-$other" "$dl/examples/hello$ext"
+        if [ -n "$other_runs" ]; then
+          odindiag "$out/hello-odin-diag-$other$ext" "-target:$odin_other"
+          run "odin-$other" "$out/hello-odin-diag-$other$ext"
         else echo "dist-test: LINKED odin-$other: hello for $other links against the universal library (not run here)"; fi
       fi ;;
     go) start=$(date +%s); "$dl/examples/go/build.sh" hello
-      echo "dist-test: go hello built in $(( $(date +%s) - start )) s"
+      echo "dist-test: go hello built in $(( $(date +%s) - start )) s, $(( $(wc -c < "$dl/examples/go/hello$ext") / 1000000 )) MB, one file"
       [ $os != macos ] || arch_of "$dl/examples/go/hello$ext" "$here"
-      run go "$dl/examples/go/hello$ext"
+      # A Go program has the library linked into it, so it cannot be pointed at the diagnostic one at
+      # run time: the offscreen run uses a second build of hello, linked the same way against the
+      # diagnostic download's static library.
+      case $os in macos) strip_flag=-Wl,-dead_strip ;; *) strip_flag=-Wl,--gc-sections ;; esac
+      godiag() { # OUT [ENV...]: hello linked against the diagnostic library
+        local o=$1; shift
+        (cd "$dl/examples/go/hello" && env CGO_ENABLED=1 CGO_LDFLAGS="-L$(native "$diag")" "$@" \
+          go build -ldflags="-s -w -extldflags=$strip_flag" -o "$(native "$o")" .)
+      }
+      godiag "$out/hello-diag$ext"
+      run go "$out/hello-diag$ext"
       if [ -n "$other" ]; then
         start=$(date +%s); GOARCH=$go_other CC="clang -arch $other" "$dl/examples/go/build.sh" hello
         echo "dist-test: go hello for $other built in $(( $(date +%s) - start )) s"
         arch_of "$dl/examples/go/hello$ext" "$other"
-        if [ -n "$other_runs" ]; then run "go-$other" "$dl/examples/go/hello$ext"
+        if [ -n "$other_runs" ]; then
+          godiag "$out/hello-diag-$other$ext" GOARCH=$go_other CC="clang -arch $other"
+          run "go-$other" "$out/hello-diag-$other$ext"
         else echo "dist-test: LINKED go-$other: hello for $other links against the universal library (not run here)"; fi
       fi ;;
     *) echo "dist-test.sh: odin or go" >&2; exit 2 ;;

@@ -17,24 +17,28 @@ Separator_VT :: struct {
 }
 
 separator_horizontal :: proc(flags: ..Style_Flag, loc := #caller_location) -> Separator {
+	use_component_separator()
 	e := Separator{new_node(740, loc), &separator_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 separator_horizontal_dashed :: proc(flags: ..Style_Flag, loc := #caller_location) -> Separator {
+	use_component_separator()
 	e := Separator{new_node(741, loc), &separator_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 separator_vertical :: proc(flags: ..Style_Flag, loc := #caller_location) -> Separator {
+	use_component_separator()
 	e := Separator{new_node(742, loc), &separator_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 separator_vertical_dashed :: proc(flags: ..Style_Flag, loc := #caller_location) -> Separator {
+	use_component_separator()
 	e := Separator{new_node(743, loc), &separator_vt}
 	tokens(e.el, flags)
 	return e

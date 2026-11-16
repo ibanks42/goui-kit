@@ -7,7 +7,8 @@ import "core:time"
 amber :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 744)
+	use_component_root()
+	put_op(o, 744)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -18,7 +19,8 @@ amber :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 base_apply_system_reduce_motion :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 726)
+	use_base_root()
+	put_op(o, 726)
 	ambient_call(cx, req[:], false, loc)
 }
 
@@ -26,7 +28,8 @@ base_apply_system_reduce_motion :: proc(cx: ^Cx, loc := #caller_location) {
 base_axis_gutter :: proc(cx: ^Cx, font_size: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 728)
+	use_base_plot()
+	put_op(o, 728)
 	put_f32(o, font_size)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -37,7 +40,8 @@ base_axis_gutter :: proc(cx: ^Cx, font_size: f32, loc := #caller_location) -> (v
 base_box_shadow :: proc(cx: ^Cx, x_: f32, y: f32, blur: f32, spread: f32, color: Color, loc := #caller_location) -> (v: Box_Shadow) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1446)
+	use_base_root()
+	put_op(o, 1446)
 	put_f32(o, x_)
 	put_f32(o, y)
 	put_f32(o, blur)
@@ -52,7 +56,8 @@ base_box_shadow :: proc(cx: ^Cx, x_: f32, y: f32, blur: f32, spread: f32, color:
 base_dock_sizing_clamp :: proc(cx: ^Cx, value: Dock_Sizing, size: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1657)
+	use_base_dock()
+	put_op(o, 1657)
 	put_vtape(o, value.nd)
 	put_f32(o, size)
 	r := ambient_call(cx, req[:], true, loc)
@@ -64,7 +69,8 @@ base_dock_sizing_clamp :: proc(cx: ^Cx, value: Dock_Sizing, size: f32, loc := #c
 base_dock_sizing_size_from_pointer :: proc(cx: ^Cx, value: Dock_Sizing, pointer: Gpui_Point, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1658)
+	use_base_dock()
+	put_op(o, 1658)
 	put_vtape(o, value.nd)
 	put_Gpui_Point(o, pointer)
 	r := ambient_call(cx, req[:], true, loc)
@@ -76,7 +82,8 @@ base_dock_sizing_size_from_pointer :: proc(cx: ^Cx, value: Dock_Sizing, pointer:
 base_ease_in_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 723)
+	use_base_animation()
+	put_op(o, 723)
 	put_f32(o, t)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -87,7 +94,8 @@ base_ease_in_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32)
 base_ease_in_out_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 724)
+	use_base_animation()
+	put_op(o, 724)
 	put_f32(o, t)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -98,7 +106,8 @@ base_ease_in_out_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: 
 base_ease_out_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 725)
+	use_base_animation()
+	put_op(o, 725)
 	put_f32(o, t)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -109,7 +118,8 @@ base_ease_out_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32
 base_enabled_by_default :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1175)
+	use_base_scroll_bounce()
+	put_op(o, 1175)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -119,7 +129,7 @@ base_enabled_by_default :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 base_extensions :: proc(cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1173)
+	put_op(o, 1173)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -129,7 +139,8 @@ base_extensions :: proc(cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) 
 base_handle_key_down :: proc(cx: ^Cx, state: Questionnaire_State, event: Key_Down_Event, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 733)
+	use_base_questionnaire()
+	put_op(o, 733)
 	put_u64(o, state.h)
 	put_Key_Down_Event(o, event)
 	ambient_call(cx, req[:], false, loc)
@@ -139,7 +150,8 @@ base_handle_key_down :: proc(cx: ^Cx, state: Questionnaire_State, event: Key_Dow
 base_highlight_characters :: proc(cx: ^Cx, query: string, item: Completion_Item, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1652)
+	use_base_input()
+	put_op(o, 1652)
 	put_str(o, query)
 	{ lv := item; put_value(o, &lv, type_info_of(Completion_Item)) }
 	r := ambient_call(cx, req[:], true, loc)
@@ -151,7 +163,8 @@ base_highlight_characters :: proc(cx: ^Cx, query: string, item: Completion_Item,
 base_highlight_contains :: proc(cx: ^Cx, query: string, item: Completion_Item, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1653)
+	use_base_input()
+	put_op(o, 1653)
 	put_str(o, query)
 	{ lv := item; put_value(o, &lv, type_info_of(Completion_Item)) }
 	r := ambient_call(cx, req[:], true, loc)
@@ -163,7 +176,8 @@ base_highlight_contains :: proc(cx: ^Cx, query: string, item: Completion_Item, l
 base_highlight_prefix :: proc(cx: ^Cx, query: string, item: Completion_Item, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1654)
+	use_base_input()
+	put_op(o, 1654)
 	put_str(o, query)
 	{ lv := item; put_value(o, &lv, type_info_of(Completion_Item)) }
 	r := ambient_call(cx, req[:], true, loc)
@@ -175,7 +189,8 @@ base_highlight_prefix :: proc(cx: ^Cx, query: string, item: Completion_Item, loc
 base_is_mobile :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 727)
+	use_base_root()
+	put_op(o, 727)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -185,7 +200,8 @@ base_is_mobile :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 base_last_horizontal_scroll_claim :: proc(cx: ^Cx, loc := #caller_location) -> (v: Maybe(Horizontal_Scroll_Claim)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1031)
+	use_base_root()
+	put_op(o, 1031)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -195,7 +211,8 @@ base_last_horizontal_scroll_claim :: proc(cx: ^Cx, loc := #caller_location) -> (
 base_measure_text_width :: proc(cx: ^Cx, text: string, font_size: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 731)
+	use_base_plot()
+	put_op(o, 731)
 	put_str(o, text)
 	put_f32(o, font_size)
 	r := ambient_call(cx, req[:], true, loc)
@@ -207,7 +224,8 @@ base_measure_text_width :: proc(cx: ^Cx, text: string, font_size: f32, loc := #c
 base_parse_markdown :: proc(cx: ^Cx, source: string, extensions: Markdown_Extensions_Arc, loc := #caller_location) -> (v: Fallible([]Block_Node_Held)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1764)
+	use_base_text()
+	put_op(o, 1764)
 	put_str(o, source)
 	put_u64(o, extensions.h)
 	r := ambient_call(cx, req[:], true, loc)
@@ -219,7 +237,8 @@ base_parse_markdown :: proc(cx: ^Cx, source: string, extensions: Markdown_Extens
 base_resolved_corner :: proc(cx: ^Cx, anchor: Anchor, trigger_bounds: Bounds, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1174)
+	use_base_popup()
+	put_op(o, 1174)
 	put_u16(o, u16(anchor))
 	put_Bounds(o, trigger_bounds)
 	r := ambient_call(cx, req[:], true, loc)
@@ -231,7 +250,8 @@ base_resolved_corner :: proc(cx: ^Cx, anchor: Anchor, trigger_bounds: Bounds, lo
 base_sankey_layout :: proc(cx: ^Cx, value: Sankey, node_count: int, links: []Sankey_Link, loc := #caller_location) -> (v: Fallible(Sankey_Graph)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1659)
+	use_base_plot()
+	put_op(o, 1659)
 	put_vtape(o, value.nd)
 	put_usize(o, node_count)
 	put_u32(o, u32(len(links)))
@@ -247,7 +267,8 @@ base_sankey_layout :: proc(cx: ^Cx, value: Sankey, node_count: int, links: []San
 base_sankey_layout_from :: proc(cx: ^Cx, value: Sankey, graph: Sankey_Graph, loc := #caller_location) -> (v: Sankey_Graph) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1660)
+	use_base_plot()
+	put_op(o, 1660)
 	put_vtape(o, value.nd)
 	put_u64(o, graph.h)
 	r := ambient_call(cx, req[:], true, loc)
@@ -259,7 +280,8 @@ base_sankey_layout_from :: proc(cx: ^Cx, value: Sankey, graph: Sankey_Graph, loc
 base_sankey_topology :: proc(cx: ^Cx, value: Sankey, node_count: int, links: []Sankey_Link, loc := #caller_location) -> (v: Fallible(Sankey_Graph)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1661)
+	use_base_plot()
+	put_op(o, 1661)
 	put_vtape(o, value.nd)
 	put_usize(o, node_count)
 	put_u32(o, u32(len(links)))
@@ -275,7 +297,8 @@ base_sankey_topology :: proc(cx: ^Cx, value: Sankey, node_count: int, links: []S
 base_set_language_config :: proc(cx: ^Cx, language: string, config: Language_Config, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1030)
+	use_base_input()
+	put_op(o, 1030)
 	put_str(o, language)
 	put_vtape(o, config.nd)
 	ambient_call(cx, req[:], false, loc)
@@ -285,7 +308,8 @@ base_set_language_config :: proc(cx: ^Cx, language: string, config: Language_Con
 base_set_language_provider :: proc(cx: ^Cx, provider: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1624)
+	use_base_input()
+	put_op(o, 1624)
 	put_u64(o, provider.h)
 	ambient_call(cx, req[:], false, loc)
 }
@@ -294,7 +318,8 @@ base_set_language_provider :: proc(cx: ^Cx, provider: Row_Source, loc := #caller
 base_step_value :: proc(cx: ^Cx, value: string, action: Step_Action, step: f64, min: Maybe(f64), max: Maybe(f64), loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 734)
+	use_base_root()
+	put_op(o, 734)
 	put_str(o, value)
 	put_u16(o, u16(action))
 	put_u64(o, transmute(u64)f64(step))
@@ -319,7 +344,8 @@ base_step_value :: proc(cx: ^Cx, value: string, action: Step_Action, step: f64, 
 base_timing_sample :: proc(cx: ^Cx, value: Timing, elapsed: time.Duration, loc := #caller_location) -> (v: Timing_Sample) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1656)
+	use_base_motion()
+	put_op(o, 1656)
 	put_vtape(o, value.nd)
 	put_ms(o, i64(elapsed))
 	r := ambient_call(cx, req[:], true, loc)
@@ -331,7 +357,8 @@ base_timing_sample :: proc(cx: ^Cx, value: Timing, elapsed: time.Duration, loc :
 base_truncate_text_to_width :: proc(cx: ^Cx, text: string, font_size: f32, max_width: f32, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 732)
+	use_base_plot()
+	put_op(o, 732)
 	put_str(o, text)
 	put_f32(o, font_size)
 	put_f32(o, max_width)
@@ -344,7 +371,8 @@ base_truncate_text_to_width :: proc(cx: ^Cx, text: string, font_size: f32, max_w
 blue :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 745)
+	use_component_root()
+	put_op(o, 745)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -355,7 +383,8 @@ blue :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 clear_notifications :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 735)
+	use_component_window_ext()
+	put_op(o, 735)
 	ambient_call(cx, req[:], false, loc)
 }
 
@@ -363,7 +392,8 @@ clear_notifications :: proc(cx: ^Cx, loc := #caller_location) {
 close_all_dialogs :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 736)
+	use_component_window_ext()
+	put_op(o, 736)
 	ambient_call(cx, req[:], false, loc)
 }
 
@@ -371,7 +401,8 @@ close_all_dialogs :: proc(cx: ^Cx, loc := #caller_location) {
 close_dialog :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 737)
+	use_component_window_ext()
+	put_op(o, 737)
 	ambient_call(cx, req[:], false, loc)
 }
 
@@ -379,7 +410,8 @@ close_dialog :: proc(cx: ^Cx, loc := #caller_location) {
 close_sheet :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 738)
+	use_component_window_ext()
+	put_op(o, 738)
 	ambient_call(cx, req[:], false, loc)
 }
 
@@ -387,7 +419,8 @@ close_sheet :: proc(cx: ^Cx, loc := #caller_location) {
 cyan :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 746)
+	use_component_root()
+	put_op(o, 746)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -398,7 +431,8 @@ cyan :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 dark :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme_Color_Arc) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1176)
+	use_component_theme()
+	put_op(o, 1176)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -408,7 +442,8 @@ dark :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme_Color_Arc) {
 diff_file_parse_count :: proc(cx: ^Cx, patch: string, loc := #caller_location) -> (v: Fallible(int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1516)
+	use_component_diff()
+	put_op(o, 1516)
 	put_str(o, patch)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -419,7 +454,8 @@ diff_file_parse_count :: proc(cx: ^Cx, patch: string, loc := #caller_location) -
 diff_file_parse_error :: proc(cx: ^Cx, patch: string, loc := #caller_location) -> (v: Maybe(Diff_Parse_Error)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1643)
+	use_component_diff()
+	put_op(o, 1643)
 	put_str(o, patch)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -430,7 +466,8 @@ diff_file_parse_error :: proc(cx: ^Cx, patch: string, loc := #caller_location) -
 diff_file_parse_with_count :: proc(cx: ^Cx, patch: string, options: Diff_Parse_Options, loc := #caller_location) -> (v: Fallible(int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1517)
+	use_component_diff()
+	put_op(o, 1517)
 	put_str(o, patch)
 	put_vtape(o, options.nd)
 	r := ambient_call(cx, req[:], true, loc)
@@ -442,7 +479,8 @@ diff_file_parse_with_count :: proc(cx: ^Cx, patch: string, options: Diff_Parse_O
 diff_file_parse_with_error :: proc(cx: ^Cx, patch: string, options: Diff_Parse_Options, loc := #caller_location) -> (v: Maybe(Diff_Parse_Error)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1644)
+	use_component_diff()
+	put_op(o, 1644)
 	put_str(o, patch)
 	put_vtape(o, options.nd)
 	r := ambient_call(cx, req[:], true, loc)
@@ -454,7 +492,8 @@ diff_file_parse_with_error :: proc(cx: ^Cx, patch: string, options: Diff_Parse_O
 emerald :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 747)
+	use_component_root()
+	put_op(o, 747)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -465,7 +504,8 @@ emerald :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 focused_input :: proc(cx: ^Cx, loc := #caller_location) -> (v: Maybe(Any_Input_State)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 739)
+	use_component_window_ext()
+	put_op(o, 739)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -475,7 +515,8 @@ focused_input :: proc(cx: ^Cx, loc := #caller_location) -> (v: Maybe(Any_Input_S
 format :: proc(cx: ^Cx, key: Keystroke, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1179)
+	use_component_kbd()
+	put_op(o, 1179)
 	put_Keystroke(o, key)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -486,7 +527,8 @@ format :: proc(cx: ^Cx, key: Keystroke, loc := #caller_location) -> (v: Temp_Str
 fuchsia :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 748)
+	use_component_root()
+	put_op(o, 748)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -497,7 +539,8 @@ fuchsia :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 gray :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 749)
+	use_component_root()
+	put_op(o, 749)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -508,7 +551,8 @@ gray :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 green :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 750)
+	use_component_root()
+	put_op(o, 750)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -519,7 +563,8 @@ green :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 has_active_dialog :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 740)
+	use_component_window_ext()
+	put_op(o, 740)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -529,7 +574,8 @@ has_active_dialog :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 has_active_sheet :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 741)
+	use_component_window_ext()
+	put_op(o, 741)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -539,7 +585,8 @@ has_active_sheet :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 has_focused_input :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 742)
+	use_component_window_ext()
+	put_op(o, 742)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -549,7 +596,8 @@ has_focused_input :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 hsl :: proc(cx: ^Cx, h: f32, s: f32, l: f32, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 751)
+	use_component_root()
+	put_op(o, 751)
 	put_f32(o, h)
 	put_f32(o, s)
 	put_f32(o, l)
@@ -562,7 +610,8 @@ hsl :: proc(cx: ^Cx, h: f32, s: f32, l: f32, loc := #caller_location) -> (v: Hsl
 indigo :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 752)
+	use_component_root()
+	put_op(o, 752)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -573,7 +622,8 @@ indigo :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 kit_panel_handle :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_location) -> (v: Dock_Panel) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1591)
+	use_component_dock()
+	put_op(o, 1591)
 	put_u64(o, panel.h)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -584,7 +634,8 @@ kit_panel_handle :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_location) ->
 kit_theme :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1447)
+	use_component_theme()
+	put_op(o, 1447)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -594,7 +645,8 @@ kit_theme :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme) {
 light :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme_Color_Arc) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1177)
+	use_component_theme()
+	put_op(o, 1177)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -604,7 +656,8 @@ light :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme_Color_Arc) {
 lime :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 754)
+	use_component_root()
+	put_op(o, 754)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -615,7 +668,8 @@ lime :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 locale :: proc(cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1448)
+	use_component_root()
+	put_op(o, 1448)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -625,7 +679,8 @@ locale :: proc(cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 neutral :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 755)
+	use_component_root()
+	put_op(o, 755)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -636,7 +691,8 @@ neutral :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 notifications :: proc(cx: ^Cx, loc := #caller_location) -> (v: []Notification) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1514)
+	use_component_window_ext()
+	put_op(o, 1514)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -646,7 +702,8 @@ notifications :: proc(cx: ^Cx, loc := #caller_location) -> (v: []Notification) {
 oklch :: proc(cx: ^Cx, lightness: f32, chroma: f32, hue: f32, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 756)
+	use_component_root()
+	put_op(o, 756)
 	put_f32(o, lightness)
 	put_f32(o, chroma)
 	put_f32(o, hue)
@@ -659,7 +716,8 @@ oklch :: proc(cx: ^Cx, lightness: f32, chroma: f32, hue: f32, loc := #caller_loc
 open_alert_dialog :: proc(cx: ^Cx, build: Built(Alert_Dialog), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1124)
+	use_component_window_ext()
+	put_op(o, 1124)
 	put_built(o, build, loc)
 	ambient_call(cx, req[:], false, loc)
 }
@@ -668,7 +726,8 @@ open_alert_dialog :: proc(cx: ^Cx, build: Built(Alert_Dialog), loc := #caller_lo
 open_dialog :: proc(cx: ^Cx, build: Built(Dialog), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1125)
+	use_component_window_ext()
+	put_op(o, 1125)
 	put_built(o, build, loc)
 	ambient_call(cx, req[:], false, loc)
 }
@@ -677,7 +736,8 @@ open_dialog :: proc(cx: ^Cx, build: Built(Dialog), loc := #caller_location) {
 open_sheet :: proc(cx: ^Cx, build: Built(Sheet), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1126)
+	use_component_window_ext()
+	put_op(o, 1126)
 	put_built(o, build, loc)
 	ambient_call(cx, req[:], false, loc)
 }
@@ -686,7 +746,8 @@ open_sheet :: proc(cx: ^Cx, build: Built(Sheet), loc := #caller_location) {
 open_sheet_at :: proc(cx: ^Cx, placement: Placement, build: Built(Sheet), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1127)
+	use_component_window_ext()
+	put_op(o, 1127)
 	put_u16(o, u16(placement))
 	put_built(o, build, loc)
 	ambient_call(cx, req[:], false, loc)
@@ -696,7 +757,8 @@ open_sheet_at :: proc(cx: ^Cx, placement: Placement, build: Built(Sheet), loc :=
 orange :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 757)
+	use_component_root()
+	put_op(o, 757)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -707,7 +769,8 @@ orange :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 parse :: proc(cx: ^Cx, patch: string, loc := #caller_location) -> (v: Fallible([]Diff_File_Read)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1425)
+	use_component_diff()
+	put_op(o, 1425)
 	put_str(o, patch)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -718,7 +781,8 @@ parse :: proc(cx: ^Cx, patch: string, loc := #caller_location) -> (v: Fallible([
 parse_conflicts :: proc(cx: ^Cx, path: string, text: string, loc := #caller_location) -> (v: Fallible(Diff_File_Read)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1426)
+	use_component_diff()
+	put_op(o, 1426)
 	put_str(o, path)
 	put_str(o, text)
 	r := ambient_call(cx, req[:], true, loc)
@@ -730,7 +794,8 @@ parse_conflicts :: proc(cx: ^Cx, path: string, text: string, loc := #caller_loca
 parse_with :: proc(cx: ^Cx, patch: string, options: Diff_Parse_Options, loc := #caller_location) -> (v: Fallible([]Diff_File_Read)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1427)
+	use_component_diff()
+	put_op(o, 1427)
 	put_str(o, patch)
 	put_vtape(o, options.nd)
 	r := ambient_call(cx, req[:], true, loc)
@@ -742,7 +807,8 @@ parse_with :: proc(cx: ^Cx, patch: string, options: Diff_Parse_Options, loc := #
 pink :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 758)
+	use_component_root()
+	put_op(o, 758)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -753,7 +819,8 @@ pink :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 purple :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 759)
+	use_component_root()
+	put_op(o, 759)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -764,7 +831,8 @@ purple :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 push_notification :: proc(cx: ^Cx, note: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 743)
+	use_component_window_ext()
+	put_op(o, 743)
 	put_str(o, note)
 	ambient_call(cx, req[:], false, loc)
 }
@@ -773,7 +841,8 @@ push_notification :: proc(cx: ^Cx, note: string, loc := #caller_location) {
 red :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 760)
+	use_component_root()
+	put_op(o, 760)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -784,7 +853,8 @@ red :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 resolve_icon_path :: proc(cx: ^Cx, path: string, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 761)
+	use_component_root()
+	put_op(o, 761)
 	put_str(o, path)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -795,7 +865,8 @@ resolve_icon_path :: proc(cx: ^Cx, path: string, loc := #caller_location) -> (v:
 rose :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 762)
+	use_component_root()
+	put_op(o, 762)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -806,7 +877,8 @@ rose :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 set_icon_resolver :: proc(cx: ^Cx, resolver: Ask(Temp_String, Maybe(string)), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1515)
+	use_component_root()
+	put_op(o, 1515)
 	put_u64(o, resolver.src.h)
 	ambient_call(cx, req[:], false, loc)
 }
@@ -815,7 +887,8 @@ set_icon_resolver :: proc(cx: ^Cx, resolver: Ask(Temp_String, Maybe(string)), lo
 set_locale :: proc(cx: ^Cx, locale: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 763)
+	use_component_root()
+	put_op(o, 763)
 	put_str(o, locale)
 	ambient_call(cx, req[:], false, loc)
 }
@@ -824,7 +897,8 @@ set_locale :: proc(cx: ^Cx, locale: string, loc := #caller_location) {
 set_native_touch_selection :: proc(cx: ^Cx, enabled: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 753)
+	use_component_input()
+	put_op(o, 753)
 	put_u8(o, u8(enabled))
 	ambient_call(cx, req[:], false, loc)
 }
@@ -833,7 +907,8 @@ set_native_touch_selection :: proc(cx: ^Cx, enabled: bool, loc := #caller_locati
 sky :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 764)
+	use_component_root()
+	put_op(o, 764)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -844,7 +919,8 @@ sky :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 slate :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 765)
+	use_component_root()
+	put_op(o, 765)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -855,7 +931,8 @@ slate :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 stone :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 766)
+	use_component_root()
+	put_op(o, 766)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -866,7 +943,8 @@ stone :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 teal :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 767)
+	use_component_root()
+	put_op(o, 767)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -877,7 +955,8 @@ teal :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 title_bar_options :: proc(cx: ^Cx, loc := #caller_location) -> (v: Titlebar_Options) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1178)
+	use_component_title_bar()
+	put_op(o, 1178)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -887,7 +966,8 @@ title_bar_options :: proc(cx: ^Cx, loc := #caller_location) -> (v: Titlebar_Opti
 try_parse_background :: proc(cx: ^Cx, background: string, loc := #caller_location) -> (v: Fallible(Background_Value)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1765)
+	use_component_root()
+	put_op(o, 1765)
 	put_str(o, background)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -898,7 +978,8 @@ try_parse_background :: proc(cx: ^Cx, background: string, loc := #caller_locatio
 try_parse_color :: proc(cx: ^Cx, color: string, loc := #caller_location) -> (v: Fallible(Hsla)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1180)
+	use_component_root()
+	put_op(o, 1180)
 	put_str(o, color)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -909,7 +990,8 @@ try_parse_color :: proc(cx: ^Cx, color: string, loc := #caller_location) -> (v: 
 violet :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 768)
+	use_component_root()
+	put_op(o, 768)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -920,7 +1002,8 @@ violet :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 window_corner_radii :: proc(cx: ^Cx, loc := #caller_location) -> (v: Corners) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 769)
+	use_component_root()
+	put_op(o, 769)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -930,7 +1013,8 @@ window_corner_radii :: proc(cx: ^Cx, loc := #caller_location) -> (v: Corners) {
 window_paddings :: proc(cx: ^Cx, loc := #caller_location) -> (v: Gpui_Edges) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 770)
+	use_component_root()
+	put_op(o, 770)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
 	return
@@ -940,7 +1024,8 @@ window_paddings :: proc(cx: ^Cx, loc := #caller_location) -> (v: Gpui_Edges) {
 yellow :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 771)
+	use_component_root()
+	put_op(o, 771)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)
@@ -951,7 +1036,8 @@ yellow :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 zinc :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 772)
+	use_component_root()
+	put_op(o, 772)
 	put_usize(o, scale)
 	r := ambient_call(cx, req[:], true, loc)
 	rd_into(&r, &v)

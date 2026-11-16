@@ -166,6 +166,7 @@ Button_VT :: struct {
 }
 
 button :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Button {
+	use_component_button()
 	e := Button{new_node(605, loc), &button_vt}
 	o := node_args()
 	put_id(o, id)
@@ -490,6 +491,7 @@ Button_Group_VT :: struct {
 }
 
 button_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Button_Group {
+	use_component_button()
 	e := Button_Group{new_node(607, loc), &button_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -565,6 +567,7 @@ Dropdown_Button_VT :: struct {
 }
 
 dropdown_button :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Dropdown_Button {
+	use_component_button()
 	e := Dropdown_Button{new_node(608, loc), &dropdown_button_vt}
 	o := node_args()
 	put_id(o, id)
@@ -633,6 +636,7 @@ Toggle_VT :: struct {
 }
 
 toggle :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Toggle {
+	use_component_button()
 	e := Toggle{new_node(609, loc), &toggle_vt}
 	o := node_args()
 	put_id(o, id)
@@ -704,6 +708,7 @@ Toggle_Group_VT :: struct {
 }
 
 toggle_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Toggle_Group {
+	use_component_button()
 	e := Toggle_Group{new_node(610, loc), &toggle_group_vt}
 	o := node_args()
 	put_id(o, id)

@@ -18,6 +18,7 @@ Questionnaire_VT :: struct {
 }
 
 questionnaire :: proc(state: Questionnaire_State, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire {
+	use_component_questionnaire()
 	e := Questionnaire{new_node(718, loc), &questionnaire_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -53,6 +54,7 @@ Questionnaire_Actions_VT :: struct {
 }
 
 questionnaire_actions :: proc(state: Questionnaire_State, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Actions {
+	use_component_questionnaire()
 	e := Questionnaire_Actions{new_node(719, loc), &questionnaire_actions_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -93,6 +95,7 @@ Questionnaire_Choice_VT :: struct {
 }
 
 questionnaire_choice :: proc(state: Questionnaire_State, item: string, value: string, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Choice {
+	use_component_questionnaire()
 	e := Questionnaire_Choice{new_node(720, loc), &questionnaire_choice_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -155,12 +158,14 @@ Questionnaire_Choice_Description_VT :: struct {
 }
 
 questionnaire_choice_description :: proc(flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Choice_Description {
+	use_component_questionnaire()
 	e := Questionnaire_Choice_Description{new_node(722, loc), &questionnaire_choice_description_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 questionnaire_choice_description_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Choice_Description {
+	use_component_questionnaire()
 	e := Questionnaire_Choice_Description{new_node(721, loc), &questionnaire_choice_description_vt}
 	tokens(e.el, flags)
 	return e
@@ -194,6 +199,7 @@ Questionnaire_Choices_VT :: struct {
 }
 
 questionnaire_choices :: proc(state: Questionnaire_State, item: string, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Choices {
+	use_component_questionnaire()
 	e := Questionnaire_Choices{new_node(723, loc), &questionnaire_choices_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -230,6 +236,7 @@ Questionnaire_Description_VT :: struct {
 }
 
 questionnaire_description :: proc(state: Questionnaire_State, item: string, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Description {
+	use_component_questionnaire()
 	e := Questionnaire_Description{new_node(724, loc), &questionnaire_description_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -266,6 +273,7 @@ Questionnaire_Error_VT :: struct {
 }
 
 questionnaire_error :: proc(state: Questionnaire_State, item: string, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Error {
+	use_component_questionnaire()
 	e := Questionnaire_Error{new_node(725, loc), &questionnaire_error_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -299,6 +307,7 @@ Questionnaire_Input_VT :: struct {
 }
 
 questionnaire_input :: proc(state: Questionnaire_State, item: string, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Input {
+	use_component_questionnaire()
 	e := Questionnaire_Input{new_node(726, loc), &questionnaire_input_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -332,6 +341,7 @@ Questionnaire_Item_VT :: struct {
 }
 
 questionnaire_item :: proc(state: Questionnaire_State, item: string, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Item {
+	use_component_questionnaire()
 	e := Questionnaire_Item{new_node(727, loc), &questionnaire_item_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -368,6 +378,7 @@ Questionnaire_Next_VT :: struct {
 }
 
 questionnaire_next :: proc(state: Questionnaire_State, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Next {
+	use_component_questionnaire()
 	e := Questionnaire_Next{new_node(728, loc), &questionnaire_next_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -403,6 +414,7 @@ Questionnaire_Previous_VT :: struct {
 }
 
 questionnaire_previous :: proc(state: Questionnaire_State, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Previous {
+	use_component_questionnaire()
 	e := Questionnaire_Previous{new_node(729, loc), &questionnaire_previous_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -438,6 +450,7 @@ Questionnaire_Progress_VT :: struct {
 }
 
 questionnaire_progress :: proc(state: Questionnaire_State, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Progress {
+	use_component_questionnaire()
 	e := Questionnaire_Progress{new_node(730, loc), &questionnaire_progress_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -473,6 +486,7 @@ Questionnaire_Skip_VT :: struct {
 }
 
 questionnaire_skip :: proc(state: Questionnaire_State, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Skip {
+	use_component_questionnaire()
 	e := Questionnaire_Skip{new_node(731, loc), &questionnaire_skip_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -508,6 +522,7 @@ Questionnaire_Submit_VT :: struct {
 }
 
 questionnaire_submit :: proc(state: Questionnaire_State, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Submit {
+	use_component_questionnaire()
 	e := Questionnaire_Submit{new_node(732, loc), &questionnaire_submit_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -543,6 +558,7 @@ Questionnaire_Title_VT :: struct {
 }
 
 questionnaire_title :: proc(state: Questionnaire_State, item: string, flags: ..Style_Flag, loc := #caller_location) -> Questionnaire_Title {
+	use_component_questionnaire()
 	e := Questionnaire_Title{new_node(733, loc), &questionnaire_title_vt}
 	o := node_args()
 	put_u64(o, state.h)

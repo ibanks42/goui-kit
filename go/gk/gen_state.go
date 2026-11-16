@@ -20,6 +20,7 @@ func (s AppMenuBar) handle() uint64 { return s.h }
 
 // Reload is <gpui_kit::component::menu::AppMenuBar>::reload.
 func (s AppMenuBar) Reload(cx *Cx) {
+	useComponentMenu()
 	o := newReq(1589)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -32,6 +33,7 @@ func (s AudioFormat) handle() uint64 { return s.h }
 
 // Channels is <gpui_kit::component::speech::AudioFormat>::channels.
 func (s AudioFormat) Channels(cx *Cx) uint16 {
+	useComponentSpeech()
 	o := newReq(1027)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -40,6 +42,7 @@ func (s AudioFormat) Channels(cx *Cx) uint16 {
 
 // SampleRate is <gpui_kit::component::speech::AudioFormat>::sample_rate.
 func (s AudioFormat) SampleRate(cx *Cx) uint32 {
+	useComponentSpeech()
 	o := newReq(1029)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -48,6 +51,7 @@ func (s AudioFormat) SampleRate(cx *Cx) uint32 {
 
 // NewAudioFormat is <gpui_kit::component::speech::AudioFormat>::new.
 func NewAudioFormat(cx *Cx, sampleRate uint32, channels uint16) AudioFormat {
+	useComponentSpeech()
 	o := newReq(1028)
 	o.u32(uint32(sampleRate))
 	o.u16(uint16(channels))
@@ -62,6 +66,7 @@ func (s AutoScroll) handle() uint64 { return s.h }
 
 // Delta is <gpui_kit::base::AutoScroll>::delta.
 func (s AutoScroll) Delta(cx *Cx) Option[float32] {
+	useBaseAutoScroll()
 	o := newReq(1456)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -70,6 +75,7 @@ func (s AutoScroll) Delta(cx *Cx) Option[float32] {
 
 // IsActive is <gpui_kit::base::AutoScroll>::is_active.
 func (s AutoScroll) IsActive(cx *Cx) bool {
+	useBaseAutoScroll()
 	o := newReq(1457)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -78,6 +84,7 @@ func (s AutoScroll) IsActive(cx *Cx) bool {
 
 // Stop is <gpui_kit::base::AutoScroll>::stop.
 func (s AutoScroll) Stop(cx *Cx) {
+	useBaseAutoScroll()
 	o := newReq(1458)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -85,6 +92,7 @@ func (s AutoScroll) Stop(cx *Cx) {
 
 // NewAutoScrollDefault is <gpui_kit::base::AutoScroll as Default>::default.
 func NewAutoScrollDefault(cx *Cx) AutoScroll {
+	useBaseAutoScroll()
 	o := newReq(1454)
 	o.u16(0) // no builder ops follow
 	return AutoScroll{stateMake(cx, o)}
@@ -92,6 +100,7 @@ func NewAutoScrollDefault(cx *Cx) AutoScroll {
 
 // AutoScrollComputeDelta is <gpui_kit::base::AutoScroll>::compute_delta.
 func AutoScrollComputeDelta(cx *Cx, y float32, bounds Bounds) Option[float32] {
+	useBaseAutoScroll()
 	o := newReq(1455)
 	o.f32(y)
 	putBounds(o, bounds)
@@ -106,6 +115,7 @@ func (s BaseTable2) handle() uint64 { return s.h }
 
 // ColumnAligns is <gpui_kit::base::text::editor_host::Table>::column_aligns.
 func (s BaseTable2) ColumnAligns(cx *Cx) []ColumnumnAlign {
+	useBaseText()
 	o := newReq(954)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -114,6 +124,7 @@ func (s BaseTable2) ColumnAligns(cx *Cx) []ColumnumnAlign {
 
 // Rows is <gpui_kit::base::text::editor_host::Table>::rows.
 func (s BaseTable2) Rows(cx *Cx) [][]ParagraphRead {
+	useBaseText()
 	o := newReq(1358)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -124,6 +135,7 @@ func (s BaseTable2) Rows(cx *Cx) [][]ParagraphRead {
 
 // NewBaseTable2 is <gpui_kit::base::text::editor_host::Table>::new.
 func NewBaseTable2(cx *Cx, rows [][]Paragraph, columnAligns []ColumnumnAlign) BaseTable2 {
+	useBaseText()
 	o := newReq(955)
 	o.u32(uint32(len(rows)))
 	for _, x0 := range rows {
@@ -147,6 +159,7 @@ func (s BaseTheme) handle() uint64 { return s.h }
 
 // Appearance is <gpui_kit::base::Theme>::appearance.
 func (s BaseTheme) Appearance(cx *Cx) ThemeAppearance {
+	useBaseTheme()
 	o := newReq(1185)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -155,6 +168,7 @@ func (s BaseTheme) Appearance(cx *Cx) ThemeAppearance {
 
 // CursorBlink is <gpui_kit::base::Theme>::cursor_blink.
 func (s BaseTheme) CursorBlink(cx *Cx) CursorBlinkRead {
+	useBaseTheme()
 	o := newReq(1341)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -163,6 +177,7 @@ func (s BaseTheme) CursorBlink(cx *Cx) CursorBlinkRead {
 
 // Plot is <gpui_kit::base::Theme>::plot.
 func (s BaseTheme) Plot(cx *Cx) PlotThemeRead {
+	useBaseTheme()
 	o := newReq(1342)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -171,6 +186,7 @@ func (s BaseTheme) Plot(cx *Cx) PlotThemeRead {
 
 // Resizable is <gpui_kit::base::Theme>::resizable.
 func (s BaseTheme) Resizable(cx *Cx) BaseResizableTheme {
+	useBaseTheme()
 	o := newReq(1186)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -179,6 +195,7 @@ func (s BaseTheme) Resizable(cx *Cx) BaseResizableTheme {
 
 // Scrollbar is <gpui_kit::base::Theme>::scrollbar.
 func (s BaseTheme) Scrollbar(cx *Cx) ScrollbarThemeRead {
+	useBaseTheme()
 	o := newReq(1343)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -187,6 +204,7 @@ func (s BaseTheme) Scrollbar(cx *Cx) ScrollbarThemeRead {
 
 // Tokens is <gpui_kit::base::Theme>::tokens.
 func (s BaseTheme) Tokens(cx *Cx) BaseSemanticThemeTokens {
+	useBaseTheme()
 	o := newReq(1193)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -195,6 +213,7 @@ func (s BaseTheme) Tokens(cx *Cx) BaseSemanticThemeTokens {
 
 // SetAppearance is <gpui_kit::base::Theme>::set_appearance.
 func (s BaseTheme) SetAppearance(cx *Cx, value ThemeAppearance) {
+	useBaseTheme()
 	o := newReq(1187)
 	o.u64(s.h)
 	o.u16(uint16(value))
@@ -203,6 +222,7 @@ func (s BaseTheme) SetAppearance(cx *Cx, value ThemeAppearance) {
 
 // SetCursorBlink is <gpui_kit::base::Theme>::set_cursor_blink.
 func (s BaseTheme) SetCursorBlink(cx *Cx, value CursorBlink) {
+	useBaseTheme()
 	o := newReq(1188)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -211,6 +231,7 @@ func (s BaseTheme) SetCursorBlink(cx *Cx, value CursorBlink) {
 
 // SetPlot is <gpui_kit::base::Theme>::set_plot.
 func (s BaseTheme) SetPlot(cx *Cx, value PlotTheme) {
+	useBaseTheme()
 	o := newReq(1189)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -219,6 +240,7 @@ func (s BaseTheme) SetPlot(cx *Cx, value PlotTheme) {
 
 // SetResizable is <gpui_kit::base::Theme>::set_resizable.
 func (s BaseTheme) SetResizable(cx *Cx, value ResizableTheme) {
+	useBaseTheme()
 	o := newReq(1190)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -227,6 +249,7 @@ func (s BaseTheme) SetResizable(cx *Cx, value ResizableTheme) {
 
 // SetScrollbar is <gpui_kit::base::Theme>::set_scrollbar.
 func (s BaseTheme) SetScrollbar(cx *Cx, value ScrollbarTheme) {
+	useBaseTheme()
 	o := newReq(1191)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -235,6 +258,7 @@ func (s BaseTheme) SetScrollbar(cx *Cx, value ScrollbarTheme) {
 
 // SetTokens is <gpui_kit::base::Theme>::set_tokens.
 func (s BaseTheme) SetTokens(cx *Cx, value SemanticThemeTokens) {
+	useBaseTheme()
 	o := newReq(1192)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -243,6 +267,7 @@ func (s BaseTheme) SetTokens(cx *Cx, value SemanticThemeTokens) {
 
 // NewBaseThemeGlobal is <gpui_kit::base::Theme>::global.
 func NewBaseThemeGlobal(cx *Cx) BaseTheme {
+	useBaseTheme()
 	o := newReq(820)
 	o.u16(0) // no builder ops follow
 	return BaseTheme{stateMake(cx, o)}
@@ -250,6 +275,7 @@ func NewBaseThemeGlobal(cx *Cx) BaseTheme {
 
 // BaseThemeGlobalMut is <gpui_kit::base::Theme>::global_mut.
 func BaseThemeGlobalMut(cx *Cx) BaseTheme {
+	useBaseTheme()
 	o := newReq(821)
 	r := objGet(0, cx, o)
 	return BaseTheme{h: r.u64()}
@@ -262,6 +288,7 @@ func (s BaseTreeEntry) handle() uint64 { return s.h }
 
 // Depth is <gpui_kit::base::TreeEntry>::depth.
 func (s BaseTreeEntry) Depth(cx *Cx) int {
+	useBaseTree()
 	o := newReq(834)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -270,6 +297,7 @@ func (s BaseTreeEntry) Depth(cx *Cx) int {
 
 // IsDisabled is <gpui_kit::base::TreeEntry>::is_disabled.
 func (s BaseTreeEntry) IsDisabled(cx *Cx) bool {
+	useBaseTree()
 	o := newReq(835)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -278,6 +306,7 @@ func (s BaseTreeEntry) IsDisabled(cx *Cx) bool {
 
 // IsExpanded is <gpui_kit::base::TreeEntry>::is_expanded.
 func (s BaseTreeEntry) IsExpanded(cx *Cx) bool {
+	useBaseTree()
 	o := newReq(836)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -286,6 +315,7 @@ func (s BaseTreeEntry) IsExpanded(cx *Cx) bool {
 
 // IsFolder is <gpui_kit::base::TreeEntry>::is_folder.
 func (s BaseTreeEntry) IsFolder(cx *Cx) bool {
+	useBaseTree()
 	o := newReq(837)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -294,6 +324,7 @@ func (s BaseTreeEntry) IsFolder(cx *Cx) bool {
 
 // IsRoot is <gpui_kit::base::TreeEntry>::is_root.
 func (s BaseTreeEntry) IsRoot(cx *Cx) bool {
+	useBaseTree()
 	o := newReq(838)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -302,6 +333,7 @@ func (s BaseTreeEntry) IsRoot(cx *Cx) bool {
 
 // Item is <gpui_kit::base::TreeEntry>::item.
 func (s BaseTreeEntry) Item(cx *Cx) BaseTreeItem {
+	useBaseTree()
 	o := newReq(839)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -310,6 +342,7 @@ func (s BaseTreeEntry) Item(cx *Cx) BaseTreeItem {
 
 // NewBaseTreeEntry is <gpui_kit::base::TreeEntry>::new.
 func NewBaseTreeEntry(cx *Cx, item TreeItem, depth int) BaseTreeEntry {
+	useBaseTree()
 	o := newReq(840)
 	putVtape(o, item.n)
 	putUsize(o, depth)
@@ -324,6 +357,7 @@ func (s CalendarState) handle() uint64 { return s.h }
 
 // CurrentMonth is <gpui_kit::base::CalendarState>::current_month.
 func (s CalendarState) CurrentMonth(cx *Cx) uint8 {
+	useBaseCalendar()
 	o := newReq(256)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -332,6 +366,7 @@ func (s CalendarState) CurrentMonth(cx *Cx) uint8 {
 
 // CurrentYear is <gpui_kit::base::CalendarState>::current_year.
 func (s CalendarState) CurrentYear(cx *Cx) int32 {
+	useBaseCalendar()
 	o := newReq(257)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -340,6 +375,7 @@ func (s CalendarState) CurrentYear(cx *Cx) int32 {
 
 // Date is <gpui_kit::base::CalendarState>::date.
 func (s CalendarState) Date(cx *Cx) Date {
+	useBaseCalendar()
 	o := newReq(258)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -348,6 +384,7 @@ func (s CalendarState) Date(cx *Cx) Date {
 
 // DisabledMatcherRef is <gpui_kit::base::CalendarState>::disabled_matcher_ref.
 func (s CalendarState) DisabledMatcherRef(cx *Cx) Option[Matcher] {
+	useBaseCalendar()
 	o := newReq(259)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -356,6 +393,7 @@ func (s CalendarState) DisabledMatcherRef(cx *Cx) Option[Matcher] {
 
 // HasNextYearPage is <gpui_kit::base::CalendarState>::has_next_year_page.
 func (s CalendarState) HasNextYearPage(cx *Cx) bool {
+	useBaseCalendar()
 	o := newReq(260)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -364,6 +402,7 @@ func (s CalendarState) HasNextYearPage(cx *Cx) bool {
 
 // HasPrevYearPage is <gpui_kit::base::CalendarState>::has_prev_year_page.
 func (s CalendarState) HasPrevYearPage(cx *Cx) bool {
+	useBaseCalendar()
 	o := newReq(261)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -372,6 +411,7 @@ func (s CalendarState) HasPrevYearPage(cx *Cx) bool {
 
 // NumberOfMonths is <gpui_kit::base::CalendarState>::number_of_months.
 func (s CalendarState) NumberOfMonths(cx *Cx) int {
+	useBaseCalendar()
 	o := newReq(264)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -380,6 +420,7 @@ func (s CalendarState) NumberOfMonths(cx *Cx) int {
 
 // OffsetYearMonth is <gpui_kit::base::CalendarState>::offset_year_month.
 func (s CalendarState) OffsetYearMonth(cx *Cx, offset int) TupleInt32Uint32 {
+	useBaseCalendar()
 	o := newReq(265)
 	o.u64(s.h)
 	putUsize(o, offset)
@@ -389,6 +430,7 @@ func (s CalendarState) OffsetYearMonth(cx *Cx, offset int) TupleInt32Uint32 {
 
 // View is <gpui_kit::base::CalendarState>::view.
 func (s CalendarState) View(cx *Cx) CalendarView {
+	useBaseCalendar()
 	o := newReq(273)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -397,6 +439,7 @@ func (s CalendarState) View(cx *Cx) CalendarView {
 
 // YearsOnPage is <gpui_kit::base::CalendarState>::years_on_page.
 func (s CalendarState) YearsOnPage(cx *Cx) []int32 {
+	useBaseCalendar()
 	o := newReq(274)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -405,6 +448,7 @@ func (s CalendarState) YearsOnPage(cx *Cx) []int32 {
 
 // ApplyDate is <gpui_kit::base::CalendarState>::apply_date.
 func (s CalendarState) ApplyDate(cx *Cx, date Date) bool {
+	useBaseCalendar()
 	o := newReq(1323)
 	o.u64(s.h)
 	putDate(o, date)
@@ -414,6 +458,7 @@ func (s CalendarState) ApplyDate(cx *Cx, date Date) bool {
 
 // NextYearPage is <gpui_kit::base::CalendarState>::next_year_page.
 func (s CalendarState) NextYearPage(cx *Cx) bool {
+	useBaseCalendar()
 	o := newReq(591)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -422,6 +467,7 @@ func (s CalendarState) NextYearPage(cx *Cx) bool {
 
 // PrevYearPage is <gpui_kit::base::CalendarState>::prev_year_page.
 func (s CalendarState) PrevYearPage(cx *Cx) bool {
+	useBaseCalendar()
 	o := newReq(592)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -430,6 +476,7 @@ func (s CalendarState) PrevYearPage(cx *Cx) bool {
 
 // NextMonth is <gpui_kit::base::CalendarState>::next_month.
 func (s CalendarState) NextMonth(cx *Cx) {
+	useBaseCalendar()
 	o := newReq(263)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -437,6 +484,7 @@ func (s CalendarState) NextMonth(cx *Cx) {
 
 // PrevMonth is <gpui_kit::base::CalendarState>::prev_month.
 func (s CalendarState) PrevMonth(cx *Cx) {
+	useBaseCalendar()
 	o := newReq(266)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -444,6 +492,7 @@ func (s CalendarState) PrevMonth(cx *Cx) {
 
 // SelectMonth is <gpui_kit::base::CalendarState>::select_month.
 func (s CalendarState) SelectMonth(cx *Cx, month uint8) {
+	useBaseCalendar()
 	o := newReq(267)
 	o.u64(s.h)
 	o.u8(uint8(month))
@@ -452,6 +501,7 @@ func (s CalendarState) SelectMonth(cx *Cx, month uint8) {
 
 // SelectYear is <gpui_kit::base::CalendarState>::select_year.
 func (s CalendarState) SelectYear(cx *Cx, year int32) {
+	useBaseCalendar()
 	o := newReq(268)
 	o.u64(s.h)
 	o.u32(uint32(year))
@@ -460,6 +510,7 @@ func (s CalendarState) SelectYear(cx *Cx, year int32) {
 
 // SetDate is <gpui_kit::base::CalendarState>::set_date.
 func (s CalendarState) SetDate(cx *Cx, date DateInto) {
+	useBaseCalendar()
 	o := newReq(1327)
 	o.u64(s.h)
 	putDateInto(o, date)
@@ -468,6 +519,7 @@ func (s CalendarState) SetDate(cx *Cx, date DateInto) {
 
 // SetDisabledMatcher is <gpui_kit::base::CalendarState>::set_disabled_matcher.
 func (s CalendarState) SetDisabledMatcher(cx *Cx, matcher MatcherInto) {
+	useBaseCalendar()
 	o := newReq(593)
 	o.u64(s.h)
 	putMatcherInto(o, matcher)
@@ -476,6 +528,7 @@ func (s CalendarState) SetDisabledMatcher(cx *Cx, matcher MatcherInto) {
 
 // SetNumberOfMonths is <gpui_kit::base::CalendarState>::set_number_of_months.
 func (s CalendarState) SetNumberOfMonths(cx *Cx, n_ int) {
+	useBaseCalendar()
 	o := newReq(269)
 	o.u64(s.h)
 	putUsize(o, n_)
@@ -484,6 +537,7 @@ func (s CalendarState) SetNumberOfMonths(cx *Cx, n_ int) {
 
 // SetView is <gpui_kit::base::CalendarState>::set_view.
 func (s CalendarState) SetView(cx *Cx, view CalendarView) {
+	useBaseCalendar()
 	o := newReq(270)
 	o.u64(s.h)
 	o.u16(uint16(view))
@@ -492,6 +546,7 @@ func (s CalendarState) SetView(cx *Cx, view CalendarView) {
 
 // SetYearRange is <gpui_kit::base::CalendarState>::set_year_range.
 func (s CalendarState) SetYearRange(cx *Cx, range_ TupleInt32Int32) {
+	useBaseCalendar()
 	o := newReq(271)
 	o.u64(s.h)
 	o.u32(uint32(range_.V0))
@@ -531,6 +586,7 @@ func (b CalendarStateBuilder) Build() CalendarState { return CalendarState{b.sb.
 
 // NewCalendarState is <gpui_kit::base::CalendarState>::new.
 func NewCalendarState(cx *Cx) CalendarStateBuilder {
+	useBaseCalendar()
 	o := newReq(262)
 	return CalendarStateBuilder{newStateBuilder(cx, o)}
 }
@@ -542,6 +598,7 @@ func (s CarouselState) handle() uint64 { return s.h }
 
 // Axis is <gpui_kit::component::carousel::CarouselState>::axis.
 func (s CarouselState) Axis(cx *Cx) Axis {
+	useComponentCarousel()
 	o := newReq(355)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -550,6 +607,7 @@ func (s CarouselState) Axis(cx *Cx) Axis {
 
 // HasNext is <gpui_kit::component::carousel::CarouselState>::has_next.
 func (s CarouselState) HasNext(cx *Cx) bool {
+	useComponentCarousel()
 	o := newReq(356)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -558,6 +616,7 @@ func (s CarouselState) HasNext(cx *Cx) bool {
 
 // HasPrevious is <gpui_kit::component::carousel::CarouselState>::has_previous.
 func (s CarouselState) HasPrevious(cx *Cx) bool {
+	useComponentCarousel()
 	o := newReq(357)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -566,6 +625,7 @@ func (s CarouselState) HasPrevious(cx *Cx) bool {
 
 // IsLooping is <gpui_kit::component::carousel::CarouselState>::is_looping.
 func (s CarouselState) IsLooping(cx *Cx) bool {
+	useComponentCarousel()
 	o := newReq(358)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -574,6 +634,7 @@ func (s CarouselState) IsLooping(cx *Cx) bool {
 
 // ItemCount is <gpui_kit::component::carousel::CarouselState>::item_count.
 func (s CarouselState) ItemCount(cx *Cx) int {
+	useComponentCarousel()
 	o := newReq(359)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -582,6 +643,7 @@ func (s CarouselState) ItemCount(cx *Cx) int {
 
 // SelectedIndex is <gpui_kit::component::carousel::CarouselState>::selected_index.
 func (s CarouselState) SelectedIndex(cx *Cx) Option[int] {
+	useComponentCarousel()
 	o := newReq(361)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -590,6 +652,7 @@ func (s CarouselState) SelectedIndex(cx *Cx) Option[int] {
 
 // SelectFirst is <gpui_kit::component::carousel::CarouselState>::select_first.
 func (s CarouselState) SelectFirst(cx *Cx) bool {
+	useComponentCarousel()
 	o := newReq(647)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -598,6 +661,7 @@ func (s CarouselState) SelectFirst(cx *Cx) bool {
 
 // SelectIndex is <gpui_kit::component::carousel::CarouselState>::select_index.
 func (s CarouselState) SelectIndex(cx *Cx, index int) bool {
+	useComponentCarousel()
 	o := newReq(648)
 	o.u64(s.h)
 	putUsize(o, index)
@@ -607,6 +671,7 @@ func (s CarouselState) SelectIndex(cx *Cx, index int) bool {
 
 // SelectLast is <gpui_kit::component::carousel::CarouselState>::select_last.
 func (s CarouselState) SelectLast(cx *Cx) bool {
+	useComponentCarousel()
 	o := newReq(649)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -615,6 +680,7 @@ func (s CarouselState) SelectLast(cx *Cx) bool {
 
 // SelectNext is <gpui_kit::component::carousel::CarouselState>::select_next.
 func (s CarouselState) SelectNext(cx *Cx) bool {
+	useComponentCarousel()
 	o := newReq(650)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -623,6 +689,7 @@ func (s CarouselState) SelectNext(cx *Cx) bool {
 
 // SelectPrevious is <gpui_kit::component::carousel::CarouselState>::select_previous.
 func (s CarouselState) SelectPrevious(cx *Cx) bool {
+	useComponentCarousel()
 	o := newReq(651)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -631,6 +698,7 @@ func (s CarouselState) SelectPrevious(cx *Cx) bool {
 
 // SetAxis is <gpui_kit::component::carousel::CarouselState>::set_axis.
 func (s CarouselState) SetAxis(cx *Cx, axis Axis) {
+	useComponentCarousel()
 	o := newReq(362)
 	o.u64(s.h)
 	o.u16(uint16(axis))
@@ -639,6 +707,7 @@ func (s CarouselState) SetAxis(cx *Cx, axis Axis) {
 
 // SetItemCount is <gpui_kit::component::carousel::CarouselState>::set_item_count.
 func (s CarouselState) SetItemCount(cx *Cx, itemCount int) {
+	useComponentCarousel()
 	o := newReq(363)
 	o.u64(s.h)
 	putUsize(o, itemCount)
@@ -647,6 +716,7 @@ func (s CarouselState) SetItemCount(cx *Cx, itemCount int) {
 
 // SetLooping is <gpui_kit::component::carousel::CarouselState>::set_looping.
 func (s CarouselState) SetLooping(cx *Cx, looping bool) {
+	useComponentCarousel()
 	o := newReq(364)
 	o.u64(s.h)
 	o.bool(looping)
@@ -655,6 +725,7 @@ func (s CarouselState) SetLooping(cx *Cx, looping bool) {
 
 // SetSelectedIndex is <gpui_kit::component::carousel::CarouselState>::set_selected_index.
 func (s CarouselState) SetSelectedIndex(cx *Cx, index int) {
+	useComponentCarousel()
 	o := newReq(365)
 	o.u64(s.h)
 	putUsize(o, index)
@@ -698,6 +769,7 @@ func (b CarouselStateBuilder) Build() CarouselState { return CarouselState{b.sb.
 
 // NewCarouselState is <gpui_kit::component::carousel::CarouselState>::new.
 func NewCarouselState(cx *Cx, itemCount int) CarouselStateBuilder {
+	useComponentCarousel()
 	o := newReq(360)
 	putUsize(o, itemCount)
 	return CarouselStateBuilder{newStateBuilder(cx, o)}
@@ -710,6 +782,7 @@ func (s CodeActionMenuState) handle() uint64 { return s.h }
 
 // Revision is <gpui_kit::base::input::CodeActionMenuState>::revision.
 func (s CodeActionMenuState) Revision(cx *Cx) uint64 {
+	useBaseInput()
 	o := newReq(1464)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -718,6 +791,7 @@ func (s CodeActionMenuState) Revision(cx *Cx) uint64 {
 
 // NewCodeActionMenuStateDefault is <gpui_kit::base::input::CodeActionMenuState as Default>::default.
 func NewCodeActionMenuStateDefault(cx *Cx) CodeActionMenuState {
+	useBaseInput()
 	o := newReq(1463)
 	o.u16(0) // no builder ops follow
 	return CodeActionMenuState{stateMake(cx, o)}
@@ -730,6 +804,7 @@ func (s ColorPickerState) handle() uint64 { return s.h }
 
 // ActiveTab is <gpui_kit::base::ColorPickerState>::active_tab.
 func (s ColorPickerState) ActiveTab(cx *Cx) int {
+	useBaseColorPicker()
 	o := newReq(275)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -738,6 +813,7 @@ func (s ColorPickerState) ActiveTab(cx *Cx) int {
 
 // DisplayedColor is <gpui_kit::base::ColorPickerState>::displayed_color.
 func (s ColorPickerState) DisplayedColor(cx *Cx) Option[Hsla] {
+	useBaseColorPicker()
 	o := newReq(278)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -746,6 +822,7 @@ func (s ColorPickerState) DisplayedColor(cx *Cx) Option[Hsla] {
 
 // HexInput is <gpui_kit::base::ColorPickerState>::hex_input.
 func (s ColorPickerState) HexInput(cx *Cx) InputState {
+	useBaseColorPicker()
 	o := newReq(1655)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -754,6 +831,7 @@ func (s ColorPickerState) HexInput(cx *Cx) InputState {
 
 // IsOpen is <gpui_kit::base::ColorPickerState>::is_open.
 func (s ColorPickerState) IsOpen(cx *Cx) bool {
+	useBaseColorPicker()
 	o := newReq(279)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -762,6 +840,7 @@ func (s ColorPickerState) IsOpen(cx *Cx) bool {
 
 // Preview is <gpui_kit::base::ColorPickerState>::preview.
 func (s ColorPickerState) Preview(cx *Cx) Option[Hsla] {
+	useBaseColorPicker()
 	o := newReq(281)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -770,6 +849,7 @@ func (s ColorPickerState) Preview(cx *Cx) Option[Hsla] {
 
 // Sliders is <gpui_kit::base::ColorPickerState>::sliders.
 func (s ColorPickerState) Sliders(cx *Cx) HslaSliders {
+	useBaseColorPicker()
 	o := newReq(773)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -778,6 +858,7 @@ func (s ColorPickerState) Sliders(cx *Cx) HslaSliders {
 
 // Value is <gpui_kit::base::ColorPickerState>::value.
 func (s ColorPickerState) Value(cx *Cx) Option[Hsla] {
+	useBaseColorPicker()
 	o := newReq(287)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -786,6 +867,7 @@ func (s ColorPickerState) Value(cx *Cx) Option[Hsla] {
 
 // TryValue is Value for a handler the component calls from inside its own update: ok is false while the state is busy.
 func (s ColorPickerState) TryValue(cx *Cx) (v Option[Hsla], ok bool) {
+	useBaseColorPicker()
 	o := newReq(287)
 	o.u64(s.h)
 	r, ok := stateTry(s.h, cx, o)
@@ -797,6 +879,7 @@ func (s ColorPickerState) TryValue(cx *Cx) (v Option[Hsla], ok bool) {
 
 // CommitHex is <gpui_kit::base::ColorPickerState>::commit_hex.
 func (s ColorPickerState) CommitHex(cx *Cx, value string) Option[Hsla] {
+	useBaseColorPicker()
 	o := newReq(594)
 	o.u64(s.h)
 	o.str(value)
@@ -806,6 +889,7 @@ func (s ColorPickerState) CommitHex(cx *Cx, value string) Option[Hsla] {
 
 // PreviewHex is <gpui_kit::base::ColorPickerState>::preview_hex.
 func (s ColorPickerState) PreviewHex(cx *Cx, value string) bool {
+	useBaseColorPicker()
 	o := newReq(596)
 	o.u64(s.h)
 	o.str(value)
@@ -815,6 +899,7 @@ func (s ColorPickerState) PreviewHex(cx *Cx, value string) bool {
 
 // ClearPreview is <gpui_kit::base::ColorPickerState>::clear_preview.
 func (s ColorPickerState) ClearPreview(cx *Cx) {
+	useBaseColorPicker()
 	o := newReq(276)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -822,6 +907,7 @@ func (s ColorPickerState) ClearPreview(cx *Cx) {
 
 // ClearValue is <gpui_kit::base::ColorPickerState>::clear_value.
 func (s ColorPickerState) ClearValue(cx *Cx) {
+	useBaseColorPicker()
 	o := newReq(277)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -829,6 +915,7 @@ func (s ColorPickerState) ClearValue(cx *Cx) {
 
 // PreviewColor is <gpui_kit::base::ColorPickerState>::preview_color.
 func (s ColorPickerState) PreviewColor(cx *Cx, value Color) {
+	useBaseColorPicker()
 	o := newReq(595)
 	o.u64(s.h)
 	putColor(o, value)
@@ -837,6 +924,7 @@ func (s ColorPickerState) PreviewColor(cx *Cx, value Color) {
 
 // SelectColor is <gpui_kit::base::ColorPickerState>::select_color.
 func (s ColorPickerState) SelectColor(cx *Cx, value Color) {
+	useBaseColorPicker()
 	o := newReq(597)
 	o.u64(s.h)
 	putColor(o, value)
@@ -845,6 +933,7 @@ func (s ColorPickerState) SelectColor(cx *Cx, value Color) {
 
 // SetActiveTab is <gpui_kit::base::ColorPickerState>::set_active_tab.
 func (s ColorPickerState) SetActiveTab(cx *Cx, tab int) {
+	useBaseColorPicker()
 	o := newReq(282)
 	o.u64(s.h)
 	putUsize(o, tab)
@@ -853,6 +942,7 @@ func (s ColorPickerState) SetActiveTab(cx *Cx, tab int) {
 
 // SetOpen is <gpui_kit::base::ColorPickerState>::set_open.
 func (s ColorPickerState) SetOpen(cx *Cx, open bool) {
+	useBaseColorPicker()
 	o := newReq(283)
 	o.u64(s.h)
 	o.bool(open)
@@ -861,6 +951,7 @@ func (s ColorPickerState) SetOpen(cx *Cx, open bool) {
 
 // SetValue is <gpui_kit::base::ColorPickerState>::set_value.
 func (s ColorPickerState) SetValue(cx *Cx, value Color) {
+	useBaseColorPicker()
 	o := newReq(598)
 	o.u64(s.h)
 	putColor(o, value)
@@ -869,6 +960,7 @@ func (s ColorPickerState) SetValue(cx *Cx, value Color) {
 
 // SyncPendingValue is <gpui_kit::base::ColorPickerState>::sync_pending_value.
 func (s ColorPickerState) SyncPendingValue(cx *Cx) {
+	useBaseColorPicker()
 	o := newReq(285)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -876,6 +968,7 @@ func (s ColorPickerState) SyncPendingValue(cx *Cx) {
 
 // ToggleOpen is <gpui_kit::base::ColorPickerState>::toggle_open.
 func (s ColorPickerState) ToggleOpen(cx *Cx) {
+	useBaseColorPicker()
 	o := newReq(286)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -883,6 +976,7 @@ func (s ColorPickerState) ToggleOpen(cx *Cx) {
 
 // UpdateColor is <gpui_kit::base::ColorPickerState>::update_color.
 func (s ColorPickerState) UpdateColor(cx *Cx, value Color) {
+	useBaseColorPicker()
 	o := newReq(599)
 	o.u64(s.h)
 	putColor(o, value)
@@ -914,6 +1008,7 @@ func (b ColorPickerStateBuilder) Build() ColorPickerState { return ColorPickerSt
 
 // NewColorPickerState is <gpui_kit::base::ColorPickerState>::new.
 func NewColorPickerState(cx *Cx) ColorPickerStateBuilder {
+	useBaseColorPicker()
 	o := newReq(280)
 	return ColorPickerStateBuilder{newStateBuilder(cx, o)}
 }
@@ -925,6 +1020,7 @@ func (s ComboboxState) handle() uint64 { return s.h }
 
 // Query is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::query.
 func (s ComboboxState) Query(cx *Cx) string {
+	useComponentCombobox()
 	o := newReq(1108)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -933,6 +1029,7 @@ func (s ComboboxState) Query(cx *Cx) string {
 
 // SelectedValue is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selected_value.
 func (s ComboboxState) SelectedValue(cx *Cx) Option[string] {
+	useComponentCombobox()
 	o := newReq(1110)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -941,6 +1038,7 @@ func (s ComboboxState) SelectedValue(cx *Cx) Option[string] {
 
 // SelectedValues is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selected_values.
 func (s ComboboxState) SelectedValues(cx *Cx) []string {
+	useComponentCombobox()
 	o := newReq(1111)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -949,6 +1047,7 @@ func (s ComboboxState) SelectedValues(cx *Cx) []string {
 
 // AddSelectedIndex is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::add_selected_index.
 func (s ComboboxState) AddSelectedIndex(cx *Cx, index BaseIndexPath) bool {
+	useComponentCombobox()
 	o := newReq(1104)
 	o.u64(s.h)
 	putBaseIndexPath(o, index)
@@ -958,6 +1057,7 @@ func (s ComboboxState) AddSelectedIndex(cx *Cx, index BaseIndexPath) bool {
 
 // RemoveSelectedIndex is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::remove_selected_index.
 func (s ComboboxState) RemoveSelectedIndex(cx *Cx, index BaseIndexPath) bool {
+	useComponentCombobox()
 	o := newReq(1109)
 	o.u64(s.h)
 	putBaseIndexPath(o, index)
@@ -967,6 +1067,7 @@ func (s ComboboxState) RemoveSelectedIndex(cx *Cx, index BaseIndexPath) bool {
 
 // ClearSelection is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::clear_selection.
 func (s ComboboxState) ClearSelection(cx *Cx) {
+	useComponentCombobox()
 	o := newReq(1105)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -974,6 +1075,7 @@ func (s ComboboxState) ClearSelection(cx *Cx) {
 
 // Focus is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::focus.
 func (s ComboboxState) Focus(cx *Cx) {
+	useComponentCombobox()
 	o := newReq(1106)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -981,6 +1083,7 @@ func (s ComboboxState) Focus(cx *Cx) {
 
 // SetItems is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_items.
 func (s ComboboxState) SetItems(cx *Cx, items RowSource) {
+	useComponentCombobox()
 	o := newReq(1113)
 	o.u64(s.h)
 	o.u64(items.h)
@@ -989,6 +1092,7 @@ func (s ComboboxState) SetItems(cx *Cx, items RowSource) {
 
 // SetQuery is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_query.
 func (s ComboboxState) SetQuery(cx *Cx, query string) {
+	useComponentCombobox()
 	o := newReq(1114)
 	o.u64(s.h)
 	o.str(query)
@@ -997,6 +1101,7 @@ func (s ComboboxState) SetQuery(cx *Cx, query string) {
 
 // SetSelectedIndices is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_selected_indices.
 func (s ComboboxState) SetSelectedIndices(cx *Cx, indices []BaseIndexPath) {
+	useComponentCombobox()
 	o := newReq(1115)
 	o.u64(s.h)
 	o.u32(uint32(len(indices)))
@@ -1008,6 +1113,7 @@ func (s ComboboxState) SetSelectedIndices(cx *Cx, indices []BaseIndexPath) {
 
 // SetSelectedValues is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_selected_values.
 func (s ComboboxState) SetSelectedValues(cx *Cx, values []string) {
+	useComponentCombobox()
 	o := newReq(1116)
 	o.u64(s.h)
 	o.u32(uint32(len(values)))
@@ -1048,6 +1154,7 @@ func (b ComboboxStateBuilder) Build() ComboboxState { return ComboboxState{b.sb.
 
 // NewComboboxState is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::new.
 func NewComboboxState(cx *Cx, delegate RowSource, selectedIndices []BaseIndexPath) ComboboxStateBuilder {
+	useComponentCombobox()
 	o := newReq(1107)
 	o.u64(delegate.h)
 	o.u32(uint32(len(selectedIndices)))
@@ -1064,6 +1171,7 @@ func (s CommandState) handle() uint64 { return s.h }
 
 // IsLoading is <gpui_kit::component::command::CommandState>::is_loading.
 func (s CommandState) IsLoading(cx *Cx) bool {
+	useComponentCommand()
 	o := newReq(367)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1072,6 +1180,7 @@ func (s CommandState) IsLoading(cx *Cx) bool {
 
 // MatchedCount is <gpui_kit::component::command::CommandState>::matched_count.
 func (s CommandState) MatchedCount(cx *Cx) int {
+	useComponentCommand()
 	o := newReq(368)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1080,6 +1189,7 @@ func (s CommandState) MatchedCount(cx *Cx) int {
 
 // Query is <gpui_kit::component::command::CommandState>::query.
 func (s CommandState) Query(cx *Cx) string {
+	useComponentCommand()
 	o := newReq(370)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1088,6 +1198,7 @@ func (s CommandState) Query(cx *Cx) string {
 
 // SelectedIndex is <gpui_kit::component::command::CommandState>::selected_index.
 func (s CommandState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
+	useComponentCommand()
 	o := newReq(371)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1096,6 +1207,7 @@ func (s CommandState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
 
 // Focus is <gpui_kit::component::command::CommandState>::focus.
 func (s CommandState) Focus(cx *Cx) {
+	useComponentCommand()
 	o := newReq(590)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -1103,6 +1215,7 @@ func (s CommandState) Focus(cx *Cx) {
 
 // SetLoading is <gpui_kit::component::command::CommandState>::set_loading.
 func (s CommandState) SetLoading(cx *Cx, loading bool) {
+	useComponentCommand()
 	o := newReq(372)
 	o.u64(s.h)
 	o.bool(loading)
@@ -1111,6 +1224,7 @@ func (s CommandState) SetLoading(cx *Cx, loading bool) {
 
 // SetQuery is <gpui_kit::component::command::CommandState>::set_query.
 func (s CommandState) SetQuery(cx *Cx, query string) {
+	useComponentCommand()
 	o := newReq(373)
 	o.u64(s.h)
 	o.str(query)
@@ -1119,6 +1233,7 @@ func (s CommandState) SetQuery(cx *Cx, query string) {
 
 // SetSelectedIndex is <gpui_kit::component::command::CommandState>::set_selected_index.
 func (s CommandState) SetSelectedIndex(cx *Cx, index Option[BaseIndexPath]) {
+	useComponentCommand()
 	o := newReq(980)
 	o.u64(s.h)
 	if x0, ok := index.Get(); ok {
@@ -1132,6 +1247,7 @@ func (s CommandState) SetSelectedIndex(cx *Cx, index Option[BaseIndexPath]) {
 
 // NewCommandState is <gpui_kit::component::command::CommandState>::new.
 func NewCommandState(cx *Cx) CommandState {
+	useComponentCommand()
 	o := newReq(369)
 	o.u16(0) // no builder ops follow
 	return CommandState{stateMake(cx, o)}
@@ -1144,6 +1260,7 @@ func (s CompletionMenuState) handle() uint64 { return s.h }
 
 // Revision is <gpui_kit::base::input::CompletionMenuState>::revision.
 func (s CompletionMenuState) Revision(cx *Cx) uint64 {
+	useBaseInput()
 	o := newReq(1466)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1152,6 +1269,7 @@ func (s CompletionMenuState) Revision(cx *Cx) uint64 {
 
 // NewCompletionMenuStateDefault is <gpui_kit::base::input::CompletionMenuState as Default>::default.
 func NewCompletionMenuStateDefault(cx *Cx) CompletionMenuState {
+	useBaseInput()
 	o := newReq(1465)
 	o.u16(0) // no builder ops follow
 	return CompletionMenuState{stateMake(cx, o)}
@@ -1164,6 +1282,7 @@ func (s CursorBlinkRead) handle() uint64 { return s.h }
 
 // IdleTimeout is <gpui_kit::base::input::CursorBlink>::idle_timeout.
 func (s CursorBlinkRead) IdleTimeout(cx *Cx) Option[time.Duration] {
+	useBaseInput()
 	o := newReq(1444)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1172,6 +1291,7 @@ func (s CursorBlinkRead) IdleTimeout(cx *Cx) Option[time.Duration] {
 
 // Interval is <gpui_kit::base::input::CursorBlink>::interval.
 func (s CursorBlinkRead) Interval(cx *Cx) Option[time.Duration] {
+	useBaseInput()
 	o := newReq(1445)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1180,6 +1300,7 @@ func (s CursorBlinkRead) Interval(cx *Cx) Option[time.Duration] {
 
 // IsSteady is <gpui_kit::base::input::CursorBlink>::is_steady.
 func (s CursorBlinkRead) IsSteady(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1372)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1193,6 +1314,7 @@ func (s DatePickerState) handle() uint64 { return s.h }
 
 // Date is <gpui_kit::component::date_picker::DatePickerState>::date.
 func (s DatePickerState) Date(cx *Cx) Date {
+	useComponentTime()
 	o := newReq(374)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1201,6 +1323,7 @@ func (s DatePickerState) Date(cx *Cx) Date {
 
 // DateTime is <gpui_kit::component::date_picker::DatePickerState>::date_time.
 func (s DatePickerState) DateTime(cx *Cx) DateTime {
+	useComponentTime()
 	o := newReq(375)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1209,6 +1332,7 @@ func (s DatePickerState) DateTime(cx *Cx) DateTime {
 
 // SetDate is <gpui_kit::component::date_picker::DatePickerState>::set_date.
 func (s DatePickerState) SetDate(cx *Cx, date DateInto) {
+	useComponentTime()
 	o := newReq(1331)
 	o.u64(s.h)
 	putDateInto(o, date)
@@ -1217,6 +1341,7 @@ func (s DatePickerState) SetDate(cx *Cx, date DateInto) {
 
 // SetDateTime is <gpui_kit::component::date_picker::DatePickerState>::set_date_time.
 func (s DatePickerState) SetDateTime(cx *Cx, value DateTime) {
+	useComponentTime()
 	o := newReq(1332)
 	o.u64(s.h)
 	putDateTime(o, value)
@@ -1225,6 +1350,7 @@ func (s DatePickerState) SetDateTime(cx *Cx, value DateTime) {
 
 // SetYearRange is <gpui_kit::component::date_picker::DatePickerState>::set_year_range.
 func (s DatePickerState) SetYearRange(cx *Cx, range_ TupleInt32Int32) {
+	useComponentTime()
 	o := newReq(378)
 	o.u64(s.h)
 	o.u32(uint32(range_.V0))
@@ -1281,12 +1407,14 @@ func (b DatePickerStateBuilder) Build() DatePickerState { return DatePickerState
 
 // NewDatePickerState is <gpui_kit::component::date_picker::DatePickerState>::new.
 func NewDatePickerState(cx *Cx) DatePickerStateBuilder {
+	useComponentTime()
 	o := newReq(376)
 	return DatePickerStateBuilder{newStateBuilder(cx, o)}
 }
 
 // NewDatePickerStateRange is <gpui_kit::component::date_picker::DatePickerState>::range.
 func NewDatePickerStateRange(cx *Cx) DatePickerStateBuilder {
+	useComponentTime()
 	o := newReq(377)
 	return DatePickerStateBuilder{newStateBuilder(cx, o)}
 }
@@ -1303,6 +1431,7 @@ func (s DiagnosticSet) handle() uint64 { return s.h }
 
 // ForOffset is <gpui_kit::base::input::DiagnosticSet>::for_offset.
 func (s DiagnosticSet) ForOffset(cx *Cx, offset int) Option[DiagnosticEntry] {
+	useBaseInput()
 	o := newReq(886)
 	o.u64(s.h)
 	putUsize(o, offset)
@@ -1312,6 +1441,7 @@ func (s DiagnosticSet) ForOffset(cx *Cx, offset int) Option[DiagnosticEntry] {
 
 // IsEmpty is <gpui_kit::base::input::DiagnosticSet>::is_empty.
 func (s DiagnosticSet) IsEmpty(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(887)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1320,6 +1450,7 @@ func (s DiagnosticSet) IsEmpty(cx *Cx) bool {
 
 // Iter is <gpui_kit::base::input::DiagnosticSet>::iter.
 func (s DiagnosticSet) Iter(cx *Cx) []DiagnosticEntry {
+	useBaseInput()
 	o := newReq(1314)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1328,6 +1459,7 @@ func (s DiagnosticSet) Iter(cx *Cx) []DiagnosticEntry {
 
 // Len is <gpui_kit::base::input::DiagnosticSet>::len.
 func (s DiagnosticSet) Len(cx *Cx) int {
+	useBaseInput()
 	o := newReq(888)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1336,6 +1468,7 @@ func (s DiagnosticSet) Len(cx *Cx) int {
 
 // Range is <gpui_kit::base::input::DiagnosticSet>::range.
 func (s DiagnosticSet) Range(cx *Cx, range_ Range) []DiagnosticEntry {
+	useBaseInput()
 	o := newReq(1315)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -1345,6 +1478,7 @@ func (s DiagnosticSet) Range(cx *Cx, range_ Range) []DiagnosticEntry {
 
 // Clear is <gpui_kit::base::input::DiagnosticSet>::clear.
 func (s DiagnosticSet) Clear(cx *Cx) {
+	useBaseInput()
 	o := newReq(885)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -1352,6 +1486,7 @@ func (s DiagnosticSet) Clear(cx *Cx) {
 
 // Extend is <gpui_kit::base::input::DiagnosticSet>::extend.
 func (s DiagnosticSet) Extend(cx *Cx, diagnostics []Diagnostic) {
+	useBaseInput()
 	o := newReq(1635)
 	o.u64(s.h)
 	o.u32(uint32(len(diagnostics)))
@@ -1363,6 +1498,7 @@ func (s DiagnosticSet) Extend(cx *Cx, diagnostics []Diagnostic) {
 
 // Push is <gpui_kit::base::input::DiagnosticSet>::push.
 func (s DiagnosticSet) Push(cx *Cx, diagnostic Diagnostic) {
+	useBaseInput()
 	o := newReq(889)
 	o.u64(s.h)
 	putVtape(o, diagnostic.n)
@@ -1376,6 +1512,7 @@ func (s DialogHandle) handle() uint64 { return s.h }
 
 // IsOpen is <gpui_kit::base::DialogHandle>::is_open.
 func (s DialogHandle) IsOpen(cx *Cx) bool {
+	useBaseDialog()
 	o := newReq(775)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1384,6 +1521,7 @@ func (s DialogHandle) IsOpen(cx *Cx) bool {
 
 // Close is <gpui_kit::base::DialogHandle>::close.
 func (s DialogHandle) Close(cx *Cx) {
+	useBaseDialog()
 	o := newReq(774)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -1391,6 +1529,7 @@ func (s DialogHandle) Close(cx *Cx) {
 
 // Open is <gpui_kit::base::DialogHandle>::open.
 func (s DialogHandle) Open(cx *Cx) {
+	useBaseDialog()
 	o := newReq(777)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -1398,6 +1537,7 @@ func (s DialogHandle) Open(cx *Cx) {
 
 // NewDialogHandle is <gpui_kit::base::DialogHandle>::new.
 func NewDialogHandle(cx *Cx, open bool) DialogHandle {
+	useBaseDialog()
 	o := newReq(776)
 	o.bool(open)
 	o.u16(0) // no builder ops follow
@@ -1411,6 +1551,7 @@ func (s DiffAnnotation) handle() uint64 { return s.h }
 
 // ID is <gpui_kit::component::diff::DiffAnnotation>::id.
 func (s DiffAnnotation) ID(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1667)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1419,6 +1560,7 @@ func (s DiffAnnotation) ID(cx *Cx) string {
 
 // Path is <gpui_kit::component::diff::DiffAnnotation>::path.
 func (s DiffAnnotation) Path(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(983)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1427,6 +1569,7 @@ func (s DiffAnnotation) Path(cx *Cx) string {
 
 // Position is <gpui_kit::component::diff::DiffAnnotation>::position.
 func (s DiffAnnotation) Position(cx *Cx) Option[DiffLinePosition] {
+	useComponentDiff()
 	o := newReq(984)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1435,6 +1578,7 @@ func (s DiffAnnotation) Position(cx *Cx) Option[DiffLinePosition] {
 
 // NewDiffAnnotationFile is <gpui_kit::component::diff::DiffAnnotation>::file.
 func NewDiffAnnotationFile(cx *Cx, id ID, path string) DiffAnnotation {
+	useComponentDiff()
 	o := newReq(981)
 	putID(o, id)
 	o.str(path)
@@ -1444,6 +1588,7 @@ func NewDiffAnnotationFile(cx *Cx, id ID, path string) DiffAnnotation {
 
 // NewDiffAnnotationLine is <gpui_kit::component::diff::DiffAnnotation>::line.
 func NewDiffAnnotationLine(cx *Cx, id ID, position DiffLinePosition) DiffAnnotation {
+	useComponentDiff()
 	o := newReq(982)
 	putID(o, id)
 	o.u64(position.h)
@@ -1458,6 +1603,7 @@ func (s DiffConflict) handle() uint64 { return s.h }
 
 // BaseLabel is <gpui_kit::component::diff::DiffConflict>::base_label.
 func (s DiffConflict) BaseLabel(cx *Cx) Option[string] {
+	useComponentDiff()
 	o := newReq(1668)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1466,6 +1612,7 @@ func (s DiffConflict) BaseLabel(cx *Cx) Option[string] {
 
 // BaseLines is <gpui_kit::component::diff::DiffConflict>::base_lines.
 func (s DiffConflict) BaseLines(cx *Cx) Option[Range] {
+	useComponentDiff()
 	o := newReq(1669)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1474,6 +1621,7 @@ func (s DiffConflict) BaseLines(cx *Cx) Option[Range] {
 
 // CurrentLabel is <gpui_kit::component::diff::DiffConflict>::current_label.
 func (s DiffConflict) CurrentLabel(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1670)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1482,6 +1630,7 @@ func (s DiffConflict) CurrentLabel(cx *Cx) string {
 
 // CurrentLines is <gpui_kit::component::diff::DiffConflict>::current_lines.
 func (s DiffConflict) CurrentLines(cx *Cx) Range {
+	useComponentDiff()
 	o := newReq(1671)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1490,6 +1639,7 @@ func (s DiffConflict) CurrentLines(cx *Cx) Range {
 
 // IncomingLabel is <gpui_kit::component::diff::DiffConflict>::incoming_label.
 func (s DiffConflict) IncomingLabel(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1672)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1498,6 +1648,7 @@ func (s DiffConflict) IncomingLabel(cx *Cx) string {
 
 // IncomingLines is <gpui_kit::component::diff::DiffConflict>::incoming_lines.
 func (s DiffConflict) IncomingLines(cx *Cx) Range {
+	useComponentDiff()
 	o := newReq(1673)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1506,6 +1657,7 @@ func (s DiffConflict) IncomingLines(cx *Cx) Range {
 
 // Lines is <gpui_kit::component::diff::DiffConflict>::lines.
 func (s DiffConflict) Lines(cx *Cx) Range {
+	useComponentDiff()
 	o := newReq(1674)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1519,6 +1671,7 @@ func (s DiffFileRead) handle() uint64 { return s.h }
 
 // Additions is <gpui_kit::component::diff::DiffFile>::additions.
 func (s DiffFileRead) Additions(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(1408)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1527,6 +1680,7 @@ func (s DiffFileRead) Additions(cx *Cx) int {
 
 // Conflicts is <gpui_kit::component::diff::DiffFile>::conflicts.
 func (s DiffFileRead) Conflicts(cx *Cx) []DiffConflict {
+	useComponentDiff()
 	o := newReq(1409)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1535,6 +1689,7 @@ func (s DiffFileRead) Conflicts(cx *Cx) []DiffConflict {
 
 // Deletions is <gpui_kit::component::diff::DiffFile>::deletions.
 func (s DiffFileRead) Deletions(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(1410)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1543,6 +1698,7 @@ func (s DiffFileRead) Deletions(cx *Cx) int {
 
 // ExtendedHeaders is <gpui_kit::component::diff::DiffFile>::extended_headers.
 func (s DiffFileRead) ExtendedHeaders(cx *Cx) []string {
+	useComponentDiff()
 	o := newReq(1411)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1551,6 +1707,7 @@ func (s DiffFileRead) ExtendedHeaders(cx *Cx) []string {
 
 // HasChanges is <gpui_kit::component::diff::DiffFile>::has_changes.
 func (s DiffFileRead) HasChanges(cx *Cx) bool {
+	useComponentDiff()
 	o := newReq(1412)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1559,6 +1716,7 @@ func (s DiffFileRead) HasChanges(cx *Cx) bool {
 
 // IsBinary is <gpui_kit::component::diff::DiffFile>::is_binary.
 func (s DiffFileRead) IsBinary(cx *Cx) bool {
+	useComponentDiff()
 	o := newReq(1413)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1567,6 +1725,7 @@ func (s DiffFileRead) IsBinary(cx *Cx) bool {
 
 // IsTruncated is <gpui_kit::component::diff::DiffFile>::is_truncated.
 func (s DiffFileRead) IsTruncated(cx *Cx) bool {
+	useComponentDiff()
 	o := newReq(1414)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1575,6 +1734,7 @@ func (s DiffFileRead) IsTruncated(cx *Cx) bool {
 
 // Language is <gpui_kit::component::diff::DiffFile>::language.
 func (s DiffFileRead) Language(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1415)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1583,6 +1743,7 @@ func (s DiffFileRead) Language(cx *Cx) string {
 
 // ModifiedPath is <gpui_kit::component::diff::DiffFile>::modified_path.
 func (s DiffFileRead) ModifiedPath(cx *Cx) Option[string] {
+	useComponentDiff()
 	o := newReq(1416)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1591,6 +1752,7 @@ func (s DiffFileRead) ModifiedPath(cx *Cx) Option[string] {
 
 // OriginalPath is <gpui_kit::component::diff::DiffFile>::original_path.
 func (s DiffFileRead) OriginalPath(cx *Cx) Option[string] {
+	useComponentDiff()
 	o := newReq(1417)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1599,6 +1761,7 @@ func (s DiffFileRead) OriginalPath(cx *Cx) Option[string] {
 
 // Path is <gpui_kit::component::diff::DiffFile>::path.
 func (s DiffFileRead) Path(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1418)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1607,6 +1770,7 @@ func (s DiffFileRead) Path(cx *Cx) string {
 
 // Status is <gpui_kit::component::diff::DiffFile>::status.
 func (s DiffFileRead) Status(cx *Cx) DiffFileStatus {
+	useComponentDiff()
 	o := newReq(1419)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1620,6 +1784,7 @@ func (s DiffGutterMarkerRead) handle() uint64 { return s.h }
 
 // ID is <gpui_kit::component::diff::DiffGutterMarker>::id.
 func (s DiffGutterMarkerRead) ID(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1675)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1628,6 +1793,7 @@ func (s DiffGutterMarkerRead) ID(cx *Cx) string {
 
 // Label is <gpui_kit::component::diff::DiffGutterMarker>::label.
 func (s DiffGutterMarkerRead) Label(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1615)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1636,6 +1802,7 @@ func (s DiffGutterMarkerRead) Label(cx *Cx) string {
 
 // Position is <gpui_kit::component::diff::DiffGutterMarker>::position.
 func (s DiffGutterMarkerRead) Position(cx *Cx) DiffLinePosition {
+	useComponentDiff()
 	o := newReq(1616)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1649,6 +1816,7 @@ func (s DiffLinePosition) handle() uint64 { return s.h }
 
 // Line is <gpui_kit::component::diff::DiffLinePosition>::line.
 func (s DiffLinePosition) Line(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(985)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1657,6 +1825,7 @@ func (s DiffLinePosition) Line(cx *Cx) int {
 
 // Path is <gpui_kit::component::diff::DiffLinePosition>::path.
 func (s DiffLinePosition) Path(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(987)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1665,6 +1834,7 @@ func (s DiffLinePosition) Path(cx *Cx) string {
 
 // Side is <gpui_kit::component::diff::DiffLinePosition>::side.
 func (s DiffLinePosition) Side(cx *Cx) DiffSide {
+	useComponentDiff()
 	o := newReq(988)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1673,6 +1843,7 @@ func (s DiffLinePosition) Side(cx *Cx) DiffSide {
 
 // NewDiffLinePosition is <gpui_kit::component::diff::DiffLinePosition>::new.
 func NewDiffLinePosition(cx *Cx, path string, side DiffSide, line int) DiffLinePosition {
+	useComponentDiff()
 	o := newReq(986)
 	o.str(path)
 	o.u16(uint16(side))
@@ -1688,6 +1859,7 @@ func (s DiffLineRangeRead) handle() uint64 { return s.h }
 
 // End is <gpui_kit::component::diff::DiffLineRange>::end.
 func (s DiffLineRangeRead) End(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(1420)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1696,6 +1868,7 @@ func (s DiffLineRangeRead) End(cx *Cx) int {
 
 // EndSide is <gpui_kit::component::diff::DiffLineRange>::end_side.
 func (s DiffLineRangeRead) EndSide(cx *Cx) DiffSide {
+	useComponentDiff()
 	o := newReq(1421)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1704,6 +1877,7 @@ func (s DiffLineRangeRead) EndSide(cx *Cx) DiffSide {
 
 // Path is <gpui_kit::component::diff::DiffLineRange>::path.
 func (s DiffLineRangeRead) Path(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1422)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1712,6 +1886,7 @@ func (s DiffLineRangeRead) Path(cx *Cx) string {
 
 // Side is <gpui_kit::component::diff::DiffLineRange>::side.
 func (s DiffLineRangeRead) Side(cx *Cx) DiffSide {
+	useComponentDiff()
 	o := newReq(1423)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1720,6 +1895,7 @@ func (s DiffLineRangeRead) Side(cx *Cx) DiffSide {
 
 // Start is <gpui_kit::component::diff::DiffLineRange>::start.
 func (s DiffLineRangeRead) Start(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(1424)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1733,6 +1909,7 @@ func (s DiffParseError) handle() uint64 { return s.h }
 
 // Line is <gpui_kit::component::diff::DiffParseError>::line.
 func (s DiffParseError) Line(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(1641)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1741,6 +1918,7 @@ func (s DiffParseError) Line(cx *Cx) int {
 
 // Message is <gpui_kit::component::diff::DiffParseError>::message.
 func (s DiffParseError) Message(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1642)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -1754,6 +1932,7 @@ func (s DiffState) handle() uint64 { return s.h }
 
 // ConflictResolution is <gpui_kit::component::diff::DiffState>::conflict_resolution.
 func (s DiffState) ConflictResolution(cx *Cx, path string, ix int) Option[DiffConflictResolution] {
+	useComponentDiff()
 	o := newReq(991)
 	o.u64(s.h)
 	o.str(path)
@@ -1764,6 +1943,7 @@ func (s DiffState) ConflictResolution(cx *Cx, path string, ix int) Option[DiffCo
 
 // ContextLines is <gpui_kit::component::diff::DiffState>::context_lines.
 func (s DiffState) ContextLines(cx *Cx) Option[int] {
+	useComponentDiff()
 	o := newReq(992)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1772,6 +1952,7 @@ func (s DiffState) ContextLines(cx *Cx) Option[int] {
 
 // ExpansionLines is <gpui_kit::component::diff::DiffState>::expansion_lines.
 func (s DiffState) ExpansionLines(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(994)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1780,6 +1961,7 @@ func (s DiffState) ExpansionLines(cx *Cx) int {
 
 // Files is <gpui_kit::component::diff::DiffState>::files.
 func (s DiffState) Files(cx *Cx) []DiffFileRead {
+	useComponentDiff()
 	o := newReq(1360)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1788,6 +1970,7 @@ func (s DiffState) Files(cx *Cx) []DiffFileRead {
 
 // InlineMaxLineLength is <gpui_kit::component::diff::DiffState>::inline_max_line_length.
 func (s DiffState) InlineMaxLineLength(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(995)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1796,6 +1979,7 @@ func (s DiffState) InlineMaxLineLength(cx *Cx) int {
 
 // InlineUnit is <gpui_kit::component::diff::DiffState>::inline_unit.
 func (s DiffState) InlineUnit(cx *Cx) Option[DiffInlineUnit] {
+	useComponentDiff()
 	o := newReq(996)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1804,6 +1988,7 @@ func (s DiffState) InlineUnit(cx *Cx) Option[DiffInlineUnit] {
 
 // IsFileCollapsed is <gpui_kit::component::diff::DiffState>::is_file_collapsed.
 func (s DiffState) IsFileCollapsed(cx *Cx, path string) bool {
+	useComponentDiff()
 	o := newReq(997)
 	o.u64(s.h)
 	o.str(path)
@@ -1813,6 +1998,7 @@ func (s DiffState) IsFileCollapsed(cx *Cx, path string) bool {
 
 // MinCollapsedLines is <gpui_kit::component::diff::DiffState>::min_collapsed_lines.
 func (s DiffState) MinCollapsedLines(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(998)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1821,6 +2007,7 @@ func (s DiffState) MinCollapsedLines(cx *Cx) int {
 
 // Mode is <gpui_kit::component::diff::DiffState>::mode.
 func (s DiffState) Mode(cx *Cx) DiffMode {
+	useComponentDiff()
 	o := newReq(999)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1829,6 +2016,7 @@ func (s DiffState) Mode(cx *Cx) DiffMode {
 
 // ResolvedText is <gpui_kit::component::diff::DiffState>::resolved_text.
 func (s DiffState) ResolvedText(cx *Cx, path string) Option[string] {
+	useComponentDiff()
 	o := newReq(1004)
 	o.u64(s.h)
 	o.str(path)
@@ -1838,6 +2026,7 @@ func (s DiffState) ResolvedText(cx *Cx, path string) Option[string] {
 
 // SelectedLines is <gpui_kit::component::diff::DiffState>::selected_lines.
 func (s DiffState) SelectedLines(cx *Cx) Option[DiffLineRangeRead] {
+	useComponentDiff()
 	o := newReq(1361)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1846,6 +2035,7 @@ func (s DiffState) SelectedLines(cx *Cx) Option[DiffLineRangeRead] {
 
 // SelectedText is <gpui_kit::component::diff::DiffState>::selected_text.
 func (s DiffState) SelectedText(cx *Cx) string {
+	useComponentDiff()
 	o := newReq(1007)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1854,6 +2044,7 @@ func (s DiffState) SelectedText(cx *Cx) string {
 
 // SyntaxMaxLineLength is <gpui_kit::component::diff::DiffState>::syntax_max_line_length.
 func (s DiffState) SyntaxMaxLineLength(cx *Cx) int {
+	useComponentDiff()
 	o := newReq(1019)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -1862,6 +2053,7 @@ func (s DiffState) SyntaxMaxLineLength(cx *Cx) int {
 
 // ClearSyntaxHighlighter is <gpui_kit::component::diff::DiffState>::clear_syntax_highlighter.
 func (s DiffState) ClearSyntaxHighlighter(cx *Cx) {
+	useComponentDiff()
 	o := newReq(989)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -1869,6 +2061,7 @@ func (s DiffState) ClearSyntaxHighlighter(cx *Cx) {
 
 // CollapseUnchanged is <gpui_kit::component::diff::DiffState>::collapse_unchanged.
 func (s DiffState) CollapseUnchanged(cx *Cx) {
+	useComponentDiff()
 	o := newReq(990)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -1876,6 +2069,7 @@ func (s DiffState) CollapseUnchanged(cx *Cx) {
 
 // ExpandUnchanged is <gpui_kit::component::diff::DiffState>::expand_unchanged.
 func (s DiffState) ExpandUnchanged(cx *Cx) {
+	useComponentDiff()
 	o := newReq(993)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -1883,6 +2077,7 @@ func (s DiffState) ExpandUnchanged(cx *Cx) {
 
 // NextChange is <gpui_kit::component::diff::DiffState>::next_change.
 func (s DiffState) NextChange(cx *Cx) {
+	useComponentDiff()
 	o := newReq(1001)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -1890,6 +2085,7 @@ func (s DiffState) NextChange(cx *Cx) {
 
 // PreviousChange is <gpui_kit::component::diff::DiffState>::previous_change.
 func (s DiffState) PreviousChange(cx *Cx) {
+	useComponentDiff()
 	o := newReq(1002)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -1897,6 +2093,7 @@ func (s DiffState) PreviousChange(cx *Cx) {
 
 // ResolveConflict is <gpui_kit::component::diff::DiffState>::resolve_conflict.
 func (s DiffState) ResolveConflict(cx *Cx, path string, ix int, resolution Option[DiffConflictResolution]) {
+	useComponentDiff()
 	o := newReq(1003)
 	o.u64(s.h)
 	o.str(path)
@@ -1912,6 +2109,7 @@ func (s DiffState) ResolveConflict(cx *Cx, path string, ix int, resolution Optio
 
 // ScrollToFile is <gpui_kit::component::diff::DiffState>::scroll_to_file.
 func (s DiffState) ScrollToFile(cx *Cx, path string) {
+	useComponentDiff()
 	o := newReq(1005)
 	o.u64(s.h)
 	o.str(path)
@@ -1920,6 +2118,7 @@ func (s DiffState) ScrollToFile(cx *Cx, path string) {
 
 // ScrollToLine is <gpui_kit::component::diff::DiffState>::scroll_to_line.
 func (s DiffState) ScrollToLine(cx *Cx, position DiffLinePosition) {
+	useComponentDiff()
 	o := newReq(1006)
 	o.u64(s.h)
 	o.u64(position.h)
@@ -1928,6 +2127,7 @@ func (s DiffState) ScrollToLine(cx *Cx, position DiffLinePosition) {
 
 // SetContextLines is <gpui_kit::component::diff::DiffState>::set_context_lines.
 func (s DiffState) SetContextLines(cx *Cx, lines Option[int]) {
+	useComponentDiff()
 	o := newReq(1008)
 	o.u64(s.h)
 	if x0, ok := lines.Get(); ok {
@@ -1941,6 +2141,7 @@ func (s DiffState) SetContextLines(cx *Cx, lines Option[int]) {
 
 // SetExpansionLines is <gpui_kit::component::diff::DiffState>::set_expansion_lines.
 func (s DiffState) SetExpansionLines(cx *Cx, lines int) {
+	useComponentDiff()
 	o := newReq(1009)
 	o.u64(s.h)
 	putUsize(o, lines)
@@ -1949,6 +2150,7 @@ func (s DiffState) SetExpansionLines(cx *Cx, lines int) {
 
 // SetFileCollapsed is <gpui_kit::component::diff::DiffState>::set_file_collapsed.
 func (s DiffState) SetFileCollapsed(cx *Cx, path string, collapsed bool) {
+	useComponentDiff()
 	o := newReq(1010)
 	o.u64(s.h)
 	o.str(path)
@@ -1958,6 +2160,7 @@ func (s DiffState) SetFileCollapsed(cx *Cx, path string, collapsed bool) {
 
 // SetFiles is <gpui_kit::component::diff::DiffState>::set_files.
 func (s DiffState) SetFiles(cx *Cx, files []DiffFile) {
+	useComponentDiff()
 	o := newReq(1011)
 	o.u64(s.h)
 	o.u32(uint32(len(files)))
@@ -1969,6 +2172,7 @@ func (s DiffState) SetFiles(cx *Cx, files []DiffFile) {
 
 // SetInlineMaxLineLength is <gpui_kit::component::diff::DiffState>::set_inline_max_line_length.
 func (s DiffState) SetInlineMaxLineLength(cx *Cx, length int) {
+	useComponentDiff()
 	o := newReq(1012)
 	o.u64(s.h)
 	putUsize(o, length)
@@ -1977,6 +2181,7 @@ func (s DiffState) SetInlineMaxLineLength(cx *Cx, length int) {
 
 // SetInlineUnit is <gpui_kit::component::diff::DiffState>::set_inline_unit.
 func (s DiffState) SetInlineUnit(cx *Cx, unit Option[DiffInlineUnit]) {
+	useComponentDiff()
 	o := newReq(1013)
 	o.u64(s.h)
 	if x0, ok := unit.Get(); ok {
@@ -1990,6 +2195,7 @@ func (s DiffState) SetInlineUnit(cx *Cx, unit Option[DiffInlineUnit]) {
 
 // SetMinCollapsedLines is <gpui_kit::component::diff::DiffState>::set_min_collapsed_lines.
 func (s DiffState) SetMinCollapsedLines(cx *Cx, lines int) {
+	useComponentDiff()
 	o := newReq(1014)
 	o.u64(s.h)
 	putUsize(o, lines)
@@ -1998,6 +2204,7 @@ func (s DiffState) SetMinCollapsedLines(cx *Cx, lines int) {
 
 // SetMode is <gpui_kit::component::diff::DiffState>::set_mode.
 func (s DiffState) SetMode(cx *Cx, mode DiffMode) {
+	useComponentDiff()
 	o := newReq(1015)
 	o.u64(s.h)
 	o.u16(uint16(mode))
@@ -2006,6 +2213,7 @@ func (s DiffState) SetMode(cx *Cx, mode DiffMode) {
 
 // SetSelectedLines is <gpui_kit::component::diff::DiffState>::set_selected_lines.
 func (s DiffState) SetSelectedLines(cx *Cx, range_ Option[DiffLineRange]) {
+	useComponentDiff()
 	o := newReq(1016)
 	o.u64(s.h)
 	if x0, ok := range_.Get(); ok {
@@ -2019,6 +2227,7 @@ func (s DiffState) SetSelectedLines(cx *Cx, range_ Option[DiffLineRange]) {
 
 // SetSyntaxMaxLineLength is <gpui_kit::component::diff::DiffState>::set_syntax_max_line_length.
 func (s DiffState) SetSyntaxMaxLineLength(cx *Cx, length int) {
+	useComponentDiff()
 	o := newReq(1017)
 	o.u64(s.h)
 	putUsize(o, length)
@@ -2096,6 +2305,7 @@ func (b DiffStateBuilder) Build() DiffState { return DiffState{b.sb.build()} }
 
 // NewDiffState is <gpui_kit::component::diff::DiffState>::new.
 func NewDiffState(cx *Cx, files []DiffFile) DiffStateBuilder {
+	useComponentDiff()
 	o := newReq(1000)
 	o.u32(uint32(len(files)))
 	for _, x0 := range files {
@@ -2111,6 +2321,7 @@ func (s Discrete) handle() uint64 { return s.h }
 
 // Sample is <gpui_kit::base::Discrete<f32>>::sample.
 func (s Discrete) Sample(cx *Cx, progress float32) float32 {
+	useBaseMotion()
 	o := newReq(1129)
 	o.u64(s.h)
 	o.f32(progress)
@@ -2120,6 +2331,7 @@ func (s Discrete) Sample(cx *Cx, progress float32) float32 {
 
 // NewDiscrete is <gpui_kit::base::Discrete<f32>>::new.
 func NewDiscrete(cx *Cx, from float32, to float32) Discrete {
+	useBaseMotion()
 	o := newReq(1128)
 	o.f32(from)
 	o.f32(to)
@@ -2134,6 +2346,7 @@ func (s DisplayMap) handle() uint64 { return s.h }
 
 // BufferLineCount is <gpui_kit::base::input::DisplayMap>::buffer_line_count.
 func (s DisplayMap) BufferLineCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1242)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2142,6 +2355,7 @@ func (s DisplayMap) BufferLineCount(cx *Cx) int {
 
 // BufferLineToDisplayRow is <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row.
 func (s DisplayMap) BufferLineToDisplayRow(cx *Cx, line int) int {
+	useBaseInput()
 	o := newReq(1243)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -2151,6 +2365,7 @@ func (s DisplayMap) BufferLineToDisplayRow(cx *Cx, line int) int {
 
 // BufferLineToDisplayRowRange is <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row_range.
 func (s DisplayMap) BufferLineToDisplayRowRange(cx *Cx, line int) Option[Range] {
+	useBaseInput()
 	o := newReq(1244)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -2160,6 +2375,7 @@ func (s DisplayMap) BufferLineToDisplayRowRange(cx *Cx, line int) Option[Range] 
 
 // BufferPosToDisplayPos is <gpui_kit::base::input::DisplayMap>::buffer_pos_to_display_pos.
 func (s DisplayMap) BufferPosToDisplayPos(cx *Cx, pos BufferPoint) DisplayPoint {
+	useBaseInput()
 	o := newReq(1245)
 	o.u64(s.h)
 	putBufferPoint(o, pos)
@@ -2169,6 +2385,7 @@ func (s DisplayMap) BufferPosToDisplayPos(cx *Cx, pos BufferPoint) DisplayPoint 
 
 // DisplayPosToBufferPos is <gpui_kit::base::input::DisplayMap>::display_pos_to_buffer_pos.
 func (s DisplayMap) DisplayPosToBufferPos(cx *Cx, pos DisplayPoint) BufferPoint {
+	useBaseInput()
 	o := newReq(1247)
 	o.u64(s.h)
 	putDisplayPoint(o, pos)
@@ -2178,6 +2395,7 @@ func (s DisplayMap) DisplayPosToBufferPos(cx *Cx, pos DisplayPoint) BufferPoint 
 
 // DisplayRowCount is <gpui_kit::base::input::DisplayMap>::display_row_count.
 func (s DisplayMap) DisplayRowCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1248)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2186,6 +2404,7 @@ func (s DisplayMap) DisplayRowCount(cx *Cx) int {
 
 // DisplayRowToBufferLine is <gpui_kit::base::input::DisplayMap>::display_row_to_buffer_line.
 func (s DisplayMap) DisplayRowToBufferLine(cx *Cx, displayRow int) int {
+	useBaseInput()
 	o := newReq(1249)
 	o.u64(s.h)
 	putUsize(o, displayRow)
@@ -2195,6 +2414,7 @@ func (s DisplayMap) DisplayRowToBufferLine(cx *Cx, displayRow int) int {
 
 // DisplayRowToWrapRow is <gpui_kit::base::input::DisplayMap>::display_row_to_wrap_row.
 func (s DisplayMap) DisplayRowToWrapRow(cx *Cx, displayRow int) Option[int] {
+	useBaseInput()
 	o := newReq(1250)
 	o.u64(s.h)
 	putUsize(o, displayRow)
@@ -2204,6 +2424,7 @@ func (s DisplayMap) DisplayRowToWrapRow(cx *Cx, displayRow int) Option[int] {
 
 // FoldedRanges is <gpui_kit::base::input::DisplayMap>::folded_ranges.
 func (s DisplayMap) FoldedRanges(cx *Cx) []FoldRange {
+	useBaseInput()
 	o := newReq(1251)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2212,6 +2433,7 @@ func (s DisplayMap) FoldedRanges(cx *Cx) []FoldRange {
 
 // IsBufferLineHidden is <gpui_kit::base::input::DisplayMap>::is_buffer_line_hidden.
 func (s DisplayMap) IsBufferLineHidden(cx *Cx, line int) bool {
+	useBaseInput()
 	o := newReq(1252)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -2221,6 +2443,7 @@ func (s DisplayMap) IsBufferLineHidden(cx *Cx, line int) bool {
 
 // IsFoldCandidate is <gpui_kit::base::input::DisplayMap>::is_fold_candidate.
 func (s DisplayMap) IsFoldCandidate(cx *Cx, startLine int) bool {
+	useBaseInput()
 	o := newReq(1253)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -2230,6 +2453,7 @@ func (s DisplayMap) IsFoldCandidate(cx *Cx, startLine int) bool {
 
 // IsFoldedAt is <gpui_kit::base::input::DisplayMap>::is_folded_at.
 func (s DisplayMap) IsFoldedAt(cx *Cx, startLine int) bool {
+	useBaseInput()
 	o := newReq(1254)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -2239,6 +2463,7 @@ func (s DisplayMap) IsFoldedAt(cx *Cx, startLine int) bool {
 
 // NearestVisibleDisplayRow is <gpui_kit::base::input::DisplayMap>::nearest_visible_display_row.
 func (s DisplayMap) NearestVisibleDisplayRow(cx *Cx, wrapRow int) int {
+	useBaseInput()
 	o := newReq(1255)
 	o.u64(s.h)
 	putUsize(o, wrapRow)
@@ -2248,6 +2473,7 @@ func (s DisplayMap) NearestVisibleDisplayRow(cx *Cx, wrapRow int) int {
 
 // Text is <gpui_kit::base::input::DisplayMap>::text.
 func (s DisplayMap) Text(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1262)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2256,6 +2482,7 @@ func (s DisplayMap) Text(cx *Cx) string {
 
 // VisibleWrapRowCountForBufferLine is <gpui_kit::base::input::DisplayMap>::visible_wrap_row_count_for_buffer_line.
 func (s DisplayMap) VisibleWrapRowCountForBufferLine(cx *Cx, line int) int {
+	useBaseInput()
 	o := newReq(1264)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -2265,6 +2492,7 @@ func (s DisplayMap) VisibleWrapRowCountForBufferLine(cx *Cx, line int) int {
 
 // WrapRowCount is <gpui_kit::base::input::DisplayMap>::wrap_row_count.
 func (s DisplayMap) WrapRowCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1265)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2273,6 +2501,7 @@ func (s DisplayMap) WrapRowCount(cx *Cx) int {
 
 // WrapRowToDisplayRow is <gpui_kit::base::input::DisplayMap>::wrap_row_to_display_row.
 func (s DisplayMap) WrapRowToDisplayRow(cx *Cx, wrapRow int) Option[int] {
+	useBaseInput()
 	o := newReq(1266)
 	o.u64(s.h)
 	putUsize(o, wrapRow)
@@ -2282,6 +2511,7 @@ func (s DisplayMap) WrapRowToDisplayRow(cx *Cx, wrapRow int) Option[int] {
 
 // ClearFolds is <gpui_kit::base::input::DisplayMap>::clear_folds.
 func (s DisplayMap) ClearFolds(cx *Cx) {
+	useBaseInput()
 	o := newReq(1246)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -2289,6 +2519,7 @@ func (s DisplayMap) ClearFolds(cx *Cx) {
 
 // OnLayoutChanged is <gpui_kit::base::input::DisplayMap>::on_layout_changed.
 func (s DisplayMap) OnLayoutChanged(cx *Cx, wrapWidth Option[float32]) {
+	useBaseInput()
 	o := newReq(1257)
 	o.u64(s.h)
 	if x0, ok := wrapWidth.Get(); ok {
@@ -2302,6 +2533,7 @@ func (s DisplayMap) OnLayoutChanged(cx *Cx, wrapWidth Option[float32]) {
 
 // SetFoldCandidates is <gpui_kit::base::input::DisplayMap>::set_fold_candidates.
 func (s DisplayMap) SetFoldCandidates(cx *Cx, candidates []FoldRange) {
+	useBaseInput()
 	o := newReq(1258)
 	o.u64(s.h)
 	o.u32(uint32(len(candidates)))
@@ -2313,6 +2545,7 @@ func (s DisplayMap) SetFoldCandidates(cx *Cx, candidates []FoldRange) {
 
 // SetFolded is <gpui_kit::base::input::DisplayMap>::set_folded.
 func (s DisplayMap) SetFolded(cx *Cx, startLine int, folded bool) {
+	useBaseInput()
 	o := newReq(1259)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -2322,6 +2555,7 @@ func (s DisplayMap) SetFolded(cx *Cx, startLine int, folded bool) {
 
 // SetWrappingIndent is <gpui_kit::base::input::DisplayMap>::set_wrapping_indent.
 func (s DisplayMap) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
+	useBaseInput()
 	o := newReq(1261)
 	o.u64(s.h)
 	o.u16(uint16(wrappingIndent))
@@ -2330,6 +2564,7 @@ func (s DisplayMap) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
 
 // ToggleFold is <gpui_kit::base::input::DisplayMap>::toggle_fold.
 func (s DisplayMap) ToggleFold(cx *Cx, startLine int) {
+	useBaseInput()
 	o := newReq(1263)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -2343,6 +2578,7 @@ func (s Dock) handle() uint64 { return s.h }
 
 // IsCollapsible is <gpui_kit::base::dock::Dock>::is_collapsible.
 func (s Dock) IsCollapsible(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(848)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2351,6 +2587,7 @@ func (s Dock) IsCollapsible(cx *Cx) bool {
 
 // IsOpen is <gpui_kit::base::dock::Dock>::is_open.
 func (s Dock) IsOpen(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(849)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2359,6 +2596,7 @@ func (s Dock) IsOpen(cx *Cx) bool {
 
 // IsResizing is <gpui_kit::base::dock::Dock>::is_resizing.
 func (s Dock) IsResizing(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(850)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2367,6 +2605,7 @@ func (s Dock) IsResizing(cx *Cx) bool {
 
 // Size is <gpui_kit::base::dock::Dock>::size.
 func (s Dock) Size(cx *Cx) float32 {
+	useBaseDock()
 	o := newReq(856)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2375,6 +2614,7 @@ func (s Dock) Size(cx *Cx) float32 {
 
 // SetCollapsible is <gpui_kit::base::dock::Dock>::set_collapsible.
 func (s Dock) SetCollapsible(cx *Cx, collapsible bool) {
+	useBaseDock()
 	o := newReq(852)
 	o.u64(s.h)
 	o.bool(collapsible)
@@ -2383,6 +2623,7 @@ func (s Dock) SetCollapsible(cx *Cx, collapsible bool) {
 
 // SetOpen is <gpui_kit::base::dock::Dock>::set_open.
 func (s Dock) SetOpen(cx *Cx, open bool) {
+	useBaseDock()
 	o := newReq(853)
 	o.u64(s.h)
 	o.bool(open)
@@ -2391,6 +2632,7 @@ func (s Dock) SetOpen(cx *Cx, open bool) {
 
 // SetResizing is <gpui_kit::base::dock::Dock>::set_resizing.
 func (s Dock) SetResizing(cx *Cx, resizing bool) {
+	useBaseDock()
 	o := newReq(854)
 	o.u64(s.h)
 	o.bool(resizing)
@@ -2399,6 +2641,7 @@ func (s Dock) SetResizing(cx *Cx, resizing bool) {
 
 // SetSize is <gpui_kit::base::dock::Dock>::set_size.
 func (s Dock) SetSize(cx *Cx, size float32) {
+	useBaseDock()
 	o := newReq(855)
 	o.u64(s.h)
 	o.f32(size)
@@ -2407,6 +2650,7 @@ func (s Dock) SetSize(cx *Cx, size float32) {
 
 // NewDock is <gpui_kit::base::dock::Dock>::new.
 func NewDock(cx *Cx, size float32) Dock {
+	useBaseDock()
 	o := newReq(851)
 	o.f32(size)
 	o.u16(0) // no builder ops follow
@@ -2420,6 +2664,7 @@ func (s DockArea) handle() uint64 { return s.h }
 
 // Bounds is <gpui_kit::base::dock::DockArea>::bounds.
 func (s DockArea) Bounds(cx *Cx) Bounds {
+	useBaseDock()
 	o := newReq(326)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2428,6 +2673,7 @@ func (s DockArea) Bounds(cx *Cx) Bounds {
 
 // DockSize is <gpui_kit::base::dock::DockArea>::dock_size.
 func (s DockArea) DockSize(cx *Cx, placement DockPlacement) Option[float32] {
+	useBaseDock()
 	o := newReq(327)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2437,6 +2683,7 @@ func (s DockArea) DockSize(cx *Cx, placement DockPlacement) Option[float32] {
 
 // HasDock is <gpui_kit::base::dock::DockArea>::has_dock.
 func (s DockArea) HasDock(cx *Cx, placement DockPlacement) bool {
+	useBaseDock()
 	o := newReq(329)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2446,6 +2693,7 @@ func (s DockArea) HasDock(cx *Cx, placement DockPlacement) bool {
 
 // ID is <gpui_kit::base::dock::DockArea>::id.
 func (s DockArea) ID(cx *Cx) string {
+	useBaseDock()
 	o := newReq(330)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2454,6 +2702,7 @@ func (s DockArea) ID(cx *Cx) string {
 
 // IsDockCollapsible is <gpui_kit::base::dock::DockArea>::is_dock_collapsible.
 func (s DockArea) IsDockCollapsible(cx *Cx, placement DockPlacement) bool {
+	useBaseDock()
 	o := newReq(331)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2463,6 +2712,7 @@ func (s DockArea) IsDockCollapsible(cx *Cx, placement DockPlacement) bool {
 
 // IsDockOpen is <gpui_kit::base::dock::DockArea>::is_dock_open.
 func (s DockArea) IsDockOpen(cx *Cx, placement DockPlacement) bool {
+	useBaseDock()
 	o := newReq(332)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2472,6 +2722,7 @@ func (s DockArea) IsDockOpen(cx *Cx, placement DockPlacement) bool {
 
 // IsEmpty is <gpui_kit::base::dock::DockArea>::is_empty.
 func (s DockArea) IsEmpty(cx *Cx, placement DockPlacement) bool {
+	useBaseDock()
 	o := newReq(333)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2481,6 +2732,7 @@ func (s DockArea) IsEmpty(cx *Cx, placement DockPlacement) bool {
 
 // IsLocked is <gpui_kit::base::dock::DockArea>::is_locked.
 func (s DockArea) IsLocked(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(334)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2489,6 +2741,7 @@ func (s DockArea) IsLocked(cx *Cx) bool {
 
 // IsZoomed is <gpui_kit::base::dock::DockArea>::is_zoomed.
 func (s DockArea) IsZoomed(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(335)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2497,6 +2750,7 @@ func (s DockArea) IsZoomed(cx *Cx) bool {
 
 // Layout is <gpui_kit::base::dock::DockArea>::layout.
 func (s DockArea) Layout(cx *Cx, placement DockPlacement) Option[PaneTree] {
+	useBaseDock()
 	o := newReq(857)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2506,6 +2760,7 @@ func (s DockArea) Layout(cx *Cx, placement DockPlacement) Option[PaneTree] {
 
 // Version is <gpui_kit::base::dock::DockArea>::version.
 func (s DockArea) Version(cx *Cx) Option[int] {
+	useBaseDock()
 	o := newReq(345)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2514,6 +2769,7 @@ func (s DockArea) Version(cx *Cx) Option[int] {
 
 // AddPanel is <gpui_kit::base::dock::DockArea>::add_panel.
 func (s DockArea) AddPanel(cx *Cx, panel DockPanel, placement DockPlacement, size Option[float32]) {
+	useBaseDock()
 	o := newReq(1277)
 	o.u64(s.h)
 	o.u64(panel.h)
@@ -2529,6 +2785,7 @@ func (s DockArea) AddPanel(cx *Cx, panel DockPanel, placement DockPlacement, siz
 
 // AddPanelView is <gpui_kit::base::dock::DockArea>::add_panel_view.
 func (s DockArea) AddPanelView(cx *Cx, panel DockPanel, placement DockPlacement, size Option[float32]) {
+	useBaseDock()
 	o := newReq(1278)
 	o.u64(s.h)
 	o.u64(panel.h)
@@ -2544,6 +2801,7 @@ func (s DockArea) AddPanelView(cx *Cx, panel DockPanel, placement DockPlacement,
 
 // RemoveDock is <gpui_kit::base::dock::DockArea>::remove_dock.
 func (s DockArea) RemoveDock(cx *Cx, placement DockPlacement) {
+	useBaseDock()
 	o := newReq(337)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2552,6 +2810,7 @@ func (s DockArea) RemoveDock(cx *Cx, placement DockPlacement) {
 
 // RemovePanel is <gpui_kit::base::dock::DockArea>::remove_panel.
 func (s DockArea) RemovePanel(cx *Cx, panel DockPanel) {
+	useBaseDock()
 	o := newReq(1279)
 	o.u64(s.h)
 	o.u64(panel.h)
@@ -2560,6 +2819,7 @@ func (s DockArea) RemovePanel(cx *Cx, panel DockPanel) {
 
 // SetCenter is <gpui_kit::base::dock::DockArea>::set_center.
 func (s DockArea) SetCenter(cx *Cx, layout DockLayout) {
+	useBaseDock()
 	o := newReq(859)
 	o.u64(s.h)
 	putVtape(o, layout.n)
@@ -2568,6 +2828,7 @@ func (s DockArea) SetCenter(cx *Cx, layout DockLayout) {
 
 // SetDock is <gpui_kit::base::dock::DockArea>::set_dock.
 func (s DockArea) SetDock(cx *Cx, placement DockPlacement, layout DockLayout) {
+	useBaseDock()
 	o := newReq(860)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2577,6 +2838,7 @@ func (s DockArea) SetDock(cx *Cx, placement DockPlacement, layout DockLayout) {
 
 // SetDockCollapsible is <gpui_kit::base::dock::DockArea>::set_dock_collapsible.
 func (s DockArea) SetDockCollapsible(cx *Cx, placement DockPlacement, collapsible bool) {
+	useBaseDock()
 	o := newReq(338)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2586,6 +2848,7 @@ func (s DockArea) SetDockCollapsible(cx *Cx, placement DockPlacement, collapsibl
 
 // SetDockSize is <gpui_kit::base::dock::DockArea>::set_dock_size.
 func (s DockArea) SetDockSize(cx *Cx, placement DockPlacement, size float32) {
+	useBaseDock()
 	o := newReq(339)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2595,6 +2858,7 @@ func (s DockArea) SetDockSize(cx *Cx, placement DockPlacement, size float32) {
 
 // SetLocked is <gpui_kit::base::dock::DockArea>::set_locked.
 func (s DockArea) SetLocked(cx *Cx, locked bool) {
+	useBaseDock()
 	o := newReq(340)
 	o.u64(s.h)
 	o.bool(locked)
@@ -2603,6 +2867,7 @@ func (s DockArea) SetLocked(cx *Cx, locked bool) {
 
 // SetVersion is <gpui_kit::base::dock::DockArea>::set_version.
 func (s DockArea) SetVersion(cx *Cx, version Option[int]) {
+	useBaseDock()
 	o := newReq(341)
 	o.u64(s.h)
 	if x0, ok := version.Get(); ok {
@@ -2616,6 +2881,7 @@ func (s DockArea) SetVersion(cx *Cx, version Option[int]) {
 
 // SetZoomedOut is <gpui_kit::base::dock::DockArea>::set_zoomed_out.
 func (s DockArea) SetZoomedOut(cx *Cx) {
+	useBaseDock()
 	o := newReq(342)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -2623,6 +2889,7 @@ func (s DockArea) SetZoomedOut(cx *Cx) {
 
 // ToggleDock is <gpui_kit::base::dock::DockArea>::toggle_dock.
 func (s DockArea) ToggleDock(cx *Cx, placement DockPlacement) {
+	useBaseDock()
 	o := newReq(344)
 	o.u64(s.h)
 	o.u16(uint16(placement))
@@ -2648,6 +2915,7 @@ func (b DockAreaBuilder) Build() DockArea { return DockArea{b.sb.build()} }
 
 // NewDockArea is <gpui_kit::base::dock::DockArea>::new.
 func NewDockArea(cx *Cx, id string, version Option[int]) DockAreaBuilder {
+	useBaseDock()
 	o := newReq(336)
 	o.str(id)
 	if x0, ok := version.Get(); ok {
@@ -2666,6 +2934,7 @@ func (s DockContext) handle() uint64 { return s.h }
 
 // IsCollapsible is <gpui_kit::base::dock::DockContext>::is_collapsible.
 func (s DockContext) IsCollapsible(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1594)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2674,6 +2943,7 @@ func (s DockContext) IsCollapsible(cx *Cx) bool {
 
 // IsOpen is <gpui_kit::base::dock::DockContext>::is_open.
 func (s DockContext) IsOpen(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1595)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2682,6 +2952,7 @@ func (s DockContext) IsOpen(cx *Cx) bool {
 
 // Placement is <gpui_kit::base::dock::DockContext>::placement.
 func (s DockContext) Placement(cx *Cx) DockPlacement {
+	useBaseDock()
 	o := newReq(1596)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2690,6 +2961,7 @@ func (s DockContext) Placement(cx *Cx) DockPlacement {
 
 // Size is <gpui_kit::base::dock::DockContext>::size.
 func (s DockContext) Size(cx *Cx) float32 {
+	useBaseDock()
 	o := newReq(1598)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2698,6 +2970,7 @@ func (s DockContext) Size(cx *Cx) float32 {
 
 // EndResize is <gpui_kit::base::dock::DockContext>::end_resize.
 func (s DockContext) EndResize(cx *Cx) {
+	useBaseDock()
 	o := newReq(1593)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -2705,6 +2978,7 @@ func (s DockContext) EndResize(cx *Cx) {
 
 // ResizeTo is <gpui_kit::base::dock::DockContext>::resize_to.
 func (s DockContext) ResizeTo(cx *Cx, pointer GpuiPoint) {
+	useBaseDock()
 	o := newReq(1597)
 	o.u64(s.h)
 	putGpuiPoint(o, pointer)
@@ -2713,6 +2987,7 @@ func (s DockContext) ResizeTo(cx *Cx, pointer GpuiPoint) {
 
 // Toggle is <gpui_kit::base::dock::DockContext>::toggle.
 func (s DockContext) Toggle(cx *Cx) {
+	useBaseDock()
 	o := newReq(1599)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -2725,6 +3000,7 @@ func (s DockState) handle() uint64 { return s.h }
 
 // Open is <gpui_kit::base::dock::DockState>::open.
 func (s DockState) Open(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1540)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2733,6 +3009,7 @@ func (s DockState) Open(cx *Cx) bool {
 
 // Placement is <gpui_kit::base::dock::DockState>::placement.
 func (s DockState) Placement(cx *Cx) DockPlacement {
+	useBaseDock()
 	o := newReq(1542)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2741,6 +3018,7 @@ func (s DockState) Placement(cx *Cx) DockPlacement {
 
 // Size is <gpui_kit::base::dock::DockState>::size.
 func (s DockState) Size(cx *Cx) float32 {
+	useBaseDock()
 	o := newReq(1543)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2754,6 +3032,7 @@ func (s DragPanel) handle() uint64 { return s.h }
 
 // DragOffset is <gpui_kit::base::dock::DragPanel>::drag_offset.
 func (s DragPanel) DragOffset(cx *Cx) GpuiPoint {
+	useBaseDock()
 	o := newReq(864)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2762,6 +3041,7 @@ func (s DragPanel) DragOffset(cx *Cx) GpuiPoint {
 
 // DragSessionID is <gpui_kit::base::dock::DragPanel>::drag_session_id.
 func (s DragPanel) DragSessionID(cx *Cx) uint64 {
+	useBaseDock()
 	o := newReq(865)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2770,6 +3050,7 @@ func (s DragPanel) DragSessionID(cx *Cx) uint64 {
 
 // PreviewSize is <gpui_kit::base::dock::DragPanel>::preview_size.
 func (s DragPanel) PreviewSize(cx *Cx) GpuiSize {
+	useBaseDock()
 	o := newReq(867)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2778,6 +3059,7 @@ func (s DragPanel) PreviewSize(cx *Cx) GpuiSize {
 
 // SetDragOffset is <gpui_kit::base::dock::DragPanel>::set_drag_offset.
 func (s DragPanel) SetDragOffset(cx *Cx, offset GpuiPoint) {
+	useBaseDock()
 	o := newReq(1743)
 	o.u64(s.h)
 	putGpuiPoint(o, offset)
@@ -2786,6 +3068,7 @@ func (s DragPanel) SetDragOffset(cx *Cx, offset GpuiPoint) {
 
 // SetPreviewSize is <gpui_kit::base::dock::DragPanel>::set_preview_size.
 func (s DragPanel) SetPreviewSize(cx *Cx, size GpuiSize) {
+	useBaseDock()
 	o := newReq(1744)
 	o.u64(s.h)
 	putGpuiSize(o, size)
@@ -2799,6 +3082,7 @@ func (s DropIndicator) handle() uint64 { return s.h }
 
 // Bounds is <gpui_kit::base::dock::DropIndicator>::bounds.
 func (s DropIndicator) Bounds(cx *Cx) Bounds {
+	useBaseDock()
 	o := newReq(1546)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2807,6 +3091,7 @@ func (s DropIndicator) Bounds(cx *Cx) Bounds {
 
 // DragSessionID is <gpui_kit::base::dock::DropIndicator>::drag_session_id.
 func (s DropIndicator) DragSessionID(cx *Cx) uint64 {
+	useBaseDock()
 	o := newReq(1547)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2815,6 +3100,7 @@ func (s DropIndicator) DragSessionID(cx *Cx) uint64 {
 
 // Epoch is <gpui_kit::base::dock::DropIndicator>::epoch.
 func (s DropIndicator) Epoch(cx *Cx) uint64 {
+	useBaseDock()
 	o := newReq(1548)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2823,6 +3109,7 @@ func (s DropIndicator) Epoch(cx *Cx) uint64 {
 
 // From is <gpui_kit::base::dock::DropIndicator>::from.
 func (s DropIndicator) From(cx *Cx) DropPlaceholderBounds {
+	useBaseDock()
 	o := newReq(1549)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2831,6 +3118,7 @@ func (s DropIndicator) From(cx *Cx) DropPlaceholderBounds {
 
 // Placement is <gpui_kit::base::dock::DropIndicator>::placement.
 func (s DropIndicator) Placement(cx *Cx) Option[Placement] {
+	useBaseDock()
 	o := newReq(1550)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2839,6 +3127,7 @@ func (s DropIndicator) Placement(cx *Cx) Option[Placement] {
 
 // To is <gpui_kit::base::dock::DropIndicator>::to.
 func (s DropIndicator) To(cx *Cx) DropPlaceholderBounds {
+	useBaseDock()
 	o := newReq(1551)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2852,6 +3141,7 @@ func (s DropPlaceholderBounds) handle() uint64 { return s.h }
 
 // Origin is <gpui_kit::base::dock::DropPlaceholderBounds>::origin.
 func (s DropPlaceholderBounds) Origin(cx *Cx) GpuiPoint {
+	useBaseDock()
 	o := newReq(869)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2860,6 +3150,7 @@ func (s DropPlaceholderBounds) Origin(cx *Cx) GpuiPoint {
 
 // Size is <gpui_kit::base::dock::DropPlaceholderBounds>::size.
 func (s DropPlaceholderBounds) Size(cx *Cx) GpuiSize {
+	useBaseDock()
 	o := newReq(870)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2868,6 +3159,7 @@ func (s DropPlaceholderBounds) Size(cx *Cx) GpuiSize {
 
 // NewDropPlaceholderBoundsForPlacement is <gpui_kit::base::dock::DropPlaceholderBounds>::for_placement.
 func NewDropPlaceholderBoundsForPlacement(cx *Cx, bounds Bounds, placement Option[Placement]) DropPlaceholderBounds {
+	useBaseDock()
 	o := newReq(868)
 	putBounds(o, bounds)
 	if x0, ok := placement.Get(); ok {
@@ -2887,6 +3179,7 @@ func (s DropTarget) handle() uint64 { return s.h }
 
 // Placement is <gpui_kit::base::dock::DropTarget>::placement.
 func (s DropTarget) Placement(cx *Cx) Option[Placement] {
+	useBaseDock()
 	o := newReq(1428)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2900,6 +3193,7 @@ func (s EditResult) handle() uint64 { return s.h }
 
 // Changed is <gpui_kit::base::dock::EditResult>::changed.
 func (s EditResult) Changed(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(871)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2908,6 +3202,7 @@ func (s EditResult) Changed(cx *Cx) bool {
 
 // NewEditResultDefault is <gpui_kit::base::dock::EditResult as Default>::default.
 func NewEditResultDefault(cx *Cx) EditResult {
+	useBaseDock()
 	o := newReq(1462)
 	o.u16(0) // no builder ops follow
 	return EditResult{stateMake(cx, o)}
@@ -2920,6 +3215,7 @@ func (s EditorScrollbarContext) handle() uint64 { return s.h }
 
 // Axis is <gpui_kit::base::input::EditorScrollbarContext>::axis.
 func (s EditorScrollbarContext) Axis(cx *Cx) ScrollbarAxis {
+	useBaseInput()
 	o := newReq(1600)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2928,6 +3224,7 @@ func (s EditorScrollbarContext) Axis(cx *Cx) ScrollbarAxis {
 
 // ScrollViewportSize is <gpui_kit::base::input::EditorScrollbarContext>::scroll_viewport_size.
 func (s EditorScrollbarContext) ScrollViewportSize(cx *Cx) GpuiSize {
+	useBaseInput()
 	o := newReq(1601)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -2941,6 +3238,7 @@ func (s EditorState) handle() uint64 { return s.h }
 
 // ContextMenuCapabilities is <gpui_kit::base::input::EditorState>::context_menu_capabilities.
 func (s EditorState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilitiesRead {
+	useBaseInput()
 	o := newReq(1344)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2949,6 +3247,7 @@ func (s EditorState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilitie
 
 // Cursor is <gpui_kit::base::input::EditorState>::cursor.
 func (s EditorState) Cursor(cx *Cx) int {
+	useBaseInput()
 	o := newReq(414)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2957,6 +3256,7 @@ func (s EditorState) Cursor(cx *Cx) int {
 
 // DiagnosticPopover is <gpui_kit::base::input::EditorState>::diagnostic_popover.
 func (s EditorState) DiagnosticPopover(cx *Cx) Option[DiagnosticEntryRc] {
+	useBaseInput()
 	o := newReq(1142)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2965,6 +3265,7 @@ func (s EditorState) DiagnosticPopover(cx *Cx) Option[DiagnosticEntryRc] {
 
 // Diagnostics is <gpui_kit::base::input::EditorState>::diagnostics.
 func (s EditorState) Diagnostics(cx *Cx) Option[DiagnosticSet] {
+	useBaseInput()
 	o := newReq(893)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2973,6 +3274,7 @@ func (s EditorState) Diagnostics(cx *Cx) Option[DiagnosticSet] {
 
 // DisplayMapBufferLineCount is (|s: &gpui_kit::base::input::EditorState| <gpui_kit::base::input::DisplayMap>::buffer_line_count(<gpui_kit::base::input::EditorState>::display_map(s))).
 func (s EditorState) DisplayMapBufferLineCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1689)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -2981,6 +3283,7 @@ func (s EditorState) DisplayMapBufferLineCount(cx *Cx) int {
 
 // DisplayMapBufferLineToDisplayRow is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapBufferLineToDisplayRow(cx *Cx, line int) int {
+	useBaseInput()
 	o := newReq(1690)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -2990,6 +3293,7 @@ func (s EditorState) DisplayMapBufferLineToDisplayRow(cx *Cx, line int) int {
 
 // DisplayMapBufferLineToDisplayRowRange is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row_range(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapBufferLineToDisplayRowRange(cx *Cx, line int) Option[Range] {
+	useBaseInput()
 	o := newReq(1691)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -2999,6 +3303,7 @@ func (s EditorState) DisplayMapBufferLineToDisplayRowRange(cx *Cx, line int) Opt
 
 // DisplayMapBufferPosToDisplayPos is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::buffer_pos_to_display_pos(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapBufferPosToDisplayPos(cx *Cx, pos BufferPoint) DisplayPoint {
+	useBaseInput()
 	o := newReq(1692)
 	o.u64(s.h)
 	putBufferPoint(o, pos)
@@ -3008,6 +3313,7 @@ func (s EditorState) DisplayMapBufferPosToDisplayPos(cx *Cx, pos BufferPoint) Di
 
 // DisplayMapDisplayPosToBufferPos is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::display_pos_to_buffer_pos(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapDisplayPosToBufferPos(cx *Cx, pos DisplayPoint) BufferPoint {
+	useBaseInput()
 	o := newReq(1693)
 	o.u64(s.h)
 	putDisplayPoint(o, pos)
@@ -3017,6 +3323,7 @@ func (s EditorState) DisplayMapDisplayPosToBufferPos(cx *Cx, pos DisplayPoint) B
 
 // DisplayMapDisplayRowCount is (|s: &gpui_kit::base::input::EditorState| <gpui_kit::base::input::DisplayMap>::display_row_count(<gpui_kit::base::input::EditorState>::display_map(s))).
 func (s EditorState) DisplayMapDisplayRowCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1694)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3025,6 +3332,7 @@ func (s EditorState) DisplayMapDisplayRowCount(cx *Cx) int {
 
 // DisplayMapDisplayRowToBufferLine is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::display_row_to_buffer_line(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapDisplayRowToBufferLine(cx *Cx, displayRow int) int {
+	useBaseInput()
 	o := newReq(1695)
 	o.u64(s.h)
 	putUsize(o, displayRow)
@@ -3034,6 +3342,7 @@ func (s EditorState) DisplayMapDisplayRowToBufferLine(cx *Cx, displayRow int) in
 
 // DisplayMapDisplayRowToWrapRow is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::display_row_to_wrap_row(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapDisplayRowToWrapRow(cx *Cx, displayRow int) Option[int] {
+	useBaseInput()
 	o := newReq(1696)
 	o.u64(s.h)
 	putUsize(o, displayRow)
@@ -3043,6 +3352,7 @@ func (s EditorState) DisplayMapDisplayRowToWrapRow(cx *Cx, displayRow int) Optio
 
 // DisplayMapFoldedRanges is (|s: &gpui_kit::base::input::EditorState| std::borrow::ToOwned::to_owned(<gpui_kit::base::input::DisplayMap>::folded_ranges(<gpui_kit::base::input::EditorState>::display_map(s)))).
 func (s EditorState) DisplayMapFoldedRanges(cx *Cx) []FoldRange {
+	useBaseInput()
 	o := newReq(1697)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3051,6 +3361,7 @@ func (s EditorState) DisplayMapFoldedRanges(cx *Cx) []FoldRange {
 
 // DisplayMapIsBufferLineHidden is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::is_buffer_line_hidden(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapIsBufferLineHidden(cx *Cx, line int) bool {
+	useBaseInput()
 	o := newReq(1698)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -3060,6 +3371,7 @@ func (s EditorState) DisplayMapIsBufferLineHidden(cx *Cx, line int) bool {
 
 // DisplayMapIsFoldCandidate is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::is_fold_candidate(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapIsFoldCandidate(cx *Cx, startLine int) bool {
+	useBaseInput()
 	o := newReq(1699)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -3069,6 +3381,7 @@ func (s EditorState) DisplayMapIsFoldCandidate(cx *Cx, startLine int) bool {
 
 // DisplayMapIsFoldedAt is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::is_folded_at(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapIsFoldedAt(cx *Cx, startLine int) bool {
+	useBaseInput()
 	o := newReq(1700)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -3078,6 +3391,7 @@ func (s EditorState) DisplayMapIsFoldedAt(cx *Cx, startLine int) bool {
 
 // DisplayMapNearestVisibleDisplayRow is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::nearest_visible_display_row(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapNearestVisibleDisplayRow(cx *Cx, wrapRow int) int {
+	useBaseInput()
 	o := newReq(1701)
 	o.u64(s.h)
 	putUsize(o, wrapRow)
@@ -3087,6 +3401,7 @@ func (s EditorState) DisplayMapNearestVisibleDisplayRow(cx *Cx, wrapRow int) int
 
 // DisplayMapText is (|s: &gpui_kit::base::input::EditorState| std::borrow::ToOwned::to_owned(<gpui_kit::base::input::DisplayMap>::text(<gpui_kit::base::input::EditorState>::display_map(s)))).
 func (s EditorState) DisplayMapText(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1702)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3095,6 +3410,7 @@ func (s EditorState) DisplayMapText(cx *Cx) string {
 
 // DisplayMapVisibleWrapRowCountForBufferLine is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::visible_wrap_row_count_for_buffer_line(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapVisibleWrapRowCountForBufferLine(cx *Cx, line int) int {
+	useBaseInput()
 	o := newReq(1703)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -3104,6 +3420,7 @@ func (s EditorState) DisplayMapVisibleWrapRowCountForBufferLine(cx *Cx, line int
 
 // DisplayMapWrapRowCount is (|s: &gpui_kit::base::input::EditorState| <gpui_kit::base::input::DisplayMap>::wrap_row_count(<gpui_kit::base::input::EditorState>::display_map(s))).
 func (s EditorState) DisplayMapWrapRowCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1704)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3112,6 +3429,7 @@ func (s EditorState) DisplayMapWrapRowCount(cx *Cx) int {
 
 // DisplayMapWrapRowToDisplayRow is (|s: &gpui_kit::base::input::EditorState, a0| <gpui_kit::base::input::DisplayMap>::wrap_row_to_display_row(<gpui_kit::base::input::EditorState>::display_map(s), a0)).
 func (s EditorState) DisplayMapWrapRowToDisplayRow(cx *Cx, wrapRow int) Option[int] {
+	useBaseInput()
 	o := newReq(1705)
 	o.u64(s.h)
 	putUsize(o, wrapRow)
@@ -3121,6 +3439,7 @@ func (s EditorState) DisplayMapWrapRowToDisplayRow(cx *Cx, wrapRow int) Option[i
 
 // HasOverlayActionHandler is <gpui_kit::base::input::EditorState>::has_overlay_action_handler.
 func (s EditorState) HasOverlayActionHandler(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(421)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3129,6 +3448,7 @@ func (s EditorState) HasOverlayActionHandler(cx *Cx) bool {
 
 // HoverPopover is <gpui_kit::base::input::EditorState>::hover_popover.
 func (s EditorState) HoverPopover(cx *Cx) Option[HoverPopoverState] {
+	useBaseInput()
 	o := newReq(602)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3137,6 +3457,7 @@ func (s EditorState) HoverPopover(cx *Cx) Option[HoverPopoverState] {
 
 // InputBounds is <gpui_kit::base::input::EditorState>::input_bounds.
 func (s EditorState) InputBounds(cx *Cx) Bounds {
+	useBaseInput()
 	o := newReq(422)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3145,6 +3466,7 @@ func (s EditorState) InputBounds(cx *Cx) Bounds {
 
 // IsCodeEditor is <gpui_kit::base::input::EditorState>::is_code_editor.
 func (s EditorState) IsCodeEditor(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(424)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3153,6 +3475,7 @@ func (s EditorState) IsCodeEditor(cx *Cx) bool {
 
 // IsCopyable is <gpui_kit::base::input::EditorState>::is_copyable.
 func (s EditorState) IsCopyable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(425)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3161,6 +3484,7 @@ func (s EditorState) IsCopyable(cx *Cx) bool {
 
 // IsEditable is <gpui_kit::base::input::EditorState>::is_editable.
 func (s EditorState) IsEditable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(426)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3169,6 +3493,7 @@ func (s EditorState) IsEditable(cx *Cx) bool {
 
 // IsMultiLine is <gpui_kit::base::input::EditorState>::is_multi_line.
 func (s EditorState) IsMultiLine(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(427)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3177,6 +3502,7 @@ func (s EditorState) IsMultiLine(cx *Cx) bool {
 
 // IsReplaceable is <gpui_kit::base::input::EditorState>::is_replaceable.
 func (s EditorState) IsReplaceable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(428)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3185,6 +3511,7 @@ func (s EditorState) IsReplaceable(cx *Cx) bool {
 
 // IsSelectionReversed is <gpui_kit::base::input::EditorState>::is_selection_reversed.
 func (s EditorState) IsSelectionReversed(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(429)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3193,6 +3520,7 @@ func (s EditorState) IsSelectionReversed(cx *Cx) bool {
 
 // IsSingleLine is <gpui_kit::base::input::EditorState>::is_single_line.
 func (s EditorState) IsSingleLine(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(430)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3201,6 +3529,7 @@ func (s EditorState) IsSingleLine(cx *Cx) bool {
 
 // LanguageName is <gpui_kit::base::input::EditorState>::language_name.
 func (s EditorState) LanguageName(cx *Cx) string {
+	useBaseInput()
 	o := newReq(431)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3209,6 +3538,7 @@ func (s EditorState) LanguageName(cx *Cx) string {
 
 // LineHeight is <gpui_kit::base::input::EditorState>::line_height.
 func (s EditorState) LineHeight(cx *Cx) Option[float32] {
+	useBaseInput()
 	o := newReq(432)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3217,6 +3547,7 @@ func (s EditorState) LineHeight(cx *Cx) Option[float32] {
 
 // Lsp is <gpui_kit::base::input::EditorState>::lsp.
 func (s EditorState) Lsp(cx *Cx) BaseLsp {
+	useBaseInput()
 	o := newReq(433)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3225,6 +3556,7 @@ func (s EditorState) Lsp(cx *Cx) BaseLsp {
 
 // Presentation is <gpui_kit::base::input::EditorState>::presentation.
 func (s EditorState) Presentation(cx *Cx) InputPresentation {
+	useBaseInput()
 	o := newReq(894)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3233,6 +3565,7 @@ func (s EditorState) Presentation(cx *Cx) InputPresentation {
 
 // RangeToBounds is <gpui_kit::base::input::EditorState>::range_to_bounds.
 func (s EditorState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
+	useBaseInput()
 	o := newReq(436)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -3242,6 +3575,7 @@ func (s EditorState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
 
 // ScrollOffset is <gpui_kit::base::input::EditorState>::scroll_offset.
 func (s EditorState) ScrollOffset(cx *Cx) GpuiPoint {
+	useBaseInput()
 	o := newReq(440)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3250,6 +3584,7 @@ func (s EditorState) ScrollOffset(cx *Cx) GpuiPoint {
 
 // SearchActivationRevision is <gpui_kit::base::input::EditorState>::search_activation_revision.
 func (s EditorState) SearchActivationRevision(cx *Cx) uint64 {
+	useBaseInput()
 	o := newReq(441)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3258,6 +3593,7 @@ func (s EditorState) SearchActivationRevision(cx *Cx) uint64 {
 
 // SearchSession is <gpui_kit::base::input::EditorState>::search_session.
 func (s EditorState) SearchSession(cx *Cx) SearchSession {
+	useBaseInput()
 	o := newReq(442)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3266,6 +3602,7 @@ func (s EditorState) SearchSession(cx *Cx) SearchSession {
 
 // SelectedRange is <gpui_kit::base::input::EditorState>::selected_range.
 func (s EditorState) SelectedRange(cx *Cx) Range {
+	useBaseInput()
 	o := newReq(607)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3274,6 +3611,7 @@ func (s EditorState) SelectedRange(cx *Cx) Range {
 
 // SelectedText is <gpui_kit::base::input::EditorState>::selected_text.
 func (s EditorState) SelectedText(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1268)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3282,6 +3620,7 @@ func (s EditorState) SelectedText(cx *Cx) string {
 
 // SelectedValue is <gpui_kit::base::input::EditorState>::selected_value.
 func (s EditorState) SelectedValue(cx *Cx) string {
+	useBaseInput()
 	o := newReq(445)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3290,6 +3629,7 @@ func (s EditorState) SelectedValue(cx *Cx) string {
 
 // Text is <gpui_kit::base::input::EditorState>::text.
 func (s EditorState) Text(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1269)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3298,6 +3638,7 @@ func (s EditorState) Text(cx *Cx) string {
 
 // TextBounds is <gpui_kit::base::input::EditorState>::text_bounds.
 func (s EditorState) TextBounds(cx *Cx) Option[Bounds] {
+	useBaseInput()
 	o := newReq(472)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3306,6 +3647,7 @@ func (s EditorState) TextBounds(cx *Cx) Option[Bounds] {
 
 // TextInputConfiguration is <gpui_kit::base::input::EditorState>::text_input_configuration.
 func (s EditorState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
+	useBaseInput()
 	o := newReq(473)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3314,6 +3656,7 @@ func (s EditorState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
 
 // TouchSelection is <gpui_kit::base::input::EditorState>::touch_selection.
 func (s EditorState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
+	useBaseInput()
 	o := newReq(896)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3322,6 +3665,7 @@ func (s EditorState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
 
 // UnmaskValue is <gpui_kit::base::input::EditorState>::unmask_value.
 func (s EditorState) UnmaskValue(cx *Cx) string {
+	useBaseInput()
 	o := newReq(475)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3330,6 +3674,7 @@ func (s EditorState) UnmaskValue(cx *Cx) string {
 
 // Value is <gpui_kit::base::input::EditorState>::value.
 func (s EditorState) Value(cx *Cx) string {
+	useBaseInput()
 	o := newReq(477)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3338,6 +3683,7 @@ func (s EditorState) Value(cx *Cx) string {
 
 // TryValue is Value for a handler the component calls from inside its own update: ok is false while the state is busy.
 func (s EditorState) TryValue(cx *Cx) (v string, ok bool) {
+	useBaseInput()
 	o := newReq(477)
 	o.u64(s.h)
 	r, ok := stateTry(s.h, cx, o)
@@ -3349,6 +3695,7 @@ func (s EditorState) TryValue(cx *Cx) (v string, ok bool) {
 
 // VisibleRowRange is <gpui_kit::base::input::EditorState>::visible_row_range.
 func (s EditorState) VisibleRowRange(cx *Cx) Option[Range] {
+	useBaseInput()
 	o := newReq(615)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -3357,6 +3704,7 @@ func (s EditorState) VisibleRowRange(cx *Cx) Option[Range] {
 
 // CreateDecorationsCollection is <gpui_kit::base::input::EditorState>::create_decorations_collection.
 func (s EditorState) CreateDecorationsCollection(cx *Cx, decorations []TextDecoration) TextDecorationCollection {
+	useBaseInput()
 	o := newReq(1681)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -3369,6 +3717,7 @@ func (s EditorState) CreateDecorationsCollection(cx *Cx, decorations []TextDecor
 
 // CreateGutterDecorationsCollection is <gpui_kit::base::input::EditorState>::create_gutter_decorations_collection.
 func (s EditorState) CreateGutterDecorationsCollection(cx *Cx, decorations []GutterDecoration) GutterDecorationCollection {
+	useBaseInput()
 	o := newReq(890)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -3381,6 +3730,7 @@ func (s EditorState) CreateGutterDecorationsCollection(cx *Cx, decorations []Gut
 
 // CreateOverviewRulerDecorationsCollection is <gpui_kit::base::input::EditorState>::create_overview_ruler_decorations_collection.
 func (s EditorState) CreateOverviewRulerDecorationsCollection(cx *Cx, decorations []OverviewRulerDecoration) OverviewRulerDecorationCollection {
+	useBaseInput()
 	o := newReq(891)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -3393,6 +3743,7 @@ func (s EditorState) CreateOverviewRulerDecorationsCollection(cx *Cx, decoration
 
 // CreateRangeDecorationsCollection is <gpui_kit::base::input::EditorState>::create_range_decorations_collection.
 func (s EditorState) CreateRangeDecorationsCollection(cx *Cx, decorations []RangeDecoration) RangeDecorationCollection {
+	useBaseInput()
 	o := newReq(892)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -3405,6 +3756,7 @@ func (s EditorState) CreateRangeDecorationsCollection(cx *Cx, decorations []Rang
 
 // HasSelectionFocus is <gpui_kit::base::input::EditorState>::has_selection_focus.
 func (s EditorState) HasSelectionFocus(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1034)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -3413,6 +3765,7 @@ func (s EditorState) HasSelectionFocus(cx *Cx) bool {
 
 // NextSearchMatch is <gpui_kit::base::input::EditorState>::next_search_match.
 func (s EditorState) NextSearchMatch(cx *Cx) Option[Range] {
+	useBaseInput()
 	o := newReq(603)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -3421,6 +3774,7 @@ func (s EditorState) NextSearchMatch(cx *Cx) Option[Range] {
 
 // PreviousSearchMatch is <gpui_kit::base::input::EditorState>::previous_search_match.
 func (s EditorState) PreviousSearchMatch(cx *Cx) Option[Range] {
+	useBaseInput()
 	o := newReq(604)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -3429,6 +3783,7 @@ func (s EditorState) PreviousSearchMatch(cx *Cx) Option[Range] {
 
 // ReplaceAllSearchMatches is <gpui_kit::base::input::EditorState>::replace_all_search_matches.
 func (s EditorState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
+	useBaseInput()
 	o := newReq(605)
 	o.u64(s.h)
 	o.str(replacement)
@@ -3438,6 +3793,7 @@ func (s EditorState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
 
 // ReplaceCurrentSearchMatch is <gpui_kit::base::input::EditorState>::replace_current_search_match.
 func (s EditorState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) bool {
+	useBaseInput()
 	o := newReq(606)
 	o.u64(s.h)
 	o.str(replacement)
@@ -3447,6 +3803,7 @@ func (s EditorState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) bool 
 
 // RouteOverlayAction is <gpui_kit::base::input::EditorState>::route_overlay_action.
 func (s EditorState) RouteOverlayAction(cx *Cx, action Action) bool {
+	useBaseInput()
 	o := newReq(1742)
 	o.u64(s.h)
 	putAction(o, action)
@@ -3456,6 +3813,7 @@ func (s EditorState) RouteOverlayAction(cx *Cx, action Action) bool {
 
 // AddSelection is <gpui_kit::base::input::EditorState>::add_selection.
 func (s EditorState) AddSelection(cx *Cx, range_ Range) {
+	useBaseInput()
 	o := newReq(408)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -3464,6 +3822,7 @@ func (s EditorState) AddSelection(cx *Cx, range_ Range) {
 
 // ApplyHighlighterFoldCandidates is <gpui_kit::base::input::EditorState>::apply_highlighter_fold_candidates.
 func (s EditorState) ApplyHighlighterFoldCandidates(cx *Cx, candidates []FoldRange) {
+	useBaseInput()
 	o := newReq(600)
 	o.u64(s.h)
 	o.u32(uint32(len(candidates)))
@@ -3475,6 +3834,7 @@ func (s EditorState) ApplyHighlighterFoldCandidates(cx *Cx, candidates []FoldRan
 
 // BeginEdgeDrag is <gpui_kit::base::input::EditorState>::begin_edge_drag.
 func (s EditorState) BeginEdgeDrag(cx *Cx, edge SelectionEdge, finger GpuiPoint) {
+	useBaseInput()
 	o := newReq(601)
 	o.u64(s.h)
 	o.u16(uint16(edge))
@@ -3484,6 +3844,7 @@ func (s EditorState) BeginEdgeDrag(cx *Cx, edge SelectionEdge, finger GpuiPoint)
 
 // Clean is <gpui_kit::base::input::EditorState>::clean.
 func (s EditorState) Clean(cx *Cx) {
+	useBaseInput()
 	o := newReq(409)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3491,6 +3852,7 @@ func (s EditorState) Clean(cx *Cx) {
 
 // ClearDiagnosticPopover is <gpui_kit::base::input::EditorState>::clear_diagnostic_popover.
 func (s EditorState) ClearDiagnosticPopover(cx *Cx) {
+	useBaseInput()
 	o := newReq(410)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3498,6 +3860,7 @@ func (s EditorState) ClearDiagnosticPopover(cx *Cx) {
 
 // ClearHoverState is <gpui_kit::base::input::EditorState>::clear_hover_state.
 func (s EditorState) ClearHoverState(cx *Cx) {
+	useBaseInput()
 	o := newReq(411)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3505,6 +3868,7 @@ func (s EditorState) ClearHoverState(cx *Cx) {
 
 // CloseEditMenu is <gpui_kit::base::input::EditorState>::close_edit_menu.
 func (s EditorState) CloseEditMenu(cx *Cx) {
+	useBaseInput()
 	o := newReq(412)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3512,6 +3876,7 @@ func (s EditorState) CloseEditMenu(cx *Cx) {
 
 // CloseSearch is <gpui_kit::base::input::EditorState>::close_search.
 func (s EditorState) CloseSearch(cx *Cx) {
+	useBaseInput()
 	o := newReq(413)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3519,6 +3884,7 @@ func (s EditorState) CloseSearch(cx *Cx) {
 
 // DismissCodeActionOverlay is <gpui_kit::base::input::EditorState>::dismiss_code_action_overlay.
 func (s EditorState) DismissCodeActionOverlay(cx *Cx) {
+	useBaseInput()
 	o := newReq(415)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3526,6 +3892,7 @@ func (s EditorState) DismissCodeActionOverlay(cx *Cx) {
 
 // DismissCompletionOverlay is <gpui_kit::base::input::EditorState>::dismiss_completion_overlay.
 func (s EditorState) DismissCompletionOverlay(cx *Cx) {
+	useBaseInput()
 	o := newReq(416)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3533,6 +3900,7 @@ func (s EditorState) DismissCompletionOverlay(cx *Cx) {
 
 // DismissLspOverlays is <gpui_kit::base::input::EditorState>::dismiss_lsp_overlays.
 func (s EditorState) DismissLspOverlays(cx *Cx) {
+	useBaseInput()
 	o := newReq(417)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3540,6 +3908,7 @@ func (s EditorState) DismissLspOverlays(cx *Cx) {
 
 // EndEdgeDrag is <gpui_kit::base::input::EditorState>::end_edge_drag.
 func (s EditorState) EndEdgeDrag(cx *Cx) {
+	useBaseInput()
 	o := newReq(418)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3547,6 +3916,7 @@ func (s EditorState) EndEdgeDrag(cx *Cx) {
 
 // EnsureHighlighterFactory is <gpui_kit::base::input::EditorState>::ensure_highlighter_factory.
 func (s EditorState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
+	useBaseInput()
 	o := newReq(1617)
 	o.u64(s.h)
 	o.u64(factory.h)
@@ -3555,6 +3925,7 @@ func (s EditorState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
 
 // EnsureNumberMask is <gpui_kit::base::input::EditorState>::ensure_number_mask.
 func (s EditorState) EnsureNumberMask(cx *Cx) {
+	useBaseInput()
 	o := newReq(419)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3562,6 +3933,7 @@ func (s EditorState) EnsureNumberMask(cx *Cx) {
 
 // Focus is <gpui_kit::base::input::EditorState>::focus.
 func (s EditorState) Focus(cx *Cx) {
+	useBaseInput()
 	o := newReq(420)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3569,6 +3941,7 @@ func (s EditorState) Focus(cx *Cx) {
 
 // Insert is <gpui_kit::base::input::EditorState>::insert.
 func (s EditorState) Insert(cx *Cx, text string) {
+	useBaseInput()
 	o := newReq(423)
 	o.u64(s.h)
 	o.str(text)
@@ -3577,6 +3950,7 @@ func (s EditorState) Insert(cx *Cx, text string) {
 
 // OnContextMenu is <gpui_kit::base::input::EditorState>::on_context_menu.
 func (s EditorState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
+	useBaseInput()
 	o := newReq(1345)
 	o.u64(s.h)
 	putKeptHandler(o, handler, 114)
@@ -3585,6 +3959,7 @@ func (s EditorState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
 
 // OpenSearch is <gpui_kit::base::input::EditorState>::open_search.
 func (s EditorState) OpenSearch(cx *Cx, replaceMode bool) {
+	useBaseInput()
 	o := newReq(435)
 	o.u64(s.h)
 	o.bool(replaceMode)
@@ -3593,6 +3968,7 @@ func (s EditorState) OpenSearch(cx *Cx, replaceMode bool) {
 
 // PresentDiagnostic is (|s: &mut gpui_kit::base::input::EditorState, a0, a1, cx: &mut gpui_kit::Context<gpui_kit::base::input::EditorState>| s.present_diagnostic(gpui_kit::base::input::DiagnosticEntry { range: a0, diagnostic: a1 }, cx)).
 func (s EditorState) PresentDiagnostic(cx *Cx, range_ Range, diagnostic Diagnostic) {
+	useBaseInput()
 	o := newReq(1748)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -3602,6 +3978,7 @@ func (s EditorState) PresentDiagnostic(cx *Cx, range_ Range, diagnostic Diagnost
 
 // Refresh is <gpui_kit::base::input::EditorState>::refresh.
 func (s EditorState) Refresh(cx *Cx) {
+	useBaseInput()
 	o := newReq(437)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3609,6 +3986,7 @@ func (s EditorState) Refresh(cx *Cx) {
 
 // Replace is <gpui_kit::base::input::EditorState>::replace.
 func (s EditorState) Replace(cx *Cx, text string) {
+	useBaseInput()
 	o := newReq(438)
 	o.u64(s.h)
 	o.str(text)
@@ -3617,6 +3995,7 @@ func (s EditorState) Replace(cx *Cx, text string) {
 
 // ReplaceAll is <gpui_kit::base::input::EditorState>::replace_all.
 func (s EditorState) ReplaceAll(cx *Cx, text string) {
+	useBaseInput()
 	o := newReq(439)
 	o.u64(s.h)
 	o.str(text)
@@ -3625,6 +4004,7 @@ func (s EditorState) ReplaceAll(cx *Cx, text string) {
 
 // SelectAll is <gpui_kit::base::input::EditorState>::select_all.
 func (s EditorState) SelectAll(cx *Cx) {
+	useBaseInput()
 	o := newReq(443)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3632,6 +4012,7 @@ func (s EditorState) SelectAll(cx *Cx) {
 
 // SelectAllFromEditMenu is <gpui_kit::base::input::EditorState>::select_all_from_edit_menu.
 func (s EditorState) SelectAllFromEditMenu(cx *Cx) {
+	useBaseInput()
 	o := newReq(444)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3639,6 +4020,7 @@ func (s EditorState) SelectAllFromEditMenu(cx *Cx) {
 
 // SetAccessibility is <gpui_kit::base::input::EditorState>::set_accessibility.
 func (s EditorState) SetAccessibility(cx *Cx, accessibility InputAccessibility) {
+	useBaseInput()
 	o := newReq(895)
 	o.u64(s.h)
 	putVtape(o, accessibility.n)
@@ -3647,6 +4029,7 @@ func (s EditorState) SetAccessibility(cx *Cx, accessibility InputAccessibility) 
 
 // SetAutoClose is <gpui_kit::base::input::EditorState>::set_auto_close.
 func (s EditorState) SetAutoClose(cx *Cx, autoClose bool) {
+	useBaseInput()
 	o := newReq(446)
 	o.u64(s.h)
 	o.bool(autoClose)
@@ -3655,6 +4038,7 @@ func (s EditorState) SetAutoClose(cx *Cx, autoClose bool) {
 
 // SetCleanOnEscape is <gpui_kit::base::input::EditorState>::set_clean_on_escape.
 func (s EditorState) SetCleanOnEscape(cx *Cx, clean bool) {
+	useBaseInput()
 	o := newReq(447)
 	o.u64(s.h)
 	o.bool(clean)
@@ -3663,6 +4047,7 @@ func (s EditorState) SetCleanOnEscape(cx *Cx, clean bool) {
 
 // SetContextMenuEnabled is <gpui_kit::base::input::EditorState>::set_context_menu_enabled.
 func (s EditorState) SetContextMenuEnabled(cx *Cx, enabled bool) {
+	useBaseInput()
 	o := newReq(448)
 	o.u64(s.h)
 	o.bool(enabled)
@@ -3671,6 +4056,7 @@ func (s EditorState) SetContextMenuEnabled(cx *Cx, enabled bool) {
 
 // SetCursorSurroundingLines is <gpui_kit::base::input::EditorState>::set_cursor_surrounding_lines.
 func (s EditorState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
+	useBaseInput()
 	o := newReq(449)
 	o.u64(s.h)
 	if x0, ok := lines.Get(); ok {
@@ -3684,6 +4070,7 @@ func (s EditorState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
 
 // SetDisabled is <gpui_kit::base::input::EditorState>::set_disabled.
 func (s EditorState) SetDisabled(cx *Cx, disabled bool) {
+	useBaseInput()
 	o := newReq(450)
 	o.u64(s.h)
 	o.bool(disabled)
@@ -3692,6 +4079,7 @@ func (s EditorState) SetDisabled(cx *Cx, disabled bool) {
 
 // SetEditorStyle is <gpui_kit::base::input::EditorState>::set_editor_style.
 func (s EditorState) SetEditorStyle(cx *Cx, style InputEditorStyle) {
+	useBaseInput()
 	o := newReq(1682)
 	o.u64(s.h)
 	putInputEditorStyle(o, style)
@@ -3700,6 +4088,7 @@ func (s EditorState) SetEditorStyle(cx *Cx, style InputEditorStyle) {
 
 // SetFoldBackground is <gpui_kit::base::input::EditorState>::set_fold_background.
 func (s EditorState) SetFoldBackground(cx *Cx, color Option[Color]) {
+	useBaseInput()
 	o := newReq(608)
 	o.u64(s.h)
 	if x0, ok := color.Get(); ok {
@@ -3713,6 +4102,7 @@ func (s EditorState) SetFoldBackground(cx *Cx, color Option[Color]) {
 
 // SetFolding is <gpui_kit::base::input::EditorState>::set_folding.
 func (s EditorState) SetFolding(cx *Cx, folding bool) {
+	useBaseInput()
 	o := newReq(451)
 	o.u64(s.h)
 	o.bool(folding)
@@ -3721,6 +4111,7 @@ func (s EditorState) SetFolding(cx *Cx, folding bool) {
 
 // SetGutterDecorationsWidth is <gpui_kit::base::input::EditorState>::set_gutter_decorations_width.
 func (s EditorState) SetGutterDecorationsWidth(cx *Cx, width float32) {
+	useBaseInput()
 	o := newReq(452)
 	o.u64(s.h)
 	o.f32(width)
@@ -3729,6 +4120,7 @@ func (s EditorState) SetGutterDecorationsWidth(cx *Cx, width float32) {
 
 // SetHighlighter is <gpui_kit::base::input::EditorState>::set_highlighter.
 func (s EditorState) SetHighlighter(cx *Cx, newLanguage string) {
+	useBaseInput()
 	o := newReq(453)
 	o.u64(s.h)
 	o.str(newLanguage)
@@ -3737,6 +4129,7 @@ func (s EditorState) SetHighlighter(cx *Cx, newLanguage string) {
 
 // SetHighlighterFactory is <gpui_kit::base::input::EditorState>::set_highlighter_factory.
 func (s EditorState) SetHighlighterFactory(cx *Cx, factory RowSource) {
+	useBaseInput()
 	o := newReq(1618)
 	o.u64(s.h)
 	o.u64(factory.h)
@@ -3745,6 +4138,7 @@ func (s EditorState) SetHighlighterFactory(cx *Cx, factory RowSource) {
 
 // SetIndentGuides is <gpui_kit::base::input::EditorState>::set_indent_guides.
 func (s EditorState) SetIndentGuides(cx *Cx, indentGuides bool) {
+	useBaseInput()
 	o := newReq(454)
 	o.u64(s.h)
 	o.bool(indentGuides)
@@ -3753,6 +4147,7 @@ func (s EditorState) SetIndentGuides(cx *Cx, indentGuides bool) {
 
 // SetLineNumber is <gpui_kit::base::input::EditorState>::set_line_number.
 func (s EditorState) SetLineNumber(cx *Cx, lineNumber bool) {
+	useBaseInput()
 	o := newReq(455)
 	o.u64(s.h)
 	o.bool(lineNumber)
@@ -3761,6 +4156,7 @@ func (s EditorState) SetLineNumber(cx *Cx, lineNumber bool) {
 
 // SetMaskPattern is <gpui_kit::base::input::EditorState>::set_mask_pattern.
 func (s EditorState) SetMaskPattern(cx *Cx, pattern MaskPatternInto) {
+	useBaseInput()
 	o := newReq(609)
 	o.u64(s.h)
 	putMaskPatternInto(o, pattern)
@@ -3769,6 +4165,7 @@ func (s EditorState) SetMaskPattern(cx *Cx, pattern MaskPatternInto) {
 
 // SetOverlayActionHandler is (|s: &mut gpui_kit::base::input::EditorState, keys: Vec<(gpui_kit::base::input::InputOverlayKind, String)>| s.set_overlay_action_handler(move |k, a, _, _| keys.iter().any(|(kk, n)| std::mem::discriminant(kk) == std::mem::discriminant(&k) && n.as_str() == a.name()))).
 func (s EditorState) SetOverlayActionHandler(cx *Cx, taken []TupleInputoverlaykindString) {
+	useBaseInput()
 	o := newReq(1749)
 	o.u64(s.h)
 	o.u32(uint32(len(taken)))
@@ -3781,6 +4178,7 @@ func (s EditorState) SetOverlayActionHandler(cx *Cx, taken []TupleInputoverlayki
 
 // SetPlaceholder is <gpui_kit::base::input::EditorState>::set_placeholder.
 func (s EditorState) SetPlaceholder(cx *Cx, placeholder string) {
+	useBaseInput()
 	o := newReq(456)
 	o.u64(s.h)
 	o.str(placeholder)
@@ -3789,6 +4187,7 @@ func (s EditorState) SetPlaceholder(cx *Cx, placeholder string) {
 
 // SetReadonly is <gpui_kit::base::input::EditorState>::set_readonly.
 func (s EditorState) SetReadonly(cx *Cx, readonly bool) {
+	useBaseInput()
 	o := newReq(457)
 	o.u64(s.h)
 	o.bool(readonly)
@@ -3797,6 +4196,7 @@ func (s EditorState) SetReadonly(cx *Cx, readonly bool) {
 
 // SetScrollBeyondLastLine is <gpui_kit::base::input::EditorState>::set_scroll_beyond_last_line.
 func (s EditorState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
+	useBaseInput()
 	o := newReq(458)
 	o.u64(s.h)
 	if x0, ok := rows.Get(); ok {
@@ -3810,6 +4210,7 @@ func (s EditorState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
 
 // SetScrollBounce is <gpui_kit::base::input::EditorState>::set_scroll_bounce.
 func (s EditorState) SetScrollBounce(cx *Cx, scrollBounce bool) {
+	useBaseInput()
 	o := newReq(459)
 	o.u64(s.h)
 	o.bool(scrollBounce)
@@ -3818,6 +4219,7 @@ func (s EditorState) SetScrollBounce(cx *Cx, scrollBounce bool) {
 
 // SetScrollOffset is <gpui_kit::base::input::EditorState>::set_scroll_offset.
 func (s EditorState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
+	useBaseInput()
 	o := newReq(610)
 	o.u64(s.h)
 	putGpuiPoint(o, offset)
@@ -3826,6 +4228,7 @@ func (s EditorState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 
 // SetSearchQuery is <gpui_kit::base::input::EditorState>::set_search_query.
 func (s EditorState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) {
+	useBaseInput()
 	o := newReq(460)
 	o.u64(s.h)
 	o.str(query)
@@ -3835,6 +4238,7 @@ func (s EditorState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) 
 
 // SetSearchable is <gpui_kit::base::input::EditorState>::set_searchable.
 func (s EditorState) SetSearchable(cx *Cx, searchable bool) {
+	useBaseInput()
 	o := newReq(461)
 	o.u64(s.h)
 	o.bool(searchable)
@@ -3843,6 +4247,7 @@ func (s EditorState) SetSearchable(cx *Cx, searchable bool) {
 
 // SetSelectedRange is <gpui_kit::base::input::EditorState>::set_selected_range.
 func (s EditorState) SetSelectedRange(cx *Cx, range_ Range) {
+	useBaseInput()
 	o := newReq(462)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -3851,6 +4256,7 @@ func (s EditorState) SetSelectedRange(cx *Cx, range_ Range) {
 
 // SetSelectedRangeWithDirection is <gpui_kit::base::input::EditorState>::set_selected_range_with_direction.
 func (s EditorState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reversed bool) {
+	useBaseInput()
 	o := newReq(463)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -3860,6 +4266,7 @@ func (s EditorState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reverse
 
 // SetSelectionFocus is <gpui_kit::base::input::EditorState>::set_selection_focus.
 func (s EditorState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
+	useBaseInput()
 	o := newReq(611)
 	o.u64(s.h)
 	if x0, ok := focus.Get(); ok {
@@ -3873,6 +4280,7 @@ func (s EditorState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
 
 // SetShowWhitespaces is <gpui_kit::base::input::EditorState>::set_show_whitespaces.
 func (s EditorState) SetShowWhitespaces(cx *Cx, show bool) {
+	useBaseInput()
 	o := newReq(464)
 	o.u64(s.h)
 	o.bool(show)
@@ -3881,6 +4289,7 @@ func (s EditorState) SetShowWhitespaces(cx *Cx, show bool) {
 
 // SetSmartIndent is <gpui_kit::base::input::EditorState>::set_smart_indent.
 func (s EditorState) SetSmartIndent(cx *Cx, smartIndent bool) {
+	useBaseInput()
 	o := newReq(465)
 	o.u64(s.h)
 	o.bool(smartIndent)
@@ -3889,6 +4298,7 @@ func (s EditorState) SetSmartIndent(cx *Cx, smartIndent bool) {
 
 // SetSoftWrap is <gpui_kit::base::input::EditorState>::set_soft_wrap.
 func (s EditorState) SetSoftWrap(cx *Cx, wrap bool) {
+	useBaseInput()
 	o := newReq(466)
 	o.u64(s.h)
 	o.bool(wrap)
@@ -3897,6 +4307,7 @@ func (s EditorState) SetSoftWrap(cx *Cx, wrap bool) {
 
 // SetSubmitOnEnter is <gpui_kit::base::input::EditorState>::set_submit_on_enter.
 func (s EditorState) SetSubmitOnEnter(cx *Cx, submit bool) {
+	useBaseInput()
 	o := newReq(467)
 	o.u64(s.h)
 	o.bool(submit)
@@ -3905,6 +4316,7 @@ func (s EditorState) SetSubmitOnEnter(cx *Cx, submit bool) {
 
 // SetTabSize is <gpui_kit::base::input::EditorState>::set_tab_size.
 func (s EditorState) SetTabSize(cx *Cx, tab TabSize) {
+	useBaseInput()
 	o := newReq(612)
 	o.u64(s.h)
 	putTabSize(o, tab)
@@ -3913,6 +4325,7 @@ func (s EditorState) SetTabSize(cx *Cx, tab TabSize) {
 
 // SetTextAlign is <gpui_kit::base::input::EditorState>::set_text_align.
 func (s EditorState) SetTextAlign(cx *Cx, textAlign TextAlign) {
+	useBaseInput()
 	o := newReq(468)
 	o.u64(s.h)
 	o.u16(uint16(textAlign))
@@ -3921,6 +4334,7 @@ func (s EditorState) SetTextAlign(cx *Cx, textAlign TextAlign) {
 
 // SetValue is <gpui_kit::base::input::EditorState>::set_value.
 func (s EditorState) SetValue(cx *Cx, value InputContentInto) {
+	useBaseInput()
 	o := newReq(613)
 	o.u64(s.h)
 	putInputContentInto(o, value)
@@ -3929,6 +4343,7 @@ func (s EditorState) SetValue(cx *Cx, value InputContentInto) {
 
 // SetWrappingIndent is <gpui_kit::base::input::EditorState>::set_wrapping_indent.
 func (s EditorState) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
+	useBaseInput()
 	o := newReq(469)
 	o.u64(s.h)
 	o.u16(uint16(wrappingIndent))
@@ -3937,6 +4352,7 @@ func (s EditorState) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
 
 // ShowCompletions is <gpui_kit::base::input::EditorState>::show_completions.
 func (s EditorState) ShowCompletions(cx *Cx) {
+	useBaseInput()
 	o := newReq(470)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3944,6 +4360,7 @@ func (s EditorState) ShowCompletions(cx *Cx) {
 
 // ToggleMasked is <gpui_kit::base::input::EditorState>::toggle_masked.
 func (s EditorState) ToggleMasked(cx *Cx) {
+	useBaseInput()
 	o := newReq(474)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3951,6 +4368,7 @@ func (s EditorState) ToggleMasked(cx *Cx) {
 
 // Unselect is <gpui_kit::base::input::EditorState>::unselect.
 func (s EditorState) Unselect(cx *Cx) {
+	useBaseInput()
 	o := newReq(476)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -3958,6 +4376,7 @@ func (s EditorState) Unselect(cx *Cx) {
 
 // UpdateEdgeDrag is <gpui_kit::base::input::EditorState>::update_edge_drag.
 func (s EditorState) UpdateEdgeDrag(cx *Cx, finger GpuiPoint) {
+	useBaseInput()
 	o := newReq(614)
 	o.u64(s.h)
 	putGpuiPoint(o, finger)
@@ -4087,6 +4506,7 @@ func (b EditorStateBuilder) Build() EditorState { return EditorState{b.sb.build(
 
 // NewEditorState is <gpui_kit::base::input::EditorState>::new.
 func NewEditorState(cx *Cx) EditorStateBuilder {
+	useBaseInput()
 	o := newReq(434)
 	return EditorStateBuilder{newStateBuilder(cx, o)}
 }
@@ -4098,6 +4518,7 @@ func (s GlobalState) handle() uint64 { return s.h }
 
 // GlobalStateGlobal is <gpui_kit::base::GlobalState>::global.
 func GlobalStateGlobal(cx *Cx) GlobalState {
+	useBaseGlobalState()
 	o := newReq(779)
 	r := objGet(0, cx, o)
 	return GlobalState{h: r.u64()}
@@ -4105,6 +4526,7 @@ func GlobalStateGlobal(cx *Cx) GlobalState {
 
 // GlobalStateGlobalMut is <gpui_kit::base::GlobalState>::global_mut.
 func GlobalStateGlobalMut(cx *Cx) GlobalState {
+	useBaseGlobalState()
 	o := newReq(780)
 	r := objGet(0, cx, o)
 	return GlobalState{h: r.u64()}
@@ -4112,6 +4534,7 @@ func GlobalStateGlobalMut(cx *Cx) GlobalState {
 
 // GlobalStateIsInDeferredContext is <gpui_kit::base::GlobalState>::is_in_deferred_context.
 func GlobalStateIsInDeferredContext(cx *Cx) bool {
+	useBaseGlobalState()
 	o := newReq(781)
 	r := stateCall(0, cx, o)
 	return r.bool()
@@ -4119,6 +4542,7 @@ func GlobalStateIsInDeferredContext(cx *Cx) bool {
 
 // GlobalStateIsTouchPress is <gpui_kit::base::GlobalState>::is_touch_press.
 func GlobalStateIsTouchPress(cx *Cx) bool {
+	useBaseGlobalState()
 	o := newReq(782)
 	r := stateCall(0, cx, o)
 	return r.bool()
@@ -4126,12 +4550,14 @@ func GlobalStateIsTouchPress(cx *Cx) bool {
 
 // GlobalStateNoteTouch is <gpui_kit::base::GlobalState>::note_touch.
 func GlobalStateNoteTouch(cx *Cx) {
+	useBaseGlobalState()
 	o := newReq(783)
 	stateSet(cx, o)
 }
 
 // GlobalStateSuppressTextSelection is <gpui_kit::base::GlobalState>::suppress_text_selection.
 func GlobalStateSuppressTextSelection(cx *Cx) {
+	useBaseGlobalState()
 	o := newReq(785)
 	stateSet(cx, o)
 }
@@ -4143,6 +4569,7 @@ func (s GridLayoutState) handle() uint64 { return s.h }
 
 // ActiveItem is <gpui_kit::base::GridLayoutState>::active_item.
 func (s GridLayoutState) ActiveItem(cx *Cx) Option[string] {
+	useBaseGridLayout()
 	o := newReq(658)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -4151,6 +4578,7 @@ func (s GridLayoutState) ActiveItem(cx *Cx) Option[string] {
 
 // Area is <gpui_kit::base::GridLayoutState>::area.
 func (s GridLayoutState) Area(cx *Cx, id string) Option[BaseGridArea] {
+	useBaseGridLayout()
 	o := newReq(659)
 	o.u64(s.h)
 	o.str(id)
@@ -4160,6 +4588,7 @@ func (s GridLayoutState) Area(cx *Cx, id string) Option[BaseGridArea] {
 
 // Areas is <gpui_kit::base::GridLayoutState>::areas.
 func (s GridLayoutState) Areas(cx *Cx) []BaseGridArea {
+	useBaseGridLayout()
 	o := newReq(660)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -4168,6 +4597,7 @@ func (s GridLayoutState) Areas(cx *Cx) []BaseGridArea {
 
 // ColumnCount is <gpui_kit::base::GridLayoutState>::column_count.
 func (s GridLayoutState) ColumnCount(cx *Cx) int {
+	useBaseGridLayout()
 	o := newReq(661)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -4176,6 +4606,7 @@ func (s GridLayoutState) ColumnCount(cx *Cx) int {
 
 // CompactionAxis is <gpui_kit::base::GridLayoutState>::compaction_axis.
 func (s GridLayoutState) CompactionAxis(cx *Cx) Option[Axis] {
+	useBaseGridLayout()
 	o := newReq(662)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -4184,6 +4615,7 @@ func (s GridLayoutState) CompactionAxis(cx *Cx) Option[Axis] {
 
 // IsCollisionPrevented is <gpui_kit::base::GridLayoutState>::is_collision_prevented.
 func (s GridLayoutState) IsCollisionPrevented(cx *Cx) bool {
+	useBaseGridLayout()
 	o := newReq(663)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -4192,6 +4624,7 @@ func (s GridLayoutState) IsCollisionPrevented(cx *Cx) bool {
 
 // IsDraggable is <gpui_kit::base::GridLayoutState>::is_draggable.
 func (s GridLayoutState) IsDraggable(cx *Cx) bool {
+	useBaseGridLayout()
 	o := newReq(664)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -4200,6 +4633,7 @@ func (s GridLayoutState) IsDraggable(cx *Cx) bool {
 
 // IsResizable is <gpui_kit::base::GridLayoutState>::is_resizable.
 func (s GridLayoutState) IsResizable(cx *Cx) bool {
+	useBaseGridLayout()
 	o := newReq(665)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -4208,6 +4642,7 @@ func (s GridLayoutState) IsResizable(cx *Cx) bool {
 
 // SelectedItem is <gpui_kit::base::GridLayoutState>::selected_item.
 func (s GridLayoutState) SelectedItem(cx *Cx) Option[string] {
+	useBaseGridLayout()
 	o := newReq(669)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -4216,6 +4651,7 @@ func (s GridLayoutState) SelectedItem(cx *Cx) Option[string] {
 
 // MoveItem is <gpui_kit::base::GridLayoutState>::move_item.
 func (s GridLayoutState) MoveItem(cx *Cx, id string, col int, row int) bool {
+	useBaseGridLayout()
 	o := newReq(666)
 	o.u64(s.h)
 	o.str(id)
@@ -4227,6 +4663,7 @@ func (s GridLayoutState) MoveItem(cx *Cx, id string, col int, row int) bool {
 
 // ResizeItem is <gpui_kit::base::GridLayoutState>::resize_item.
 func (s GridLayoutState) ResizeItem(cx *Cx, id string, colSpan int, rowSpan int) bool {
+	useBaseGridLayout()
 	o := newReq(668)
 	o.u64(s.h)
 	o.str(id)
@@ -4238,6 +4675,7 @@ func (s GridLayoutState) ResizeItem(cx *Cx, id string, colSpan int, rowSpan int)
 
 // SetAreas is <gpui_kit::base::GridLayoutState>::set_areas.
 func (s GridLayoutState) SetAreas(cx *Cx, areas []GridArea) {
+	useBaseGridLayout()
 	o := newReq(786)
 	o.u64(s.h)
 	o.u32(uint32(len(areas)))
@@ -4249,6 +4687,7 @@ func (s GridLayoutState) SetAreas(cx *Cx, areas []GridArea) {
 
 // SetCols is <gpui_kit::base::GridLayoutState>::set_cols.
 func (s GridLayoutState) SetCols(cx *Cx, cols int) {
+	useBaseGridLayout()
 	o := newReq(670)
 	o.u64(s.h)
 	putUsize(o, cols)
@@ -4257,6 +4696,7 @@ func (s GridLayoutState) SetCols(cx *Cx, cols int) {
 
 // SetCompaction is <gpui_kit::base::GridLayoutState>::set_compaction.
 func (s GridLayoutState) SetCompaction(cx *Cx, compaction Option[Axis]) {
+	useBaseGridLayout()
 	o := newReq(671)
 	o.u64(s.h)
 	if x0, ok := compaction.Get(); ok {
@@ -4270,6 +4710,7 @@ func (s GridLayoutState) SetCompaction(cx *Cx, compaction Option[Axis]) {
 
 // SetDraggable is <gpui_kit::base::GridLayoutState>::set_draggable.
 func (s GridLayoutState) SetDraggable(cx *Cx, draggable bool) {
+	useBaseGridLayout()
 	o := newReq(672)
 	o.u64(s.h)
 	o.bool(draggable)
@@ -4278,6 +4719,7 @@ func (s GridLayoutState) SetDraggable(cx *Cx, draggable bool) {
 
 // SetPreventCollision is <gpui_kit::base::GridLayoutState>::set_prevent_collision.
 func (s GridLayoutState) SetPreventCollision(cx *Cx, preventCollision bool) {
+	useBaseGridLayout()
 	o := newReq(673)
 	o.u64(s.h)
 	o.bool(preventCollision)
@@ -4286,6 +4728,7 @@ func (s GridLayoutState) SetPreventCollision(cx *Cx, preventCollision bool) {
 
 // SetResizable is <gpui_kit::base::GridLayoutState>::set_resizable.
 func (s GridLayoutState) SetResizable(cx *Cx, resizable bool) {
+	useBaseGridLayout()
 	o := newReq(674)
 	o.u64(s.h)
 	o.bool(resizable)
@@ -4294,6 +4737,7 @@ func (s GridLayoutState) SetResizable(cx *Cx, resizable bool) {
 
 // SetSelectedItem is <gpui_kit::base::GridLayoutState>::set_selected_item.
 func (s GridLayoutState) SetSelectedItem(cx *Cx, id Option[string]) {
+	useBaseGridLayout()
 	o := newReq(675)
 	o.u64(s.h)
 	if x0, ok := id.Get(); ok {
@@ -4368,6 +4812,7 @@ func (b GridLayoutStateBuilder) Build() GridLayoutState { return GridLayoutState
 
 // NewGridLayoutState is <gpui_kit::base::GridLayoutState>::new.
 func NewGridLayoutState(cx *Cx) GridLayoutStateBuilder {
+	useBaseGridLayout()
 	o := newReq(667)
 	return GridLayoutStateBuilder{newStateBuilder(cx, o)}
 }
@@ -4379,6 +4824,7 @@ func (s GutterDecorationCollection) handle() uint64 { return s.h }
 
 // GetRanges is <gpui_kit::base::input::GutterDecorationCollection>::get_ranges.
 func (s GutterDecorationCollection) GetRanges(cx *Cx) []Range {
+	useBaseInput()
 	o := newReq(900)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4387,6 +4833,7 @@ func (s GutterDecorationCollection) GetRanges(cx *Cx) []Range {
 
 // Append is <gpui_kit::base::input::GutterDecorationCollection>::append.
 func (s GutterDecorationCollection) Append(cx *Cx, decorations []GutterDecoration) {
+	useBaseInput()
 	o := newReq(897)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -4398,6 +4845,7 @@ func (s GutterDecorationCollection) Append(cx *Cx, decorations []GutterDecoratio
 
 // Clear is <gpui_kit::base::input::GutterDecorationCollection>::clear.
 func (s GutterDecorationCollection) Clear(cx *Cx) {
+	useBaseInput()
 	o := newReq(898)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -4405,6 +4853,7 @@ func (s GutterDecorationCollection) Clear(cx *Cx) {
 
 // Dispose is <gpui_kit::base::input::GutterDecorationCollection>::dispose.
 func (s GutterDecorationCollection) Dispose(cx *Cx) {
+	useBaseInput()
 	o := newReq(899)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -4412,6 +4861,7 @@ func (s GutterDecorationCollection) Dispose(cx *Cx) {
 
 // Set is <gpui_kit::base::input::GutterDecorationCollection>::set.
 func (s GutterDecorationCollection) Set(cx *Cx, decorations []GutterDecoration) {
+	useBaseInput()
 	o := newReq(901)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -4423,6 +4873,7 @@ func (s GutterDecorationCollection) Set(cx *Cx, decorations []GutterDecoration) 
 
 // NewGutterDecorationCollectionDefault is <gpui_kit::base::input::GutterDecorationCollection as Default>::default.
 func NewGutterDecorationCollectionDefault(cx *Cx) GutterDecorationCollection {
+	useBaseInput()
 	o := newReq(1470)
 	o.u16(0) // no builder ops follow
 	return GutterDecorationCollection{stateMake(cx, o)}
@@ -4440,6 +4891,7 @@ func (s History) handle() uint64 { return s.h }
 
 // CanBack is <gpui_kit::base::History<gpui_kit::SharedString>>::can_back.
 func (s History) CanBack(cx *Cx) bool {
+	useBaseRoot()
 	o := newReq(1292)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4448,6 +4900,7 @@ func (s History) CanBack(cx *Cx) bool {
 
 // CanForward is <gpui_kit::base::History<gpui_kit::SharedString>>::can_forward.
 func (s History) CanForward(cx *Cx) bool {
+	useBaseRoot()
 	o := newReq(1293)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4456,6 +4909,7 @@ func (s History) CanForward(cx *Cx) bool {
 
 // Current is <gpui_kit::base::History<gpui_kit::SharedString>>::current.
 func (s History) Current(cx *Cx) Option[string] {
+	useBaseRoot()
 	o := newReq(1295)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4464,6 +4918,7 @@ func (s History) Current(cx *Cx) Option[string] {
 
 // Entries is <gpui_kit::base::History<gpui_kit::SharedString>>::entries.
 func (s History) Entries(cx *Cx) []string {
+	useBaseRoot()
 	o := newReq(1296)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4472,6 +4927,7 @@ func (s History) Entries(cx *Cx) []string {
 
 // ForwardEntries is <gpui_kit::base::History<gpui_kit::SharedString>>::forward_entries.
 func (s History) ForwardEntries(cx *Cx) []string {
+	useBaseRoot()
 	o := newReq(1298)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4480,6 +4936,7 @@ func (s History) ForwardEntries(cx *Cx) []string {
 
 // Back is <gpui_kit::base::History<gpui_kit::SharedString>>::back.
 func (s History) Back(cx *Cx) Option[string] {
+	useBaseRoot()
 	o := newReq(1291)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -4488,6 +4945,7 @@ func (s History) Back(cx *Cx) Option[string] {
 
 // Forward is <gpui_kit::base::History<gpui_kit::SharedString>>::forward.
 func (s History) Forward(cx *Cx) Option[string] {
+	useBaseRoot()
 	o := newReq(1297)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -4496,6 +4954,7 @@ func (s History) Forward(cx *Cx) Option[string] {
 
 // RemoveCurrent is <gpui_kit::base::History<gpui_kit::SharedString>>::remove_current.
 func (s History) RemoveCurrent(cx *Cx) Option[string] {
+	useBaseRoot()
 	o := newReq(1301)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -4504,6 +4963,7 @@ func (s History) RemoveCurrent(cx *Cx) Option[string] {
 
 // Clear is <gpui_kit::base::History<gpui_kit::SharedString>>::clear.
 func (s History) Clear(cx *Cx) {
+	useBaseRoot()
 	o := newReq(1294)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -4511,6 +4971,7 @@ func (s History) Clear(cx *Cx) {
 
 // Push is <gpui_kit::base::History<gpui_kit::SharedString>>::push.
 func (s History) Push(cx *Cx, entry string) {
+	useBaseRoot()
 	o := newReq(1300)
 	o.u64(s.h)
 	o.str(entry)
@@ -4519,6 +4980,7 @@ func (s History) Push(cx *Cx, entry string) {
 
 // ReplaceCurrent is <gpui_kit::base::History<gpui_kit::SharedString>>::replace_current.
 func (s History) ReplaceCurrent(cx *Cx, entry string) {
+	useBaseRoot()
 	o := newReq(1302)
 	o.u64(s.h)
 	o.str(entry)
@@ -4539,6 +5001,7 @@ func (b HistoryBuilder) Build() History { return History{b.sb.build()} }
 
 // NewHistory is <gpui_kit::base::History<gpui_kit::SharedString>>::new.
 func NewHistory(cx *Cx) HistoryBuilder {
+	useBaseRoot()
 	o := newReq(1299)
 	return HistoryBuilder{newStateBuilder(cx, o)}
 }
@@ -4550,6 +5013,7 @@ func (s HorizontalScrollClaim) handle() uint64 { return s.h }
 
 // DeltaX is <gpui_kit::base::HorizontalScrollClaim>::delta_x.
 func (s HorizontalScrollClaim) DeltaX(cx *Cx) float32 {
+	useBaseScrollableMask()
 	o := newReq(787)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4563,6 +5027,7 @@ func (s HslaSliders) handle() uint64 { return s.h }
 
 // Alpha is <gpui_kit::base::HslaSliders>::alpha.
 func (s HslaSliders) Alpha(cx *Cx) SliderState {
+	useBaseColorPicker()
 	o := newReq(1449)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4571,6 +5036,7 @@ func (s HslaSliders) Alpha(cx *Cx) SliderState {
 
 // Hue is <gpui_kit::base::HslaSliders>::hue.
 func (s HslaSliders) Hue(cx *Cx) SliderState {
+	useBaseColorPicker()
 	o := newReq(1450)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4579,6 +5045,7 @@ func (s HslaSliders) Hue(cx *Cx) SliderState {
 
 // Lightness is <gpui_kit::base::HslaSliders>::lightness.
 func (s HslaSliders) Lightness(cx *Cx) SliderState {
+	useBaseColorPicker()
 	o := newReq(1451)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4587,6 +5054,7 @@ func (s HslaSliders) Lightness(cx *Cx) SliderState {
 
 // Saturation is <gpui_kit::base::HslaSliders>::saturation.
 func (s HslaSliders) Saturation(cx *Cx) SliderState {
+	useBaseColorPicker()
 	o := newReq(1452)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4600,6 +5068,7 @@ func (s ImageNode) handle() uint64 { return s.h }
 
 // Title is <gpui_kit::base::text::editor_host::ImageNode>::title.
 func (s ImageNode) Title(cx *Cx) string {
+	useBaseText()
 	o := newReq(1487)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4608,6 +5077,7 @@ func (s ImageNode) Title(cx *Cx) string {
 
 // NewImageNodeDefault is <gpui_kit::base::text::editor_host::ImageNode as Default>::default.
 func NewImageNodeDefault(cx *Cx) ImageNode {
+	useBaseText()
 	o := newReq(1486)
 	o.u16(0) // no builder ops follow
 	return ImageNode{stateMake(cx, o)}
@@ -4620,6 +5090,7 @@ func (s InlineNodeRead) handle() uint64 { return s.h }
 
 // AsCustom is <gpui_kit::base::text::editor_host::InlineNode>::as_custom.
 func (s InlineNodeRead) AsCustom(cx *Cx) Option[MarkdownNodeRead] {
+	useBaseText()
 	o := newReq(1403)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4628,6 +5099,7 @@ func (s InlineNodeRead) AsCustom(cx *Cx) Option[MarkdownNodeRead] {
 
 // AsImage is <gpui_kit::base::text::editor_host::InlineNode>::as_image.
 func (s InlineNodeRead) AsImage(cx *Cx) Option[ImageNode] {
+	useBaseText()
 	o := newReq(1404)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4636,6 +5108,7 @@ func (s InlineNodeRead) AsImage(cx *Cx) Option[ImageNode] {
 
 // MarkRuns is <gpui_kit::base::text::editor_host::InlineNode>::mark_runs.
 func (s InlineNodeRead) MarkRuns(cx *Cx) []TupleRangeBasetextmark {
+	useBaseText()
 	o := newReq(1405)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4644,6 +5117,7 @@ func (s InlineNodeRead) MarkRuns(cx *Cx) []TupleRangeBasetextmark {
 
 // Text is <gpui_kit::base::text::editor_host::InlineNode>::text.
 func (s InlineNodeRead) Text(cx *Cx) string {
+	useBaseText()
 	o := newReq(1406)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4657,6 +5131,7 @@ func (s InlineRenderContext) handle() uint64 { return s.h }
 
 // FontSize is <gpui_kit::base::InlineRenderContext>::font_size.
 func (s InlineRenderContext) FontSize(cx *Cx) float32 {
+	useBaseText()
 	o := newReq(1663)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4665,6 +5140,7 @@ func (s InlineRenderContext) FontSize(cx *Cx) float32 {
 
 // LineHeight is <gpui_kit::base::InlineRenderContext>::line_height.
 func (s InlineRenderContext) LineHeight(cx *Cx) float32 {
+	useBaseText()
 	o := newReq(1664)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4673,6 +5149,7 @@ func (s InlineRenderContext) LineHeight(cx *Cx) float32 {
 
 // RemSize is <gpui_kit::base::InlineRenderContext>::rem_size.
 func (s InlineRenderContext) RemSize(cx *Cx) float32 {
+	useBaseText()
 	o := newReq(1665)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4681,6 +5158,7 @@ func (s InlineRenderContext) RemSize(cx *Cx) float32 {
 
 // TextStyle is <gpui_kit::base::InlineRenderContext>::text_style.
 func (s InlineRenderContext) TextStyle(cx *Cx) TextStyle {
+	useBaseText()
 	o := newReq(1666)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4694,6 +5172,7 @@ func (s InlineTokenClickEvent) handle() uint64 { return s.h }
 
 // Bounds is <gpui_kit::base::input::InlineTokenClickEvent>::bounds.
 func (s InlineTokenClickEvent) Bounds(cx *Cx) Bounds {
+	useBaseInput()
 	o := newReq(1321)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4702,6 +5181,7 @@ func (s InlineTokenClickEvent) Bounds(cx *Cx) Bounds {
 
 // Click is <gpui_kit::base::input::InlineTokenClickEvent>::click.
 func (s InlineTokenClickEvent) Click(cx *Cx) ClickEvent {
+	useBaseInput()
 	o := newReq(1283)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4710,6 +5190,7 @@ func (s InlineTokenClickEvent) Click(cx *Cx) ClickEvent {
 
 // Range is <gpui_kit::base::input::InlineTokenClickEvent>::range.
 func (s InlineTokenClickEvent) Range(cx *Cx) Range {
+	useBaseInput()
 	o := newReq(1284)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4718,6 +5199,7 @@ func (s InlineTokenClickEvent) Range(cx *Cx) Range {
 
 // Token is <gpui_kit::base::input::InlineTokenClickEvent>::token.
 func (s InlineTokenClickEvent) Token(cx *Cx) InlineTokenRead {
+	useBaseInput()
 	o := newReq(1346)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4731,6 +5213,7 @@ func (s InlineTokenContext) handle() uint64 { return s.h }
 
 // AvailableWidth is <gpui_kit::base::input::InlineTokenContext>::available_width.
 func (s InlineTokenContext) AvailableWidth(cx *Cx) float32 {
+	useBaseInput()
 	o := newReq(1604)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4739,6 +5222,7 @@ func (s InlineTokenContext) AvailableWidth(cx *Cx) float32 {
 
 // IsDisabled is <gpui_kit::base::input::InlineTokenContext>::is_disabled.
 func (s InlineTokenContext) IsDisabled(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1605)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4747,6 +5231,7 @@ func (s InlineTokenContext) IsDisabled(cx *Cx) bool {
 
 // IsReadonly is <gpui_kit::base::input::InlineTokenContext>::is_readonly.
 func (s InlineTokenContext) IsReadonly(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1606)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4755,6 +5240,7 @@ func (s InlineTokenContext) IsReadonly(cx *Cx) bool {
 
 // IsSelected is <gpui_kit::base::input::InlineTokenContext>::is_selected.
 func (s InlineTokenContext) IsSelected(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1607)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4763,6 +5249,7 @@ func (s InlineTokenContext) IsSelected(cx *Cx) bool {
 
 // LineHeight is <gpui_kit::base::input::InlineTokenContext>::line_height.
 func (s InlineTokenContext) LineHeight(cx *Cx) float32 {
+	useBaseInput()
 	o := newReq(1608)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4771,6 +5258,7 @@ func (s InlineTokenContext) LineHeight(cx *Cx) float32 {
 
 // Range is <gpui_kit::base::input::InlineTokenContext>::range.
 func (s InlineTokenContext) Range(cx *Cx) Range {
+	useBaseInput()
 	o := newReq(1609)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4779,6 +5267,7 @@ func (s InlineTokenContext) Range(cx *Cx) Range {
 
 // Token is <gpui_kit::base::input::InlineTokenContext>::token.
 func (s InlineTokenContext) Token(cx *Cx) InlineTokenRead {
+	useBaseInput()
 	o := newReq(1610)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4792,6 +5281,7 @@ func (s InlineTokenHoverEvent) handle() uint64 { return s.h }
 
 // Bounds is <gpui_kit::base::input::InlineTokenHoverEvent>::bounds.
 func (s InlineTokenHoverEvent) Bounds(cx *Cx) Bounds {
+	useBaseInput()
 	o := newReq(1285)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4800,6 +5290,7 @@ func (s InlineTokenHoverEvent) Bounds(cx *Cx) Bounds {
 
 // IsHovered is <gpui_kit::base::input::InlineTokenHoverEvent>::is_hovered.
 func (s InlineTokenHoverEvent) IsHovered(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1286)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4808,6 +5299,7 @@ func (s InlineTokenHoverEvent) IsHovered(cx *Cx) bool {
 
 // Range is <gpui_kit::base::input::InlineTokenHoverEvent>::range.
 func (s InlineTokenHoverEvent) Range(cx *Cx) Range {
+	useBaseInput()
 	o := newReq(1287)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4816,6 +5308,7 @@ func (s InlineTokenHoverEvent) Range(cx *Cx) Range {
 
 // RangeUtf16 is <gpui_kit::base::input::InlineTokenHoverEvent>::range_utf16.
 func (s InlineTokenHoverEvent) RangeUtf16(cx *Cx) TupleIntInt {
+	useBaseInput()
 	o := newReq(1288)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4824,6 +5317,7 @@ func (s InlineTokenHoverEvent) RangeUtf16(cx *Cx) TupleIntInt {
 
 // Token is <gpui_kit::base::input::InlineTokenHoverEvent>::token.
 func (s InlineTokenHoverEvent) Token(cx *Cx) InlineTokenRead {
+	useBaseInput()
 	o := newReq(1347)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4837,6 +5331,7 @@ func (s InlineTokenRead) handle() uint64 { return s.h }
 
 // ID is <gpui_kit::base::input::InlineToken>::id.
 func (s InlineTokenRead) ID(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1373)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4845,6 +5340,7 @@ func (s InlineTokenRead) ID(cx *Cx) string {
 
 // Label is <gpui_kit::base::input::InlineToken>::label.
 func (s InlineTokenRead) Label(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1374)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4853,6 +5349,7 @@ func (s InlineTokenRead) Label(cx *Cx) string {
 
 // Text is <gpui_kit::base::input::InlineToken>::text.
 func (s InlineTokenRead) Text(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1375)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4866,6 +5363,7 @@ func (s InlineTokenSpan) handle() uint64 { return s.h }
 
 // Range is <gpui_kit::base::input::InlineTokenSpan>::range.
 func (s InlineTokenSpan) Range(cx *Cx) Range {
+	useBaseInput()
 	o := newReq(902)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4874,6 +5372,7 @@ func (s InlineTokenSpan) Range(cx *Cx) Range {
 
 // Token is <gpui_kit::base::input::InlineTokenSpan>::token.
 func (s InlineTokenSpan) Token(cx *Cx) InlineTokenRead {
+	useBaseInput()
 	o := newReq(1348)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4887,6 +5386,7 @@ func (s InputContent) handle() uint64 { return s.h }
 
 // Text is <gpui_kit::base::input::InputContent>::text.
 func (s InputContent) Text(cx *Cx) string {
+	useBaseInput()
 	o := newReq(904)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4895,6 +5395,7 @@ func (s InputContent) Text(cx *Cx) string {
 
 // Tokens is <gpui_kit::base::input::InputContent>::tokens.
 func (s InputContent) Tokens(cx *Cx) []InlineTokenSpan {
+	useBaseInput()
 	o := newReq(905)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4903,6 +5404,7 @@ func (s InputContent) Tokens(cx *Cx) []InlineTokenSpan {
 
 // NewInputContent is <gpui_kit::base::input::InputContent>::new.
 func NewInputContent(cx *Cx, text string) InputContent {
+	useBaseInput()
 	o := newReq(903)
 	o.str(text)
 	o.u16(0) // no builder ops follow
@@ -4916,6 +5418,7 @@ func (s InputContextMenuCapabilitiesRead) handle() uint64 { return s.h }
 
 // HasCodeActions is <gpui_kit::base::input::InputContextMenuCapabilities>::has_code_actions.
 func (s InputContextMenuCapabilitiesRead) HasCodeActions(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1376)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4924,6 +5427,7 @@ func (s InputContextMenuCapabilitiesRead) HasCodeActions(cx *Cx) bool {
 
 // HasDefinition is <gpui_kit::base::input::InputContextMenuCapabilities>::has_definition.
 func (s InputContextMenuCapabilitiesRead) HasDefinition(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1377)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4932,6 +5436,7 @@ func (s InputContextMenuCapabilitiesRead) HasDefinition(cx *Cx) bool {
 
 // HasSelection is <gpui_kit::base::input::InputContextMenuCapabilities>::has_selection.
 func (s InputContextMenuCapabilitiesRead) HasSelection(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1378)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4940,6 +5445,7 @@ func (s InputContextMenuCapabilitiesRead) HasSelection(cx *Cx) bool {
 
 // IsCodeEditor is <gpui_kit::base::input::InputContextMenuCapabilities>::is_code_editor.
 func (s InputContextMenuCapabilitiesRead) IsCodeEditor(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1379)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4948,6 +5454,7 @@ func (s InputContextMenuCapabilitiesRead) IsCodeEditor(cx *Cx) bool {
 
 // IsCopyable is <gpui_kit::base::input::InputContextMenuCapabilities>::is_copyable.
 func (s InputContextMenuCapabilitiesRead) IsCopyable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1380)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4956,6 +5463,7 @@ func (s InputContextMenuCapabilitiesRead) IsCopyable(cx *Cx) bool {
 
 // IsDisabled is <gpui_kit::base::input::InputContextMenuCapabilities>::is_disabled.
 func (s InputContextMenuCapabilitiesRead) IsDisabled(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1381)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4964,6 +5472,7 @@ func (s InputContextMenuCapabilitiesRead) IsDisabled(cx *Cx) bool {
 
 // IsEditable is <gpui_kit::base::input::InputContextMenuCapabilities>::is_editable.
 func (s InputContextMenuCapabilitiesRead) IsEditable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1382)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4972,6 +5481,7 @@ func (s InputContextMenuCapabilitiesRead) IsEditable(cx *Cx) bool {
 
 // IsMasked is <gpui_kit::base::input::InputContextMenuCapabilities>::is_masked.
 func (s InputContextMenuCapabilitiesRead) IsMasked(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1383)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4980,6 +5490,7 @@ func (s InputContextMenuCapabilitiesRead) IsMasked(cx *Cx) bool {
 
 // IsReadonly is <gpui_kit::base::input::InputContextMenuCapabilities>::is_readonly.
 func (s InputContextMenuCapabilitiesRead) IsReadonly(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1384)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -4993,6 +5504,7 @@ func (s InputPresentation) handle() uint64 { return s.h }
 
 // FocusHandle is <gpui_kit::base::input::InputPresentation>::focus_handle.
 func (s InputPresentation) FocusHandle(cx *Cx) FocusHandle {
+	useBaseInput()
 	o := newReq(1646)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5001,6 +5513,7 @@ func (s InputPresentation) FocusHandle(cx *Cx) FocusHandle {
 
 // IsCodeEditor is <gpui_kit::base::input::InputPresentation>::is_code_editor.
 func (s InputPresentation) IsCodeEditor(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(906)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5009,6 +5522,7 @@ func (s InputPresentation) IsCodeEditor(cx *Cx) bool {
 
 // IsDisabled is <gpui_kit::base::input::InputPresentation>::is_disabled.
 func (s InputPresentation) IsDisabled(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(907)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5017,6 +5531,7 @@ func (s InputPresentation) IsDisabled(cx *Cx) bool {
 
 // IsEditable is <gpui_kit::base::input::InputPresentation>::is_editable.
 func (s InputPresentation) IsEditable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(908)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5025,6 +5540,7 @@ func (s InputPresentation) IsEditable(cx *Cx) bool {
 
 // IsLoading is <gpui_kit::base::input::InputPresentation>::is_loading.
 func (s InputPresentation) IsLoading(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(909)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5033,6 +5549,7 @@ func (s InputPresentation) IsLoading(cx *Cx) bool {
 
 // IsMasked is <gpui_kit::base::input::InputPresentation>::is_masked.
 func (s InputPresentation) IsMasked(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(910)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5041,6 +5558,7 @@ func (s InputPresentation) IsMasked(cx *Cx) bool {
 
 // IsMultiLine is <gpui_kit::base::input::InputPresentation>::is_multi_line.
 func (s InputPresentation) IsMultiLine(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(911)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5049,6 +5567,7 @@ func (s InputPresentation) IsMultiLine(cx *Cx) bool {
 
 // IsReadonly is <gpui_kit::base::input::InputPresentation>::is_readonly.
 func (s InputPresentation) IsReadonly(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(912)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5057,6 +5576,7 @@ func (s InputPresentation) IsReadonly(cx *Cx) bool {
 
 // MaskPlaceholder is <gpui_kit::base::input::InputPresentation>::mask_placeholder.
 func (s InputPresentation) MaskPlaceholder(cx *Cx) Option[string] {
+	useBaseInput()
 	o := newReq(913)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5065,6 +5585,7 @@ func (s InputPresentation) MaskPlaceholder(cx *Cx) Option[string] {
 
 // Placeholder is <gpui_kit::base::input::InputPresentation>::placeholder.
 func (s InputPresentation) Placeholder(cx *Cx) string {
+	useBaseInput()
 	o := newReq(914)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5073,6 +5594,7 @@ func (s InputPresentation) Placeholder(cx *Cx) string {
 
 // TextAlign is <gpui_kit::base::input::InputPresentation>::text_align.
 func (s InputPresentation) TextAlign(cx *Cx) TextAlign {
+	useBaseInput()
 	o := newReq(915)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -5086,6 +5608,7 @@ func (s InputState) handle() uint64 { return s.h }
 
 // Content is <gpui_kit::base::input::InputState>::content.
 func (s InputState) Content(cx *Cx) InputContent {
+	useBaseInput()
 	o := newReq(916)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5094,6 +5617,7 @@ func (s InputState) Content(cx *Cx) InputContent {
 
 // ContextMenuCapabilities is <gpui_kit::base::input::InputState>::context_menu_capabilities.
 func (s InputState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilitiesRead {
+	useBaseInput()
 	o := newReq(1349)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5102,6 +5626,7 @@ func (s InputState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilities
 
 // Cursor is <gpui_kit::base::input::InputState>::cursor.
 func (s InputState) Cursor(cx *Cx) int {
+	useBaseInput()
 	o := newReq(482)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5110,6 +5635,7 @@ func (s InputState) Cursor(cx *Cx) int {
 
 // DiagnosticPopover is <gpui_kit::base::input::InputState>::diagnostic_popover.
 func (s InputState) DiagnosticPopover(cx *Cx) Option[DiagnosticEntryRc] {
+	useBaseInput()
 	o := newReq(1144)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5118,6 +5644,7 @@ func (s InputState) DiagnosticPopover(cx *Cx) Option[DiagnosticEntryRc] {
 
 // Diagnostics is <gpui_kit::base::input::InputState>::diagnostics.
 func (s InputState) Diagnostics(cx *Cx) Option[DiagnosticSet] {
+	useBaseInput()
 	o := newReq(917)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5126,6 +5653,7 @@ func (s InputState) Diagnostics(cx *Cx) Option[DiagnosticSet] {
 
 // DisplayMapBufferLineCount is (|s: &gpui_kit::base::input::InputState| <gpui_kit::base::input::DisplayMap>::buffer_line_count(<gpui_kit::base::input::InputState>::display_map(s))).
 func (s InputState) DisplayMapBufferLineCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1706)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5134,6 +5662,7 @@ func (s InputState) DisplayMapBufferLineCount(cx *Cx) int {
 
 // DisplayMapBufferLineToDisplayRow is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapBufferLineToDisplayRow(cx *Cx, line int) int {
+	useBaseInput()
 	o := newReq(1707)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -5143,6 +5672,7 @@ func (s InputState) DisplayMapBufferLineToDisplayRow(cx *Cx, line int) int {
 
 // DisplayMapBufferLineToDisplayRowRange is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row_range(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapBufferLineToDisplayRowRange(cx *Cx, line int) Option[Range] {
+	useBaseInput()
 	o := newReq(1708)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -5152,6 +5682,7 @@ func (s InputState) DisplayMapBufferLineToDisplayRowRange(cx *Cx, line int) Opti
 
 // DisplayMapBufferPosToDisplayPos is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::buffer_pos_to_display_pos(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapBufferPosToDisplayPos(cx *Cx, pos BufferPoint) DisplayPoint {
+	useBaseInput()
 	o := newReq(1709)
 	o.u64(s.h)
 	putBufferPoint(o, pos)
@@ -5161,6 +5692,7 @@ func (s InputState) DisplayMapBufferPosToDisplayPos(cx *Cx, pos BufferPoint) Dis
 
 // DisplayMapDisplayPosToBufferPos is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::display_pos_to_buffer_pos(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapDisplayPosToBufferPos(cx *Cx, pos DisplayPoint) BufferPoint {
+	useBaseInput()
 	o := newReq(1710)
 	o.u64(s.h)
 	putDisplayPoint(o, pos)
@@ -5170,6 +5702,7 @@ func (s InputState) DisplayMapDisplayPosToBufferPos(cx *Cx, pos DisplayPoint) Bu
 
 // DisplayMapDisplayRowCount is (|s: &gpui_kit::base::input::InputState| <gpui_kit::base::input::DisplayMap>::display_row_count(<gpui_kit::base::input::InputState>::display_map(s))).
 func (s InputState) DisplayMapDisplayRowCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1711)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5178,6 +5711,7 @@ func (s InputState) DisplayMapDisplayRowCount(cx *Cx) int {
 
 // DisplayMapDisplayRowToBufferLine is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::display_row_to_buffer_line(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapDisplayRowToBufferLine(cx *Cx, displayRow int) int {
+	useBaseInput()
 	o := newReq(1712)
 	o.u64(s.h)
 	putUsize(o, displayRow)
@@ -5187,6 +5721,7 @@ func (s InputState) DisplayMapDisplayRowToBufferLine(cx *Cx, displayRow int) int
 
 // DisplayMapDisplayRowToWrapRow is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::display_row_to_wrap_row(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapDisplayRowToWrapRow(cx *Cx, displayRow int) Option[int] {
+	useBaseInput()
 	o := newReq(1713)
 	o.u64(s.h)
 	putUsize(o, displayRow)
@@ -5196,6 +5731,7 @@ func (s InputState) DisplayMapDisplayRowToWrapRow(cx *Cx, displayRow int) Option
 
 // DisplayMapFoldedRanges is (|s: &gpui_kit::base::input::InputState| std::borrow::ToOwned::to_owned(<gpui_kit::base::input::DisplayMap>::folded_ranges(<gpui_kit::base::input::InputState>::display_map(s)))).
 func (s InputState) DisplayMapFoldedRanges(cx *Cx) []FoldRange {
+	useBaseInput()
 	o := newReq(1714)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5204,6 +5740,7 @@ func (s InputState) DisplayMapFoldedRanges(cx *Cx) []FoldRange {
 
 // DisplayMapIsBufferLineHidden is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::is_buffer_line_hidden(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapIsBufferLineHidden(cx *Cx, line int) bool {
+	useBaseInput()
 	o := newReq(1715)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -5213,6 +5750,7 @@ func (s InputState) DisplayMapIsBufferLineHidden(cx *Cx, line int) bool {
 
 // DisplayMapIsFoldCandidate is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::is_fold_candidate(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapIsFoldCandidate(cx *Cx, startLine int) bool {
+	useBaseInput()
 	o := newReq(1716)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -5222,6 +5760,7 @@ func (s InputState) DisplayMapIsFoldCandidate(cx *Cx, startLine int) bool {
 
 // DisplayMapIsFoldedAt is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::is_folded_at(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapIsFoldedAt(cx *Cx, startLine int) bool {
+	useBaseInput()
 	o := newReq(1717)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -5231,6 +5770,7 @@ func (s InputState) DisplayMapIsFoldedAt(cx *Cx, startLine int) bool {
 
 // DisplayMapNearestVisibleDisplayRow is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::nearest_visible_display_row(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapNearestVisibleDisplayRow(cx *Cx, wrapRow int) int {
+	useBaseInput()
 	o := newReq(1718)
 	o.u64(s.h)
 	putUsize(o, wrapRow)
@@ -5240,6 +5780,7 @@ func (s InputState) DisplayMapNearestVisibleDisplayRow(cx *Cx, wrapRow int) int 
 
 // DisplayMapText is (|s: &gpui_kit::base::input::InputState| std::borrow::ToOwned::to_owned(<gpui_kit::base::input::DisplayMap>::text(<gpui_kit::base::input::InputState>::display_map(s)))).
 func (s InputState) DisplayMapText(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1719)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5248,6 +5789,7 @@ func (s InputState) DisplayMapText(cx *Cx) string {
 
 // DisplayMapVisibleWrapRowCountForBufferLine is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::visible_wrap_row_count_for_buffer_line(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapVisibleWrapRowCountForBufferLine(cx *Cx, line int) int {
+	useBaseInput()
 	o := newReq(1720)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -5257,6 +5799,7 @@ func (s InputState) DisplayMapVisibleWrapRowCountForBufferLine(cx *Cx, line int)
 
 // DisplayMapWrapRowCount is (|s: &gpui_kit::base::input::InputState| <gpui_kit::base::input::DisplayMap>::wrap_row_count(<gpui_kit::base::input::InputState>::display_map(s))).
 func (s InputState) DisplayMapWrapRowCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1721)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5265,6 +5808,7 @@ func (s InputState) DisplayMapWrapRowCount(cx *Cx) int {
 
 // DisplayMapWrapRowToDisplayRow is (|s: &gpui_kit::base::input::InputState, a0| <gpui_kit::base::input::DisplayMap>::wrap_row_to_display_row(<gpui_kit::base::input::InputState>::display_map(s), a0)).
 func (s InputState) DisplayMapWrapRowToDisplayRow(cx *Cx, wrapRow int) Option[int] {
+	useBaseInput()
 	o := newReq(1722)
 	o.u64(s.h)
 	putUsize(o, wrapRow)
@@ -5274,6 +5818,7 @@ func (s InputState) DisplayMapWrapRowToDisplayRow(cx *Cx, wrapRow int) Option[in
 
 // InputBounds is <gpui_kit::base::input::InputState>::input_bounds.
 func (s InputState) InputBounds(cx *Cx) Bounds {
+	useBaseInput()
 	o := newReq(486)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5282,6 +5827,7 @@ func (s InputState) InputBounds(cx *Cx) Bounds {
 
 // IsCodeEditor is <gpui_kit::base::input::InputState>::is_code_editor.
 func (s InputState) IsCodeEditor(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(488)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5290,6 +5836,7 @@ func (s InputState) IsCodeEditor(cx *Cx) bool {
 
 // IsCopyable is <gpui_kit::base::input::InputState>::is_copyable.
 func (s InputState) IsCopyable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(489)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5298,6 +5845,7 @@ func (s InputState) IsCopyable(cx *Cx) bool {
 
 // IsEditable is <gpui_kit::base::input::InputState>::is_editable.
 func (s InputState) IsEditable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(490)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5306,6 +5854,7 @@ func (s InputState) IsEditable(cx *Cx) bool {
 
 // IsMultiLine is <gpui_kit::base::input::InputState>::is_multi_line.
 func (s InputState) IsMultiLine(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(491)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5314,6 +5863,7 @@ func (s InputState) IsMultiLine(cx *Cx) bool {
 
 // IsReplaceable is <gpui_kit::base::input::InputState>::is_replaceable.
 func (s InputState) IsReplaceable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(492)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5322,6 +5872,7 @@ func (s InputState) IsReplaceable(cx *Cx) bool {
 
 // IsSelectionReversed is <gpui_kit::base::input::InputState>::is_selection_reversed.
 func (s InputState) IsSelectionReversed(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(493)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5330,6 +5881,7 @@ func (s InputState) IsSelectionReversed(cx *Cx) bool {
 
 // IsSingleLine is <gpui_kit::base::input::InputState>::is_single_line.
 func (s InputState) IsSingleLine(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(494)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5338,6 +5890,7 @@ func (s InputState) IsSingleLine(cx *Cx) bool {
 
 // LineHeight is <gpui_kit::base::input::InputState>::line_height.
 func (s InputState) LineHeight(cx *Cx) Option[float32] {
+	useBaseInput()
 	o := newReq(495)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5346,6 +5899,7 @@ func (s InputState) LineHeight(cx *Cx) Option[float32] {
 
 // Presentation is <gpui_kit::base::input::InputState>::presentation.
 func (s InputState) Presentation(cx *Cx) InputPresentation {
+	useBaseInput()
 	o := newReq(918)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5354,6 +5908,7 @@ func (s InputState) Presentation(cx *Cx) InputPresentation {
 
 // RangeToBounds is <gpui_kit::base::input::InputState>::range_to_bounds.
 func (s InputState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
+	useBaseInput()
 	o := newReq(498)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -5363,6 +5918,7 @@ func (s InputState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
 
 // ScrollOffset is <gpui_kit::base::input::InputState>::scroll_offset.
 func (s InputState) ScrollOffset(cx *Cx) GpuiPoint {
+	useBaseInput()
 	o := newReq(502)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5371,6 +5927,7 @@ func (s InputState) ScrollOffset(cx *Cx) GpuiPoint {
 
 // SearchActivationRevision is <gpui_kit::base::input::InputState>::search_activation_revision.
 func (s InputState) SearchActivationRevision(cx *Cx) uint64 {
+	useBaseInput()
 	o := newReq(503)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5379,6 +5936,7 @@ func (s InputState) SearchActivationRevision(cx *Cx) uint64 {
 
 // SearchSession is <gpui_kit::base::input::InputState>::search_session.
 func (s InputState) SearchSession(cx *Cx) SearchSession {
+	useBaseInput()
 	o := newReq(504)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5387,6 +5945,7 @@ func (s InputState) SearchSession(cx *Cx) SearchSession {
 
 // SelectedRange is <gpui_kit::base::input::InputState>::selected_range.
 func (s InputState) SelectedRange(cx *Cx) Range {
+	useBaseInput()
 	o := newReq(622)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5395,6 +5954,7 @@ func (s InputState) SelectedRange(cx *Cx) Range {
 
 // SelectedText is <gpui_kit::base::input::InputState>::selected_text.
 func (s InputState) SelectedText(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1271)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5403,6 +5963,7 @@ func (s InputState) SelectedText(cx *Cx) string {
 
 // SelectedValue is <gpui_kit::base::input::InputState>::selected_value.
 func (s InputState) SelectedValue(cx *Cx) string {
+	useBaseInput()
 	o := newReq(507)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5411,6 +5972,7 @@ func (s InputState) SelectedValue(cx *Cx) string {
 
 // Text is <gpui_kit::base::input::InputState>::text.
 func (s InputState) Text(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1272)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5419,6 +5981,7 @@ func (s InputState) Text(cx *Cx) string {
 
 // TextBounds is <gpui_kit::base::input::InputState>::text_bounds.
 func (s InputState) TextBounds(cx *Cx) Option[Bounds] {
+	useBaseInput()
 	o := newReq(527)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5427,6 +5990,7 @@ func (s InputState) TextBounds(cx *Cx) Option[Bounds] {
 
 // TextInputConfiguration is <gpui_kit::base::input::InputState>::text_input_configuration.
 func (s InputState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
+	useBaseInput()
 	o := newReq(528)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5435,6 +5999,7 @@ func (s InputState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
 
 // Tokens is <gpui_kit::base::input::InputState>::tokens.
 func (s InputState) Tokens(cx *Cx) []InlineTokenSpan {
+	useBaseInput()
 	o := newReq(920)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5443,6 +6008,7 @@ func (s InputState) Tokens(cx *Cx) []InlineTokenSpan {
 
 // TouchSelection is <gpui_kit::base::input::InputState>::touch_selection.
 func (s InputState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
+	useBaseInput()
 	o := newReq(921)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5451,6 +6017,7 @@ func (s InputState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
 
 // UnmaskValue is <gpui_kit::base::input::InputState>::unmask_value.
 func (s InputState) UnmaskValue(cx *Cx) string {
+	useBaseInput()
 	o := newReq(530)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5459,6 +6026,7 @@ func (s InputState) UnmaskValue(cx *Cx) string {
 
 // Value is <gpui_kit::base::input::InputState>::value.
 func (s InputState) Value(cx *Cx) string {
+	useBaseInput()
 	o := newReq(532)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5467,6 +6035,7 @@ func (s InputState) Value(cx *Cx) string {
 
 // TryValue is Value for a handler the component calls from inside its own update: ok is false while the state is busy.
 func (s InputState) TryValue(cx *Cx) (v string, ok bool) {
+	useBaseInput()
 	o := newReq(532)
 	o.u64(s.h)
 	r, ok := stateTry(s.h, cx, o)
@@ -5478,6 +6047,7 @@ func (s InputState) TryValue(cx *Cx) (v string, ok bool) {
 
 // VisibleRowRange is <gpui_kit::base::input::InputState>::visible_row_range.
 func (s InputState) VisibleRowRange(cx *Cx) Option[Range] {
+	useBaseInput()
 	o := newReq(630)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -5486,6 +6056,7 @@ func (s InputState) VisibleRowRange(cx *Cx) Option[Range] {
 
 // HasSelectionFocus is <gpui_kit::base::input::InputState>::has_selection_focus.
 func (s InputState) HasSelectionFocus(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1035)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -5494,6 +6065,7 @@ func (s InputState) HasSelectionFocus(cx *Cx) bool {
 
 // NextSearchMatch is <gpui_kit::base::input::InputState>::next_search_match.
 func (s InputState) NextSearchMatch(cx *Cx) Option[Range] {
+	useBaseInput()
 	o := newReq(618)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -5502,6 +6074,7 @@ func (s InputState) NextSearchMatch(cx *Cx) Option[Range] {
 
 // PreviousSearchMatch is <gpui_kit::base::input::InputState>::previous_search_match.
 func (s InputState) PreviousSearchMatch(cx *Cx) Option[Range] {
+	useBaseInput()
 	o := newReq(619)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -5510,6 +6083,7 @@ func (s InputState) PreviousSearchMatch(cx *Cx) Option[Range] {
 
 // ReplaceAllSearchMatches is <gpui_kit::base::input::InputState>::replace_all_search_matches.
 func (s InputState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
+	useBaseInput()
 	o := newReq(620)
 	o.u64(s.h)
 	o.str(replacement)
@@ -5519,6 +6093,7 @@ func (s InputState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
 
 // ReplaceCurrentSearchMatch is <gpui_kit::base::input::InputState>::replace_current_search_match.
 func (s InputState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) bool {
+	useBaseInput()
 	o := newReq(621)
 	o.u64(s.h)
 	o.str(replacement)
@@ -5528,6 +6103,7 @@ func (s InputState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) bool {
 
 // ReplaceRangeWithToken is <gpui_kit::base::input::InputState>::replace_range_with_token.
 func (s InputState) ReplaceRangeWithToken(cx *Cx, range_ Range, token InlineToken) error {
+	useBaseInput()
 	o := newReq(1036)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -5538,6 +6114,7 @@ func (s InputState) ReplaceRangeWithToken(cx *Cx, range_ Range, token InlineToke
 
 // ReplaceWithToken is <gpui_kit::base::input::InputState>::replace_with_token.
 func (s InputState) ReplaceWithToken(cx *Cx, token InlineToken) error {
+	useBaseInput()
 	o := newReq(1037)
 	o.u64(s.h)
 	putVtape(o, token.n)
@@ -5547,6 +6124,7 @@ func (s InputState) ReplaceWithToken(cx *Cx, token InlineToken) error {
 
 // AddSelection is <gpui_kit::base::input::InputState>::add_selection.
 func (s InputState) AddSelection(cx *Cx, range_ Range) {
+	useBaseInput()
 	o := newReq(478)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -5555,6 +6133,7 @@ func (s InputState) AddSelection(cx *Cx, range_ Range) {
 
 // ApplyHighlighterFoldCandidates is <gpui_kit::base::input::InputState>::apply_highlighter_fold_candidates.
 func (s InputState) ApplyHighlighterFoldCandidates(cx *Cx, candidates []FoldRange) {
+	useBaseInput()
 	o := newReq(616)
 	o.u64(s.h)
 	o.u32(uint32(len(candidates)))
@@ -5566,6 +6145,7 @@ func (s InputState) ApplyHighlighterFoldCandidates(cx *Cx, candidates []FoldRang
 
 // BeginEdgeDrag is <gpui_kit::base::input::InputState>::begin_edge_drag.
 func (s InputState) BeginEdgeDrag(cx *Cx, edge SelectionEdge, finger GpuiPoint) {
+	useBaseInput()
 	o := newReq(617)
 	o.u64(s.h)
 	o.u16(uint16(edge))
@@ -5575,6 +6155,7 @@ func (s InputState) BeginEdgeDrag(cx *Cx, edge SelectionEdge, finger GpuiPoint) 
 
 // Clean is <gpui_kit::base::input::InputState>::clean.
 func (s InputState) Clean(cx *Cx) {
+	useBaseInput()
 	o := newReq(479)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5582,6 +6163,7 @@ func (s InputState) Clean(cx *Cx) {
 
 // CloseEditMenu is <gpui_kit::base::input::InputState>::close_edit_menu.
 func (s InputState) CloseEditMenu(cx *Cx) {
+	useBaseInput()
 	o := newReq(480)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5589,6 +6171,7 @@ func (s InputState) CloseEditMenu(cx *Cx) {
 
 // CloseSearch is <gpui_kit::base::input::InputState>::close_search.
 func (s InputState) CloseSearch(cx *Cx) {
+	useBaseInput()
 	o := newReq(481)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5596,6 +6179,7 @@ func (s InputState) CloseSearch(cx *Cx) {
 
 // EndEdgeDrag is <gpui_kit::base::input::InputState>::end_edge_drag.
 func (s InputState) EndEdgeDrag(cx *Cx) {
+	useBaseInput()
 	o := newReq(483)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5603,6 +6187,7 @@ func (s InputState) EndEdgeDrag(cx *Cx) {
 
 // EnsureHighlighterFactory is <gpui_kit::base::input::InputState>::ensure_highlighter_factory.
 func (s InputState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
+	useBaseInput()
 	o := newReq(1619)
 	o.u64(s.h)
 	o.u64(factory.h)
@@ -5611,6 +6196,7 @@ func (s InputState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
 
 // EnsureNumberMask is <gpui_kit::base::input::InputState>::ensure_number_mask.
 func (s InputState) EnsureNumberMask(cx *Cx) {
+	useBaseInput()
 	o := newReq(484)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5618,6 +6204,7 @@ func (s InputState) EnsureNumberMask(cx *Cx) {
 
 // Focus is <gpui_kit::base::input::InputState>::focus.
 func (s InputState) Focus(cx *Cx) {
+	useBaseInput()
 	o := newReq(485)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5625,6 +6212,7 @@ func (s InputState) Focus(cx *Cx) {
 
 // Insert is <gpui_kit::base::input::InputState>::insert.
 func (s InputState) Insert(cx *Cx, text string) {
+	useBaseInput()
 	o := newReq(487)
 	o.u64(s.h)
 	o.str(text)
@@ -5633,6 +6221,7 @@ func (s InputState) Insert(cx *Cx, text string) {
 
 // OnContextMenu is <gpui_kit::base::input::InputState>::on_context_menu.
 func (s InputState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
+	useBaseInput()
 	o := newReq(1350)
 	o.u64(s.h)
 	putKeptHandler(o, handler, 114)
@@ -5641,6 +6230,7 @@ func (s InputState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
 
 // OpenSearch is <gpui_kit::base::input::InputState>::open_search.
 func (s InputState) OpenSearch(cx *Cx, replaceMode bool) {
+	useBaseInput()
 	o := newReq(497)
 	o.u64(s.h)
 	o.bool(replaceMode)
@@ -5649,6 +6239,7 @@ func (s InputState) OpenSearch(cx *Cx, replaceMode bool) {
 
 // Refresh is <gpui_kit::base::input::InputState>::refresh.
 func (s InputState) Refresh(cx *Cx) {
+	useBaseInput()
 	o := newReq(499)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5656,6 +6247,7 @@ func (s InputState) Refresh(cx *Cx) {
 
 // Replace is <gpui_kit::base::input::InputState>::replace.
 func (s InputState) Replace(cx *Cx, text string) {
+	useBaseInput()
 	o := newReq(500)
 	o.u64(s.h)
 	o.str(text)
@@ -5664,6 +6256,7 @@ func (s InputState) Replace(cx *Cx, text string) {
 
 // ReplaceAll is <gpui_kit::base::input::InputState>::replace_all.
 func (s InputState) ReplaceAll(cx *Cx, text string) {
+	useBaseInput()
 	o := newReq(501)
 	o.u64(s.h)
 	o.str(text)
@@ -5672,6 +6265,7 @@ func (s InputState) ReplaceAll(cx *Cx, text string) {
 
 // SelectAll is <gpui_kit::base::input::InputState>::select_all.
 func (s InputState) SelectAll(cx *Cx) {
+	useBaseInput()
 	o := newReq(505)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5679,6 +6273,7 @@ func (s InputState) SelectAll(cx *Cx) {
 
 // SelectAllFromEditMenu is <gpui_kit::base::input::InputState>::select_all_from_edit_menu.
 func (s InputState) SelectAllFromEditMenu(cx *Cx) {
+	useBaseInput()
 	o := newReq(506)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5686,6 +6281,7 @@ func (s InputState) SelectAllFromEditMenu(cx *Cx) {
 
 // SetAccessibility is <gpui_kit::base::input::InputState>::set_accessibility.
 func (s InputState) SetAccessibility(cx *Cx, accessibility InputAccessibility) {
+	useBaseInput()
 	o := newReq(919)
 	o.u64(s.h)
 	putVtape(o, accessibility.n)
@@ -5694,6 +6290,7 @@ func (s InputState) SetAccessibility(cx *Cx, accessibility InputAccessibility) {
 
 // SetCleanOnEscape is <gpui_kit::base::input::InputState>::set_clean_on_escape.
 func (s InputState) SetCleanOnEscape(cx *Cx, clean bool) {
+	useBaseInput()
 	o := newReq(508)
 	o.u64(s.h)
 	o.bool(clean)
@@ -5702,6 +6299,7 @@ func (s InputState) SetCleanOnEscape(cx *Cx, clean bool) {
 
 // SetContextMenuEnabled is <gpui_kit::base::input::InputState>::set_context_menu_enabled.
 func (s InputState) SetContextMenuEnabled(cx *Cx, enabled bool) {
+	useBaseInput()
 	o := newReq(509)
 	o.u64(s.h)
 	o.bool(enabled)
@@ -5710,6 +6308,7 @@ func (s InputState) SetContextMenuEnabled(cx *Cx, enabled bool) {
 
 // SetCursorSurroundingLines is <gpui_kit::base::input::InputState>::set_cursor_surrounding_lines.
 func (s InputState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
+	useBaseInput()
 	o := newReq(510)
 	o.u64(s.h)
 	if x0, ok := lines.Get(); ok {
@@ -5723,6 +6322,7 @@ func (s InputState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
 
 // SetDisabled is <gpui_kit::base::input::InputState>::set_disabled.
 func (s InputState) SetDisabled(cx *Cx, disabled bool) {
+	useBaseInput()
 	o := newReq(511)
 	o.u64(s.h)
 	o.bool(disabled)
@@ -5731,6 +6331,7 @@ func (s InputState) SetDisabled(cx *Cx, disabled bool) {
 
 // SetEditorStyle is <gpui_kit::base::input::InputState>::set_editor_style.
 func (s InputState) SetEditorStyle(cx *Cx, style InputEditorStyle) {
+	useBaseInput()
 	o := newReq(1683)
 	o.u64(s.h)
 	putInputEditorStyle(o, style)
@@ -5739,6 +6340,7 @@ func (s InputState) SetEditorStyle(cx *Cx, style InputEditorStyle) {
 
 // SetFoldBackground is <gpui_kit::base::input::InputState>::set_fold_background.
 func (s InputState) SetFoldBackground(cx *Cx, color Option[Color]) {
+	useBaseInput()
 	o := newReq(623)
 	o.u64(s.h)
 	if x0, ok := color.Get(); ok {
@@ -5752,6 +6354,7 @@ func (s InputState) SetFoldBackground(cx *Cx, color Option[Color]) {
 
 // SetHighlighter is <gpui_kit::base::input::InputState>::set_highlighter.
 func (s InputState) SetHighlighter(cx *Cx, newLanguage string) {
+	useBaseInput()
 	o := newReq(512)
 	o.u64(s.h)
 	o.str(newLanguage)
@@ -5760,6 +6363,7 @@ func (s InputState) SetHighlighter(cx *Cx, newLanguage string) {
 
 // SetHighlighterFactory is <gpui_kit::base::input::InputState>::set_highlighter_factory.
 func (s InputState) SetHighlighterFactory(cx *Cx, factory RowSource) {
+	useBaseInput()
 	o := newReq(1620)
 	o.u64(s.h)
 	o.u64(factory.h)
@@ -5768,6 +6372,7 @@ func (s InputState) SetHighlighterFactory(cx *Cx, factory RowSource) {
 
 // SetLoading is <gpui_kit::base::input::InputState>::set_loading.
 func (s InputState) SetLoading(cx *Cx, loading bool) {
+	useBaseInput()
 	o := newReq(513)
 	o.u64(s.h)
 	o.bool(loading)
@@ -5776,6 +6381,7 @@ func (s InputState) SetLoading(cx *Cx, loading bool) {
 
 // SetMaskPattern is <gpui_kit::base::input::InputState>::set_mask_pattern.
 func (s InputState) SetMaskPattern(cx *Cx, pattern MaskPatternInto) {
+	useBaseInput()
 	o := newReq(624)
 	o.u64(s.h)
 	putMaskPatternInto(o, pattern)
@@ -5784,6 +6390,7 @@ func (s InputState) SetMaskPattern(cx *Cx, pattern MaskPatternInto) {
 
 // SetMasked is <gpui_kit::base::input::InputState>::set_masked.
 func (s InputState) SetMasked(cx *Cx, masked bool) {
+	useBaseInput()
 	o := newReq(514)
 	o.u64(s.h)
 	o.bool(masked)
@@ -5792,6 +6399,7 @@ func (s InputState) SetMasked(cx *Cx, masked bool) {
 
 // SetMax is <gpui_kit::base::input::InputState>::set_max.
 func (s InputState) SetMax(cx *Cx, max_ Option[float64]) {
+	useBaseInput()
 	o := newReq(515)
 	o.u64(s.h)
 	if x0, ok := max_.Get(); ok {
@@ -5805,6 +6413,7 @@ func (s InputState) SetMax(cx *Cx, max_ Option[float64]) {
 
 // SetMin is <gpui_kit::base::input::InputState>::set_min.
 func (s InputState) SetMin(cx *Cx, min_ Option[float64]) {
+	useBaseInput()
 	o := newReq(516)
 	o.u64(s.h)
 	if x0, ok := min_.Get(); ok {
@@ -5818,6 +6427,7 @@ func (s InputState) SetMin(cx *Cx, min_ Option[float64]) {
 
 // SetPlaceholder is <gpui_kit::base::input::InputState>::set_placeholder.
 func (s InputState) SetPlaceholder(cx *Cx, placeholder string) {
+	useBaseInput()
 	o := newReq(517)
 	o.u64(s.h)
 	o.str(placeholder)
@@ -5826,6 +6436,7 @@ func (s InputState) SetPlaceholder(cx *Cx, placeholder string) {
 
 // SetReadonly is <gpui_kit::base::input::InputState>::set_readonly.
 func (s InputState) SetReadonly(cx *Cx, readonly bool) {
+	useBaseInput()
 	o := newReq(518)
 	o.u64(s.h)
 	o.bool(readonly)
@@ -5834,6 +6445,7 @@ func (s InputState) SetReadonly(cx *Cx, readonly bool) {
 
 // SetScrollBeyondLastLine is <gpui_kit::base::input::InputState>::set_scroll_beyond_last_line.
 func (s InputState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
+	useBaseInput()
 	o := newReq(519)
 	o.u64(s.h)
 	if x0, ok := rows.Get(); ok {
@@ -5847,6 +6459,7 @@ func (s InputState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
 
 // SetScrollOffset is <gpui_kit::base::input::InputState>::set_scroll_offset.
 func (s InputState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
+	useBaseInput()
 	o := newReq(625)
 	o.u64(s.h)
 	putGpuiPoint(o, offset)
@@ -5855,6 +6468,7 @@ func (s InputState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 
 // SetSearchQuery is <gpui_kit::base::input::InputState>::set_search_query.
 func (s InputState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) {
+	useBaseInput()
 	o := newReq(520)
 	o.u64(s.h)
 	o.str(query)
@@ -5864,6 +6478,7 @@ func (s InputState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) {
 
 // SetSelectedRange is <gpui_kit::base::input::InputState>::set_selected_range.
 func (s InputState) SetSelectedRange(cx *Cx, range_ Range) {
+	useBaseInput()
 	o := newReq(521)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -5872,6 +6487,7 @@ func (s InputState) SetSelectedRange(cx *Cx, range_ Range) {
 
 // SetSelectedRangeWithDirection is <gpui_kit::base::input::InputState>::set_selected_range_with_direction.
 func (s InputState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reversed bool) {
+	useBaseInput()
 	o := newReq(522)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -5881,6 +6497,7 @@ func (s InputState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reversed
 
 // SetSelectionFocus is <gpui_kit::base::input::InputState>::set_selection_focus.
 func (s InputState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
+	useBaseInput()
 	o := newReq(626)
 	o.u64(s.h)
 	if x0, ok := focus.Get(); ok {
@@ -5894,6 +6511,7 @@ func (s InputState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
 
 // SetShowWhitespaces is <gpui_kit::base::input::InputState>::set_show_whitespaces.
 func (s InputState) SetShowWhitespaces(cx *Cx, show bool) {
+	useBaseInput()
 	o := newReq(523)
 	o.u64(s.h)
 	o.bool(show)
@@ -5902,6 +6520,7 @@ func (s InputState) SetShowWhitespaces(cx *Cx, show bool) {
 
 // SetStep is <gpui_kit::base::input::InputState>::set_step.
 func (s InputState) SetStep(cx *Cx, step Option[NumberStep]) {
+	useBaseInput()
 	o := newReq(627)
 	o.u64(s.h)
 	if x0, ok := step.Get(); ok {
@@ -5915,6 +6534,7 @@ func (s InputState) SetStep(cx *Cx, step Option[NumberStep]) {
 
 // SetSubmitOnEnter is <gpui_kit::base::input::InputState>::set_submit_on_enter.
 func (s InputState) SetSubmitOnEnter(cx *Cx, submit bool) {
+	useBaseInput()
 	o := newReq(524)
 	o.u64(s.h)
 	o.bool(submit)
@@ -5923,6 +6543,7 @@ func (s InputState) SetSubmitOnEnter(cx *Cx, submit bool) {
 
 // SetTextAlign is <gpui_kit::base::input::InputState>::set_text_align.
 func (s InputState) SetTextAlign(cx *Cx, textAlign TextAlign) {
+	useBaseInput()
 	o := newReq(525)
 	o.u64(s.h)
 	o.u16(uint16(textAlign))
@@ -5931,6 +6552,7 @@ func (s InputState) SetTextAlign(cx *Cx, textAlign TextAlign) {
 
 // SetValidator is <gpui_kit::base::input::InputState>::set_validator.
 func (s InputState) SetValidator(cx *Cx, validate func(cx *Cx, e string) bool) {
+	useBaseInput()
 	o := newReq(1289)
 	o.u64(s.h)
 	putKeptHandler(o, validate, 98)
@@ -5939,6 +6561,7 @@ func (s InputState) SetValidator(cx *Cx, validate func(cx *Cx, e string) bool) {
 
 // SetValue is <gpui_kit::base::input::InputState>::set_value.
 func (s InputState) SetValue(cx *Cx, value InputContentInto) {
+	useBaseInput()
 	o := newReq(628)
 	o.u64(s.h)
 	putInputContentInto(o, value)
@@ -5947,6 +6570,7 @@ func (s InputState) SetValue(cx *Cx, value InputContentInto) {
 
 // ToggleMasked is <gpui_kit::base::input::InputState>::toggle_masked.
 func (s InputState) ToggleMasked(cx *Cx) {
+	useBaseInput()
 	o := newReq(529)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5954,6 +6578,7 @@ func (s InputState) ToggleMasked(cx *Cx) {
 
 // Unselect is <gpui_kit::base::input::InputState>::unselect.
 func (s InputState) Unselect(cx *Cx) {
+	useBaseInput()
 	o := newReq(531)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -5961,6 +6586,7 @@ func (s InputState) Unselect(cx *Cx) {
 
 // UpdateEdgeDrag is <gpui_kit::base::input::InputState>::update_edge_drag.
 func (s InputState) UpdateEdgeDrag(cx *Cx, finger GpuiPoint) {
+	useBaseInput()
 	o := newReq(629)
 	o.u64(s.h)
 	putGpuiPoint(o, finger)
@@ -6096,6 +6722,7 @@ func (b InputStateBuilder) Build() InputState { return InputState{b.sb.build()} 
 
 // NewInputState is <gpui_kit::base::input::InputState>::new.
 func NewInputState(cx *Cx) InputStateBuilder {
+	useBaseInput()
 	o := newReq(496)
 	return InputStateBuilder{newStateBuilder(cx, o)}
 }
@@ -6107,6 +6734,7 @@ func (s Keyframes) handle() uint64 { return s.h }
 
 // IsEmpty is <gpui_kit::base::Keyframes<f32>>::is_empty.
 func (s Keyframes) IsEmpty(cx *Cx) bool {
+	useBaseMotion()
 	o := newReq(1238)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6115,6 +6743,7 @@ func (s Keyframes) IsEmpty(cx *Cx) bool {
 
 // Len is <gpui_kit::base::Keyframes<f32>>::len.
 func (s Keyframes) Len(cx *Cx) int {
+	useBaseMotion()
 	o := newReq(1239)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6123,6 +6752,7 @@ func (s Keyframes) Len(cx *Cx) int {
 
 // Sample is <gpui_kit::base::Keyframes<f32>>::sample.
 func (s Keyframes) Sample(cx *Cx, progress float32) float32 {
+	useBaseMotion()
 	o := newReq(1240)
 	o.u64(s.h)
 	o.f32(progress)
@@ -6137,6 +6767,7 @@ func (s LeafGeometry) handle() uint64 { return s.h }
 
 // AtomAt is <gpui_kit::base::text::editor_host::LeafGeometry>::atom_at.
 func (s LeafGeometry) AtomAt(cx *Cx, at GpuiPoint) Option[Range] {
+	useBaseText()
 	o := newReq(1753)
 	o.u64(s.h)
 	putGpuiPoint(o, at)
@@ -6146,6 +6777,7 @@ func (s LeafGeometry) AtomAt(cx *Cx, at GpuiPoint) Option[Range] {
 
 // Bounds is <gpui_kit::base::text::editor_host::LeafGeometry>::bounds.
 func (s LeafGeometry) Bounds(cx *Cx) Bounds {
+	useBaseText()
 	o := newReq(1754)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6154,6 +6786,7 @@ func (s LeafGeometry) Bounds(cx *Cx) Bounds {
 
 // CaretForPosition is <gpui_kit::base::text::editor_host::LeafGeometry>::caret_for_position.
 func (s LeafGeometry) CaretForPosition(cx *Cx, at GpuiPoint) BaseCaret {
+	useBaseText()
 	o := newReq(1755)
 	o.u64(s.h)
 	putGpuiPoint(o, at)
@@ -6163,6 +6796,7 @@ func (s LeafGeometry) CaretForPosition(cx *Cx, at GpuiPoint) BaseCaret {
 
 // CaretHeight is <gpui_kit::base::text::editor_host::LeafGeometry>::caret_height.
 func (s LeafGeometry) CaretHeight(cx *Cx) float32 {
+	useBaseText()
 	o := newReq(1756)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6171,6 +6805,7 @@ func (s LeafGeometry) CaretHeight(cx *Cx) float32 {
 
 // IndexForPosition is <gpui_kit::base::text::editor_host::LeafGeometry>::index_for_position.
 func (s LeafGeometry) IndexForPosition(cx *Cx, at GpuiPoint) int {
+	useBaseText()
 	o := newReq(1757)
 	o.u64(s.h)
 	putGpuiPoint(o, at)
@@ -6180,6 +6815,7 @@ func (s LeafGeometry) IndexForPosition(cx *Cx, at GpuiPoint) int {
 
 // IsEmpty is <gpui_kit::base::text::editor_host::LeafGeometry>::is_empty.
 func (s LeafGeometry) IsEmpty(cx *Cx) bool {
+	useBaseText()
 	o := newReq(1758)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6188,6 +6824,7 @@ func (s LeafGeometry) IsEmpty(cx *Cx) bool {
 
 // Len is <gpui_kit::base::text::editor_host::LeafGeometry>::len.
 func (s LeafGeometry) Len(cx *Cx) int {
+	useBaseText()
 	o := newReq(1759)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6196,6 +6833,7 @@ func (s LeafGeometry) Len(cx *Cx) int {
 
 // LineHeight is <gpui_kit::base::text::editor_host::LeafGeometry>::line_height.
 func (s LeafGeometry) LineHeight(cx *Cx) float32 {
+	useBaseText()
 	o := newReq(1760)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6204,6 +6842,7 @@ func (s LeafGeometry) LineHeight(cx *Cx) float32 {
 
 // PositionForCaret is <gpui_kit::base::text::editor_host::LeafGeometry>::position_for_caret.
 func (s LeafGeometry) PositionForCaret(cx *Cx, caret BaseCaret) GpuiPoint {
+	useBaseText()
 	o := newReq(1761)
 	o.u64(s.h)
 	putBaseCaret(o, caret)
@@ -6213,6 +6852,7 @@ func (s LeafGeometry) PositionForCaret(cx *Cx, caret BaseCaret) GpuiPoint {
 
 // PositionForIndex is <gpui_kit::base::text::editor_host::LeafGeometry>::position_for_index.
 func (s LeafGeometry) PositionForIndex(cx *Cx, index int) GpuiPoint {
+	useBaseText()
 	o := newReq(1762)
 	o.u64(s.h)
 	putUsize(o, index)
@@ -6227,6 +6867,7 @@ func (s ListState) handle() uint64 { return s.h }
 
 // Delegate is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::delegate.
 func (s ListState) Delegate(cx *Cx) RowSource {
+	useComponentList()
 	o := newReq(1181)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6235,6 +6876,7 @@ func (s ListState) Delegate(cx *Cx) RowSource {
 
 // RightClickedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::right_clicked_index.
 func (s ListState) RightClickedIndex(cx *Cx) Option[BaseIndexPath] {
+	useComponentList()
 	o := newReq(692)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6243,6 +6885,7 @@ func (s ListState) RightClickedIndex(cx *Cx) Option[BaseIndexPath] {
 
 // ScrollHandle is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_handle.
 func (s ListState) ScrollHandle(cx *Cx) VirtualListScrollHandle {
+	useComponentList()
 	o := newReq(1022)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6251,6 +6894,7 @@ func (s ListState) ScrollHandle(cx *Cx) VirtualListScrollHandle {
 
 // SelectedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::selected_index.
 func (s ListState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
+	useComponentList()
 	o := newReq(694)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6259,6 +6903,7 @@ func (s ListState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
 
 // DelegateMut is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::delegate_mut.
 func (s ListState) DelegateMut(cx *Cx) RowSource {
+	useComponentList()
 	o := newReq(1182)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -6267,6 +6912,7 @@ func (s ListState) DelegateMut(cx *Cx) RowSource {
 
 // Focus is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::focus.
 func (s ListState) Focus(cx *Cx) {
+	useComponentList()
 	o := newReq(690)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6274,6 +6920,7 @@ func (s ListState) Focus(cx *Cx) {
 
 // ScrollToItem is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_to_item.
 func (s ListState) ScrollToItem(cx *Cx, ix BaseIndexPath, strategy ScrollStrategy) {
+	useComponentList()
 	o := newReq(1023)
 	o.u64(s.h)
 	putBaseIndexPath(o, ix)
@@ -6283,6 +6930,7 @@ func (s ListState) ScrollToItem(cx *Cx, ix BaseIndexPath, strategy ScrollStrateg
 
 // ScrollToSelectedItem is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_to_selected_item.
 func (s ListState) ScrollToSelectedItem(cx *Cx) {
+	useComponentList()
 	o := newReq(693)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6290,6 +6938,7 @@ func (s ListState) ScrollToSelectedItem(cx *Cx) {
 
 // SetItemToMeasureIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_item_to_measure_index.
 func (s ListState) SetItemToMeasureIndex(cx *Cx, ix BaseIndexPath) {
+	useComponentList()
 	o := newReq(1024)
 	o.u64(s.h)
 	putBaseIndexPath(o, ix)
@@ -6298,6 +6947,7 @@ func (s ListState) SetItemToMeasureIndex(cx *Cx, ix BaseIndexPath) {
 
 // SetQuery is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_query.
 func (s ListState) SetQuery(cx *Cx, query string) {
+	useComponentList()
 	o := newReq(695)
 	o.u64(s.h)
 	o.str(query)
@@ -6306,6 +6956,7 @@ func (s ListState) SetQuery(cx *Cx, query string) {
 
 // SetRightClickedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_right_clicked_index.
 func (s ListState) SetRightClickedIndex(cx *Cx, ix Option[BaseIndexPath]) {
+	useComponentList()
 	o := newReq(1025)
 	o.u64(s.h)
 	if x0, ok := ix.Get(); ok {
@@ -6319,6 +6970,7 @@ func (s ListState) SetRightClickedIndex(cx *Cx, ix Option[BaseIndexPath]) {
 
 // SetSearchable is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_searchable.
 func (s ListState) SetSearchable(cx *Cx, searchable bool) {
+	useComponentList()
 	o := newReq(696)
 	o.u64(s.h)
 	o.bool(searchable)
@@ -6327,6 +6979,7 @@ func (s ListState) SetSearchable(cx *Cx, searchable bool) {
 
 // SetSelectable is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_selectable.
 func (s ListState) SetSelectable(cx *Cx, selectable bool) {
+	useComponentList()
 	o := newReq(697)
 	o.u64(s.h)
 	o.bool(selectable)
@@ -6335,6 +6988,7 @@ func (s ListState) SetSelectable(cx *Cx, selectable bool) {
 
 // SetSelectedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_selected_index.
 func (s ListState) SetSelectedIndex(cx *Cx, ix Option[BaseIndexPath]) {
+	useComponentList()
 	o := newReq(1026)
 	o.u64(s.h)
 	if x0, ok := ix.Get(); ok {
@@ -6377,6 +7031,7 @@ func (b ListStateBuilder) Build() ListState { return ListState{b.sb.build()} }
 
 // NewListState is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::new.
 func NewListState(cx *Cx, delegate RowSource) ListStateBuilder {
+	useComponentList()
 	o := newReq(691)
 	o.u64(delegate.h)
 	return ListStateBuilder{newStateBuilder(cx, o)}
@@ -6389,6 +7044,7 @@ func (s MarkdownExtensionsArc) handle() uint64 { return s.h }
 
 // NewMarkdownExtensionsArc is std::sync::Arc::new.
 func NewMarkdownExtensionsArc(cx *Cx, value MarkdownExtensions) MarkdownExtensionsArc {
+	useBaseText()
 	o := newReq(1236)
 	putVtape(o, value.n)
 	o.u16(0) // no builder ops follow
@@ -6402,6 +7058,7 @@ func (s MarkdownNodeRead) handle() uint64 { return s.h }
 
 // AccessibilityName is <gpui_kit::base::MarkdownNode>::accessibility_name.
 func (s MarkdownNodeRead) AccessibilityName(cx *Cx) string {
+	useBaseRoot()
 	o := newReq(1362)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6410,6 +7067,7 @@ func (s MarkdownNodeRead) AccessibilityName(cx *Cx) string {
 
 // AsMarkdown is <gpui_kit::base::MarkdownNode>::as_markdown.
 func (s MarkdownNodeRead) AsMarkdown(cx *Cx) string {
+	useBaseRoot()
 	o := newReq(1363)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6418,6 +7076,7 @@ func (s MarkdownNodeRead) AsMarkdown(cx *Cx) string {
 
 // AsText is <gpui_kit::base::MarkdownNode>::as_text.
 func (s MarkdownNodeRead) AsText(cx *Cx) string {
+	useBaseRoot()
 	o := newReq(1364)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6426,6 +7085,7 @@ func (s MarkdownNodeRead) AsText(cx *Cx) string {
 
 // Name is <gpui_kit::base::MarkdownNode>::name.
 func (s MarkdownNodeRead) Name(cx *Cx) string {
+	useBaseRoot()
 	o := newReq(1365)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6434,6 +7094,7 @@ func (s MarkdownNodeRead) Name(cx *Cx) string {
 
 // SourceRange is <gpui_kit::base::MarkdownNode>::source_range.
 func (s MarkdownNodeRead) SourceRange(cx *Cx) Option[Range] {
+	useBaseRoot()
 	o := newReq(1366)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6447,6 +7108,7 @@ func (s MessageScrollerState) handle() uint64 { return s.h }
 
 // IsFollowingTail is <gpui_kit::component::message_scroller::MessageScrollerState>::is_following_tail.
 func (s MessageScrollerState) IsFollowingTail(cx *Cx) bool {
+	useComponentMessageScroller()
 	o := newReq(380)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6455,6 +7117,7 @@ func (s MessageScrollerState) IsFollowingTail(cx *Cx) bool {
 
 // IsScrolledUp is <gpui_kit::component::message_scroller::MessageScrollerState>::is_scrolled_up.
 func (s MessageScrollerState) IsScrolledUp(cx *Cx) bool {
+	useComponentMessageScroller()
 	o := newReq(381)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6463,6 +7126,7 @@ func (s MessageScrollerState) IsScrolledUp(cx *Cx) bool {
 
 // ItemCount is <gpui_kit::component::message_scroller::MessageScrollerState>::item_count.
 func (s MessageScrollerState) ItemCount(cx *Cx) int {
+	useComponentMessageScroller()
 	o := newReq(382)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6471,6 +7135,7 @@ func (s MessageScrollerState) ItemCount(cx *Cx) int {
 
 // LogicalScrollTop is <gpui_kit::component::message_scroller::MessageScrollerState>::logical_scroll_top.
 func (s MessageScrollerState) LogicalScrollTop(cx *Cx) ListOffset {
+	useComponentMessageScroller()
 	o := newReq(383)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6479,6 +7144,7 @@ func (s MessageScrollerState) LogicalScrollTop(cx *Cx) ListOffset {
 
 // Append is <gpui_kit::component::message_scroller::MessageScrollerState>::append.
 func (s MessageScrollerState) Append(cx *Cx, count int) bool {
+	useComponentMessageScroller()
 	o := newReq(652)
 	o.u64(s.h)
 	putUsize(o, count)
@@ -6488,6 +7154,7 @@ func (s MessageScrollerState) Append(cx *Cx, count int) bool {
 
 // Prepend is <gpui_kit::component::message_scroller::MessageScrollerState>::prepend.
 func (s MessageScrollerState) Prepend(cx *Cx, count int) bool {
+	useComponentMessageScroller()
 	o := newReq(653)
 	o.u64(s.h)
 	putUsize(o, count)
@@ -6497,6 +7164,7 @@ func (s MessageScrollerState) Prepend(cx *Cx, count int) bool {
 
 // RemeasureItems is <gpui_kit::component::message_scroller::MessageScrollerState>::remeasure_items.
 func (s MessageScrollerState) RemeasureItems(cx *Cx, range_ Range) bool {
+	useComponentMessageScroller()
 	o := newReq(654)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -6506,6 +7174,7 @@ func (s MessageScrollerState) RemeasureItems(cx *Cx, range_ Range) bool {
 
 // ScrollToItem is <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_item.
 func (s MessageScrollerState) ScrollToItem(cx *Cx, index int) bool {
+	useComponentMessageScroller()
 	o := newReq(655)
 	o.u64(s.h)
 	putUsize(o, index)
@@ -6515,6 +7184,7 @@ func (s MessageScrollerState) ScrollToItem(cx *Cx, index int) bool {
 
 // Splice is <gpui_kit::component::message_scroller::MessageScrollerState>::splice.
 func (s MessageScrollerState) Splice(cx *Cx, oldRange Range, count int) bool {
+	useComponentMessageScroller()
 	o := newReq(656)
 	o.u64(s.h)
 	putRange(o, oldRange)
@@ -6525,6 +7195,7 @@ func (s MessageScrollerState) Splice(cx *Cx, oldRange Range, count int) bool {
 
 // Remeasure is <gpui_kit::component::message_scroller::MessageScrollerState>::remeasure.
 func (s MessageScrollerState) Remeasure(cx *Cx) {
+	useComponentMessageScroller()
 	o := newReq(385)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6532,6 +7203,7 @@ func (s MessageScrollerState) Remeasure(cx *Cx) {
 
 // Reset is <gpui_kit::component::message_scroller::MessageScrollerState>::reset.
 func (s MessageScrollerState) Reset(cx *Cx, itemCount int) {
+	useComponentMessageScroller()
 	o := newReq(386)
 	o.u64(s.h)
 	putUsize(o, itemCount)
@@ -6540,6 +7212,7 @@ func (s MessageScrollerState) Reset(cx *Cx, itemCount int) {
 
 // ScrollToEnd is <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_end.
 func (s MessageScrollerState) ScrollToEnd(cx *Cx) {
+	useComponentMessageScroller()
 	o := newReq(387)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6547,6 +7220,7 @@ func (s MessageScrollerState) ScrollToEnd(cx *Cx) {
 
 // NewMessageScrollerState is <gpui_kit::component::message_scroller::MessageScrollerState>::new.
 func NewMessageScrollerState(cx *Cx, itemCount int) MessageScrollerState {
+	useComponentMessageScroller()
 	o := newReq(384)
 	putUsize(o, itemCount)
 	o.u16(0) // no builder ops follow
@@ -6560,6 +7234,7 @@ func (s NavStackState) handle() uint64 { return s.h }
 
 // Depth is <gpui_kit::base::NavStackState>::depth.
 func (s NavStackState) Depth(cx *Cx) int {
+	useBaseNavStack()
 	o := newReq(289)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6568,6 +7243,7 @@ func (s NavStackState) Depth(cx *Cx) int {
 
 // IsEmpty is <gpui_kit::base::NavStackState>::is_empty.
 func (s NavStackState) IsEmpty(cx *Cx) bool {
+	useBaseNavStack()
 	o := newReq(290)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6576,6 +7252,7 @@ func (s NavStackState) IsEmpty(cx *Cx) bool {
 
 // Clear is <gpui_kit::base::NavStackState>::clear.
 func (s NavStackState) Clear(cx *Cx) {
+	useBaseNavStack()
 	o := newReq(288)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6594,6 +7271,7 @@ func (s NavStackState) OnNavStackEvent(cx *Cx, h func(cx *Cx, e NavStackEvent)) 
 
 // NewNavStackState is <gpui_kit::base::NavStackState>::new.
 func NewNavStackState(cx *Cx) NavStackState {
+	useBaseNavStack()
 	o := newReq(291)
 	o.u16(0) // no builder ops follow
 	return NavStackState{stateMake(cx, o)}
@@ -6606,6 +7284,7 @@ func (s Notification) handle() uint64 { return s.h }
 
 // Dismiss is <gpui_kit::component::notification::Notification>::dismiss.
 func (s Notification) Dismiss(cx *Cx) {
+	useComponentNotification()
 	o := newReq(388)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6683,12 +7362,14 @@ func (b NotificationBuilder) Build() Notification { return Notification{b.sb.bui
 
 // NewNotification is <gpui_kit::component::notification::Notification>::new.
 func NewNotification(cx *Cx) NotificationBuilder {
+	useComponentNotification()
 	o := newReq(391)
 	return NotificationBuilder{newStateBuilder(cx, o)}
 }
 
 // NewNotificationError is <gpui_kit::component::notification::Notification>::error.
 func NewNotificationError(cx *Cx, message string) NotificationBuilder {
+	useComponentNotification()
 	o := newReq(389)
 	o.str(message)
 	return NotificationBuilder{newStateBuilder(cx, o)}
@@ -6696,6 +7377,7 @@ func NewNotificationError(cx *Cx, message string) NotificationBuilder {
 
 // NewNotificationInfo is <gpui_kit::component::notification::Notification>::info.
 func NewNotificationInfo(cx *Cx, message string) NotificationBuilder {
+	useComponentNotification()
 	o := newReq(390)
 	o.str(message)
 	return NotificationBuilder{newStateBuilder(cx, o)}
@@ -6703,6 +7385,7 @@ func NewNotificationInfo(cx *Cx, message string) NotificationBuilder {
 
 // NewNotificationSuccess is <gpui_kit::component::notification::Notification>::success.
 func NewNotificationSuccess(cx *Cx, message string) NotificationBuilder {
+	useComponentNotification()
 	o := newReq(392)
 	o.str(message)
 	return NotificationBuilder{newStateBuilder(cx, o)}
@@ -6710,6 +7393,7 @@ func NewNotificationSuccess(cx *Cx, message string) NotificationBuilder {
 
 // NewNotificationWarning is <gpui_kit::component::notification::Notification>::warning.
 func NewNotificationWarning(cx *Cx, message string) NotificationBuilder {
+	useComponentNotification()
 	o := newReq(393)
 	o.str(message)
 	return NotificationBuilder{newStateBuilder(cx, o)}
@@ -6722,6 +7406,7 @@ func (s NotificationList) handle() uint64 { return s.h }
 
 // Notifications is <gpui_kit::component::notification::NotificationList>::notifications.
 func (s NotificationList) Notifications(cx *Cx) []Notification {
+	useComponentNotification()
 	o := newReq(1453)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6730,6 +7415,7 @@ func (s NotificationList) Notifications(cx *Cx) []Notification {
 
 // Clear is <gpui_kit::component::notification::NotificationList>::clear.
 func (s NotificationList) Clear(cx *Cx) {
+	useComponentNotification()
 	o := newReq(394)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6737,6 +7423,7 @@ func (s NotificationList) Clear(cx *Cx) {
 
 // Push is <gpui_kit::component::notification::NotificationList>::push.
 func (s NotificationList) Push(cx *Cx, notification string) {
+	useComponentNotification()
 	o := newReq(657)
 	o.u64(s.h)
 	o.str(notification)
@@ -6745,6 +7432,7 @@ func (s NotificationList) Push(cx *Cx, notification string) {
 
 // NewNotificationList is <gpui_kit::component::notification::NotificationList>::new.
 func NewNotificationList(cx *Cx) NotificationList {
+	useComponentNotification()
 	o := newReq(395)
 	o.u16(0) // no builder ops follow
 	return NotificationList{stateMake(cx, o)}
@@ -6757,6 +7445,7 @@ func (s OtpState) handle() uint64 { return s.h }
 
 // CursorVisible is <gpui_kit::base::OtpState>::cursor_visible.
 func (s OtpState) CursorVisible(cx *Cx) bool {
+	useBaseOtpInput()
 	o := newReq(293)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6765,6 +7454,7 @@ func (s OtpState) CursorVisible(cx *Cx) bool {
 
 // IsEmpty is <gpui_kit::base::OtpState>::is_empty.
 func (s OtpState) IsEmpty(cx *Cx) bool {
+	useBaseOtpInput()
 	o := newReq(294)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6773,6 +7463,7 @@ func (s OtpState) IsEmpty(cx *Cx) bool {
 
 // IsMasked is <gpui_kit::base::OtpState>::is_masked.
 func (s OtpState) IsMasked(cx *Cx) bool {
+	useBaseOtpInput()
 	o := newReq(295)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6781,6 +7472,7 @@ func (s OtpState) IsMasked(cx *Cx) bool {
 
 // Len is <gpui_kit::base::OtpState>::len.
 func (s OtpState) Len(cx *Cx) int {
+	useBaseOtpInput()
 	o := newReq(296)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6789,6 +7481,7 @@ func (s OtpState) Len(cx *Cx) int {
 
 // Value is <gpui_kit::base::OtpState>::value.
 func (s OtpState) Value(cx *Cx) string {
+	useBaseOtpInput()
 	o := newReq(301)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -6797,6 +7490,7 @@ func (s OtpState) Value(cx *Cx) string {
 
 // TryValue is Value for a handler the component calls from inside its own update: ok is false while the state is busy.
 func (s OtpState) TryValue(cx *Cx) (v string, ok bool) {
+	useBaseOtpInput()
 	o := newReq(301)
 	o.u64(s.h)
 	r, ok := stateTry(s.h, cx, o)
@@ -6808,6 +7502,7 @@ func (s OtpState) TryValue(cx *Cx) (v string, ok bool) {
 
 // Focus is <gpui_kit::base::OtpState>::focus.
 func (s OtpState) Focus(cx *Cx) {
+	useBaseOtpInput()
 	o := newReq(406)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6815,6 +7510,7 @@ func (s OtpState) Focus(cx *Cx) {
 
 // SetMasked is <gpui_kit::base::OtpState>::set_masked.
 func (s OtpState) SetMasked(cx *Cx, masked bool) {
+	useBaseOtpInput()
 	o := newReq(298)
 	o.u64(s.h)
 	o.bool(masked)
@@ -6823,6 +7519,7 @@ func (s OtpState) SetMasked(cx *Cx, masked bool) {
 
 // SetValue is <gpui_kit::base::OtpState>::set_value.
 func (s OtpState) SetValue(cx *Cx, value string) {
+	useBaseOtpInput()
 	o := newReq(299)
 	o.u64(s.h)
 	o.str(value)
@@ -6860,6 +7557,7 @@ func (b OtpStateBuilder) Build() OtpState { return OtpState{b.sb.build()} }
 
 // NewOtpState is <gpui_kit::base::OtpState>::new.
 func NewOtpState(cx *Cx, length int) OtpStateBuilder {
+	useBaseOtpInput()
 	o := newReq(297)
 	putUsize(o, length)
 	return OtpStateBuilder{newStateBuilder(cx, o)}
@@ -6872,6 +7570,7 @@ func (s OverviewRulerDecorationCollection) handle() uint64 { return s.h }
 
 // GetRanges is <gpui_kit::base::input::OverviewRulerDecorationCollection>::get_ranges.
 func (s OverviewRulerDecorationCollection) GetRanges(cx *Cx) []Range {
+	useBaseInput()
 	o := newReq(925)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6880,6 +7579,7 @@ func (s OverviewRulerDecorationCollection) GetRanges(cx *Cx) []Range {
 
 // Append is <gpui_kit::base::input::OverviewRulerDecorationCollection>::append.
 func (s OverviewRulerDecorationCollection) Append(cx *Cx, decorations []OverviewRulerDecoration) {
+	useBaseInput()
 	o := newReq(922)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -6891,6 +7591,7 @@ func (s OverviewRulerDecorationCollection) Append(cx *Cx, decorations []Overview
 
 // Clear is <gpui_kit::base::input::OverviewRulerDecorationCollection>::clear.
 func (s OverviewRulerDecorationCollection) Clear(cx *Cx) {
+	useBaseInput()
 	o := newReq(923)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6898,6 +7599,7 @@ func (s OverviewRulerDecorationCollection) Clear(cx *Cx) {
 
 // Dispose is <gpui_kit::base::input::OverviewRulerDecorationCollection>::dispose.
 func (s OverviewRulerDecorationCollection) Dispose(cx *Cx) {
+	useBaseInput()
 	o := newReq(924)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6905,6 +7607,7 @@ func (s OverviewRulerDecorationCollection) Dispose(cx *Cx) {
 
 // Set is <gpui_kit::base::input::OverviewRulerDecorationCollection>::set.
 func (s OverviewRulerDecorationCollection) Set(cx *Cx, decorations []OverviewRulerDecoration) {
+	useBaseInput()
 	o := newReq(926)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -6916,6 +7619,7 @@ func (s OverviewRulerDecorationCollection) Set(cx *Cx, decorations []OverviewRul
 
 // NewOverviewRulerDecorationCollectionDefault is <gpui_kit::base::input::OverviewRulerDecorationCollection as Default>::default.
 func NewOverviewRulerDecorationCollectionDefault(cx *Cx) OverviewRulerDecorationCollection {
+	useBaseInput()
 	o := newReq(1473)
 	o.u16(0) // no builder ops follow
 	return OverviewRulerDecorationCollection{stateMake(cx, o)}
@@ -6933,6 +7637,7 @@ func (s PaneTree) handle() uint64 { return s.h }
 
 // Root is <gpui_kit::base::dock::PaneTree>::root.
 func (s PaneTree) Root(cx *Cx) PaneNode {
+	useBaseDock()
 	o := newReq(877)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6941,6 +7646,7 @@ func (s PaneTree) Root(cx *Cx) PaneNode {
 
 // RootKind is <gpui_kit::base::dock::PaneTree>::root_kind.
 func (s PaneTree) RootKind(cx *Cx) RootKind {
+	useBaseDock()
 	o := newReq(878)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -6949,6 +7655,7 @@ func (s PaneTree) RootKind(cx *Cx) RootKind {
 
 // Normalize is <gpui_kit::base::dock::PaneTree>::normalize.
 func (s PaneTree) Normalize(cx *Cx) {
+	useBaseDock()
 	o := newReq(875)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -6956,6 +7663,7 @@ func (s PaneTree) Normalize(cx *Cx) {
 
 // NewPaneTree is <gpui_kit::base::dock::PaneTree>::new.
 func NewPaneTree(cx *Cx, rootKind RootKind) PaneTree {
+	useBaseDock()
 	o := newReq(874)
 	o.u16(uint16(rootKind))
 	o.u16(0) // no builder ops follow
@@ -6969,6 +7677,7 @@ func (s PanelHandle) handle() uint64 { return s.h }
 
 // NewPanelHandle is <gpui_kit::component::dock::PanelHandle>::new.
 func NewPanelHandle(cx *Cx, panel DockPanel) PanelHandle {
+	useComponentDock()
 	o := newReq(1281)
 	o.u64(panel.h)
 	o.u16(0) // no builder ops follow
@@ -6977,6 +7686,7 @@ func NewPanelHandle(cx *Cx, panel DockPanel) PanelHandle {
 
 // NewPanelHandleFromView is <gpui_kit::component::dock::PanelHandle>::from_view.
 func NewPanelHandleFromView(cx *Cx, panel DockPanel) PanelHandle {
+	useComponentDock()
 	o := newReq(1280)
 	o.u64(panel.h)
 	o.u16(0) // no builder ops follow
@@ -6985,6 +7695,7 @@ func NewPanelHandleFromView(cx *Cx, panel DockPanel) PanelHandle {
 
 // PanelHandleOf is <gpui_kit::component::dock::PanelHandle>::of.
 func PanelHandleOf(cx *Cx, panel DockPanel) Option[PanelHandle] {
+	useComponentDock()
 	o := newReq(1282)
 	o.u64(panel.h)
 	r := stateCall(0, cx, o)
@@ -6998,6 +7709,7 @@ func (s PanelRegistry) handle() uint64 { return s.h }
 
 // NewPanelRegistry is <gpui_kit::base::dock::PanelRegistry>::new.
 func NewPanelRegistry(cx *Cx) PanelRegistry {
+	useBaseDock()
 	o := newReq(884)
 	o.u16(0) // no builder ops follow
 	return PanelRegistry{stateMake(cx, o)}
@@ -7005,6 +7717,7 @@ func NewPanelRegistry(cx *Cx) PanelRegistry {
 
 // PanelRegistryGlobal is <gpui_kit::base::dock::PanelRegistry>::global.
 func PanelRegistryGlobal(cx *Cx) PanelRegistry {
+	useBaseDock()
 	o := newReq(882)
 	r := objGet(0, cx, o)
 	return PanelRegistry{h: r.u64()}
@@ -7012,6 +7725,7 @@ func PanelRegistryGlobal(cx *Cx) PanelRegistry {
 
 // PanelRegistryGlobalMut is <gpui_kit::base::dock::PanelRegistry>::global_mut.
 func PanelRegistryGlobalMut(cx *Cx) PanelRegistry {
+	useBaseDock()
 	o := newReq(883)
 	r := objGet(0, cx, o)
 	return PanelRegistry{h: r.u64()}
@@ -7024,6 +7738,7 @@ func (s ParagraphRead) handle() uint64 { return s.h }
 
 // Children is <gpui_kit::base::text::editor_host::Paragraph>::children.
 func (s ParagraphRead) Children(cx *Cx) []InlineNodeRead {
+	useBaseText()
 	o := newReq(1407)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7037,6 +7752,7 @@ func (s PathCache) handle() uint64 { return s.h }
 
 // IsWarm is <gpui_kit::base::plot::PathCache>::is_warm.
 func (s PathCache) IsWarm(cx *Cx) bool {
+	useBasePlot()
 	o := newReq(1479)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7045,6 +7761,7 @@ func (s PathCache) IsWarm(cx *Cx) bool {
 
 // NewPathCacheDefault is <gpui_kit::base::plot::PathCache as Default>::default.
 func NewPathCacheDefault(cx *Cx) PathCache {
+	useBasePlot()
 	o := newReq(1478)
 	o.u16(0) // no builder ops follow
 	return PathCache{stateMake(cx, o)}
@@ -7057,6 +7774,7 @@ func (s PathCaches) handle() uint64 { return s.h }
 
 // NewPathCachesDefault is <gpui_kit::base::plot::PathCaches as Default>::default.
 func NewPathCachesDefault(cx *Cx) PathCaches {
+	useBasePlot()
 	o := newReq(1480)
 	o.u16(0) // no builder ops follow
 	return PathCaches{stateMake(cx, o)}
@@ -7099,6 +7817,7 @@ func (b PieBuilder) Build() Pie { return Pie{b.sb.build()} }
 
 // NewPie is <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::new.
 func NewPie(cx *Cx) PieBuilder {
+	useBasePlot()
 	o := newReq(1637)
 	return PieBuilder{newStateBuilder(cx, o)}
 }
@@ -7110,6 +7829,7 @@ func (s PlotAppear) handle() uint64 { return s.h }
 
 // IsAppearing is <gpui_kit::base::plot::PlotAppear>::is_appearing.
 func (s PlotAppear) IsAppearing(cx *Cx) bool {
+	useBasePlot()
 	o := newReq(948)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7118,6 +7838,7 @@ func (s PlotAppear) IsAppearing(cx *Cx) bool {
 
 // Progress is <gpui_kit::base::plot::PlotAppear>::progress.
 func (s PlotAppear) Progress(cx *Cx) float32 {
+	useBasePlot()
 	o := newReq(949)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7126,6 +7847,7 @@ func (s PlotAppear) Progress(cx *Cx) float32 {
 
 // Staggered is <gpui_kit::base::plot::PlotAppear>::staggered.
 func (s PlotAppear) Staggered(cx *Cx, index int, count int, spread float32) float32 {
+	useBasePlot()
 	o := newReq(950)
 	o.u64(s.h)
 	putUsize(o, index)
@@ -7137,6 +7859,7 @@ func (s PlotAppear) Staggered(cx *Cx, index int, count int, spread float32) floa
 
 // NewPlotAppearComplete is <gpui_kit::base::plot::PlotAppear>::complete.
 func NewPlotAppearComplete(cx *Cx) PlotAppear {
+	useBasePlot()
 	o := newReq(947)
 	o.u16(0) // no builder ops follow
 	return PlotAppear{stateMake(cx, o)}
@@ -7149,6 +7872,7 @@ func (s PlotLabel) handle() uint64 { return s.h }
 
 // Paint is <gpui_kit::base::plot::PlotLabel>::paint.
 func (s PlotLabel) Paint(cx *Cx, bounds Bounds) {
+	useBasePlot()
 	o := newReq(1623)
 	o.u64(s.h)
 	putBounds(o, bounds)
@@ -7157,6 +7881,7 @@ func (s PlotLabel) Paint(cx *Cx, bounds Bounds) {
 
 // NewPlotLabel is <gpui_kit::base::plot::PlotLabel>::new.
 func NewPlotLabel(cx *Cx, items []BaseText) PlotLabel {
+	useBasePlot()
 	o := newReq(951)
 	o.u32(uint32(len(items)))
 	for _, x0 := range items {
@@ -7178,6 +7903,7 @@ func (s PlotThemeRead) handle() uint64 { return s.h }
 
 // Motion is <gpui_kit::base::PlotTheme>::motion.
 func (s PlotThemeRead) Motion(cx *Cx) PlotMotionRead {
+	useBaseRoot()
 	o := newReq(1367)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7191,6 +7917,7 @@ func (s PopoverState) handle() uint64 { return s.h }
 
 // IsOpen is <gpui_kit::base::PopoverState>::is_open.
 func (s PopoverState) IsOpen(cx *Cx) bool {
+	useBasePopover()
 	o := newReq(678)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7199,6 +7926,7 @@ func (s PopoverState) IsOpen(cx *Cx) bool {
 
 // Dismiss is <gpui_kit::base::PopoverState>::dismiss.
 func (s PopoverState) Dismiss(cx *Cx) {
+	useBasePopover()
 	o := newReq(677)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -7206,6 +7934,7 @@ func (s PopoverState) Dismiss(cx *Cx) {
 
 // Show is <gpui_kit::base::PopoverState>::show.
 func (s PopoverState) Show(cx *Cx) {
+	useBasePopover()
 	o := newReq(680)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -7213,6 +7942,7 @@ func (s PopoverState) Show(cx *Cx) {
 
 // NewPopoverState is <gpui_kit::base::PopoverState>::new.
 func NewPopoverState(cx *Cx, defaultOpen bool) PopoverState {
+	useBasePopover()
 	o := newReq(679)
 	o.bool(defaultOpen)
 	o.u16(0) // no builder ops follow
@@ -7226,6 +7956,7 @@ func (s QuestionnaireAnswerChange) handle() uint64 { return s.h }
 
 // Answer is <gpui_kit::base::questionnaire::QuestionnaireAnswerChange>::answer.
 func (s QuestionnaireAnswerChange) Answer(cx *Cx) QuestionnaireAnswerRead {
+	useBaseQuestionnaire()
 	o := newReq(1429)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7234,6 +7965,7 @@ func (s QuestionnaireAnswerChange) Answer(cx *Cx) QuestionnaireAnswerRead {
 
 // Item is <gpui_kit::base::questionnaire::QuestionnaireAnswerChange>::item.
 func (s QuestionnaireAnswerChange) Item(cx *Cx) string {
+	useBaseQuestionnaire()
 	o := newReq(1430)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7242,6 +7974,7 @@ func (s QuestionnaireAnswerChange) Item(cx *Cx) string {
 
 // Status is <gpui_kit::base::questionnaire::QuestionnaireAnswerChange>::status.
 func (s QuestionnaireAnswerChange) Status(cx *Cx) QuestionnaireItemStatus {
+	useBaseQuestionnaire()
 	o := newReq(1431)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7255,6 +7988,7 @@ func (s QuestionnaireAnswerRead) handle() uint64 { return s.h }
 
 // Choices is <gpui_kit::base::questionnaire::QuestionnaireAnswer>::choices.
 func (s QuestionnaireAnswerRead) Choices(cx *Cx) []string {
+	useBaseQuestionnaire()
 	o := newReq(1385)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7263,6 +7997,7 @@ func (s QuestionnaireAnswerRead) Choices(cx *Cx) []string {
 
 // Freeform is <gpui_kit::base::questionnaire::QuestionnaireAnswer>::freeform.
 func (s QuestionnaireAnswerRead) Freeform(cx *Cx) Option[string] {
+	useBaseQuestionnaire()
 	o := newReq(1386)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7271,6 +8006,7 @@ func (s QuestionnaireAnswerRead) Freeform(cx *Cx) Option[string] {
 
 // IsEmpty is <gpui_kit::base::questionnaire::QuestionnaireAnswer>::is_empty.
 func (s QuestionnaireAnswerRead) IsEmpty(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1387)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7284,6 +8020,7 @@ func (s QuestionnaireAnswers) handle() uint64 { return s.h }
 
 // Get is <gpui_kit::base::questionnaire::QuestionnaireAnswers>::get.
 func (s QuestionnaireAnswers) Get(cx *Cx, name string) Option[QuestionnaireAnswerRead] {
+	useBaseQuestionnaire()
 	o := newReq(1353)
 	o.u64(s.h)
 	o.str(name)
@@ -7293,6 +8030,7 @@ func (s QuestionnaireAnswers) Get(cx *Cx, name string) Option[QuestionnaireAnswe
 
 // IsEmpty is <gpui_kit::base::questionnaire::QuestionnaireAnswers>::is_empty.
 func (s QuestionnaireAnswers) IsEmpty(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1041)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7301,6 +8039,7 @@ func (s QuestionnaireAnswers) IsEmpty(cx *Cx) bool {
 
 // Iter is <gpui_kit::base::questionnaire::QuestionnaireAnswers>::iter.
 func (s QuestionnaireAnswers) Iter(cx *Cx) []TupleStringQuestionnaireanswerread {
+	useBaseQuestionnaire()
 	o := newReq(1354)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7311,6 +8050,7 @@ func (s QuestionnaireAnswers) Iter(cx *Cx) []TupleStringQuestionnaireanswerread 
 
 // Len is <gpui_kit::base::questionnaire::QuestionnaireAnswers>::len.
 func (s QuestionnaireAnswers) Len(cx *Cx) int {
+	useBaseQuestionnaire()
 	o := newReq(1042)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7319,6 +8059,7 @@ func (s QuestionnaireAnswers) Len(cx *Cx) int {
 
 // NewQuestionnaireAnswersDefault is <gpui_kit::base::questionnaire::QuestionnaireAnswers as Default>::default.
 func NewQuestionnaireAnswersDefault(cx *Cx) QuestionnaireAnswers {
+	useBaseQuestionnaire()
 	o := newReq(1483)
 	o.u16(0) // no builder ops follow
 	return QuestionnaireAnswers{stateMake(cx, o)}
@@ -7331,6 +8072,7 @@ func (s QuestionnaireChoiceDefinitionRead) handle() uint64 { return s.h }
 
 // AccessibilityLabel is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::accessibility_label.
 func (s QuestionnaireChoiceDefinitionRead) AccessibilityLabel(cx *Cx) string {
+	useBaseQuestionnaire()
 	o := newReq(1388)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7339,6 +8081,7 @@ func (s QuestionnaireChoiceDefinitionRead) AccessibilityLabel(cx *Cx) string {
 
 // Description is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::description.
 func (s QuestionnaireChoiceDefinitionRead) Description(cx *Cx) Option[string] {
+	useBaseQuestionnaire()
 	o := newReq(1389)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7347,6 +8090,7 @@ func (s QuestionnaireChoiceDefinitionRead) Description(cx *Cx) Option[string] {
 
 // IsDefaultSelected is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::is_default_selected.
 func (s QuestionnaireChoiceDefinitionRead) IsDefaultSelected(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1390)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7355,6 +8099,7 @@ func (s QuestionnaireChoiceDefinitionRead) IsDefaultSelected(cx *Cx) bool {
 
 // IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::is_disabled.
 func (s QuestionnaireChoiceDefinitionRead) IsDisabled(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1391)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7363,6 +8108,7 @@ func (s QuestionnaireChoiceDefinitionRead) IsDisabled(cx *Cx) bool {
 
 // Value is <gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition>::value.
 func (s QuestionnaireChoiceDefinitionRead) Value(cx *Cx) string {
+	useBaseQuestionnaire()
 	o := newReq(1392)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7376,6 +8122,7 @@ func (s QuestionnaireChoiceState) handle() uint64 { return s.h }
 
 // IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::is_disabled.
 func (s QuestionnaireChoiceState) IsDisabled(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1043)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7384,6 +8131,7 @@ func (s QuestionnaireChoiceState) IsDisabled(cx *Cx) bool {
 
 // IsInvalid is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::is_invalid.
 func (s QuestionnaireChoiceState) IsInvalid(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1044)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7392,6 +8140,7 @@ func (s QuestionnaireChoiceState) IsInvalid(cx *Cx) bool {
 
 // IsSelected is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::is_selected.
 func (s QuestionnaireChoiceState) IsSelected(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1045)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7400,6 +8149,7 @@ func (s QuestionnaireChoiceState) IsSelected(cx *Cx) bool {
 
 // Shortcut is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::shortcut.
 func (s QuestionnaireChoiceState) Shortcut(cx *Cx) Option[string] {
+	useBaseQuestionnaire()
 	o := newReq(1046)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7408,6 +8158,7 @@ func (s QuestionnaireChoiceState) Shortcut(cx *Cx) Option[string] {
 
 // Value is <gpui_kit::base::questionnaire::QuestionnaireChoiceState>::value.
 func (s QuestionnaireChoiceState) Value(cx *Cx) string {
+	useBaseQuestionnaire()
 	o := newReq(1047)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7421,6 +8172,7 @@ func (s QuestionnaireInputDefinitionRead) handle() uint64 { return s.h }
 
 // AccessibilityLabel is <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::accessibility_label.
 func (s QuestionnaireInputDefinitionRead) AccessibilityLabel(cx *Cx) string {
+	useBaseQuestionnaire()
 	o := newReq(1393)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7429,6 +8181,7 @@ func (s QuestionnaireInputDefinitionRead) AccessibilityLabel(cx *Cx) string {
 
 // IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::is_disabled.
 func (s QuestionnaireInputDefinitionRead) IsDisabled(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1394)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7437,6 +8190,7 @@ func (s QuestionnaireInputDefinitionRead) IsDisabled(cx *Cx) bool {
 
 // State is <gpui_kit::base::questionnaire::QuestionnaireInputDefinition>::state.
 func (s QuestionnaireInputDefinitionRead) State(cx *Cx) InputState {
+	useBaseQuestionnaire()
 	o := newReq(1590)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7450,6 +8204,7 @@ func (s QuestionnaireItemDefinitionRead) handle() uint64 { return s.h }
 
 // AccessibilityLabel is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::accessibility_label.
 func (s QuestionnaireItemDefinitionRead) AccessibilityLabel(cx *Cx) string {
+	useBaseQuestionnaire()
 	o := newReq(1395)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7458,6 +8213,7 @@ func (s QuestionnaireItemDefinitionRead) AccessibilityLabel(cx *Cx) string {
 
 // Choices is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::choices.
 func (s QuestionnaireItemDefinitionRead) Choices(cx *Cx) []QuestionnaireChoiceDefinitionRead {
+	useBaseQuestionnaire()
 	o := newReq(1396)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7468,6 +8224,7 @@ func (s QuestionnaireItemDefinitionRead) Choices(cx *Cx) []QuestionnaireChoiceDe
 
 // Description is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::description.
 func (s QuestionnaireItemDefinitionRead) Description(cx *Cx) Option[string] {
+	useBaseQuestionnaire()
 	o := newReq(1397)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7476,6 +8233,7 @@ func (s QuestionnaireItemDefinitionRead) Description(cx *Cx) Option[string] {
 
 // Input is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::input.
 func (s QuestionnaireItemDefinitionRead) Input(cx *Cx) Option[QuestionnaireInputDefinitionRead] {
+	useBaseQuestionnaire()
 	o := newReq(1398)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7484,6 +8242,7 @@ func (s QuestionnaireItemDefinitionRead) Input(cx *Cx) Option[QuestionnaireInput
 
 // IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::is_disabled.
 func (s QuestionnaireItemDefinitionRead) IsDisabled(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1399)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7492,6 +8251,7 @@ func (s QuestionnaireItemDefinitionRead) IsDisabled(cx *Cx) bool {
 
 // IsMultiple is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::is_multiple.
 func (s QuestionnaireItemDefinitionRead) IsMultiple(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1400)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7500,6 +8260,7 @@ func (s QuestionnaireItemDefinitionRead) IsMultiple(cx *Cx) bool {
 
 // IsRequired is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::is_required.
 func (s QuestionnaireItemDefinitionRead) IsRequired(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1401)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7508,6 +8269,7 @@ func (s QuestionnaireItemDefinitionRead) IsRequired(cx *Cx) bool {
 
 // Name is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::name.
 func (s QuestionnaireItemDefinitionRead) Name(cx *Cx) string {
+	useBaseQuestionnaire()
 	o := newReq(1402)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7521,6 +8283,7 @@ func (s QuestionnaireItemState) handle() uint64 { return s.h }
 
 // HasInput is <gpui_kit::base::questionnaire::QuestionnaireItemState>::has_input.
 func (s QuestionnaireItemState) HasInput(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1048)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7529,6 +8292,7 @@ func (s QuestionnaireItemState) HasInput(cx *Cx) bool {
 
 // IsDisabled is <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_disabled.
 func (s QuestionnaireItemState) IsDisabled(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1049)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7537,6 +8301,7 @@ func (s QuestionnaireItemState) IsDisabled(cx *Cx) bool {
 
 // IsInvalid is <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_invalid.
 func (s QuestionnaireItemState) IsInvalid(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1050)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7545,6 +8310,7 @@ func (s QuestionnaireItemState) IsInvalid(cx *Cx) bool {
 
 // IsMultiple is <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_multiple.
 func (s QuestionnaireItemState) IsMultiple(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1051)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7553,6 +8319,7 @@ func (s QuestionnaireItemState) IsMultiple(cx *Cx) bool {
 
 // IsRequired is <gpui_kit::base::questionnaire::QuestionnaireItemState>::is_required.
 func (s QuestionnaireItemState) IsRequired(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1052)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7561,6 +8328,7 @@ func (s QuestionnaireItemState) IsRequired(cx *Cx) bool {
 
 // Name is <gpui_kit::base::questionnaire::QuestionnaireItemState>::name.
 func (s QuestionnaireItemState) Name(cx *Cx) string {
+	useBaseQuestionnaire()
 	o := newReq(1053)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7569,6 +8337,7 @@ func (s QuestionnaireItemState) Name(cx *Cx) string {
 
 // Status is <gpui_kit::base::questionnaire::QuestionnaireItemState>::status.
 func (s QuestionnaireItemState) Status(cx *Cx) QuestionnaireItemStatus {
+	useBaseQuestionnaire()
 	o := newReq(1054)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7582,6 +8351,7 @@ func (s QuestionnaireNavigationState) handle() uint64 { return s.h }
 
 // IsConfirmable is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_confirmable.
 func (s QuestionnaireNavigationState) IsConfirmable(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1055)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7590,6 +8360,7 @@ func (s QuestionnaireNavigationState) IsConfirmable(cx *Cx) bool {
 
 // IsNextVisible is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_next_visible.
 func (s QuestionnaireNavigationState) IsNextVisible(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1056)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7598,6 +8369,7 @@ func (s QuestionnaireNavigationState) IsNextVisible(cx *Cx) bool {
 
 // IsPreviousVisible is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_previous_visible.
 func (s QuestionnaireNavigationState) IsPreviousVisible(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1057)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7606,6 +8378,7 @@ func (s QuestionnaireNavigationState) IsPreviousVisible(cx *Cx) bool {
 
 // IsSkipVisible is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_skip_visible.
 func (s QuestionnaireNavigationState) IsSkipVisible(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1058)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7614,6 +8387,7 @@ func (s QuestionnaireNavigationState) IsSkipVisible(cx *Cx) bool {
 
 // IsSubmitVisible is <gpui_kit::base::questionnaire::QuestionnaireNavigationState>::is_submit_visible.
 func (s QuestionnaireNavigationState) IsSubmitVisible(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1059)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7622,6 +8396,7 @@ func (s QuestionnaireNavigationState) IsSubmitVisible(cx *Cx) bool {
 
 // NewQuestionnaireNavigationStateDefault is <gpui_kit::base::questionnaire::QuestionnaireNavigationState as Default>::default.
 func NewQuestionnaireNavigationStateDefault(cx *Cx) QuestionnaireNavigationState {
+	useBaseQuestionnaire()
 	o := newReq(1484)
 	o.u16(0) // no builder ops follow
 	return QuestionnaireNavigationState{stateMake(cx, o)}
@@ -7634,6 +8409,7 @@ func (s QuestionnaireProgressState) handle() uint64 { return s.h }
 
 // Current is <gpui_kit::base::questionnaire::QuestionnaireProgressState>::current.
 func (s QuestionnaireProgressState) Current(cx *Cx) int {
+	useBaseQuestionnaire()
 	o := newReq(1060)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7642,6 +8418,7 @@ func (s QuestionnaireProgressState) Current(cx *Cx) int {
 
 // Total is <gpui_kit::base::questionnaire::QuestionnaireProgressState>::total.
 func (s QuestionnaireProgressState) Total(cx *Cx) int {
+	useBaseQuestionnaire()
 	o := newReq(1061)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -7655,6 +8432,7 @@ func (s QuestionnaireState) handle() uint64 { return s.h }
 
 // Answer is <gpui_kit::base::questionnaire::QuestionnaireState>::answer.
 func (s QuestionnaireState) Answer(cx *Cx, name string) Option[QuestionnaireAnswerRead] {
+	useBaseQuestionnaire()
 	o := newReq(1355)
 	o.u64(s.h)
 	o.str(name)
@@ -7664,6 +8442,7 @@ func (s QuestionnaireState) Answer(cx *Cx, name string) Option[QuestionnaireAnsw
 
 // Answers is <gpui_kit::base::questionnaire::QuestionnaireState>::answers.
 func (s QuestionnaireState) Answers(cx *Cx) QuestionnaireAnswers {
+	useBaseQuestionnaire()
 	o := newReq(1064)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7672,6 +8451,7 @@ func (s QuestionnaireState) Answers(cx *Cx) QuestionnaireAnswers {
 
 // ChoiceDefinition is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_definition.
 func (s QuestionnaireState) ChoiceDefinition(cx *Cx, item string, value string) Option[QuestionnaireChoiceDefinitionRead] {
+	useBaseQuestionnaire()
 	o := newReq(1356)
 	o.u64(s.h)
 	o.str(item)
@@ -7684,6 +8464,7 @@ func (s QuestionnaireState) ChoiceDefinition(cx *Cx, item string, value string) 
 
 // ChoiceFocusHandle is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_focus_handle.
 func (s QuestionnaireState) ChoiceFocusHandle(cx *Cx, item string, value string) Option[FocusHandle] {
+	useBaseQuestionnaire()
 	o := newReq(1647)
 	o.u64(s.h)
 	o.str(item)
@@ -7694,6 +8475,7 @@ func (s QuestionnaireState) ChoiceFocusHandle(cx *Cx, item string, value string)
 
 // ChoiceForShortcut is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_for_shortcut.
 func (s QuestionnaireState) ChoiceForShortcut(cx *Cx, item string, key string) Option[string] {
+	useBaseQuestionnaire()
 	o := newReq(1065)
 	o.u64(s.h)
 	o.str(item)
@@ -7704,6 +8486,7 @@ func (s QuestionnaireState) ChoiceForShortcut(cx *Cx, item string, key string) O
 
 // ChoicePosition is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_position.
 func (s QuestionnaireState) ChoicePosition(cx *Cx, item string, value string) Option[TupleIntInt] {
+	useBaseQuestionnaire()
 	o := newReq(1066)
 	o.u64(s.h)
 	o.str(item)
@@ -7714,6 +8497,7 @@ func (s QuestionnaireState) ChoicePosition(cx *Cx, item string, value string) Op
 
 // ChoiceState is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_state.
 func (s QuestionnaireState) ChoiceState(cx *Cx, item string, value string) Option[QuestionnaireChoiceState] {
+	useBaseQuestionnaire()
 	o := newReq(1067)
 	o.u64(s.h)
 	o.str(item)
@@ -7724,6 +8508,7 @@ func (s QuestionnaireState) ChoiceState(cx *Cx, item string, value string) Optio
 
 // CurrentInputHasText is <gpui_kit::base::questionnaire::QuestionnaireState>::current_input_has_text.
 func (s QuestionnaireState) CurrentInputHasText(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1071)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7732,6 +8517,7 @@ func (s QuestionnaireState) CurrentInputHasText(cx *Cx) bool {
 
 // CurrentItem is <gpui_kit::base::questionnaire::QuestionnaireState>::current_item.
 func (s QuestionnaireState) CurrentItem(cx *Cx) Option[string] {
+	useBaseQuestionnaire()
 	o := newReq(1072)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7740,6 +8526,7 @@ func (s QuestionnaireState) CurrentItem(cx *Cx) Option[string] {
 
 // CurrentIx is <gpui_kit::base::questionnaire::QuestionnaireState>::current_ix.
 func (s QuestionnaireState) CurrentIx(cx *Cx) Option[int] {
+	useBaseQuestionnaire()
 	o := newReq(1073)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7748,6 +8535,7 @@ func (s QuestionnaireState) CurrentIx(cx *Cx) Option[int] {
 
 // Error is <gpui_kit::base::questionnaire::QuestionnaireState>::error.
 func (s QuestionnaireState) Error(cx *Cx, name string) Option[QuestionnaireValidationError] {
+	useBaseQuestionnaire()
 	o := newReq(1074)
 	o.u64(s.h)
 	o.str(name)
@@ -7757,6 +8545,7 @@ func (s QuestionnaireState) Error(cx *Cx, name string) Option[QuestionnaireValid
 
 // FocusHandle is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_handle.
 func (s QuestionnaireState) FocusHandle(cx *Cx) FocusHandle {
+	useBaseQuestionnaire()
 	o := newReq(1648)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7765,6 +8554,7 @@ func (s QuestionnaireState) FocusHandle(cx *Cx) FocusHandle {
 
 // InputState is <gpui_kit::base::questionnaire::QuestionnaireState>::input_state.
 func (s QuestionnaireState) InputState(cx *Cx, name string) Option[InputState] {
+	useBaseQuestionnaire()
 	o := newReq(1587)
 	o.u64(s.h)
 	o.str(name)
@@ -7774,6 +8564,7 @@ func (s QuestionnaireState) InputState(cx *Cx, name string) Option[InputState] {
 
 // IsComplete is <gpui_kit::base::questionnaire::QuestionnaireState>::is_complete.
 func (s QuestionnaireState) IsComplete(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1084)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7782,6 +8573,7 @@ func (s QuestionnaireState) IsComplete(cx *Cx) bool {
 
 // ItemDefinition is <gpui_kit::base::questionnaire::QuestionnaireState>::item_definition.
 func (s QuestionnaireState) ItemDefinition(cx *Cx, name string) Option[QuestionnaireItemDefinitionRead] {
+	useBaseQuestionnaire()
 	o := newReq(1357)
 	o.u64(s.h)
 	o.str(name)
@@ -7791,6 +8583,7 @@ func (s QuestionnaireState) ItemDefinition(cx *Cx, name string) Option[Questionn
 
 // ItemFocusHandle is <gpui_kit::base::questionnaire::QuestionnaireState>::item_focus_handle.
 func (s QuestionnaireState) ItemFocusHandle(cx *Cx, name string) Option[FocusHandle] {
+	useBaseQuestionnaire()
 	o := newReq(1649)
 	o.u64(s.h)
 	o.str(name)
@@ -7800,6 +8593,7 @@ func (s QuestionnaireState) ItemFocusHandle(cx *Cx, name string) Option[FocusHan
 
 // ItemState is <gpui_kit::base::questionnaire::QuestionnaireState>::item_state.
 func (s QuestionnaireState) ItemState(cx *Cx, name string) Option[QuestionnaireItemState] {
+	useBaseQuestionnaire()
 	o := newReq(1086)
 	o.u64(s.h)
 	o.str(name)
@@ -7809,6 +8603,7 @@ func (s QuestionnaireState) ItemState(cx *Cx, name string) Option[QuestionnaireI
 
 // NavigationState is <gpui_kit::base::questionnaire::QuestionnaireState>::navigation_state.
 func (s QuestionnaireState) NavigationState(cx *Cx) QuestionnaireNavigationState {
+	useBaseQuestionnaire()
 	o := newReq(1088)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7817,6 +8612,7 @@ func (s QuestionnaireState) NavigationState(cx *Cx) QuestionnaireNavigationState
 
 // Progress is <gpui_kit::base::questionnaire::QuestionnaireState>::progress.
 func (s QuestionnaireState) Progress(cx *Cx) QuestionnaireProgressState {
+	useBaseQuestionnaire()
 	o := newReq(1090)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7825,6 +8621,7 @@ func (s QuestionnaireState) Progress(cx *Cx) QuestionnaireProgressState {
 
 // ShortcutForChoice is <gpui_kit::base::questionnaire::QuestionnaireState>::shortcut_for_choice.
 func (s QuestionnaireState) ShortcutForChoice(cx *Cx, item string, value string) Option[string] {
+	useBaseQuestionnaire()
 	o := newReq(1098)
 	o.u64(s.h)
 	o.str(item)
@@ -7835,6 +8632,7 @@ func (s QuestionnaireState) ShortcutForChoice(cx *Cx, item string, value string)
 
 // ShortcutMode is <gpui_kit::base::questionnaire::QuestionnaireState>::shortcut_mode.
 func (s QuestionnaireState) ShortcutMode(cx *Cx) Option[QuestionnaireShortcutMode] {
+	useBaseQuestionnaire()
 	o := newReq(1099)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7843,6 +8641,7 @@ func (s QuestionnaireState) ShortcutMode(cx *Cx) Option[QuestionnaireShortcutMod
 
 // Total is <gpui_kit::base::questionnaire::QuestionnaireState>::total.
 func (s QuestionnaireState) Total(cx *Cx) int {
+	useBaseQuestionnaire()
 	o := newReq(1103)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -7851,6 +8650,7 @@ func (s QuestionnaireState) Total(cx *Cx) int {
 
 // ActivateChoice is <gpui_kit::base::questionnaire::QuestionnaireState>::activate_choice.
 func (s QuestionnaireState) ActivateChoice(cx *Cx, item string, value string) error {
+	useBaseQuestionnaire()
 	o := newReq(1062)
 	o.u64(s.h)
 	o.str(item)
@@ -7861,6 +8661,7 @@ func (s QuestionnaireState) ActivateChoice(cx *Cx, item string, value string) er
 
 // ActivateShortcut is <gpui_kit::base::questionnaire::QuestionnaireState>::activate_shortcut.
 func (s QuestionnaireState) ActivateShortcut(cx *Cx, key string) bool {
+	useBaseQuestionnaire()
 	o := newReq(1063)
 	o.u64(s.h)
 	o.str(key)
@@ -7870,6 +8671,7 @@ func (s QuestionnaireState) ActivateShortcut(cx *Cx, key string) bool {
 
 // Choose is <gpui_kit::base::questionnaire::QuestionnaireState>::choose.
 func (s QuestionnaireState) Choose(cx *Cx, item string, value string) error {
+	useBaseQuestionnaire()
 	o := newReq(1068)
 	o.u64(s.h)
 	o.str(item)
@@ -7880,6 +8682,7 @@ func (s QuestionnaireState) Choose(cx *Cx, item string, value string) error {
 
 // ClearExternalError is <gpui_kit::base::questionnaire::QuestionnaireState>::clear_external_error.
 func (s QuestionnaireState) ClearExternalError(cx *Cx, item string) error {
+	useBaseQuestionnaire()
 	o := newReq(1069)
 	o.u64(s.h)
 	o.str(item)
@@ -7889,6 +8692,7 @@ func (s QuestionnaireState) ClearExternalError(cx *Cx, item string) error {
 
 // ConfirmCurrent is <gpui_kit::base::questionnaire::QuestionnaireState>::confirm_current.
 func (s QuestionnaireState) ConfirmCurrent(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1070)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -7897,6 +8701,7 @@ func (s QuestionnaireState) ConfirmCurrent(cx *Cx) bool {
 
 // FocusChoice is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_choice.
 func (s QuestionnaireState) FocusChoice(cx *Cx, item string, value string) bool {
+	useBaseQuestionnaire()
 	o := newReq(1075)
 	o.u64(s.h)
 	o.str(item)
@@ -7907,6 +8712,7 @@ func (s QuestionnaireState) FocusChoice(cx *Cx, item string, value string) bool 
 
 // FocusCurrentItem is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_current_item.
 func (s QuestionnaireState) FocusCurrentItem(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1076)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -7915,6 +8721,7 @@ func (s QuestionnaireState) FocusCurrentItem(cx *Cx) bool {
 
 // FocusInput is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_input.
 func (s QuestionnaireState) FocusInput(cx *Cx, item string) bool {
+	useBaseQuestionnaire()
 	o := newReq(1077)
 	o.u64(s.h)
 	o.str(item)
@@ -7924,6 +8731,7 @@ func (s QuestionnaireState) FocusInput(cx *Cx, item string) bool {
 
 // FocusInvalidItem is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_invalid_item.
 func (s QuestionnaireState) FocusInvalidItem(cx *Cx, item string) bool {
+	useBaseQuestionnaire()
 	o := newReq(1078)
 	o.u64(s.h)
 	o.str(item)
@@ -7933,6 +8741,7 @@ func (s QuestionnaireState) FocusInvalidItem(cx *Cx, item string) bool {
 
 // FocusNextAnswer is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_next_answer.
 func (s QuestionnaireState) FocusNextAnswer(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1079)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -7941,6 +8750,7 @@ func (s QuestionnaireState) FocusNextAnswer(cx *Cx) bool {
 
 // FocusPreviousAnswer is <gpui_kit::base::questionnaire::QuestionnaireState>::focus_previous_answer.
 func (s QuestionnaireState) FocusPreviousAnswer(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1080)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -7949,6 +8759,7 @@ func (s QuestionnaireState) FocusPreviousAnswer(cx *Cx) bool {
 
 // FocusedCurrentChoice is <gpui_kit::base::questionnaire::QuestionnaireState>::focused_current_choice.
 func (s QuestionnaireState) FocusedCurrentChoice(cx *Cx) Option[string] {
+	useBaseQuestionnaire()
 	o := newReq(1081)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -7957,6 +8768,7 @@ func (s QuestionnaireState) FocusedCurrentChoice(cx *Cx) Option[string] {
 
 // GoNext is <gpui_kit::base::questionnaire::QuestionnaireState>::go_next.
 func (s QuestionnaireState) GoNext(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1082)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -7965,6 +8777,7 @@ func (s QuestionnaireState) GoNext(cx *Cx) bool {
 
 // GoPrevious is <gpui_kit::base::questionnaire::QuestionnaireState>::go_previous.
 func (s QuestionnaireState) GoPrevious(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1083)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -7973,6 +8786,7 @@ func (s QuestionnaireState) GoPrevious(cx *Cx) bool {
 
 // IsCurrentInputFocused is <gpui_kit::base::questionnaire::QuestionnaireState>::is_current_input_focused.
 func (s QuestionnaireState) IsCurrentInputFocused(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1085)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -7981,6 +8795,7 @@ func (s QuestionnaireState) IsCurrentInputFocused(cx *Cx) bool {
 
 // MoveCurrentRadio is <gpui_kit::base::questionnaire::QuestionnaireState>::move_current_radio.
 func (s QuestionnaireState) MoveCurrentRadio(cx *Cx, direction int) bool {
+	useBaseQuestionnaire()
 	o := newReq(1087)
 	o.u64(s.h)
 	o.u64(uint64(direction))
@@ -7990,6 +8805,7 @@ func (s QuestionnaireState) MoveCurrentRadio(cx *Cx, direction int) bool {
 
 // SetAnswer is <gpui_kit::base::questionnaire::QuestionnaireState>::set_answer.
 func (s QuestionnaireState) SetAnswer(cx *Cx, item string, answer QuestionnaireAnswer) error {
+	useBaseQuestionnaire()
 	o := newReq(1092)
 	o.u64(s.h)
 	o.str(item)
@@ -8000,6 +8816,7 @@ func (s QuestionnaireState) SetAnswer(cx *Cx, item string, answer QuestionnaireA
 
 // SetChoiceDisabled is <gpui_kit::base::questionnaire::QuestionnaireState>::set_choice_disabled.
 func (s QuestionnaireState) SetChoiceDisabled(cx *Cx, item string, value string, disabled bool) error {
+	useBaseQuestionnaire()
 	o := newReq(1093)
 	o.u64(s.h)
 	o.str(item)
@@ -8011,6 +8828,7 @@ func (s QuestionnaireState) SetChoiceDisabled(cx *Cx, item string, value string,
 
 // SetCurrentItem is <gpui_kit::base::questionnaire::QuestionnaireState>::set_current_item.
 func (s QuestionnaireState) SetCurrentItem(cx *Cx, name string) error {
+	useBaseQuestionnaire()
 	o := newReq(1094)
 	o.u64(s.h)
 	o.str(name)
@@ -8020,6 +8838,7 @@ func (s QuestionnaireState) SetCurrentItem(cx *Cx, name string) error {
 
 // SetExternalError is <gpui_kit::base::questionnaire::QuestionnaireState>::set_external_error.
 func (s QuestionnaireState) SetExternalError(cx *Cx, item string, error_ string) error {
+	useBaseQuestionnaire()
 	o := newReq(1095)
 	o.u64(s.h)
 	o.str(item)
@@ -8030,6 +8849,7 @@ func (s QuestionnaireState) SetExternalError(cx *Cx, item string, error_ string)
 
 // SetInputValue is <gpui_kit::base::questionnaire::QuestionnaireState>::set_input_value.
 func (s QuestionnaireState) SetInputValue(cx *Cx, item string, value string) error {
+	useBaseQuestionnaire()
 	o := newReq(1096)
 	o.u64(s.h)
 	o.str(item)
@@ -8040,6 +8860,7 @@ func (s QuestionnaireState) SetInputValue(cx *Cx, item string, value string) err
 
 // SetItemDisabled is <gpui_kit::base::questionnaire::QuestionnaireState>::set_item_disabled.
 func (s QuestionnaireState) SetItemDisabled(cx *Cx, name string, disabled bool) error {
+	useBaseQuestionnaire()
 	o := newReq(1097)
 	o.u64(s.h)
 	o.str(name)
@@ -8050,6 +8871,7 @@ func (s QuestionnaireState) SetItemDisabled(cx *Cx, name string, disabled bool) 
 
 // SkipCurrent is <gpui_kit::base::questionnaire::QuestionnaireState>::skip_current.
 func (s QuestionnaireState) SkipCurrent(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1100)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -8058,6 +8880,7 @@ func (s QuestionnaireState) SkipCurrent(cx *Cx) bool {
 
 // Submit is <gpui_kit::base::questionnaire::QuestionnaireState>::submit.
 func (s QuestionnaireState) Submit(cx *Cx) bool {
+	useBaseQuestionnaire()
 	o := newReq(1101)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -8066,6 +8889,7 @@ func (s QuestionnaireState) Submit(cx *Cx) bool {
 
 // Reset is <gpui_kit::base::questionnaire::QuestionnaireState>::reset.
 func (s QuestionnaireState) Reset(cx *Cx) {
+	useBaseQuestionnaire()
 	o := newReq(1091)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -8104,6 +8928,7 @@ func (b QuestionnaireStateBuilder) Build() QuestionnaireState {
 
 // NewQuestionnaireState is crate::overlay::Fallible(<gpui_kit::base::questionnaire::QuestionnaireState>::new).call2.
 func NewQuestionnaireState(cx *Cx, items []QuestionnaireItemDefinition) QuestionnaireStateBuilder {
+	useBaseQuestionnaire()
 	o := newReq(1089)
 	o.u32(uint32(len(items)))
 	for _, x0 := range items {
@@ -8119,6 +8944,7 @@ func (s QuestionnaireSubmission) handle() uint64 { return s.h }
 
 // Answer is <gpui_kit::base::questionnaire::QuestionnaireSubmission>::answer.
 func (s QuestionnaireSubmission) Answer(cx *Cx, name string) Option[QuestionnaireAnswerRead] {
+	useBaseQuestionnaire()
 	o := newReq(1432)
 	o.u64(s.h)
 	o.str(name)
@@ -8128,6 +8954,7 @@ func (s QuestionnaireSubmission) Answer(cx *Cx, name string) Option[Questionnair
 
 // Items is <gpui_kit::base::questionnaire::QuestionnaireSubmission>::items.
 func (s QuestionnaireSubmission) Items(cx *Cx) []QuestionnaireSubmissionItem {
+	useBaseQuestionnaire()
 	o := newReq(1433)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8136,6 +8963,7 @@ func (s QuestionnaireSubmission) Items(cx *Cx) []QuestionnaireSubmissionItem {
 
 // NewQuestionnaireSubmissionDefault is <gpui_kit::base::questionnaire::QuestionnaireSubmission as Default>::default.
 func NewQuestionnaireSubmissionDefault(cx *Cx) QuestionnaireSubmission {
+	useBaseQuestionnaire()
 	o := newReq(1485)
 	o.u16(0) // no builder ops follow
 	return QuestionnaireSubmission{stateMake(cx, o)}
@@ -8148,6 +8976,7 @@ func (s QuestionnaireSubmissionItem) handle() uint64 { return s.h }
 
 // Answer is <gpui_kit::base::questionnaire::QuestionnaireSubmissionItem>::answer.
 func (s QuestionnaireSubmissionItem) Answer(cx *Cx) QuestionnaireAnswerRead {
+	useBaseQuestionnaire()
 	o := newReq(1434)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8156,6 +8985,7 @@ func (s QuestionnaireSubmissionItem) Answer(cx *Cx) QuestionnaireAnswerRead {
 
 // Name is <gpui_kit::base::questionnaire::QuestionnaireSubmissionItem>::name.
 func (s QuestionnaireSubmissionItem) Name(cx *Cx) string {
+	useBaseQuestionnaire()
 	o := newReq(1435)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8164,6 +8994,7 @@ func (s QuestionnaireSubmissionItem) Name(cx *Cx) string {
 
 // Status is <gpui_kit::base::questionnaire::QuestionnaireSubmissionItem>::status.
 func (s QuestionnaireSubmissionItem) Status(cx *Cx) QuestionnaireItemStatus {
+	useBaseQuestionnaire()
 	o := newReq(1436)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8177,6 +9008,7 @@ func (s RangeDecorationCollection) handle() uint64 { return s.h }
 
 // GetRanges is <gpui_kit::base::input::RangeDecorationCollection>::get_ranges.
 func (s RangeDecorationCollection) GetRanges(cx *Cx) []Range {
+	useBaseInput()
 	o := newReq(930)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8185,6 +9017,7 @@ func (s RangeDecorationCollection) GetRanges(cx *Cx) []Range {
 
 // Append is <gpui_kit::base::input::RangeDecorationCollection>::append.
 func (s RangeDecorationCollection) Append(cx *Cx, decorations []RangeDecoration) {
+	useBaseInput()
 	o := newReq(927)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -8196,6 +9029,7 @@ func (s RangeDecorationCollection) Append(cx *Cx, decorations []RangeDecoration)
 
 // Clear is <gpui_kit::base::input::RangeDecorationCollection>::clear.
 func (s RangeDecorationCollection) Clear(cx *Cx) {
+	useBaseInput()
 	o := newReq(928)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -8203,6 +9037,7 @@ func (s RangeDecorationCollection) Clear(cx *Cx) {
 
 // Dispose is <gpui_kit::base::input::RangeDecorationCollection>::dispose.
 func (s RangeDecorationCollection) Dispose(cx *Cx) {
+	useBaseInput()
 	o := newReq(929)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -8210,6 +9045,7 @@ func (s RangeDecorationCollection) Dispose(cx *Cx) {
 
 // Set is <gpui_kit::base::input::RangeDecorationCollection>::set.
 func (s RangeDecorationCollection) Set(cx *Cx, decorations []RangeDecoration) {
+	useBaseInput()
 	o := newReq(931)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -8226,6 +9062,7 @@ func (s RangeHighlight) handle() uint64 { return s.h }
 
 // Background is <gpui_kit::base::RangeHighlight>::background.
 func (s RangeHighlight) Background(cx *Cx) Hsla {
+	useBaseText()
 	o := newReq(788)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8234,6 +9071,7 @@ func (s RangeHighlight) Background(cx *Cx) Hsla {
 
 // Range is <gpui_kit::base::RangeHighlight>::range.
 func (s RangeHighlight) Range(cx *Cx) Range {
+	useBaseText()
 	o := newReq(790)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8242,6 +9080,7 @@ func (s RangeHighlight) Range(cx *Cx) Range {
 
 // NewRangeHighlight is <gpui_kit::base::RangeHighlight>::new.
 func NewRangeHighlight(cx *Cx, range_ Range, background Color) RangeHighlight {
+	useBaseText()
 	o := newReq(789)
 	putRange(o, range_)
 	putColor(o, background)
@@ -8256,6 +9095,7 @@ func (s RenderedText) handle() uint64 { return s.h }
 
 // AsStr is <gpui_kit::base::RenderedText>::as_str.
 func (s RenderedText) AsStr(cx *Cx) string {
+	useBaseText()
 	o := newReq(791)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8264,6 +9104,7 @@ func (s RenderedText) AsStr(cx *Cx) string {
 
 // IsEmpty is <gpui_kit::base::RenderedText>::is_empty.
 func (s RenderedText) IsEmpty(cx *Cx) bool {
+	useBaseText()
 	o := newReq(792)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8272,6 +9113,7 @@ func (s RenderedText) IsEmpty(cx *Cx) bool {
 
 // Len is <gpui_kit::base::RenderedText>::len.
 func (s RenderedText) Len(cx *Cx) int {
+	useBaseText()
 	o := newReq(793)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8280,6 +9122,7 @@ func (s RenderedText) Len(cx *Cx) int {
 
 // RangeForSource is <gpui_kit::base::RenderedText>::range_for_source.
 func (s RenderedText) RangeForSource(cx *Cx, source Range) Option[Range] {
+	useBaseText()
 	o := newReq(794)
 	o.u64(s.h)
 	putRange(o, source)
@@ -8289,6 +9132,7 @@ func (s RenderedText) RangeForSource(cx *Cx, source Range) Option[Range] {
 
 // Source is <gpui_kit::base::RenderedText>::source.
 func (s RenderedText) Source(cx *Cx) string {
+	useBaseText()
 	o := newReq(795)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8302,6 +9146,7 @@ func (s ResizableState) handle() uint64 { return s.h }
 
 // ContainerSize is <gpui_kit::base::ResizableState>::container_size.
 func (s ResizableState) ContainerSize(cx *Cx) float32 {
+	useBaseResizable()
 	o := newReq(1527)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -8310,6 +9155,7 @@ func (s ResizableState) ContainerSize(cx *Cx) float32 {
 
 // Sizes is <gpui_kit::base::ResizableState>::sizes.
 func (s ResizableState) Sizes(cx *Cx) []float32 {
+	useBaseResizable()
 	o := newReq(1533)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -8318,6 +9164,7 @@ func (s ResizableState) Sizes(cx *Cx) []float32 {
 
 // Clear is <gpui_kit::base::ResizableState>::clear.
 func (s ResizableState) Clear(cx *Cx) {
+	useBaseResizable()
 	o := newReq(1526)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -8325,6 +9172,7 @@ func (s ResizableState) Clear(cx *Cx) {
 
 // InsertPanel is <gpui_kit::base::ResizableState>::insert_panel.
 func (s ResizableState) InsertPanel(cx *Cx, size Option[float32], ix Option[int]) {
+	useBaseResizable()
 	o := newReq(1528)
 	o.u64(s.h)
 	if x0, ok := size.Get(); ok {
@@ -8344,6 +9192,7 @@ func (s ResizableState) InsertPanel(cx *Cx, size Option[float32], ix Option[int]
 
 // RemovePanel is <gpui_kit::base::ResizableState>::remove_panel.
 func (s ResizableState) RemovePanel(cx *Cx, panelIx int) {
+	useBaseResizable()
 	o := newReq(1530)
 	o.u64(s.h)
 	putUsize(o, panelIx)
@@ -8352,6 +9201,7 @@ func (s ResizableState) RemovePanel(cx *Cx, panelIx int) {
 
 // ResetPanel is <gpui_kit::base::ResizableState>::reset_panel.
 func (s ResizableState) ResetPanel(cx *Cx, panelIx int) {
+	useBaseResizable()
 	o := newReq(1531)
 	o.u64(s.h)
 	putUsize(o, panelIx)
@@ -8360,6 +9210,7 @@ func (s ResizableState) ResetPanel(cx *Cx, panelIx int) {
 
 // ResizePanel is <gpui_kit::base::ResizableState>::resize_panel.
 func (s ResizableState) ResizePanel(cx *Cx, ix int, size float32) {
+	useBaseResizable()
 	o := newReq(1532)
 	o.u64(s.h)
 	putUsize(o, ix)
@@ -8380,6 +9231,7 @@ func (s ResizableState) OnResizablePanelEvent(cx *Cx, h func(cx *Cx, e Resizable
 
 // NewResizableState is <gpui_kit::base::ResizableState as Default>::default.
 func NewResizableState(cx *Cx) ResizableState {
+	useBaseResizable()
 	o := newReq(1529)
 	o.u16(0) // no builder ops follow
 	return ResizableState{stateMake(cx, o)}
@@ -8397,6 +9249,7 @@ func (s SankeyGraph) handle() uint64 { return s.h }
 
 // LayerCount is <gpui_kit::base::plot::shape::SankeyGraph>::layer_count.
 func (s SankeyGraph) LayerCount(cx *Cx) int {
+	useBasePlot()
 	o := newReq(1482)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8405,6 +9258,7 @@ func (s SankeyGraph) LayerCount(cx *Cx) int {
 
 // NewSankeyGraphDefault is <gpui_kit::base::plot::shape::SankeyGraph as Default>::default.
 func NewSankeyGraphDefault(cx *Cx) SankeyGraph {
+	useBasePlot()
 	o := newReq(1481)
 	o.u16(0) // no builder ops follow
 	return SankeyGraph{stateMake(cx, o)}
@@ -8417,6 +9271,7 @@ func (s ScaleBand) handle() uint64 { return s.h }
 
 // BandWidth is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::band_width.
 func (s ScaleBand) BandWidth(cx *Cx) float32 {
+	useBaseRoot()
 	o := newReq(1146)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8425,6 +9280,7 @@ func (s ScaleBand) BandWidth(cx *Cx) float32 {
 
 // NearestIndex is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::nearest_index.
 func (s ScaleBand) NearestIndex(cx *Cx, arg0 float32) int {
+	useBaseRoot()
 	o := newReq(1147)
 	o.u64(s.h)
 	o.f32(arg0)
@@ -8434,6 +9290,7 @@ func (s ScaleBand) NearestIndex(cx *Cx, arg0 float32) int {
 
 // Step is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::step.
 func (s ScaleBand) Step(cx *Cx) float32 {
+	useBaseRoot()
 	o := newReq(1149)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8442,6 +9299,7 @@ func (s ScaleBand) Step(cx *Cx) float32 {
 
 // Tick is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::tick.
 func (s ScaleBand) Tick(cx *Cx, value string) Option[float32] {
+	useBaseRoot()
 	o := newReq(1150)
 	o.u64(s.h)
 	o.str(value)
@@ -8481,6 +9339,7 @@ func (b ScaleBandBuilder) Build() ScaleBand { return ScaleBand{b.sb.build()} }
 
 // NewScaleBand is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::new.
 func NewScaleBand(cx *Cx, domain []string, range_ [2]float32) ScaleBandBuilder {
+	useBaseRoot()
 	o := newReq(1148)
 	o.u32(uint32(len(domain)))
 	for _, x0 := range domain {
@@ -8499,6 +9358,7 @@ func (s ScaleLinear) handle() uint64 { return s.h }
 
 // NearestIndex is <gpui_kit::base::plot::scale::ScaleLinear<f64> as gpui_kit::base::plot::scale::Scale<f64>>::nearest_index.
 func (s ScaleLinear) NearestIndex(cx *Cx, arg0 float32) int {
+	useBasePlot()
 	o := newReq(1151)
 	o.u64(s.h)
 	o.f32(arg0)
@@ -8508,6 +9368,7 @@ func (s ScaleLinear) NearestIndex(cx *Cx, arg0 float32) int {
 
 // Tick is <gpui_kit::base::plot::scale::ScaleLinear<f64> as gpui_kit::base::plot::scale::Scale<f64>>::tick.
 func (s ScaleLinear) Tick(cx *Cx, value float64) Option[float32] {
+	useBasePlot()
 	o := newReq(1153)
 	o.u64(s.h)
 	o.f64(value)
@@ -8517,6 +9378,7 @@ func (s ScaleLinear) Tick(cx *Cx, value float64) Option[float32] {
 
 // NewScaleLinear is <gpui_kit::base::plot::scale::ScaleLinear<f64>>::new.
 func NewScaleLinear(cx *Cx, domain []float64, range_ [2]float32) ScaleLinear {
+	useBasePlot()
 	o := newReq(1152)
 	o.u32(uint32(len(domain)))
 	for _, x0 := range domain {
@@ -8536,6 +9398,7 @@ func (s ScaleOrdinal) handle() uint64 { return s.h }
 
 // Map is <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::map.
 func (s ScaleOrdinal) Map(cx *Cx, value string) Option[Hsla] {
+	useBaseRoot()
 	o := newReq(1154)
 	o.u64(s.h)
 	o.str(value)
@@ -8575,6 +9438,7 @@ func (b ScaleOrdinalBuilder) Build() ScaleOrdinal { return ScaleOrdinal{b.sb.bui
 
 // NewScaleOrdinal is <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::new.
 func NewScaleOrdinal(cx *Cx, domain []string, range_ []Color) ScaleOrdinalBuilder {
+	useBaseRoot()
 	o := newReq(1155)
 	o.u32(uint32(len(domain)))
 	for _, x0 := range domain {
@@ -8594,6 +9458,7 @@ func (s ScalePoint) handle() uint64 { return s.h }
 
 // NearestIndex is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::nearest_index.
 func (s ScalePoint) NearestIndex(cx *Cx, arg0 float32) int {
+	useBaseRoot()
 	o := newReq(1156)
 	o.u64(s.h)
 	o.f32(arg0)
@@ -8603,6 +9468,7 @@ func (s ScalePoint) NearestIndex(cx *Cx, arg0 float32) int {
 
 // Tick is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::tick.
 func (s ScalePoint) Tick(cx *Cx, value string) Option[float32] {
+	useBaseRoot()
 	o := newReq(1158)
 	o.u64(s.h)
 	o.str(value)
@@ -8612,6 +9478,7 @@ func (s ScalePoint) Tick(cx *Cx, value string) Option[float32] {
 
 // TickAt is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>>::tick_at.
 func (s ScalePoint) TickAt(cx *Cx, index int) Option[float32] {
+	useBaseRoot()
 	o := newReq(1159)
 	o.u64(s.h)
 	putUsize(o, index)
@@ -8621,6 +9488,7 @@ func (s ScalePoint) TickAt(cx *Cx, index int) Option[float32] {
 
 // NewScalePoint is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>>::new.
 func NewScalePoint(cx *Cx, domain []string, range_ [2]float32) ScalePoint {
+	useBaseRoot()
 	o := newReq(1157)
 	o.u32(uint32(len(domain)))
 	for _, x0 := range domain {
@@ -8698,6 +9566,7 @@ func (s ScrollbarMotionRead) handle() uint64 { return s.h }
 
 // Enter is <gpui_kit::base::ScrollbarMotion>::enter.
 func (s ScrollbarMotionRead) Enter(cx *Cx) time.Duration {
+	useBaseRoot()
 	o := newReq(1440)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8706,6 +9575,7 @@ func (s ScrollbarMotionRead) Enter(cx *Cx) time.Duration {
 
 // Entrance is <gpui_kit::base::ScrollbarMotion>::entrance.
 func (s ScrollbarMotionRead) Entrance(cx *Cx) ScrollbarEntrance {
+	useBaseRoot()
 	o := newReq(1368)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8714,6 +9584,7 @@ func (s ScrollbarMotionRead) Entrance(cx *Cx) ScrollbarEntrance {
 
 // Exit is <gpui_kit::base::ScrollbarMotion>::exit.
 func (s ScrollbarMotionRead) Exit(cx *Cx) time.Duration {
+	useBaseRoot()
 	o := newReq(1441)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8722,6 +9593,7 @@ func (s ScrollbarMotionRead) Exit(cx *Cx) time.Duration {
 
 // Expand is <gpui_kit::base::ScrollbarMotion>::expand.
 func (s ScrollbarMotionRead) Expand(cx *Cx) time.Duration {
+	useBaseRoot()
 	o := newReq(1442)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8730,6 +9602,7 @@ func (s ScrollbarMotionRead) Expand(cx *Cx) time.Duration {
 
 // Idle is <gpui_kit::base::ScrollbarMotion>::idle.
 func (s ScrollbarMotionRead) Idle(cx *Cx) time.Duration {
+	useBaseRoot()
 	o := newReq(1443)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8738,6 +9611,7 @@ func (s ScrollbarMotionRead) Idle(cx *Cx) time.Duration {
 
 // ThumbHoverEntrance is <gpui_kit::base::ScrollbarMotion>::thumb_hover_entrance.
 func (s ScrollbarMotionRead) ThumbHoverEntrance(cx *Cx) ScrollbarEntrance {
+	useBaseRoot()
 	o := newReq(1369)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8751,6 +9625,7 @@ func (s ScrollbarThemeRead) handle() uint64 { return s.h }
 
 // Mode is <gpui_kit::base::ScrollbarTheme>::mode.
 func (s ScrollbarThemeRead) Mode(cx *Cx) ScrollbarMode {
+	useBaseRoot()
 	o := newReq(1370)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8759,6 +9634,7 @@ func (s ScrollbarThemeRead) Mode(cx *Cx) ScrollbarMode {
 
 // Motion is <gpui_kit::base::ScrollbarTheme>::motion.
 func (s ScrollbarThemeRead) Motion(cx *Cx) ScrollbarMotionRead {
+	useBaseRoot()
 	o := newReq(1371)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8772,6 +9648,7 @@ func (s SearchMatcher) handle() uint64 { return s.h }
 
 // Current is <gpui_kit::base::input::SearchMatcher>::current.
 func (s SearchMatcher) Current(cx *Cx) Option[int] {
+	useBaseInput()
 	o := newReq(932)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8780,6 +9657,7 @@ func (s SearchMatcher) Current(cx *Cx) Option[int] {
 
 // CurrentMatchIndex is <gpui_kit::base::input::SearchMatcher>::current_match_index.
 func (s SearchMatcher) CurrentMatchIndex(cx *Cx) int {
+	useBaseInput()
 	o := newReq(933)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8788,6 +9666,7 @@ func (s SearchMatcher) CurrentMatchIndex(cx *Cx) int {
 
 // IsEmpty is <gpui_kit::base::input::SearchMatcher>::is_empty.
 func (s SearchMatcher) IsEmpty(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(934)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8796,6 +9675,7 @@ func (s SearchMatcher) IsEmpty(cx *Cx) bool {
 
 // Label is <gpui_kit::base::input::SearchMatcher>::label.
 func (s SearchMatcher) Label(cx *Cx) string {
+	useBaseInput()
 	o := newReq(935)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8804,6 +9684,7 @@ func (s SearchMatcher) Label(cx *Cx) string {
 
 // Len is <gpui_kit::base::input::SearchMatcher>::len.
 func (s SearchMatcher) Len(cx *Cx) int {
+	useBaseInput()
 	o := newReq(936)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8812,6 +9693,7 @@ func (s SearchMatcher) Len(cx *Cx) int {
 
 // MatchedRanges is <gpui_kit::base::input::SearchMatcher>::matched_ranges.
 func (s SearchMatcher) MatchedRanges(cx *Cx) []Range {
+	useBaseInput()
 	o := newReq(1474)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8820,6 +9702,7 @@ func (s SearchMatcher) MatchedRanges(cx *Cx) []Range {
 
 // UpdateCursorByOffset is <gpui_kit::base::input::SearchMatcher>::update_cursor_by_offset.
 func (s SearchMatcher) UpdateCursorByOffset(cx *Cx, offset int) {
+	useBaseInput()
 	o := newReq(938)
 	o.u64(s.h)
 	putUsize(o, offset)
@@ -8828,6 +9711,7 @@ func (s SearchMatcher) UpdateCursorByOffset(cx *Cx, offset int) {
 
 // UpdateQuery is <gpui_kit::base::input::SearchMatcher>::update_query.
 func (s SearchMatcher) UpdateQuery(cx *Cx, query string, caseInsensitive bool) {
+	useBaseInput()
 	o := newReq(939)
 	o.u64(s.h)
 	o.str(query)
@@ -8837,6 +9721,7 @@ func (s SearchMatcher) UpdateQuery(cx *Cx, query string, caseInsensitive bool) {
 
 // NewSearchMatcher is <gpui_kit::base::input::SearchMatcher>::new.
 func NewSearchMatcher(cx *Cx) SearchMatcher {
+	useBaseInput()
 	o := newReq(937)
 	o.u16(0) // no builder ops follow
 	return SearchMatcher{stateMake(cx, o)}
@@ -8849,6 +9734,7 @@ func (s SearchSession) handle() uint64 { return s.h }
 
 // IsActive is <gpui_kit::base::input::SearchSession>::is_active.
 func (s SearchSession) IsActive(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(940)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8857,6 +9743,7 @@ func (s SearchSession) IsActive(cx *Cx) bool {
 
 // NewSearchSessionDefault is <gpui_kit::base::input::SearchSession as Default>::default.
 func NewSearchSessionDefault(cx *Cx) SearchSession {
+	useBaseInput()
 	o := newReq(1475)
 	o.u16(0) // no builder ops follow
 	return SearchSession{stateMake(cx, o)}
@@ -8869,6 +9756,7 @@ func (s SelectState) handle() uint64 { return s.h }
 
 // SelectedIndex is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::selected_index.
 func (s SelectState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
+	useComponentSelect()
 	o := newReq(1120)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -8877,6 +9765,7 @@ func (s SelectState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
 
 // SelectedValue is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::selected_value.
 func (s SelectState) SelectedValue(cx *Cx) Option[string] {
+	useComponentSelect()
 	o := newReq(1171)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -8885,6 +9774,7 @@ func (s SelectState) SelectedValue(cx *Cx) Option[string] {
 
 // Focus is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::focus.
 func (s SelectState) Focus(cx *Cx) {
+	useComponentSelect()
 	o := newReq(1118)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -8892,6 +9782,7 @@ func (s SelectState) Focus(cx *Cx) {
 
 // SetItems is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_items.
 func (s SelectState) SetItems(cx *Cx, items RowSource) {
+	useComponentSelect()
 	o := newReq(1121)
 	o.u64(s.h)
 	o.u64(items.h)
@@ -8900,6 +9791,7 @@ func (s SelectState) SetItems(cx *Cx, items RowSource) {
 
 // SetSelectedIndex is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_selected_index.
 func (s SelectState) SetSelectedIndex(cx *Cx, selectedIndex Option[BaseIndexPath]) {
+	useComponentSelect()
 	o := newReq(1122)
 	o.u64(s.h)
 	if x0, ok := selectedIndex.Get(); ok {
@@ -8913,6 +9805,7 @@ func (s SelectState) SetSelectedIndex(cx *Cx, selectedIndex Option[BaseIndexPath
 
 // SetSelectedValue is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_selected_value.
 func (s SelectState) SetSelectedValue(cx *Cx, selectedValue string) {
+	useComponentSelect()
 	o := newReq(1172)
 	o.u64(s.h)
 	o.str(selectedValue)
@@ -8944,6 +9837,7 @@ func (b SelectStateBuilder) Build() SelectState { return SelectState{b.sb.build(
 
 // NewSelectState is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::new.
 func NewSelectState(cx *Cx, delegate RowSource, selectedIndex Option[BaseIndexPath]) SelectStateBuilder {
+	useComponentSelect()
 	o := newReq(1119)
 	o.u64(delegate.h)
 	if x0, ok := selectedIndex.Get(); ok {
@@ -8962,6 +9856,7 @@ func (s Sequence) handle() uint64 { return s.h }
 
 // From is <gpui_kit::base::Sequence<f32>>::from.
 func (s Sequence) From(cx *Cx) float32 {
+	useBaseMotion()
 	o := newReq(1131)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8970,6 +9865,7 @@ func (s Sequence) From(cx *Cx) float32 {
 
 // Steps is <gpui_kit::base::Sequence<f32>>::steps.
 func (s Sequence) Steps(cx *Cx) []SequenceStep {
+	useBaseMotion()
 	o := newReq(1134)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -8978,6 +9874,7 @@ func (s Sequence) Steps(cx *Cx) []SequenceStep {
 
 // Sample is <gpui_kit::base::Sequence<f32>>::sample.
 func (s Sequence) Sample(cx *Cx) SequenceSample {
+	useBaseMotion()
 	o := newReq(1133)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -9008,6 +9905,7 @@ func (b SequenceBuilder) Build() Sequence { return Sequence{b.sb.build()} }
 
 // NewSequence is <gpui_kit::base::Sequence<f32>>::new.
 func NewSequence(cx *Cx, id TransitionIDInto, from float32) SequenceBuilder {
+	useBaseMotion()
 	o := newReq(1132)
 	putTransitionIDInto(o, id)
 	o.f32(from)
@@ -9021,6 +9919,7 @@ func (s SequenceSample) handle() uint64 { return s.h }
 
 // IsFinished is <gpui_kit::base::SequenceSample<f32>>::is_finished.
 func (s SequenceSample) IsFinished(cx *Cx) bool {
+	useBaseMotion()
 	o := newReq(1136)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9029,6 +9928,7 @@ func (s SequenceSample) IsFinished(cx *Cx) bool {
 
 // Status is <gpui_kit::base::SequenceSample<f32>>::status.
 func (s SequenceSample) Status(cx *Cx) MotionStatus {
+	useBaseMotion()
 	o := newReq(1137)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9037,6 +9937,7 @@ func (s SequenceSample) Status(cx *Cx) MotionStatus {
 
 // Step is <gpui_kit::base::SequenceSample<f32>>::step.
 func (s SequenceSample) Step(cx *Cx) int {
+	useBaseMotion()
 	o := newReq(1138)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9045,6 +9946,7 @@ func (s SequenceSample) Step(cx *Cx) int {
 
 // Value is <gpui_kit::base::SequenceSample<f32>>::value.
 func (s SequenceSample) Value(cx *Cx) float32 {
+	useBaseMotion()
 	o := newReq(1139)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9053,6 +9955,7 @@ func (s SequenceSample) Value(cx *Cx) float32 {
 
 // IntoValue is <gpui_kit::base::SequenceSample<f32>>::into_value.
 func (s SequenceSample) IntoValue(cx *Cx) float32 {
+	useBaseMotion()
 	o := newReq(1135)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -9066,6 +9969,7 @@ func (s SequenceStep) handle() uint64 { return s.h }
 
 // Target is <gpui_kit::base::SequenceStep<f32>>::target.
 func (s SequenceStep) Target(cx *Cx) float32 {
+	useBaseMotion()
 	o := newReq(1141)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9074,6 +9978,7 @@ func (s SequenceStep) Target(cx *Cx) float32 {
 
 // NewSequenceStep is <gpui_kit::base::SequenceStep<f32>>::new.
 func NewSequenceStep(cx *Cx, target float32, transition Transition) SequenceStep {
+	useBaseMotion()
 	o := newReq(1140)
 	o.f32(target)
 	putVtape(o, transition.n)
@@ -9088,6 +9993,7 @@ func (s ShapeKey) handle() uint64 { return s.h }
 
 // Finish is <gpui_kit::base::plot::ShapeKey>::finish.
 func (s ShapeKey) Finish(cx *Cx) uint64 {
+	useBasePlot()
 	o := newReq(952)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9096,6 +10002,7 @@ func (s ShapeKey) Finish(cx *Cx) uint64 {
 
 // NewShapeKey is <gpui_kit::base::plot::ShapeKey>::new.
 func NewShapeKey(cx *Cx, extra string) ShapeKey {
+	useBasePlot()
 	o := newReq(953)
 	o.str(extra)
 	o.u16(0) // no builder ops follow
@@ -9109,6 +10016,7 @@ func (s SliderState) handle() uint64 { return s.h }
 
 // AccessibilityStep is <gpui_kit::base::slider::SliderState>::accessibility_step.
 func (s SliderState) AccessibilityStep(cx *Cx) float32 {
+	useBaseSlider()
 	o := newReq(346)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9117,6 +10025,7 @@ func (s SliderState) AccessibilityStep(cx *Cx) float32 {
 
 // MaxValue is <gpui_kit::base::slider::SliderState>::max_value.
 func (s SliderState) MaxValue(cx *Cx) float32 {
+	useBaseSlider()
 	o := newReq(347)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9125,6 +10034,7 @@ func (s SliderState) MaxValue(cx *Cx) float32 {
 
 // MinValue is <gpui_kit::base::slider::SliderState>::min_value.
 func (s SliderState) MinValue(cx *Cx) float32 {
+	useBaseSlider()
 	o := newReq(348)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9133,6 +10043,7 @@ func (s SliderState) MinValue(cx *Cx) float32 {
 
 // StepValue is <gpui_kit::base::slider::SliderState>::step_value.
 func (s SliderState) StepValue(cx *Cx) float32 {
+	useBaseSlider()
 	o := newReq(350)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9141,6 +10052,7 @@ func (s SliderState) StepValue(cx *Cx) float32 {
 
 // Value is <gpui_kit::base::slider::SliderState>::value.
 func (s SliderState) Value(cx *Cx) SliderValue {
+	useBaseSlider()
 	o := newReq(352)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9149,6 +10061,7 @@ func (s SliderState) Value(cx *Cx) SliderValue {
 
 // TryValue is Value for a handler the component calls from inside its own update: ok is false while the state is busy.
 func (s SliderState) TryValue(cx *Cx) (v SliderValue, ok bool) {
+	useBaseSlider()
 	o := newReq(352)
 	o.u64(s.h)
 	r, ok := stateTry(s.h, cx, o)
@@ -9160,6 +10073,7 @@ func (s SliderState) TryValue(cx *Cx) (v SliderValue, ok bool) {
 
 // SetValue is <gpui_kit::base::slider::SliderState>::set_value.
 func (s SliderState) SetValue(cx *Cx, value SliderValueInto) {
+	useBaseSlider()
 	o := newReq(646)
 	o.u64(s.h)
 	putSliderValueInto(o, value)
@@ -9215,6 +10129,7 @@ func (b SliderStateBuilder) Build() SliderState { return SliderState{b.sb.build(
 
 // NewSliderState is <gpui_kit::base::slider::SliderState>::new.
 func NewSliderState(cx *Cx) SliderStateBuilder {
+	useBaseSlider()
 	o := newReq(349)
 	return SliderStateBuilder{newStateBuilder(cx, o)}
 }
@@ -9226,6 +10141,7 @@ func (s SpeechState) handle() uint64 { return s.h }
 
 // HasRecognizer is <gpui_kit::component::speech::SpeechState>::has_recognizer.
 func (s SpeechState) HasRecognizer(cx *Cx) bool {
+	useComponentSpeech()
 	o := newReq(397)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9234,6 +10150,7 @@ func (s SpeechState) HasRecognizer(cx *Cx) bool {
 
 // IsAvailable is <gpui_kit::component::speech::SpeechState>::is_available.
 func (s SpeechState) IsAvailable(cx *Cx) bool {
+	useComponentSpeech()
 	o := newReq(398)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9242,6 +10159,7 @@ func (s SpeechState) IsAvailable(cx *Cx) bool {
 
 // Levels is <gpui_kit::component::speech::SpeechState>::levels.
 func (s SpeechState) Levels(cx *Cx) []float32 {
+	useComponentSpeech()
 	o := newReq(1316)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9250,6 +10168,7 @@ func (s SpeechState) Levels(cx *Cx) []float32 {
 
 // Status is <gpui_kit::component::speech::SpeechState>::status.
 func (s SpeechState) Status(cx *Cx) SpeechStatus {
+	useComponentSpeech()
 	o := newReq(401)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9258,6 +10177,7 @@ func (s SpeechState) Status(cx *Cx) SpeechStatus {
 
 // Transcript is <gpui_kit::component::speech::SpeechState>::transcript.
 func (s SpeechState) Transcript(cx *Cx) string {
+	useComponentSpeech()
 	o := newReq(405)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9266,6 +10186,7 @@ func (s SpeechState) Transcript(cx *Cx) string {
 
 // Cancel is <gpui_kit::component::speech::SpeechState>::cancel.
 func (s SpeechState) Cancel(cx *Cx) {
+	useComponentSpeech()
 	o := newReq(396)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -9273,6 +10194,7 @@ func (s SpeechState) Cancel(cx *Cx) {
 
 // Start is <gpui_kit::component::speech::SpeechState>::start.
 func (s SpeechState) Start(cx *Cx) {
+	useComponentSpeech()
 	o := newReq(400)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -9280,6 +10202,7 @@ func (s SpeechState) Start(cx *Cx) {
 
 // Stop is <gpui_kit::component::speech::SpeechState>::stop.
 func (s SpeechState) Stop(cx *Cx) {
+	useComponentSpeech()
 	o := newReq(402)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -9287,6 +10210,7 @@ func (s SpeechState) Stop(cx *Cx) {
 
 // Toggle is <gpui_kit::component::speech::SpeechState>::toggle.
 func (s SpeechState) Toggle(cx *Cx) {
+	useComponentSpeech()
 	o := newReq(404)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -9323,6 +10247,7 @@ func (b SpeechStateBuilder) Build() SpeechState { return SpeechState{b.sb.build(
 
 // NewSpeechState is <gpui_kit::component::speech::SpeechState>::new.
 func NewSpeechState(cx *Cx) SpeechStateBuilder {
+	useComponentSpeech()
 	o := newReq(399)
 	return SpeechStateBuilder{newStateBuilder(cx, o)}
 }
@@ -9361,6 +10286,7 @@ func (b StackBuilder) Build() Stack { return Stack{b.sb.build()} }
 
 // NewStack is <gpui_kit::base::plot::shape::Stack<crate::data::Datum>>::new.
 func NewStack(cx *Cx) StackBuilder {
+	useBasePlot()
 	o := newReq(1638)
 	return StackBuilder{newStateBuilder(cx, o)}
 }
@@ -9372,6 +10298,7 @@ func (s Stagger) handle() uint64 { return s.h }
 
 // Delay is <gpui_kit::base::Stagger>::delay.
 func (s Stagger) Delay(cx *Cx, index int, count int) time.Duration {
+	useBaseMotion()
 	o := newReq(1437)
 	o.u64(s.h)
 	putUsize(o, index)
@@ -9382,6 +10309,7 @@ func (s Stagger) Delay(cx *Cx, index int, count int) time.Duration {
 
 // NewStagger is <gpui_kit::base::Stagger>::new.
 func NewStagger(cx *Cx, interval time.Duration, origin StaggerOrigin) Stagger {
+	useBaseMotion()
 	o := newReq(796)
 	putMs(o, interval)
 	putStaggerOrigin(o, origin)
@@ -9396,6 +10324,7 @@ func (s StatusColors) handle() uint64 { return s.h }
 
 // Created is <gpui_kit::component::highlighter::StatusColors>::created.
 func (s StatusColors) Created(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1490)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9404,6 +10333,7 @@ func (s StatusColors) Created(cx *Cx) Hsla {
 
 // Deleted is <gpui_kit::component::highlighter::StatusColors>::deleted.
 func (s StatusColors) Deleted(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1491)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9412,6 +10342,7 @@ func (s StatusColors) Deleted(cx *Cx) Hsla {
 
 // Error is <gpui_kit::component::highlighter::StatusColors>::error.
 func (s StatusColors) Error(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1492)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9420,6 +10351,7 @@ func (s StatusColors) Error(cx *Cx) Hsla {
 
 // ErrorBackground is <gpui_kit::component::highlighter::StatusColors>::error_background.
 func (s StatusColors) ErrorBackground(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1493)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9428,6 +10360,7 @@ func (s StatusColors) ErrorBackground(cx *Cx) Hsla {
 
 // ErrorBorder is <gpui_kit::component::highlighter::StatusColors>::error_border.
 func (s StatusColors) ErrorBorder(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1494)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9436,6 +10369,7 @@ func (s StatusColors) ErrorBorder(cx *Cx) Hsla {
 
 // Hint is <gpui_kit::component::highlighter::StatusColors>::hint.
 func (s StatusColors) Hint(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1495)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9444,6 +10378,7 @@ func (s StatusColors) Hint(cx *Cx) Hsla {
 
 // HintBackground is <gpui_kit::component::highlighter::StatusColors>::hint_background.
 func (s StatusColors) HintBackground(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1496)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9452,6 +10387,7 @@ func (s StatusColors) HintBackground(cx *Cx) Hsla {
 
 // HintBorder is <gpui_kit::component::highlighter::StatusColors>::hint_border.
 func (s StatusColors) HintBorder(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1497)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9460,6 +10396,7 @@ func (s StatusColors) HintBorder(cx *Cx) Hsla {
 
 // Info is <gpui_kit::component::highlighter::StatusColors>::info.
 func (s StatusColors) Info(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1498)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9468,6 +10405,7 @@ func (s StatusColors) Info(cx *Cx) Hsla {
 
 // InfoBackground is <gpui_kit::component::highlighter::StatusColors>::info_background.
 func (s StatusColors) InfoBackground(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1499)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9476,6 +10414,7 @@ func (s StatusColors) InfoBackground(cx *Cx) Hsla {
 
 // InfoBorder is <gpui_kit::component::highlighter::StatusColors>::info_border.
 func (s StatusColors) InfoBorder(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1500)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9484,6 +10423,7 @@ func (s StatusColors) InfoBorder(cx *Cx) Hsla {
 
 // Modified is <gpui_kit::component::highlighter::StatusColors>::modified.
 func (s StatusColors) Modified(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1501)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9492,6 +10432,7 @@ func (s StatusColors) Modified(cx *Cx) Hsla {
 
 // Success is <gpui_kit::component::highlighter::StatusColors>::success.
 func (s StatusColors) Success(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1502)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9500,6 +10441,7 @@ func (s StatusColors) Success(cx *Cx) Hsla {
 
 // SuccessBackground is <gpui_kit::component::highlighter::StatusColors>::success_background.
 func (s StatusColors) SuccessBackground(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1503)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9508,6 +10450,7 @@ func (s StatusColors) SuccessBackground(cx *Cx) Hsla {
 
 // SuccessBorder is <gpui_kit::component::highlighter::StatusColors>::success_border.
 func (s StatusColors) SuccessBorder(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1504)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9516,6 +10459,7 @@ func (s StatusColors) SuccessBorder(cx *Cx) Hsla {
 
 // Warning is <gpui_kit::component::highlighter::StatusColors>::warning.
 func (s StatusColors) Warning(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1505)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9524,6 +10468,7 @@ func (s StatusColors) Warning(cx *Cx) Hsla {
 
 // WarningBackground is <gpui_kit::component::highlighter::StatusColors>::warning_background.
 func (s StatusColors) WarningBackground(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1506)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9532,6 +10477,7 @@ func (s StatusColors) WarningBackground(cx *Cx) Hsla {
 
 // WarningBorder is <gpui_kit::component::highlighter::StatusColors>::warning_border.
 func (s StatusColors) WarningBorder(cx *Cx) Hsla {
+	useComponentHighlighter()
 	o := newReq(1507)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9540,6 +10486,7 @@ func (s StatusColors) WarningBorder(cx *Cx) Hsla {
 
 // NewStatusColorsDefault is <gpui_kit::component::highlighter::StatusColors as Default>::default.
 func NewStatusColorsDefault(cx *Cx) StatusColors {
+	useComponentHighlighter()
 	o := newReq(1489)
 	o.u16(0) // no builder ops follow
 	return StatusColors{stateMake(cx, o)}
@@ -9552,6 +10499,7 @@ func (s SyntaxColors) handle() uint64 { return s.h }
 
 // Style is <gpui_kit::component::highlighter::SyntaxColors>::style.
 func (s SyntaxColors) Style(cx *Cx, name string) Option[HighlightStyle] {
+	useComponentHighlighter()
 	o := newReq(1509)
 	o.u64(s.h)
 	o.str(name)
@@ -9561,6 +10509,7 @@ func (s SyntaxColors) Style(cx *Cx, name string) Option[HighlightStyle] {
 
 // StyleForIndex is <gpui_kit::component::highlighter::SyntaxColors>::style_for_index.
 func (s SyntaxColors) StyleForIndex(cx *Cx, index int) Option[HighlightStyle] {
+	useComponentHighlighter()
 	o := newReq(1510)
 	o.u64(s.h)
 	putUsize(o, index)
@@ -9570,6 +10519,7 @@ func (s SyntaxColors) StyleForIndex(cx *Cx, index int) Option[HighlightStyle] {
 
 // NewSyntaxColorsDefault is <gpui_kit::component::highlighter::SyntaxColors as Default>::default.
 func NewSyntaxColorsDefault(cx *Cx) SyntaxColors {
+	useComponentHighlighter()
 	o := newReq(1508)
 	o.u16(0) // no builder ops follow
 	return SyntaxColors{stateMake(cx, o)}
@@ -9582,6 +10532,7 @@ func (s SyntaxHighlighter) handle() uint64 { return s.h }
 
 // Language is <gpui_kit::component::highlighter::SyntaxHighlighter>::language.
 func (s SyntaxHighlighter) Language(cx *Cx) string {
+	useComponentHighlighter()
 	o := newReq(1020)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9590,6 +10541,7 @@ func (s SyntaxHighlighter) Language(cx *Cx) string {
 
 // Text is <gpui_kit::component::highlighter::SyntaxHighlighter>::text.
 func (s SyntaxHighlighter) Text(cx *Cx) string {
+	useComponentHighlighter()
 	o := newReq(1276)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9598,6 +10550,7 @@ func (s SyntaxHighlighter) Text(cx *Cx) string {
 
 // NewSyntaxHighlighter is <gpui_kit::component::highlighter::SyntaxHighlighter>::new.
 func NewSyntaxHighlighter(cx *Cx, language string) SyntaxHighlighter {
+	useComponentHighlighter()
 	o := newReq(1021)
 	o.str(language)
 	o.u16(0) // no builder ops follow
@@ -9611,6 +10564,7 @@ func (s TabGroup) handle() uint64 { return s.h }
 
 // ActiveIx is <gpui_kit::base::dock::TabGroup>::active_ix.
 func (s TabGroup) ActiveIx(cx *Cx) int {
+	useBaseDock()
 	o := newReq(1559)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9619,6 +10573,7 @@ func (s TabGroup) ActiveIx(cx *Cx) int {
 
 // Context is <gpui_kit::base::dock::TabGroup>::context.
 func (s TabGroup) Context(cx *Cx) TabGroupContext {
+	useBaseDock()
 	o := newReq(1562)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9627,6 +10582,7 @@ func (s TabGroup) Context(cx *Cx) TabGroupContext {
 
 // IsClosable is <gpui_kit::base::dock::TabGroup>::is_closable.
 func (s TabGroup) IsClosable(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1563)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9635,6 +10591,7 @@ func (s TabGroup) IsClosable(cx *Cx) bool {
 
 // IsCollapsed is <gpui_kit::base::dock::TabGroup>::is_collapsed.
 func (s TabGroup) IsCollapsed(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1564)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9643,6 +10600,7 @@ func (s TabGroup) IsCollapsed(cx *Cx) bool {
 
 // IsZoomed is <gpui_kit::base::dock::TabGroup>::is_zoomed.
 func (s TabGroup) IsZoomed(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1565)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9651,6 +10609,7 @@ func (s TabGroup) IsZoomed(cx *Cx) bool {
 
 // SelectTab is <gpui_kit::base::dock::TabGroup>::select_tab.
 func (s TabGroup) SelectTab(cx *Cx, ix int) {
+	useBaseDock()
 	o := newReq(1568)
 	o.u64(s.h)
 	putUsize(o, ix)
@@ -9659,6 +10618,7 @@ func (s TabGroup) SelectTab(cx *Cx, ix int) {
 
 // ToggleZoom is <gpui_kit::base::dock::TabGroup>::toggle_zoom.
 func (s TabGroup) ToggleZoom(cx *Cx) {
+	useBaseDock()
 	o := newReq(1570)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -9688,6 +10648,7 @@ func (s TabGroupContext) handle() uint64 { return s.h }
 
 // ActiveIx is <gpui_kit::base::dock::TabGroupContext>::active_ix.
 func (s TabGroupContext) ActiveIx(cx *Cx) int {
+	useBaseDock()
 	o := newReq(1571)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9696,6 +10657,7 @@ func (s TabGroupContext) ActiveIx(cx *Cx) int {
 
 // DragPanel is <gpui_kit::base::dock::TabGroupContext>::drag_panel.
 func (s TabGroupContext) DragPanel(cx *Cx, ix int) Option[DragPanel] {
+	useBaseDock()
 	o := newReq(1745)
 	o.u64(s.h)
 	putUsize(o, ix)
@@ -9705,6 +10667,7 @@ func (s TabGroupContext) DragPanel(cx *Cx, ix int) Option[DragPanel] {
 
 // DropIndicator is <gpui_kit::base::dock::TabGroupContext>::drop_indicator.
 func (s TabGroupContext) DropIndicator(cx *Cx) Option[DropIndicator] {
+	useBaseDock()
 	o := newReq(1574)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9713,6 +10676,7 @@ func (s TabGroupContext) DropIndicator(cx *Cx) Option[DropIndicator] {
 
 // IsClosable is <gpui_kit::base::dock::TabGroupContext>::is_closable.
 func (s TabGroupContext) IsClosable(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1576)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9721,6 +10685,7 @@ func (s TabGroupContext) IsClosable(cx *Cx) bool {
 
 // IsCollapsed is <gpui_kit::base::dock::TabGroupContext>::is_collapsed.
 func (s TabGroupContext) IsCollapsed(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1577)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9729,6 +10694,7 @@ func (s TabGroupContext) IsCollapsed(cx *Cx) bool {
 
 // IsDraggable is <gpui_kit::base::dock::TabGroupContext>::is_draggable.
 func (s TabGroupContext) IsDraggable(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1578)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9737,6 +10703,7 @@ func (s TabGroupContext) IsDraggable(cx *Cx) bool {
 
 // IsDroppable is <gpui_kit::base::dock::TabGroupContext>::is_droppable.
 func (s TabGroupContext) IsDroppable(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1579)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9745,6 +10712,7 @@ func (s TabGroupContext) IsDroppable(cx *Cx) bool {
 
 // IsLocked is <gpui_kit::base::dock::TabGroupContext>::is_locked.
 func (s TabGroupContext) IsLocked(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1580)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9753,6 +10721,7 @@ func (s TabGroupContext) IsLocked(cx *Cx) bool {
 
 // IsZoomed is <gpui_kit::base::dock::TabGroupContext>::is_zoomed.
 func (s TabGroupContext) IsZoomed(cx *Cx) bool {
+	useBaseDock()
 	o := newReq(1582)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -9761,6 +10730,7 @@ func (s TabGroupContext) IsZoomed(cx *Cx) bool {
 
 // DropItem is <gpui_kit::base::dock::TabGroupContext>::drop_item.
 func (s TabGroupContext) DropItem(cx *Cx, item AnyDrag, placement Option[Placement]) {
+	useBaseDock()
 	o := newReq(1575)
 	o.u64(s.h)
 	o.u64(item.h)
@@ -9775,6 +10745,7 @@ func (s TabGroupContext) DropItem(cx *Cx, item AnyDrag, placement Option[Placeme
 
 // DropPanel is <gpui_kit::base::dock::TabGroupContext>::drop_panel.
 func (s TabGroupContext) DropPanel(cx *Cx, drag DragPanel, ix Option[int], activate bool) {
+	useBaseDock()
 	o := newReq(1746)
 	o.u64(s.h)
 	o.u64(drag.h)
@@ -9790,6 +10761,7 @@ func (s TabGroupContext) DropPanel(cx *Cx, drag DragPanel, ix Option[int], activ
 
 // SelectTab is <gpui_kit::base::dock::TabGroupContext>::select_tab.
 func (s TabGroupContext) SelectTab(cx *Cx, ix int) {
+	useBaseDock()
 	o := newReq(1585)
 	o.u64(s.h)
 	putUsize(o, ix)
@@ -9798,6 +10770,7 @@ func (s TabGroupContext) SelectTab(cx *Cx, ix int) {
 
 // ToggleZoom is <gpui_kit::base::dock::TabGroupContext>::toggle_zoom.
 func (s TabGroupContext) ToggleZoom(cx *Cx) {
+	useBaseDock()
 	o := newReq(1586)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -9810,6 +10783,7 @@ func (s TableState) handle() uint64 { return s.h }
 
 // ColWidth is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::col_width.
 func (s TableState) ColWidth(cx *Cx, colIx int) Option[float32] {
+	useComponentTable()
 	o := newReq(701)
 	o.u64(s.h)
 	putUsize(o, colIx)
@@ -9819,6 +10793,7 @@ func (s TableState) ColWidth(cx *Cx, colIx int) Option[float32] {
 
 // Delegate is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::delegate.
 func (s TableState) Delegate(cx *Cx) RowSource {
+	useComponentTable()
 	o := newReq(1183)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9827,6 +10802,7 @@ func (s TableState) Delegate(cx *Cx) RowSource {
 
 // Dump is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump.
 func (s TableState) Dump(cx *Cx) TupleStringString {
+	useComponentTable()
 	o := newReq(702)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9835,6 +10811,7 @@ func (s TableState) Dump(cx *Cx) TupleStringString {
 
 // DumpRange is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump_range.
 func (s TableState) DumpRange(cx *Cx, range_ Range) TupleStringString {
+	useComponentTable()
 	o := newReq(703)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -9844,6 +10821,7 @@ func (s TableState) DumpRange(cx *Cx, range_ Range) TupleStringString {
 
 // Headers is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::headers.
 func (s TableState) Headers(cx *Cx) []string {
+	useComponentTable()
 	o := newReq(705)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9852,6 +10830,7 @@ func (s TableState) Headers(cx *Cx) []string {
 
 // RightClickedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::right_clicked_cell.
 func (s TableState) RightClickedCell(cx *Cx) Option[TupleIntInt] {
+	useComponentTable()
 	o := newReq(709)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9860,6 +10839,7 @@ func (s TableState) RightClickedCell(cx *Cx) Option[TupleIntInt] {
 
 // RightClickedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::right_clicked_row.
 func (s TableState) RightClickedRow(cx *Cx) Option[int] {
+	useComponentTable()
 	o := newReq(710)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9868,6 +10848,7 @@ func (s TableState) RightClickedRow(cx *Cx) Option[int] {
 
 // SelectedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_cell.
 func (s TableState) SelectedCell(cx *Cx) Option[TupleIntInt] {
+	useComponentTable()
 	o := newReq(713)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9876,6 +10857,7 @@ func (s TableState) SelectedCell(cx *Cx) Option[TupleIntInt] {
 
 // SelectedCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_col.
 func (s TableState) SelectedCol(cx *Cx) Option[int] {
+	useComponentTable()
 	o := newReq(714)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9884,6 +10866,7 @@ func (s TableState) SelectedCol(cx *Cx) Option[int] {
 
 // SelectedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_row.
 func (s TableState) SelectedRow(cx *Cx) Option[int] {
+	useComponentTable()
 	o := newReq(715)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9892,6 +10875,7 @@ func (s TableState) SelectedRow(cx *Cx) Option[int] {
 
 // Selection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selection.
 func (s TableState) Selection(cx *Cx) TableSelection {
+	useComponentTable()
 	o := newReq(716)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9900,6 +10884,7 @@ func (s TableState) Selection(cx *Cx) TableSelection {
 
 // VisibleRangeCols is (|s: &gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>| std::borrow::ToOwned::to_owned(<gpui_kit::component::table::TableVisibleRange>::cols(<gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::visible_range(s)))).
 func (s TableState) VisibleRangeCols(cx *Cx) Range {
+	useComponentTable()
 	o := newReq(1740)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9908,6 +10893,7 @@ func (s TableState) VisibleRangeCols(cx *Cx) Range {
 
 // VisibleRangeRows is (|s: &gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>| std::borrow::ToOwned::to_owned(<gpui_kit::component::table::TableVisibleRange>::rows(<gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::visible_range(s)))).
 func (s TableState) VisibleRangeRows(cx *Cx) Range {
+	useComponentTable()
 	o := newReq(1741)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -9916,6 +10902,7 @@ func (s TableState) VisibleRangeRows(cx *Cx) Range {
 
 // DelegateMut is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::delegate_mut.
 func (s TableState) DelegateMut(cx *Cx) RowSource {
+	useComponentTable()
 	o := newReq(1184)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -9924,6 +10911,7 @@ func (s TableState) DelegateMut(cx *Cx) RowSource {
 
 // FitCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::fit_col.
 func (s TableState) FitCol(cx *Cx, colIx int) bool {
+	useComponentTable()
 	o := newReq(704)
 	o.u64(s.h)
 	putUsize(o, colIx)
@@ -9933,6 +10921,7 @@ func (s TableState) FitCol(cx *Cx, colIx int) bool {
 
 // ClearSelection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::clear_selection.
 func (s TableState) ClearSelection(cx *Cx) {
+	useComponentTable()
 	o := newReq(700)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -9940,6 +10929,7 @@ func (s TableState) ClearSelection(cx *Cx) {
 
 // Refresh is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::refresh.
 func (s TableState) Refresh(cx *Cx) {
+	useComponentTable()
 	o := newReq(707)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -9947,6 +10937,7 @@ func (s TableState) Refresh(cx *Cx) {
 
 // RefreshHeaderLayout is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::refresh_header_layout.
 func (s TableState) RefreshHeaderLayout(cx *Cx) {
+	useComponentTable()
 	o := newReq(708)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -9954,6 +10945,7 @@ func (s TableState) RefreshHeaderLayout(cx *Cx) {
 
 // ScrollToCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::scroll_to_col.
 func (s TableState) ScrollToCol(cx *Cx, colIx int) {
+	useComponentTable()
 	o := newReq(711)
 	o.u64(s.h)
 	putUsize(o, colIx)
@@ -9962,6 +10954,7 @@ func (s TableState) ScrollToCol(cx *Cx, colIx int) {
 
 // ScrollToRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::scroll_to_row.
 func (s TableState) ScrollToRow(cx *Cx, rowIx int) {
+	useComponentTable()
 	o := newReq(712)
 	o.u64(s.h)
 	putUsize(o, rowIx)
@@ -9970,6 +10963,7 @@ func (s TableState) ScrollToRow(cx *Cx, rowIx int) {
 
 // SetRightClickedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_right_clicked_row.
 func (s TableState) SetRightClickedRow(cx *Cx, row Option[int]) {
+	useComponentTable()
 	o := newReq(717)
 	o.u64(s.h)
 	if x0, ok := row.Get(); ok {
@@ -9983,6 +10977,7 @@ func (s TableState) SetRightClickedRow(cx *Cx, row Option[int]) {
 
 // SetSelectedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_cell.
 func (s TableState) SetSelectedCell(cx *Cx, rowIx int, colIx int) {
+	useComponentTable()
 	o := newReq(718)
 	o.u64(s.h)
 	putUsize(o, rowIx)
@@ -9992,6 +10987,7 @@ func (s TableState) SetSelectedCell(cx *Cx, rowIx int, colIx int) {
 
 // SetSelectedCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_col.
 func (s TableState) SetSelectedCol(cx *Cx, colIx int) {
+	useComponentTable()
 	o := newReq(719)
 	o.u64(s.h)
 	putUsize(o, colIx)
@@ -10000,6 +10996,7 @@ func (s TableState) SetSelectedCol(cx *Cx, colIx int) {
 
 // SetSelectedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_row.
 func (s TableState) SetSelectedRow(cx *Cx, rowIx int) {
+	useComponentTable()
 	o := newReq(720)
 	o.u64(s.h)
 	putUsize(o, rowIx)
@@ -10008,6 +11005,7 @@ func (s TableState) SetSelectedRow(cx *Cx, rowIx int) {
 
 // SetSelection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selection.
 func (s TableState) SetSelection(cx *Cx, selection TableSelection) {
+	useComponentTable()
 	o := newReq(721)
 	o.u64(s.h)
 	putTableSelection(o, selection)
@@ -10087,6 +11085,7 @@ func (b TableStateBuilder) Build() TableState { return TableState{b.sb.build()} 
 
 // NewTableState is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::new.
 func NewTableState(cx *Cx, delegate RowSource) TableStateBuilder {
+	useComponentTable()
 	o := newReq(706)
 	o.u64(delegate.h)
 	return TableStateBuilder{newStateBuilder(cx, o)}
@@ -10099,6 +11098,7 @@ func (s TableVisibleRange) handle() uint64 { return s.h }
 
 // Cols is <gpui_kit::component::table::TableVisibleRange>::cols.
 func (s TableVisibleRange) Cols(cx *Cx) Range {
+	useComponentTable()
 	o := newReq(1512)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10107,6 +11107,7 @@ func (s TableVisibleRange) Cols(cx *Cx) Range {
 
 // Rows is <gpui_kit::component::table::TableVisibleRange>::rows.
 func (s TableVisibleRange) Rows(cx *Cx) Range {
+	useComponentTable()
 	o := newReq(1513)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10115,6 +11116,7 @@ func (s TableVisibleRange) Rows(cx *Cx) Range {
 
 // NewTableVisibleRangeDefault is <gpui_kit::component::table::TableVisibleRange as Default>::default.
 func NewTableVisibleRangeDefault(cx *Cx) TableVisibleRange {
+	useComponentTable()
 	o := newReq(1511)
 	o.u16(0) // no builder ops follow
 	return TableVisibleRange{stateMake(cx, o)}
@@ -10127,6 +11129,7 @@ func (s TaskToggleEvent) handle() uint64 { return s.h }
 
 // Checked is <gpui_kit::base::TaskToggleEvent>::checked.
 func (s TaskToggleEvent) Checked(cx *Cx) bool {
+	useBaseText()
 	o := newReq(1318)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10135,6 +11138,7 @@ func (s TaskToggleEvent) Checked(cx *Cx) bool {
 
 // ItemRange is <gpui_kit::base::TaskToggleEvent>::item_range.
 func (s TaskToggleEvent) ItemRange(cx *Cx) Range {
+	useBaseText()
 	o := newReq(1319)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10143,6 +11147,7 @@ func (s TaskToggleEvent) ItemRange(cx *Cx) Range {
 
 // MarkerRange is <gpui_kit::base::TaskToggleEvent>::marker_range.
 func (s TaskToggleEvent) MarkerRange(cx *Cx) Range {
+	useBaseText()
 	o := newReq(1320)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10156,6 +11161,7 @@ func (s TextDecorationCollection) handle() uint64 { return s.h }
 
 // GetRanges is <gpui_kit::base::input::TextDecorationCollection>::get_ranges.
 func (s TextDecorationCollection) GetRanges(cx *Cx) []Range {
+	useBaseInput()
 	o := newReq(1686)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10164,6 +11170,7 @@ func (s TextDecorationCollection) GetRanges(cx *Cx) []Range {
 
 // Append is <gpui_kit::base::input::TextDecorationCollection>::append.
 func (s TextDecorationCollection) Append(cx *Cx, decorations []TextDecoration) {
+	useBaseInput()
 	o := newReq(1684)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -10175,6 +11182,7 @@ func (s TextDecorationCollection) Append(cx *Cx, decorations []TextDecoration) {
 
 // Clear is <gpui_kit::base::input::TextDecorationCollection>::clear.
 func (s TextDecorationCollection) Clear(cx *Cx) {
+	useBaseInput()
 	o := newReq(1685)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -10182,6 +11190,7 @@ func (s TextDecorationCollection) Clear(cx *Cx) {
 
 // Set is <gpui_kit::base::input::TextDecorationCollection>::set.
 func (s TextDecorationCollection) Set(cx *Cx, decorations []TextDecoration) {
+	useBaseInput()
 	o := newReq(1687)
 	o.u64(s.h)
 	o.u32(uint32(len(decorations)))
@@ -10198,6 +11207,7 @@ func (s TextSelectionEndpoint) handle() uint64 { return s.h }
 
 // ContentPoint is <gpui_kit::base::TextSelectionEndpoint>::content_point.
 func (s TextSelectionEndpoint) ContentPoint(cx *Cx) GpuiPoint {
+	useBaseTextSelection()
 	o := newReq(797)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10211,6 +11221,7 @@ func (s TextSelectionHandle) handle() uint64 { return s.h }
 
 // HasLocalSelection is <gpui_kit::base::TextSelectionHandle>::has_local_selection.
 func (s TextSelectionHandle) HasLocalSelection(cx *Cx) bool {
+	useBaseTextSelection()
 	o := newReq(798)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10219,6 +11230,7 @@ func (s TextSelectionHandle) HasLocalSelection(cx *Cx) bool {
 
 // Snapshot is <gpui_kit::base::TextSelectionHandle>::snapshot.
 func (s TextSelectionHandle) Snapshot(cx *Cx) Option[TextSelectionSnapshot] {
+	useBaseTextSelection()
 	o := newReq(804)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10227,6 +11239,7 @@ func (s TextSelectionHandle) Snapshot(cx *Cx) Option[TextSelectionSnapshot] {
 
 // PaintTouchHandles is <gpui_kit::base::TextSelectionHandle>::paint_touch_handles.
 func (s TextSelectionHandle) PaintTouchHandles(cx *Cx, layout TouchHandleLayout, color Color) {
+	useBaseTextSelection()
 	o := newReq(800)
 	o.u64(s.h)
 	putVtape(o, layout.n)
@@ -10236,6 +11249,7 @@ func (s TextSelectionHandle) PaintTouchHandles(cx *Cx, layout TouchHandleLayout,
 
 // SetFallbackCopyText is <gpui_kit::base::TextSelectionHandle>::set_fallback_copy_text.
 func (s TextSelectionHandle) SetFallbackCopyText(cx *Cx, text string) {
+	useBaseTextSelection()
 	o := newReq(802)
 	o.u64(s.h)
 	o.str(text)
@@ -10244,6 +11258,7 @@ func (s TextSelectionHandle) SetFallbackCopyText(cx *Cx, text string) {
 
 // SetLocalSelection is <gpui_kit::base::TextSelectionHandle>::set_local_selection.
 func (s TextSelectionHandle) SetLocalSelection(cx *Cx, active bool) {
+	useBaseTextSelection()
 	o := newReq(803)
 	o.u64(s.h)
 	o.bool(active)
@@ -10252,6 +11267,7 @@ func (s TextSelectionHandle) SetLocalSelection(cx *Cx, active bool) {
 
 // NewTextSelectionHandle is <gpui_kit::base::TextSelectionHandle>::new.
 func NewTextSelectionHandle(cx *Cx, fallbackCopyText string) TextSelectionHandle {
+	useBaseTextSelection()
 	o := newReq(799)
 	o.str(fallbackCopyText)
 	o.u16(0) // no builder ops follow
@@ -10265,6 +11281,7 @@ func (s TextSelectionProjection) handle() uint64 { return s.h }
 
 // NewTextSelectionProjectionDefault is <gpui_kit::base::TextSelectionProjection as Default>::default.
 func NewTextSelectionProjectionDefault(cx *Cx) TextSelectionProjection {
+	useBaseTextSelection()
 	o := newReq(1459)
 	o.u16(0) // no builder ops follow
 	return TextSelectionProjection{stateMake(cx, o)}
@@ -10277,6 +11294,7 @@ func (s TextSelectionSnapshot) handle() uint64 { return s.h }
 
 // Anchor is <gpui_kit::base::TextSelectionSnapshot>::anchor.
 func (s TextSelectionSnapshot) Anchor(cx *Cx) TextSelectionEndpoint {
+	useBaseTextSelection()
 	o := newReq(806)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10285,6 +11303,7 @@ func (s TextSelectionSnapshot) Anchor(cx *Cx) TextSelectionEndpoint {
 
 // Coverage is <gpui_kit::base::TextSelectionSnapshot>::coverage.
 func (s TextSelectionSnapshot) Coverage(cx *Cx) TextSelectionCoverage {
+	useBaseTextSelection()
 	o := newReq(807)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10293,6 +11312,7 @@ func (s TextSelectionSnapshot) Coverage(cx *Cx) TextSelectionCoverage {
 
 // Cursor is <gpui_kit::base::TextSelectionSnapshot>::cursor.
 func (s TextSelectionSnapshot) Cursor(cx *Cx) TextSelectionEndpoint {
+	useBaseTextSelection()
 	o := newReq(808)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10301,6 +11321,7 @@ func (s TextSelectionSnapshot) Cursor(cx *Cx) TextSelectionEndpoint {
 
 // IsSelecting is <gpui_kit::base::TextSelectionSnapshot>::is_selecting.
 func (s TextSelectionSnapshot) IsSelecting(cx *Cx) bool {
+	useBaseTextSelection()
 	o := newReq(809)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10309,6 +11330,7 @@ func (s TextSelectionSnapshot) IsSelecting(cx *Cx) bool {
 
 // WindowPoints is <gpui_kit::base::TextSelectionSnapshot>::window_points.
 func (s TextSelectionSnapshot) WindowPoints(cx *Cx) Option[TextSelectionWindowPoints] {
+	useBaseTextSelection()
 	o := newReq(810)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10322,6 +11344,7 @@ func (s TextSelectionWindowPoints) handle() uint64 { return s.h }
 
 // Anchor is <gpui_kit::base::TextSelectionWindowPoints>::anchor.
 func (s TextSelectionWindowPoints) Anchor(cx *Cx) GpuiPoint {
+	useBaseTextSelection()
 	o := newReq(811)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10330,6 +11353,7 @@ func (s TextSelectionWindowPoints) Anchor(cx *Cx) GpuiPoint {
 
 // Cursor is <gpui_kit::base::TextSelectionWindowPoints>::cursor.
 func (s TextSelectionWindowPoints) Cursor(cx *Cx) GpuiPoint {
+	useBaseTextSelection()
 	o := newReq(812)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10343,6 +11367,7 @@ func (s TextViewDefaults) handle() uint64 { return s.h }
 
 // HasCodeBlockHighlighter is <gpui_kit::base::TextViewDefaults>::has_code_block_highlighter.
 func (s TextViewDefaults) HasCodeBlockHighlighter(cx *Cx) bool {
+	useBaseText()
 	o := newReq(814)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10351,6 +11376,7 @@ func (s TextViewDefaults) HasCodeBlockHighlighter(cx *Cx) bool {
 
 // InheritTextColor is <gpui_kit::base::TextViewDefaults>::inherit_text_color.
 func (s TextViewDefaults) InheritTextColor(cx *Cx) bool {
+	useBaseText()
 	o := newReq(815)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -10359,6 +11385,7 @@ func (s TextViewDefaults) InheritTextColor(cx *Cx) bool {
 
 // Install is <gpui_kit::base::TextViewDefaults>::install.
 func (s TextViewDefaults) Install(cx *Cx) {
+	useBaseText()
 	o := newReq(816)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -10384,12 +11411,14 @@ func (b TextViewDefaultsBuilder) Build() TextViewDefaults { return TextViewDefau
 
 // NewTextViewDefaults is <gpui_kit::base::TextViewDefaults>::new.
 func NewTextViewDefaults(cx *Cx) TextViewDefaultsBuilder {
+	useBaseText()
 	o := newReq(817)
 	return TextViewDefaultsBuilder{newStateBuilder(cx, o)}
 }
 
 // NewTextViewDefaultsGlobal is <gpui_kit::base::TextViewDefaults>::global.
 func NewTextViewDefaultsGlobal(cx *Cx) TextViewDefaultsBuilder {
+	useBaseText()
 	o := newReq(813)
 	return TextViewDefaultsBuilder{newStateBuilder(cx, o)}
 }
@@ -10401,6 +11430,7 @@ func (s TextViewState) handle() uint64 { return s.h }
 
 // IsClamped is <gpui_kit::base::TextViewState>::is_clamped.
 func (s TextViewState) IsClamped(cx *Cx) bool {
+	useBaseText()
 	o := newReq(308)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10409,6 +11439,7 @@ func (s TextViewState) IsClamped(cx *Cx) bool {
 
 // RenderedText is <gpui_kit::base::TextViewState>::rendered_text.
 func (s TextViewState) RenderedText(cx *Cx) RenderedText {
+	useBaseText()
 	o := newReq(818)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10417,6 +11448,7 @@ func (s TextViewState) RenderedText(cx *Cx) RenderedText {
 
 // SelectedSourceRange is <gpui_kit::base::TextViewState>::selected_source_range.
 func (s TextViewState) SelectedSourceRange(cx *Cx) Option[Range] {
+	useBaseText()
 	o := newReq(312)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10425,6 +11457,7 @@ func (s TextViewState) SelectedSourceRange(cx *Cx) Option[Range] {
 
 // SelectedText is <gpui_kit::base::TextViewState>::selected_text.
 func (s TextViewState) SelectedText(cx *Cx) string {
+	useBaseText()
 	o := newReq(313)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10433,6 +11466,7 @@ func (s TextViewState) SelectedText(cx *Cx) string {
 
 // RevealRange is <gpui_kit::base::TextViewState>::reveal_range.
 func (s TextViewState) RevealRange(cx *Cx, range_ Range) error {
+	useBaseText()
 	o := newReq(1032)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -10442,6 +11476,7 @@ func (s TextViewState) RevealRange(cx *Cx, range_ Range) error {
 
 // SetRangeHighlights is <gpui_kit::base::TextViewState>::set_range_highlights.
 func (s TextViewState) SetRangeHighlights(cx *Cx, highlights []RangeHighlight) error {
+	useBaseText()
 	o := newReq(1033)
 	o.u64(s.h)
 	o.u32(uint32(len(highlights)))
@@ -10454,6 +11489,7 @@ func (s TextViewState) SetRangeHighlights(cx *Cx, highlights []RangeHighlight) e
 
 // ClearRangeHighlights is <gpui_kit::base::TextViewState>::clear_range_highlights.
 func (s TextViewState) ClearRangeHighlights(cx *Cx) {
+	useBaseText()
 	o := newReq(304)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -10461,6 +11497,7 @@ func (s TextViewState) ClearRangeHighlights(cx *Cx) {
 
 // ClearSelection is <gpui_kit::base::TextViewState>::clear_selection.
 func (s TextViewState) ClearSelection(cx *Cx) {
+	useBaseText()
 	o := newReq(305)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -10468,6 +11505,7 @@ func (s TextViewState) ClearSelection(cx *Cx) {
 
 // InvalidateInlineLayout is <gpui_kit::base::TextViewState>::invalidate_inline_layout.
 func (s TextViewState) InvalidateInlineLayout(cx *Cx) {
+	useBaseText()
 	o := newReq(307)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -10475,6 +11513,7 @@ func (s TextViewState) InvalidateInlineLayout(cx *Cx) {
 
 // PushStr is <gpui_kit::base::TextViewState>::push_str.
 func (s TextViewState) PushStr(cx *Cx, newText string) {
+	useBaseText()
 	o := newReq(310)
 	o.u64(s.h)
 	o.str(newText)
@@ -10483,6 +11522,7 @@ func (s TextViewState) PushStr(cx *Cx, newText string) {
 
 // SelectAll is <gpui_kit::base::TextViewState>::select_all.
 func (s TextViewState) SelectAll(cx *Cx) {
+	useBaseText()
 	o := newReq(311)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -10490,6 +11530,7 @@ func (s TextViewState) SelectAll(cx *Cx) {
 
 // SetMotion is <gpui_kit::base::TextViewState>::set_motion.
 func (s TextViewState) SetMotion(cx *Cx, motion TextViewMotion) {
+	useBaseText()
 	o := newReq(819)
 	o.u64(s.h)
 	putVtape(o, motion.n)
@@ -10498,6 +11539,7 @@ func (s TextViewState) SetMotion(cx *Cx, motion TextViewMotion) {
 
 // SetScrollable is <gpui_kit::base::TextViewState>::set_scrollable.
 func (s TextViewState) SetScrollable(cx *Cx, scrollable bool) {
+	useBaseText()
 	o := newReq(314)
 	o.u64(s.h)
 	o.bool(scrollable)
@@ -10506,6 +11548,7 @@ func (s TextViewState) SetScrollable(cx *Cx, scrollable bool) {
 
 // SetSelectable is <gpui_kit::base::TextViewState>::set_selectable.
 func (s TextViewState) SetSelectable(cx *Cx, selectable bool) {
+	useBaseText()
 	o := newReq(315)
 	o.u64(s.h)
 	o.bool(selectable)
@@ -10514,6 +11557,7 @@ func (s TextViewState) SetSelectable(cx *Cx, selectable bool) {
 
 // SetSelectionFormat is <gpui_kit::base::TextViewState>::set_selection_format.
 func (s TextViewState) SetSelectionFormat(cx *Cx, selectionFormat SelectionFormat) {
+	useBaseText()
 	o := newReq(316)
 	o.u64(s.h)
 	o.u16(uint16(selectionFormat))
@@ -10522,6 +11566,7 @@ func (s TextViewState) SetSelectionFormat(cx *Cx, selectionFormat SelectionForma
 
 // SetText is <gpui_kit::base::TextViewState>::set_text.
 func (s TextViewState) SetText(cx *Cx, text string) {
+	useBaseText()
 	o := newReq(317)
 	o.u64(s.h)
 	o.str(text)
@@ -10560,6 +11605,7 @@ func (b TextViewStateBuilder) Build() TextViewState { return TextViewState{b.sb.
 
 // NewTextViewStateHTML is <gpui_kit::base::TextViewState>::html.
 func NewTextViewStateHTML(cx *Cx, text string) TextViewStateBuilder {
+	useBaseText()
 	o := newReq(306)
 	o.str(text)
 	return TextViewStateBuilder{newStateBuilder(cx, o)}
@@ -10567,6 +11613,7 @@ func NewTextViewStateHTML(cx *Cx, text string) TextViewStateBuilder {
 
 // NewTextViewStateMarkdown is <gpui_kit::base::TextViewState>::markdown.
 func NewTextViewStateMarkdown(cx *Cx, text string) TextViewStateBuilder {
+	useBaseText()
 	o := newReq(309)
 	o.str(text)
 	return TextViewStateBuilder{newStateBuilder(cx, o)}
@@ -10579,6 +11626,7 @@ func (s TextareaState) handle() uint64 { return s.h }
 
 // Content is <gpui_kit::base::input::TextareaState>::content.
 func (s TextareaState) Content(cx *Cx) InputContent {
+	useBaseInput()
 	o := newReq(941)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10587,6 +11635,7 @@ func (s TextareaState) Content(cx *Cx) InputContent {
 
 // ContextMenuCapabilities is <gpui_kit::base::input::TextareaState>::context_menu_capabilities.
 func (s TextareaState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilitiesRead {
+	useBaseInput()
 	o := newReq(1351)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10595,6 +11644,7 @@ func (s TextareaState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilit
 
 // Cursor is <gpui_kit::base::input::TextareaState>::cursor.
 func (s TextareaState) Cursor(cx *Cx) int {
+	useBaseInput()
 	o := newReq(537)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10603,6 +11653,7 @@ func (s TextareaState) Cursor(cx *Cx) int {
 
 // DiagnosticPopover is <gpui_kit::base::input::TextareaState>::diagnostic_popover.
 func (s TextareaState) DiagnosticPopover(cx *Cx) Option[DiagnosticEntryRc] {
+	useBaseInput()
 	o := newReq(1145)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10611,6 +11662,7 @@ func (s TextareaState) DiagnosticPopover(cx *Cx) Option[DiagnosticEntryRc] {
 
 // Diagnostics is <gpui_kit::base::input::TextareaState>::diagnostics.
 func (s TextareaState) Diagnostics(cx *Cx) Option[DiagnosticSet] {
+	useBaseInput()
 	o := newReq(942)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10619,6 +11671,7 @@ func (s TextareaState) Diagnostics(cx *Cx) Option[DiagnosticSet] {
 
 // DisplayMapBufferLineCount is (|s: &gpui_kit::base::input::TextareaState| <gpui_kit::base::input::DisplayMap>::buffer_line_count(<gpui_kit::base::input::TextareaState>::display_map(s))).
 func (s TextareaState) DisplayMapBufferLineCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1723)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10627,6 +11680,7 @@ func (s TextareaState) DisplayMapBufferLineCount(cx *Cx) int {
 
 // DisplayMapBufferLineToDisplayRow is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapBufferLineToDisplayRow(cx *Cx, line int) int {
+	useBaseInput()
 	o := newReq(1724)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -10636,6 +11690,7 @@ func (s TextareaState) DisplayMapBufferLineToDisplayRow(cx *Cx, line int) int {
 
 // DisplayMapBufferLineToDisplayRowRange is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row_range(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapBufferLineToDisplayRowRange(cx *Cx, line int) Option[Range] {
+	useBaseInput()
 	o := newReq(1725)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -10645,6 +11700,7 @@ func (s TextareaState) DisplayMapBufferLineToDisplayRowRange(cx *Cx, line int) O
 
 // DisplayMapBufferPosToDisplayPos is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::buffer_pos_to_display_pos(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapBufferPosToDisplayPos(cx *Cx, pos BufferPoint) DisplayPoint {
+	useBaseInput()
 	o := newReq(1726)
 	o.u64(s.h)
 	putBufferPoint(o, pos)
@@ -10654,6 +11710,7 @@ func (s TextareaState) DisplayMapBufferPosToDisplayPos(cx *Cx, pos BufferPoint) 
 
 // DisplayMapDisplayPosToBufferPos is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::display_pos_to_buffer_pos(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapDisplayPosToBufferPos(cx *Cx, pos DisplayPoint) BufferPoint {
+	useBaseInput()
 	o := newReq(1727)
 	o.u64(s.h)
 	putDisplayPoint(o, pos)
@@ -10663,6 +11720,7 @@ func (s TextareaState) DisplayMapDisplayPosToBufferPos(cx *Cx, pos DisplayPoint)
 
 // DisplayMapDisplayRowCount is (|s: &gpui_kit::base::input::TextareaState| <gpui_kit::base::input::DisplayMap>::display_row_count(<gpui_kit::base::input::TextareaState>::display_map(s))).
 func (s TextareaState) DisplayMapDisplayRowCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1728)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10671,6 +11729,7 @@ func (s TextareaState) DisplayMapDisplayRowCount(cx *Cx) int {
 
 // DisplayMapDisplayRowToBufferLine is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::display_row_to_buffer_line(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapDisplayRowToBufferLine(cx *Cx, displayRow int) int {
+	useBaseInput()
 	o := newReq(1729)
 	o.u64(s.h)
 	putUsize(o, displayRow)
@@ -10680,6 +11739,7 @@ func (s TextareaState) DisplayMapDisplayRowToBufferLine(cx *Cx, displayRow int) 
 
 // DisplayMapDisplayRowToWrapRow is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::display_row_to_wrap_row(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapDisplayRowToWrapRow(cx *Cx, displayRow int) Option[int] {
+	useBaseInput()
 	o := newReq(1730)
 	o.u64(s.h)
 	putUsize(o, displayRow)
@@ -10689,6 +11749,7 @@ func (s TextareaState) DisplayMapDisplayRowToWrapRow(cx *Cx, displayRow int) Opt
 
 // DisplayMapFoldedRanges is (|s: &gpui_kit::base::input::TextareaState| std::borrow::ToOwned::to_owned(<gpui_kit::base::input::DisplayMap>::folded_ranges(<gpui_kit::base::input::TextareaState>::display_map(s)))).
 func (s TextareaState) DisplayMapFoldedRanges(cx *Cx) []FoldRange {
+	useBaseInput()
 	o := newReq(1731)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10697,6 +11758,7 @@ func (s TextareaState) DisplayMapFoldedRanges(cx *Cx) []FoldRange {
 
 // DisplayMapIsBufferLineHidden is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::is_buffer_line_hidden(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapIsBufferLineHidden(cx *Cx, line int) bool {
+	useBaseInput()
 	o := newReq(1732)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -10706,6 +11768,7 @@ func (s TextareaState) DisplayMapIsBufferLineHidden(cx *Cx, line int) bool {
 
 // DisplayMapIsFoldCandidate is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::is_fold_candidate(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapIsFoldCandidate(cx *Cx, startLine int) bool {
+	useBaseInput()
 	o := newReq(1733)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -10715,6 +11778,7 @@ func (s TextareaState) DisplayMapIsFoldCandidate(cx *Cx, startLine int) bool {
 
 // DisplayMapIsFoldedAt is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::is_folded_at(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapIsFoldedAt(cx *Cx, startLine int) bool {
+	useBaseInput()
 	o := newReq(1734)
 	o.u64(s.h)
 	putUsize(o, startLine)
@@ -10724,6 +11788,7 @@ func (s TextareaState) DisplayMapIsFoldedAt(cx *Cx, startLine int) bool {
 
 // DisplayMapNearestVisibleDisplayRow is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::nearest_visible_display_row(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapNearestVisibleDisplayRow(cx *Cx, wrapRow int) int {
+	useBaseInput()
 	o := newReq(1735)
 	o.u64(s.h)
 	putUsize(o, wrapRow)
@@ -10733,6 +11798,7 @@ func (s TextareaState) DisplayMapNearestVisibleDisplayRow(cx *Cx, wrapRow int) i
 
 // DisplayMapText is (|s: &gpui_kit::base::input::TextareaState| std::borrow::ToOwned::to_owned(<gpui_kit::base::input::DisplayMap>::text(<gpui_kit::base::input::TextareaState>::display_map(s)))).
 func (s TextareaState) DisplayMapText(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1736)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10741,6 +11807,7 @@ func (s TextareaState) DisplayMapText(cx *Cx) string {
 
 // DisplayMapVisibleWrapRowCountForBufferLine is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::visible_wrap_row_count_for_buffer_line(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapVisibleWrapRowCountForBufferLine(cx *Cx, line int) int {
+	useBaseInput()
 	o := newReq(1737)
 	o.u64(s.h)
 	putUsize(o, line)
@@ -10750,6 +11817,7 @@ func (s TextareaState) DisplayMapVisibleWrapRowCountForBufferLine(cx *Cx, line i
 
 // DisplayMapWrapRowCount is (|s: &gpui_kit::base::input::TextareaState| <gpui_kit::base::input::DisplayMap>::wrap_row_count(<gpui_kit::base::input::TextareaState>::display_map(s))).
 func (s TextareaState) DisplayMapWrapRowCount(cx *Cx) int {
+	useBaseInput()
 	o := newReq(1738)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10758,6 +11826,7 @@ func (s TextareaState) DisplayMapWrapRowCount(cx *Cx) int {
 
 // DisplayMapWrapRowToDisplayRow is (|s: &gpui_kit::base::input::TextareaState, a0| <gpui_kit::base::input::DisplayMap>::wrap_row_to_display_row(<gpui_kit::base::input::TextareaState>::display_map(s), a0)).
 func (s TextareaState) DisplayMapWrapRowToDisplayRow(cx *Cx, wrapRow int) Option[int] {
+	useBaseInput()
 	o := newReq(1739)
 	o.u64(s.h)
 	putUsize(o, wrapRow)
@@ -10767,6 +11836,7 @@ func (s TextareaState) DisplayMapWrapRowToDisplayRow(cx *Cx, wrapRow int) Option
 
 // InputBounds is <gpui_kit::base::input::TextareaState>::input_bounds.
 func (s TextareaState) InputBounds(cx *Cx) Bounds {
+	useBaseInput()
 	o := newReq(541)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10775,6 +11845,7 @@ func (s TextareaState) InputBounds(cx *Cx) Bounds {
 
 // IsCodeEditor is <gpui_kit::base::input::TextareaState>::is_code_editor.
 func (s TextareaState) IsCodeEditor(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(543)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10783,6 +11854,7 @@ func (s TextareaState) IsCodeEditor(cx *Cx) bool {
 
 // IsCopyable is <gpui_kit::base::input::TextareaState>::is_copyable.
 func (s TextareaState) IsCopyable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(544)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10791,6 +11863,7 @@ func (s TextareaState) IsCopyable(cx *Cx) bool {
 
 // IsEditable is <gpui_kit::base::input::TextareaState>::is_editable.
 func (s TextareaState) IsEditable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(545)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10799,6 +11872,7 @@ func (s TextareaState) IsEditable(cx *Cx) bool {
 
 // IsMultiLine is <gpui_kit::base::input::TextareaState>::is_multi_line.
 func (s TextareaState) IsMultiLine(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(546)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10807,6 +11881,7 @@ func (s TextareaState) IsMultiLine(cx *Cx) bool {
 
 // IsReplaceable is <gpui_kit::base::input::TextareaState>::is_replaceable.
 func (s TextareaState) IsReplaceable(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(547)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10815,6 +11890,7 @@ func (s TextareaState) IsReplaceable(cx *Cx) bool {
 
 // IsSelectionReversed is <gpui_kit::base::input::TextareaState>::is_selection_reversed.
 func (s TextareaState) IsSelectionReversed(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(548)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10823,6 +11899,7 @@ func (s TextareaState) IsSelectionReversed(cx *Cx) bool {
 
 // IsSingleLine is <gpui_kit::base::input::TextareaState>::is_single_line.
 func (s TextareaState) IsSingleLine(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(549)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10831,6 +11908,7 @@ func (s TextareaState) IsSingleLine(cx *Cx) bool {
 
 // LineHeight is <gpui_kit::base::input::TextareaState>::line_height.
 func (s TextareaState) LineHeight(cx *Cx) Option[float32] {
+	useBaseInput()
 	o := newReq(550)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10839,6 +11917,7 @@ func (s TextareaState) LineHeight(cx *Cx) Option[float32] {
 
 // Presentation is <gpui_kit::base::input::TextareaState>::presentation.
 func (s TextareaState) Presentation(cx *Cx) InputPresentation {
+	useBaseInput()
 	o := newReq(943)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10847,6 +11926,7 @@ func (s TextareaState) Presentation(cx *Cx) InputPresentation {
 
 // RangeToBounds is <gpui_kit::base::input::TextareaState>::range_to_bounds.
 func (s TextareaState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
+	useBaseInput()
 	o := newReq(553)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -10856,6 +11936,7 @@ func (s TextareaState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
 
 // ScrollOffset is <gpui_kit::base::input::TextareaState>::scroll_offset.
 func (s TextareaState) ScrollOffset(cx *Cx) GpuiPoint {
+	useBaseInput()
 	o := newReq(557)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10864,6 +11945,7 @@ func (s TextareaState) ScrollOffset(cx *Cx) GpuiPoint {
 
 // SearchActivationRevision is <gpui_kit::base::input::TextareaState>::search_activation_revision.
 func (s TextareaState) SearchActivationRevision(cx *Cx) uint64 {
+	useBaseInput()
 	o := newReq(558)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10872,6 +11954,7 @@ func (s TextareaState) SearchActivationRevision(cx *Cx) uint64 {
 
 // SearchSession is <gpui_kit::base::input::TextareaState>::search_session.
 func (s TextareaState) SearchSession(cx *Cx) SearchSession {
+	useBaseInput()
 	o := newReq(559)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10880,6 +11963,7 @@ func (s TextareaState) SearchSession(cx *Cx) SearchSession {
 
 // SelectedRange is <gpui_kit::base::input::TextareaState>::selected_range.
 func (s TextareaState) SelectedRange(cx *Cx) Range {
+	useBaseInput()
 	o := newReq(637)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10888,6 +11972,7 @@ func (s TextareaState) SelectedRange(cx *Cx) Range {
 
 // SelectedText is <gpui_kit::base::input::TextareaState>::selected_text.
 func (s TextareaState) SelectedText(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1274)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10896,6 +11981,7 @@ func (s TextareaState) SelectedText(cx *Cx) string {
 
 // SelectedValue is <gpui_kit::base::input::TextareaState>::selected_value.
 func (s TextareaState) SelectedValue(cx *Cx) string {
+	useBaseInput()
 	o := newReq(562)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10904,6 +11990,7 @@ func (s TextareaState) SelectedValue(cx *Cx) string {
 
 // Text is <gpui_kit::base::input::TextareaState>::text.
 func (s TextareaState) Text(cx *Cx) string {
+	useBaseInput()
 	o := newReq(1275)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10912,6 +11999,7 @@ func (s TextareaState) Text(cx *Cx) string {
 
 // TextBounds is <gpui_kit::base::input::TextareaState>::text_bounds.
 func (s TextareaState) TextBounds(cx *Cx) Option[Bounds] {
+	useBaseInput()
 	o := newReq(584)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10920,6 +12008,7 @@ func (s TextareaState) TextBounds(cx *Cx) Option[Bounds] {
 
 // TextInputConfiguration is <gpui_kit::base::input::TextareaState>::text_input_configuration.
 func (s TextareaState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
+	useBaseInput()
 	o := newReq(585)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10928,6 +12017,7 @@ func (s TextareaState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
 
 // Tokens is <gpui_kit::base::input::TextareaState>::tokens.
 func (s TextareaState) Tokens(cx *Cx) []InlineTokenSpan {
+	useBaseInput()
 	o := newReq(945)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10936,6 +12026,7 @@ func (s TextareaState) Tokens(cx *Cx) []InlineTokenSpan {
 
 // TouchSelection is <gpui_kit::base::input::TextareaState>::touch_selection.
 func (s TextareaState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
+	useBaseInput()
 	o := newReq(946)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10944,6 +12035,7 @@ func (s TextareaState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
 
 // UnmaskValue is <gpui_kit::base::input::TextareaState>::unmask_value.
 func (s TextareaState) UnmaskValue(cx *Cx) string {
+	useBaseInput()
 	o := newReq(587)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10952,6 +12044,7 @@ func (s TextareaState) UnmaskValue(cx *Cx) string {
 
 // Value is <gpui_kit::base::input::TextareaState>::value.
 func (s TextareaState) Value(cx *Cx) string {
+	useBaseInput()
 	o := newReq(589)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10960,6 +12053,7 @@ func (s TextareaState) Value(cx *Cx) string {
 
 // TryValue is Value for a handler the component calls from inside its own update: ok is false while the state is busy.
 func (s TextareaState) TryValue(cx *Cx) (v string, ok bool) {
+	useBaseInput()
 	o := newReq(589)
 	o.u64(s.h)
 	r, ok := stateTry(s.h, cx, o)
@@ -10971,6 +12065,7 @@ func (s TextareaState) TryValue(cx *Cx) (v string, ok bool) {
 
 // VisibleRowRange is <gpui_kit::base::input::TextareaState>::visible_row_range.
 func (s TextareaState) VisibleRowRange(cx *Cx) Option[Range] {
+	useBaseInput()
 	o := newReq(645)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -10979,6 +12074,7 @@ func (s TextareaState) VisibleRowRange(cx *Cx) Option[Range] {
 
 // HasSelectionFocus is <gpui_kit::base::input::TextareaState>::has_selection_focus.
 func (s TextareaState) HasSelectionFocus(cx *Cx) bool {
+	useBaseInput()
 	o := newReq(1038)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -10987,6 +12083,7 @@ func (s TextareaState) HasSelectionFocus(cx *Cx) bool {
 
 // NextSearchMatch is <gpui_kit::base::input::TextareaState>::next_search_match.
 func (s TextareaState) NextSearchMatch(cx *Cx) Option[Range] {
+	useBaseInput()
 	o := newReq(633)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -10995,6 +12092,7 @@ func (s TextareaState) NextSearchMatch(cx *Cx) Option[Range] {
 
 // PreviousSearchMatch is <gpui_kit::base::input::TextareaState>::previous_search_match.
 func (s TextareaState) PreviousSearchMatch(cx *Cx) Option[Range] {
+	useBaseInput()
 	o := newReq(634)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -11003,6 +12101,7 @@ func (s TextareaState) PreviousSearchMatch(cx *Cx) Option[Range] {
 
 // ReplaceAllSearchMatches is <gpui_kit::base::input::TextareaState>::replace_all_search_matches.
 func (s TextareaState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
+	useBaseInput()
 	o := newReq(635)
 	o.u64(s.h)
 	o.str(replacement)
@@ -11012,6 +12111,7 @@ func (s TextareaState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
 
 // ReplaceCurrentSearchMatch is <gpui_kit::base::input::TextareaState>::replace_current_search_match.
 func (s TextareaState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) bool {
+	useBaseInput()
 	o := newReq(636)
 	o.u64(s.h)
 	o.str(replacement)
@@ -11021,6 +12121,7 @@ func (s TextareaState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) boo
 
 // ReplaceRangeWithToken is <gpui_kit::base::input::TextareaState>::replace_range_with_token.
 func (s TextareaState) ReplaceRangeWithToken(cx *Cx, range_ Range, token InlineToken) error {
+	useBaseInput()
 	o := newReq(1039)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -11031,6 +12132,7 @@ func (s TextareaState) ReplaceRangeWithToken(cx *Cx, range_ Range, token InlineT
 
 // ReplaceWithToken is <gpui_kit::base::input::TextareaState>::replace_with_token.
 func (s TextareaState) ReplaceWithToken(cx *Cx, token InlineToken) error {
+	useBaseInput()
 	o := newReq(1040)
 	o.u64(s.h)
 	putVtape(o, token.n)
@@ -11040,6 +12142,7 @@ func (s TextareaState) ReplaceWithToken(cx *Cx, token InlineToken) error {
 
 // AddSelection is <gpui_kit::base::input::TextareaState>::add_selection.
 func (s TextareaState) AddSelection(cx *Cx, range_ Range) {
+	useBaseInput()
 	o := newReq(533)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -11048,6 +12151,7 @@ func (s TextareaState) AddSelection(cx *Cx, range_ Range) {
 
 // ApplyHighlighterFoldCandidates is <gpui_kit::base::input::TextareaState>::apply_highlighter_fold_candidates.
 func (s TextareaState) ApplyHighlighterFoldCandidates(cx *Cx, candidates []FoldRange) {
+	useBaseInput()
 	o := newReq(631)
 	o.u64(s.h)
 	o.u32(uint32(len(candidates)))
@@ -11059,6 +12163,7 @@ func (s TextareaState) ApplyHighlighterFoldCandidates(cx *Cx, candidates []FoldR
 
 // BeginEdgeDrag is <gpui_kit::base::input::TextareaState>::begin_edge_drag.
 func (s TextareaState) BeginEdgeDrag(cx *Cx, edge SelectionEdge, finger GpuiPoint) {
+	useBaseInput()
 	o := newReq(632)
 	o.u64(s.h)
 	o.u16(uint16(edge))
@@ -11068,6 +12173,7 @@ func (s TextareaState) BeginEdgeDrag(cx *Cx, edge SelectionEdge, finger GpuiPoin
 
 // Clean is <gpui_kit::base::input::TextareaState>::clean.
 func (s TextareaState) Clean(cx *Cx) {
+	useBaseInput()
 	o := newReq(534)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11075,6 +12181,7 @@ func (s TextareaState) Clean(cx *Cx) {
 
 // CloseEditMenu is <gpui_kit::base::input::TextareaState>::close_edit_menu.
 func (s TextareaState) CloseEditMenu(cx *Cx) {
+	useBaseInput()
 	o := newReq(535)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11082,6 +12189,7 @@ func (s TextareaState) CloseEditMenu(cx *Cx) {
 
 // CloseSearch is <gpui_kit::base::input::TextareaState>::close_search.
 func (s TextareaState) CloseSearch(cx *Cx) {
+	useBaseInput()
 	o := newReq(536)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11089,6 +12197,7 @@ func (s TextareaState) CloseSearch(cx *Cx) {
 
 // EndEdgeDrag is <gpui_kit::base::input::TextareaState>::end_edge_drag.
 func (s TextareaState) EndEdgeDrag(cx *Cx) {
+	useBaseInput()
 	o := newReq(538)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11096,6 +12205,7 @@ func (s TextareaState) EndEdgeDrag(cx *Cx) {
 
 // EnsureHighlighterFactory is <gpui_kit::base::input::TextareaState>::ensure_highlighter_factory.
 func (s TextareaState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
+	useBaseInput()
 	o := newReq(1621)
 	o.u64(s.h)
 	o.u64(factory.h)
@@ -11104,6 +12214,7 @@ func (s TextareaState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
 
 // EnsureNumberMask is <gpui_kit::base::input::TextareaState>::ensure_number_mask.
 func (s TextareaState) EnsureNumberMask(cx *Cx) {
+	useBaseInput()
 	o := newReq(539)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11111,6 +12222,7 @@ func (s TextareaState) EnsureNumberMask(cx *Cx) {
 
 // Focus is <gpui_kit::base::input::TextareaState>::focus.
 func (s TextareaState) Focus(cx *Cx) {
+	useBaseInput()
 	o := newReq(540)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11118,6 +12230,7 @@ func (s TextareaState) Focus(cx *Cx) {
 
 // Insert is <gpui_kit::base::input::TextareaState>::insert.
 func (s TextareaState) Insert(cx *Cx, text string) {
+	useBaseInput()
 	o := newReq(542)
 	o.u64(s.h)
 	o.str(text)
@@ -11126,6 +12239,7 @@ func (s TextareaState) Insert(cx *Cx, text string) {
 
 // OnContextMenu is <gpui_kit::base::input::TextareaState>::on_context_menu.
 func (s TextareaState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
+	useBaseInput()
 	o := newReq(1352)
 	o.u64(s.h)
 	putKeptHandler(o, handler, 114)
@@ -11134,6 +12248,7 @@ func (s TextareaState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
 
 // OpenSearch is <gpui_kit::base::input::TextareaState>::open_search.
 func (s TextareaState) OpenSearch(cx *Cx, replaceMode bool) {
+	useBaseInput()
 	o := newReq(552)
 	o.u64(s.h)
 	o.bool(replaceMode)
@@ -11142,6 +12257,7 @@ func (s TextareaState) OpenSearch(cx *Cx, replaceMode bool) {
 
 // Refresh is <gpui_kit::base::input::TextareaState>::refresh.
 func (s TextareaState) Refresh(cx *Cx) {
+	useBaseInput()
 	o := newReq(554)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11149,6 +12265,7 @@ func (s TextareaState) Refresh(cx *Cx) {
 
 // Replace is <gpui_kit::base::input::TextareaState>::replace.
 func (s TextareaState) Replace(cx *Cx, text string) {
+	useBaseInput()
 	o := newReq(555)
 	o.u64(s.h)
 	o.str(text)
@@ -11157,6 +12274,7 @@ func (s TextareaState) Replace(cx *Cx, text string) {
 
 // ReplaceAll is <gpui_kit::base::input::TextareaState>::replace_all.
 func (s TextareaState) ReplaceAll(cx *Cx, text string) {
+	useBaseInput()
 	o := newReq(556)
 	o.u64(s.h)
 	o.str(text)
@@ -11165,6 +12283,7 @@ func (s TextareaState) ReplaceAll(cx *Cx, text string) {
 
 // SelectAll is <gpui_kit::base::input::TextareaState>::select_all.
 func (s TextareaState) SelectAll(cx *Cx) {
+	useBaseInput()
 	o := newReq(560)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11172,6 +12291,7 @@ func (s TextareaState) SelectAll(cx *Cx) {
 
 // SelectAllFromEditMenu is <gpui_kit::base::input::TextareaState>::select_all_from_edit_menu.
 func (s TextareaState) SelectAllFromEditMenu(cx *Cx) {
+	useBaseInput()
 	o := newReq(561)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11179,6 +12299,7 @@ func (s TextareaState) SelectAllFromEditMenu(cx *Cx) {
 
 // SetAccessibility is <gpui_kit::base::input::TextareaState>::set_accessibility.
 func (s TextareaState) SetAccessibility(cx *Cx, accessibility InputAccessibility) {
+	useBaseInput()
 	o := newReq(944)
 	o.u64(s.h)
 	putVtape(o, accessibility.n)
@@ -11187,6 +12308,7 @@ func (s TextareaState) SetAccessibility(cx *Cx, accessibility InputAccessibility
 
 // SetAutoGrow is <gpui_kit::base::input::TextareaState>::set_auto_grow.
 func (s TextareaState) SetAutoGrow(cx *Cx, minRows int, maxRows int) {
+	useBaseInput()
 	o := newReq(563)
 	o.u64(s.h)
 	putUsize(o, minRows)
@@ -11196,6 +12318,7 @@ func (s TextareaState) SetAutoGrow(cx *Cx, minRows int, maxRows int) {
 
 // SetCleanOnEscape is <gpui_kit::base::input::TextareaState>::set_clean_on_escape.
 func (s TextareaState) SetCleanOnEscape(cx *Cx, clean bool) {
+	useBaseInput()
 	o := newReq(564)
 	o.u64(s.h)
 	o.bool(clean)
@@ -11204,6 +12327,7 @@ func (s TextareaState) SetCleanOnEscape(cx *Cx, clean bool) {
 
 // SetContextMenuEnabled is <gpui_kit::base::input::TextareaState>::set_context_menu_enabled.
 func (s TextareaState) SetContextMenuEnabled(cx *Cx, enabled bool) {
+	useBaseInput()
 	o := newReq(565)
 	o.u64(s.h)
 	o.bool(enabled)
@@ -11212,6 +12336,7 @@ func (s TextareaState) SetContextMenuEnabled(cx *Cx, enabled bool) {
 
 // SetCursorSurroundingLines is <gpui_kit::base::input::TextareaState>::set_cursor_surrounding_lines.
 func (s TextareaState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
+	useBaseInput()
 	o := newReq(566)
 	o.u64(s.h)
 	if x0, ok := lines.Get(); ok {
@@ -11225,6 +12350,7 @@ func (s TextareaState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
 
 // SetDisabled is <gpui_kit::base::input::TextareaState>::set_disabled.
 func (s TextareaState) SetDisabled(cx *Cx, disabled bool) {
+	useBaseInput()
 	o := newReq(567)
 	o.u64(s.h)
 	o.bool(disabled)
@@ -11233,6 +12359,7 @@ func (s TextareaState) SetDisabled(cx *Cx, disabled bool) {
 
 // SetEditorStyle is <gpui_kit::base::input::TextareaState>::set_editor_style.
 func (s TextareaState) SetEditorStyle(cx *Cx, style InputEditorStyle) {
+	useBaseInput()
 	o := newReq(1688)
 	o.u64(s.h)
 	putInputEditorStyle(o, style)
@@ -11241,6 +12368,7 @@ func (s TextareaState) SetEditorStyle(cx *Cx, style InputEditorStyle) {
 
 // SetFoldBackground is <gpui_kit::base::input::TextareaState>::set_fold_background.
 func (s TextareaState) SetFoldBackground(cx *Cx, color Option[Color]) {
+	useBaseInput()
 	o := newReq(638)
 	o.u64(s.h)
 	if x0, ok := color.Get(); ok {
@@ -11254,6 +12382,7 @@ func (s TextareaState) SetFoldBackground(cx *Cx, color Option[Color]) {
 
 // SetHighlighter is <gpui_kit::base::input::TextareaState>::set_highlighter.
 func (s TextareaState) SetHighlighter(cx *Cx, newLanguage string) {
+	useBaseInput()
 	o := newReq(568)
 	o.u64(s.h)
 	o.str(newLanguage)
@@ -11262,6 +12391,7 @@ func (s TextareaState) SetHighlighter(cx *Cx, newLanguage string) {
 
 // SetHighlighterFactory is <gpui_kit::base::input::TextareaState>::set_highlighter_factory.
 func (s TextareaState) SetHighlighterFactory(cx *Cx, factory RowSource) {
+	useBaseInput()
 	o := newReq(1622)
 	o.u64(s.h)
 	o.u64(factory.h)
@@ -11270,6 +12400,7 @@ func (s TextareaState) SetHighlighterFactory(cx *Cx, factory RowSource) {
 
 // SetMaskPattern is <gpui_kit::base::input::TextareaState>::set_mask_pattern.
 func (s TextareaState) SetMaskPattern(cx *Cx, pattern MaskPatternInto) {
+	useBaseInput()
 	o := newReq(639)
 	o.u64(s.h)
 	putMaskPatternInto(o, pattern)
@@ -11278,6 +12409,7 @@ func (s TextareaState) SetMaskPattern(cx *Cx, pattern MaskPatternInto) {
 
 // SetPlaceholder is <gpui_kit::base::input::TextareaState>::set_placeholder.
 func (s TextareaState) SetPlaceholder(cx *Cx, placeholder string) {
+	useBaseInput()
 	o := newReq(569)
 	o.u64(s.h)
 	o.str(placeholder)
@@ -11286,6 +12418,7 @@ func (s TextareaState) SetPlaceholder(cx *Cx, placeholder string) {
 
 // SetReadonly is <gpui_kit::base::input::TextareaState>::set_readonly.
 func (s TextareaState) SetReadonly(cx *Cx, readonly bool) {
+	useBaseInput()
 	o := newReq(570)
 	o.u64(s.h)
 	o.bool(readonly)
@@ -11294,6 +12427,7 @@ func (s TextareaState) SetReadonly(cx *Cx, readonly bool) {
 
 // SetRows is <gpui_kit::base::input::TextareaState>::set_rows.
 func (s TextareaState) SetRows(cx *Cx, rows int) {
+	useBaseInput()
 	o := newReq(571)
 	o.u64(s.h)
 	putUsize(o, rows)
@@ -11302,6 +12436,7 @@ func (s TextareaState) SetRows(cx *Cx, rows int) {
 
 // SetScrollBeyondLastLine is <gpui_kit::base::input::TextareaState>::set_scroll_beyond_last_line.
 func (s TextareaState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
+	useBaseInput()
 	o := newReq(572)
 	o.u64(s.h)
 	if x0, ok := rows.Get(); ok {
@@ -11315,6 +12450,7 @@ func (s TextareaState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
 
 // SetScrollBounce is <gpui_kit::base::input::TextareaState>::set_scroll_bounce.
 func (s TextareaState) SetScrollBounce(cx *Cx, scrollBounce bool) {
+	useBaseInput()
 	o := newReq(573)
 	o.u64(s.h)
 	o.bool(scrollBounce)
@@ -11323,6 +12459,7 @@ func (s TextareaState) SetScrollBounce(cx *Cx, scrollBounce bool) {
 
 // SetScrollOffset is <gpui_kit::base::input::TextareaState>::set_scroll_offset.
 func (s TextareaState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
+	useBaseInput()
 	o := newReq(640)
 	o.u64(s.h)
 	putGpuiPoint(o, offset)
@@ -11331,6 +12468,7 @@ func (s TextareaState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 
 // SetSearchQuery is <gpui_kit::base::input::TextareaState>::set_search_query.
 func (s TextareaState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) {
+	useBaseInput()
 	o := newReq(574)
 	o.u64(s.h)
 	o.str(query)
@@ -11340,6 +12478,7 @@ func (s TextareaState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool
 
 // SetSearchable is <gpui_kit::base::input::TextareaState>::set_searchable.
 func (s TextareaState) SetSearchable(cx *Cx, searchable bool) {
+	useBaseInput()
 	o := newReq(575)
 	o.u64(s.h)
 	o.bool(searchable)
@@ -11348,6 +12487,7 @@ func (s TextareaState) SetSearchable(cx *Cx, searchable bool) {
 
 // SetSelectedRange is <gpui_kit::base::input::TextareaState>::set_selected_range.
 func (s TextareaState) SetSelectedRange(cx *Cx, range_ Range) {
+	useBaseInput()
 	o := newReq(576)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -11356,6 +12496,7 @@ func (s TextareaState) SetSelectedRange(cx *Cx, range_ Range) {
 
 // SetSelectedRangeWithDirection is <gpui_kit::base::input::TextareaState>::set_selected_range_with_direction.
 func (s TextareaState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reversed bool) {
+	useBaseInput()
 	o := newReq(577)
 	o.u64(s.h)
 	putRange(o, range_)
@@ -11365,6 +12506,7 @@ func (s TextareaState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, rever
 
 // SetSelectionFocus is <gpui_kit::base::input::TextareaState>::set_selection_focus.
 func (s TextareaState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
+	useBaseInput()
 	o := newReq(641)
 	o.u64(s.h)
 	if x0, ok := focus.Get(); ok {
@@ -11378,6 +12520,7 @@ func (s TextareaState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
 
 // SetShowWhitespaces is <gpui_kit::base::input::TextareaState>::set_show_whitespaces.
 func (s TextareaState) SetShowWhitespaces(cx *Cx, show bool) {
+	useBaseInput()
 	o := newReq(578)
 	o.u64(s.h)
 	o.bool(show)
@@ -11386,6 +12529,7 @@ func (s TextareaState) SetShowWhitespaces(cx *Cx, show bool) {
 
 // SetSoftWrap is <gpui_kit::base::input::TextareaState>::set_soft_wrap.
 func (s TextareaState) SetSoftWrap(cx *Cx, wrap bool) {
+	useBaseInput()
 	o := newReq(579)
 	o.u64(s.h)
 	o.bool(wrap)
@@ -11394,6 +12538,7 @@ func (s TextareaState) SetSoftWrap(cx *Cx, wrap bool) {
 
 // SetSubmitOnEnter is <gpui_kit::base::input::TextareaState>::set_submit_on_enter.
 func (s TextareaState) SetSubmitOnEnter(cx *Cx, submit bool) {
+	useBaseInput()
 	o := newReq(580)
 	o.u64(s.h)
 	o.bool(submit)
@@ -11402,6 +12547,7 @@ func (s TextareaState) SetSubmitOnEnter(cx *Cx, submit bool) {
 
 // SetTabSize is <gpui_kit::base::input::TextareaState>::set_tab_size.
 func (s TextareaState) SetTabSize(cx *Cx, tab TabSize) {
+	useBaseInput()
 	o := newReq(642)
 	o.u64(s.h)
 	putTabSize(o, tab)
@@ -11410,6 +12556,7 @@ func (s TextareaState) SetTabSize(cx *Cx, tab TabSize) {
 
 // SetTextAlign is <gpui_kit::base::input::TextareaState>::set_text_align.
 func (s TextareaState) SetTextAlign(cx *Cx, textAlign TextAlign) {
+	useBaseInput()
 	o := newReq(581)
 	o.u64(s.h)
 	o.u16(uint16(textAlign))
@@ -11418,6 +12565,7 @@ func (s TextareaState) SetTextAlign(cx *Cx, textAlign TextAlign) {
 
 // SetValue is <gpui_kit::base::input::TextareaState>::set_value.
 func (s TextareaState) SetValue(cx *Cx, value InputContentInto) {
+	useBaseInput()
 	o := newReq(643)
 	o.u64(s.h)
 	putInputContentInto(o, value)
@@ -11426,6 +12574,7 @@ func (s TextareaState) SetValue(cx *Cx, value InputContentInto) {
 
 // SetWrappingIndent is <gpui_kit::base::input::TextareaState>::set_wrapping_indent.
 func (s TextareaState) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
+	useBaseInput()
 	o := newReq(582)
 	o.u64(s.h)
 	o.u16(uint16(wrappingIndent))
@@ -11434,6 +12583,7 @@ func (s TextareaState) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) 
 
 // ToggleMasked is <gpui_kit::base::input::TextareaState>::toggle_masked.
 func (s TextareaState) ToggleMasked(cx *Cx) {
+	useBaseInput()
 	o := newReq(586)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11441,6 +12591,7 @@ func (s TextareaState) ToggleMasked(cx *Cx) {
 
 // Unselect is <gpui_kit::base::input::TextareaState>::unselect.
 func (s TextareaState) Unselect(cx *Cx) {
+	useBaseInput()
 	o := newReq(588)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -11448,6 +12599,7 @@ func (s TextareaState) Unselect(cx *Cx) {
 
 // UpdateEdgeDrag is <gpui_kit::base::input::TextareaState>::update_edge_drag.
 func (s TextareaState) UpdateEdgeDrag(cx *Cx, finger GpuiPoint) {
+	useBaseInput()
 	o := newReq(644)
 	o.u64(s.h)
 	putGpuiPoint(o, finger)
@@ -11572,6 +12724,7 @@ func (b TextareaStateBuilder) Build() TextareaState { return TextareaState{b.sb.
 
 // NewTextareaState is <gpui_kit::base::input::TextareaState>::new.
 func NewTextareaState(cx *Cx) TextareaStateBuilder {
+	useBaseInput()
 	o := newReq(551)
 	return TextareaStateBuilder{newStateBuilder(cx, o)}
 }
@@ -11583,6 +12736,7 @@ func (s Theme) handle() uint64 { return s.h }
 
 // ColorTokens is <gpui_kit::component::Theme>::color_tokens.
 func (s Theme) ColorTokens(cx *Cx) BaseColorTokens {
+	useComponentTheme()
 	o := newReq(958)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11591,6 +12745,7 @@ func (s Theme) ColorTokens(cx *Cx) BaseColorTokens {
 
 // Colors is <gpui_kit::component::Theme>::colors.
 func (s Theme) Colors(cx *Cx) KitThemeColor2 {
+	useComponentTheme()
 	o := newReq(1194)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11599,6 +12754,7 @@ func (s Theme) Colors(cx *Cx) KitThemeColor2 {
 
 // CursorBlink is <gpui_kit::component::Theme>::cursor_blink.
 func (s Theme) CursorBlink(cx *Cx) CursorBlinkRead {
+	useComponentTheme()
 	o := newReq(1359)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11607,6 +12763,7 @@ func (s Theme) CursorBlink(cx *Cx) CursorBlinkRead {
 
 // DarkTheme is <gpui_kit::component::Theme>::dark_theme.
 func (s Theme) DarkTheme(cx *Cx) ThemeConfigRc {
+	useComponentTheme()
 	o := newReq(1195)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11615,6 +12772,7 @@ func (s Theme) DarkTheme(cx *Cx) ThemeConfigRc {
 
 // FocusRing is <gpui_kit::component::Theme>::focus_ring.
 func (s Theme) FocusRing(cx *Cx) bool {
+	useComponentTheme()
 	o := newReq(1196)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11623,6 +12781,7 @@ func (s Theme) FocusRing(cx *Cx) bool {
 
 // FontFamily is <gpui_kit::component::Theme>::font_family.
 func (s Theme) FontFamily(cx *Cx) string {
+	useComponentTheme()
 	o := newReq(1197)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11631,6 +12790,7 @@ func (s Theme) FontFamily(cx *Cx) string {
 
 // FontSize is <gpui_kit::component::Theme>::font_size.
 func (s Theme) FontSize(cx *Cx) float32 {
+	useComponentTheme()
 	o := newReq(1198)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11639,6 +12799,7 @@ func (s Theme) FontSize(cx *Cx) float32 {
 
 // HighlightTheme is <gpui_kit::component::Theme>::highlight_theme.
 func (s Theme) HighlightTheme(cx *Cx) HighlightThemeArc {
+	useComponentTheme()
 	o := newReq(1199)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11647,6 +12808,7 @@ func (s Theme) HighlightTheme(cx *Cx) HighlightThemeArc {
 
 // InputBackground is <gpui_kit::component::Theme>::input_background.
 func (s Theme) InputBackground(cx *Cx) Hsla {
+	useComponentTheme()
 	o := newReq(961)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11655,6 +12817,7 @@ func (s Theme) InputBackground(cx *Cx) Hsla {
 
 // IsDark is <gpui_kit::component::Theme>::is_dark.
 func (s Theme) IsDark(cx *Cx) bool {
+	useComponentTheme()
 	o := newReq(962)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11663,6 +12826,7 @@ func (s Theme) IsDark(cx *Cx) bool {
 
 // LightTheme is <gpui_kit::component::Theme>::light_theme.
 func (s Theme) LightTheme(cx *Cx) ThemeConfigRc {
+	useComponentTheme()
 	o := newReq(1200)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11671,6 +12835,7 @@ func (s Theme) LightTheme(cx *Cx) ThemeConfigRc {
 
 // List is <gpui_kit::component::Theme>::list.
 func (s Theme) List(cx *Cx) BaseListSettings {
+	useComponentTheme()
 	o := newReq(1201)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11679,6 +12844,7 @@ func (s Theme) List(cx *Cx) BaseListSettings {
 
 // Mode is <gpui_kit::component::Theme>::mode.
 func (s Theme) Mode(cx *Cx) ThemeMode {
+	useComponentTheme()
 	o := newReq(1202)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11687,6 +12853,7 @@ func (s Theme) Mode(cx *Cx) ThemeMode {
 
 // MonoFontFamily is <gpui_kit::component::Theme>::mono_font_family.
 func (s Theme) MonoFontFamily(cx *Cx) string {
+	useComponentTheme()
 	o := newReq(1203)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11695,6 +12862,7 @@ func (s Theme) MonoFontFamily(cx *Cx) string {
 
 // MonoFontSize is <gpui_kit::component::Theme>::mono_font_size.
 func (s Theme) MonoFontSize(cx *Cx) float32 {
+	useComponentTheme()
 	o := newReq(1204)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11703,6 +12871,7 @@ func (s Theme) MonoFontSize(cx *Cx) float32 {
 
 // Motion is <gpui_kit::component::Theme>::motion.
 func (s Theme) Motion(cx *Cx) KitMotionTokens {
+	useComponentTheme()
 	o := newReq(1205)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11711,6 +12880,7 @@ func (s Theme) Motion(cx *Cx) KitMotionTokens {
 
 // MotionTokens is <gpui_kit::component::Theme>::motion_tokens.
 func (s Theme) MotionTokens(cx *Cx) KitMotionTokens {
+	useComponentTheme()
 	o := newReq(963)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11719,6 +12889,7 @@ func (s Theme) MotionTokens(cx *Cx) KitMotionTokens {
 
 // Notification is <gpui_kit::component::Theme>::notification.
 func (s Theme) Notification(cx *Cx) KitNotificationSettings {
+	useComponentTheme()
 	o := newReq(1206)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11727,6 +12898,7 @@ func (s Theme) Notification(cx *Cx) KitNotificationSettings {
 
 // Radius is <gpui_kit::component::Theme>::radius.
 func (s Theme) Radius(cx *Cx) float32 {
+	useComponentTheme()
 	o := newReq(1207)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11735,6 +12907,7 @@ func (s Theme) Radius(cx *Cx) float32 {
 
 // Radius2xl is <gpui_kit::component::Theme>::radius_2xl.
 func (s Theme) Radius2xl(cx *Cx) float32 {
+	useComponentTheme()
 	o := newReq(964)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11743,6 +12916,7 @@ func (s Theme) Radius2xl(cx *Cx) float32 {
 
 // Radius3xl is <gpui_kit::component::Theme>::radius_3xl.
 func (s Theme) Radius3xl(cx *Cx) float32 {
+	useComponentTheme()
 	o := newReq(965)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11751,6 +12925,7 @@ func (s Theme) Radius3xl(cx *Cx) float32 {
 
 // Radius4xl is <gpui_kit::component::Theme>::radius_4xl.
 func (s Theme) Radius4xl(cx *Cx) float32 {
+	useComponentTheme()
 	o := newReq(966)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11759,6 +12934,7 @@ func (s Theme) Radius4xl(cx *Cx) float32 {
 
 // RadiusFull is <gpui_kit::component::Theme>::radius_full.
 func (s Theme) RadiusFull(cx *Cx) float32 {
+	useComponentTheme()
 	o := newReq(967)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11767,6 +12943,7 @@ func (s Theme) RadiusFull(cx *Cx) float32 {
 
 // RadiusLg is <gpui_kit::component::Theme>::radius_lg.
 func (s Theme) RadiusLg(cx *Cx) float32 {
+	useComponentTheme()
 	o := newReq(1208)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11775,6 +12952,7 @@ func (s Theme) RadiusLg(cx *Cx) float32 {
 
 // RadiusTokens is <gpui_kit::component::Theme>::radius_tokens.
 func (s Theme) RadiusTokens(cx *Cx) BaseRadiusTokens {
+	useComponentTheme()
 	o := newReq(968)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11783,6 +12961,7 @@ func (s Theme) RadiusTokens(cx *Cx) BaseRadiusTokens {
 
 // ResolveSemanticConfig is <gpui_kit::component::Theme>::resolve_semantic_config.
 func (s Theme) ResolveSemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSemanticThemeTokens {
+	useComponentTheme()
 	o := newReq(969)
 	o.u64(s.h)
 	putVtape(o, config.n)
@@ -11792,6 +12971,7 @@ func (s Theme) ResolveSemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSem
 
 // ScrollbarMode is <gpui_kit::component::Theme>::scrollbar_mode.
 func (s Theme) ScrollbarMode(cx *Cx) ScrollbarMode {
+	useComponentTheme()
 	o := newReq(1209)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11800,6 +12980,7 @@ func (s Theme) ScrollbarMode(cx *Cx) ScrollbarMode {
 
 // SemanticTokens is <gpui_kit::component::Theme>::semantic_tokens.
 func (s Theme) SemanticTokens(cx *Cx) BaseSemanticThemeTokens {
+	useComponentTheme()
 	o := newReq(970)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11808,6 +12989,7 @@ func (s Theme) SemanticTokens(cx *Cx) BaseSemanticThemeTokens {
 
 // Shadow is <gpui_kit::component::Theme>::shadow.
 func (s Theme) Shadow(cx *Cx) bool {
+	useComponentTheme()
 	o := newReq(1230)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11816,6 +12998,7 @@ func (s Theme) Shadow(cx *Cx) bool {
 
 // ShadowTokens is <gpui_kit::component::Theme>::shadow_tokens.
 func (s Theme) ShadowTokens(cx *Cx) BaseShadowTokens {
+	useComponentTheme()
 	o := newReq(972)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11824,6 +13007,7 @@ func (s Theme) ShadowTokens(cx *Cx) BaseShadowTokens {
 
 // Sheet is <gpui_kit::component::Theme>::sheet.
 func (s Theme) Sheet(cx *Cx) KitSheetSettings {
+	useComponentTheme()
 	o := newReq(1231)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11832,6 +13016,7 @@ func (s Theme) Sheet(cx *Cx) KitSheetSettings {
 
 // SpacingTokens is <gpui_kit::component::Theme>::spacing_tokens.
 func (s Theme) SpacingTokens(cx *Cx) BaseSpacingTokens {
+	useComponentTheme()
 	o := newReq(973)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11840,6 +13025,7 @@ func (s Theme) SpacingTokens(cx *Cx) BaseSpacingTokens {
 
 // ThemeName is <gpui_kit::component::Theme>::theme_name.
 func (s Theme) ThemeName(cx *Cx) string {
+	useComponentTheme()
 	o := newReq(976)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11848,6 +13034,7 @@ func (s Theme) ThemeName(cx *Cx) string {
 
 // Tokens is <gpui_kit::component::Theme>::tokens.
 func (s Theme) Tokens(cx *Cx) ThemeTokens {
+	useComponentTheme()
 	o := newReq(1232)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11856,6 +13043,7 @@ func (s Theme) Tokens(cx *Cx) ThemeTokens {
 
 // Transparent is <gpui_kit::component::Theme>::transparent.
 func (s Theme) Transparent(cx *Cx) Hsla {
+	useComponentTheme()
 	o := newReq(1233)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11864,6 +13052,7 @@ func (s Theme) Transparent(cx *Cx) Hsla {
 
 // TypographyTokens is <gpui_kit::component::Theme>::typography_tokens.
 func (s Theme) TypographyTokens(cx *Cx) BaseTypographyTokens {
+	useComponentTheme()
 	o := newReq(977)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11872,6 +13061,7 @@ func (s Theme) TypographyTokens(cx *Cx) BaseTypographyTokens {
 
 // WindowRadius is <gpui_kit::component::Theme>::window_radius.
 func (s Theme) WindowRadius(cx *Cx) float32 {
+	useComponentTheme()
 	o := newReq(1234)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -11880,6 +13070,7 @@ func (s Theme) WindowRadius(cx *Cx) float32 {
 
 // ApplySemanticConfig is <gpui_kit::component::Theme>::apply_semantic_config.
 func (s Theme) ApplySemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSemanticThemeTokens {
+	useComponentTheme()
 	o := newReq(956)
 	o.u64(s.h)
 	putVtape(o, config.n)
@@ -11889,6 +13080,7 @@ func (s Theme) ApplySemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSeman
 
 // ApplyConfig is <gpui_kit::component::Theme>::apply_config.
 func (s Theme) ApplyConfig(cx *Cx, config ThemeConfigRc) {
+	useComponentTheme()
 	o := newReq(1161)
 	o.u64(s.h)
 	o.u64(config.h)
@@ -11897,6 +13089,7 @@ func (s Theme) ApplyConfig(cx *Cx, config ThemeConfigRc) {
 
 // ApplySemanticTokens is <gpui_kit::component::Theme>::apply_semantic_tokens.
 func (s Theme) ApplySemanticTokens(cx *Cx, tokens SemanticThemeTokens) {
+	useComponentTheme()
 	o := newReq(957)
 	o.u64(s.h)
 	putVtape(o, tokens.n)
@@ -11905,6 +13098,7 @@ func (s Theme) ApplySemanticTokens(cx *Cx, tokens SemanticThemeTokens) {
 
 // SetColors is <gpui_kit::component::Theme>::set_colors.
 func (s Theme) SetColors(cx *Cx, value KitThemeColor) {
+	useComponentTheme()
 	o := newReq(1210)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -11913,6 +13107,7 @@ func (s Theme) SetColors(cx *Cx, value KitThemeColor) {
 
 // SetCursorBlink is <gpui_kit::component::Theme>::set_cursor_blink.
 func (s Theme) SetCursorBlink(cx *Cx, value CursorBlink) {
+	useComponentTheme()
 	o := newReq(1211)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -11921,6 +13116,7 @@ func (s Theme) SetCursorBlink(cx *Cx, value CursorBlink) {
 
 // SetDarkTheme is <gpui_kit::component::Theme>::set_dark_theme.
 func (s Theme) SetDarkTheme(cx *Cx, value ThemeConfigRc) {
+	useComponentTheme()
 	o := newReq(1212)
 	o.u64(s.h)
 	o.u64(value.h)
@@ -11929,6 +13125,7 @@ func (s Theme) SetDarkTheme(cx *Cx, value ThemeConfigRc) {
 
 // SetFocusRing is <gpui_kit::component::Theme>::set_focus_ring.
 func (s Theme) SetFocusRing(cx *Cx, value bool) {
+	useComponentTheme()
 	o := newReq(1213)
 	o.u64(s.h)
 	o.bool(value)
@@ -11937,6 +13134,7 @@ func (s Theme) SetFocusRing(cx *Cx, value bool) {
 
 // SetFontFamily is <gpui_kit::component::Theme>::set_font_family.
 func (s Theme) SetFontFamily(cx *Cx, value string) {
+	useComponentTheme()
 	o := newReq(1214)
 	o.u64(s.h)
 	o.str(value)
@@ -11945,6 +13143,7 @@ func (s Theme) SetFontFamily(cx *Cx, value string) {
 
 // SetFontSize is <gpui_kit::component::Theme>::set_font_size.
 func (s Theme) SetFontSize(cx *Cx, value float32) {
+	useComponentTheme()
 	o := newReq(1215)
 	o.u64(s.h)
 	o.f32(value)
@@ -11953,6 +13152,7 @@ func (s Theme) SetFontSize(cx *Cx, value float32) {
 
 // SetHighlightTheme is <gpui_kit::component::Theme>::set_highlight_theme.
 func (s Theme) SetHighlightTheme(cx *Cx, value HighlightThemeArc) {
+	useComponentTheme()
 	o := newReq(1216)
 	o.u64(s.h)
 	o.u64(value.h)
@@ -11961,6 +13161,7 @@ func (s Theme) SetHighlightTheme(cx *Cx, value HighlightThemeArc) {
 
 // SetLightTheme is <gpui_kit::component::Theme>::set_light_theme.
 func (s Theme) SetLightTheme(cx *Cx, value ThemeConfigRc) {
+	useComponentTheme()
 	o := newReq(1217)
 	o.u64(s.h)
 	o.u64(value.h)
@@ -11969,6 +13170,7 @@ func (s Theme) SetLightTheme(cx *Cx, value ThemeConfigRc) {
 
 // SetList is <gpui_kit::component::Theme>::set_list.
 func (s Theme) SetList(cx *Cx, value ListSettings) {
+	useComponentTheme()
 	o := newReq(1218)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -11977,6 +13179,7 @@ func (s Theme) SetList(cx *Cx, value ListSettings) {
 
 // SetMode is <gpui_kit::component::Theme>::set_mode.
 func (s Theme) SetMode(cx *Cx, value ThemeMode) {
+	useComponentTheme()
 	o := newReq(1219)
 	o.u64(s.h)
 	o.u16(uint16(value))
@@ -11985,6 +13188,7 @@ func (s Theme) SetMode(cx *Cx, value ThemeMode) {
 
 // SetMonoFontFamily is <gpui_kit::component::Theme>::set_mono_font_family.
 func (s Theme) SetMonoFontFamily(cx *Cx, value string) {
+	useComponentTheme()
 	o := newReq(1220)
 	o.u64(s.h)
 	o.str(value)
@@ -11993,6 +13197,7 @@ func (s Theme) SetMonoFontFamily(cx *Cx, value string) {
 
 // SetMonoFontSize is <gpui_kit::component::Theme>::set_mono_font_size.
 func (s Theme) SetMonoFontSize(cx *Cx, value float32) {
+	useComponentTheme()
 	o := newReq(1221)
 	o.u64(s.h)
 	o.f32(value)
@@ -12001,6 +13206,7 @@ func (s Theme) SetMonoFontSize(cx *Cx, value float32) {
 
 // SetMotion is <gpui_kit::component::Theme>::set_motion.
 func (s Theme) SetMotion(cx *Cx, value MotionTokens) {
+	useComponentTheme()
 	o := newReq(1222)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -12009,6 +13215,7 @@ func (s Theme) SetMotion(cx *Cx, value MotionTokens) {
 
 // SetNotification is <gpui_kit::component::Theme>::set_notification.
 func (s Theme) SetNotification(cx *Cx, value NotificationSettings) {
+	useComponentTheme()
 	o := newReq(1223)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -12017,6 +13224,7 @@ func (s Theme) SetNotification(cx *Cx, value NotificationSettings) {
 
 // SetRadius is <gpui_kit::component::Theme>::set_radius.
 func (s Theme) SetRadius(cx *Cx, value float32) {
+	useComponentTheme()
 	o := newReq(1224)
 	o.u64(s.h)
 	o.f32(value)
@@ -12025,6 +13233,7 @@ func (s Theme) SetRadius(cx *Cx, value float32) {
 
 // SetRadiusLg is <gpui_kit::component::Theme>::set_radius_lg.
 func (s Theme) SetRadiusLg(cx *Cx, value float32) {
+	useComponentTheme()
 	o := newReq(1225)
 	o.u64(s.h)
 	o.f32(value)
@@ -12033,6 +13242,7 @@ func (s Theme) SetRadiusLg(cx *Cx, value float32) {
 
 // SetShadow is <gpui_kit::component::Theme>::set_shadow.
 func (s Theme) SetShadow(cx *Cx, value bool) {
+	useComponentTheme()
 	o := newReq(1226)
 	o.u64(s.h)
 	o.bool(value)
@@ -12041,6 +13251,7 @@ func (s Theme) SetShadow(cx *Cx, value bool) {
 
 // SetSheet is <gpui_kit::component::Theme>::set_sheet.
 func (s Theme) SetSheet(cx *Cx, value SheetSettings) {
+	useComponentTheme()
 	o := newReq(1227)
 	o.u64(s.h)
 	putVtape(o, value.n)
@@ -12049,6 +13260,7 @@ func (s Theme) SetSheet(cx *Cx, value SheetSettings) {
 
 // SetTransparent is <gpui_kit::component::Theme>::set_transparent.
 func (s Theme) SetTransparent(cx *Cx, value Color) {
+	useComponentTheme()
 	o := newReq(1228)
 	o.u64(s.h)
 	putColor(o, value)
@@ -12057,6 +13269,7 @@ func (s Theme) SetTransparent(cx *Cx, value Color) {
 
 // SetWindowRadius is <gpui_kit::component::Theme>::set_window_radius.
 func (s Theme) SetWindowRadius(cx *Cx, value float32) {
+	useComponentTheme()
 	o := newReq(1229)
 	o.u64(s.h)
 	o.f32(value)
@@ -12065,6 +13278,7 @@ func (s Theme) SetWindowRadius(cx *Cx, value float32) {
 
 // ThemeChange is <gpui_kit::component::Theme>::change.
 func ThemeChange(cx *Cx, mode ThemeModeInto) {
+	useComponentTheme()
 	o := newReq(1163)
 	putThemeModeInto(o, mode)
 	stateSet(cx, o)
@@ -12072,6 +13286,7 @@ func ThemeChange(cx *Cx, mode ThemeModeInto) {
 
 // ThemeGlobal is <gpui_kit::component::Theme>::global.
 func ThemeGlobal(cx *Cx) Theme {
+	useComponentTheme()
 	o := newReq(959)
 	r := objGet(0, cx, o)
 	return Theme{h: r.u64()}
@@ -12079,6 +13294,7 @@ func ThemeGlobal(cx *Cx) Theme {
 
 // ThemeGlobalMut is <gpui_kit::component::Theme>::global_mut.
 func ThemeGlobalMut(cx *Cx) Theme {
+	useComponentTheme()
 	o := newReq(960)
 	r := objGet(0, cx, o)
 	return Theme{h: r.u64()}
@@ -12086,6 +13302,7 @@ func ThemeGlobalMut(cx *Cx) Theme {
 
 // ThemeSetScrollbarMode is <gpui_kit::component::Theme>::set_scrollbar_mode.
 func ThemeSetScrollbarMode(cx *Cx, mode ScrollbarMode) {
+	useComponentTheme()
 	o := newReq(971)
 	o.u16(uint16(mode))
 	stateSet(cx, o)
@@ -12093,18 +13310,21 @@ func ThemeSetScrollbarMode(cx *Cx, mode ScrollbarMode) {
 
 // ThemeSyncBase is <gpui_kit::component::Theme>::sync_base.
 func ThemeSyncBase(cx *Cx) {
+	useComponentTheme()
 	o := newReq(974)
 	stateSet(cx, o)
 }
 
 // ThemeSyncScrollbarAppearance is <gpui_kit::component::Theme>::sync_scrollbar_appearance.
 func ThemeSyncScrollbarAppearance(cx *Cx) {
+	useComponentTheme()
 	o := newReq(975)
 	stateSet(cx, o)
 }
 
 // ThemeSyncSystemAppearance is <gpui_kit::component::Theme>::sync_system_appearance.
 func ThemeSyncSystemAppearance(cx *Cx) {
+	useComponentTheme()
 	o := newReq(1164)
 	stateSet(cx, o)
 }
@@ -12116,6 +13336,7 @@ func (s ThemeColorArc) handle() uint64 { return s.h }
 
 // NewThemeColorArc is std::sync::Arc::new.
 func NewThemeColorArc(cx *Cx, value KitThemeColor) ThemeColorArc {
+	useComponentTheme()
 	o := newReq(1237)
 	putVtape(o, value.n)
 	o.u16(0) // no builder ops follow
@@ -12129,6 +13350,7 @@ func (s ThemeConfigRc) handle() uint64 { return s.h }
 
 // NewThemeConfigRc is std::rc::Rc::new.
 func NewThemeConfigRc(cx *Cx, value ThemeConfig) ThemeConfigRc {
+	useComponentTheme()
 	o := newReq(1235)
 	putVtape(o, value.n)
 	o.u16(0) // no builder ops follow
@@ -12142,6 +13364,7 @@ func (s ThemeRegistry) handle() uint64 { return s.h }
 
 // DefaultDarkTheme is <gpui_kit::component::ThemeRegistry>::default_dark_theme.
 func (s ThemeRegistry) DefaultDarkTheme(cx *Cx) ThemeConfigRc {
+	useComponentTheme()
 	o := newReq(1165)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12150,6 +13373,7 @@ func (s ThemeRegistry) DefaultDarkTheme(cx *Cx) ThemeConfigRc {
 
 // DefaultLightTheme is <gpui_kit::component::ThemeRegistry>::default_light_theme.
 func (s ThemeRegistry) DefaultLightTheme(cx *Cx) ThemeConfigRc {
+	useComponentTheme()
 	o := newReq(1166)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12158,6 +13382,7 @@ func (s ThemeRegistry) DefaultLightTheme(cx *Cx) ThemeConfigRc {
 
 // DefaultThemes is <gpui_kit::component::ThemeRegistry>::default_themes.
 func (s ThemeRegistry) DefaultThemes(cx *Cx) []TupleThememodeThemeconfigrc {
+	useComponentTheme()
 	o := newReq(1167)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12168,6 +13393,7 @@ func (s ThemeRegistry) DefaultThemes(cx *Cx) []TupleThememodeThemeconfigrc {
 
 // SortedThemes is <gpui_kit::component::ThemeRegistry>::sorted_themes.
 func (s ThemeRegistry) SortedThemes(cx *Cx) []ThemeConfigRc {
+	useComponentTheme()
 	o := newReq(1169)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12176,6 +13402,7 @@ func (s ThemeRegistry) SortedThemes(cx *Cx) []ThemeConfigRc {
 
 // Themes is <gpui_kit::component::ThemeRegistry>::themes.
 func (s ThemeRegistry) Themes(cx *Cx) []TupleStringThemeconfigrc {
+	useComponentTheme()
 	o := newReq(1170)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12186,6 +13413,7 @@ func (s ThemeRegistry) Themes(cx *Cx) []TupleStringThemeconfigrc {
 
 // LoadThemesFromStr is <gpui_kit::component::ThemeRegistry>::load_themes_from_str.
 func (s ThemeRegistry) LoadThemesFromStr(cx *Cx, content string) error {
+	useComponentTheme()
 	o := newReq(1168)
 	o.u64(s.h)
 	o.str(content)
@@ -12195,6 +13423,7 @@ func (s ThemeRegistry) LoadThemesFromStr(cx *Cx, content string) error {
 
 // ThemeRegistryGlobal is <gpui_kit::component::ThemeRegistry>::global.
 func ThemeRegistryGlobal(cx *Cx) ThemeRegistry {
+	useComponentTheme()
 	o := newReq(978)
 	r := objGet(0, cx, o)
 	return ThemeRegistry{h: r.u64()}
@@ -12202,6 +13431,7 @@ func ThemeRegistryGlobal(cx *Cx) ThemeRegistry {
 
 // ThemeRegistryGlobalMut is <gpui_kit::component::ThemeRegistry>::global_mut.
 func ThemeRegistryGlobalMut(cx *Cx) ThemeRegistry {
+	useComponentTheme()
 	o := newReq(979)
 	r := objGet(0, cx, o)
 	return ThemeRegistry{h: r.u64()}
@@ -12209,6 +13439,7 @@ func ThemeRegistryGlobalMut(cx *Cx) ThemeRegistry {
 
 // ThemeRegistryWatchDir is <gpui_kit::component::ThemeRegistry>::watch_dir.
 func ThemeRegistryWatchDir(cx *Cx, themesDir string, onLoad func(cx *Cx)) error {
+	useComponentTheme()
 	o := newReq(1290)
 	o.str(themesDir)
 	putKeptHandler(o, onLoad, 3)
@@ -12223,6 +13454,7 @@ func (s TimeFieldState) handle() uint64 { return s.h }
 
 // SelectedSegment is <gpui_kit::base::TimeFieldState>::selected_segment.
 func (s TimeFieldState) SelectedSegment(cx *Cx) TimeSegment {
+	useBaseTimeField()
 	o := newReq(319)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -12231,6 +13463,7 @@ func (s TimeFieldState) SelectedSegment(cx *Cx) TimeSegment {
 
 // Focus is <gpui_kit::base::TimeFieldState>::focus.
 func (s TimeFieldState) Focus(cx *Cx) {
+	useBaseTimeField()
 	o := newReq(407)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -12238,6 +13471,7 @@ func (s TimeFieldState) Focus(cx *Cx) {
 
 // SetHourCycle is <gpui_kit::base::TimeFieldState>::set_hour_cycle.
 func (s TimeFieldState) SetHourCycle(cx *Cx, hourCycle HourCycle) {
+	useBaseTimeField()
 	o := newReq(320)
 	o.u64(s.h)
 	o.u16(uint16(hourCycle))
@@ -12246,6 +13480,7 @@ func (s TimeFieldState) SetHourCycle(cx *Cx, hourCycle HourCycle) {
 
 // SetPrecision is <gpui_kit::base::TimeFieldState>::set_precision.
 func (s TimeFieldState) SetPrecision(cx *Cx, precision TimePrecision) {
+	useBaseTimeField()
 	o := newReq(321)
 	o.u64(s.h)
 	o.u16(uint16(precision))
@@ -12283,6 +13518,7 @@ func (b TimeFieldStateBuilder) Build() TimeFieldState { return TimeFieldState{b.
 
 // NewTimeFieldState is <gpui_kit::base::TimeFieldState>::new.
 func NewTimeFieldState(cx *Cx) TimeFieldStateBuilder {
+	useBaseTimeField()
 	o := newReq(318)
 	return TimeFieldStateBuilder{newStateBuilder(cx, o)}
 }
@@ -12294,6 +13530,7 @@ func (s ToastManager) handle() uint64 { return s.h }
 
 // Get is <gpui_kit::base::ToastManager<u64, u64>>::get.
 func (s ToastManager) Get(cx *Cx, id uint64) Option[uint64] {
+	useBaseToast()
 	o := newReq(1628)
 	o.u64(s.h)
 	o.u64(uint64(id))
@@ -12303,6 +13540,7 @@ func (s ToastManager) Get(cx *Cx, id uint64) Option[uint64] {
 
 // IsEmpty is <gpui_kit::base::ToastManager<u64, u64>>::is_empty.
 func (s ToastManager) IsEmpty(cx *Cx) bool {
+	useBaseToast()
 	o := newReq(1629)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12311,6 +13549,7 @@ func (s ToastManager) IsEmpty(cx *Cx) bool {
 
 // Iter is <gpui_kit::base::ToastManager<u64, u64>>::iter.
 func (s ToastManager) Iter(cx *Cx) []TupleUint64Uint64Toasttransitionstatus {
+	useBaseToast()
 	o := newReq(1630)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12321,6 +13560,7 @@ func (s ToastManager) Iter(cx *Cx) []TupleUint64Uint64Toasttransitionstatus {
 
 // Len is <gpui_kit::base::ToastManager<u64, u64>>::len.
 func (s ToastManager) Len(cx *Cx) int {
+	useBaseToast()
 	o := newReq(1631)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12329,6 +13569,7 @@ func (s ToastManager) Len(cx *Cx) int {
 
 // Visible is <gpui_kit::base::ToastManager<u64, u64>>::visible.
 func (s ToastManager) Visible(cx *Cx, limit int) []TupleUint64Uint64Toasttransitionstatus {
+	useBaseToast()
 	o := newReq(1634)
 	o.u64(s.h)
 	putUsize(o, limit)
@@ -12340,6 +13581,7 @@ func (s ToastManager) Visible(cx *Cx, limit int) []TupleUint64Uint64Toasttransit
 
 // NewToastManager is <gpui_kit::base::ToastManager<u64, u64>>::new.
 func NewToastManager(cx *Cx, motion ToastMotion) ToastManager {
+	useBaseToast()
 	o := newReq(1632)
 	putToastMotion(o, motion)
 	o.u16(0) // no builder ops follow
@@ -12353,6 +13595,7 @@ func (s ToastStackState) handle() uint64 { return s.h }
 
 // IsExpanded is <gpui_kit::base::ToastStackState>::is_expanded.
 func (s ToastStackState) IsExpanded(cx *Cx) bool {
+	useBaseToast()
 	o := newReq(1461)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12361,6 +13604,7 @@ func (s ToastStackState) IsExpanded(cx *Cx) bool {
 
 // NewToastStackStateDefault is <gpui_kit::base::ToastStackState as Default>::default.
 func NewToastStackStateDefault(cx *Cx) ToastStackState {
+	useBaseToast()
 	o := newReq(1460)
 	o.u16(0) // no builder ops follow
 	return ToastStackState{stateMake(cx, o)}
@@ -12373,6 +13617,7 @@ func (s TooltipDefaults) handle() uint64 { return s.h }
 
 // GracePeriod is <gpui_kit::base::TooltipDefaults>::grace_period.
 func (s TooltipDefaults) GracePeriod(cx *Cx) time.Duration {
+	useBaseTooltip()
 	o := newReq(1438)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12381,6 +13626,7 @@ func (s TooltipDefaults) GracePeriod(cx *Cx) time.Duration {
 
 // ShowDelay is <gpui_kit::base::TooltipDefaults>::show_delay.
 func (s TooltipDefaults) ShowDelay(cx *Cx) time.Duration {
+	useBaseTooltip()
 	o := newReq(1439)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12389,6 +13635,7 @@ func (s TooltipDefaults) ShowDelay(cx *Cx) time.Duration {
 
 // Install is <gpui_kit::base::TooltipDefaults>::install.
 func (s TooltipDefaults) Install(cx *Cx) {
+	useBaseTooltip()
 	o := newReq(823)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -12414,12 +13661,14 @@ func (b TooltipDefaultsBuilder) Build() TooltipDefaults { return TooltipDefaults
 
 // NewTooltipDefaults is <gpui_kit::base::TooltipDefaults>::new.
 func NewTooltipDefaults(cx *Cx) TooltipDefaultsBuilder {
+	useBaseTooltip()
 	o := newReq(824)
 	return TooltipDefaultsBuilder{newStateBuilder(cx, o)}
 }
 
 // NewTooltipDefaultsGlobal is <gpui_kit::base::TooltipDefaults>::global.
 func NewTooltipDefaultsGlobal(cx *Cx) TooltipDefaultsBuilder {
+	useBaseTooltip()
 	o := newReq(822)
 	return TooltipDefaultsBuilder{newStateBuilder(cx, o)}
 }
@@ -12431,6 +13680,7 @@ func (s TooltipOverlay) handle() uint64 { return s.h }
 
 // Hide is <gpui_kit::base::TooltipOverlay>::hide.
 func (s TooltipOverlay) Hide(cx *Cx) {
+	useBaseTooltip()
 	o := newReq(323)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -12438,6 +13688,7 @@ func (s TooltipOverlay) Hide(cx *Cx) {
 
 // RequestHide is <gpui_kit::base::TooltipOverlay>::request_hide.
 func (s TooltipOverlay) RequestHide(cx *Cx) {
+	useBaseTooltip()
 	o := newReq(325)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -12445,6 +13696,7 @@ func (s TooltipOverlay) RequestHide(cx *Cx) {
 
 // RequestShow is <gpui_kit::base::TooltipOverlay>::request_show.
 func (s TooltipOverlay) RequestShow(cx *Cx, content TooltipRequest) {
+	useBaseTooltip()
 	o := newReq(825)
 	o.u64(s.h)
 	putVtape(o, content.n)
@@ -12459,6 +13711,7 @@ func (b TooltipOverlayBuilder) Build() TooltipOverlay { return TooltipOverlay{b.
 
 // NewTooltipOverlay is <gpui_kit::base::TooltipOverlay>::new.
 func NewTooltipOverlay(cx *Cx) TooltipOverlayBuilder {
+	useBaseTooltip()
 	o := newReq(324)
 	return TooltipOverlayBuilder{newStateBuilder(cx, o)}
 }
@@ -12470,6 +13723,7 @@ func (s TouchSelectionSnapshot) handle() uint64 { return s.h }
 
 // Bounds is <gpui_kit::base::TouchSelectionSnapshot>::bounds.
 func (s TouchSelectionSnapshot) Bounds(cx *Cx) Option[Bounds] {
+	useBaseTouchSelection()
 	o := newReq(826)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12478,6 +13732,7 @@ func (s TouchSelectionSnapshot) Bounds(cx *Cx) Option[Bounds] {
 
 // Dragging is <gpui_kit::base::TouchSelectionSnapshot>::dragging.
 func (s TouchSelectionSnapshot) Dragging(cx *Cx) Option[SelectionEdge] {
+	useBaseTouchSelection()
 	o := newReq(827)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12486,6 +13741,7 @@ func (s TouchSelectionSnapshot) Dragging(cx *Cx) Option[SelectionEdge] {
 
 // Edge is <gpui_kit::base::TouchSelectionSnapshot>::edge.
 func (s TouchSelectionSnapshot) Edge(cx *Cx, edge SelectionEdge) Bounds {
+	useBaseTouchSelection()
 	o := newReq(828)
 	o.u64(s.h)
 	o.u16(uint16(edge))
@@ -12495,6 +13751,7 @@ func (s TouchSelectionSnapshot) Edge(cx *Cx, edge SelectionEdge) Bounds {
 
 // End is <gpui_kit::base::TouchSelectionSnapshot>::end.
 func (s TouchSelectionSnapshot) End(cx *Cx) Bounds {
+	useBaseTouchSelection()
 	o := newReq(829)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12503,6 +13760,7 @@ func (s TouchSelectionSnapshot) End(cx *Cx) Bounds {
 
 // IsEdgeVisible is <gpui_kit::base::TouchSelectionSnapshot>::is_edge_visible.
 func (s TouchSelectionSnapshot) IsEdgeVisible(cx *Cx, edge SelectionEdge) bool {
+	useBaseTouchSelection()
 	o := newReq(830)
 	o.u64(s.h)
 	o.u16(uint16(edge))
@@ -12512,6 +13770,7 @@ func (s TouchSelectionSnapshot) IsEdgeVisible(cx *Cx, edge SelectionEdge) bool {
 
 // IsEmpty is <gpui_kit::base::TouchSelectionSnapshot>::is_empty.
 func (s TouchSelectionSnapshot) IsEmpty(cx *Cx) bool {
+	useBaseTouchSelection()
 	o := newReq(831)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12520,6 +13779,7 @@ func (s TouchSelectionSnapshot) IsEmpty(cx *Cx) bool {
 
 // IsMenuOpen is <gpui_kit::base::TouchSelectionSnapshot>::is_menu_open.
 func (s TouchSelectionSnapshot) IsMenuOpen(cx *Cx) bool {
+	useBaseTouchSelection()
 	o := newReq(832)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12528,6 +13788,7 @@ func (s TouchSelectionSnapshot) IsMenuOpen(cx *Cx) bool {
 
 // Start is <gpui_kit::base::TouchSelectionSnapshot>::start.
 func (s TouchSelectionSnapshot) Start(cx *Cx) Bounds {
+	useBaseTouchSelection()
 	o := newReq(833)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12541,6 +13802,7 @@ func (s TransitionState) handle() uint64 { return s.h }
 
 // Sample is <gpui_kit::base::TransitionState<f32>>::sample.
 func (s TransitionState) Sample(cx *Cx, target float32, policy Transition) MotionValueF32 {
+	useBaseMotion()
 	o := newReq(1680)
 	o.u64(s.h)
 	o.f32(target)
@@ -12551,6 +13813,7 @@ func (s TransitionState) Sample(cx *Cx, target float32, policy Transition) Motio
 
 // NewTransitionStateDefault is <gpui_kit::base::TransitionState<f32> as Default>::default.
 func NewTransitionStateDefault(cx *Cx) TransitionState {
+	useBaseMotion()
 	o := newReq(1679)
 	o.u16(0) // no builder ops follow
 	return TransitionState{stateMake(cx, o)}
@@ -12563,6 +13826,7 @@ func (s TreeState) handle() uint64 { return s.h }
 
 // Entry is <gpui_kit::base::TreeState>::entry.
 func (s TreeState) Entry(cx *Cx, ix int) Option[BaseTreeEntry] {
+	useBaseTree()
 	o := newReq(841)
 	o.u64(s.h)
 	putUsize(o, ix)
@@ -12572,6 +13836,7 @@ func (s TreeState) Entry(cx *Cx, ix int) Option[BaseTreeEntry] {
 
 // IndexOf is <gpui_kit::base::TreeState>::index_of.
 func (s TreeState) IndexOf(cx *Cx, id string) Option[int] {
+	useBaseTree()
 	o := newReq(682)
 	o.u64(s.h)
 	o.str(id)
@@ -12581,6 +13846,7 @@ func (s TreeState) IndexOf(cx *Cx, id string) Option[int] {
 
 // SelectedEntry is <gpui_kit::base::TreeState>::selected_entry.
 func (s TreeState) SelectedEntry(cx *Cx) Option[BaseTreeEntry] {
+	useBaseTree()
 	o := newReq(842)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -12589,6 +13855,7 @@ func (s TreeState) SelectedEntry(cx *Cx) Option[BaseTreeEntry] {
 
 // SelectedIndex is <gpui_kit::base::TreeState>::selected_index.
 func (s TreeState) SelectedIndex(cx *Cx) Option[int] {
+	useBaseTree()
 	o := newReq(686)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -12597,6 +13864,7 @@ func (s TreeState) SelectedIndex(cx *Cx) Option[int] {
 
 // SelectedItem is <gpui_kit::base::TreeState>::selected_item.
 func (s TreeState) SelectedItem(cx *Cx) Option[BaseTreeItem] {
+	useBaseTree()
 	o := newReq(687)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
@@ -12605,6 +13873,7 @@ func (s TreeState) SelectedItem(cx *Cx) Option[BaseTreeItem] {
 
 // Focus is <gpui_kit::base::TreeState>::focus.
 func (s TreeState) Focus(cx *Cx) {
+	useBaseTree()
 	o := newReq(681)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -12612,6 +13881,7 @@ func (s TreeState) Focus(cx *Cx) {
 
 // RevealItem is <gpui_kit::base::TreeState>::reveal_item.
 func (s TreeState) RevealItem(cx *Cx, id string, strategy ScrollStrategy) {
+	useBaseTree()
 	o := newReq(684)
 	o.u64(s.h)
 	o.str(id)
@@ -12621,6 +13891,7 @@ func (s TreeState) RevealItem(cx *Cx, id string, strategy ScrollStrategy) {
 
 // ScrollToItem is <gpui_kit::base::TreeState>::scroll_to_item.
 func (s TreeState) ScrollToItem(cx *Cx, ix int, strategy ScrollStrategy) {
+	useBaseTree()
 	o := newReq(685)
 	o.u64(s.h)
 	putUsize(o, ix)
@@ -12630,6 +13901,7 @@ func (s TreeState) ScrollToItem(cx *Cx, ix int, strategy ScrollStrategy) {
 
 // SetItems is <gpui_kit::base::TreeState>::set_items.
 func (s TreeState) SetItems(cx *Cx, items []TreeItem) {
+	useBaseTree()
 	o := newReq(843)
 	o.u64(s.h)
 	o.u32(uint32(len(items)))
@@ -12641,6 +13913,7 @@ func (s TreeState) SetItems(cx *Cx, items []TreeItem) {
 
 // SetSelectedIndex is <gpui_kit::base::TreeState>::set_selected_index.
 func (s TreeState) SetSelectedIndex(cx *Cx, ix Option[int]) {
+	useBaseTree()
 	o := newReq(688)
 	o.u64(s.h)
 	if x0, ok := ix.Get(); ok {
@@ -12654,6 +13927,7 @@ func (s TreeState) SetSelectedIndex(cx *Cx, ix Option[int]) {
 
 // SetSelectedItem is <gpui_kit::base::TreeState>::set_selected_item.
 func (s TreeState) SetSelectedItem(cx *Cx, item Option[TreeItem]) {
+	useBaseTree()
 	o := newReq(844)
 	o.u64(s.h)
 	if x0, ok := item.Get(); ok {
@@ -12693,6 +13967,7 @@ func (b TreeStateBuilder) Build() TreeState { return TreeState{b.sb.build()} }
 
 // NewTreeState is <gpui_kit::base::TreeState>::new.
 func NewTreeState(cx *Cx) TreeStateBuilder {
+	useBaseTree()
 	o := newReq(683)
 	return TreeStateBuilder{newStateBuilder(cx, o)}
 }
@@ -12704,6 +13979,7 @@ func (s UndoHistory) handle() uint64 { return s.h }
 
 // CanRedo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::can_redo.
 func (s UndoHistory) CanRedo(cx *Cx) bool {
+	useBaseRoot()
 	o := newReq(1303)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12712,6 +13988,7 @@ func (s UndoHistory) CanRedo(cx *Cx) bool {
 
 // CanUndo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::can_undo.
 func (s UndoHistory) CanUndo(cx *Cx) bool {
+	useBaseRoot()
 	o := newReq(1304)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12720,6 +13997,7 @@ func (s UndoHistory) CanUndo(cx *Cx) bool {
 
 // IsIgnoring is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::is_ignoring.
 func (s UndoHistory) IsIgnoring(cx *Cx) bool {
+	useBaseRoot()
 	o := newReq(1307)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12728,6 +14006,7 @@ func (s UndoHistory) IsIgnoring(cx *Cx) bool {
 
 // Redo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::redo.
 func (s UndoHistory) Redo(cx *Cx) Option[[]string] {
+	useBaseRoot()
 	o := newReq(1310)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -12736,6 +14015,7 @@ func (s UndoHistory) Redo(cx *Cx) Option[[]string] {
 
 // Undo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::undo.
 func (s UndoHistory) Undo(cx *Cx) Option[[]string] {
+	useBaseRoot()
 	o := newReq(1313)
 	o.u64(s.h)
 	r := stateCall(s.h, cx, o)
@@ -12744,6 +14024,7 @@ func (s UndoHistory) Undo(cx *Cx) Option[[]string] {
 
 // Clear is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::clear.
 func (s UndoHistory) Clear(cx *Cx) {
+	useBaseRoot()
 	o := newReq(1305)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -12751,6 +14032,7 @@ func (s UndoHistory) Clear(cx *Cx) {
 
 // EndGrouping is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::end_grouping.
 func (s UndoHistory) EndGrouping(cx *Cx) {
+	useBaseRoot()
 	o := newReq(1306)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -12758,6 +14040,7 @@ func (s UndoHistory) EndGrouping(cx *Cx) {
 
 // Push is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::push.
 func (s UndoHistory) Push(cx *Cx, item string) {
+	useBaseRoot()
 	o := newReq(1309)
 	o.u64(s.h)
 	o.str(item)
@@ -12766,6 +14049,7 @@ func (s UndoHistory) Push(cx *Cx, item string) {
 
 // SetIgnoring is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::set_ignoring.
 func (s UndoHistory) SetIgnoring(cx *Cx, ignoring bool) {
+	useBaseRoot()
 	o := newReq(1311)
 	o.u64(s.h)
 	o.bool(ignoring)
@@ -12774,6 +14058,7 @@ func (s UndoHistory) SetIgnoring(cx *Cx, ignoring bool) {
 
 // StartGrouping is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::start_grouping.
 func (s UndoHistory) StartGrouping(cx *Cx) {
+	useBaseRoot()
 	o := newReq(1312)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -12799,6 +14084,7 @@ func (b UndoHistoryBuilder) Build() UndoHistory { return UndoHistory{b.sb.build(
 
 // NewUndoHistory is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::new.
 func NewUndoHistory(cx *Cx) UndoHistoryBuilder {
+	useBaseRoot()
 	o := newReq(1308)
 	return UndoHistoryBuilder{newStateBuilder(cx, o)}
 }
@@ -12810,6 +14096,7 @@ func (s VirtualListScrollHandle) handle() uint64 { return s.h }
 
 // BaseHandle is <gpui_kit::base::VirtualListScrollHandle>::base_handle.
 func (s VirtualListScrollHandle) BaseHandle(cx *Cx) ScrollHandle {
+	useBaseVirtualList()
 	o := newReq(1340)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
@@ -12818,6 +14105,7 @@ func (s VirtualListScrollHandle) BaseHandle(cx *Cx) ScrollHandle {
 
 // ScrollToBottom is <gpui_kit::base::VirtualListScrollHandle>::scroll_to_bottom.
 func (s VirtualListScrollHandle) ScrollToBottom(cx *Cx) {
+	useBaseVirtualList()
 	o := newReq(846)
 	o.u64(s.h)
 	stateSet(cx, o)
@@ -12825,6 +14113,7 @@ func (s VirtualListScrollHandle) ScrollToBottom(cx *Cx) {
 
 // ScrollToItem is <gpui_kit::base::VirtualListScrollHandle>::scroll_to_item.
 func (s VirtualListScrollHandle) ScrollToItem(cx *Cx, ix int, strategy ScrollStrategy) {
+	useBaseVirtualList()
 	o := newReq(847)
 	o.u64(s.h)
 	putUsize(o, ix)
@@ -12834,6 +14123,7 @@ func (s VirtualListScrollHandle) ScrollToItem(cx *Cx, ix int, strategy ScrollStr
 
 // NewVirtualListScrollHandle is <gpui_kit::base::VirtualListScrollHandle>::new.
 func NewVirtualListScrollHandle(cx *Cx) VirtualListScrollHandle {
+	useBaseVirtualList()
 	o := newReq(845)
 	o.u16(0) // no builder ops follow
 	return VirtualListScrollHandle{stateMake(cx, o)}

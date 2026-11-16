@@ -4,26 +4,3 @@
 use crate::genapi::{self, Dx, R};
 use super::*;
 
-pub fn build_component_notification_settings(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::notification::NotificationSettings> {
-    let (ty, args, first) = dx.node(n);
-    make_component_notification_settings(dx, ty, args, first)
-}
-pub fn make_component_notification_settings(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::notification::NotificationSettings> {
-    let r = &mut dx.args(args);
-    let el: gpui_kit::component::notification::NotificationSettings = match ty {
-        710 => { <gpui_kit::component::notification::NotificationSettings as Default>::default() }
-        _ => return bad_node("NotificationSettings", ty),
-    };
-    Some(apply_component_notification_settings(dx, el, first))
-}
-#[inline]
-pub fn apply_component_notification_settings(dx: &mut Dx, mut el: gpui_kit::component::notification::NotificationSettings, first: u32) -> gpui_kit::component::notification::NotificationSettings {
-    let mut at = first;
-    while let Some((op, mut r)) = dx.op(&mut at) {
-        let r = &mut r;
-        match op {
-            _ => bad_op("NotificationSettings", op),
-        }
-    }
-    el
-}

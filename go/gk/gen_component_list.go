@@ -15,6 +15,7 @@ func (e ListEl) node() *node { return e.n }
 
 // List is <gpui_kit::component::list::List<crate::shim_rows::GkListDelegate>>::new.
 func List(state ListState, st ...Style) ListEl {
+	useComponentList()
 	n := newNode(804)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -191,6 +192,7 @@ func (e ListItemEl) node() *node { return e.n }
 
 // ListItem is <gpui_kit::component::list::ListItem>::new.
 func ListItem(id ID, st ...Style) ListItemEl {
+	useComponentList()
 	n := newNode(687)
 	o := nodeArgs(n)
 	putID(o, id)

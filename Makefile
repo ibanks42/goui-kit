@@ -19,7 +19,7 @@ LOGS  ?= gates/out/logs
 
 .PHONY: help odin gen status coverage lib lib-release dist cross check-windows examples \
         gates gates-quick proto docs fps pixels gallery memory misuse counter rebuild \
-        go-test go-apps go-fps clean
+        go-test go-apps go-static go-fps clean
 
 help:
 	@echo "Setup"
@@ -52,6 +52,7 @@ help:
 	@echo "  make fps            one frame-cost run: HZ=$(HZ) SCENE='$(SCENE)'"
 	@echo "  make go-test        the Go front end: examples, protocol tests, misuse cases, pixels"
 	@echo "  make go-apps        the Go apps and tutorial against their Odin twins, image by image"
+	@echo "  make go-static      the Go and Odin apps built as an app is: static, only the component families used"
 	@echo "  make go-fps         frame cost of Go against Rust and Odin (about ten minutes)"
 	@echo ""
 	@echo "  make clean          delete bin/ and gates/out/ (keeps lib/ and target/)"
@@ -141,6 +142,9 @@ go-test:
 
 go-apps:
 	gates/go-apps.sh
+
+go-static:
+	GK_STATIC=1 gates/go-apps.sh build notes todo reader expenses tutorial
 
 go-fps:
 	gates/go.sh build fps

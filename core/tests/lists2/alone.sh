@@ -15,7 +15,7 @@ build() { # output-name [source-dir] extra-flags...
   name=$1; shift
   dir=$here/proto
   if [ $# -gt 0 ] && [ -d "$1" ]; then dir=$1; shift; fi
-  "$odin" build "$dir" -o:minimal -define:GK_GUARD=true "$@" -collection:gpuikit="$repo/odin" \
+  "$odin" build "$dir" -o:minimal -define:GK_GUARD=true "$@" -define:GK_SHARED=true -collection:gpuikit="$repo/odin" \
     "-extra-linker-flags:-L$lib -Wl,-rpath,\$ORIGIN/../lib/diag" -out:"$bin/$name" || exit 2
 }
 pass=0; total=0

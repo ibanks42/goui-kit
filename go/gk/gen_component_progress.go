@@ -11,6 +11,7 @@ func (e ProgressEl) node() *node { return e.n }
 
 // Progress is <gpui_kit::component::progress::Progress>::new.
 func Progress(id ID, st ...Style) ProgressEl {
+	useComponentProgress()
 	n := newNode(716)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -215,6 +216,7 @@ func (e ProgressCircleEl) node() *node { return e.n }
 
 // ProgressCircle is <gpui_kit::component::progress::ProgressCircle>::new.
 func ProgressCircle(id ID, st ...Style) ProgressCircleEl {
+	useComponentProgress()
 	n := newNode(717)
 	o := nodeArgs(n)
 	putID(o, id)

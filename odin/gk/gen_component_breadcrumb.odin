@@ -16,6 +16,7 @@ Breadcrumb_VT :: struct {
 }
 
 breadcrumb :: proc(flags: ..Style_Flag, loc := #caller_location) -> Breadcrumb {
+	use_component_breadcrumb()
 	e := Breadcrumb{new_node(595, loc), &breadcrumb_vt}
 	tokens(e.el, flags)
 	return e
@@ -56,6 +57,7 @@ Breadcrumb_Item_VT :: struct {
 }
 
 breadcrumb_item :: proc(label: string, flags: ..Style_Flag, loc := #caller_location) -> Breadcrumb_Item {
+	use_component_breadcrumb()
 	e := Breadcrumb_Item{new_node(596, loc), &breadcrumb_item_vt}
 	o := node_args()
 	put_str(o, label)

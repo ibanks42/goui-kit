@@ -11,6 +11,11 @@
 #   windows-x86_64  built by tools/build-lib.sh on Windows; .zip
 # Every platform's download holds the same folders and files; only the library's files differ:
 #   lib/libgpuikit.so                      Linux: the library (release, no grammars, no speech)
+#   lib/libgpuikit_static.a                Linux: the same as a static library, which Go apps link
+#                                          (each keeps only the component families it uses)
+#   lib/libgpuikit_sys.so                  Linux: a linker script naming the system libraries it needs
+#   lib/libgpuikit_static.a                macOS (universal) and Windows (MinGW's format) too; on
+#   lib/libgpuikit_sys.a                   Windows beside the import library of the Windows API it links
 #   lib/libgpuikit.dylib                   macOS: the same, universal (arm64 and x86_64 slices, each
 #                                          with install name @rpath/libgpuikit.dylib)
 #   lib/gpuikit.dll                        Windows: the same, and its import libraries:
@@ -48,9 +53,11 @@ if [ -z "${GK_PLATFORM:-}" ]; then
   esac
 fi
 case "$GK_PLATFORM" in
-  linux-x86_64) libs=(libgpuikit.so); main=libgpuikit.so; ext=.bin ;;
-  macos-universal) libs=(libgpuikit.dylib); main=libgpuikit.dylib; ext=.bin ;;
-  windows-x86_64) libs=(gpuikit.dll gpuikit.dll.lib libgpuikit.dll.a gpuikit.def); main=gpuikit.dll; ext=.exe ;;
+  # Apps link the library into the program (only the component families they use); the shared
+  # library is built too (lib/ship) but not shipped: what the library needs is read from it.
+  linux-x86_64) libs=(libgpuikit_static.a libgpuikit_sys.so); main=libgpuikit_static.a; probe=libgpuikit.so; ext=.bin ;;
+  macos-universal) libs=(libgpuikit_static.a); main=libgpuikit_static.a; probe=libgpuikit.dylib; ext=.bin ;;
+  windows-x86_64) libs=(libgpuikit_static.a libgpuikit_sys.a gpuikit_static.lib gpuikit_sys.lib); main=libgpuikit_static.a; probe=gpuikit.dll; ext=.exe ;;
   *) echo "dist.sh: GK_PLATFORM is linux-x86_64, macos-universal or windows-x86_64" >&2; exit 2 ;;
 esac
 ver=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
@@ -104,8 +111,9 @@ cat > "$out/examples/build.sh" <<'B'
 #   ODIN-FLAG...  passed on to odin build (not -o:, which is set here): on macOS -target:darwin_amd64
 #         builds for Intel on Apple silicon, -target:darwin_arm64 for Apple silicon on Intel (the
 #         library is universal)
-# Linux and macOS: the binary finds the library by the path of this download's lib/ written into it
-# (-rpath). Windows: gpuikit.dll is copied beside the .exe, where Windows looks first.
+# The library is linked into the program, with only the component families the app calls into
+# (package gk asks the linker to drop the rest): one file, nothing to ship beside it (on Windows,
+# the manifest: see below).
 set -e
 here=$(cd "$(dirname "$0")" && pwd); lib=$(cd "$here/../lib" && pwd); app=${1:-hello}
 if [ $# -gt 0 ]; then shift; fi
@@ -123,13 +131,12 @@ if [ -n "$win" ]; then
   odin build "$(cygpath -m "$src")" -o:minimal -linker:"${ODIN_LINKER:-lld}" \
     -collection:gpuikit="$(cygpath -m "$here/../odin")" \
     "-extra-linker-flags:/LIBPATH:$(cygpath -m "$lib")" -out:"$(cygpath -m "$bin")" "$@"
-  cp "$lib/gpuikit.dll" "$(dirname "$bin")/"
-  # Required, not only for DPI: gpuikit.dll imports comctl32 6's TaskDialogIndirect, and without a
+  # Required, not only for DPI: the library imports comctl32 6's TaskDialogIndirect, and without a
   # manifest asking for common controls 6 Windows loads comctl32 5 and refuses to start the program.
   cp "$(dirname "$lib")/windows/gpuikit.manifest" "$bin.manifest"
 else
   odin build "$src" -o:minimal -collection:gpuikit="$here/../odin" \
-    "-extra-linker-flags:-L$lib -Wl,-rpath,$lib" -out:"$bin" "$@"
+    "-extra-linker-flags:-L$lib" -out:"$bin" "$@"
 fi
 [ -f "$bin" ] || { echo "build.sh: odin made no $bin" >&2; exit 1; }
 echo "built $bin"
@@ -144,8 +151,9 @@ cat > "$out/examples/go/build.sh" <<'B'
 #         examples/go/APP.bin (APP.exe on Windows), or the path of any folder that holds a main
 #         package of a module requiring gpuikit.dev (docs/tutorial-go/03-list, ../myapp), built into
 #         FOLDER.bin (FOLDER.exe) beside it
-# Linux and macOS: the binary finds the library by the path of this download's lib/ written into it
-# (-rpath). Windows: gpuikit.dll is copied beside the .exe, where Windows looks first. Go's own
+# The library is linked into the binary (lib/libgpuikit_static.a), keeping only the component
+# families the app calls into (-Wl,--gc-sections; -Wl,-dead_strip on macOS): one file, nothing to
+# ship beside it (on Windows, the manifest: see below). Go's own
 # settings pass through: on macOS GOARCH=amd64 CC='clang -arch x86_64' builds for Intel on Apple
 # silicon (the library is universal), GOARCH=arm64 CC='clang -arch arm64' the other way.
 set -e
@@ -157,13 +165,16 @@ case "$app" in
 esac
 cd "$src"
 if [ -n "$win" ]; then
-  CGO_ENABLED=1 CGO_LDFLAGS="-L$(cygpath -m "$lib")" go build -o "$(cygpath -m "$bin")" .
-  cp "$lib/gpuikit.dll" "$(dirname "$bin")/"
-  # Required, not only for DPI: gpuikit.dll imports comctl32 6's TaskDialogIndirect, and without a
-  # manifest asking for common controls 6 Windows loads comctl32 5 and refuses to start the program.
-  cp "$(dirname "$lib")/windows/gpuikit.manifest" "$bin.manifest"
+  # With lld (llvm-mingw, MSYS2's mingw-w64-ucrt-x86_64-lld) the linker drops the component families
+  # the app does not use; GNU ld cannot on Windows (it keeps every function that has unwind data),
+  # so without lld the program holds all of them. The manifest comes with package gk (a .syso);
+  # -force:multipleres lets it replace the default one MinGW's gcc adds.
+  if command -v ld.lld > /dev/null; then x="-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres"; else x="-Wl,--gc-sections"; fi
+  CGO_ENABLED=1 CGO_LDFLAGS="-L$(cygpath -m "$lib")" go build -ldflags="-s -w '-extldflags=$x'" -o "$(cygpath -m "$bin")" .
+elif [ "$(uname -s)" = Darwin ]; then
+  CGO_ENABLED=1 CGO_LDFLAGS="-L$lib" go build -ldflags="-s -w -extldflags=-Wl,-dead_strip" -o "$bin" .
 else
-  CGO_ENABLED=1 CGO_LDFLAGS="-L$lib -Wl,-rpath,$lib" go build -o "$bin" .
+  CGO_ENABLED=1 CGO_LDFLAGS="-L$lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o "$bin" .
 fi
 echo "built $bin"
 B
@@ -173,22 +184,29 @@ case "$GK_PLATFORM" in
   linux-x86_64) sys="Linux x86_64"; libdesc="the library"
     odin_needs="needs odin and clang on PATH"
     go_needs="a C compiler for cgo (gcc, or clang with CC=clang)"
-    go_link='CGO_LDFLAGS="-L<this folder>/lib -Wl,-rpath,<this folder>/lib" go build'
-    ship_note='To ship an app, put libgpuikit.so beside it and build with -Wl,-rpath,$ORIGIN.' ;;
+    go_link='CGO_LDFLAGS="-L<this folder>/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections"'
+    ship_note='An app is one file: the library is linked into it, with only the component families the app calls into (a Go app without the -ldflags still works, but holds all of them).' ;;
   macos-universal) sys="macOS, Apple silicon and Intel (universal)"
-    libdesc="the library, universal: arm64 and x86_64 (install name @rpath/libgpuikit.dylib)"
+    libdesc="the library, universal (arm64 and x86_64), which an app links into itself"
     odin_needs="needs odin and the Xcode command-line tools (clang)"
     go_needs="the Xcode command-line tools (clang) for cgo"
-    go_link='CGO_LDFLAGS="-L<this folder>/lib -Wl,-rpath,<this folder>/lib" go build'
-    ship_note="The build scripts build for this Mac's architecture. For Intel on Apple silicon: examples/build.sh APP -target:darwin_amd64, or GOARCH=amd64 CC='clang -arch x86_64' examples/go/build.sh APP (the other way round: darwin_arm64, GOARCH=arm64, -arch arm64); lipo -create joins the two programs into a universal one. To ship an app, put libgpuikit.dylib in the bundle's Contents/Frameworks and build with -Wl,-rpath,@executable_path/../Frameworks; sign the dylib before the bundle." ;;
-  windows-x86_64) sys="Windows x86_64"; libdesc="the library; gpuikit.dll.lib (Odin) and libgpuikit.dll.a (Go) link it"
+    go_link='CGO_LDFLAGS="-L<this folder>/lib" go build -ldflags="-s -w -extldflags=-Wl,-dead_strip"'
+    ship_note="An app is one file: the library is linked into it, with only the component families the app calls into. The build scripts build for this Mac's architecture. For Intel on Apple silicon: examples/build.sh APP -target:darwin_amd64, or GOARCH=amd64 CC='clang -arch x86_64' examples/go/build.sh APP (the other way round: darwin_arm64, GOARCH=arm64, -arch arm64); lipo -create joins the two programs into a universal one." ;;
+  windows-x86_64) sys="Windows x86_64"; libdesc="the library, which Go apps link into themselves (MinGW's format)"
     odin_needs="needs odin and Visual Studio's C++ build tools; in Git Bash or MSYS2"
-    go_needs="MinGW-w64 gcc on PATH for cgo (MSYS2's ucrt64, or w64devkit)"
-    go_link='CGO_LDFLAGS="-L<this folder>/lib" go build, then gpuikit.dll copied beside the .exe,'
-    ship_note="To ship an app, put gpuikit.dll beside the .exe, and embed windows/gpuikit.manifest (windows/gpuikit.rc says how), or ship it beside the .exe as APP.exe.manifest: without it the program does not start (gpuikit.dll needs common controls 6) and the window is not DPI aware. The build scripts put APP.exe.manifest beside the program." ;;
+    go_needs="MinGW-w64 gcc and lld on PATH for cgo (MSYS2's ucrt64 with the mingw-w64-ucrt-x86_64-lld package, llvm-mingw, or WinLibs' LLVM build)"
+    go_link="CGO_LDFLAGS=\"-L<this folder>/lib\" go build -ldflags=\"-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'\" (with lld on PATH; without it, -extldflags=-Wl,--gc-sections, and the program holds every component)"
+    ship_note="An app is one .exe: the library is linked into it, with only the component families the app calls into. A Go app has the manifest linked in too; an Odin app needs windows/gpuikit.manifest beside it as APP.exe.manifest (the build script puts it there) or embedded (windows/gpuikit.rc says how): without it the program does not start (the library needs common controls 6) and the window is not DPI aware" ;;
 esac
 librows=$(for f in "${libs[@]}"; do
-  if [ "$f" = "$main" ]; then echo "| lib/$f | $libdesc |"; else echo "| lib/$f | an import library of gpuikit.dll |"; fi
+  case $f in
+    "$main") echo "| lib/$f | $libdesc; an app keeps only the component families it uses |" ;;
+    gpuikit_static.lib) echo "| lib/$f | the same library in MSVC's format, which Odin apps link into themselves |" ;;
+    gpuikit_sys.lib) echo "| lib/$f | the import library of the Windows API it links, in MSVC's format |" ;;
+    libgpuikit_sys.so) echo "| lib/$f | a linker script that names the system libraries the static library needs |" ;;
+    libgpuikit_sys.a) echo "| lib/$f | the import library of the Windows API the static library links |" ;;
+    *) echo "| lib/$f | an import library of gpuikit.dll |" ;;
+  esac
 done
 [ "$GK_PLATFORM" != windows-x86_64 ] || echo "| windows/ | the manifest a program embeds, and the resource script that embeds it |")
 kit=$("$py" -c "import json;print(json.load(open('api/coverage.json', encoding='utf-8'))['pin']['gpui-kit'])")
@@ -236,8 +254,8 @@ $librows
 | VERSIONS | what the library was built from, and what it needs to run |
 | THIRD_PARTY.md, licences/ | the licences of everything inside the library |
 R
-# What the library needs on this platform, read from the file itself.
-lf=$out/lib/$main
+# What the library needs on this platform, read from the shared library of the same build.
+lf=$root/ship/$probe
 case "$GK_PLATFORM" in
   linux-x86_64)
     needs="glibc $(objdump -T "$lf" | grep -o 'GLIBC_[0-9.]*' | sort -V | tail -1 | cut -d_ -f2) or newer (the newest symbol version the library refers to; it is linked against glibc 2.28), and $(objdump -p "$lf" | awk '/NEEDED/{print $2}' | grep -v 'libc.so\|libm.so\|ld-linux' | tr '\n' ' ')" ;;
@@ -269,7 +287,7 @@ library: release, gpui-kit $("$py" -c "import json;p=json.load(open('api/coverag
 interface hash: $hash (the library and the package refuse each other when it differs)
 needs: $needs${arch_line:-}
 licences: THIRD_PARTY.md (every crate linked into the library, its licence; texts in licences/texts)
-library sha256: $(sha256 "$lf")
+library sha256: $(sha256 "$out/lib/$main")
 source commit: $(git rev-parse --short HEAD 2>/dev/null || echo "${GK_COMMIT:-unknown} (a copy without git)")$(git diff --quiet 2>/dev/null || [ -n "${GK_COMMIT:-}" ] || echo ' with uncommitted changes')
 tested with: Odin ${odin_v:-not found}, Go ${go_v:-not found}
 V

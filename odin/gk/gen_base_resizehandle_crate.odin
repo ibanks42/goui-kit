@@ -58,6 +58,7 @@ Resize_Handle_VT :: struct {
 }
 
 kit_resize_handle :: proc(id: Id, axis: Axis, loc := #caller_location) -> Resize_Handle {
+	use_base_resizable()
 	e := Resize_Handle{new_node(870, loc), &resize_handle_vt}
 	o := node_args()
 	put_id(o, id)
@@ -66,6 +67,7 @@ kit_resize_handle :: proc(id: Id, axis: Axis, loc := #caller_location) -> Resize
 }
 
 resize_handle :: proc(id: Id, axis: Axis, loc := #caller_location) -> Resize_Handle {
+	use_base_resizable()
 	e := Resize_Handle{new_node(869, loc), &resize_handle_vt}
 	o := node_args()
 	put_id(o, id)

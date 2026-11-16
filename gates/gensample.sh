@@ -16,7 +16,7 @@ out=$here/out/gensample; rm -rf "$out"; mkdir -p "$out" "$bin"
 export LD_LIBRARY_PATH=$lib
 unset WAYLAND_DISPLAY DISPLAY
 start=$(date +%s.%N)
-if ! "$odin" build "$repo/core/tests/gensample" -o:minimal -collection:gpuikit="$repo/odin" \
+if ! "$odin" build "$repo/core/tests/gensample" -o:minimal -define:GK_SHARED=true -collection:gpuikit="$repo/odin" \
     "-extra-linker-flags:-L$lib" -out:"$bin/gensample-odin" > "$out/build.log" 2>&1; then
   echo "GATE gensample odin FAIL the sample does not compile: $(grep -c Error "$out/build.log") errors"; head -5 "$out/build.log"; exit 1
 fi

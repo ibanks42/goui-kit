@@ -11,6 +11,7 @@ func (e SheetEl) node() *node { return e.n }
 
 // Sheet is <gpui_kit::component::sheet::Sheet>::new.
 func Sheet(st ...Style) SheetEl {
+	useComponentSheet()
 	n := newNode(834)
 	tokens(n, st)
 	return SheetEl{n}

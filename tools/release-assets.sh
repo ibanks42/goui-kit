@@ -51,9 +51,8 @@ member() {
 }
 for p in "${platforms[@]}"; do
   case $p in
-    linux-*) e=tar.zst; lib=libgpuikit.so ;;
-    macos-*) e=tar.zst; lib=libgpuikit.dylib ;;
-    windows-*) e=zip; lib=gpuikit.dll ;;
+    linux-*|macos-*) e=tar.zst; lib=libgpuikit_static.a ;;
+    windows-*) e=zip; lib=libgpuikit_static.a ;;
   esac
   name=gpuikit-$ver-$p; arc=$dir/$name.$e; darc=$dir/$name-diag.$e
   v=$(member "$arc" "$name/VERSIONS") || fail "$name.$e has no $name/VERSIONS"
@@ -70,7 +69,7 @@ for p in "${platforms[@]}"; do
     case "$a" in *arm64*x86_64*|*x86_64*arm64*) ;; *) fail "$name/VERSIONS says architectures '${a:-none}', not arm64 and x86_64" ;; esac
     for pair in "$arc $name" "$darc $name-diag"; do
       read -r f top <<< "$pair"
-      chk=$(member "$f" "$top/lib/$lib" | python3 -I "$repo/tools/macho.py" check - arm64 x86_64 --id @rpath/libgpuikit.dylib 2>&1) \
+      chk=$(member "$f" "$top/lib/$lib" | python3 -I "$repo/tools/macho.py" check - arm64 x86_64 --kind archive 2>&1) \
         || fail "$top/lib/$lib: $chk"
     done
     slices=", universal (ship and diag): $chk"

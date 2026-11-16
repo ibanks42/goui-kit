@@ -11,6 +11,7 @@ func (e FieldEl) node() *node { return e.n }
 
 // Field is <gpui_kit::component::form::Field>::new.
 func Field(st ...Style) FieldEl {
+	useComponentForm()
 	n := newNode(664)
 	tokens(n, st)
 	return FieldEl{n}
@@ -18,6 +19,7 @@ func Field(st ...Style) FieldEl {
 
 // KitField is gpui_kit::component::form::field.
 func KitField(st ...Style) FieldEl {
+	useComponentForm()
 	n := newNode(665)
 	tokens(n, st)
 	return FieldEl{n}
@@ -272,6 +274,7 @@ func (e FormEl) node() *node { return e.n }
 
 // Form is <gpui_kit::component::form::Form>::new.
 func Form(st ...Style) FormEl {
+	useComponentForm()
 	n := newNode(668)
 	tokens(n, st)
 	return FormEl{n}
@@ -279,6 +282,7 @@ func Form(st ...Style) FormEl {
 
 // FormDefault is <gpui_kit::component::form::Form as Default>::default.
 func FormDefault(st ...Style) FormEl {
+	useComponentForm()
 	n := newNode(666)
 	tokens(n, st)
 	return FormEl{n}
@@ -286,6 +290,7 @@ func FormDefault(st ...Style) FormEl {
 
 // FormHorizontal is <gpui_kit::component::form::Form>::horizontal.
 func FormHorizontal(st ...Style) FormEl {
+	useComponentForm()
 	n := newNode(667)
 	tokens(n, st)
 	return FormEl{n}
@@ -293,6 +298,7 @@ func FormHorizontal(st ...Style) FormEl {
 
 // FormVertical is <gpui_kit::component::form::Form>::vertical.
 func FormVertical(st ...Style) FormEl {
+	useComponentForm()
 	n := newNode(669)
 	tokens(n, st)
 	return FormEl{n}
@@ -300,6 +306,7 @@ func FormVertical(st ...Style) FormEl {
 
 // HForm is gpui_kit::component::form::h_form.
 func HForm(st ...Style) FormEl {
+	useComponentForm()
 	n := newNode(670)
 	tokens(n, st)
 	return FormEl{n}
@@ -307,6 +314,7 @@ func HForm(st ...Style) FormEl {
 
 // VForm is gpui_kit::component::form::v_form.
 func VForm(st ...Style) FormEl {
+	useComponentForm()
 	n := newNode(671)
 	tokens(n, st)
 	return FormEl{n}

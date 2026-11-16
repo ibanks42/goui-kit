@@ -41,6 +41,7 @@ Area_Chart_VT :: struct {
 }
 
 area_chart :: proc(data: Data, loc := #caller_location) -> Area_Chart {
+	use_component_chart()
 	e := Area_Chart{new_node(816, loc), &area_chart_vt}
 	o := node_args()
 	put_data(o, data)
@@ -241,6 +242,7 @@ Bar_Chart_VT :: struct {
 }
 
 bar_chart :: proc(data: Data, loc := #caller_location) -> Bar_Chart {
+	use_component_chart()
 	e := Bar_Chart{new_node(817, loc), &bar_chart_vt}
 	o := node_args()
 	put_data(o, data)
@@ -441,6 +443,7 @@ Candlestick_Chart_VT :: struct {
 }
 
 candlestick_chart :: proc(data: Data, loc := #caller_location) -> Candlestick_Chart {
+	use_component_chart()
 	e := Candlestick_Chart{new_node(818, loc), &candlestick_chart_vt}
 	o := node_args()
 	put_data(o, data)
@@ -591,6 +594,7 @@ Line_Chart_VT :: struct {
 }
 
 line_chart :: proc(data: Data, loc := #caller_location) -> Line_Chart {
+	use_component_chart()
 	e := Line_Chart{new_node(819, loc), &line_chart_vt}
 	o := node_args()
 	put_data(o, data)
@@ -778,6 +782,7 @@ Pie_Chart_VT :: struct {
 }
 
 pie_chart :: proc(data: Data, loc := #caller_location) -> Pie_Chart {
+	use_component_chart()
 	e := Pie_Chart{new_node(820, loc), &pie_chart_vt}
 	o := node_args()
 	put_data(o, data)
@@ -913,6 +918,7 @@ Radar_Chart_VT :: struct {
 }
 
 radar_chart :: proc(data: Data, loc := #caller_location) -> Radar_Chart {
+	use_component_chart()
 	e := Radar_Chart{new_node(821, loc), &radar_chart_vt}
 	o := node_args()
 	put_data(o, data)
@@ -1051,6 +1057,7 @@ Sankey_Chart_VT :: struct {
 }
 
 sankey_chart :: proc(nodes: Data, links: []Sankey_Link, loc := #caller_location) -> Sankey_Chart {
+	use_component_chart()
 	e := Sankey_Chart{new_node(822, loc), &sankey_chart_vt}
 	o := node_args()
 	put_data(o, nodes)

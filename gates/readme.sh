@@ -10,7 +10,7 @@ if ! cmp -s "$out/readme.odin" "$repo/examples/odin/hello/main.odin"; then
   echo "GATE readme example FAIL the Odin block in README.md is not examples/odin/hello/main.odin"; exit 1
 fi
 lib=${GK_LIB_ROOT:-$repo/lib}/ship; bin=${GK_BIN:-$repo/bin}; mkdir -p "$bin"
-if ! "${ODIN:-odin}" build "$repo/examples/odin/hello" -o:minimal -collection:gpuikit="$repo/odin" \
+if ! "${ODIN:-odin}" build "$repo/examples/odin/hello" -o:minimal -define:GK_SHARED=true -collection:gpuikit="$repo/odin" \
     "-extra-linker-flags:-L$lib" -out:"$bin/hello-odin" > "$out/build.log" 2>&1; then
   echo "GATE readme example FAIL it does not build"; head -5 "$out/build.log"; exit 1
 fi

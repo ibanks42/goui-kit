@@ -418,10 +418,12 @@ def gen(argv):
     lock = gk_rust.Lock(os.path.join(API, "opcodes.lock"))
     gk_rust.number(m, lock)
     lock.save()
-    where = gk_rust.Rust(m, rust_out).emit()
+    rs = gk_rust.Rust(m, rust_out)
+    where = rs.emit()
     json.dump(where, open(os.path.join(OUT, "rust-lines.json"), "w"))
     od = gk_odin.Odin(m, odin_out)
     spans = od.emit()
+    rs.fam.odin_link(odin_out, spans)  # each family linked only when the program calls into it (gen/gk_fam.py)
     sm = Sample(m, od)
     calls, skipped = sm.emit(os.path.join(REPO, "core", "tests", "gensample", "main.odin"))
     spans["main.odin"] = sm.spans
@@ -456,6 +458,7 @@ def gen(argv):
     import gk_go  # noqa: PLC0415 (the Go front end, docs/GO.md: from the same model, after the Odin names)
     go = gk_go.Go(m, od, go_out)
     go.emit()
+    rs.fam.go_link(go_out)  # each family linked only when the program calls into it (gen/gk_fam.py)
     rows, tot = go.report(os.path.join(OUT, "go-report.md"), family)
     print(f"gen: go: {tot[1]:,} of {tot[0]:,} bound or bridged functions generated into {os.path.relpath(go_out, REPO)} "
           f"({tot[2]:,} not yet: gen/out/go-report.md)")

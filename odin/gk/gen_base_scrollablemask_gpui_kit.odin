@@ -13,6 +13,7 @@ Scrollable_Mask_VT :: struct {
 }
 
 scrollable_mask :: proc(axis: Axis, scroll_handle: Scroll_Handle, loc := #caller_location) -> Scrollable_Mask {
+	use_base_scrollable_mask()
 	e := Scrollable_Mask{new_node(843, loc), &scrollable_mask_vt}
 	o := node_args()
 	put_u16(o, u16(axis))
@@ -21,6 +22,7 @@ scrollable_mask :: proc(axis: Axis, scroll_handle: Scroll_Handle, loc := #caller
 }
 
 scrollable_mask_vertical_wheel :: proc(scroll_handle: Scroll_Handle, loc := #caller_location) -> Scrollable_Mask {
+	use_base_scrollable_mask()
 	e := Scrollable_Mask{new_node(844, loc), &scrollable_mask_vt}
 	o := node_args()
 	put_obj(o, scroll_handle.h)

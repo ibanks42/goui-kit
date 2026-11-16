@@ -110,6 +110,7 @@ Checkbox_VT :: struct {
 }
 
 checkbox :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Checkbox {
+	use_component_checkbox()
 	e := Checkbox{new_node(620, loc), &checkbox_vt}
 	o := node_args()
 	put_id(o, id)

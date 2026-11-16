@@ -11,6 +11,7 @@ func (e SelectEl) node() *node { return e.n }
 
 // Select is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::new.
 func Select(state SelectState, st ...Style) SelectEl {
+	useComponentSelect()
 	n := newNode(833)
 	o := nodeArgs(n)
 	o.u64(state.h)

@@ -11,6 +11,7 @@ func (e TagEl) node() *node { return e.n }
 
 // Tag is <gpui_kit::component::tag::Tag>::new.
 func Tag(st ...Style) TagEl {
+	useComponentTag()
 	n := newNode(786)
 	tokens(n, st)
 	return TagEl{n}
@@ -18,6 +19,7 @@ func Tag(st ...Style) TagEl {
 
 // TagColor is <gpui_kit::component::tag::Tag>::color.
 func TagColor(color ColorName, st ...Style) TagEl {
+	useComponentTag()
 	n := newNode(782)
 	o := nodeArgs(n)
 	o.u16(uint16(color))
@@ -27,6 +29,7 @@ func TagColor(color ColorName, st ...Style) TagEl {
 
 // TagCustom is <gpui_kit::component::tag::Tag>::custom.
 func TagCustom(color Color, foreground Color, border Color, st ...Style) TagEl {
+	useComponentTag()
 	n := newNode(783)
 	o := nodeArgs(n)
 	putColor(o, color)
@@ -38,6 +41,7 @@ func TagCustom(color Color, foreground Color, border Color, st ...Style) TagEl {
 
 // TagDanger is <gpui_kit::component::tag::Tag>::danger.
 func TagDanger(st ...Style) TagEl {
+	useComponentTag()
 	n := newNode(784)
 	tokens(n, st)
 	return TagEl{n}
@@ -45,6 +49,7 @@ func TagDanger(st ...Style) TagEl {
 
 // TagInfo is <gpui_kit::component::tag::Tag>::info.
 func TagInfo(st ...Style) TagEl {
+	useComponentTag()
 	n := newNode(785)
 	tokens(n, st)
 	return TagEl{n}
@@ -52,6 +57,7 @@ func TagInfo(st ...Style) TagEl {
 
 // TagPrimary is <gpui_kit::component::tag::Tag>::primary.
 func TagPrimary(st ...Style) TagEl {
+	useComponentTag()
 	n := newNode(787)
 	tokens(n, st)
 	return TagEl{n}
@@ -59,6 +65,7 @@ func TagPrimary(st ...Style) TagEl {
 
 // TagSecondary is <gpui_kit::component::tag::Tag>::secondary.
 func TagSecondary(st ...Style) TagEl {
+	useComponentTag()
 	n := newNode(788)
 	tokens(n, st)
 	return TagEl{n}
@@ -66,6 +73,7 @@ func TagSecondary(st ...Style) TagEl {
 
 // TagSuccess is <gpui_kit::component::tag::Tag>::success.
 func TagSuccess(st ...Style) TagEl {
+	useComponentTag()
 	n := newNode(789)
 	tokens(n, st)
 	return TagEl{n}
@@ -73,6 +81,7 @@ func TagSuccess(st ...Style) TagEl {
 
 // TagWarning is <gpui_kit::component::tag::Tag>::warning.
 func TagWarning(st ...Style) TagEl {
+	useComponentTag()
 	n := newNode(790)
 	tokens(n, st)
 	return TagEl{n}

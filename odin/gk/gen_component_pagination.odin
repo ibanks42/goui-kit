@@ -21,6 +21,7 @@ Pagination_VT :: struct {
 }
 
 pagination :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Pagination {
+	use_component_pagination()
 	e := Pagination{new_node(711, loc), &pagination_vt}
 	o := node_args()
 	put_id(o, id)

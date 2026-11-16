@@ -27,6 +27,7 @@ Hover_Card_VT :: struct {
 }
 
 hover_card :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Hover_Card {
+	use_component_hover_card()
 	e := Hover_Card{new_node(674, loc), &hover_card_vt}
 	o := node_args()
 	put_id(o, id)

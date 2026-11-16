@@ -121,6 +121,7 @@ Input_VT :: struct {
 }
 
 input :: proc(state: Input_State, flags: ..Style_Flag, loc := #caller_location) -> Input {
+	use_component_input()
 	e := Input{new_node(675, loc), &input_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -347,6 +348,7 @@ Input_Group_VT :: struct {
 }
 
 input_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Input_Group {
+	use_component_input()
 	e := Input_Group{new_node(676, loc), &input_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -410,6 +412,7 @@ Input_Group_Addon_VT :: struct {
 }
 
 input_group_addon :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Input_Group_Addon {
+	use_component_input()
 	e := Input_Group_Addon{new_node(677, loc), &input_group_addon_vt}
 	o := node_args()
 	put_id(o, id)
@@ -506,6 +509,7 @@ Input_Group_Button_VT :: struct {
 }
 
 input_group_button :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Input_Group_Button {
+	use_component_input()
 	e := Input_Group_Button{new_node(678, loc), &input_group_button_vt}
 	o := node_args()
 	put_id(o, id)
@@ -640,12 +644,14 @@ Input_Group_Text_VT :: struct {
 }
 
 input_group_text :: proc(flags: ..Style_Flag, loc := #caller_location) -> Input_Group_Text {
+	use_component_input()
 	e := Input_Group_Text{new_node(680, loc), &input_group_text_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 input_group_text_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Input_Group_Text {
+	use_component_input()
 	e := Input_Group_Text{new_node(679, loc), &input_group_text_vt}
 	tokens(e.el, flags)
 	return e
@@ -675,6 +681,7 @@ Input_Token_VT :: struct {
 }
 
 input_token :: proc(context_: Inline_Token_Context, flags: ..Style_Flag, loc := #caller_location) -> Input_Token {
+	use_component_input()
 	e := Input_Token{new_node(828, loc), &input_token_vt}
 	o := node_args()
 	put_obj(o, context_.h)
@@ -715,6 +722,7 @@ Number_Input_VT :: struct {
 }
 
 number_input :: proc(state: Input_State, flags: ..Style_Flag, loc := #caller_location) -> Number_Input {
+	use_component_input()
 	e := Number_Input{new_node(681, loc), &number_input_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -771,6 +779,7 @@ Otp_Input_VT :: struct {
 }
 
 otp_input :: proc(state: Otp_State, loc := #caller_location) -> Otp_Input {
+	use_component_input()
 	e := Otp_Input{new_node(682, loc), &otp_input_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -897,6 +906,7 @@ Textarea_VT :: struct {
 }
 
 textarea :: proc(state: Textarea_State, flags: ..Style_Flag, loc := #caller_location) -> Textarea {
+	use_component_input()
 	e := Textarea{new_node(683, loc), &textarea_vt}
 	o := node_args()
 	put_u64(o, state.h)

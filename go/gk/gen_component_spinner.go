@@ -11,6 +11,7 @@ func (e SpinnerEl) node() *node { return e.n }
 
 // Spinner is <gpui_kit::component::spinner::Spinner>::new.
 func Spinner() SpinnerEl {
+	useComponentSpinner()
 	n := newNode(764)
 	return SpinnerEl{n}
 }

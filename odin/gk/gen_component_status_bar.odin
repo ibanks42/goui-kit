@@ -98,6 +98,7 @@ Status_Bar_VT :: struct {
 }
 
 status_bar :: proc(flags: ..Style_Flag, loc := #caller_location) -> Status_Bar {
+	use_component_status_bar()
 	e := Status_Bar{new_node(765, loc), &status_bar_vt}
 	tokens(e.el, flags)
 	return e

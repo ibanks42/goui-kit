@@ -67,6 +67,7 @@ func (e ShimmerTextEl) node() *node { return e.n }
 
 // ShimmerText is <gpui_kit::component::shimmer::ShimmerText>::new.
 func ShimmerText(text string, st ...Style) ShimmerTextEl {
+	useComponentShimmer()
 	n := newNode(752)
 	o := nodeArgs(n)
 	o.str(text)

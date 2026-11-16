@@ -11,6 +11,7 @@ func (e StepperEl) node() *node { return e.n }
 
 // Stepper is <gpui_kit::component::stepper::Stepper>::new.
 func Stepper(id ID, st ...Style) StepperEl {
+	useComponentStepper()
 	n := newNode(766)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -242,6 +243,7 @@ func (e StepperItemEl) node() *node { return e.n }
 
 // StepperItem is <gpui_kit::component::stepper::StepperItem>::new.
 func StepperItem(st ...Style) StepperItemEl {
+	useComponentStepper()
 	n := newNode(767)
 	tokens(n, st)
 	return StepperItemEl{n}

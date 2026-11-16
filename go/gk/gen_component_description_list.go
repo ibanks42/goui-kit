@@ -11,18 +11,21 @@ func (e DescriptionListEl) node() *node { return e.n }
 
 // DescriptionList is <gpui_kit::component::description_list::DescriptionList>::new.
 func DescriptionList() DescriptionListEl {
+	useComponentDescriptionList()
 	n := newNode(632)
 	return DescriptionListEl{n}
 }
 
 // DescriptionListHorizontal is <gpui_kit::component::description_list::DescriptionList>::horizontal.
 func DescriptionListHorizontal() DescriptionListEl {
+	useComponentDescriptionList()
 	n := newNode(631)
 	return DescriptionListEl{n}
 }
 
 // DescriptionListVertical is <gpui_kit::component::description_list::DescriptionList>::vertical.
 func DescriptionListVertical() DescriptionListEl {
+	useComponentDescriptionList()
 	n := newNode(633)
 	return DescriptionListEl{n}
 }

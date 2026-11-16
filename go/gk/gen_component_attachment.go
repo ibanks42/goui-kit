@@ -11,6 +11,7 @@ func (e AttachmentEl) node() *node { return e.n }
 
 // Attachment is <gpui_kit::component::attachment::Attachment>::new.
 func Attachment(st ...Style) AttachmentEl {
+	useComponentAttachment()
 	n := newNode(582)
 	tokens(n, st)
 	return AttachmentEl{n}
@@ -18,6 +19,7 @@ func Attachment(st ...Style) AttachmentEl {
 
 // AttachmentDefault is <gpui_kit::component::attachment::Attachment as Default>::default.
 func AttachmentDefault(st ...Style) AttachmentEl {
+	useComponentAttachment()
 	n := newNode(581)
 	tokens(n, st)
 	return AttachmentEl{n}
@@ -278,6 +280,7 @@ func (e AttachmentActionsEl) node() *node { return e.n }
 
 // AttachmentActions is <gpui_kit::component::attachment::AttachmentActions>::new.
 func AttachmentActions(st ...Style) AttachmentActionsEl {
+	useComponentAttachment()
 	n := newNode(584)
 	tokens(n, st)
 	return AttachmentActionsEl{n}
@@ -285,6 +288,7 @@ func AttachmentActions(st ...Style) AttachmentActionsEl {
 
 // AttachmentActionsDefault is <gpui_kit::component::attachment::AttachmentActions as Default>::default.
 func AttachmentActionsDefault(st ...Style) AttachmentActionsEl {
+	useComponentAttachment()
 	n := newNode(583)
 	tokens(n, st)
 	return AttachmentActionsEl{n}
@@ -640,6 +644,7 @@ func (e AttachmentContentEl) node() *node { return e.n }
 
 // AttachmentContent is <gpui_kit::component::attachment::AttachmentContent>::new.
 func AttachmentContent(st ...Style) AttachmentContentEl {
+	useComponentAttachment()
 	n := newNode(586)
 	tokens(n, st)
 	return AttachmentContentEl{n}
@@ -647,6 +652,7 @@ func AttachmentContent(st ...Style) AttachmentContentEl {
 
 // AttachmentContentDefault is <gpui_kit::component::attachment::AttachmentContent as Default>::default.
 func AttachmentContentDefault(st ...Style) AttachmentContentEl {
+	useComponentAttachment()
 	n := newNode(585)
 	tokens(n, st)
 	return AttachmentContentEl{n}
@@ -1016,6 +1022,7 @@ func (e AttachmentDescriptionEl) node() *node { return e.n }
 
 // AttachmentDescription is <gpui_kit::component::attachment::AttachmentDescription>::new.
 func AttachmentDescription(text string, st ...Style) AttachmentDescriptionEl {
+	useComponentAttachment()
 	n := newNode(587)
 	o := nodeArgs(n)
 	o.str(text)
@@ -1452,6 +1459,7 @@ func (e AttachmentGroupEl) node() *node { return e.n }
 
 // AttachmentGroup is <gpui_kit::component::attachment::AttachmentGroup>::new.
 func AttachmentGroup(id ID, st ...Style) AttachmentGroupEl {
+	useComponentAttachment()
 	n := newNode(588)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -1784,6 +1792,7 @@ func (e AttachmentMediaEl) node() *node { return e.n }
 
 // AttachmentMedia is <gpui_kit::component::attachment::AttachmentMedia>::new.
 func AttachmentMedia(st ...Style) AttachmentMediaEl {
+	useComponentAttachment()
 	n := newNode(590)
 	tokens(n, st)
 	return AttachmentMediaEl{n}
@@ -1791,6 +1800,7 @@ func AttachmentMedia(st ...Style) AttachmentMediaEl {
 
 // AttachmentMediaDefault is <gpui_kit::component::attachment::AttachmentMedia as Default>::default.
 func AttachmentMediaDefault(st ...Style) AttachmentMediaEl {
+	useComponentAttachment()
 	n := newNode(589)
 	tokens(n, st)
 	return AttachmentMediaEl{n}
@@ -2129,6 +2139,7 @@ func (e AttachmentTitleEl) node() *node { return e.n }
 
 // AttachmentTitle is <gpui_kit::component::attachment::AttachmentTitle>::new.
 func AttachmentTitle(text string, st ...Style) AttachmentTitleEl {
+	useComponentAttachment()
 	n := newNode(591)
 	o := nodeArgs(n)
 	o.str(text)

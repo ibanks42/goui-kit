@@ -49,11 +49,13 @@ Grid_VT :: struct {
 }
 
 grid :: proc(loc := #caller_location) -> Grid {
+	use_base_plot()
 	e := Grid{new_value(528, loc), &grid_vt}
 	return e
 }
 
 grid_default :: proc(loc := #caller_location) -> Grid {
+	use_base_plot()
 	e := Grid{new_value(527, loc), &grid_vt}
 	return e
 }
@@ -101,6 +103,7 @@ Plot_Appear_Scope_VT :: struct {
 }
 
 plot_appear_scope :: proc(id: Id, child: Element, loc := #caller_location) -> Plot_Appear_Scope {
+	use_base_plot()
 	e := Plot_Appear_Scope{new_node(529, loc), &plot_appear_scope_vt}
 	o := node_args()
 	put_id(o, id)
@@ -131,11 +134,13 @@ Plot_Axis_VT :: struct {
 }
 
 plot_axis :: proc(loc := #caller_location) -> Plot_Axis {
+	use_base_plot()
 	e := Plot_Axis{new_value(531, loc), &plot_axis_vt}
 	return e
 }
 
 plot_axis_default :: proc(loc := #caller_location) -> Plot_Axis {
+	use_base_plot()
 	e := Plot_Axis{new_value(530, loc), &plot_axis_vt}
 	return e
 }
@@ -252,11 +257,13 @@ Area_Shape_VT :: struct {
 }
 
 area_shape :: proc(loc := #caller_location) -> Area_Shape {
+	use_base_plot()
 	e := Area_Shape{new_value(809, loc), &area_shape_vt}
 	return e
 }
 
 area_shape_default :: proc(loc := #caller_location) -> Area_Shape {
+	use_base_plot()
 	e := Area_Shape{new_value(808, loc), &area_shape_vt}
 	return e
 }
@@ -319,11 +326,13 @@ Bar_Shape_VT :: struct {
 }
 
 bar_shape :: proc(loc := #caller_location) -> Bar_Shape {
+	use_base_plot()
 	e := Bar_Shape{new_value(811, loc), &bar_shape_vt}
 	return e
 }
 
 bar_shape_default :: proc(loc := #caller_location) -> Bar_Shape {
+	use_base_plot()
 	e := Bar_Shape{new_value(810, loc), &bar_shape_vt}
 	return e
 }
@@ -403,11 +412,13 @@ Line_Shape_VT :: struct {
 }
 
 line_shape :: proc(loc := #caller_location) -> Line_Shape {
+	use_base_plot()
 	e := Line_Shape{new_value(813, loc), &line_shape_vt}
 	return e
 }
 
 line_shape_default :: proc(loc := #caller_location) -> Line_Shape {
+	use_base_plot()
 	e := Line_Shape{new_value(812, loc), &line_shape_vt}
 	return e
 }
@@ -486,11 +497,13 @@ Radial_Line_Shape_VT :: struct {
 }
 
 radial_line_shape :: proc(loc := #caller_location) -> Radial_Line_Shape {
+	use_base_plot()
 	e := Radial_Line_Shape{new_value(815, loc), &radial_line_shape_vt}
 	return e
 }
 
 radial_line_shape_default :: proc(loc := #caller_location) -> Radial_Line_Shape {
+	use_base_plot()
 	e := Radial_Line_Shape{new_value(814, loc), &radial_line_shape_vt}
 	return e
 }

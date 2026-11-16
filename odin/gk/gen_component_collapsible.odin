@@ -20,6 +20,7 @@ Collapsible_VT :: struct {
 }
 
 collapsible :: proc(flags: ..Style_Flag, loc := #caller_location) -> Collapsible {
+	use_component_collapsible()
 	e := Collapsible{new_node(622, loc), &collapsible_vt}
 	tokens(e.el, flags)
 	return e

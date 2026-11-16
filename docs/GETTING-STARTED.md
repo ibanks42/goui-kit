@@ -51,11 +51,10 @@ library's:
 
 | path | what |
 |---|---|
-| `lib/libgpuikit.so` | Linux: the library (GPUI-kit 0.9.1 on the gpui-fast engine) behind a C interface |
-| `lib/libgpuikit.dylib` | macOS: the same, universal: one file for Apple silicon and Intel (install name `@rpath/libgpuikit.dylib`) |
-| `lib/gpuikit.dll`, `lib/gpuikit.dll.lib` | Windows: the same, and the import library Odin links |
-| `lib/libgpuikit.dll.a`, `lib/gpuikit.def` | Windows: the import library Go's cgo links (MinGW's format) |
-| `windows/` | Windows: the manifest a program embeds, and `gpuikit.rc`, which embeds it |
+| `lib/libgpuikit_static.a` | the library (GPUI-kit 0.9.1 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel |
+| `lib/libgpuikit_sys.so` | Linux: a small linker script naming the system libraries the library uses |
+| `lib/gpuikit_static.lib`, `lib/gpuikit_sys.lib` | Windows: the library in Visual Studio's format, which Odin links, and the import library of the Windows API it uses |
+| `windows/` | Windows: the manifest a program needs, and `gpuikit.rc`, which embeds it |
 | `odin/gk/` | the Odin package your app imports as `gpuikit:gk` |
 | `README.md` | where to start: this guide |
 | `examples/` | `hello`, `counter`, `notes`, `todo`, `reader`, `expenses` and `build.sh`, which builds them |
@@ -78,14 +77,10 @@ are built the same way (`examples/build.sh todo`, `reader`, `notes`, `counter`, 
 If it does not start, the first line it prints starts with `gk:` and says why. The usual ones:
 
 - `the library and this package are from different versions`: the app was built against the
-  `odin/` folder of one download and loads the `libgpuikit.so` of another. Build against the
-  `odin/` folder that came with the library.
-- `error while loading shared libraries: libgpuikit.so` (Linux), `Library not loaded:
-  @rpath/libgpuikit.dylib` (macOS): the binary cannot find the library. The build command below
-  puts its location into the binary (`-rpath`); if you moved the binary, move `lib/` with it or
-  set `LD_LIBRARY_PATH` (`DYLD_LIBRARY_PATH` on macOS).
-- Windows says `gpuikit.dll was not found`: Windows looks for the DLL in the program's folder,
-  then on `PATH`. `build.sh` copies it beside the `.exe`; copy it again if you moved the program.
+  `odin/` folder of one download and the `lib/` of another. Build against the `odin/` folder
+  that came with the library.
+- `unable to find library -lgpuikit_static` (or `gpuikit_static.lib` on Windows) when building:
+  `-extra-linker-flags` does not name the download's `lib/` folder.
 
 ### Your own app
 
@@ -94,35 +89,37 @@ download and build it with:
 
 ```sh
 G=gpuikit-0.0.1-linux-x86_64
-odin build groceries -o:minimal -collection:gpuikit=$G/odin \
-  "-extra-linker-flags:-L$G/lib -Wl,-rpath,\$ORIGIN/$G/lib" -out:groceries.bin
+odin build groceries -o:minimal -collection:gpuikit=$G/odin "-extra-linker-flags:-L$G/lib" -out:groceries.bin
 ./groceries.bin
 ```
 
-`-collection:gpuikit=...` lets the app write `import gk "gpuikit:gk"`; `-L` finds the library when
-linking and `-rpath` when running (`$ORIGIN` is the binary's folder). Use `-o:minimal` while you
-edit (a rebuild takes about a second) and `-o:speed` for what you ship.
+`-collection:gpuikit=...` lets the app write `import gk "gpuikit:gk"`, and `-L` tells the linker
+where the library is. Use `-o:minimal` while you edit (a rebuild takes a few seconds) and
+`-o:speed` for what you ship.
 
-On macOS the same command works with `@executable_path` in place of `$ORIGIN`
-(`-Wl,-rpath,@executable_path/$G/lib`); an app bundle carries `libgpuikit.dylib` in
-`Contents/Frameworks` and is built with `-Wl,-rpath,@executable_path/../Frameworks`. Odin builds
-for the Mac it runs on; the library is universal, so the same command with `-target:darwin_amd64`
+The library is linked into your program, and only the components your app actually calls end up in
+it: use `gk.button` and the button code comes along; never touch the charts and they stay out. You
+don't list or import anything for this, and you don't need any extra flag: package `gk` tells the
+linker to drop what isn't used (and, unless you build with `-debug`, to leave out the symbol
+table). The program is one file, so shipping it means copying that file. [DESIGN.md](DESIGN.md)
+section 16 explains how it works.
+
+On macOS the same command works. Odin builds for the Mac it runs on; the library is universal, so the same command with `-target:darwin_amd64`
 builds for Intel on Apple silicon (`-target:darwin_arm64` the other way round), and `lipo -create
 -output groceries.bin groceries-arm64.bin groceries-x86_64.bin` makes one program for both.
 `examples/build.sh` passes what follows the app's name on to `odin build`
 (`examples/build.sh hello -target:darwin_amd64`). On Windows the
-linker is `link.exe`, which takes the library folder as `/LIBPATH:`, and the DLL goes beside the
-program (in PowerShell):
+linker is `lld-link`, which takes the library folder as `/LIBPATH:` (in PowerShell):
 
 ```powershell
 $G = "gpuikit-0.0.1-windows-x86_64"
 odin build groceries -o:minimal -linker:lld -collection:gpuikit=$G/odin "-extra-linker-flags:/LIBPATH:$G/lib" -out:groceries.exe
-copy $G/lib/gpuikit.dll .
+copy $G/windows/gpuikit.manifest groceries.exe.manifest
 .\groceries.exe
 ```
 
 A Windows program also needs the manifest in `windows/gpuikit.manifest`, or it does not start:
-gpuikit.dll uses common controls 6 (which Windows only loads for a program whose manifest asks for
+the library uses common controls 6 (which Windows only loads for a program whose manifest asks for
 it), and the manifest makes the window per-monitor DPI aware (without it Windows scales the window
 up and it looks blurred). Either put a copy beside the program as `APP.exe.manifest` (the build
 scripts do), or embed it: `rc windows\gpuikit.rc` makes `gpuikit.res`, which goes into
@@ -682,9 +679,9 @@ chart :: proc(a: ^App) -> gk.Element {
 ### Testing without a display
 
 Any app runs offscreen when the environment names a script: `GK_SCRIPT=session.script ./app`. It
-needs the optional diagnostic library (a second download, `gpuikit-..-diag`): put its `lib/` first
-in `LD_LIBRARY_PATH` (`DYLD_LIBRARY_PATH` on macOS; on Windows its `gpuikit.dll` beside the
-program). A script clicks, types, presses keys and saves screenshots. Screenshots work on Linux and
+needs the optional diagnostic library (a second download, `gpuikit-..-diag`): build a test copy of
+the app against its `lib/` folder instead of the normal one (the library is linked into the
+program, so the copy is what changes). A script clicks, types, presses keys and saves screenshots. Screenshots work on Linux and
 macOS; on Windows the engine has no offscreen renderer, so a script still runs every frame but
 `shot` fails:
 

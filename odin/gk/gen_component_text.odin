@@ -25,6 +25,7 @@ frontmatter_plugin_default :: proc(loc := #caller_location) -> Frontmatter_Plugi
 frontmatter_plugin_vt := Frontmatter_Plugin_VT {
 	setup = proc(e: Frontmatter_Plugin, text_view: Text_View) -> Text_View {
 		src := take(vel(e.nd), receiver = true)
+		use_base_text()
 		n := Text_View{new_node(410), &text_view_vt}
 		o := node_args()
 		put_u32(o, src)
@@ -147,6 +148,7 @@ Text_View_VT :: struct {
 }
 
 html :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) -> Text_View {
+	use_base_text()
 	e := Text_View{new_node(796, loc), &text_view_vt}
 	o := node_args()
 	put_str(o, source)
@@ -155,6 +157,7 @@ html :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) -> Te
 }
 
 markdown :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) -> Text_View {
+	use_base_text()
 	e := Text_View{new_node(797, loc), &text_view_vt}
 	o := node_args()
 	put_str(o, source)
@@ -163,6 +166,7 @@ markdown :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) -
 }
 
 text_view :: proc(state: Text_View_State, flags: ..Style_Flag, loc := #caller_location) -> Text_View {
+	use_base_text()
 	e := Text_View{new_node(795, loc), &text_view_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -171,6 +175,7 @@ text_view :: proc(state: Text_View_State, flags: ..Style_Flag, loc := #caller_lo
 }
 
 text_view_html :: proc(id: Id, text: string, flags: ..Style_Flag, loc := #caller_location) -> Text_View {
+	use_base_text()
 	e := Text_View{new_node(793, loc), &text_view_vt}
 	o := node_args()
 	put_id(o, id)
@@ -180,6 +185,7 @@ text_view_html :: proc(id: Id, text: string, flags: ..Style_Flag, loc := #caller
 }
 
 text_view_markdown :: proc(id: Id, text: string, flags: ..Style_Flag, loc := #caller_location) -> Text_View {
+	use_base_text()
 	e := Text_View{new_node(794, loc), &text_view_vt}
 	o := node_args()
 	put_id(o, id)

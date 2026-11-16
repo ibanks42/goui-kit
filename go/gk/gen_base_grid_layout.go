@@ -11,6 +11,7 @@ func (e GrowHeight) valueNode() *node { return e.n }
 
 // NewGrowHeightDefault is <gpui_kit::base::grid_layout::GrowHeight as Default>::default.
 func NewGrowHeightDefault() GrowHeight {
+	useBaseGridLayout()
 	n := newValue(449)
 	return GrowHeight{n}
 }
@@ -22,6 +23,7 @@ func (e GrowWidth) valueNode() *node { return e.n }
 
 // NewGrowWidthDefault is <gpui_kit::base::grid_layout::GrowWidth as Default>::default.
 func NewGrowWidthDefault() GrowWidth {
+	useBaseGridLayout()
 	n := newValue(450)
 	return GrowWidth{n}
 }
@@ -33,6 +35,7 @@ func (e MoveDown) valueNode() *node { return e.n }
 
 // NewMoveDownDefault is <gpui_kit::base::grid_layout::MoveDown as Default>::default.
 func NewMoveDownDefault() MoveDown {
+	useBaseGridLayout()
 	n := newValue(451)
 	return MoveDown{n}
 }
@@ -44,6 +47,7 @@ func (e MoveLeft) valueNode() *node { return e.n }
 
 // NewMoveLeftDefault is <gpui_kit::base::grid_layout::MoveLeft as Default>::default.
 func NewMoveLeftDefault() MoveLeft {
+	useBaseGridLayout()
 	n := newValue(452)
 	return MoveLeft{n}
 }
@@ -55,6 +59,7 @@ func (e MoveRight) valueNode() *node { return e.n }
 
 // NewMoveRightDefault is <gpui_kit::base::grid_layout::MoveRight as Default>::default.
 func NewMoveRightDefault() MoveRight {
+	useBaseGridLayout()
 	n := newValue(453)
 	return MoveRight{n}
 }
@@ -66,6 +71,7 @@ func (e MoveUp) valueNode() *node { return e.n }
 
 // NewMoveUpDefault is <gpui_kit::base::grid_layout::MoveUp as Default>::default.
 func NewMoveUpDefault() MoveUp {
+	useBaseGridLayout()
 	n := newValue(454)
 	return MoveUp{n}
 }
@@ -77,6 +83,7 @@ func (e SelectNextItem) valueNode() *node { return e.n }
 
 // NewSelectNextItemDefault is <gpui_kit::base::grid_layout::SelectNextItem as Default>::default.
 func NewSelectNextItemDefault() SelectNextItem {
+	useBaseGridLayout()
 	n := newValue(455)
 	return SelectNextItem{n}
 }
@@ -88,6 +95,7 @@ func (e SelectPreviousItem) valueNode() *node { return e.n }
 
 // NewSelectPreviousItemDefault is <gpui_kit::base::grid_layout::SelectPreviousItem as Default>::default.
 func NewSelectPreviousItemDefault() SelectPreviousItem {
+	useBaseGridLayout()
 	n := newValue(456)
 	return SelectPreviousItem{n}
 }
@@ -99,6 +107,7 @@ func (e ShrinkHeight) valueNode() *node { return e.n }
 
 // NewShrinkHeightDefault is <gpui_kit::base::grid_layout::ShrinkHeight as Default>::default.
 func NewShrinkHeightDefault() ShrinkHeight {
+	useBaseGridLayout()
 	n := newValue(457)
 	return ShrinkHeight{n}
 }
@@ -110,6 +119,7 @@ func (e ShrinkWidth) valueNode() *node { return e.n }
 
 // NewShrinkWidthDefault is <gpui_kit::base::grid_layout::ShrinkWidth as Default>::default.
 func NewShrinkWidthDefault() ShrinkWidth {
+	useBaseGridLayout()
 	n := newValue(458)
 	return ShrinkWidth{n}
 }

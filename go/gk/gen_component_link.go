@@ -11,6 +11,7 @@ func (e LinkEl) node() *node { return e.n }
 
 // Link is <gpui_kit::component::link::Link>::new.
 func Link(id ID, st ...Style) LinkEl {
+	useComponentLink()
 	n := newNode(686)
 	o := nodeArgs(n)
 	putID(o, id)

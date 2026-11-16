@@ -39,7 +39,7 @@ else
 fi
 build() { # which(now|m1) i
   sed -i "s/\"Add[0-9]*\"/\"Add$2\"/" "$tmp/$1/counter/main.odin"
-  "$odin" build "$tmp/$1/counter" -o:minimal -collection:gpuikit="$tmp/$1/odin" \
+  "$odin" build "$tmp/$1/counter" -o:minimal -define:GK_SHARED=true -collection:gpuikit="$tmp/$1/odin" \
     "-extra-linker-flags:-L$lib -Wl,-rpath,\$ORIGIN/../lib/ship" -out:"$tmp/$1/counter.bin"
 }
 build now 0; build m1 0   # warm: the first build is not an edit
@@ -63,7 +63,7 @@ if [ "${GK_REBUILD_BREAKDOWN:-}" = 1 ]; then
       "$(ls "$pkg"/*.odin | wc -l)" "$(cat "$pkg"/*.odin | wc -l)" "$(cat "$pkg"/*.odin | wc -c)" \
       "$(cat "$pkg"/gen_*.odin 2>/dev/null | wc -l)" "$(cat "$tmp/$w/counter"/*.odin | wc -l)"
     sed -i "s/\"Add[0-9]*\"/\"Add99\"/" "$tmp/$w/counter/main.odin"
-    "$odin" build "$tmp/$w/counter" -o:minimal -collection:gpuikit="$tmp/$w/odin" -show-timings \
+    "$odin" build "$tmp/$w/counter" -o:minimal -define:GK_SHARED=true -collection:gpuikit="$tmp/$w/odin" -show-timings \
       "-extra-linker-flags:-L$lib -Wl,-rpath,\$ORIGIN/../lib/ship" -out:"$tmp/$w/counter.bin" 2>&1 |
       sed "s/^/rebuild-timings $w | /"
   done

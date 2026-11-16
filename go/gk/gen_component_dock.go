@@ -11,6 +11,7 @@ func (e ClosePanel) valueNode() *node { return e.n }
 
 // NewClosePanelDefault is <gpui_kit::component::dock::ClosePanel as Default>::default.
 func NewClosePanelDefault() ClosePanel {
+	useComponentDock()
 	n := newValue(650)
 	return ClosePanel{n}
 }
@@ -22,6 +23,7 @@ func (e ToggleZoom) valueNode() *node { return e.n }
 
 // NewToggleZoomDefault is <gpui_kit::component::dock::ToggleZoom as Default>::default.
 func NewToggleZoomDefault() ToggleZoom {
+	useComponentDock()
 	n := newValue(651)
 	return ToggleZoom{n}
 }

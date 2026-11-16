@@ -17,6 +17,7 @@ Label_VT :: struct {
 }
 
 label :: proc(label: string, flags: ..Style_Flag, loc := #caller_location) -> Label {
+	use_component_label()
 	e := Label{new_node(685, loc), &label_vt}
 	o := node_args()
 	put_str(o, label)

@@ -15,6 +15,7 @@ Skeleton_VT :: struct {
 }
 
 skeleton :: proc(flags: ..Style_Flag, loc := #caller_location) -> Skeleton {
+	use_component_skeleton()
 	e := Skeleton{new_node(759, loc), &skeleton_vt}
 	tokens(e.el, flags)
 	return e

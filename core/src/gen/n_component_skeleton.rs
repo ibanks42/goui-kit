@@ -4,31 +4,3 @@
 use crate::genapi::{self, Dx, R};
 use super::*;
 
-pub fn build_component_skeleton(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::skeleton::Skeleton> {
-    let (ty, args, first) = dx.node(n);
-    make_component_skeleton(dx, ty, args, first)
-}
-pub fn make_component_skeleton(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::skeleton::Skeleton> {
-    let r = &mut dx.args(args);
-    let el: gpui_kit::component::skeleton::Skeleton = match ty {
-        759 => { <gpui_kit::component::skeleton::Skeleton>::new() }
-        _ => return bad_node("Skeleton", ty),
-    };
-    Some(apply_component_skeleton(dx, el, first))
-}
-#[inline]
-pub fn apply_component_skeleton(dx: &mut Dx, mut el: gpui_kit::component::skeleton::Skeleton, first: u32) -> gpui_kit::component::skeleton::Skeleton {
-    let mut at = first;
-    while let Some((op, mut r)) = dx.op(&mut at) {
-        let r = &mut r;
-        match op {
-            256 => { el = { <gpui_kit::component::skeleton::Skeleton>::secondary(el) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
-            16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            _ => bad_op("Skeleton", op),
-        }
-    }
-    el
-}

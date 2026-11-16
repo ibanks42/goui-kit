@@ -102,12 +102,14 @@ Tag_VT :: struct {
 }
 
 tag :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tag {
+	use_component_tag()
 	e := Tag{new_node(786, loc), &tag_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 tag_color :: proc(color: Color_Name, flags: ..Style_Flag, loc := #caller_location) -> Tag {
+	use_component_tag()
 	e := Tag{new_node(782, loc), &tag_vt}
 	o := node_args()
 	put_u16(o, u16(color))
@@ -116,6 +118,7 @@ tag_color :: proc(color: Color_Name, flags: ..Style_Flag, loc := #caller_locatio
 }
 
 tag_custom :: proc(color: Color, foreground: Color, border: Color, flags: ..Style_Flag, loc := #caller_location) -> Tag {
+	use_component_tag()
 	e := Tag{new_node(783, loc), &tag_vt}
 	o := node_args()
 	put_color(o, color)
@@ -126,36 +129,42 @@ tag_custom :: proc(color: Color, foreground: Color, border: Color, flags: ..Styl
 }
 
 tag_danger :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tag {
+	use_component_tag()
 	e := Tag{new_node(784, loc), &tag_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 tag_info :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tag {
+	use_component_tag()
 	e := Tag{new_node(785, loc), &tag_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 tag_primary :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tag {
+	use_component_tag()
 	e := Tag{new_node(787, loc), &tag_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 tag_secondary :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tag {
+	use_component_tag()
 	e := Tag{new_node(788, loc), &tag_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 tag_success :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tag {
+	use_component_tag()
 	e := Tag{new_node(789, loc), &tag_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 tag_warning :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tag {
+	use_component_tag()
 	e := Tag{new_node(790, loc), &tag_vt}
 	tokens(e.el, flags)
 	return e

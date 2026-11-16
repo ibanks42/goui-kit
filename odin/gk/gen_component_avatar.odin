@@ -19,6 +19,7 @@ Avatar_VT :: struct {
 }
 
 avatar :: proc(flags: ..Style_Flag, loc := #caller_location) -> Avatar {
+	use_component_avatar()
 	e := Avatar{new_node(592, loc), &avatar_vt}
 	tokens(e.el, flags)
 	return e
@@ -67,6 +68,7 @@ Avatar_Group_VT :: struct {
 }
 
 avatar_group :: proc(flags: ..Style_Flag, loc := #caller_location) -> Avatar_Group {
+	use_component_avatar()
 	e := Avatar_Group{new_node(593, loc), &avatar_group_vt}
 	tokens(e.el, flags)
 	return e

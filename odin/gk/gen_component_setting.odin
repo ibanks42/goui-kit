@@ -16,6 +16,7 @@ Setting_Field_Bool_VT :: struct {
 }
 
 setting_field_bool_checkbox :: proc(value: Cell(bool), set_value: Handler, flags: ..Style_Flag, loc := #caller_location) -> Setting_Field_Bool {
+	use_component_setting()
 	e := Setting_Field_Bool{new_value(850, loc), &setting_field_bool_vt}
 	o := node_args()
 	put_u64(o, value.h)
@@ -25,6 +26,7 @@ setting_field_bool_checkbox :: proc(value: Cell(bool), set_value: Handler, flags
 }
 
 setting_field_bool_switch :: proc(value: Cell(bool), set_value: Handler, flags: ..Style_Flag, loc := #caller_location) -> Setting_Field_Bool {
+	use_component_setting()
 	e := Setting_Field_Bool{new_value(851, loc), &setting_field_bool_vt}
 	o := node_args()
 	put_u64(o, value.h)
@@ -66,6 +68,7 @@ Setting_Field_Number_VT :: struct {
 }
 
 setting_field_number_number_input :: proc(options: Number_Field_Options, value: Cell(f64), set_value: Handler, flags: ..Style_Flag, loc := #caller_location) -> Setting_Field_Number {
+	use_component_setting()
 	e := Setting_Field_Number{new_value(852, loc), &setting_field_number_vt}
 	o := node_args()
 	put_Number_Field_Options(o, options)
@@ -108,6 +111,7 @@ Setting_Field_Text_VT :: struct {
 }
 
 setting_field_text_dropdown :: proc(options: []Tuple_String_String, value: Cell(string), set_value: Handler, flags: ..Style_Flag, loc := #caller_location) -> Setting_Field_Text {
+	use_component_setting()
 	e := Setting_Field_Text{new_value(853, loc), &setting_field_text_vt}
 	o := node_args()
 	put_u32(o, u32(len(options)))
@@ -122,6 +126,7 @@ setting_field_text_dropdown :: proc(options: []Tuple_String_String, value: Cell(
 }
 
 setting_field_text_element :: proc(element: Element, flags: ..Style_Flag, loc := #caller_location) -> Setting_Field_Text {
+	use_component_setting()
 	e := Setting_Field_Text{new_value(854, loc), &setting_field_text_vt}
 	o := node_args()
 	put_u32(o, take(element))
@@ -130,6 +135,7 @@ setting_field_text_element :: proc(element: Element, flags: ..Style_Flag, loc :=
 }
 
 setting_field_text_input :: proc(value: Cell(string), set_value: Handler, flags: ..Style_Flag, loc := #caller_location) -> Setting_Field_Text {
+	use_component_setting()
 	e := Setting_Field_Text{new_value(855, loc), &setting_field_text_vt}
 	o := node_args()
 	put_u64(o, value.h)
@@ -139,6 +145,7 @@ setting_field_text_input :: proc(value: Cell(string), set_value: Handler, flags:
 }
 
 setting_field_text_render :: proc(element_render: Element, flags: ..Style_Flag, loc := #caller_location) -> Setting_Field_Text {
+	use_component_setting()
 	e := Setting_Field_Text{new_value(856, loc), &setting_field_text_vt}
 	o := node_args()
 	put_u32(o, take(element_render))
@@ -147,6 +154,7 @@ setting_field_text_render :: proc(element_render: Element, flags: ..Style_Flag, 
 }
 
 setting_field_text_scrollable_dropdown :: proc(options: []Tuple_String_String, value: Cell(string), set_value: Handler, flags: ..Style_Flag, loc := #caller_location) -> Setting_Field_Text {
+	use_component_setting()
 	e := Setting_Field_Text{new_value(857, loc), &setting_field_text_vt}
 	o := node_args()
 	put_u32(o, u32(len(options)))
@@ -411,6 +419,7 @@ Settings_VT :: struct {
 }
 
 settings :: proc(id: Id, loc := #caller_location) -> Settings {
+	use_component_setting()
 	e := Settings{new_node(748, loc), &settings_vt}
 	o := node_args()
 	put_id(o, id)

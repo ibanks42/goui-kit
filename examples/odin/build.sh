@@ -22,6 +22,8 @@ for what in "$@"; do
   # The negative suite needs the guard pages a debug build has; here they are switched on
   # in the ordinary build.
   case "$what" in negative|negative_rows) extra=(-define:GK_GUARD=true) ;; esac
-  "$odin" build "$src/$what" $opt "${extra[@]}" -collection:gpuikit="$repo/odin" \
+  # GK_ODIN_SHARED (default true): link the shared library, so a test can run the program against
+  # lib/ship or lib/diag; false links the static library, as an app does (docs/DESIGN.md section 16).
+  "$odin" build "$src/$what" $opt "${extra[@]}" -define:GK_SHARED=${GK_ODIN_SHARED:-true} -collection:gpuikit="$repo/odin" \
     "-extra-linker-flags:-L$lib -Wl,-rpath,\$ORIGIN/../lib/ship ${GK_LDFLAGS:-}" -out:"$out/$what-odin${SUFFIX:-}"
 done

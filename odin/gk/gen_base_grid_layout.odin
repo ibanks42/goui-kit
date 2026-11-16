@@ -11,6 +11,7 @@ Grow_Height_VT :: struct {
 }
 
 grow_height_default :: proc(loc := #caller_location) -> Grow_Height {
+	use_base_grid_layout()
 	e := Grow_Height{new_value(449, loc), &grow_height_vt}
 	return e
 }
@@ -29,6 +30,7 @@ Grow_Width_VT :: struct {
 }
 
 grow_width_default :: proc(loc := #caller_location) -> Grow_Width {
+	use_base_grid_layout()
 	e := Grow_Width{new_value(450, loc), &grow_width_vt}
 	return e
 }
@@ -47,6 +49,7 @@ Move_Down_VT :: struct {
 }
 
 move_down_default :: proc(loc := #caller_location) -> Move_Down {
+	use_base_grid_layout()
 	e := Move_Down{new_value(451, loc), &move_down_vt}
 	return e
 }
@@ -65,6 +68,7 @@ Move_Left_VT :: struct {
 }
 
 move_left_default :: proc(loc := #caller_location) -> Move_Left {
+	use_base_grid_layout()
 	e := Move_Left{new_value(452, loc), &move_left_vt}
 	return e
 }
@@ -83,6 +87,7 @@ Move_Right_VT :: struct {
 }
 
 move_right_default :: proc(loc := #caller_location) -> Move_Right {
+	use_base_grid_layout()
 	e := Move_Right{new_value(453, loc), &move_right_vt}
 	return e
 }
@@ -101,6 +106,7 @@ Move_Up_VT :: struct {
 }
 
 move_up_default :: proc(loc := #caller_location) -> Move_Up {
+	use_base_grid_layout()
 	e := Move_Up{new_value(454, loc), &move_up_vt}
 	return e
 }
@@ -119,6 +125,7 @@ Select_Next_Item_VT :: struct {
 }
 
 select_next_item_default :: proc(loc := #caller_location) -> Select_Next_Item {
+	use_base_grid_layout()
 	e := Select_Next_Item{new_value(455, loc), &select_next_item_vt}
 	return e
 }
@@ -137,6 +144,7 @@ Select_Previous_Item_VT :: struct {
 }
 
 select_previous_item_default :: proc(loc := #caller_location) -> Select_Previous_Item {
+	use_base_grid_layout()
 	e := Select_Previous_Item{new_value(456, loc), &select_previous_item_vt}
 	return e
 }
@@ -155,6 +163,7 @@ Shrink_Height_VT :: struct {
 }
 
 shrink_height_default :: proc(loc := #caller_location) -> Shrink_Height {
+	use_base_grid_layout()
 	e := Shrink_Height{new_value(457, loc), &shrink_height_vt}
 	return e
 }
@@ -173,6 +182,7 @@ Shrink_Width_VT :: struct {
 }
 
 shrink_width_default :: proc(loc := #caller_location) -> Shrink_Width {
+	use_base_grid_layout()
 	e := Shrink_Width{new_value(458, loc), &shrink_width_vt}
 	return e
 }

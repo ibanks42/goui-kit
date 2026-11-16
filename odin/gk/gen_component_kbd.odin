@@ -16,6 +16,7 @@ Kbd_VT :: struct {
 }
 
 kbd :: proc(stroke: Keystroke, flags: ..Style_Flag, loc := #caller_location) -> Kbd {
+	use_component_kbd()
 	e := Kbd{new_node(684, loc), &kbd_vt}
 	o := node_args()
 	put_Keystroke(o, stroke)

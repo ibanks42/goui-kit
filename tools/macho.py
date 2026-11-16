@@ -6,7 +6,8 @@
                                        LC_VERSION_MIN_MACOSX); `-` reads standard input
   macho.py check FILE|- ARCH... [--kind KIND] [--id NAME] [--minos VERSION]
                                        exits non-zero unless FILE is a KIND (default dylib; or
-                                       executable) with exactly the slices ARCH... (arm64, x86_64),
+                                       executable, or archive: a static library) with exactly the
+                                       slices ARCH... (arm64, x86_64),
                                        each with install name NAME and minimum macOS VERSION when
                                        given
   macho.py fat OUT THIN...             joins thin Mach-O files into one universal file, as
@@ -32,8 +33,11 @@ def version(v):
     return f"{v >> 16}.{(v >> 8) & 0xFF}" + (f".{v & 0xFF}" if v & 0xFF else "")
 
 
-def thin(data, off=0):
-    """One 64-bit little-endian Mach-O slice at data[off:]: (arch, filetype, install name, minos)."""
+def thin(data, off=0, cpu=None):
+    """One 64-bit little-endian Mach-O slice at data[off:]: (arch, filetype, install name, minos). A
+    static archive's slice (ar's "!<arch>" magic) is an "archive", named by the universal header's cpu."""
+    if data[off:off + 8] == b"!<arch>\n":
+        return CPU.get(cpu, f"cpu{cpu:#x}" if cpu is not None else "unknown"), "archive", None, None
     magic, cputype, _sub, filetype, ncmds, _size, _flags, _res = struct.unpack_from("<8I", data, off)
     if magic != MH_MAGIC_64:
         raise ValueError(f"not a 64-bit Mach-O slice at offset {off} (magic {magic:#x})")
@@ -64,10 +68,10 @@ def slices(data):
     out = []
     for i in range(n):
         if magic == FAT_MAGIC:
-            _cpu, _sub, off, _size, _align = struct.unpack_from(">5I", data, 8 + 20 * i)
+            cpu, _sub, off, _size, _align = struct.unpack_from(">5I", data, 8 + 20 * i)
         else:
-            _cpu, _sub, off, _size, _align, _res = struct.unpack_from(">2I2Q2I", data, 8 + 32 * i)
-        out.append(thin(data, off))
+            cpu, _sub, off, _size, _align, _res = struct.unpack_from(">2I2Q2I", data, 8 + 32 * i)
+        out.append(thin(data, off, cpu))
     return out
 
 

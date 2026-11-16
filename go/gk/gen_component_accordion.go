@@ -11,6 +11,7 @@ func (e AccordionEl) node() *node { return e.n }
 
 // Accordion is <gpui_kit::component::accordion::Accordion>::new.
 func Accordion(id ID, st ...Style) AccordionEl {
+	useComponentAccordion()
 	n := newNode(574)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -225,6 +226,7 @@ func (e AccordionItemEl) node() *node { return e.n }
 
 // AccordionItem is <gpui_kit::component::accordion::AccordionItem>::new.
 func AccordionItem(st ...Style) AccordionItemEl {
+	useComponentAccordion()
 	n := newNode(575)
 	tokens(n, st)
 	return AccordionItemEl{n}

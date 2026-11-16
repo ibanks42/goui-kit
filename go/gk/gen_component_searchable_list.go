@@ -11,6 +11,7 @@ func (e SearchableListItemElementEl) node() *node { return e.n }
 
 // SearchableListItemElement is <gpui_kit::component::searchable_list::SearchableListItemElement>::new.
 func SearchableListItemElement(ix int, st ...Style) SearchableListItemElementEl {
+	useComponentSearchableList()
 	n := newNode(739)
 	o := nodeArgs(n)
 	putUsize(o, ix)

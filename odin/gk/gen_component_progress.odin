@@ -19,6 +19,7 @@ Progress_VT :: struct {
 }
 
 progress :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Progress {
+	use_component_progress()
 	e := Progress{new_node(716, loc), &progress_vt}
 	o := node_args()
 	put_id(o, id)
@@ -75,6 +76,7 @@ Progress_Circle_VT :: struct {
 }
 
 progress_circle :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Progress_Circle {
+	use_component_progress()
 	e := Progress_Circle{new_node(717, loc), &progress_circle_vt}
 	o := node_args()
 	put_id(o, id)

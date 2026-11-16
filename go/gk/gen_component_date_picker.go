@@ -11,6 +11,7 @@ func (e DatePickerEl) node() *node { return e.n }
 
 // DatePicker is <gpui_kit::component::date_picker::DatePicker>::new.
 func DatePicker(state DatePickerState, st ...Style) DatePickerEl {
+	useComponentTime()
 	n := newNode(630)
 	o := nodeArgs(n)
 	o.u64(state.h)

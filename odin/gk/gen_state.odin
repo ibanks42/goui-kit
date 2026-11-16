@@ -36,7 +36,8 @@ app_menu_bar_vt := App_Menu_Bar_VT {
 	reload = proc(s: App_Menu_Bar, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1589)
+		use_component_menu()
+		put_op(o, 1589)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -63,7 +64,8 @@ audio_format_vt := Audio_Format_VT {
 	channels = proc(s: Audio_Format, cx: ^Cx, loc := #caller_location) -> (v: u16) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1027)
+		use_component_speech()
+		put_op(o, 1027)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -72,7 +74,8 @@ audio_format_vt := Audio_Format_VT {
 	sample_rate = proc(s: Audio_Format, cx: ^Cx, loc := #caller_location) -> (v: u32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1029)
+		use_component_speech()
+		put_op(o, 1029)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -84,7 +87,8 @@ audio_format :: proc(cx: ^Cx, sample_rate: u32, channels: u16, loc := #caller_lo
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1028)
+	use_component_speech()
+	put_op(o, 1028)
 	put_u32(o, u32(sample_rate))
 	put_u16(o, u16(channels))
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -99,7 +103,8 @@ reg_auto_scroll :: proc "contextless" () {
 auto_scroll_compute_delta :: proc(cx: ^Cx, y: f32, bounds: Bounds, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1455)
+	use_base_auto_scroll()
+	put_op(o, 1455)
 	put_f32(o, y)
 	put_Bounds(o, bounds)
 	r := state_call(0, cx, req[:], loc)
@@ -124,7 +129,8 @@ auto_scroll_vt := Auto_Scroll_VT {
 	delta = proc(s: Auto_Scroll, cx: ^Cx, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1456)
+		use_base_auto_scroll()
+		put_op(o, 1456)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -133,7 +139,8 @@ auto_scroll_vt := Auto_Scroll_VT {
 	is_active = proc(s: Auto_Scroll, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1457)
+		use_base_auto_scroll()
+		put_op(o, 1457)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -142,7 +149,8 @@ auto_scroll_vt := Auto_Scroll_VT {
 	stop = proc(s: Auto_Scroll, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1458)
+		use_base_auto_scroll()
+		put_op(o, 1458)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -152,7 +160,8 @@ auto_scroll_default :: proc(cx: ^Cx, loc := #caller_location) -> Auto_Scroll {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1454)
+	use_base_auto_scroll()
+	put_op(o, 1454)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &auto_scroll_vt}
 }
@@ -178,7 +187,8 @@ base_table_2_vt := Base_Table_2_VT {
 	column_aligns = proc(s: Base_Table_2, cx: ^Cx, loc := #caller_location) -> (v: []Columnumn_Align) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 954)
+		use_base_text()
+		put_op(o, 954)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -187,7 +197,8 @@ base_table_2_vt := Base_Table_2_VT {
 	rows = proc(s: Base_Table_2, cx: ^Cx, loc := #caller_location) -> (v: [][]Paragraph_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1358)
+		use_base_text()
+		put_op(o, 1358)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -199,7 +210,8 @@ base_table_2 :: proc(cx: ^Cx, rows: [][]Paragraph, column_aligns: []Columnumn_Al
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 955)
+	use_base_text()
+	put_op(o, 955)
 	put_u32(o, u32(len(rows)))
 	for x0 in rows {
 		put_u32(o, u32(len(x0)))
@@ -223,7 +235,8 @@ reg_base_theme :: proc "contextless" () {
 base_theme_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Base_Theme {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 821)
+	use_base_theme()
+	put_op(o, 821)
 	r := obj_get(0, cx, req[:], loc)
 	return {state = {h = rd_u64(&r)}, vt = &base_theme_vt}
 }
@@ -254,7 +267,8 @@ base_theme_vt := Base_Theme_VT {
 	appearance = proc(s: Base_Theme, cx: ^Cx, loc := #caller_location) -> (v: Theme_Appearance) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1185)
+		use_base_theme()
+		put_op(o, 1185)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -263,7 +277,8 @@ base_theme_vt := Base_Theme_VT {
 	cursor_blink = proc(s: Base_Theme, cx: ^Cx, loc := #caller_location) -> (v: Cursor_Blink_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1341)
+		use_base_theme()
+		put_op(o, 1341)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -272,7 +287,8 @@ base_theme_vt := Base_Theme_VT {
 	plot = proc(s: Base_Theme, cx: ^Cx, loc := #caller_location) -> (v: Plot_Theme_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1342)
+		use_base_theme()
+		put_op(o, 1342)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -281,7 +297,8 @@ base_theme_vt := Base_Theme_VT {
 	resizable = proc(s: Base_Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_Resizable_Theme) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1186)
+		use_base_theme()
+		put_op(o, 1186)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -290,7 +307,8 @@ base_theme_vt := Base_Theme_VT {
 	scrollbar = proc(s: Base_Theme, cx: ^Cx, loc := #caller_location) -> (v: Scrollbar_Theme_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1343)
+		use_base_theme()
+		put_op(o, 1343)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -299,7 +317,8 @@ base_theme_vt := Base_Theme_VT {
 	tokens = proc(s: Base_Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_Semantic_Theme_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1193)
+		use_base_theme()
+		put_op(o, 1193)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -308,7 +327,8 @@ base_theme_vt := Base_Theme_VT {
 	set_appearance = proc(s: Base_Theme, cx: ^Cx, value: Theme_Appearance, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1187)
+		use_base_theme()
+		put_op(o, 1187)
 		put_u64(o, s.h)
 		put_u16(o, u16(value))
 		state_set(cx, req[:], loc)
@@ -316,7 +336,8 @@ base_theme_vt := Base_Theme_VT {
 	set_cursor_blink = proc(s: Base_Theme, cx: ^Cx, value: Cursor_Blink, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1188)
+		use_base_theme()
+		put_op(o, 1188)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -324,7 +345,8 @@ base_theme_vt := Base_Theme_VT {
 	set_plot = proc(s: Base_Theme, cx: ^Cx, value: Plot_Theme, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1189)
+		use_base_theme()
+		put_op(o, 1189)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -332,7 +354,8 @@ base_theme_vt := Base_Theme_VT {
 	set_resizable = proc(s: Base_Theme, cx: ^Cx, value: Resizable_Theme, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1190)
+		use_base_theme()
+		put_op(o, 1190)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -340,7 +363,8 @@ base_theme_vt := Base_Theme_VT {
 	set_scrollbar = proc(s: Base_Theme, cx: ^Cx, value: Scrollbar_Theme, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1191)
+		use_base_theme()
+		put_op(o, 1191)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -348,7 +372,8 @@ base_theme_vt := Base_Theme_VT {
 	set_tokens = proc(s: Base_Theme, cx: ^Cx, value: Semantic_Theme_Tokens, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1192)
+		use_base_theme()
+		put_op(o, 1192)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -359,7 +384,8 @@ base_theme_global :: proc(cx: ^Cx, loc := #caller_location) -> Base_Theme {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 820)
+	use_base_theme()
+	put_op(o, 820)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &base_theme_vt}
 }
@@ -389,7 +415,8 @@ base_tree_entry_vt := Base_Tree_Entry_VT {
 	depth = proc(s: Base_Tree_Entry, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 834)
+		use_base_tree()
+		put_op(o, 834)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -398,7 +425,8 @@ base_tree_entry_vt := Base_Tree_Entry_VT {
 	is_disabled = proc(s: Base_Tree_Entry, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 835)
+		use_base_tree()
+		put_op(o, 835)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -407,7 +435,8 @@ base_tree_entry_vt := Base_Tree_Entry_VT {
 	is_expanded = proc(s: Base_Tree_Entry, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 836)
+		use_base_tree()
+		put_op(o, 836)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -416,7 +445,8 @@ base_tree_entry_vt := Base_Tree_Entry_VT {
 	is_folder = proc(s: Base_Tree_Entry, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 837)
+		use_base_tree()
+		put_op(o, 837)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -425,7 +455,8 @@ base_tree_entry_vt := Base_Tree_Entry_VT {
 	is_root = proc(s: Base_Tree_Entry, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 838)
+		use_base_tree()
+		put_op(o, 838)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -434,7 +465,8 @@ base_tree_entry_vt := Base_Tree_Entry_VT {
 	item = proc(s: Base_Tree_Entry, cx: ^Cx, loc := #caller_location) -> (v: Base_Tree_Item) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 839)
+		use_base_tree()
+		put_op(o, 839)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -446,7 +478,8 @@ base_tree_entry :: proc(cx: ^Cx, item: Tree_Item, depth: int, loc := #caller_loc
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 840)
+	use_base_tree()
+	put_op(o, 840)
 	put_vtape(o, item.nd)
 	put_usize(o, depth)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -495,7 +528,8 @@ calendar_state_vt := Calendar_State_VT {
 	current_month = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: u8) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 256)
+		use_base_calendar()
+		put_op(o, 256)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -504,7 +538,8 @@ calendar_state_vt := Calendar_State_VT {
 	current_year = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: i32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 257)
+		use_base_calendar()
+		put_op(o, 257)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -513,7 +548,8 @@ calendar_state_vt := Calendar_State_VT {
 	date = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: Date) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 258)
+		use_base_calendar()
+		put_op(o, 258)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -522,7 +558,8 @@ calendar_state_vt := Calendar_State_VT {
 	days = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: [][]Naive_Date) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1324)
+		use_base_calendar()
+		put_op(o, 1324)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -531,7 +568,8 @@ calendar_state_vt := Calendar_State_VT {
 	disabled_matcher_ref = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Matcher)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 259)
+		use_base_calendar()
+		put_op(o, 259)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -540,7 +578,8 @@ calendar_state_vt := Calendar_State_VT {
 	has_next_year_page = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 260)
+		use_base_calendar()
+		put_op(o, 260)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -549,7 +588,8 @@ calendar_state_vt := Calendar_State_VT {
 	has_prev_year_page = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 261)
+		use_base_calendar()
+		put_op(o, 261)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -558,7 +598,8 @@ calendar_state_vt := Calendar_State_VT {
 	month_days = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: [][][]Naive_Date) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1325)
+		use_base_calendar()
+		put_op(o, 1325)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -567,7 +608,8 @@ calendar_state_vt := Calendar_State_VT {
 	number_of_months = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 264)
+		use_base_calendar()
+		put_op(o, 264)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -576,7 +618,8 @@ calendar_state_vt := Calendar_State_VT {
 	offset_year_month = proc(s: Calendar_State, cx: ^Cx, offset: int, loc := #caller_location) -> (v: Tuple_I32_U32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 265)
+		use_base_calendar()
+		put_op(o, 265)
 		put_u64(o, s.h)
 		put_usize(o, offset)
 		r := state_get(s.h, cx, req[:], loc)
@@ -586,7 +629,8 @@ calendar_state_vt := Calendar_State_VT {
 	today = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: Naive_Date) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1328)
+		use_base_calendar()
+		put_op(o, 1328)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -595,7 +639,8 @@ calendar_state_vt := Calendar_State_VT {
 	view = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: Calendar_View) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 273)
+		use_base_calendar()
+		put_op(o, 273)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -604,7 +649,8 @@ calendar_state_vt := Calendar_State_VT {
 	years_on_page = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: []i32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 274)
+		use_base_calendar()
+		put_op(o, 274)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -613,7 +659,8 @@ calendar_state_vt := Calendar_State_VT {
 	activate_date = proc(s: Calendar_State, cx: ^Cx, value: Naive_Date, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1322)
+		use_base_calendar()
+		put_op(o, 1322)
 		put_u64(o, s.h)
 		put_naive_date(o, value)
 		r := state_call(s.h, cx, req[:], loc)
@@ -623,7 +670,8 @@ calendar_state_vt := Calendar_State_VT {
 	apply_date = proc(s: Calendar_State, cx: ^Cx, date: Date, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1323)
+		use_base_calendar()
+		put_op(o, 1323)
 		put_u64(o, s.h)
 		put_Date(o, date)
 		r := state_call(s.h, cx, req[:], loc)
@@ -633,7 +681,8 @@ calendar_state_vt := Calendar_State_VT {
 	next_year_page = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 591)
+		use_base_calendar()
+		put_op(o, 591)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -642,7 +691,8 @@ calendar_state_vt := Calendar_State_VT {
 	prev_year_page = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 592)
+		use_base_calendar()
+		put_op(o, 592)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -651,7 +701,8 @@ calendar_state_vt := Calendar_State_VT {
 	select_date = proc(s: Calendar_State, cx: ^Cx, value: Naive_Date, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1326)
+		use_base_calendar()
+		put_op(o, 1326)
 		put_u64(o, s.h)
 		put_naive_date(o, value)
 		r := state_call(s.h, cx, req[:], loc)
@@ -661,21 +712,24 @@ calendar_state_vt := Calendar_State_VT {
 	next_month = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 263)
+		use_base_calendar()
+		put_op(o, 263)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	prev_month = proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 266)
+		use_base_calendar()
+		put_op(o, 266)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	select_month = proc(s: Calendar_State, cx: ^Cx, month: u8, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 267)
+		use_base_calendar()
+		put_op(o, 267)
 		put_u64(o, s.h)
 		put_u8(o, u8(month))
 		state_set(cx, req[:], loc)
@@ -683,7 +737,8 @@ calendar_state_vt := Calendar_State_VT {
 	select_year = proc(s: Calendar_State, cx: ^Cx, year: i32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 268)
+		use_base_calendar()
+		put_op(o, 268)
 		put_u64(o, s.h)
 		put_u32(o, u32(year))
 		state_set(cx, req[:], loc)
@@ -691,7 +746,8 @@ calendar_state_vt := Calendar_State_VT {
 	set_date = proc(s: Calendar_State, cx: ^Cx, date: Date_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1327)
+		use_base_calendar()
+		put_op(o, 1327)
 		put_u64(o, s.h)
 		put_Date_Into(o, date)
 		state_set(cx, req[:], loc)
@@ -699,7 +755,8 @@ calendar_state_vt := Calendar_State_VT {
 	set_disabled_matcher = proc(s: Calendar_State, cx: ^Cx, matcher: Matcher_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 593)
+		use_base_calendar()
+		put_op(o, 593)
 		put_u64(o, s.h)
 		put_Matcher_Into(o, matcher)
 		state_set(cx, req[:], loc)
@@ -707,7 +764,8 @@ calendar_state_vt := Calendar_State_VT {
 	set_number_of_months = proc(s: Calendar_State, cx: ^Cx, n_: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 269)
+		use_base_calendar()
+		put_op(o, 269)
 		put_u64(o, s.h)
 		put_usize(o, n_)
 		state_set(cx, req[:], loc)
@@ -715,7 +773,8 @@ calendar_state_vt := Calendar_State_VT {
 	set_view = proc(s: Calendar_State, cx: ^Cx, view: Calendar_View, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 270)
+		use_base_calendar()
+		put_op(o, 270)
 		put_u64(o, s.h)
 		put_u16(o, u16(view))
 		state_set(cx, req[:], loc)
@@ -723,7 +782,8 @@ calendar_state_vt := Calendar_State_VT {
 	set_year_range = proc(s: Calendar_State, cx: ^Cx, range: Tuple_I32_I32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 271)
+		use_base_calendar()
+		put_op(o, 271)
 		put_u64(o, s.h)
 		put_u32(o, u32(range.v0))
 		put_u32(o, u32(range.v1))
@@ -733,7 +793,7 @@ calendar_state_vt := Calendar_State_VT {
 		slot, generation := keep_handler(cx, h, 110, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 272)
+		put_op(o, 272)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -760,14 +820,14 @@ Calendar_State_Builder_VT :: struct {
 calendar_state_builder_vt := Calendar_State_Builder_VT {
 	disabled_matcher = proc(b: Calendar_State_Builder, matcher: Matcher_Into) -> Calendar_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_Matcher_Into(o, matcher)
 		o[b.count_at] += 1
 		return b
 	},
 	year_range = proc(b: Calendar_State_Builder, range: Tuple_I32_I32) -> Calendar_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u32(o, u32(range.v0))
 		put_u32(o, u32(range.v1))
 		o[b.count_at] += 1
@@ -782,7 +842,8 @@ calendar_state :: proc(cx: ^Cx, loc := #caller_location) -> Calendar_State_Build
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 262)
+	use_base_calendar()
+	put_op(o, 262)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &calendar_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -817,7 +878,8 @@ carousel_state_vt := Carousel_State_VT {
 	axis = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: Axis) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 355)
+		use_component_carousel()
+		put_op(o, 355)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -826,7 +888,8 @@ carousel_state_vt := Carousel_State_VT {
 	has_next = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 356)
+		use_component_carousel()
+		put_op(o, 356)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -835,7 +898,8 @@ carousel_state_vt := Carousel_State_VT {
 	has_previous = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 357)
+		use_component_carousel()
+		put_op(o, 357)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -844,7 +908,8 @@ carousel_state_vt := Carousel_State_VT {
 	is_looping = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 358)
+		use_component_carousel()
+		put_op(o, 358)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -853,7 +918,8 @@ carousel_state_vt := Carousel_State_VT {
 	item_count = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 359)
+		use_component_carousel()
+		put_op(o, 359)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -862,7 +928,8 @@ carousel_state_vt := Carousel_State_VT {
 	selected_index = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 361)
+		use_component_carousel()
+		put_op(o, 361)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -871,7 +938,8 @@ carousel_state_vt := Carousel_State_VT {
 	select_first = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 647)
+		use_component_carousel()
+		put_op(o, 647)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -880,7 +948,8 @@ carousel_state_vt := Carousel_State_VT {
 	select_index = proc(s: Carousel_State, cx: ^Cx, index: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 648)
+		use_component_carousel()
+		put_op(o, 648)
 		put_u64(o, s.h)
 		put_usize(o, index)
 		r := state_call(s.h, cx, req[:], loc)
@@ -890,7 +959,8 @@ carousel_state_vt := Carousel_State_VT {
 	select_last = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 649)
+		use_component_carousel()
+		put_op(o, 649)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -899,7 +969,8 @@ carousel_state_vt := Carousel_State_VT {
 	select_next = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 650)
+		use_component_carousel()
+		put_op(o, 650)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -908,7 +979,8 @@ carousel_state_vt := Carousel_State_VT {
 	select_previous = proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 651)
+		use_component_carousel()
+		put_op(o, 651)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -917,7 +989,8 @@ carousel_state_vt := Carousel_State_VT {
 	set_axis = proc(s: Carousel_State, cx: ^Cx, axis: Axis, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 362)
+		use_component_carousel()
+		put_op(o, 362)
 		put_u64(o, s.h)
 		put_u16(o, u16(axis))
 		state_set(cx, req[:], loc)
@@ -925,7 +998,8 @@ carousel_state_vt := Carousel_State_VT {
 	set_item_count = proc(s: Carousel_State, cx: ^Cx, item_count: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 363)
+		use_component_carousel()
+		put_op(o, 363)
 		put_u64(o, s.h)
 		put_usize(o, item_count)
 		state_set(cx, req[:], loc)
@@ -933,7 +1007,8 @@ carousel_state_vt := Carousel_State_VT {
 	set_looping = proc(s: Carousel_State, cx: ^Cx, looping: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 364)
+		use_component_carousel()
+		put_op(o, 364)
 		put_u64(o, s.h)
 		put_u8(o, u8(looping))
 		state_set(cx, req[:], loc)
@@ -941,7 +1016,8 @@ carousel_state_vt := Carousel_State_VT {
 	set_selected_index = proc(s: Carousel_State, cx: ^Cx, index: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 365)
+		use_component_carousel()
+		put_op(o, 365)
 		put_u64(o, s.h)
 		put_usize(o, index)
 		state_set(cx, req[:], loc)
@@ -950,7 +1026,7 @@ carousel_state_vt := Carousel_State_VT {
 		slot, generation := keep_handler(cx, h, 91, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 366)
+		put_op(o, 366)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -978,21 +1054,21 @@ Carousel_State_Builder_VT :: struct {
 carousel_state_builder_vt := Carousel_State_Builder_VT {
 	with_axis = proc(b: Carousel_State_Builder, axis: Axis) -> Carousel_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u16(o, u16(axis))
 		o[b.count_at] += 1
 		return b
 	},
 	with_looping = proc(b: Carousel_State_Builder, looping: bool) -> Carousel_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u8(o, u8(looping))
 		o[b.count_at] += 1
 		return b
 	},
 	with_selected_index = proc(b: Carousel_State_Builder, index: int) -> Carousel_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_usize(o, index)
 		o[b.count_at] += 1
 		return b
@@ -1006,7 +1082,8 @@ carousel_state :: proc(cx: ^Cx, item_count: int, loc := #caller_location) -> Car
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 360)
+	use_component_carousel()
+	put_op(o, 360)
 	put_usize(o, item_count)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &carousel_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -1032,7 +1109,8 @@ code_action_menu_state_vt := Code_Action_Menu_State_VT {
 	revision = proc(s: Code_Action_Menu_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1464)
+		use_base_input()
+		put_op(o, 1464)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1044,7 +1122,8 @@ code_action_menu_state_default :: proc(cx: ^Cx, loc := #caller_location) -> Code
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1463)
+	use_base_input()
+	put_op(o, 1463)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &code_action_menu_state_vt}
 }
@@ -1084,7 +1163,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	active_tab = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 275)
+		use_base_color_picker()
+		put_op(o, 275)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1093,7 +1173,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	displayed_color = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Hsla)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 278)
+		use_base_color_picker()
+		put_op(o, 278)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1102,7 +1183,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	hex_input = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Input_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1655)
+		use_base_color_picker()
+		put_op(o, 1655)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1111,7 +1193,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	is_open = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 279)
+		use_base_color_picker()
+		put_op(o, 279)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1120,7 +1203,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	preview = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Hsla)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 281)
+		use_base_color_picker()
+		put_op(o, 281)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1129,7 +1213,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	sliders = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Hsla_Sliders) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 773)
+		use_base_color_picker()
+		put_op(o, 773)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1138,7 +1223,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	value = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Hsla)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 287)
+		use_base_color_picker()
+		put_op(o, 287)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1147,7 +1233,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	try_value = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Hsla), ok: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 287)
+		use_base_color_picker()
+		put_op(o, 287)
 		put_u64(o, s.h)
 		r := state_try(s.h, cx, req[:], loc) or_return
 		rd_into(&r, &v)
@@ -1156,7 +1243,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	commit_hex = proc(s: Color_Picker_State, cx: ^Cx, value: string, loc := #caller_location) -> (v: Maybe(Hsla)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 594)
+		use_base_color_picker()
+		put_op(o, 594)
 		put_u64(o, s.h)
 		put_str(o, value)
 		r := state_call(s.h, cx, req[:], loc)
@@ -1166,7 +1254,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	preview_hex = proc(s: Color_Picker_State, cx: ^Cx, value: string, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 596)
+		use_base_color_picker()
+		put_op(o, 596)
 		put_u64(o, s.h)
 		put_str(o, value)
 		r := state_call(s.h, cx, req[:], loc)
@@ -1176,21 +1265,24 @@ color_picker_state_vt := Color_Picker_State_VT {
 	clear_preview = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 276)
+		use_base_color_picker()
+		put_op(o, 276)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	clear_value = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 277)
+		use_base_color_picker()
+		put_op(o, 277)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	preview_color = proc(s: Color_Picker_State, cx: ^Cx, value: Color, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 595)
+		use_base_color_picker()
+		put_op(o, 595)
 		put_u64(o, s.h)
 		put_color(o, value)
 		state_set(cx, req[:], loc)
@@ -1198,7 +1290,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	select_color = proc(s: Color_Picker_State, cx: ^Cx, value: Color, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 597)
+		use_base_color_picker()
+		put_op(o, 597)
 		put_u64(o, s.h)
 		put_color(o, value)
 		state_set(cx, req[:], loc)
@@ -1206,7 +1299,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	set_active_tab = proc(s: Color_Picker_State, cx: ^Cx, tab: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 282)
+		use_base_color_picker()
+		put_op(o, 282)
 		put_u64(o, s.h)
 		put_usize(o, tab)
 		state_set(cx, req[:], loc)
@@ -1214,7 +1308,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	set_open = proc(s: Color_Picker_State, cx: ^Cx, open: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 283)
+		use_base_color_picker()
+		put_op(o, 283)
 		put_u64(o, s.h)
 		put_u8(o, u8(open))
 		state_set(cx, req[:], loc)
@@ -1222,7 +1317,8 @@ color_picker_state_vt := Color_Picker_State_VT {
 	set_value = proc(s: Color_Picker_State, cx: ^Cx, value: Color, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 598)
+		use_base_color_picker()
+		put_op(o, 598)
 		put_u64(o, s.h)
 		put_color(o, value)
 		state_set(cx, req[:], loc)
@@ -1230,21 +1326,24 @@ color_picker_state_vt := Color_Picker_State_VT {
 	sync_pending_value = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 285)
+		use_base_color_picker()
+		put_op(o, 285)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	toggle_open = proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 286)
+		use_base_color_picker()
+		put_op(o, 286)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	update_color = proc(s: Color_Picker_State, cx: ^Cx, value: Color, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 599)
+		use_base_color_picker()
+		put_op(o, 599)
 		put_u64(o, s.h)
 		put_color(o, value)
 		state_set(cx, req[:], loc)
@@ -1253,7 +1352,7 @@ color_picker_state_vt := Color_Picker_State_VT {
 		slot, generation := keep_handler(cx, h, 84, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 284)
+		put_op(o, 284)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -1279,7 +1378,7 @@ Color_Picker_State_Builder_VT :: struct {
 color_picker_state_builder_vt := Color_Picker_State_Builder_VT {
 	default_value = proc(b: Color_Picker_State_Builder, value: Color) -> Color_Picker_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_color(o, value)
 		o[b.count_at] += 1
 		return b
@@ -1293,7 +1392,8 @@ color_picker_state :: proc(cx: ^Cx, loc := #caller_location) -> Color_Picker_Sta
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 280)
+	use_base_color_picker()
+	put_op(o, 280)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &color_picker_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -1325,7 +1425,8 @@ combobox_state_vt := Combobox_State_VT {
 	query = proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1108)
+		use_component_combobox()
+		put_op(o, 1108)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1334,7 +1435,8 @@ combobox_state_vt := Combobox_State_VT {
 	selected_value = proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1110)
+		use_component_combobox()
+		put_op(o, 1110)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1343,7 +1445,8 @@ combobox_state_vt := Combobox_State_VT {
 	selected_values = proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1111)
+		use_component_combobox()
+		put_op(o, 1111)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1352,7 +1455,8 @@ combobox_state_vt := Combobox_State_VT {
 	selection = proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_Base_Index_Path_Search_Item) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1112)
+		use_component_combobox()
+		put_op(o, 1112)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1361,7 +1465,8 @@ combobox_state_vt := Combobox_State_VT {
 	add_selected_index = proc(s: Combobox_State, cx: ^Cx, index: Index_Path, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1104)
+		use_component_combobox()
+		put_op(o, 1104)
 		put_u64(o, s.h)
 		index_rec: Base_Index_Path
 		switch x in index {
@@ -1378,7 +1483,8 @@ combobox_state_vt := Combobox_State_VT {
 	remove_selected_index = proc(s: Combobox_State, cx: ^Cx, index: Index_Path, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1109)
+		use_component_combobox()
+		put_op(o, 1109)
 		put_u64(o, s.h)
 		index_rec: Base_Index_Path
 		switch x in index {
@@ -1395,21 +1501,24 @@ combobox_state_vt := Combobox_State_VT {
 	clear_selection = proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1105)
+		use_component_combobox()
+		put_op(o, 1105)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	focus = proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1106)
+		use_component_combobox()
+		put_op(o, 1106)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_items = proc(s: Combobox_State, cx: ^Cx, items: Row_Source, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1113)
+		use_component_combobox()
+		put_op(o, 1113)
 		put_u64(o, s.h)
 		put_u64(o, items.h)
 		state_set(cx, req[:], loc)
@@ -1417,7 +1526,8 @@ combobox_state_vt := Combobox_State_VT {
 	set_query = proc(s: Combobox_State, cx: ^Cx, query: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1114)
+		use_component_combobox()
+		put_op(o, 1114)
 		put_u64(o, s.h)
 		put_str(o, query)
 		state_set(cx, req[:], loc)
@@ -1425,7 +1535,8 @@ combobox_state_vt := Combobox_State_VT {
 	set_selected_indices = proc(s: Combobox_State, cx: ^Cx, indices: Index_Path_List, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1115)
+		use_component_combobox()
+		put_op(o, 1115)
 		put_u64(o, s.h)
 		indices_rec: []Base_Index_Path
 		switch x in indices {
@@ -1444,7 +1555,8 @@ combobox_state_vt := Combobox_State_VT {
 	set_selected_values = proc(s: Combobox_State, cx: ^Cx, values: []string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1116)
+		use_component_combobox()
+		put_op(o, 1116)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(values)))
 		for x0 in values {
@@ -1456,7 +1568,7 @@ combobox_state_vt := Combobox_State_VT {
 		slot, generation := keep_handler(cx, h, 102, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1117)
+		put_op(o, 1117)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -1483,14 +1595,14 @@ Combobox_State_Builder_VT :: struct {
 combobox_state_builder_vt := Combobox_State_Builder_VT {
 	multiple = proc(b: Combobox_State_Builder, multiple: bool) -> Combobox_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u8(o, u8(multiple))
 		o[b.count_at] += 1
 		return b
 	},
 	searchable = proc(b: Combobox_State_Builder, searchable: bool) -> Combobox_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u8(o, u8(searchable))
 		o[b.count_at] += 1
 		return b
@@ -1504,7 +1616,8 @@ combobox_state :: proc(cx: ^Cx, delegate: Row_Source, selected_indices: Index_Pa
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1107)
+	use_component_combobox()
+	put_op(o, 1107)
 	put_u64(o, delegate.h)
 	selected_indices_rec: []Base_Index_Path
 	switch x in selected_indices {
@@ -1544,7 +1657,8 @@ command_state_vt := Command_State_VT {
 	is_loading = proc(s: Command_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 367)
+		use_component_command()
+		put_op(o, 367)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1553,7 +1667,8 @@ command_state_vt := Command_State_VT {
 	matched_count = proc(s: Command_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 368)
+		use_component_command()
+		put_op(o, 368)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1562,7 +1677,8 @@ command_state_vt := Command_State_VT {
 	query = proc(s: Command_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 370)
+		use_component_command()
+		put_op(o, 370)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1571,7 +1687,8 @@ command_state_vt := Command_State_VT {
 	selected_index = proc(s: Command_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Base_Index_Path)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 371)
+		use_component_command()
+		put_op(o, 371)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1580,14 +1697,16 @@ command_state_vt := Command_State_VT {
 	focus = proc(s: Command_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 590)
+		use_component_command()
+		put_op(o, 590)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_loading = proc(s: Command_State, cx: ^Cx, loading: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 372)
+		use_component_command()
+		put_op(o, 372)
 		put_u64(o, s.h)
 		put_u8(o, u8(loading))
 		state_set(cx, req[:], loc)
@@ -1595,7 +1714,8 @@ command_state_vt := Command_State_VT {
 	set_query = proc(s: Command_State, cx: ^Cx, query: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 373)
+		use_component_command()
+		put_op(o, 373)
 		put_u64(o, s.h)
 		put_str(o, query)
 		state_set(cx, req[:], loc)
@@ -1603,7 +1723,8 @@ command_state_vt := Command_State_VT {
 	set_selected_index = proc(s: Command_State, cx: ^Cx, index: Maybe_Index_Path, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 980)
+		use_component_command()
+		put_op(o, 980)
 		put_u64(o, s.h)
 		index_rec: Maybe(Base_Index_Path)
 		switch x in index {
@@ -1626,7 +1747,8 @@ command_state :: proc(cx: ^Cx, loc := #caller_location) -> Command_State {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 369)
+	use_component_command()
+	put_op(o, 369)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &command_state_vt}
 }
@@ -1651,7 +1773,8 @@ completion_menu_state_vt := Completion_Menu_State_VT {
 	revision = proc(s: Completion_Menu_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1466)
+		use_base_input()
+		put_op(o, 1466)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1663,7 +1786,8 @@ completion_menu_state_default :: proc(cx: ^Cx, loc := #caller_location) -> Compl
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1465)
+	use_base_input()
+	put_op(o, 1465)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &completion_menu_state_vt}
 }
@@ -1690,7 +1814,8 @@ cursor_blink_read_vt := Cursor_Blink_Read_VT {
 	idle_timeout = proc(s: Cursor_Blink_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(time.Duration)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1444)
+		use_base_input()
+		put_op(o, 1444)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1699,7 +1824,8 @@ cursor_blink_read_vt := Cursor_Blink_Read_VT {
 	interval = proc(s: Cursor_Blink_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(time.Duration)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1445)
+		use_base_input()
+		put_op(o, 1445)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1708,7 +1834,8 @@ cursor_blink_read_vt := Cursor_Blink_Read_VT {
 	is_steady = proc(s: Cursor_Blink_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1372)
+		use_base_input()
+		put_op(o, 1372)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1736,7 +1863,8 @@ date_picker_state_vt := Date_Picker_State_VT {
 	date = proc(s: Date_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Date) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 374)
+		use_component_time()
+		put_op(o, 374)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1745,7 +1873,8 @@ date_picker_state_vt := Date_Picker_State_VT {
 	date_time = proc(s: Date_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Date_Time) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 375)
+		use_component_time()
+		put_op(o, 375)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1754,7 +1883,8 @@ date_picker_state_vt := Date_Picker_State_VT {
 	set_date = proc(s: Date_Picker_State, cx: ^Cx, date: Date_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1331)
+		use_component_time()
+		put_op(o, 1331)
 		put_u64(o, s.h)
 		put_Date_Into(o, date)
 		state_set(cx, req[:], loc)
@@ -1762,7 +1892,8 @@ date_picker_state_vt := Date_Picker_State_VT {
 	set_date_time = proc(s: Date_Picker_State, cx: ^Cx, value: Date_Time, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1332)
+		use_component_time()
+		put_op(o, 1332)
 		put_u64(o, s.h)
 		put_Date_Time(o, value)
 		state_set(cx, req[:], loc)
@@ -1770,7 +1901,8 @@ date_picker_state_vt := Date_Picker_State_VT {
 	set_year_range = proc(s: Date_Picker_State, cx: ^Cx, range: Tuple_I32_I32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 378)
+		use_component_time()
+		put_op(o, 378)
 		put_u64(o, s.h)
 		put_u32(o, u32(range.v0))
 		put_u32(o, u32(range.v1))
@@ -1780,7 +1912,7 @@ date_picker_state_vt := Date_Picker_State_VT {
 		slot, generation := keep_handler(cx, h, 112, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 379)
+		put_op(o, 379)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -1812,49 +1944,49 @@ Date_Picker_State_Builder_VT :: struct {
 date_picker_state_builder_vt := Date_Picker_State_Builder_VT {
 	date_format = proc(b: Date_Picker_State_Builder, format: string) -> Date_Picker_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_str(o, format)
 		o[b.count_at] += 1
 		return b
 	},
 	default_time = proc(b: Date_Picker_State_Builder, time: Naive_Time) -> Date_Picker_State_Builder {
 		o := b.req
-		put_u16(o, 6)
+		put_op(o, 6)
 		put_naive_time(o, time)
 		o[b.count_at] += 1
 		return b
 	},
 	disabled_matcher = proc(b: Date_Picker_State_Builder, disabled: Matcher_Into) -> Date_Picker_State_Builder {
 		o := b.req
-		put_u16(o, 5)
+		put_op(o, 5)
 		put_Matcher_Into(o, disabled)
 		o[b.count_at] += 1
 		return b
 	},
 	first_day_of_week = proc(b: Date_Picker_State_Builder, day: Weekday) -> Date_Picker_State_Builder {
 		o := b.req
-		put_u16(o, 7)
+		put_op(o, 7)
 		put_weekday(o, day)
 		o[b.count_at] += 1
 		return b
 	},
 	hour_cycle = proc(b: Date_Picker_State_Builder, hour_cycle: Hour_Cycle) -> Date_Picker_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u16(o, u16(hour_cycle))
 		o[b.count_at] += 1
 		return b
 	},
 	number_of_months = proc(b: Date_Picker_State_Builder, number_of_months: int) -> Date_Picker_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_usize(o, number_of_months)
 		o[b.count_at] += 1
 		return b
 	},
 	time_precision = proc(b: Date_Picker_State_Builder, precision: Time_Precision) -> Date_Picker_State_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		put_u16(o, u16(precision))
 		o[b.count_at] += 1
 		return b
@@ -1868,7 +2000,8 @@ date_picker_state :: proc(cx: ^Cx, loc := #caller_location) -> Date_Picker_State
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 376)
+	use_component_time()
+	put_op(o, 376)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &date_picker_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -1877,7 +2010,8 @@ date_picker_state_range :: proc(cx: ^Cx, loc := #caller_location) -> Date_Picker
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 377)
+	use_component_time()
+	put_op(o, 377)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &date_picker_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -1927,7 +2061,8 @@ diagnostic_set_vt := Diagnostic_Set_VT {
 	for_offset = proc(s: Diagnostic_Set, cx: ^Cx, offset: int, loc := #caller_location) -> (v: Maybe(Diagnostic_Entry)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 886)
+		use_base_input()
+		put_op(o, 886)
 		put_u64(o, s.h)
 		put_usize(o, offset)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -1937,7 +2072,8 @@ diagnostic_set_vt := Diagnostic_Set_VT {
 	is_empty = proc(s: Diagnostic_Set, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 887)
+		use_base_input()
+		put_op(o, 887)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1946,7 +2082,8 @@ diagnostic_set_vt := Diagnostic_Set_VT {
 	iter = proc(s: Diagnostic_Set, cx: ^Cx, loc := #caller_location) -> (v: []Diagnostic_Entry) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1314)
+		use_base_input()
+		put_op(o, 1314)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1955,7 +2092,8 @@ diagnostic_set_vt := Diagnostic_Set_VT {
 	len_ = proc(s: Diagnostic_Set, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 888)
+		use_base_input()
+		put_op(o, 888)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -1964,7 +2102,8 @@ diagnostic_set_vt := Diagnostic_Set_VT {
 	range = proc(s: Diagnostic_Set, cx: ^Cx, range: Range, loc := #caller_location) -> (v: []Diagnostic_Entry) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1315)
+		use_base_input()
+		put_op(o, 1315)
 		put_u64(o, s.h)
 		put_range(o, range)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -1974,14 +2113,16 @@ diagnostic_set_vt := Diagnostic_Set_VT {
 	clear = proc(s: Diagnostic_Set, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 885)
+		use_base_input()
+		put_op(o, 885)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	extend = proc(s: Diagnostic_Set, cx: ^Cx, diagnostics: []Diagnostic, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1635)
+		use_base_input()
+		put_op(o, 1635)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(diagnostics)))
 		for x0 in diagnostics {
@@ -1992,7 +2133,8 @@ diagnostic_set_vt := Diagnostic_Set_VT {
 	push = proc(s: Diagnostic_Set, cx: ^Cx, diagnostic: Diagnostic, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 889)
+		use_base_input()
+		put_op(o, 889)
 		put_u64(o, s.h)
 		put_vtape(o, diagnostic.nd)
 		state_set(cx, req[:], loc)
@@ -2021,7 +2163,8 @@ dialog_handle_vt := Dialog_Handle_VT {
 	is_open = proc(s: Dialog_Handle, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 775)
+		use_base_dialog()
+		put_op(o, 775)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2030,14 +2173,16 @@ dialog_handle_vt := Dialog_Handle_VT {
 	close = proc(s: Dialog_Handle, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 774)
+		use_base_dialog()
+		put_op(o, 774)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	open = proc(s: Dialog_Handle, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 777)
+		use_base_dialog()
+		put_op(o, 777)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -2047,7 +2192,8 @@ dialog_handle :: proc(cx: ^Cx, open: bool, loc := #caller_location) -> Dialog_Ha
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 776)
+	use_base_dialog()
+	put_op(o, 776)
 	put_u8(o, u8(open))
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &dialog_handle_vt}
@@ -2075,7 +2221,8 @@ diff_annotation_vt := Diff_Annotation_VT {
 	id = proc(s: Diff_Annotation, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1667)
+		use_component_diff()
+		put_op(o, 1667)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2084,7 +2231,8 @@ diff_annotation_vt := Diff_Annotation_VT {
 	path = proc(s: Diff_Annotation, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 983)
+		use_component_diff()
+		put_op(o, 983)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2093,7 +2241,8 @@ diff_annotation_vt := Diff_Annotation_VT {
 	position = proc(s: Diff_Annotation, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diff_Line_Position)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 984)
+		use_component_diff()
+		put_op(o, 984)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2105,7 +2254,8 @@ diff_annotation_file :: proc(cx: ^Cx, id: Id, path: string, loc := #caller_locat
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 981)
+	use_component_diff()
+	put_op(o, 981)
 	put_id(o, id)
 	put_str(o, path)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -2116,7 +2266,8 @@ diff_annotation_line :: proc(cx: ^Cx, id: Id, position: Diff_Line_Position, loc 
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 982)
+	use_component_diff()
+	put_op(o, 982)
 	put_id(o, id)
 	put_u64(o, position.h)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -2149,7 +2300,8 @@ diff_conflict_vt := Diff_Conflict_VT {
 	base_label = proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1668)
+		use_component_diff()
+		put_op(o, 1668)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2158,7 +2310,8 @@ diff_conflict_vt := Diff_Conflict_VT {
 	base_lines = proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1669)
+		use_component_diff()
+		put_op(o, 1669)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2167,7 +2320,8 @@ diff_conflict_vt := Diff_Conflict_VT {
 	current_label = proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1670)
+		use_component_diff()
+		put_op(o, 1670)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2176,7 +2330,8 @@ diff_conflict_vt := Diff_Conflict_VT {
 	current_lines = proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1671)
+		use_component_diff()
+		put_op(o, 1671)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2185,7 +2340,8 @@ diff_conflict_vt := Diff_Conflict_VT {
 	incoming_label = proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1672)
+		use_component_diff()
+		put_op(o, 1672)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2194,7 +2350,8 @@ diff_conflict_vt := Diff_Conflict_VT {
 	incoming_lines = proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1673)
+		use_component_diff()
+		put_op(o, 1673)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2203,7 +2360,8 @@ diff_conflict_vt := Diff_Conflict_VT {
 	lines = proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1674)
+		use_component_diff()
+		put_op(o, 1674)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2242,7 +2400,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	additions = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1408)
+		use_component_diff()
+		put_op(o, 1408)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2251,7 +2410,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	conflicts = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: []Diff_Conflict) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1409)
+		use_component_diff()
+		put_op(o, 1409)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2260,7 +2420,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	deletions = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1410)
+		use_component_diff()
+		put_op(o, 1410)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2269,7 +2430,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	extended_headers = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1411)
+		use_component_diff()
+		put_op(o, 1411)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2278,7 +2440,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	has_changes = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1412)
+		use_component_diff()
+		put_op(o, 1412)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2287,7 +2450,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	is_binary = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1413)
+		use_component_diff()
+		put_op(o, 1413)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2296,7 +2460,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	is_truncated = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1414)
+		use_component_diff()
+		put_op(o, 1414)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2305,7 +2470,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	language = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1415)
+		use_component_diff()
+		put_op(o, 1415)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2314,7 +2480,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	modified_path = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1416)
+		use_component_diff()
+		put_op(o, 1416)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2323,7 +2490,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	original_path = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1417)
+		use_component_diff()
+		put_op(o, 1417)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2332,7 +2500,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	path = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1418)
+		use_component_diff()
+		put_op(o, 1418)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2341,7 +2510,8 @@ diff_file_read_vt := Diff_File_Read_VT {
 	status = proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Diff_File_Status) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1419)
+		use_component_diff()
+		put_op(o, 1419)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2371,7 +2541,8 @@ diff_gutter_marker_read_vt := Diff_Gutter_Marker_Read_VT {
 	id = proc(s: Diff_Gutter_Marker_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1675)
+		use_component_diff()
+		put_op(o, 1675)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2380,7 +2551,8 @@ diff_gutter_marker_read_vt := Diff_Gutter_Marker_Read_VT {
 	label = proc(s: Diff_Gutter_Marker_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1615)
+		use_component_diff()
+		put_op(o, 1615)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2389,7 +2561,8 @@ diff_gutter_marker_read_vt := Diff_Gutter_Marker_Read_VT {
 	position = proc(s: Diff_Gutter_Marker_Read, cx: ^Cx, loc := #caller_location) -> (v: Diff_Line_Position) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1616)
+		use_component_diff()
+		put_op(o, 1616)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2419,7 +2592,8 @@ diff_line_position_vt := Diff_Line_Position_VT {
 	line = proc(s: Diff_Line_Position, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 985)
+		use_component_diff()
+		put_op(o, 985)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2428,7 +2602,8 @@ diff_line_position_vt := Diff_Line_Position_VT {
 	path = proc(s: Diff_Line_Position, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 987)
+		use_component_diff()
+		put_op(o, 987)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2437,7 +2612,8 @@ diff_line_position_vt := Diff_Line_Position_VT {
 	side = proc(s: Diff_Line_Position, cx: ^Cx, loc := #caller_location) -> (v: Diff_Side) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 988)
+		use_component_diff()
+		put_op(o, 988)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2449,7 +2625,8 @@ diff_line_position :: proc(cx: ^Cx, path: string, side: Diff_Side, line: int, lo
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 986)
+	use_component_diff()
+	put_op(o, 986)
 	put_str(o, path)
 	put_u16(o, u16(side))
 	put_usize(o, line)
@@ -2481,7 +2658,8 @@ diff_line_range_read_vt := Diff_Line_Range_Read_VT {
 	end = proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1420)
+		use_component_diff()
+		put_op(o, 1420)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2490,7 +2668,8 @@ diff_line_range_read_vt := Diff_Line_Range_Read_VT {
 	end_side = proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #caller_location) -> (v: Diff_Side) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1421)
+		use_component_diff()
+		put_op(o, 1421)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2499,7 +2678,8 @@ diff_line_range_read_vt := Diff_Line_Range_Read_VT {
 	path = proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1422)
+		use_component_diff()
+		put_op(o, 1422)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2508,7 +2688,8 @@ diff_line_range_read_vt := Diff_Line_Range_Read_VT {
 	side = proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #caller_location) -> (v: Diff_Side) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1423)
+		use_component_diff()
+		put_op(o, 1423)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2517,7 +2698,8 @@ diff_line_range_read_vt := Diff_Line_Range_Read_VT {
 	start = proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1424)
+		use_component_diff()
+		put_op(o, 1424)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2546,7 +2728,8 @@ diff_parse_error_vt := Diff_Parse_Error_VT {
 	line = proc(s: Diff_Parse_Error, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1641)
+		use_component_diff()
+		put_op(o, 1641)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2555,7 +2738,8 @@ diff_parse_error_vt := Diff_Parse_Error_VT {
 	message = proc(s: Diff_Parse_Error, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1642)
+		use_component_diff()
+		put_op(o, 1642)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2610,7 +2794,8 @@ diff_state_vt := Diff_State_VT {
 	conflict_resolution = proc(s: Diff_State, cx: ^Cx, path: string, ix: int, loc := #caller_location) -> (v: Maybe(Diff_Conflict_Resolution)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 991)
+		use_component_diff()
+		put_op(o, 991)
 		put_u64(o, s.h)
 		put_str(o, path)
 		put_usize(o, ix)
@@ -2621,7 +2806,8 @@ diff_state_vt := Diff_State_VT {
 	context_lines = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 992)
+		use_component_diff()
+		put_op(o, 992)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2630,7 +2816,8 @@ diff_state_vt := Diff_State_VT {
 	expansion_lines = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 994)
+		use_component_diff()
+		put_op(o, 994)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2639,7 +2826,8 @@ diff_state_vt := Diff_State_VT {
 	files = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: []Diff_File_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1360)
+		use_component_diff()
+		put_op(o, 1360)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2648,7 +2836,8 @@ diff_state_vt := Diff_State_VT {
 	inline_max_line_length = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 995)
+		use_component_diff()
+		put_op(o, 995)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2657,7 +2846,8 @@ diff_state_vt := Diff_State_VT {
 	inline_unit = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diff_Inline_Unit)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 996)
+		use_component_diff()
+		put_op(o, 996)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2666,7 +2856,8 @@ diff_state_vt := Diff_State_VT {
 	is_file_collapsed = proc(s: Diff_State, cx: ^Cx, path: string, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 997)
+		use_component_diff()
+		put_op(o, 997)
 		put_u64(o, s.h)
 		put_str(o, path)
 		r := state_get(s.h, cx, req[:], loc)
@@ -2676,7 +2867,8 @@ diff_state_vt := Diff_State_VT {
 	min_collapsed_lines = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 998)
+		use_component_diff()
+		put_op(o, 998)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2685,7 +2877,8 @@ diff_state_vt := Diff_State_VT {
 	mode = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: Diff_Mode) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 999)
+		use_component_diff()
+		put_op(o, 999)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2694,7 +2887,8 @@ diff_state_vt := Diff_State_VT {
 	resolved_text = proc(s: Diff_State, cx: ^Cx, path: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1004)
+		use_component_diff()
+		put_op(o, 1004)
 		put_u64(o, s.h)
 		put_str(o, path)
 		r := state_get(s.h, cx, req[:], loc)
@@ -2704,7 +2898,8 @@ diff_state_vt := Diff_State_VT {
 	selected_lines = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diff_Line_Range_Read)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1361)
+		use_component_diff()
+		put_op(o, 1361)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2713,7 +2908,8 @@ diff_state_vt := Diff_State_VT {
 	selected_text = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1007)
+		use_component_diff()
+		put_op(o, 1007)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2722,7 +2918,8 @@ diff_state_vt := Diff_State_VT {
 	syntax_max_line_length = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1019)
+		use_component_diff()
+		put_op(o, 1019)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -2731,42 +2928,48 @@ diff_state_vt := Diff_State_VT {
 	clear_syntax_highlighter = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 989)
+		use_component_diff()
+		put_op(o, 989)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	collapse_unchanged = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 990)
+		use_component_diff()
+		put_op(o, 990)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	expand_unchanged = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 993)
+		use_component_diff()
+		put_op(o, 993)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	next_change = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1001)
+		use_component_diff()
+		put_op(o, 1001)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	previous_change = proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1002)
+		use_component_diff()
+		put_op(o, 1002)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	resolve_conflict = proc(s: Diff_State, cx: ^Cx, path: string, ix: int, resolution: Maybe(Diff_Conflict_Resolution), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1003)
+		use_component_diff()
+		put_op(o, 1003)
 		put_u64(o, s.h)
 		put_str(o, path)
 		put_usize(o, ix)
@@ -2781,7 +2984,8 @@ diff_state_vt := Diff_State_VT {
 	scroll_to_file = proc(s: Diff_State, cx: ^Cx, path: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1005)
+		use_component_diff()
+		put_op(o, 1005)
 		put_u64(o, s.h)
 		put_str(o, path)
 		state_set(cx, req[:], loc)
@@ -2789,7 +2993,8 @@ diff_state_vt := Diff_State_VT {
 	scroll_to_line = proc(s: Diff_State, cx: ^Cx, position: Diff_Line_Position, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1006)
+		use_component_diff()
+		put_op(o, 1006)
 		put_u64(o, s.h)
 		put_u64(o, position.h)
 		state_set(cx, req[:], loc)
@@ -2797,7 +3002,8 @@ diff_state_vt := Diff_State_VT {
 	set_context_lines = proc(s: Diff_State, cx: ^Cx, lines: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1008)
+		use_component_diff()
+		put_op(o, 1008)
 		put_u64(o, s.h)
 		if x0, ok := lines.?; ok {
 			put_u8(o, 1)
@@ -2810,7 +3016,8 @@ diff_state_vt := Diff_State_VT {
 	set_expansion_lines = proc(s: Diff_State, cx: ^Cx, lines: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1009)
+		use_component_diff()
+		put_op(o, 1009)
 		put_u64(o, s.h)
 		put_usize(o, lines)
 		state_set(cx, req[:], loc)
@@ -2818,7 +3025,8 @@ diff_state_vt := Diff_State_VT {
 	set_file_collapsed = proc(s: Diff_State, cx: ^Cx, path: string, collapsed: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1010)
+		use_component_diff()
+		put_op(o, 1010)
 		put_u64(o, s.h)
 		put_str(o, path)
 		put_u8(o, u8(collapsed))
@@ -2827,7 +3035,8 @@ diff_state_vt := Diff_State_VT {
 	set_files = proc(s: Diff_State, cx: ^Cx, files: []Diff_File, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1011)
+		use_component_diff()
+		put_op(o, 1011)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(files)))
 		for x0 in files {
@@ -2838,7 +3047,8 @@ diff_state_vt := Diff_State_VT {
 	set_inline_max_line_length = proc(s: Diff_State, cx: ^Cx, length: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1012)
+		use_component_diff()
+		put_op(o, 1012)
 		put_u64(o, s.h)
 		put_usize(o, length)
 		state_set(cx, req[:], loc)
@@ -2846,7 +3056,8 @@ diff_state_vt := Diff_State_VT {
 	set_inline_unit = proc(s: Diff_State, cx: ^Cx, unit: Maybe(Diff_Inline_Unit), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1013)
+		use_component_diff()
+		put_op(o, 1013)
 		put_u64(o, s.h)
 		if x0, ok := unit.?; ok {
 			put_u8(o, 1)
@@ -2859,7 +3070,8 @@ diff_state_vt := Diff_State_VT {
 	set_min_collapsed_lines = proc(s: Diff_State, cx: ^Cx, lines: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1014)
+		use_component_diff()
+		put_op(o, 1014)
 		put_u64(o, s.h)
 		put_usize(o, lines)
 		state_set(cx, req[:], loc)
@@ -2867,7 +3079,8 @@ diff_state_vt := Diff_State_VT {
 	set_mode = proc(s: Diff_State, cx: ^Cx, mode: Diff_Mode, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1015)
+		use_component_diff()
+		put_op(o, 1015)
 		put_u64(o, s.h)
 		put_u16(o, u16(mode))
 		state_set(cx, req[:], loc)
@@ -2875,7 +3088,8 @@ diff_state_vt := Diff_State_VT {
 	set_selected_lines = proc(s: Diff_State, cx: ^Cx, range: Maybe(Diff_Line_Range), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1016)
+		use_component_diff()
+		put_op(o, 1016)
 		put_u64(o, s.h)
 		if x0, ok := range.?; ok {
 			put_u8(o, 1)
@@ -2888,7 +3102,8 @@ diff_state_vt := Diff_State_VT {
 	set_syntax_highlighter = proc(s: Diff_State, cx: ^Cx, highlighter: Ask(Tuple_Temp_String_Temp_String, []Tuple_Range_Highlight_Style), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1488)
+		use_component_diff()
+		put_op(o, 1488)
 		put_u64(o, s.h)
 		put_u64(o, highlighter.src.h)
 		state_set(cx, req[:], loc)
@@ -2896,7 +3111,8 @@ diff_state_vt := Diff_State_VT {
 	set_syntax_max_line_length = proc(s: Diff_State, cx: ^Cx, length: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1017)
+		use_component_diff()
+		put_op(o, 1017)
 		put_u64(o, s.h)
 		put_usize(o, length)
 		state_set(cx, req[:], loc)
@@ -2905,7 +3121,7 @@ diff_state_vt := Diff_State_VT {
 		slot, generation := keep_handler(cx, h, 92, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1018)
+		put_op(o, 1018)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -2938,7 +3154,7 @@ Diff_State_Builder_VT :: struct {
 diff_state_builder_vt := Diff_State_Builder_VT {
 	with_context_lines = proc(b: Diff_State_Builder, lines: Maybe(int)) -> Diff_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		if x0, ok := lines.?; ok {
 			put_u8(o, 1)
 			put_usize(o, x0)
@@ -2950,21 +3166,21 @@ diff_state_builder_vt := Diff_State_Builder_VT {
 	},
 	with_expansion_lines = proc(b: Diff_State_Builder, lines: int) -> Diff_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_usize(o, lines)
 		o[b.count_at] += 1
 		return b
 	},
 	with_inline_max_line_length = proc(b: Diff_State_Builder, length: int) -> Diff_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_usize(o, length)
 		o[b.count_at] += 1
 		return b
 	},
 	with_inline_unit = proc(b: Diff_State_Builder, unit: Maybe(Diff_Inline_Unit)) -> Diff_State_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		if x0, ok := unit.?; ok {
 			put_u8(o, 1)
 			put_u16(o, u16(x0))
@@ -2976,28 +3192,28 @@ diff_state_builder_vt := Diff_State_Builder_VT {
 	},
 	with_min_collapsed_lines = proc(b: Diff_State_Builder, lines: int) -> Diff_State_Builder {
 		o := b.req
-		put_u16(o, 5)
+		put_op(o, 5)
 		put_usize(o, lines)
 		o[b.count_at] += 1
 		return b
 	},
 	with_mode = proc(b: Diff_State_Builder, mode: Diff_Mode) -> Diff_State_Builder {
 		o := b.req
-		put_u16(o, 6)
+		put_op(o, 6)
 		put_u16(o, u16(mode))
 		o[b.count_at] += 1
 		return b
 	},
 	with_syntax_highlighter = proc(b: Diff_State_Builder, highlighter: Ask(Tuple_Temp_String_Temp_String, []Tuple_Range_Highlight_Style)) -> Diff_State_Builder {
 		o := b.req
-		put_u16(o, 8)
+		put_op(o, 8)
 		put_u64(o, highlighter.src.h)
 		o[b.count_at] += 1
 		return b
 	},
 	with_syntax_max_line_length = proc(b: Diff_State_Builder, length: int) -> Diff_State_Builder {
 		o := b.req
-		put_u16(o, 7)
+		put_op(o, 7)
 		put_usize(o, length)
 		o[b.count_at] += 1
 		return b
@@ -3011,7 +3227,8 @@ diff_state :: proc(cx: ^Cx, files: []Diff_File, loc := #caller_location) -> Diff
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1000)
+	use_component_diff()
+	put_op(o, 1000)
 	put_u32(o, u32(len(files)))
 	for x0 in files {
 		put_vtape(o, x0.nd)
@@ -3041,7 +3258,8 @@ discrete_vt := Discrete_VT {
 	sample = proc(s: Discrete, cx: ^Cx, progress: f32, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1129)
+		use_base_motion()
+		put_op(o, 1129)
 		put_u64(o, s.h)
 		put_f32(o, progress)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3051,7 +3269,8 @@ discrete_vt := Discrete_VT {
 	switch_at = proc(s: Discrete, cx: ^Cx, progress: f32, loc := #caller_location) -> (v: Fallible(Discrete)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1130)
+		use_base_motion()
+		put_op(o, 1130)
 		put_u64(o, s.h)
 		put_f32(o, progress)
 		r := state_call(s.h, cx, req[:], loc)
@@ -3064,7 +3283,8 @@ discrete :: proc(cx: ^Cx, from: f32, to: f32, loc := #caller_location) -> Discre
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1128)
+	use_base_motion()
+	put_op(o, 1128)
 	put_f32(o, from)
 	put_f32(o, to)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -3114,7 +3334,8 @@ display_map_vt := Display_Map_VT {
 	buffer_line_count = proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1242)
+		use_base_input()
+		put_op(o, 1242)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3123,7 +3344,8 @@ display_map_vt := Display_Map_VT {
 	buffer_line_to_display_row = proc(s: Display_Map, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1243)
+		use_base_input()
+		put_op(o, 1243)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3133,7 +3355,8 @@ display_map_vt := Display_Map_VT {
 	buffer_line_to_display_row_range = proc(s: Display_Map, cx: ^Cx, line: int, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1244)
+		use_base_input()
+		put_op(o, 1244)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3143,7 +3366,8 @@ display_map_vt := Display_Map_VT {
 	buffer_pos_to_display_pos = proc(s: Display_Map, cx: ^Cx, pos: Buffer_Point, loc := #caller_location) -> (v: Display_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1245)
+		use_base_input()
+		put_op(o, 1245)
 		put_u64(o, s.h)
 		put_Buffer_Point(o, pos)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3153,7 +3377,8 @@ display_map_vt := Display_Map_VT {
 	display_pos_to_buffer_pos = proc(s: Display_Map, cx: ^Cx, pos: Display_Point, loc := #caller_location) -> (v: Buffer_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1247)
+		use_base_input()
+		put_op(o, 1247)
 		put_u64(o, s.h)
 		put_Display_Point(o, pos)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3163,7 +3388,8 @@ display_map_vt := Display_Map_VT {
 	display_row_count = proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1248)
+		use_base_input()
+		put_op(o, 1248)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3172,7 +3398,8 @@ display_map_vt := Display_Map_VT {
 	display_row_to_buffer_line = proc(s: Display_Map, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1249)
+		use_base_input()
+		put_op(o, 1249)
 		put_u64(o, s.h)
 		put_usize(o, display_row)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3182,7 +3409,8 @@ display_map_vt := Display_Map_VT {
 	display_row_to_wrap_row = proc(s: Display_Map, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1250)
+		use_base_input()
+		put_op(o, 1250)
 		put_u64(o, s.h)
 		put_usize(o, display_row)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3192,7 +3420,8 @@ display_map_vt := Display_Map_VT {
 	folded_ranges = proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: []Fold_Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1251)
+		use_base_input()
+		put_op(o, 1251)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3201,7 +3430,8 @@ display_map_vt := Display_Map_VT {
 	is_buffer_line_hidden = proc(s: Display_Map, cx: ^Cx, line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1252)
+		use_base_input()
+		put_op(o, 1252)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3211,7 +3441,8 @@ display_map_vt := Display_Map_VT {
 	is_fold_candidate = proc(s: Display_Map, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1253)
+		use_base_input()
+		put_op(o, 1253)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3221,7 +3452,8 @@ display_map_vt := Display_Map_VT {
 	is_folded_at = proc(s: Display_Map, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1254)
+		use_base_input()
+		put_op(o, 1254)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3231,7 +3463,8 @@ display_map_vt := Display_Map_VT {
 	nearest_visible_display_row = proc(s: Display_Map, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1255)
+		use_base_input()
+		put_op(o, 1255)
 		put_u64(o, s.h)
 		put_usize(o, wrap_row)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3241,7 +3474,8 @@ display_map_vt := Display_Map_VT {
 	text = proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1262)
+		use_base_input()
+		put_op(o, 1262)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3250,7 +3484,8 @@ display_map_vt := Display_Map_VT {
 	visible_wrap_row_count_for_buffer_line = proc(s: Display_Map, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1264)
+		use_base_input()
+		put_op(o, 1264)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3260,7 +3495,8 @@ display_map_vt := Display_Map_VT {
 	wrap_row_count = proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1265)
+		use_base_input()
+		put_op(o, 1265)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3269,7 +3505,8 @@ display_map_vt := Display_Map_VT {
 	wrap_row_to_display_row = proc(s: Display_Map, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1266)
+		use_base_input()
+		put_op(o, 1266)
 		put_u64(o, s.h)
 		put_usize(o, wrap_row)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -3279,14 +3516,16 @@ display_map_vt := Display_Map_VT {
 	clear_folds = proc(s: Display_Map, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1246)
+		use_base_input()
+		put_op(o, 1246)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	on_layout_changed = proc(s: Display_Map, cx: ^Cx, wrap_width: Maybe(f32), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1257)
+		use_base_input()
+		put_op(o, 1257)
 		put_u64(o, s.h)
 		if x0, ok := wrap_width.?; ok {
 			put_u8(o, 1)
@@ -3299,7 +3538,8 @@ display_map_vt := Display_Map_VT {
 	set_fold_candidates = proc(s: Display_Map, cx: ^Cx, candidates: []Fold_Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1258)
+		use_base_input()
+		put_op(o, 1258)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(candidates)))
 		for x0 in candidates {
@@ -3310,7 +3550,8 @@ display_map_vt := Display_Map_VT {
 	set_folded = proc(s: Display_Map, cx: ^Cx, start_line: int, folded: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1259)
+		use_base_input()
+		put_op(o, 1259)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		put_u8(o, u8(folded))
@@ -3319,7 +3560,8 @@ display_map_vt := Display_Map_VT {
 	set_font = proc(s: Display_Map, cx: ^Cx, font: Font, font_size: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1260)
+		use_base_input()
+		put_op(o, 1260)
 		put_u64(o, s.h)
 		{ fv := font; put_value(o, &fv, type_info_of(Font)) }
 		put_f32(o, font_size)
@@ -3328,7 +3570,8 @@ display_map_vt := Display_Map_VT {
 	set_wrapping_indent = proc(s: Display_Map, cx: ^Cx, wrapping_indent: Wrapping_Indent, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1261)
+		use_base_input()
+		put_op(o, 1261)
 		put_u64(o, s.h)
 		put_u16(o, u16(wrapping_indent))
 		state_set(cx, req[:], loc)
@@ -3336,7 +3579,8 @@ display_map_vt := Display_Map_VT {
 	toggle_fold = proc(s: Display_Map, cx: ^Cx, start_line: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1263)
+		use_base_input()
+		put_op(o, 1263)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		state_set(cx, req[:], loc)
@@ -3347,7 +3591,8 @@ display_map :: proc(cx: ^Cx, font: Font, font_size: f32, wrap_width: Maybe(f32),
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1256)
+	use_base_input()
+	put_op(o, 1256)
 	{ fv := font; put_value(o, &fv, type_info_of(Font)) }
 	put_f32(o, font_size)
 	if x0, ok := wrap_width.?; ok {
@@ -3387,7 +3632,8 @@ dock_vt := Dock_VT {
 	is_collapsible = proc(s: Dock, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 848)
+		use_base_dock()
+		put_op(o, 848)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3396,7 +3642,8 @@ dock_vt := Dock_VT {
 	is_open = proc(s: Dock, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 849)
+		use_base_dock()
+		put_op(o, 849)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3405,7 +3652,8 @@ dock_vt := Dock_VT {
 	is_resizing = proc(s: Dock, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 850)
+		use_base_dock()
+		put_op(o, 850)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3414,7 +3662,8 @@ dock_vt := Dock_VT {
 	size = proc(s: Dock, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 856)
+		use_base_dock()
+		put_op(o, 856)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3423,7 +3672,8 @@ dock_vt := Dock_VT {
 	set_collapsible = proc(s: Dock, cx: ^Cx, collapsible: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 852)
+		use_base_dock()
+		put_op(o, 852)
 		put_u64(o, s.h)
 		put_u8(o, u8(collapsible))
 		state_set(cx, req[:], loc)
@@ -3431,7 +3681,8 @@ dock_vt := Dock_VT {
 	set_open = proc(s: Dock, cx: ^Cx, open: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 853)
+		use_base_dock()
+		put_op(o, 853)
 		put_u64(o, s.h)
 		put_u8(o, u8(open))
 		state_set(cx, req[:], loc)
@@ -3439,7 +3690,8 @@ dock_vt := Dock_VT {
 	set_resizing = proc(s: Dock, cx: ^Cx, resizing: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 854)
+		use_base_dock()
+		put_op(o, 854)
 		put_u64(o, s.h)
 		put_u8(o, u8(resizing))
 		state_set(cx, req[:], loc)
@@ -3447,7 +3699,8 @@ dock_vt := Dock_VT {
 	set_size = proc(s: Dock, cx: ^Cx, size: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 855)
+		use_base_dock()
+		put_op(o, 855)
 		put_u64(o, s.h)
 		put_f32(o, size)
 		state_set(cx, req[:], loc)
@@ -3458,7 +3711,8 @@ dock :: proc(cx: ^Cx, size: f32, loc := #caller_location) -> Dock {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 851)
+	use_base_dock()
+	put_op(o, 851)
 	put_f32(o, size)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &dock_vt}
@@ -3511,7 +3765,8 @@ dock_area_vt := Dock_Area_VT {
 	bounds = proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 326)
+		use_base_dock()
+		put_op(o, 326)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3520,7 +3775,8 @@ dock_area_vt := Dock_Area_VT {
 	dock_size = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 327)
+		use_base_dock()
+		put_op(o, 327)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		r := state_get(s.h, cx, req[:], loc)
@@ -3530,7 +3786,8 @@ dock_area_vt := Dock_Area_VT {
 	dump = proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: Dock_Area_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 328)
+		use_base_dock()
+		put_op(o, 328)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3539,7 +3796,8 @@ dock_area_vt := Dock_Area_VT {
 	has_dock = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 329)
+		use_base_dock()
+		put_op(o, 329)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		r := state_get(s.h, cx, req[:], loc)
@@ -3549,7 +3807,8 @@ dock_area_vt := Dock_Area_VT {
 	id = proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 330)
+		use_base_dock()
+		put_op(o, 330)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3558,7 +3817,8 @@ dock_area_vt := Dock_Area_VT {
 	is_dock_collapsible = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 331)
+		use_base_dock()
+		put_op(o, 331)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		r := state_get(s.h, cx, req[:], loc)
@@ -3568,7 +3828,8 @@ dock_area_vt := Dock_Area_VT {
 	is_dock_open = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 332)
+		use_base_dock()
+		put_op(o, 332)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		r := state_get(s.h, cx, req[:], loc)
@@ -3578,7 +3839,8 @@ dock_area_vt := Dock_Area_VT {
 	is_empty = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 333)
+		use_base_dock()
+		put_op(o, 333)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		r := state_get(s.h, cx, req[:], loc)
@@ -3588,7 +3850,8 @@ dock_area_vt := Dock_Area_VT {
 	is_locked = proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 334)
+		use_base_dock()
+		put_op(o, 334)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3597,7 +3860,8 @@ dock_area_vt := Dock_Area_VT {
 	is_zoomed = proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 335)
+		use_base_dock()
+		put_op(o, 335)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3606,7 +3870,8 @@ dock_area_vt := Dock_Area_VT {
 	layout = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: Maybe(Pane_Tree)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 857)
+		use_base_dock()
+		put_op(o, 857)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		r := state_get(s.h, cx, req[:], loc)
@@ -3616,7 +3881,8 @@ dock_area_vt := Dock_Area_VT {
 	panel = proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) -> (v: Maybe(Dock_Panel)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1537)
+		use_base_dock()
+		put_op(o, 1537)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		r := state_get(s.h, cx, req[:], loc)
@@ -3626,7 +3892,8 @@ dock_area_vt := Dock_Area_VT {
 	version = proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 345)
+		use_base_dock()
+		put_op(o, 345)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3635,7 +3902,8 @@ dock_area_vt := Dock_Area_VT {
 	zoomed_group = proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Node_Id)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1538)
+		use_base_dock()
+		put_op(o, 1538)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3644,7 +3912,8 @@ dock_area_vt := Dock_Area_VT {
 	load = proc(s: Dock_Area, cx: ^Cx, state: Dock_Area_State, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1535)
+		use_base_dock()
+		put_op(o, 1535)
 		put_u64(o, s.h)
 		{ lv := state; put_value(o, &lv, type_info_of(Dock_Area_State)) }
 		r := state_call(s.h, cx, req[:], loc)
@@ -3654,7 +3923,8 @@ dock_area_vt := Dock_Area_VT {
 	add_panel = proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel, placement: Dock_Placement, size: Maybe(f32), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1277)
+		use_base_dock()
+		put_op(o, 1277)
 		put_u64(o, s.h)
 		put_u64(o, panel.h)
 		put_u16(o, u16(placement))
@@ -3669,7 +3939,8 @@ dock_area_vt := Dock_Area_VT {
 	add_panel_view = proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel, placement: Dock_Placement, size: Maybe(f32), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1278)
+		use_base_dock()
+		put_op(o, 1278)
 		put_u64(o, s.h)
 		put_u64(o, panel.h)
 		put_u16(o, u16(placement))
@@ -3684,7 +3955,8 @@ dock_area_vt := Dock_Area_VT {
 	move_panel = proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel_Id, target: Insert_Target, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1536)
+		use_base_dock()
+		put_op(o, 1536)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		put_Insert_Target(o, target)
@@ -3693,7 +3965,8 @@ dock_area_vt := Dock_Area_VT {
 	remove_dock = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 337)
+		use_base_dock()
+		put_op(o, 337)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		state_set(cx, req[:], loc)
@@ -3701,7 +3974,8 @@ dock_area_vt := Dock_Area_VT {
 	remove_panel = proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1279)
+		use_base_dock()
+		put_op(o, 1279)
 		put_u64(o, s.h)
 		put_u64(o, panel.h)
 		state_set(cx, req[:], loc)
@@ -3709,7 +3983,8 @@ dock_area_vt := Dock_Area_VT {
 	select_panel = proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 858)
+		use_base_dock()
+		put_op(o, 858)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		state_set(cx, req[:], loc)
@@ -3717,7 +3992,8 @@ dock_area_vt := Dock_Area_VT {
 	set_center = proc(s: Dock_Area, cx: ^Cx, layout: Dock_Layout, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 859)
+		use_base_dock()
+		put_op(o, 859)
 		put_u64(o, s.h)
 		put_vtape(o, layout.nd)
 		state_set(cx, req[:], loc)
@@ -3725,7 +4001,8 @@ dock_area_vt := Dock_Area_VT {
 	set_dock = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, layout: Dock_Layout, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 860)
+		use_base_dock()
+		put_op(o, 860)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		put_vtape(o, layout.nd)
@@ -3734,7 +4011,8 @@ dock_area_vt := Dock_Area_VT {
 	set_dock_collapsible = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, collapsible: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 338)
+		use_base_dock()
+		put_op(o, 338)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		put_u8(o, u8(collapsible))
@@ -3743,7 +4021,8 @@ dock_area_vt := Dock_Area_VT {
 	set_dock_size = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, size: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 339)
+		use_base_dock()
+		put_op(o, 339)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		put_f32(o, size)
@@ -3752,7 +4031,8 @@ dock_area_vt := Dock_Area_VT {
 	set_locked = proc(s: Dock_Area, cx: ^Cx, locked: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 340)
+		use_base_dock()
+		put_op(o, 340)
 		put_u64(o, s.h)
 		put_u8(o, u8(locked))
 		state_set(cx, req[:], loc)
@@ -3760,7 +4040,8 @@ dock_area_vt := Dock_Area_VT {
 	set_split_sizes = proc(s: Dock_Area, cx: ^Cx, node: Node_Id, sizes: []f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 861)
+		use_base_dock()
+		put_op(o, 861)
 		put_u64(o, s.h)
 		put_u64(o, u64(node))
 		put_u32(o, u32(len(sizes)))
@@ -3772,7 +4053,8 @@ dock_area_vt := Dock_Area_VT {
 	set_version = proc(s: Dock_Area, cx: ^Cx, version: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 341)
+		use_base_dock()
+		put_op(o, 341)
 		put_u64(o, s.h)
 		if x0, ok := version.?; ok {
 			put_u8(o, 1)
@@ -3785,7 +4067,8 @@ dock_area_vt := Dock_Area_VT {
 	set_zoomed_in = proc(s: Dock_Area, cx: ^Cx, node: Node_Id, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 862)
+		use_base_dock()
+		put_op(o, 862)
 		put_u64(o, s.h)
 		put_u64(o, u64(node))
 		state_set(cx, req[:], loc)
@@ -3793,14 +4076,16 @@ dock_area_vt := Dock_Area_VT {
 	set_zoomed_out = proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 342)
+		use_base_dock()
+		put_op(o, 342)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	split_at = proc(s: Dock_Area, cx: ^Cx, node: Node_Id, panel: Dock_Panel_Id, placement: Placement, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 863)
+		use_base_dock()
+		put_op(o, 863)
 		put_u64(o, s.h)
 		put_u64(o, u64(node))
 		put_u64(o, u64(panel))
@@ -3810,7 +4095,8 @@ dock_area_vt := Dock_Area_VT {
 	toggle_dock = proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 344)
+		use_base_dock()
+		put_op(o, 344)
 		put_u64(o, s.h)
 		put_u16(o, u16(placement))
 		state_set(cx, req[:], loc)
@@ -3819,7 +4105,7 @@ dock_area_vt := Dock_Area_VT {
 		slot, generation := keep_handler(cx, h, 87, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 343)
+		put_op(o, 343)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -3845,7 +4131,7 @@ Dock_Area_Builder_VT :: struct {
 dock_area_builder_vt := Dock_Area_Builder_VT {
 	with_renderer = proc(b: Dock_Area_Builder, renderer: Dock_Renderer) -> Dock_Area_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u64(o, renderer.h)
 		o[b.count_at] += 1
 		return b
@@ -3859,7 +4145,8 @@ dock_area :: proc(cx: ^Cx, id: string, version: Maybe(int), loc := #caller_locat
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 336)
+	use_base_dock()
+	put_op(o, 336)
 	put_str(o, id)
 	if x0, ok := version.?; ok {
 		put_u8(o, 1)
@@ -3897,7 +4184,8 @@ dock_context_vt := Dock_Context_VT {
 	is_collapsible = proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1594)
+		use_base_dock()
+		put_op(o, 1594)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3906,7 +4194,8 @@ dock_context_vt := Dock_Context_VT {
 	is_open = proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1595)
+		use_base_dock()
+		put_op(o, 1595)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3915,7 +4204,8 @@ dock_context_vt := Dock_Context_VT {
 	placement = proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) -> (v: Dock_Placement) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1596)
+		use_base_dock()
+		put_op(o, 1596)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3924,7 +4214,8 @@ dock_context_vt := Dock_Context_VT {
 	size = proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1598)
+		use_base_dock()
+		put_op(o, 1598)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3933,14 +4224,16 @@ dock_context_vt := Dock_Context_VT {
 	end_resize = proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1593)
+		use_base_dock()
+		put_op(o, 1593)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	resize_to = proc(s: Dock_Context, cx: ^Cx, pointer: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1597)
+		use_base_dock()
+		put_op(o, 1597)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, pointer)
 		state_set(cx, req[:], loc)
@@ -3948,7 +4241,8 @@ dock_context_vt := Dock_Context_VT {
 	toggle = proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1599)
+		use_base_dock()
+		put_op(o, 1599)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -3977,7 +4271,8 @@ dock_state_vt := Dock_State_VT {
 	open = proc(s: Dock_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1540)
+		use_base_dock()
+		put_op(o, 1540)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3986,7 +4281,8 @@ dock_state_vt := Dock_State_VT {
 	panel = proc(s: Dock_State, cx: ^Cx, loc := #caller_location) -> (v: Panel_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1541)
+		use_base_dock()
+		put_op(o, 1541)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -3995,7 +4291,8 @@ dock_state_vt := Dock_State_VT {
 	placement = proc(s: Dock_State, cx: ^Cx, loc := #caller_location) -> (v: Dock_Placement) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1542)
+		use_base_dock()
+		put_op(o, 1542)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4004,7 +4301,8 @@ dock_state_vt := Dock_State_VT {
 	size = proc(s: Dock_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1543)
+		use_base_dock()
+		put_op(o, 1543)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4016,7 +4314,8 @@ dock_state :: proc(cx: ^Cx, panel: Panel_State, placement: Dock_Placement, size:
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1539)
+	use_base_dock()
+	put_op(o, 1539)
 	{ lv := panel; put_value(o, &lv, type_info_of(Panel_State)) }
 	put_u16(o, u16(placement))
 	put_f32(o, size)
@@ -4051,7 +4350,8 @@ drag_panel_vt := Drag_Panel_VT {
 	drag_offset = proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 864)
+		use_base_dock()
+		put_op(o, 864)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4060,7 +4360,8 @@ drag_panel_vt := Drag_Panel_VT {
 	drag_session_id = proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 865)
+		use_base_dock()
+		put_op(o, 865)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4069,7 +4370,8 @@ drag_panel_vt := Drag_Panel_VT {
 	panel = proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location) -> (v: Dock_Panel_Id) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1544)
+		use_base_dock()
+		put_op(o, 1544)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4078,7 +4380,8 @@ drag_panel_vt := Drag_Panel_VT {
 	preview_size = proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Size) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 867)
+		use_base_dock()
+		put_op(o, 867)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4087,7 +4390,8 @@ drag_panel_vt := Drag_Panel_VT {
 	source = proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location) -> (v: Node_Id) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1545)
+		use_base_dock()
+		put_op(o, 1545)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4096,7 +4400,8 @@ drag_panel_vt := Drag_Panel_VT {
 	set_drag_offset = proc(s: Drag_Panel, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1743)
+		use_base_dock()
+		put_op(o, 1743)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, offset)
 		state_set(cx, req[:], loc)
@@ -4104,7 +4409,8 @@ drag_panel_vt := Drag_Panel_VT {
 	set_preview_size = proc(s: Drag_Panel, cx: ^Cx, size: Gpui_Size, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1744)
+		use_base_dock()
+		put_op(o, 1744)
 		put_u64(o, s.h)
 		put_Gpui_Size(o, size)
 		state_set(cx, req[:], loc)
@@ -4115,7 +4421,8 @@ drag_panel :: proc(cx: ^Cx, panel: Dock_Panel_Id, source: Node_Id, loc := #calle
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 866)
+	use_base_dock()
+	put_op(o, 866)
 	put_u64(o, u64(panel))
 	put_u64(o, u64(source))
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -4147,7 +4454,8 @@ drop_indicator_vt := Drop_Indicator_VT {
 	bounds = proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1546)
+		use_base_dock()
+		put_op(o, 1546)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4156,7 +4464,8 @@ drop_indicator_vt := Drop_Indicator_VT {
 	drag_session_id = proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1547)
+		use_base_dock()
+		put_op(o, 1547)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4165,7 +4474,8 @@ drop_indicator_vt := Drop_Indicator_VT {
 	epoch = proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1548)
+		use_base_dock()
+		put_op(o, 1548)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4174,7 +4484,8 @@ drop_indicator_vt := Drop_Indicator_VT {
 	from = proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: Drop_Placeholder_Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1549)
+		use_base_dock()
+		put_op(o, 1549)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4183,7 +4494,8 @@ drop_indicator_vt := Drop_Indicator_VT {
 	placement = proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Placement)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1550)
+		use_base_dock()
+		put_op(o, 1550)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4192,7 +4504,8 @@ drop_indicator_vt := Drop_Indicator_VT {
 	to = proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: Drop_Placeholder_Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1551)
+		use_base_dock()
+		put_op(o, 1551)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4221,7 +4534,8 @@ drop_placeholder_bounds_vt := Drop_Placeholder_Bounds_VT {
 	origin = proc(s: Drop_Placeholder_Bounds, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 869)
+		use_base_dock()
+		put_op(o, 869)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4230,7 +4544,8 @@ drop_placeholder_bounds_vt := Drop_Placeholder_Bounds_VT {
 	size = proc(s: Drop_Placeholder_Bounds, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Size) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 870)
+		use_base_dock()
+		put_op(o, 870)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4242,7 +4557,8 @@ drop_placeholder_bounds_for_placement :: proc(cx: ^Cx, bounds: Bounds, placement
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 868)
+	use_base_dock()
+	put_op(o, 868)
 	put_Bounds(o, bounds)
 	if x0, ok := placement.?; ok {
 		put_u8(o, 1)
@@ -4275,7 +4591,8 @@ drop_target_vt := Drop_Target_VT {
 	node = proc(s: Drop_Target, cx: ^Cx, loc := #caller_location) -> (v: Node_Id) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1552)
+		use_base_dock()
+		put_op(o, 1552)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4284,7 +4601,8 @@ drop_target_vt := Drop_Target_VT {
 	placement = proc(s: Drop_Target, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Placement)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1428)
+		use_base_dock()
+		put_op(o, 1428)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4312,7 +4630,8 @@ edit_result_vt := Edit_Result_VT {
 	changed = proc(s: Edit_Result, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 871)
+		use_base_dock()
+		put_op(o, 871)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4324,7 +4643,8 @@ edit_result_default :: proc(cx: ^Cx, loc := #caller_location) -> Edit_Result {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1462)
+	use_base_dock()
+	put_op(o, 1462)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &edit_result_vt}
 }
@@ -4350,7 +4670,8 @@ editor_scrollbar_context_vt := Editor_Scrollbar_Context_VT {
 	axis = proc(s: Editor_Scrollbar_Context, cx: ^Cx, loc := #caller_location) -> (v: Scrollbar_Axis) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1600)
+		use_base_input()
+		put_op(o, 1600)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4359,7 +4680,8 @@ editor_scrollbar_context_vt := Editor_Scrollbar_Context_VT {
 	scroll_viewport_size = proc(s: Editor_Scrollbar_Context, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Size) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1601)
+		use_base_input()
+		put_op(o, 1601)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4515,7 +4837,8 @@ editor_state_vt := Editor_State_VT {
 	context_menu_capabilities = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Context_Menu_Capabilities_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1344)
+		use_base_input()
+		put_op(o, 1344)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4524,7 +4847,8 @@ editor_state_vt := Editor_State_VT {
 	cursor = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 414)
+		use_base_input()
+		put_op(o, 414)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4533,7 +4857,8 @@ editor_state_vt := Editor_State_VT {
 	cursor_position = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Lsp_Position) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1467)
+		use_base_input()
+		put_op(o, 1467)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4542,7 +4867,8 @@ editor_state_vt := Editor_State_VT {
 	diagnostic_popover = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diagnostic_Entry_Rc)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1142)
+		use_base_input()
+		put_op(o, 1142)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4551,7 +4877,8 @@ editor_state_vt := Editor_State_VT {
 	diagnostics = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diagnostic_Set)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 893)
+		use_base_input()
+		put_op(o, 893)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4560,7 +4887,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_buffer_line_count = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1689)
+		use_base_input()
+		put_op(o, 1689)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4569,7 +4897,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_buffer_line_to_display_row = proc(s: Editor_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1690)
+		use_base_input()
+		put_op(o, 1690)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4579,7 +4908,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_buffer_line_to_display_row_range = proc(s: Editor_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1691)
+		use_base_input()
+		put_op(o, 1691)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4589,7 +4919,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_buffer_pos_to_display_pos = proc(s: Editor_State, cx: ^Cx, pos: Buffer_Point, loc := #caller_location) -> (v: Display_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1692)
+		use_base_input()
+		put_op(o, 1692)
 		put_u64(o, s.h)
 		put_Buffer_Point(o, pos)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4599,7 +4930,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_display_pos_to_buffer_pos = proc(s: Editor_State, cx: ^Cx, pos: Display_Point, loc := #caller_location) -> (v: Buffer_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1693)
+		use_base_input()
+		put_op(o, 1693)
 		put_u64(o, s.h)
 		put_Display_Point(o, pos)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4609,7 +4941,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_display_row_count = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1694)
+		use_base_input()
+		put_op(o, 1694)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4618,7 +4951,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_display_row_to_buffer_line = proc(s: Editor_State, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1695)
+		use_base_input()
+		put_op(o, 1695)
 		put_u64(o, s.h)
 		put_usize(o, display_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4628,7 +4962,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_display_row_to_wrap_row = proc(s: Editor_State, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1696)
+		use_base_input()
+		put_op(o, 1696)
 		put_u64(o, s.h)
 		put_usize(o, display_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4638,7 +4973,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_folded_ranges = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: []Fold_Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1697)
+		use_base_input()
+		put_op(o, 1697)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4647,7 +4983,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_is_buffer_line_hidden = proc(s: Editor_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1698)
+		use_base_input()
+		put_op(o, 1698)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4657,7 +4994,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_is_fold_candidate = proc(s: Editor_State, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1699)
+		use_base_input()
+		put_op(o, 1699)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4667,7 +5005,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_is_folded_at = proc(s: Editor_State, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1700)
+		use_base_input()
+		put_op(o, 1700)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4677,7 +5016,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_nearest_visible_display_row = proc(s: Editor_State, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1701)
+		use_base_input()
+		put_op(o, 1701)
 		put_u64(o, s.h)
 		put_usize(o, wrap_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4687,7 +5027,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_text = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1702)
+		use_base_input()
+		put_op(o, 1702)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4696,7 +5037,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_visible_wrap_row_count_for_buffer_line = proc(s: Editor_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1703)
+		use_base_input()
+		put_op(o, 1703)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4706,7 +5048,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_wrap_row_count = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1704)
+		use_base_input()
+		put_op(o, 1704)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4715,7 +5058,8 @@ editor_state_vt := Editor_State_VT {
 	display_map_wrap_row_to_display_row = proc(s: Editor_State, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1705)
+		use_base_input()
+		put_op(o, 1705)
 		put_u64(o, s.h)
 		put_usize(o, wrap_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4725,7 +5069,8 @@ editor_state_vt := Editor_State_VT {
 	has_overlay_action_handler = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 421)
+		use_base_input()
+		put_op(o, 421)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4734,7 +5079,8 @@ editor_state_vt := Editor_State_VT {
 	hover_popover = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Hover_Popover_State)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 602)
+		use_base_input()
+		put_op(o, 602)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4743,7 +5089,8 @@ editor_state_vt := Editor_State_VT {
 	input_bounds = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 422)
+		use_base_input()
+		put_op(o, 422)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4752,7 +5099,8 @@ editor_state_vt := Editor_State_VT {
 	is_code_editor = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 424)
+		use_base_input()
+		put_op(o, 424)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4761,7 +5109,8 @@ editor_state_vt := Editor_State_VT {
 	is_copyable = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 425)
+		use_base_input()
+		put_op(o, 425)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4770,7 +5119,8 @@ editor_state_vt := Editor_State_VT {
 	is_editable = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 426)
+		use_base_input()
+		put_op(o, 426)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4779,7 +5129,8 @@ editor_state_vt := Editor_State_VT {
 	is_multi_line = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 427)
+		use_base_input()
+		put_op(o, 427)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4788,7 +5139,8 @@ editor_state_vt := Editor_State_VT {
 	is_replaceable = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 428)
+		use_base_input()
+		put_op(o, 428)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4797,7 +5149,8 @@ editor_state_vt := Editor_State_VT {
 	is_selection_reversed = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 429)
+		use_base_input()
+		put_op(o, 429)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4806,7 +5159,8 @@ editor_state_vt := Editor_State_VT {
 	is_single_line = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 430)
+		use_base_input()
+		put_op(o, 430)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4815,7 +5169,8 @@ editor_state_vt := Editor_State_VT {
 	language_name = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 431)
+		use_base_input()
+		put_op(o, 431)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4824,7 +5179,8 @@ editor_state_vt := Editor_State_VT {
 	line_height = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 432)
+		use_base_input()
+		put_op(o, 432)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4833,7 +5189,8 @@ editor_state_vt := Editor_State_VT {
 	lsp = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Base_Lsp) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 433)
+		use_base_input()
+		put_op(o, 433)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4842,7 +5199,8 @@ editor_state_vt := Editor_State_VT {
 	presentation = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Presentation) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 894)
+		use_base_input()
+		put_op(o, 894)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4851,7 +5209,8 @@ editor_state_vt := Editor_State_VT {
 	range_to_bounds = proc(s: Editor_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Maybe(Bounds)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 436)
+		use_base_input()
+		put_op(o, 436)
 		put_u64(o, s.h)
 		put_range(o, range)
 		r := state_get(s.h, cx, req[:], loc)
@@ -4861,7 +5220,8 @@ editor_state_vt := Editor_State_VT {
 	scroll_offset = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 440)
+		use_base_input()
+		put_op(o, 440)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4870,7 +5230,8 @@ editor_state_vt := Editor_State_VT {
 	search_activation_revision = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 441)
+		use_base_input()
+		put_op(o, 441)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4879,7 +5240,8 @@ editor_state_vt := Editor_State_VT {
 	search_session = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Search_Session) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 442)
+		use_base_input()
+		put_op(o, 442)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4888,7 +5250,8 @@ editor_state_vt := Editor_State_VT {
 	selected_range = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 607)
+		use_base_input()
+		put_op(o, 607)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4897,7 +5260,8 @@ editor_state_vt := Editor_State_VT {
 	selected_text = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1268)
+		use_base_input()
+		put_op(o, 1268)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4906,7 +5270,8 @@ editor_state_vt := Editor_State_VT {
 	selected_value = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 445)
+		use_base_input()
+		put_op(o, 445)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4915,7 +5280,8 @@ editor_state_vt := Editor_State_VT {
 	text = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1269)
+		use_base_input()
+		put_op(o, 1269)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4924,7 +5290,8 @@ editor_state_vt := Editor_State_VT {
 	text_bounds = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Bounds)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 472)
+		use_base_input()
+		put_op(o, 472)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4933,7 +5300,8 @@ editor_state_vt := Editor_State_VT {
 	text_input_configuration = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Text_Input_Configuration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 473)
+		use_base_input()
+		put_op(o, 473)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4942,7 +5310,8 @@ editor_state_vt := Editor_State_VT {
 	touch_selection = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Touch_Selection_Snapshot)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 896)
+		use_base_input()
+		put_op(o, 896)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4951,7 +5320,8 @@ editor_state_vt := Editor_State_VT {
 	unmask_value = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 475)
+		use_base_input()
+		put_op(o, 475)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4960,7 +5330,8 @@ editor_state_vt := Editor_State_VT {
 	value = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 477)
+		use_base_input()
+		put_op(o, 477)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4969,7 +5340,8 @@ editor_state_vt := Editor_State_VT {
 	visible_row_range = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 615)
+		use_base_input()
+		put_op(o, 615)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -4978,7 +5350,8 @@ editor_state_vt := Editor_State_VT {
 	try_value = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String, ok: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 477)
+		use_base_input()
+		put_op(o, 477)
 		put_u64(o, s.h)
 		r := state_try(s.h, cx, req[:], loc) or_return
 		rd_into(&r, &v)
@@ -4987,7 +5360,8 @@ editor_state_vt := Editor_State_VT {
 	create_decorations_collection = proc(s: Editor_State, cx: ^Cx, decorations: []Text_Decoration, loc := #caller_location) -> (v: Text_Decoration_Collection) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1681)
+		use_base_input()
+		put_op(o, 1681)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -5000,7 +5374,8 @@ editor_state_vt := Editor_State_VT {
 	create_gutter_decorations_collection = proc(s: Editor_State, cx: ^Cx, decorations: []Gutter_Decoration, loc := #caller_location) -> (v: Gutter_Decoration_Collection) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 890)
+		use_base_input()
+		put_op(o, 890)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -5013,7 +5388,8 @@ editor_state_vt := Editor_State_VT {
 	create_overview_ruler_decorations_collection = proc(s: Editor_State, cx: ^Cx, decorations: []Overview_Ruler_Decoration, loc := #caller_location) -> (v: Overview_Ruler_Decoration_Collection) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 891)
+		use_base_input()
+		put_op(o, 891)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -5026,7 +5402,8 @@ editor_state_vt := Editor_State_VT {
 	create_range_decorations_collection = proc(s: Editor_State, cx: ^Cx, decorations: []Range_Decoration, loc := #caller_location) -> (v: Range_Decoration_Collection) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 892)
+		use_base_input()
+		put_op(o, 892)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -5039,7 +5416,8 @@ editor_state_vt := Editor_State_VT {
 	diagnostics_mut = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diagnostic_Set)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1602)
+		use_base_input()
+		put_op(o, 1602)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -5048,7 +5426,8 @@ editor_state_vt := Editor_State_VT {
 	has_selection_focus = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1034)
+		use_base_input()
+		put_op(o, 1034)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -5057,7 +5436,8 @@ editor_state_vt := Editor_State_VT {
 	next_search_match = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 603)
+		use_base_input()
+		put_op(o, 603)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -5066,7 +5446,8 @@ editor_state_vt := Editor_State_VT {
 	previous_search_match = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 604)
+		use_base_input()
+		put_op(o, 604)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -5075,7 +5456,8 @@ editor_state_vt := Editor_State_VT {
 	replace_all_search_matches = proc(s: Editor_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 605)
+		use_base_input()
+		put_op(o, 605)
 		put_u64(o, s.h)
 		put_str(o, replacement)
 		r := state_call(s.h, cx, req[:], loc)
@@ -5085,7 +5467,8 @@ editor_state_vt := Editor_State_VT {
 	replace_current_search_match = proc(s: Editor_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 606)
+		use_base_input()
+		put_op(o, 606)
 		put_u64(o, s.h)
 		put_str(o, replacement)
 		r := state_call(s.h, cx, req[:], loc)
@@ -5095,7 +5478,8 @@ editor_state_vt := Editor_State_VT {
 	route_overlay_action = proc(s: Editor_State, cx: ^Cx, action: Action, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1742)
+		use_base_input()
+		put_op(o, 1742)
 		put_u64(o, s.h)
 		put_action(o, action)
 		r := state_call(s.h, cx, req[:], loc)
@@ -5105,7 +5489,8 @@ editor_state_vt := Editor_State_VT {
 	unfold_at = proc(s: Editor_State, cx: ^Cx, position: Lsp_Position, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1469)
+		use_base_input()
+		put_op(o, 1469)
 		put_u64(o, s.h)
 		{ lv := position; put_value(o, &lv, type_info_of(Lsp_Position)) }
 		r := state_call(s.h, cx, req[:], loc)
@@ -5115,7 +5500,8 @@ editor_state_vt := Editor_State_VT {
 	add_selection = proc(s: Editor_State, cx: ^Cx, range: Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 408)
+		use_base_input()
+		put_op(o, 408)
 		put_u64(o, s.h)
 		put_range(o, range)
 		state_set(cx, req[:], loc)
@@ -5123,7 +5509,8 @@ editor_state_vt := Editor_State_VT {
 	apply_highlighter_fold_candidates = proc(s: Editor_State, cx: ^Cx, candidates: []Fold_Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 600)
+		use_base_input()
+		put_op(o, 600)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(candidates)))
 		for x0 in candidates {
@@ -5134,7 +5521,8 @@ editor_state_vt := Editor_State_VT {
 	begin_edge_drag = proc(s: Editor_State, cx: ^Cx, edge: Selection_Edge, finger: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 601)
+		use_base_input()
+		put_op(o, 601)
 		put_u64(o, s.h)
 		put_u16(o, u16(edge))
 		put_Gpui_Point(o, finger)
@@ -5143,70 +5531,80 @@ editor_state_vt := Editor_State_VT {
 	clean = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 409)
+		use_base_input()
+		put_op(o, 409)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	clear_diagnostic_popover = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 410)
+		use_base_input()
+		put_op(o, 410)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	clear_hover_state = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 411)
+		use_base_input()
+		put_op(o, 411)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	close_edit_menu = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 412)
+		use_base_input()
+		put_op(o, 412)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	close_search = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 413)
+		use_base_input()
+		put_op(o, 413)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	dismiss_code_action_overlay = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 415)
+		use_base_input()
+		put_op(o, 415)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	dismiss_completion_overlay = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 416)
+		use_base_input()
+		put_op(o, 416)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	dismiss_lsp_overlays = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 417)
+		use_base_input()
+		put_op(o, 417)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	end_edge_drag = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 418)
+		use_base_input()
+		put_op(o, 418)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	ensure_highlighter_factory = proc(s: Editor_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1617)
+		use_base_input()
+		put_op(o, 1617)
 		put_u64(o, s.h)
 		put_u64(o, factory.h)
 		state_set(cx, req[:], loc)
@@ -5214,21 +5612,24 @@ editor_state_vt := Editor_State_VT {
 	ensure_number_mask = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 419)
+		use_base_input()
+		put_op(o, 419)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	focus = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 420)
+		use_base_input()
+		put_op(o, 420)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	insert = proc(s: Editor_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 423)
+		use_base_input()
+		put_op(o, 423)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -5236,7 +5637,8 @@ editor_state_vt := Editor_State_VT {
 	insert_completion = proc(s: Editor_State, cx: ^Cx, item: Completion_Item, fallback_range: Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1650)
+		use_base_input()
+		put_op(o, 1650)
 		put_u64(o, s.h)
 		{ lv := item; put_value(o, &lv, type_info_of(Completion_Item)) }
 		put_range(o, fallback_range)
@@ -5245,7 +5647,8 @@ editor_state_vt := Editor_State_VT {
 	lsp_mut = proc(s: Editor_State, cx: ^Cx, edit: Lsp, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1747)
+		use_base_input()
+		put_op(o, 1747)
 		put_u64(o, s.h)
 		put_vtape(o, edit.nd)
 		state_set(cx, req[:], loc)
@@ -5253,7 +5656,8 @@ editor_state_vt := Editor_State_VT {
 	on_context_menu = proc(s: Editor_State, cx: ^Cx, handler: Handler, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1345)
+		use_base_input()
+		put_op(o, 1345)
 		put_u64(o, s.h)
 		put_kept_handler(o, handler, 114)
 		state_set(cx, req[:], loc)
@@ -5261,7 +5665,8 @@ editor_state_vt := Editor_State_VT {
 	open_search = proc(s: Editor_State, cx: ^Cx, replace_mode: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 435)
+		use_base_input()
+		put_op(o, 435)
 		put_u64(o, s.h)
 		put_u8(o, u8(replace_mode))
 		state_set(cx, req[:], loc)
@@ -5269,7 +5674,8 @@ editor_state_vt := Editor_State_VT {
 	present_completion_items = proc(s: Editor_State, cx: ^Cx, trigger_start_offset: int, query: string, items: []Completion_Item, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1651)
+		use_base_input()
+		put_op(o, 1651)
 		put_u64(o, s.h)
 		put_usize(o, trigger_start_offset)
 		put_str(o, query)
@@ -5282,7 +5688,8 @@ editor_state_vt := Editor_State_VT {
 	present_diagnostic = proc(s: Editor_State, cx: ^Cx, range: Range, diagnostic: Diagnostic, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1748)
+		use_base_input()
+		put_op(o, 1748)
 		put_u64(o, s.h)
 		put_range(o, range)
 		put_vtape(o, diagnostic.nd)
@@ -5291,7 +5698,8 @@ editor_state_vt := Editor_State_VT {
 	prewrap = proc(s: Editor_State, cx: ^Cx, font: Font, font_size: f32, width: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1267)
+		use_base_input()
+		put_op(o, 1267)
 		put_u64(o, s.h)
 		{ fv := font; put_value(o, &fv, type_info_of(Font)) }
 		put_f32(o, font_size)
@@ -5301,14 +5709,16 @@ editor_state_vt := Editor_State_VT {
 	refresh = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 437)
+		use_base_input()
+		put_op(o, 437)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	replace = proc(s: Editor_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 438)
+		use_base_input()
+		put_op(o, 438)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -5316,7 +5726,8 @@ editor_state_vt := Editor_State_VT {
 	replace_all = proc(s: Editor_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 439)
+		use_base_input()
+		put_op(o, 439)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -5324,21 +5735,24 @@ editor_state_vt := Editor_State_VT {
 	select_all = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 443)
+		use_base_input()
+		put_op(o, 443)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	select_all_from_edit_menu = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 444)
+		use_base_input()
+		put_op(o, 444)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_accessibility = proc(s: Editor_State, cx: ^Cx, accessibility: Input_Accessibility, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 895)
+		use_base_input()
+		put_op(o, 895)
 		put_u64(o, s.h)
 		put_vtape(o, accessibility.nd)
 		state_set(cx, req[:], loc)
@@ -5346,7 +5760,8 @@ editor_state_vt := Editor_State_VT {
 	set_auto_close = proc(s: Editor_State, cx: ^Cx, auto_close: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 446)
+		use_base_input()
+		put_op(o, 446)
 		put_u64(o, s.h)
 		put_u8(o, u8(auto_close))
 		state_set(cx, req[:], loc)
@@ -5354,7 +5769,8 @@ editor_state_vt := Editor_State_VT {
 	set_clean_on_escape = proc(s: Editor_State, cx: ^Cx, clean: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 447)
+		use_base_input()
+		put_op(o, 447)
 		put_u64(o, s.h)
 		put_u8(o, u8(clean))
 		state_set(cx, req[:], loc)
@@ -5362,7 +5778,8 @@ editor_state_vt := Editor_State_VT {
 	set_context_menu_enabled = proc(s: Editor_State, cx: ^Cx, enabled: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 448)
+		use_base_input()
+		put_op(o, 448)
 		put_u64(o, s.h)
 		put_u8(o, u8(enabled))
 		state_set(cx, req[:], loc)
@@ -5370,7 +5787,8 @@ editor_state_vt := Editor_State_VT {
 	set_cursor_position = proc(s: Editor_State, cx: ^Cx, position: Lsp_Position, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1468)
+		use_base_input()
+		put_op(o, 1468)
 		put_u64(o, s.h)
 		{ lv := position; put_value(o, &lv, type_info_of(Lsp_Position)) }
 		state_set(cx, req[:], loc)
@@ -5378,7 +5796,8 @@ editor_state_vt := Editor_State_VT {
 	set_cursor_surrounding_lines = proc(s: Editor_State, cx: ^Cx, lines: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 449)
+		use_base_input()
+		put_op(o, 449)
 		put_u64(o, s.h)
 		if x0, ok := lines.?; ok {
 			put_u8(o, 1)
@@ -5391,7 +5810,8 @@ editor_state_vt := Editor_State_VT {
 	set_disabled = proc(s: Editor_State, cx: ^Cx, disabled: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 450)
+		use_base_input()
+		put_op(o, 450)
 		put_u64(o, s.h)
 		put_u8(o, u8(disabled))
 		state_set(cx, req[:], loc)
@@ -5399,7 +5819,8 @@ editor_state_vt := Editor_State_VT {
 	set_editor_style = proc(s: Editor_State, cx: ^Cx, style: Input_Editor_Style, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1682)
+		use_base_input()
+		put_op(o, 1682)
 		put_u64(o, s.h)
 		put_Input_Editor_Style(o, style)
 		state_set(cx, req[:], loc)
@@ -5407,7 +5828,8 @@ editor_state_vt := Editor_State_VT {
 	set_fold_background = proc(s: Editor_State, cx: ^Cx, color: Maybe(Color), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 608)
+		use_base_input()
+		put_op(o, 608)
 		put_u64(o, s.h)
 		if x0, ok := color.?; ok {
 			put_u8(o, 1)
@@ -5420,7 +5842,8 @@ editor_state_vt := Editor_State_VT {
 	set_fold_placeholder_renderer = proc(s: Editor_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1676)
+		use_base_input()
+		put_op(o, 1676)
 		put_u64(o, s.h)
 		if x0, ok := renderer.?; ok {
 			put_u8(o, 1)
@@ -5433,7 +5856,8 @@ editor_state_vt := Editor_State_VT {
 	set_folding = proc(s: Editor_State, cx: ^Cx, folding: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 451)
+		use_base_input()
+		put_op(o, 451)
 		put_u64(o, s.h)
 		put_u8(o, u8(folding))
 		state_set(cx, req[:], loc)
@@ -5441,7 +5865,8 @@ editor_state_vt := Editor_State_VT {
 	set_gutter_decorations_width = proc(s: Editor_State, cx: ^Cx, width: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 452)
+		use_base_input()
+		put_op(o, 452)
 		put_u64(o, s.h)
 		put_f32(o, width)
 		state_set(cx, req[:], loc)
@@ -5449,7 +5874,8 @@ editor_state_vt := Editor_State_VT {
 	set_highlighter = proc(s: Editor_State, cx: ^Cx, new_language: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 453)
+		use_base_input()
+		put_op(o, 453)
 		put_u64(o, s.h)
 		put_str(o, new_language)
 		state_set(cx, req[:], loc)
@@ -5457,7 +5883,8 @@ editor_state_vt := Editor_State_VT {
 	set_highlighter_factory = proc(s: Editor_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1618)
+		use_base_input()
+		put_op(o, 1618)
 		put_u64(o, s.h)
 		put_u64(o, factory.h)
 		state_set(cx, req[:], loc)
@@ -5465,7 +5892,8 @@ editor_state_vt := Editor_State_VT {
 	set_indent_guides = proc(s: Editor_State, cx: ^Cx, indent_guides: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 454)
+		use_base_input()
+		put_op(o, 454)
 		put_u64(o, s.h)
 		put_u8(o, u8(indent_guides))
 		state_set(cx, req[:], loc)
@@ -5473,7 +5901,8 @@ editor_state_vt := Editor_State_VT {
 	set_line_number = proc(s: Editor_State, cx: ^Cx, line_number: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 455)
+		use_base_input()
+		put_op(o, 455)
 		put_u64(o, s.h)
 		put_u8(o, u8(line_number))
 		state_set(cx, req[:], loc)
@@ -5481,7 +5910,8 @@ editor_state_vt := Editor_State_VT {
 	set_mask_pattern = proc(s: Editor_State, cx: ^Cx, pattern: Mask_Pattern_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 609)
+		use_base_input()
+		put_op(o, 609)
 		put_u64(o, s.h)
 		put_Mask_Pattern_Into(o, pattern)
 		state_set(cx, req[:], loc)
@@ -5489,7 +5919,8 @@ editor_state_vt := Editor_State_VT {
 	set_overlay_action_handler = proc(s: Editor_State, cx: ^Cx, taken: []Tuple_Input_Overlay_Kind_String, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1749)
+		use_base_input()
+		put_op(o, 1749)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(taken)))
 		for x0 in taken {
@@ -5501,7 +5932,8 @@ editor_state_vt := Editor_State_VT {
 	set_placeholder = proc(s: Editor_State, cx: ^Cx, placeholder: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 456)
+		use_base_input()
+		put_op(o, 456)
 		put_u64(o, s.h)
 		put_str(o, placeholder)
 		state_set(cx, req[:], loc)
@@ -5509,7 +5941,8 @@ editor_state_vt := Editor_State_VT {
 	set_readonly = proc(s: Editor_State, cx: ^Cx, readonly: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 457)
+		use_base_input()
+		put_op(o, 457)
 		put_u64(o, s.h)
 		put_u8(o, u8(readonly))
 		state_set(cx, req[:], loc)
@@ -5517,7 +5950,8 @@ editor_state_vt := Editor_State_VT {
 	set_scroll_beyond_last_line = proc(s: Editor_State, cx: ^Cx, rows: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 458)
+		use_base_input()
+		put_op(o, 458)
 		put_u64(o, s.h)
 		if x0, ok := rows.?; ok {
 			put_u8(o, 1)
@@ -5530,7 +5964,8 @@ editor_state_vt := Editor_State_VT {
 	set_scroll_bounce = proc(s: Editor_State, cx: ^Cx, scroll_bounce: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 459)
+		use_base_input()
+		put_op(o, 459)
 		put_u64(o, s.h)
 		put_u8(o, u8(scroll_bounce))
 		state_set(cx, req[:], loc)
@@ -5538,7 +5973,8 @@ editor_state_vt := Editor_State_VT {
 	set_scroll_offset = proc(s: Editor_State, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 610)
+		use_base_input()
+		put_op(o, 610)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, offset)
 		state_set(cx, req[:], loc)
@@ -5546,7 +5982,8 @@ editor_state_vt := Editor_State_VT {
 	set_scrollbar_renderer = proc(s: Editor_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1603)
+		use_base_input()
+		put_op(o, 1603)
 		put_u64(o, s.h)
 		if x0, ok := renderer.?; ok {
 			put_u8(o, 1)
@@ -5559,7 +5996,8 @@ editor_state_vt := Editor_State_VT {
 	set_search_query = proc(s: Editor_State, cx: ^Cx, query: string, case_insensitive: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 460)
+		use_base_input()
+		put_op(o, 460)
 		put_u64(o, s.h)
 		put_str(o, query)
 		put_u8(o, u8(case_insensitive))
@@ -5568,7 +6006,8 @@ editor_state_vt := Editor_State_VT {
 	set_searchable = proc(s: Editor_State, cx: ^Cx, searchable: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 461)
+		use_base_input()
+		put_op(o, 461)
 		put_u64(o, s.h)
 		put_u8(o, u8(searchable))
 		state_set(cx, req[:], loc)
@@ -5576,7 +6015,8 @@ editor_state_vt := Editor_State_VT {
 	set_selected_range = proc(s: Editor_State, cx: ^Cx, range: Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 462)
+		use_base_input()
+		put_op(o, 462)
 		put_u64(o, s.h)
 		put_range(o, range)
 		state_set(cx, req[:], loc)
@@ -5584,7 +6024,8 @@ editor_state_vt := Editor_State_VT {
 	set_selected_range_with_direction = proc(s: Editor_State, cx: ^Cx, range: Range, reversed: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 463)
+		use_base_input()
+		put_op(o, 463)
 		put_u64(o, s.h)
 		put_range(o, range)
 		put_u8(o, u8(reversed))
@@ -5593,7 +6034,8 @@ editor_state_vt := Editor_State_VT {
 	set_selection_focus = proc(s: Editor_State, cx: ^Cx, focus: Maybe(Focus_Handle), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 611)
+		use_base_input()
+		put_op(o, 611)
 		put_u64(o, s.h)
 		if x0, ok := focus.?; ok {
 			put_u8(o, 1)
@@ -5606,7 +6048,8 @@ editor_state_vt := Editor_State_VT {
 	set_show_whitespaces = proc(s: Editor_State, cx: ^Cx, show: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 464)
+		use_base_input()
+		put_op(o, 464)
 		put_u64(o, s.h)
 		put_u8(o, u8(show))
 		state_set(cx, req[:], loc)
@@ -5614,7 +6057,8 @@ editor_state_vt := Editor_State_VT {
 	set_smart_indent = proc(s: Editor_State, cx: ^Cx, smart_indent: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 465)
+		use_base_input()
+		put_op(o, 465)
 		put_u64(o, s.h)
 		put_u8(o, u8(smart_indent))
 		state_set(cx, req[:], loc)
@@ -5622,7 +6066,8 @@ editor_state_vt := Editor_State_VT {
 	set_soft_wrap = proc(s: Editor_State, cx: ^Cx, wrap: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 466)
+		use_base_input()
+		put_op(o, 466)
 		put_u64(o, s.h)
 		put_u8(o, u8(wrap))
 		state_set(cx, req[:], loc)
@@ -5630,7 +6075,8 @@ editor_state_vt := Editor_State_VT {
 	set_submit_on_enter = proc(s: Editor_State, cx: ^Cx, submit: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 467)
+		use_base_input()
+		put_op(o, 467)
 		put_u64(o, s.h)
 		put_u8(o, u8(submit))
 		state_set(cx, req[:], loc)
@@ -5638,7 +6084,8 @@ editor_state_vt := Editor_State_VT {
 	set_tab_size = proc(s: Editor_State, cx: ^Cx, tab: Tab_Size, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 612)
+		use_base_input()
+		put_op(o, 612)
 		put_u64(o, s.h)
 		put_Tab_Size(o, tab)
 		state_set(cx, req[:], loc)
@@ -5646,7 +6093,8 @@ editor_state_vt := Editor_State_VT {
 	set_text_align = proc(s: Editor_State, cx: ^Cx, text_align: Text_Align, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 468)
+		use_base_input()
+		put_op(o, 468)
 		put_u64(o, s.h)
 		put_u16(o, u16(text_align))
 		state_set(cx, req[:], loc)
@@ -5654,7 +6102,8 @@ editor_state_vt := Editor_State_VT {
 	set_value = proc(s: Editor_State, cx: ^Cx, value: Input_Content_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 613)
+		use_base_input()
+		put_op(o, 613)
 		put_u64(o, s.h)
 		put_Input_Content_Into(o, value)
 		state_set(cx, req[:], loc)
@@ -5662,7 +6111,8 @@ editor_state_vt := Editor_State_VT {
 	set_wrapping_indent = proc(s: Editor_State, cx: ^Cx, wrapping_indent: Wrapping_Indent, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 469)
+		use_base_input()
+		put_op(o, 469)
 		put_u64(o, s.h)
 		put_u16(o, u16(wrapping_indent))
 		state_set(cx, req[:], loc)
@@ -5670,28 +6120,32 @@ editor_state_vt := Editor_State_VT {
 	show_completions = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 470)
+		use_base_input()
+		put_op(o, 470)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	toggle_masked = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 474)
+		use_base_input()
+		put_op(o, 474)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	unselect = proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 476)
+		use_base_input()
+		put_op(o, 476)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	update_edge_drag = proc(s: Editor_State, cx: ^Cx, finger: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 614)
+		use_base_input()
+		put_op(o, 614)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, finger)
 		state_set(cx, req[:], loc)
@@ -5700,7 +6154,7 @@ editor_state_vt := Editor_State_VT {
 		slot, generation := keep_handler(cx, h, 97, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 471)
+		put_op(o, 471)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -5711,7 +6165,7 @@ editor_state_vt := Editor_State_VT {
 		slot, generation := keep_handler(cx, h, 120, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1750)
+		put_op(o, 1750)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -5750,34 +6204,34 @@ Editor_State_Builder_VT :: struct {
 editor_state_builder_vt := Editor_State_Builder_VT {
 	autocapitalize = proc(b: Editor_State_Builder, autocapitalize: Autocapitalize) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u16(o, u16(autocapitalize))
 		o[b.count_at] += 1
 		return b
 	},
 	autocorrect = proc(b: Editor_State_Builder, autocorrect: bool) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u8(o, u8(autocorrect))
 		o[b.count_at] += 1
 		return b
 	},
 	clean_on_escape = proc(b: Editor_State_Builder) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		o[b.count_at] += 1
 		return b
 	},
 	context_menu = proc(b: Editor_State_Builder, enable: bool) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		put_u8(o, u8(enable))
 		o[b.count_at] += 1
 		return b
 	},
 	cursor_surrounding_lines = proc(b: Editor_State_Builder, lines: Maybe(int)) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 5)
+		put_op(o, 5)
 		if x0, ok := lines.?; ok {
 			put_u8(o, 1)
 			put_usize(o, x0)
@@ -5789,49 +6243,49 @@ editor_state_builder_vt := Editor_State_Builder_VT {
 	},
 	default_value = proc(b: Editor_State_Builder, value: string) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 6)
+		put_op(o, 6)
 		put_str(o, value)
 		o[b.count_at] += 1
 		return b
 	},
 	gutter_decorations_width = proc(b: Editor_State_Builder, width: f32) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 7)
+		put_op(o, 7)
 		put_f32(o, width)
 		o[b.count_at] += 1
 		return b
 	},
 	input_action = proc(b: Editor_State_Builder, action: Text_Input_Action) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 8)
+		put_op(o, 8)
 		put_u16(o, u16(action))
 		o[b.count_at] += 1
 		return b
 	},
 	language = proc(b: Editor_State_Builder, language: string) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 9)
+		put_op(o, 9)
 		put_str(o, language)
 		o[b.count_at] += 1
 		return b
 	},
 	mask_pattern = proc(b: Editor_State_Builder, pattern: Mask_Pattern_Into) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 14)
+		put_op(o, 14)
 		put_Mask_Pattern_Into(o, pattern)
 		o[b.count_at] += 1
 		return b
 	},
 	placeholder = proc(b: Editor_State_Builder, placeholder: string) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 10)
+		put_op(o, 10)
 		put_str(o, placeholder)
 		o[b.count_at] += 1
 		return b
 	},
 	scroll_beyond_last_line = proc(b: Editor_State_Builder, rows: Maybe(int)) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 11)
+		put_op(o, 11)
 		if x0, ok := rows.?; ok {
 			put_u8(o, 1)
 			put_usize(o, x0)
@@ -5843,14 +6297,14 @@ editor_state_builder_vt := Editor_State_Builder_VT {
 	},
 	scroll_bounce = proc(b: Editor_State_Builder, scroll_bounce: bool) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 12)
+		put_op(o, 12)
 		put_u8(o, u8(scroll_bounce))
 		o[b.count_at] += 1
 		return b
 	},
 	searchable = proc(b: Editor_State_Builder, searchable: bool) -> Editor_State_Builder {
 		o := b.req
-		put_u16(o, 13)
+		put_op(o, 13)
 		put_u8(o, u8(searchable))
 		o[b.count_at] += 1
 		return b
@@ -5864,7 +6318,8 @@ editor_state :: proc(cx: ^Cx, loc := #caller_location) -> Editor_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 434)
+	use_base_input()
+	put_op(o, 434)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &editor_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -5877,7 +6332,8 @@ reg_global_state :: proc "contextless" () {
 global_state_global :: proc(cx: ^Cx, loc := #caller_location) -> Global_State {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 779)
+	use_base_global_state()
+	put_op(o, 779)
 	r := obj_get(0, cx, req[:], loc)
 	return {state = {h = rd_u64(&r)}, vt = &global_state_vt}
 }
@@ -5885,7 +6341,8 @@ global_state_global :: proc(cx: ^Cx, loc := #caller_location) -> Global_State {
 global_state_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Global_State {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 780)
+	use_base_global_state()
+	put_op(o, 780)
 	r := obj_get(0, cx, req[:], loc)
 	return {state = {h = rd_u64(&r)}, vt = &global_state_vt}
 }
@@ -5893,7 +6350,8 @@ global_state_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Global_Stat
 global_state_is_in_deferred_context :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 781)
+	use_base_global_state()
+	put_op(o, 781)
 	r := state_call(0, cx, req[:], loc)
 	rd_into(&r, &v)
 	return
@@ -5902,7 +6360,8 @@ global_state_is_in_deferred_context :: proc(cx: ^Cx, loc := #caller_location) ->
 global_state_is_touch_press :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 782)
+	use_base_global_state()
+	put_op(o, 782)
 	r := state_call(0, cx, req[:], loc)
 	rd_into(&r, &v)
 	return
@@ -5911,14 +6370,16 @@ global_state_is_touch_press :: proc(cx: ^Cx, loc := #caller_location) -> (v: boo
 global_state_note_touch :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 783)
+	use_base_global_state()
+	put_op(o, 783)
 	state_set(cx, req[:], loc)
 }
 
 global_state_suppress_text_selection :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 785)
+	use_base_global_state()
+	put_op(o, 785)
 	state_set(cx, req[:], loc)
 }
 
@@ -5968,7 +6429,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	active_item = proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 658)
+		use_base_grid_layout()
+		put_op(o, 658)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -5977,7 +6439,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	area = proc(s: Grid_Layout_State, cx: ^Cx, id: string, loc := #caller_location) -> (v: Maybe(Base_Grid_Area)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 659)
+		use_base_grid_layout()
+		put_op(o, 659)
 		put_u64(o, s.h)
 		put_str(o, id)
 		r := state_get(s.h, cx, req[:], loc)
@@ -5987,7 +6450,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	areas = proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: []Base_Grid_Area) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 660)
+		use_base_grid_layout()
+		put_op(o, 660)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -5996,7 +6460,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	column_count = proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 661)
+		use_base_grid_layout()
+		put_op(o, 661)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6005,7 +6470,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	compaction_axis = proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Axis)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 662)
+		use_base_grid_layout()
+		put_op(o, 662)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6014,7 +6480,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	is_collision_prevented = proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 663)
+		use_base_grid_layout()
+		put_op(o, 663)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6023,7 +6490,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	is_draggable = proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 664)
+		use_base_grid_layout()
+		put_op(o, 664)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6032,7 +6500,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	is_resizable = proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 665)
+		use_base_grid_layout()
+		put_op(o, 665)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6041,7 +6510,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	selected_item = proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 669)
+		use_base_grid_layout()
+		put_op(o, 669)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6050,7 +6520,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	move_item = proc(s: Grid_Layout_State, cx: ^Cx, id: string, col: int, row: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 666)
+		use_base_grid_layout()
+		put_op(o, 666)
 		put_u64(o, s.h)
 		put_str(o, id)
 		put_usize(o, col)
@@ -6062,7 +6533,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	resize_item = proc(s: Grid_Layout_State, cx: ^Cx, id: string, col_span: int, row_span: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 668)
+		use_base_grid_layout()
+		put_op(o, 668)
 		put_u64(o, s.h)
 		put_str(o, id)
 		put_usize(o, col_span)
@@ -6074,7 +6546,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	set_areas = proc(s: Grid_Layout_State, cx: ^Cx, areas: []Grid_Area, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 786)
+		use_base_grid_layout()
+		put_op(o, 786)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(areas)))
 		for x0 in areas {
@@ -6085,7 +6558,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	set_cols = proc(s: Grid_Layout_State, cx: ^Cx, cols: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 670)
+		use_base_grid_layout()
+		put_op(o, 670)
 		put_u64(o, s.h)
 		put_usize(o, cols)
 		state_set(cx, req[:], loc)
@@ -6093,7 +6567,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	set_compaction = proc(s: Grid_Layout_State, cx: ^Cx, compaction: Maybe(Axis), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 671)
+		use_base_grid_layout()
+		put_op(o, 671)
 		put_u64(o, s.h)
 		if x0, ok := compaction.?; ok {
 			put_u8(o, 1)
@@ -6106,7 +6581,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	set_draggable = proc(s: Grid_Layout_State, cx: ^Cx, draggable: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 672)
+		use_base_grid_layout()
+		put_op(o, 672)
 		put_u64(o, s.h)
 		put_u8(o, u8(draggable))
 		state_set(cx, req[:], loc)
@@ -6114,7 +6590,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	set_prevent_collision = proc(s: Grid_Layout_State, cx: ^Cx, prevent_collision: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 673)
+		use_base_grid_layout()
+		put_op(o, 673)
 		put_u64(o, s.h)
 		put_u8(o, u8(prevent_collision))
 		state_set(cx, req[:], loc)
@@ -6122,7 +6599,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	set_resizable = proc(s: Grid_Layout_State, cx: ^Cx, resizable: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 674)
+		use_base_grid_layout()
+		put_op(o, 674)
 		put_u64(o, s.h)
 		put_u8(o, u8(resizable))
 		state_set(cx, req[:], loc)
@@ -6130,7 +6608,8 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 	set_selected_item = proc(s: Grid_Layout_State, cx: ^Cx, id: Maybe(string), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 675)
+		use_base_grid_layout()
+		put_op(o, 675)
 		put_u64(o, s.h)
 		if x0, ok := id.?; ok {
 			put_u8(o, 1)
@@ -6144,7 +6623,7 @@ grid_layout_state_vt := Grid_Layout_State_VT {
 		slot, generation := keep_handler(cx, h, 85, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 676)
+		put_op(o, 676)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -6175,14 +6654,14 @@ Grid_Layout_State_Builder_VT :: struct {
 grid_layout_state_builder_vt := Grid_Layout_State_Builder_VT {
 	cols = proc(b: Grid_Layout_State_Builder, cols: int) -> Grid_Layout_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_usize(o, cols)
 		o[b.count_at] += 1
 		return b
 	},
 	compaction = proc(b: Grid_Layout_State_Builder, compaction: Maybe(Axis)) -> Grid_Layout_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		if x0, ok := compaction.?; ok {
 			put_u8(o, 1)
 			put_u16(o, u16(x0))
@@ -6194,7 +6673,7 @@ grid_layout_state_builder_vt := Grid_Layout_State_Builder_VT {
 	},
 	default_areas = proc(b: Grid_Layout_State_Builder, areas: []Grid_Area) -> Grid_Layout_State_Builder {
 		o := b.req
-		put_u16(o, 6)
+		put_op(o, 6)
 		put_u32(o, u32(len(areas)))
 		for x0 in areas {
 			put_vtape(o, x0.nd)
@@ -6204,21 +6683,21 @@ grid_layout_state_builder_vt := Grid_Layout_State_Builder_VT {
 	},
 	draggable = proc(b: Grid_Layout_State_Builder, draggable: bool) -> Grid_Layout_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_u8(o, u8(draggable))
 		o[b.count_at] += 1
 		return b
 	},
 	prevent_collision = proc(b: Grid_Layout_State_Builder, prevent_collision: bool) -> Grid_Layout_State_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		put_u8(o, u8(prevent_collision))
 		o[b.count_at] += 1
 		return b
 	},
 	resizable = proc(b: Grid_Layout_State_Builder, resizable: bool) -> Grid_Layout_State_Builder {
 		o := b.req
-		put_u16(o, 5)
+		put_op(o, 5)
 		put_u8(o, u8(resizable))
 		o[b.count_at] += 1
 		return b
@@ -6232,7 +6711,8 @@ grid_layout_state :: proc(cx: ^Cx, loc := #caller_location) -> Grid_Layout_State
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 667)
+	use_base_grid_layout()
+	put_op(o, 667)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &grid_layout_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -6261,7 +6741,8 @@ gutter_decoration_collection_vt := Gutter_Decoration_Collection_VT {
 	get_ranges = proc(s: Gutter_Decoration_Collection, cx: ^Cx, loc := #caller_location) -> (v: []Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 900)
+		use_base_input()
+		put_op(o, 900)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6270,7 +6751,8 @@ gutter_decoration_collection_vt := Gutter_Decoration_Collection_VT {
 	append = proc(s: Gutter_Decoration_Collection, cx: ^Cx, decorations: []Gutter_Decoration, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 897)
+		use_base_input()
+		put_op(o, 897)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -6281,21 +6763,24 @@ gutter_decoration_collection_vt := Gutter_Decoration_Collection_VT {
 	clear = proc(s: Gutter_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 898)
+		use_base_input()
+		put_op(o, 898)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	dispose = proc(s: Gutter_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 899)
+		use_base_input()
+		put_op(o, 899)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set = proc(s: Gutter_Decoration_Collection, cx: ^Cx, decorations: []Gutter_Decoration, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 901)
+		use_base_input()
+		put_op(o, 901)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -6309,7 +6794,8 @@ gutter_decoration_collection_default :: proc(cx: ^Cx, loc := #caller_location) -
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1470)
+	use_base_input()
+	put_op(o, 1470)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &gutter_decoration_collection_vt}
 }
@@ -6363,7 +6849,8 @@ history_vt := History_VT {
 	can_back = proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1292)
+		use_base_root()
+		put_op(o, 1292)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6372,7 +6859,8 @@ history_vt := History_VT {
 	can_forward = proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1293)
+		use_base_root()
+		put_op(o, 1293)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6381,7 +6869,8 @@ history_vt := History_VT {
 	current = proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1295)
+		use_base_root()
+		put_op(o, 1295)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6390,7 +6879,8 @@ history_vt := History_VT {
 	entries = proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1296)
+		use_base_root()
+		put_op(o, 1296)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6399,7 +6889,8 @@ history_vt := History_VT {
 	forward_entries = proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1298)
+		use_base_root()
+		put_op(o, 1298)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6408,7 +6899,8 @@ history_vt := History_VT {
 	back = proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1291)
+		use_base_root()
+		put_op(o, 1291)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6417,7 +6909,8 @@ history_vt := History_VT {
 	forward = proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1297)
+		use_base_root()
+		put_op(o, 1297)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6426,7 +6919,8 @@ history_vt := History_VT {
 	remove_current = proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1301)
+		use_base_root()
+		put_op(o, 1301)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6435,14 +6929,16 @@ history_vt := History_VT {
 	clear = proc(s: History, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1294)
+		use_base_root()
+		put_op(o, 1294)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	push = proc(s: History, cx: ^Cx, entry: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1300)
+		use_base_root()
+		put_op(o, 1300)
 		put_u64(o, s.h)
 		put_str(o, entry)
 		state_set(cx, req[:], loc)
@@ -6450,7 +6946,8 @@ history_vt := History_VT {
 	replace_current = proc(s: History, cx: ^Cx, entry: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1302)
+		use_base_root()
+		put_op(o, 1302)
 		put_u64(o, s.h)
 		put_str(o, entry)
 		state_set(cx, req[:], loc)
@@ -6458,7 +6955,8 @@ history_vt := History_VT {
 	retain = proc(s: History, cx: ^Cx, keep: []string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1662)
+		use_base_root()
+		put_op(o, 1662)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(keep)))
 		for x0 in keep {
@@ -6485,7 +6983,7 @@ History_Builder_VT :: struct {
 history_builder_vt := History_Builder_VT {
 	max_entries = proc(b: History_Builder, max_entries: int) -> History_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_usize(o, max_entries)
 		o[b.count_at] += 1
 		return b
@@ -6499,7 +6997,8 @@ history :: proc(cx: ^Cx, loc := #caller_location) -> History_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1299)
+	use_base_root()
+	put_op(o, 1299)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &history_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -6525,7 +7024,8 @@ horizontal_scroll_claim_vt := Horizontal_Scroll_Claim_VT {
 	at = proc(s: Horizontal_Scroll_Claim, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1592)
+		use_base_scrollable_mask()
+		put_op(o, 1592)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6534,7 +7034,8 @@ horizontal_scroll_claim_vt := Horizontal_Scroll_Claim_VT {
 	delta_x = proc(s: Horizontal_Scroll_Claim, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 787)
+		use_base_scrollable_mask()
+		put_op(o, 787)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6565,7 +7066,8 @@ hsla_sliders_vt := Hsla_Sliders_VT {
 	alpha = proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) -> (v: Slider_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1449)
+		use_base_color_picker()
+		put_op(o, 1449)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6574,7 +7076,8 @@ hsla_sliders_vt := Hsla_Sliders_VT {
 	hue = proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) -> (v: Slider_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1450)
+		use_base_color_picker()
+		put_op(o, 1450)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6583,7 +7086,8 @@ hsla_sliders_vt := Hsla_Sliders_VT {
 	lightness = proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) -> (v: Slider_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1451)
+		use_base_color_picker()
+		put_op(o, 1451)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6592,7 +7096,8 @@ hsla_sliders_vt := Hsla_Sliders_VT {
 	saturation = proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) -> (v: Slider_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1452)
+		use_base_color_picker()
+		put_op(o, 1452)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6620,7 +7125,8 @@ image_node_vt := Image_Node_VT {
 	title = proc(s: Image_Node, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1487)
+		use_base_text()
+		put_op(o, 1487)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6632,7 +7138,8 @@ image_node_default :: proc(cx: ^Cx, loc := #caller_location) -> Image_Node {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1486)
+	use_base_text()
+	put_op(o, 1486)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &image_node_vt}
 }
@@ -6660,7 +7167,8 @@ inline_node_read_vt := Inline_Node_Read_VT {
 	as_custom = proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Markdown_Node_Read)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1403)
+		use_base_text()
+		put_op(o, 1403)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6669,7 +7177,8 @@ inline_node_read_vt := Inline_Node_Read_VT {
 	as_image = proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Image_Node)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1404)
+		use_base_text()
+		put_op(o, 1404)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6678,7 +7187,8 @@ inline_node_read_vt := Inline_Node_Read_VT {
 	mark_runs = proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_Range_Base_Text_Mark) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1405)
+		use_base_text()
+		put_op(o, 1405)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6687,7 +7197,8 @@ inline_node_read_vt := Inline_Node_Read_VT {
 	text = proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1406)
+		use_base_text()
+		put_op(o, 1406)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6718,7 +7229,8 @@ inline_render_context_vt := Inline_Render_Context_VT {
 	font_size = proc(s: Inline_Render_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1663)
+		use_base_text()
+		put_op(o, 1663)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6727,7 +7239,8 @@ inline_render_context_vt := Inline_Render_Context_VT {
 	line_height = proc(s: Inline_Render_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1664)
+		use_base_text()
+		put_op(o, 1664)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6736,7 +7249,8 @@ inline_render_context_vt := Inline_Render_Context_VT {
 	rem_size = proc(s: Inline_Render_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1665)
+		use_base_text()
+		put_op(o, 1665)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6745,7 +7259,8 @@ inline_render_context_vt := Inline_Render_Context_VT {
 	text_style = proc(s: Inline_Render_Context, cx: ^Cx, loc := #caller_location) -> (v: Text_Style) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1666)
+		use_base_text()
+		put_op(o, 1666)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6776,7 +7291,8 @@ inline_token_click_event_vt := Inline_Token_Click_Event_VT {
 	bounds = proc(s: Inline_Token_Click_Event, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1321)
+		use_base_input()
+		put_op(o, 1321)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6785,7 +7301,8 @@ inline_token_click_event_vt := Inline_Token_Click_Event_VT {
 	click = proc(s: Inline_Token_Click_Event, cx: ^Cx, loc := #caller_location) -> (v: Click_Event) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1283)
+		use_base_input()
+		put_op(o, 1283)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6794,7 +7311,8 @@ inline_token_click_event_vt := Inline_Token_Click_Event_VT {
 	range = proc(s: Inline_Token_Click_Event, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1284)
+		use_base_input()
+		put_op(o, 1284)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6803,7 +7321,8 @@ inline_token_click_event_vt := Inline_Token_Click_Event_VT {
 	token = proc(s: Inline_Token_Click_Event, cx: ^Cx, loc := #caller_location) -> (v: Inline_Token_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1346)
+		use_base_input()
+		put_op(o, 1346)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6837,7 +7356,8 @@ inline_token_context_vt := Inline_Token_Context_VT {
 	available_width = proc(s: Inline_Token_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1604)
+		use_base_input()
+		put_op(o, 1604)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6846,7 +7366,8 @@ inline_token_context_vt := Inline_Token_Context_VT {
 	is_disabled = proc(s: Inline_Token_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1605)
+		use_base_input()
+		put_op(o, 1605)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6855,7 +7376,8 @@ inline_token_context_vt := Inline_Token_Context_VT {
 	is_readonly = proc(s: Inline_Token_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1606)
+		use_base_input()
+		put_op(o, 1606)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6864,7 +7386,8 @@ inline_token_context_vt := Inline_Token_Context_VT {
 	is_selected = proc(s: Inline_Token_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1607)
+		use_base_input()
+		put_op(o, 1607)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6873,7 +7396,8 @@ inline_token_context_vt := Inline_Token_Context_VT {
 	line_height = proc(s: Inline_Token_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1608)
+		use_base_input()
+		put_op(o, 1608)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6882,7 +7406,8 @@ inline_token_context_vt := Inline_Token_Context_VT {
 	range = proc(s: Inline_Token_Context, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1609)
+		use_base_input()
+		put_op(o, 1609)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6891,7 +7416,8 @@ inline_token_context_vt := Inline_Token_Context_VT {
 	token = proc(s: Inline_Token_Context, cx: ^Cx, loc := #caller_location) -> (v: Inline_Token_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1610)
+		use_base_input()
+		put_op(o, 1610)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6923,7 +7449,8 @@ inline_token_hover_event_vt := Inline_Token_Hover_Event_VT {
 	bounds = proc(s: Inline_Token_Hover_Event, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1285)
+		use_base_input()
+		put_op(o, 1285)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6932,7 +7459,8 @@ inline_token_hover_event_vt := Inline_Token_Hover_Event_VT {
 	is_hovered = proc(s: Inline_Token_Hover_Event, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1286)
+		use_base_input()
+		put_op(o, 1286)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6941,7 +7469,8 @@ inline_token_hover_event_vt := Inline_Token_Hover_Event_VT {
 	range = proc(s: Inline_Token_Hover_Event, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1287)
+		use_base_input()
+		put_op(o, 1287)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6950,7 +7479,8 @@ inline_token_hover_event_vt := Inline_Token_Hover_Event_VT {
 	range_utf16 = proc(s: Inline_Token_Hover_Event, cx: ^Cx, loc := #caller_location) -> (v: Tuple_Int_Int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1288)
+		use_base_input()
+		put_op(o, 1288)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6959,7 +7489,8 @@ inline_token_hover_event_vt := Inline_Token_Hover_Event_VT {
 	token = proc(s: Inline_Token_Hover_Event, cx: ^Cx, loc := #caller_location) -> (v: Inline_Token_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1347)
+		use_base_input()
+		put_op(o, 1347)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6989,7 +7520,8 @@ inline_token_read_vt := Inline_Token_Read_VT {
 	id = proc(s: Inline_Token_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1373)
+		use_base_input()
+		put_op(o, 1373)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -6998,7 +7530,8 @@ inline_token_read_vt := Inline_Token_Read_VT {
 	label = proc(s: Inline_Token_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1374)
+		use_base_input()
+		put_op(o, 1374)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7007,7 +7540,8 @@ inline_token_read_vt := Inline_Token_Read_VT {
 	text = proc(s: Inline_Token_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1375)
+		use_base_input()
+		put_op(o, 1375)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7036,7 +7570,8 @@ inline_token_span_vt := Inline_Token_Span_VT {
 	range = proc(s: Inline_Token_Span, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 902)
+		use_base_input()
+		put_op(o, 902)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7045,7 +7580,8 @@ inline_token_span_vt := Inline_Token_Span_VT {
 	token = proc(s: Inline_Token_Span, cx: ^Cx, loc := #caller_location) -> (v: Inline_Token_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1348)
+		use_base_input()
+		put_op(o, 1348)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7075,7 +7611,8 @@ input_content_vt := Input_Content_VT {
 	text = proc(s: Input_Content, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 904)
+		use_base_input()
+		put_op(o, 904)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7084,7 +7621,8 @@ input_content_vt := Input_Content_VT {
 	tokens = proc(s: Input_Content, cx: ^Cx, loc := #caller_location) -> (v: []Inline_Token_Span) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 905)
+		use_base_input()
+		put_op(o, 905)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7093,7 +7631,8 @@ input_content_vt := Input_Content_VT {
 	with_token = proc(s: Input_Content, cx: ^Cx, range: Range, token: Inline_Token, loc := #caller_location) -> (v: Fallible(Input_Content)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1143)
+		use_base_input()
+		put_op(o, 1143)
 		put_u64(o, s.h)
 		put_range(o, range)
 		put_vtape(o, token.nd)
@@ -7107,7 +7646,8 @@ input_content :: proc(cx: ^Cx, text: string, loc := #caller_location) -> Input_C
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 903)
+	use_base_input()
+	put_op(o, 903)
 	put_str(o, text)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &input_content_vt}
@@ -7141,7 +7681,8 @@ input_context_menu_capabilities_read_vt := Input_Context_Menu_Capabilities_Read_
 	has_code_actions = proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1376)
+		use_base_input()
+		put_op(o, 1376)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7150,7 +7691,8 @@ input_context_menu_capabilities_read_vt := Input_Context_Menu_Capabilities_Read_
 	has_definition = proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1377)
+		use_base_input()
+		put_op(o, 1377)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7159,7 +7701,8 @@ input_context_menu_capabilities_read_vt := Input_Context_Menu_Capabilities_Read_
 	has_selection = proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1378)
+		use_base_input()
+		put_op(o, 1378)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7168,7 +7711,8 @@ input_context_menu_capabilities_read_vt := Input_Context_Menu_Capabilities_Read_
 	is_code_editor = proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1379)
+		use_base_input()
+		put_op(o, 1379)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7177,7 +7721,8 @@ input_context_menu_capabilities_read_vt := Input_Context_Menu_Capabilities_Read_
 	is_copyable = proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1380)
+		use_base_input()
+		put_op(o, 1380)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7186,7 +7731,8 @@ input_context_menu_capabilities_read_vt := Input_Context_Menu_Capabilities_Read_
 	is_disabled = proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1381)
+		use_base_input()
+		put_op(o, 1381)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7195,7 +7741,8 @@ input_context_menu_capabilities_read_vt := Input_Context_Menu_Capabilities_Read_
 	is_editable = proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1382)
+		use_base_input()
+		put_op(o, 1382)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7204,7 +7751,8 @@ input_context_menu_capabilities_read_vt := Input_Context_Menu_Capabilities_Read_
 	is_masked = proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1383)
+		use_base_input()
+		put_op(o, 1383)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7213,7 +7761,8 @@ input_context_menu_capabilities_read_vt := Input_Context_Menu_Capabilities_Read_
 	is_readonly = proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1384)
+		use_base_input()
+		put_op(o, 1384)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7251,7 +7800,8 @@ input_presentation_vt := Input_Presentation_VT {
 	focus_handle = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: Focus_Handle) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1646)
+		use_base_input()
+		put_op(o, 1646)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7260,7 +7810,8 @@ input_presentation_vt := Input_Presentation_VT {
 	is_code_editor = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 906)
+		use_base_input()
+		put_op(o, 906)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7269,7 +7820,8 @@ input_presentation_vt := Input_Presentation_VT {
 	is_disabled = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 907)
+		use_base_input()
+		put_op(o, 907)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7278,7 +7830,8 @@ input_presentation_vt := Input_Presentation_VT {
 	is_editable = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 908)
+		use_base_input()
+		put_op(o, 908)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7287,7 +7840,8 @@ input_presentation_vt := Input_Presentation_VT {
 	is_loading = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 909)
+		use_base_input()
+		put_op(o, 909)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7296,7 +7850,8 @@ input_presentation_vt := Input_Presentation_VT {
 	is_masked = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 910)
+		use_base_input()
+		put_op(o, 910)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7305,7 +7860,8 @@ input_presentation_vt := Input_Presentation_VT {
 	is_multi_line = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 911)
+		use_base_input()
+		put_op(o, 911)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7314,7 +7870,8 @@ input_presentation_vt := Input_Presentation_VT {
 	is_readonly = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 912)
+		use_base_input()
+		put_op(o, 912)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7323,7 +7880,8 @@ input_presentation_vt := Input_Presentation_VT {
 	mask_placeholder = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 913)
+		use_base_input()
+		put_op(o, 913)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7332,7 +7890,8 @@ input_presentation_vt := Input_Presentation_VT {
 	placeholder = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 914)
+		use_base_input()
+		put_op(o, 914)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7341,7 +7900,8 @@ input_presentation_vt := Input_Presentation_VT {
 	text_align = proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: Text_Align) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 915)
+		use_base_input()
+		put_op(o, 915)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7475,7 +8035,8 @@ input_state_vt := Input_State_VT {
 	content = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Content) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 916)
+		use_base_input()
+		put_op(o, 916)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7484,7 +8045,8 @@ input_state_vt := Input_State_VT {
 	context_menu_capabilities = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Context_Menu_Capabilities_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1349)
+		use_base_input()
+		put_op(o, 1349)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7493,7 +8055,8 @@ input_state_vt := Input_State_VT {
 	cursor = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 482)
+		use_base_input()
+		put_op(o, 482)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7502,7 +8065,8 @@ input_state_vt := Input_State_VT {
 	cursor_position = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Lsp_Position) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1471)
+		use_base_input()
+		put_op(o, 1471)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7511,7 +8075,8 @@ input_state_vt := Input_State_VT {
 	diagnostic_popover = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diagnostic_Entry_Rc)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1144)
+		use_base_input()
+		put_op(o, 1144)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7520,7 +8085,8 @@ input_state_vt := Input_State_VT {
 	diagnostics = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diagnostic_Set)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 917)
+		use_base_input()
+		put_op(o, 917)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7529,7 +8095,8 @@ input_state_vt := Input_State_VT {
 	display_map_buffer_line_count = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1706)
+		use_base_input()
+		put_op(o, 1706)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7538,7 +8105,8 @@ input_state_vt := Input_State_VT {
 	display_map_buffer_line_to_display_row = proc(s: Input_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1707)
+		use_base_input()
+		put_op(o, 1707)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7548,7 +8116,8 @@ input_state_vt := Input_State_VT {
 	display_map_buffer_line_to_display_row_range = proc(s: Input_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1708)
+		use_base_input()
+		put_op(o, 1708)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7558,7 +8127,8 @@ input_state_vt := Input_State_VT {
 	display_map_buffer_pos_to_display_pos = proc(s: Input_State, cx: ^Cx, pos: Buffer_Point, loc := #caller_location) -> (v: Display_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1709)
+		use_base_input()
+		put_op(o, 1709)
 		put_u64(o, s.h)
 		put_Buffer_Point(o, pos)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7568,7 +8138,8 @@ input_state_vt := Input_State_VT {
 	display_map_display_pos_to_buffer_pos = proc(s: Input_State, cx: ^Cx, pos: Display_Point, loc := #caller_location) -> (v: Buffer_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1710)
+		use_base_input()
+		put_op(o, 1710)
 		put_u64(o, s.h)
 		put_Display_Point(o, pos)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7578,7 +8149,8 @@ input_state_vt := Input_State_VT {
 	display_map_display_row_count = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1711)
+		use_base_input()
+		put_op(o, 1711)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7587,7 +8159,8 @@ input_state_vt := Input_State_VT {
 	display_map_display_row_to_buffer_line = proc(s: Input_State, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1712)
+		use_base_input()
+		put_op(o, 1712)
 		put_u64(o, s.h)
 		put_usize(o, display_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7597,7 +8170,8 @@ input_state_vt := Input_State_VT {
 	display_map_display_row_to_wrap_row = proc(s: Input_State, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1713)
+		use_base_input()
+		put_op(o, 1713)
 		put_u64(o, s.h)
 		put_usize(o, display_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7607,7 +8181,8 @@ input_state_vt := Input_State_VT {
 	display_map_folded_ranges = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: []Fold_Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1714)
+		use_base_input()
+		put_op(o, 1714)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7616,7 +8191,8 @@ input_state_vt := Input_State_VT {
 	display_map_is_buffer_line_hidden = proc(s: Input_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1715)
+		use_base_input()
+		put_op(o, 1715)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7626,7 +8202,8 @@ input_state_vt := Input_State_VT {
 	display_map_is_fold_candidate = proc(s: Input_State, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1716)
+		use_base_input()
+		put_op(o, 1716)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7636,7 +8213,8 @@ input_state_vt := Input_State_VT {
 	display_map_is_folded_at = proc(s: Input_State, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1717)
+		use_base_input()
+		put_op(o, 1717)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7646,7 +8224,8 @@ input_state_vt := Input_State_VT {
 	display_map_nearest_visible_display_row = proc(s: Input_State, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1718)
+		use_base_input()
+		put_op(o, 1718)
 		put_u64(o, s.h)
 		put_usize(o, wrap_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7656,7 +8235,8 @@ input_state_vt := Input_State_VT {
 	display_map_text = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1719)
+		use_base_input()
+		put_op(o, 1719)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7665,7 +8245,8 @@ input_state_vt := Input_State_VT {
 	display_map_visible_wrap_row_count_for_buffer_line = proc(s: Input_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1720)
+		use_base_input()
+		put_op(o, 1720)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7675,7 +8256,8 @@ input_state_vt := Input_State_VT {
 	display_map_wrap_row_count = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1721)
+		use_base_input()
+		put_op(o, 1721)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7684,7 +8266,8 @@ input_state_vt := Input_State_VT {
 	display_map_wrap_row_to_display_row = proc(s: Input_State, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1722)
+		use_base_input()
+		put_op(o, 1722)
 		put_u64(o, s.h)
 		put_usize(o, wrap_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7694,7 +8277,8 @@ input_state_vt := Input_State_VT {
 	input_bounds = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 486)
+		use_base_input()
+		put_op(o, 486)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7703,7 +8287,8 @@ input_state_vt := Input_State_VT {
 	is_code_editor = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 488)
+		use_base_input()
+		put_op(o, 488)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7712,7 +8297,8 @@ input_state_vt := Input_State_VT {
 	is_copyable = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 489)
+		use_base_input()
+		put_op(o, 489)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7721,7 +8307,8 @@ input_state_vt := Input_State_VT {
 	is_editable = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 490)
+		use_base_input()
+		put_op(o, 490)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7730,7 +8317,8 @@ input_state_vt := Input_State_VT {
 	is_multi_line = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 491)
+		use_base_input()
+		put_op(o, 491)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7739,7 +8327,8 @@ input_state_vt := Input_State_VT {
 	is_replaceable = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 492)
+		use_base_input()
+		put_op(o, 492)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7748,7 +8337,8 @@ input_state_vt := Input_State_VT {
 	is_selection_reversed = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 493)
+		use_base_input()
+		put_op(o, 493)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7757,7 +8347,8 @@ input_state_vt := Input_State_VT {
 	is_single_line = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 494)
+		use_base_input()
+		put_op(o, 494)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7766,7 +8357,8 @@ input_state_vt := Input_State_VT {
 	line_height = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 495)
+		use_base_input()
+		put_op(o, 495)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7775,7 +8367,8 @@ input_state_vt := Input_State_VT {
 	presentation = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Presentation) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 918)
+		use_base_input()
+		put_op(o, 918)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7784,7 +8377,8 @@ input_state_vt := Input_State_VT {
 	range_to_bounds = proc(s: Input_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Maybe(Bounds)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 498)
+		use_base_input()
+		put_op(o, 498)
 		put_u64(o, s.h)
 		put_range(o, range)
 		r := state_get(s.h, cx, req[:], loc)
@@ -7794,7 +8388,8 @@ input_state_vt := Input_State_VT {
 	scroll_offset = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 502)
+		use_base_input()
+		put_op(o, 502)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7803,7 +8398,8 @@ input_state_vt := Input_State_VT {
 	search_activation_revision = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 503)
+		use_base_input()
+		put_op(o, 503)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7812,7 +8408,8 @@ input_state_vt := Input_State_VT {
 	search_session = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Search_Session) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 504)
+		use_base_input()
+		put_op(o, 504)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7821,7 +8418,8 @@ input_state_vt := Input_State_VT {
 	selected_range = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 622)
+		use_base_input()
+		put_op(o, 622)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7830,7 +8428,8 @@ input_state_vt := Input_State_VT {
 	selected_text = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1271)
+		use_base_input()
+		put_op(o, 1271)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7839,7 +8438,8 @@ input_state_vt := Input_State_VT {
 	selected_value = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 507)
+		use_base_input()
+		put_op(o, 507)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7848,7 +8448,8 @@ input_state_vt := Input_State_VT {
 	text = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1272)
+		use_base_input()
+		put_op(o, 1272)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7857,7 +8458,8 @@ input_state_vt := Input_State_VT {
 	text_bounds = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Bounds)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 527)
+		use_base_input()
+		put_op(o, 527)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7866,7 +8468,8 @@ input_state_vt := Input_State_VT {
 	text_input_configuration = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Text_Input_Configuration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 528)
+		use_base_input()
+		put_op(o, 528)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7875,7 +8478,8 @@ input_state_vt := Input_State_VT {
 	tokens = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: []Inline_Token_Span) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 920)
+		use_base_input()
+		put_op(o, 920)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7884,7 +8488,8 @@ input_state_vt := Input_State_VT {
 	touch_selection = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Touch_Selection_Snapshot)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 921)
+		use_base_input()
+		put_op(o, 921)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7893,7 +8498,8 @@ input_state_vt := Input_State_VT {
 	unmask_value = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 530)
+		use_base_input()
+		put_op(o, 530)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7902,7 +8508,8 @@ input_state_vt := Input_State_VT {
 	value = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 532)
+		use_base_input()
+		put_op(o, 532)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7911,7 +8518,8 @@ input_state_vt := Input_State_VT {
 	visible_row_range = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 630)
+		use_base_input()
+		put_op(o, 630)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7920,7 +8528,8 @@ input_state_vt := Input_State_VT {
 	try_value = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String, ok: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 532)
+		use_base_input()
+		put_op(o, 532)
 		put_u64(o, s.h)
 		r := state_try(s.h, cx, req[:], loc) or_return
 		rd_into(&r, &v)
@@ -7929,7 +8538,8 @@ input_state_vt := Input_State_VT {
 	diagnostics_mut = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diagnostic_Set)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1611)
+		use_base_input()
+		put_op(o, 1611)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7938,7 +8548,8 @@ input_state_vt := Input_State_VT {
 	has_selection_focus = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1035)
+		use_base_input()
+		put_op(o, 1035)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7947,7 +8558,8 @@ input_state_vt := Input_State_VT {
 	next_search_match = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 618)
+		use_base_input()
+		put_op(o, 618)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7956,7 +8568,8 @@ input_state_vt := Input_State_VT {
 	previous_search_match = proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 619)
+		use_base_input()
+		put_op(o, 619)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -7965,7 +8578,8 @@ input_state_vt := Input_State_VT {
 	replace_all_search_matches = proc(s: Input_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 620)
+		use_base_input()
+		put_op(o, 620)
 		put_u64(o, s.h)
 		put_str(o, replacement)
 		r := state_call(s.h, cx, req[:], loc)
@@ -7975,7 +8589,8 @@ input_state_vt := Input_State_VT {
 	replace_current_search_match = proc(s: Input_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 621)
+		use_base_input()
+		put_op(o, 621)
 		put_u64(o, s.h)
 		put_str(o, replacement)
 		r := state_call(s.h, cx, req[:], loc)
@@ -7985,7 +8600,8 @@ input_state_vt := Input_State_VT {
 	replace_range_with_token = proc(s: Input_State, cx: ^Cx, range: Range, token: Inline_Token, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1036)
+		use_base_input()
+		put_op(o, 1036)
 		put_u64(o, s.h)
 		put_range(o, range)
 		put_vtape(o, token.nd)
@@ -7996,7 +8612,8 @@ input_state_vt := Input_State_VT {
 	replace_with_token = proc(s: Input_State, cx: ^Cx, token: Inline_Token, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1037)
+		use_base_input()
+		put_op(o, 1037)
 		put_u64(o, s.h)
 		put_vtape(o, token.nd)
 		r := state_call(s.h, cx, req[:], loc)
@@ -8006,7 +8623,8 @@ input_state_vt := Input_State_VT {
 	add_selection = proc(s: Input_State, cx: ^Cx, range: Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 478)
+		use_base_input()
+		put_op(o, 478)
 		put_u64(o, s.h)
 		put_range(o, range)
 		state_set(cx, req[:], loc)
@@ -8014,7 +8632,8 @@ input_state_vt := Input_State_VT {
 	apply_highlighter_fold_candidates = proc(s: Input_State, cx: ^Cx, candidates: []Fold_Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 616)
+		use_base_input()
+		put_op(o, 616)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(candidates)))
 		for x0 in candidates {
@@ -8025,7 +8644,8 @@ input_state_vt := Input_State_VT {
 	begin_edge_drag = proc(s: Input_State, cx: ^Cx, edge: Selection_Edge, finger: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 617)
+		use_base_input()
+		put_op(o, 617)
 		put_u64(o, s.h)
 		put_u16(o, u16(edge))
 		put_Gpui_Point(o, finger)
@@ -8034,35 +8654,40 @@ input_state_vt := Input_State_VT {
 	clean = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 479)
+		use_base_input()
+		put_op(o, 479)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	close_edit_menu = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 480)
+		use_base_input()
+		put_op(o, 480)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	close_search = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 481)
+		use_base_input()
+		put_op(o, 481)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	end_edge_drag = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 483)
+		use_base_input()
+		put_op(o, 483)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	ensure_highlighter_factory = proc(s: Input_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1619)
+		use_base_input()
+		put_op(o, 1619)
 		put_u64(o, s.h)
 		put_u64(o, factory.h)
 		state_set(cx, req[:], loc)
@@ -8070,21 +8695,24 @@ input_state_vt := Input_State_VT {
 	ensure_number_mask = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 484)
+		use_base_input()
+		put_op(o, 484)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	focus = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 485)
+		use_base_input()
+		put_op(o, 485)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	insert = proc(s: Input_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 487)
+		use_base_input()
+		put_op(o, 487)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -8092,7 +8720,8 @@ input_state_vt := Input_State_VT {
 	on_context_menu = proc(s: Input_State, cx: ^Cx, handler: Handler, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1350)
+		use_base_input()
+		put_op(o, 1350)
 		put_u64(o, s.h)
 		put_kept_handler(o, handler, 114)
 		state_set(cx, req[:], loc)
@@ -8100,7 +8729,8 @@ input_state_vt := Input_State_VT {
 	open_search = proc(s: Input_State, cx: ^Cx, replace_mode: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 497)
+		use_base_input()
+		put_op(o, 497)
 		put_u64(o, s.h)
 		put_u8(o, u8(replace_mode))
 		state_set(cx, req[:], loc)
@@ -8108,7 +8738,8 @@ input_state_vt := Input_State_VT {
 	prewrap = proc(s: Input_State, cx: ^Cx, font: Font, font_size: f32, width: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1270)
+		use_base_input()
+		put_op(o, 1270)
 		put_u64(o, s.h)
 		{ fv := font; put_value(o, &fv, type_info_of(Font)) }
 		put_f32(o, font_size)
@@ -8118,14 +8749,16 @@ input_state_vt := Input_State_VT {
 	refresh = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 499)
+		use_base_input()
+		put_op(o, 499)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	replace = proc(s: Input_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 500)
+		use_base_input()
+		put_op(o, 500)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -8133,7 +8766,8 @@ input_state_vt := Input_State_VT {
 	replace_all = proc(s: Input_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 501)
+		use_base_input()
+		put_op(o, 501)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -8141,21 +8775,24 @@ input_state_vt := Input_State_VT {
 	select_all = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 505)
+		use_base_input()
+		put_op(o, 505)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	select_all_from_edit_menu = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 506)
+		use_base_input()
+		put_op(o, 506)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_accessibility = proc(s: Input_State, cx: ^Cx, accessibility: Input_Accessibility, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 919)
+		use_base_input()
+		put_op(o, 919)
 		put_u64(o, s.h)
 		put_vtape(o, accessibility.nd)
 		state_set(cx, req[:], loc)
@@ -8163,7 +8800,8 @@ input_state_vt := Input_State_VT {
 	set_clean_on_escape = proc(s: Input_State, cx: ^Cx, clean: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 508)
+		use_base_input()
+		put_op(o, 508)
 		put_u64(o, s.h)
 		put_u8(o, u8(clean))
 		state_set(cx, req[:], loc)
@@ -8171,7 +8809,8 @@ input_state_vt := Input_State_VT {
 	set_context_menu_enabled = proc(s: Input_State, cx: ^Cx, enabled: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 509)
+		use_base_input()
+		put_op(o, 509)
 		put_u64(o, s.h)
 		put_u8(o, u8(enabled))
 		state_set(cx, req[:], loc)
@@ -8179,7 +8818,8 @@ input_state_vt := Input_State_VT {
 	set_cursor_position = proc(s: Input_State, cx: ^Cx, position: Lsp_Position, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1472)
+		use_base_input()
+		put_op(o, 1472)
 		put_u64(o, s.h)
 		{ lv := position; put_value(o, &lv, type_info_of(Lsp_Position)) }
 		state_set(cx, req[:], loc)
@@ -8187,7 +8827,8 @@ input_state_vt := Input_State_VT {
 	set_cursor_surrounding_lines = proc(s: Input_State, cx: ^Cx, lines: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 510)
+		use_base_input()
+		put_op(o, 510)
 		put_u64(o, s.h)
 		if x0, ok := lines.?; ok {
 			put_u8(o, 1)
@@ -8200,7 +8841,8 @@ input_state_vt := Input_State_VT {
 	set_disabled = proc(s: Input_State, cx: ^Cx, disabled: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 511)
+		use_base_input()
+		put_op(o, 511)
 		put_u64(o, s.h)
 		put_u8(o, u8(disabled))
 		state_set(cx, req[:], loc)
@@ -8208,7 +8850,8 @@ input_state_vt := Input_State_VT {
 	set_editor_style = proc(s: Input_State, cx: ^Cx, style: Input_Editor_Style, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1683)
+		use_base_input()
+		put_op(o, 1683)
 		put_u64(o, s.h)
 		put_Input_Editor_Style(o, style)
 		state_set(cx, req[:], loc)
@@ -8216,7 +8859,8 @@ input_state_vt := Input_State_VT {
 	set_fold_background = proc(s: Input_State, cx: ^Cx, color: Maybe(Color), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 623)
+		use_base_input()
+		put_op(o, 623)
 		put_u64(o, s.h)
 		if x0, ok := color.?; ok {
 			put_u8(o, 1)
@@ -8229,7 +8873,8 @@ input_state_vt := Input_State_VT {
 	set_fold_placeholder_renderer = proc(s: Input_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1677)
+		use_base_input()
+		put_op(o, 1677)
 		put_u64(o, s.h)
 		if x0, ok := renderer.?; ok {
 			put_u8(o, 1)
@@ -8242,7 +8887,8 @@ input_state_vt := Input_State_VT {
 	set_highlighter = proc(s: Input_State, cx: ^Cx, new_language: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 512)
+		use_base_input()
+		put_op(o, 512)
 		put_u64(o, s.h)
 		put_str(o, new_language)
 		state_set(cx, req[:], loc)
@@ -8250,7 +8896,8 @@ input_state_vt := Input_State_VT {
 	set_highlighter_factory = proc(s: Input_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1620)
+		use_base_input()
+		put_op(o, 1620)
 		put_u64(o, s.h)
 		put_u64(o, factory.h)
 		state_set(cx, req[:], loc)
@@ -8258,7 +8905,8 @@ input_state_vt := Input_State_VT {
 	set_loading = proc(s: Input_State, cx: ^Cx, loading: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 513)
+		use_base_input()
+		put_op(o, 513)
 		put_u64(o, s.h)
 		put_u8(o, u8(loading))
 		state_set(cx, req[:], loc)
@@ -8266,7 +8914,8 @@ input_state_vt := Input_State_VT {
 	set_mask_pattern = proc(s: Input_State, cx: ^Cx, pattern: Mask_Pattern_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 624)
+		use_base_input()
+		put_op(o, 624)
 		put_u64(o, s.h)
 		put_Mask_Pattern_Into(o, pattern)
 		state_set(cx, req[:], loc)
@@ -8274,7 +8923,8 @@ input_state_vt := Input_State_VT {
 	set_masked = proc(s: Input_State, cx: ^Cx, masked: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 514)
+		use_base_input()
+		put_op(o, 514)
 		put_u64(o, s.h)
 		put_u8(o, u8(masked))
 		state_set(cx, req[:], loc)
@@ -8282,7 +8932,8 @@ input_state_vt := Input_State_VT {
 	set_max = proc(s: Input_State, cx: ^Cx, max: Maybe(f64), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 515)
+		use_base_input()
+		put_op(o, 515)
 		put_u64(o, s.h)
 		if x0, ok := max.?; ok {
 			put_u8(o, 1)
@@ -8295,7 +8946,8 @@ input_state_vt := Input_State_VT {
 	set_min = proc(s: Input_State, cx: ^Cx, min: Maybe(f64), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 516)
+		use_base_input()
+		put_op(o, 516)
 		put_u64(o, s.h)
 		if x0, ok := min.?; ok {
 			put_u8(o, 1)
@@ -8308,7 +8960,8 @@ input_state_vt := Input_State_VT {
 	set_placeholder = proc(s: Input_State, cx: ^Cx, placeholder: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 517)
+		use_base_input()
+		put_op(o, 517)
 		put_u64(o, s.h)
 		put_str(o, placeholder)
 		state_set(cx, req[:], loc)
@@ -8316,7 +8969,8 @@ input_state_vt := Input_State_VT {
 	set_readonly = proc(s: Input_State, cx: ^Cx, readonly: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 518)
+		use_base_input()
+		put_op(o, 518)
 		put_u64(o, s.h)
 		put_u8(o, u8(readonly))
 		state_set(cx, req[:], loc)
@@ -8324,7 +8978,8 @@ input_state_vt := Input_State_VT {
 	set_scroll_beyond_last_line = proc(s: Input_State, cx: ^Cx, rows: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 519)
+		use_base_input()
+		put_op(o, 519)
 		put_u64(o, s.h)
 		if x0, ok := rows.?; ok {
 			put_u8(o, 1)
@@ -8337,7 +8992,8 @@ input_state_vt := Input_State_VT {
 	set_scroll_offset = proc(s: Input_State, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 625)
+		use_base_input()
+		put_op(o, 625)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, offset)
 		state_set(cx, req[:], loc)
@@ -8345,7 +9001,8 @@ input_state_vt := Input_State_VT {
 	set_scrollbar_renderer = proc(s: Input_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1612)
+		use_base_input()
+		put_op(o, 1612)
 		put_u64(o, s.h)
 		if x0, ok := renderer.?; ok {
 			put_u8(o, 1)
@@ -8358,7 +9015,8 @@ input_state_vt := Input_State_VT {
 	set_search_query = proc(s: Input_State, cx: ^Cx, query: string, case_insensitive: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 520)
+		use_base_input()
+		put_op(o, 520)
 		put_u64(o, s.h)
 		put_str(o, query)
 		put_u8(o, u8(case_insensitive))
@@ -8367,7 +9025,8 @@ input_state_vt := Input_State_VT {
 	set_selected_range = proc(s: Input_State, cx: ^Cx, range: Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 521)
+		use_base_input()
+		put_op(o, 521)
 		put_u64(o, s.h)
 		put_range(o, range)
 		state_set(cx, req[:], loc)
@@ -8375,7 +9034,8 @@ input_state_vt := Input_State_VT {
 	set_selected_range_with_direction = proc(s: Input_State, cx: ^Cx, range: Range, reversed: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 522)
+		use_base_input()
+		put_op(o, 522)
 		put_u64(o, s.h)
 		put_range(o, range)
 		put_u8(o, u8(reversed))
@@ -8384,7 +9044,8 @@ input_state_vt := Input_State_VT {
 	set_selection_focus = proc(s: Input_State, cx: ^Cx, focus: Maybe(Focus_Handle), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 626)
+		use_base_input()
+		put_op(o, 626)
 		put_u64(o, s.h)
 		if x0, ok := focus.?; ok {
 			put_u8(o, 1)
@@ -8397,7 +9058,8 @@ input_state_vt := Input_State_VT {
 	set_show_whitespaces = proc(s: Input_State, cx: ^Cx, show: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 523)
+		use_base_input()
+		put_op(o, 523)
 		put_u64(o, s.h)
 		put_u8(o, u8(show))
 		state_set(cx, req[:], loc)
@@ -8405,7 +9067,8 @@ input_state_vt := Input_State_VT {
 	set_step = proc(s: Input_State, cx: ^Cx, step: Maybe(Number_Step), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 627)
+		use_base_input()
+		put_op(o, 627)
 		put_u64(o, s.h)
 		if x0, ok := step.?; ok {
 			put_u8(o, 1)
@@ -8418,7 +9081,8 @@ input_state_vt := Input_State_VT {
 	set_submit_on_enter = proc(s: Input_State, cx: ^Cx, submit: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 524)
+		use_base_input()
+		put_op(o, 524)
 		put_u64(o, s.h)
 		put_u8(o, u8(submit))
 		state_set(cx, req[:], loc)
@@ -8426,7 +9090,8 @@ input_state_vt := Input_State_VT {
 	set_text_align = proc(s: Input_State, cx: ^Cx, text_align: Text_Align, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 525)
+		use_base_input()
+		put_op(o, 525)
 		put_u64(o, s.h)
 		put_u16(o, u16(text_align))
 		state_set(cx, req[:], loc)
@@ -8434,7 +9099,8 @@ input_state_vt := Input_State_VT {
 	set_validator = proc(s: Input_State, cx: ^Cx, validate: Handler, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1289)
+		use_base_input()
+		put_op(o, 1289)
 		put_u64(o, s.h)
 		put_kept_handler(o, validate, 98)
 		state_set(cx, req[:], loc)
@@ -8442,7 +9108,8 @@ input_state_vt := Input_State_VT {
 	set_value = proc(s: Input_State, cx: ^Cx, value: Input_Content_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 628)
+		use_base_input()
+		put_op(o, 628)
 		put_u64(o, s.h)
 		put_Input_Content_Into(o, value)
 		state_set(cx, req[:], loc)
@@ -8450,21 +9117,24 @@ input_state_vt := Input_State_VT {
 	toggle_masked = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 529)
+		use_base_input()
+		put_op(o, 529)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	unselect = proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 531)
+		use_base_input()
+		put_op(o, 531)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	update_edge_drag = proc(s: Input_State, cx: ^Cx, finger: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 629)
+		use_base_input()
+		put_op(o, 629)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, finger)
 		state_set(cx, req[:], loc)
@@ -8473,7 +9143,7 @@ input_state_vt := Input_State_VT {
 		slot, generation := keep_handler(cx, h, 97, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 526)
+		put_op(o, 526)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -8484,7 +9154,7 @@ input_state_vt := Input_State_VT {
 		slot, generation := keep_handler(cx, h, 120, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1751)
+		put_op(o, 1751)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -8525,34 +9195,34 @@ Input_State_Builder_VT :: struct {
 input_state_builder_vt := Input_State_Builder_VT {
 	autocapitalize = proc(b: Input_State_Builder, autocapitalize: Autocapitalize) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u16(o, u16(autocapitalize))
 		o[b.count_at] += 1
 		return b
 	},
 	autocorrect = proc(b: Input_State_Builder, autocorrect: bool) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u8(o, u8(autocorrect))
 		o[b.count_at] += 1
 		return b
 	},
 	clean_on_escape = proc(b: Input_State_Builder) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		o[b.count_at] += 1
 		return b
 	},
 	context_menu = proc(b: Input_State_Builder, enable: bool) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		put_u8(o, u8(enable))
 		o[b.count_at] += 1
 		return b
 	},
 	cursor_surrounding_lines = proc(b: Input_State_Builder, lines: Maybe(int)) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 5)
+		put_op(o, 5)
 		if x0, ok := lines.?; ok {
 			put_u8(o, 1)
 			put_usize(o, x0)
@@ -8564,56 +9234,56 @@ input_state_builder_vt := Input_State_Builder_VT {
 	},
 	default_value = proc(b: Input_State_Builder, value: string) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 6)
+		put_op(o, 6)
 		put_str(o, value)
 		o[b.count_at] += 1
 		return b
 	},
 	input_action = proc(b: Input_State_Builder, action: Text_Input_Action) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 7)
+		put_op(o, 7)
 		put_u16(o, u16(action))
 		o[b.count_at] += 1
 		return b
 	},
 	mask_pattern = proc(b: Input_State_Builder, pattern: Mask_Pattern_Into) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 13)
+		put_op(o, 13)
 		put_Mask_Pattern_Into(o, pattern)
 		o[b.count_at] += 1
 		return b
 	},
 	masked = proc(b: Input_State_Builder, masked: bool) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 8)
+		put_op(o, 8)
 		put_u8(o, u8(masked))
 		o[b.count_at] += 1
 		return b
 	},
 	max = proc(b: Input_State_Builder, max: f64) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 9)
+		put_op(o, 9)
 		put_u64(o, transmute(u64)f64(max))
 		o[b.count_at] += 1
 		return b
 	},
 	min = proc(b: Input_State_Builder, min: f64) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 10)
+		put_op(o, 10)
 		put_u64(o, transmute(u64)f64(min))
 		o[b.count_at] += 1
 		return b
 	},
 	placeholder = proc(b: Input_State_Builder, placeholder: string) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 11)
+		put_op(o, 11)
 		put_str(o, placeholder)
 		o[b.count_at] += 1
 		return b
 	},
 	scroll_beyond_last_line = proc(b: Input_State_Builder, rows: Maybe(int)) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 12)
+		put_op(o, 12)
 		if x0, ok := rows.?; ok {
 			put_u8(o, 1)
 			put_usize(o, x0)
@@ -8625,21 +9295,21 @@ input_state_builder_vt := Input_State_Builder_VT {
 	},
 	step = proc(b: Input_State_Builder, step: Number_Step_Into) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 14)
+		put_op(o, 14)
 		put_Number_Step_Into(o, step)
 		o[b.count_at] += 1
 		return b
 	},
 	step_by = proc(b: Input_State_Builder, f: string) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 16)
+		put_op(o, 16)
 		put_expr(o, f, 2)
 		o[b.count_at] += 1
 		return b
 	},
 	validate = proc(b: Input_State_Builder, f: Handler) -> Input_State_Builder {
 		o := b.req
-		put_u16(o, 15)
+		put_op(o, 15)
 		put_kept_handler(o, f, 98)
 		o[b.count_at] += 1
 		return b
@@ -8653,7 +9323,8 @@ input_state :: proc(cx: ^Cx, loc := #caller_location) -> Input_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 496)
+	use_base_input()
+	put_op(o, 496)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &input_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -8666,7 +9337,8 @@ reg_keyframes :: proc "contextless" () {
 keyframes_try_new :: proc(cx: ^Cx, frames: []Keyframe_F32, loc := #caller_location) -> (v: Fallible(Keyframes)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1241)
+	use_base_motion()
+	put_op(o, 1241)
 	put_u32(o, u32(len(frames)))
 	for x0 in frames {
 		put_Keyframe_F32(o, x0)
@@ -8693,7 +9365,8 @@ keyframes_vt := Keyframes_VT {
 	is_empty = proc(s: Keyframes, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1238)
+		use_base_motion()
+		put_op(o, 1238)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8702,7 +9375,8 @@ keyframes_vt := Keyframes_VT {
 	len_ = proc(s: Keyframes, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1239)
+		use_base_motion()
+		put_op(o, 1239)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8711,7 +9385,8 @@ keyframes_vt := Keyframes_VT {
 	sample = proc(s: Keyframes, cx: ^Cx, progress: f32, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1240)
+		use_base_motion()
+		put_op(o, 1240)
 		put_u64(o, s.h)
 		put_f32(o, progress)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -8749,7 +9424,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	atom_at = proc(s: Leaf_Geometry, cx: ^Cx, at: Gpui_Point, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1753)
+		use_base_text()
+		put_op(o, 1753)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, at)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -8759,7 +9435,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	bounds = proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1754)
+		use_base_text()
+		put_op(o, 1754)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8768,7 +9445,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	caret_for_position = proc(s: Leaf_Geometry, cx: ^Cx, at: Gpui_Point, loc := #caller_location) -> (v: Base_Caret) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1755)
+		use_base_text()
+		put_op(o, 1755)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, at)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -8778,7 +9456,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	caret_height = proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1756)
+		use_base_text()
+		put_op(o, 1756)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8787,7 +9466,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	index_for_position = proc(s: Leaf_Geometry, cx: ^Cx, at: Gpui_Point, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1757)
+		use_base_text()
+		put_op(o, 1757)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, at)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -8797,7 +9477,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	is_empty = proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1758)
+		use_base_text()
+		put_op(o, 1758)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8806,7 +9487,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	len_ = proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1759)
+		use_base_text()
+		put_op(o, 1759)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8815,7 +9497,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	line_height = proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1760)
+		use_base_text()
+		put_op(o, 1760)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8824,7 +9507,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	position_for_caret = proc(s: Leaf_Geometry, cx: ^Cx, caret: Base_Caret, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1761)
+		use_base_text()
+		put_op(o, 1761)
 		put_u64(o, s.h)
 		put_Base_Caret(o, caret)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -8834,7 +9518,8 @@ leaf_geometry_vt := Leaf_Geometry_VT {
 	position_for_index = proc(s: Leaf_Geometry, cx: ^Cx, index: int, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1762)
+		use_base_text()
+		put_op(o, 1762)
 		put_u64(o, s.h)
 		put_usize(o, index)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -8872,7 +9557,8 @@ list_state_vt := List_State_VT {
 	delegate = proc(s: List_State, cx: ^Cx, loc := #caller_location) -> (v: Row_Source) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1181)
+		use_component_list()
+		put_op(o, 1181)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8881,7 +9567,8 @@ list_state_vt := List_State_VT {
 	right_clicked_index = proc(s: List_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Base_Index_Path)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 692)
+		use_component_list()
+		put_op(o, 692)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8890,7 +9577,8 @@ list_state_vt := List_State_VT {
 	scroll_handle = proc(s: List_State, cx: ^Cx, loc := #caller_location) -> (v: Virtual_List_Scroll_Handle) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1022)
+		use_component_list()
+		put_op(o, 1022)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8899,7 +9587,8 @@ list_state_vt := List_State_VT {
 	selected_index = proc(s: List_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Base_Index_Path)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 694)
+		use_component_list()
+		put_op(o, 694)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8908,7 +9597,8 @@ list_state_vt := List_State_VT {
 	delegate_mut = proc(s: List_State, cx: ^Cx, loc := #caller_location) -> (v: Row_Source) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1182)
+		use_component_list()
+		put_op(o, 1182)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -8917,14 +9607,16 @@ list_state_vt := List_State_VT {
 	focus = proc(s: List_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 690)
+		use_component_list()
+		put_op(o, 690)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	scroll_to_item = proc(s: List_State, cx: ^Cx, ix: Index_Path, strategy: Scroll_Strategy, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1023)
+		use_component_list()
+		put_op(o, 1023)
 		put_u64(o, s.h)
 		ix_rec: Base_Index_Path
 		switch x in ix {
@@ -8940,14 +9632,16 @@ list_state_vt := List_State_VT {
 	scroll_to_selected_item = proc(s: List_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 693)
+		use_component_list()
+		put_op(o, 693)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_item_to_measure_index = proc(s: List_State, cx: ^Cx, ix: Index_Path, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1024)
+		use_component_list()
+		put_op(o, 1024)
 		put_u64(o, s.h)
 		ix_rec: Base_Index_Path
 		switch x in ix {
@@ -8962,7 +9656,8 @@ list_state_vt := List_State_VT {
 	set_query = proc(s: List_State, cx: ^Cx, query: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 695)
+		use_component_list()
+		put_op(o, 695)
 		put_u64(o, s.h)
 		put_str(o, query)
 		state_set(cx, req[:], loc)
@@ -8970,7 +9665,8 @@ list_state_vt := List_State_VT {
 	set_right_clicked_index = proc(s: List_State, cx: ^Cx, ix: Maybe_Index_Path, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1025)
+		use_component_list()
+		put_op(o, 1025)
 		put_u64(o, s.h)
 		ix_rec: Maybe(Base_Index_Path)
 		switch x in ix {
@@ -8990,7 +9686,8 @@ list_state_vt := List_State_VT {
 	set_searchable = proc(s: List_State, cx: ^Cx, searchable: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 696)
+		use_component_list()
+		put_op(o, 696)
 		put_u64(o, s.h)
 		put_u8(o, u8(searchable))
 		state_set(cx, req[:], loc)
@@ -8998,7 +9695,8 @@ list_state_vt := List_State_VT {
 	set_selectable = proc(s: List_State, cx: ^Cx, selectable: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 697)
+		use_component_list()
+		put_op(o, 697)
 		put_u64(o, s.h)
 		put_u8(o, u8(selectable))
 		state_set(cx, req[:], loc)
@@ -9006,7 +9704,8 @@ list_state_vt := List_State_VT {
 	set_selected_index = proc(s: List_State, cx: ^Cx, ix: Maybe_Index_Path, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1026)
+		use_component_list()
+		put_op(o, 1026)
 		put_u64(o, s.h)
 		ix_rec: Maybe(Base_Index_Path)
 		switch x in ix {
@@ -9027,7 +9726,7 @@ list_state_vt := List_State_VT {
 		slot, generation := keep_handler(cx, h, 99, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 698)
+		put_op(o, 698)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -9054,14 +9753,14 @@ List_State_Builder_VT :: struct {
 list_state_builder_vt := List_State_Builder_VT {
 	searchable = proc(b: List_State_Builder, searchable: bool) -> List_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u8(o, u8(searchable))
 		o[b.count_at] += 1
 		return b
 	},
 	selectable = proc(b: List_State_Builder, selectable: bool) -> List_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u8(o, u8(selectable))
 		o[b.count_at] += 1
 		return b
@@ -9075,7 +9774,8 @@ list_state :: proc(cx: ^Cx, delegate: Row_Source, loc := #caller_location) -> Li
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 691)
+	use_component_list()
+	put_op(o, 691)
 	put_u64(o, delegate.h)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &list_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -9103,7 +9803,8 @@ markdown_extensions_arc :: proc(cx: ^Cx, value: Markdown_Extensions, loc := #cal
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1236)
+	use_base_text()
+	put_op(o, 1236)
 	put_vtape(o, value.nd)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &markdown_extensions_arc_vt}
@@ -9133,7 +9834,8 @@ markdown_node_read_vt := Markdown_Node_Read_VT {
 	accessibility_name = proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1362)
+		use_base_root()
+		put_op(o, 1362)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9142,7 +9844,8 @@ markdown_node_read_vt := Markdown_Node_Read_VT {
 	as_markdown = proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1363)
+		use_base_root()
+		put_op(o, 1363)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9151,7 +9854,8 @@ markdown_node_read_vt := Markdown_Node_Read_VT {
 	as_text = proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1364)
+		use_base_root()
+		put_op(o, 1364)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9160,7 +9864,8 @@ markdown_node_read_vt := Markdown_Node_Read_VT {
 	name = proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1365)
+		use_base_root()
+		put_op(o, 1365)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9169,7 +9874,8 @@ markdown_node_read_vt := Markdown_Node_Read_VT {
 	source_range = proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1366)
+		use_base_root()
+		put_op(o, 1366)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9203,7 +9909,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	is_following_tail = proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 380)
+		use_component_message_scroller()
+		put_op(o, 380)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9212,7 +9919,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	is_scrolled_up = proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 381)
+		use_component_message_scroller()
+		put_op(o, 381)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9221,7 +9929,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	item_count = proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 382)
+		use_component_message_scroller()
+		put_op(o, 382)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9230,7 +9939,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	logical_scroll_top = proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) -> (v: List_Offset) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 383)
+		use_component_message_scroller()
+		put_op(o, 383)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9239,7 +9949,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	append = proc(s: Message_Scroller_State, cx: ^Cx, count: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 652)
+		use_component_message_scroller()
+		put_op(o, 652)
 		put_u64(o, s.h)
 		put_usize(o, count)
 		r := state_call(s.h, cx, req[:], loc)
@@ -9249,7 +9960,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	prepend = proc(s: Message_Scroller_State, cx: ^Cx, count: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 653)
+		use_component_message_scroller()
+		put_op(o, 653)
 		put_u64(o, s.h)
 		put_usize(o, count)
 		r := state_call(s.h, cx, req[:], loc)
@@ -9259,7 +9971,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	remeasure_items = proc(s: Message_Scroller_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 654)
+		use_component_message_scroller()
+		put_op(o, 654)
 		put_u64(o, s.h)
 		put_range(o, range)
 		r := state_call(s.h, cx, req[:], loc)
@@ -9269,7 +9982,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	scroll_to_item = proc(s: Message_Scroller_State, cx: ^Cx, index: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 655)
+		use_component_message_scroller()
+		put_op(o, 655)
 		put_u64(o, s.h)
 		put_usize(o, index)
 		r := state_call(s.h, cx, req[:], loc)
@@ -9279,7 +9993,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	splice = proc(s: Message_Scroller_State, cx: ^Cx, old_range: Range, count: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 656)
+		use_component_message_scroller()
+		put_op(o, 656)
 		put_u64(o, s.h)
 		put_range(o, old_range)
 		put_usize(o, count)
@@ -9290,14 +10005,16 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	remeasure = proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 385)
+		use_component_message_scroller()
+		put_op(o, 385)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	reset = proc(s: Message_Scroller_State, cx: ^Cx, item_count: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 386)
+		use_component_message_scroller()
+		put_op(o, 386)
 		put_u64(o, s.h)
 		put_usize(o, item_count)
 		state_set(cx, req[:], loc)
@@ -9305,7 +10022,8 @@ message_scroller_state_vt := Message_Scroller_State_VT {
 	scroll_to_end = proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 387)
+		use_component_message_scroller()
+		put_op(o, 387)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -9315,7 +10033,8 @@ message_scroller_state :: proc(cx: ^Cx, item_count: int, loc := #caller_location
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 384)
+	use_component_message_scroller()
+	put_op(o, 384)
 	put_usize(o, item_count)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &message_scroller_state_vt}
@@ -9347,7 +10066,8 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	current = proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(View)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1518)
+		use_base_nav_stack()
+		put_op(o, 1518)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9356,7 +10076,8 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	depth = proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 289)
+		use_base_nav_stack()
+		put_op(o, 289)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9365,7 +10086,8 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	forward_views = proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: []View) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1520)
+		use_base_nav_stack()
+		put_op(o, 1520)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9374,7 +10096,8 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	is_empty = proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 290)
+		use_base_nav_stack()
+		put_op(o, 290)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9383,7 +10106,8 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	views = proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: []View) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1525)
+		use_base_nav_stack()
+		put_op(o, 1525)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9392,7 +10116,8 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	forward = proc(s: Nav_Stack_State, cx: ^Cx, motion: Nav_Motion, loc := #caller_location) -> (v: Maybe(View)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1519)
+		use_base_nav_stack()
+		put_op(o, 1519)
 		put_u64(o, s.h)
 		put_u16(o, u16(motion))
 		r := state_call(s.h, cx, req[:], loc)
@@ -9402,7 +10127,8 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	pop = proc(s: Nav_Stack_State, cx: ^Cx, motion: Nav_Motion, loc := #caller_location) -> (v: Maybe(View)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1521)
+		use_base_nav_stack()
+		put_op(o, 1521)
 		put_u64(o, s.h)
 		put_u16(o, u16(motion))
 		r := state_call(s.h, cx, req[:], loc)
@@ -9412,7 +10138,8 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	pop_to_root = proc(s: Nav_Stack_State, cx: ^Cx, motion: Nav_Motion, loc := #caller_location) -> (v: []View) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1522)
+		use_base_nav_stack()
+		put_op(o, 1522)
 		put_u64(o, s.h)
 		put_u16(o, u16(motion))
 		r := state_call(s.h, cx, req[:], loc)
@@ -9422,7 +10149,8 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	replace = proc(s: Nav_Stack_State, cx: ^Cx, view: View, motion: Nav_Motion, loc := #caller_location) -> (v: Maybe(View)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1524)
+		use_base_nav_stack()
+		put_op(o, 1524)
 		put_u64(o, s.h)
 		put_u64(o, view.h)
 		put_u16(o, u16(motion))
@@ -9433,14 +10161,16 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 	clear = proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 288)
+		use_base_nav_stack()
+		put_op(o, 288)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	push = proc(s: Nav_Stack_State, cx: ^Cx, view: View, motion: Nav_Motion, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1523)
+		use_base_nav_stack()
+		put_op(o, 1523)
 		put_u64(o, s.h)
 		put_u64(o, view.h)
 		put_u16(o, u16(motion))
@@ -9450,7 +10180,7 @@ nav_stack_state_vt := Nav_Stack_State_VT {
 		slot, generation := keep_handler(cx, h, 94, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 292)
+		put_op(o, 292)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -9463,7 +10193,8 @@ nav_stack_state :: proc(cx: ^Cx, loc := #caller_location) -> Nav_Stack_State {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 291)
+	use_base_nav_stack()
+	put_op(o, 291)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &nav_stack_state_vt}
 }
@@ -9483,7 +10214,8 @@ notification_vt := Notification_VT {
 	dismiss = proc(s: Notification, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 388)
+		use_component_notification()
+		put_op(o, 388)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -9518,89 +10250,89 @@ Notification_Builder_VT :: struct {
 notification_builder_vt := Notification_Builder_VT {
 	action = proc(b: Notification_Builder, action: Row_Source) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 14)
+		put_op(o, 14)
 		put_u64(o, items_check(action, 20))
 		o[b.count_at] += 1
 		return b
 	},
 	autohide = proc(b: Notification_Builder, autohide: bool) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u8(o, u8(autohide))
 		o[b.count_at] += 1
 		return b
 	},
 	content = proc(b: Notification_Builder, content: Row_Source) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 15)
+		put_op(o, 15)
 		put_u64(o, items_check(content, 21))
 		o[b.count_at] += 1
 		return b
 	},
 	delivery = proc(b: Notification_Builder, delivery: Notification_Delivery) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u16(o, u16(delivery))
 		o[b.count_at] += 1
 		return b
 	},
 	icon = proc(b: Notification_Builder, icon: Icon_Name) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 11)
+		put_op(o, 11)
 		put_u16(o, u16(icon))
 		o[b.count_at] += 1
 		return b
 	},
 	in_app_and_system = proc(b: Notification_Builder) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 5)
+		put_op(o, 5)
 		o[b.count_at] += 1
 		return b
 	},
 	message = proc(b: Notification_Builder, message: string) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 6)
+		put_op(o, 6)
 		put_str(o, message)
 		o[b.count_at] += 1
 		return b
 	},
 	on_click = proc(b: Notification_Builder, on_click: Handler) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 12)
+		put_op(o, 12)
 		put_kept_handler(o, on_click, 1)
 		o[b.count_at] += 1
 		return b
 	},
 	on_close = proc(b: Notification_Builder, on_close: Handler) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 13)
+		put_op(o, 13)
 		put_kept_handler(o, on_close, 3)
 		o[b.count_at] += 1
 		return b
 	},
 	placement = proc(b: Notification_Builder, placement: Anchor) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 7)
+		put_op(o, 7)
 		put_u16(o, u16(placement))
 		o[b.count_at] += 1
 		return b
 	},
 	system = proc(b: Notification_Builder) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 8)
+		put_op(o, 8)
 		o[b.count_at] += 1
 		return b
 	},
 	title = proc(b: Notification_Builder, title: string) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 9)
+		put_op(o, 9)
 		put_str(o, title)
 		o[b.count_at] += 1
 		return b
 	},
 	with_type = proc(b: Notification_Builder, type_: Notification_Type) -> Notification_Builder {
 		o := b.req
-		put_u16(o, 10)
+		put_op(o, 10)
 		put_u16(o, u16(type_))
 		o[b.count_at] += 1
 		return b
@@ -9614,7 +10346,8 @@ notification :: proc(cx: ^Cx, loc := #caller_location) -> Notification_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 391)
+	use_component_notification()
+	put_op(o, 391)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -9623,7 +10356,8 @@ notification_error :: proc(cx: ^Cx, message: string, loc := #caller_location) ->
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 389)
+	use_component_notification()
+	put_op(o, 389)
 	put_str(o, message)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -9633,7 +10367,8 @@ notification_info :: proc(cx: ^Cx, message: string, loc := #caller_location) -> 
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 390)
+	use_component_notification()
+	put_op(o, 390)
 	put_str(o, message)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -9643,7 +10378,8 @@ notification_success :: proc(cx: ^Cx, message: string, loc := #caller_location) 
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 392)
+	use_component_notification()
+	put_op(o, 392)
 	put_str(o, message)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -9653,7 +10389,8 @@ notification_warning :: proc(cx: ^Cx, message: string, loc := #caller_location) 
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 393)
+	use_component_notification()
+	put_op(o, 393)
 	put_str(o, message)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -9676,7 +10413,8 @@ notification_list_vt := Notification_List_VT {
 	notifications = proc(s: Notification_List, cx: ^Cx, loc := #caller_location) -> (v: []Notification) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1453)
+		use_component_notification()
+		put_op(o, 1453)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9685,14 +10423,16 @@ notification_list_vt := Notification_List_VT {
 	clear = proc(s: Notification_List, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 394)
+		use_component_notification()
+		put_op(o, 394)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	push = proc(s: Notification_List, cx: ^Cx, notification: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 657)
+		use_component_notification()
+		put_op(o, 657)
 		put_u64(o, s.h)
 		put_str(o, notification)
 		state_set(cx, req[:], loc)
@@ -9703,7 +10443,8 @@ notification_list :: proc(cx: ^Cx, loc := #caller_location) -> Notification_List
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 395)
+	use_component_notification()
+	put_op(o, 395)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &notification_list_vt}
 }
@@ -9732,7 +10473,8 @@ otp_state_vt := Otp_State_VT {
 	cursor_visible = proc(s: Otp_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 293)
+		use_base_otp_input()
+		put_op(o, 293)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9741,7 +10483,8 @@ otp_state_vt := Otp_State_VT {
 	is_empty = proc(s: Otp_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 294)
+		use_base_otp_input()
+		put_op(o, 294)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9750,7 +10493,8 @@ otp_state_vt := Otp_State_VT {
 	is_masked = proc(s: Otp_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 295)
+		use_base_otp_input()
+		put_op(o, 295)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9759,7 +10503,8 @@ otp_state_vt := Otp_State_VT {
 	len_ = proc(s: Otp_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 296)
+		use_base_otp_input()
+		put_op(o, 296)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9768,7 +10513,8 @@ otp_state_vt := Otp_State_VT {
 	value = proc(s: Otp_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 301)
+		use_base_otp_input()
+		put_op(o, 301)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9777,7 +10523,8 @@ otp_state_vt := Otp_State_VT {
 	try_value = proc(s: Otp_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String, ok: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 301)
+		use_base_otp_input()
+		put_op(o, 301)
 		put_u64(o, s.h)
 		r := state_try(s.h, cx, req[:], loc) or_return
 		rd_into(&r, &v)
@@ -9786,14 +10533,16 @@ otp_state_vt := Otp_State_VT {
 	focus = proc(s: Otp_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 406)
+		use_base_otp_input()
+		put_op(o, 406)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_masked = proc(s: Otp_State, cx: ^Cx, masked: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 298)
+		use_base_otp_input()
+		put_op(o, 298)
 		put_u64(o, s.h)
 		put_u8(o, u8(masked))
 		state_set(cx, req[:], loc)
@@ -9801,7 +10550,8 @@ otp_state_vt := Otp_State_VT {
 	set_value = proc(s: Otp_State, cx: ^Cx, value: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 299)
+		use_base_otp_input()
+		put_op(o, 299)
 		put_u64(o, s.h)
 		put_str(o, value)
 		state_set(cx, req[:], loc)
@@ -9810,7 +10560,7 @@ otp_state_vt := Otp_State_VT {
 		slot, generation := keep_handler(cx, h, 95, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 300)
+		put_op(o, 300)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -9837,14 +10587,14 @@ Otp_State_Builder_VT :: struct {
 otp_state_builder_vt := Otp_State_Builder_VT {
 	default_value = proc(b: Otp_State_Builder, value: string) -> Otp_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_str(o, value)
 		o[b.count_at] += 1
 		return b
 	},
 	masked = proc(b: Otp_State_Builder, masked: bool) -> Otp_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u8(o, u8(masked))
 		o[b.count_at] += 1
 		return b
@@ -9858,7 +10608,8 @@ otp_state :: proc(cx: ^Cx, length: int, loc := #caller_location) -> Otp_State_Bu
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 297)
+	use_base_otp_input()
+	put_op(o, 297)
 	put_usize(o, length)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &otp_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -9888,7 +10639,8 @@ overview_ruler_decoration_collection_vt := Overview_Ruler_Decoration_Collection_
 	get_ranges = proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, loc := #caller_location) -> (v: []Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 925)
+		use_base_input()
+		put_op(o, 925)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -9897,7 +10649,8 @@ overview_ruler_decoration_collection_vt := Overview_Ruler_Decoration_Collection_
 	append = proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, decorations: []Overview_Ruler_Decoration, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 922)
+		use_base_input()
+		put_op(o, 922)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -9908,21 +10661,24 @@ overview_ruler_decoration_collection_vt := Overview_Ruler_Decoration_Collection_
 	clear = proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 923)
+		use_base_input()
+		put_op(o, 923)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	dispose = proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 924)
+		use_base_input()
+		put_op(o, 924)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set = proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, decorations: []Overview_Ruler_Decoration, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 926)
+		use_base_input()
+		put_op(o, 926)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -9936,7 +10692,8 @@ overview_ruler_decoration_collection_default :: proc(cx: ^Cx, loc := #caller_loc
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1473)
+	use_base_input()
+	put_op(o, 1473)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &overview_ruler_decoration_collection_vt}
 }
@@ -9961,7 +10718,8 @@ pane_node_vt := Pane_Node_VT {
 	id = proc(s: Pane_Node, cx: ^Cx, loc := #caller_location) -> (v: Node_Id) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1553)
+		use_base_dock()
+		put_op(o, 1553)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10002,7 +10760,8 @@ pane_tree_vt := Pane_Tree_VT {
 	contains_panel = proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 872)
+		use_base_dock()
+		put_op(o, 872)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		r := obj_get(s.h, cx, req[:], loc)
@@ -10012,7 +10771,8 @@ pane_tree_vt := Pane_Tree_VT {
 	find_node = proc(s: Pane_Tree, cx: ^Cx, id: Node_Id, loc := #caller_location) -> (v: Maybe(Pane_Node)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 873)
+		use_base_dock()
+		put_op(o, 873)
 		put_u64(o, s.h)
 		put_u64(o, u64(id))
 		r := obj_get(s.h, cx, req[:], loc)
@@ -10022,7 +10782,8 @@ pane_tree_vt := Pane_Tree_VT {
 	find_panel_node = proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) -> (v: Maybe(Node_Id)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1554)
+		use_base_dock()
+		put_op(o, 1554)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		r := obj_get(s.h, cx, req[:], loc)
@@ -10032,7 +10793,8 @@ pane_tree_vt := Pane_Tree_VT {
 	node_ids = proc(s: Pane_Tree, cx: ^Cx, loc := #caller_location) -> (v: []Node_Id) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1557)
+		use_base_dock()
+		put_op(o, 1557)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10041,7 +10803,8 @@ pane_tree_vt := Pane_Tree_VT {
 	panels = proc(s: Pane_Tree, cx: ^Cx, loc := #caller_location) -> (v: []Dock_Panel_Id) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1558)
+		use_base_dock()
+		put_op(o, 1558)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10050,7 +10813,8 @@ pane_tree_vt := Pane_Tree_VT {
 	root = proc(s: Pane_Tree, cx: ^Cx, loc := #caller_location) -> (v: Pane_Node) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 877)
+		use_base_dock()
+		put_op(o, 877)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10059,7 +10823,8 @@ pane_tree_vt := Pane_Tree_VT {
 	root_kind = proc(s: Pane_Tree, cx: ^Cx, loc := #caller_location) -> (v: Root_Kind) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 878)
+		use_base_dock()
+		put_op(o, 878)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10068,7 +10833,8 @@ pane_tree_vt := Pane_Tree_VT {
 	insert_panel = proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, target: Insert_Target, loc := #caller_location) -> (v: Edit_Result) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1555)
+		use_base_dock()
+		put_op(o, 1555)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		put_Insert_Target(o, target)
@@ -10079,7 +10845,8 @@ pane_tree_vt := Pane_Tree_VT {
 	move_panel = proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, target: Insert_Target, loc := #caller_location) -> (v: Edit_Result) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1556)
+		use_base_dock()
+		put_op(o, 1556)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		put_Insert_Target(o, target)
@@ -10090,7 +10857,8 @@ pane_tree_vt := Pane_Tree_VT {
 	remove_panel = proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) -> (v: Edit_Result) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 876)
+		use_base_dock()
+		put_op(o, 876)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		r := state_call(s.h, cx, req[:], loc)
@@ -10100,7 +10868,8 @@ pane_tree_vt := Pane_Tree_VT {
 	set_active = proc(s: Pane_Tree, cx: ^Cx, node: Node_Id, ix: int, loc := #caller_location) -> (v: Edit_Result) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 879)
+		use_base_dock()
+		put_op(o, 879)
 		put_u64(o, s.h)
 		put_u64(o, u64(node))
 		put_usize(o, ix)
@@ -10111,7 +10880,8 @@ pane_tree_vt := Pane_Tree_VT {
 	set_sizes = proc(s: Pane_Tree, cx: ^Cx, node: Node_Id, new_sizes: []Maybe(f32), loc := #caller_location) -> (v: Edit_Result) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 880)
+		use_base_dock()
+		put_op(o, 880)
 		put_u64(o, s.h)
 		put_u64(o, u64(node))
 		put_u32(o, u32(len(new_sizes)))
@@ -10130,7 +10900,8 @@ pane_tree_vt := Pane_Tree_VT {
 	split = proc(s: Pane_Tree, cx: ^Cx, at: Node_Id, panel: Dock_Panel_Id, placement: Placement, size: Maybe(f32), loc := #caller_location) -> (v: Edit_Result) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 881)
+		use_base_dock()
+		put_op(o, 881)
 		put_u64(o, s.h)
 		put_u64(o, u64(at))
 		put_u64(o, u64(panel))
@@ -10148,7 +10919,8 @@ pane_tree_vt := Pane_Tree_VT {
 	normalize = proc(s: Pane_Tree, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 875)
+		use_base_dock()
+		put_op(o, 875)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -10158,7 +10930,8 @@ pane_tree :: proc(cx: ^Cx, root_kind: Root_Kind, loc := #caller_location) -> Pan
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 874)
+	use_base_dock()
+	put_op(o, 874)
 	put_u16(o, u16(root_kind))
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &pane_tree_vt}
@@ -10172,7 +10945,8 @@ reg_panel_handle :: proc "contextless" () {
 panel_handle_of :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_location) -> (v: Maybe(Panel_Handle)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1282)
+	use_component_dock()
+	put_op(o, 1282)
 	put_u64(o, panel.h)
 	r := state_call(0, cx, req[:], loc)
 	rd_into(&r, &v)
@@ -10194,7 +10968,8 @@ panel_handle_vt := Panel_Handle_VT {
 	panel = proc(s: Panel_Handle, cx: ^Cx, loc := #caller_location) -> (v: Dock_Panel) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1588)
+		use_component_dock()
+		put_op(o, 1588)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10206,7 +10981,8 @@ panel_handle :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_location) -> Pan
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1281)
+	use_component_dock()
+	put_op(o, 1281)
 	put_u64(o, panel.h)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &panel_handle_vt}
@@ -10216,7 +10992,8 @@ panel_handle_from_view :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_locati
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1280)
+	use_component_dock()
+	put_op(o, 1280)
 	put_u64(o, panel.h)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &panel_handle_vt}
@@ -10230,7 +11007,8 @@ reg_panel_registry :: proc "contextless" () {
 panel_registry_global :: proc(cx: ^Cx, loc := #caller_location) -> Panel_Registry {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 882)
+	use_base_dock()
+	put_op(o, 882)
 	r := obj_get(0, cx, req[:], loc)
 	return {state = {h = rd_u64(&r)}, vt = &panel_registry_vt}
 }
@@ -10238,7 +11016,8 @@ panel_registry_global :: proc(cx: ^Cx, loc := #caller_location) -> Panel_Registr
 panel_registry_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Panel_Registry {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 883)
+	use_base_dock()
+	put_op(o, 883)
 	r := obj_get(0, cx, req[:], loc)
 	return {state = {h = rd_u64(&r)}, vt = &panel_registry_vt}
 }
@@ -10260,7 +11039,8 @@ panel_registry :: proc(cx: ^Cx, loc := #caller_location) -> Panel_Registry {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 884)
+	use_base_dock()
+	put_op(o, 884)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &panel_registry_vt}
 }
@@ -10285,7 +11065,8 @@ paragraph_read_vt := Paragraph_Read_VT {
 	children = proc(s: Paragraph_Read, cx: ^Cx, loc := #caller_location) -> (v: []Inline_Node_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1407)
+		use_base_text()
+		put_op(o, 1407)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10313,7 +11094,8 @@ path_cache_vt := Path_Cache_VT {
 	is_warm = proc(s: Path_Cache, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1479)
+		use_base_plot()
+		put_op(o, 1479)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10325,7 +11107,8 @@ path_cache_default :: proc(cx: ^Cx, loc := #caller_location) -> Path_Cache {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1478)
+	use_base_plot()
+	put_op(o, 1478)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &path_cache_vt}
 }
@@ -10352,7 +11135,8 @@ path_caches_default :: proc(cx: ^Cx, loc := #caller_location) -> Path_Caches {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1480)
+	use_base_plot()
+	put_op(o, 1480)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &path_caches_vt}
 }
@@ -10377,7 +11161,8 @@ pie_vt := Pie_VT {
 	arcs = proc(s: Pie, cx: ^Cx, data: Data, loc := #caller_location) -> (v: []Arc_Data) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1636)
+		use_base_plot()
+		put_op(o, 1636)
 		put_u64(o, s.h)
 		put_data(o, data)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -10406,28 +11191,28 @@ Pie_Builder_VT :: struct {
 pie_builder_vt := Pie_Builder_VT {
 	end_angle = proc(b: Pie_Builder, end_angle: f32) -> Pie_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_f32(o, end_angle)
 		o[b.count_at] += 1
 		return b
 	},
 	pad_angle = proc(b: Pie_Builder, pad_angle: f32) -> Pie_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_f32(o, pad_angle)
 		o[b.count_at] += 1
 		return b
 	},
 	start_angle = proc(b: Pie_Builder, start_angle: f32) -> Pie_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_f32(o, start_angle)
 		o[b.count_at] += 1
 		return b
 	},
 	value = proc(b: Pie_Builder, value: string) -> Pie_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		put_field(o, value, .Opt)
 		o[b.count_at] += 1
 		return b
@@ -10441,7 +11226,8 @@ pie :: proc(cx: ^Cx, loc := #caller_location) -> Pie_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1637)
+	use_base_plot()
+	put_op(o, 1637)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &pie_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -10468,7 +11254,8 @@ plot_appear_vt := Plot_Appear_VT {
 	is_appearing = proc(s: Plot_Appear, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 948)
+		use_base_plot()
+		put_op(o, 948)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10477,7 +11264,8 @@ plot_appear_vt := Plot_Appear_VT {
 	progress = proc(s: Plot_Appear, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 949)
+		use_base_plot()
+		put_op(o, 949)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10486,7 +11274,8 @@ plot_appear_vt := Plot_Appear_VT {
 	staggered = proc(s: Plot_Appear, cx: ^Cx, index: int, count: int, spread: f32, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 950)
+		use_base_plot()
+		put_op(o, 950)
 		put_u64(o, s.h)
 		put_usize(o, index)
 		put_usize(o, count)
@@ -10501,7 +11290,8 @@ plot_appear_complete :: proc(cx: ^Cx, loc := #caller_location) -> Plot_Appear {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 947)
+	use_base_plot()
+	put_op(o, 947)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &plot_appear_vt}
 }
@@ -10526,7 +11316,8 @@ plot_label_vt := Plot_Label_VT {
 	paint = proc(s: Plot_Label, cx: ^Cx, bounds: Bounds, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1623)
+		use_base_plot()
+		put_op(o, 1623)
 		put_u64(o, s.h)
 		put_Bounds(o, bounds)
 		state_set(cx, req[:], loc)
@@ -10537,7 +11328,8 @@ plot_label :: proc(cx: ^Cx, items: []Text, loc := #caller_location) -> Plot_Labe
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 951)
+	use_base_plot()
+	put_op(o, 951)
 	put_u32(o, u32(len(items)))
 	for x0 in items {
 		put_vtape(o, x0.nd)
@@ -10584,7 +11376,8 @@ plot_theme_read_vt := Plot_Theme_Read_VT {
 	motion = proc(s: Plot_Theme_Read, cx: ^Cx, loc := #caller_location) -> (v: Plot_Motion_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1367)
+		use_base_root()
+		put_op(o, 1367)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10609,7 +11402,8 @@ popover_state_vt := Popover_State_VT {
 	is_open = proc(s: Popover_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 678)
+		use_base_popover()
+		put_op(o, 678)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10618,14 +11412,16 @@ popover_state_vt := Popover_State_VT {
 	dismiss = proc(s: Popover_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 677)
+		use_base_popover()
+		put_op(o, 677)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	show = proc(s: Popover_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 680)
+		use_base_popover()
+		put_op(o, 680)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -10635,7 +11431,8 @@ popover_state :: proc(cx: ^Cx, default_open: bool, loc := #caller_location) -> P
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 679)
+	use_base_popover()
+	put_op(o, 679)
 	put_u8(o, u8(default_open))
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &popover_state_vt}
@@ -10663,7 +11460,8 @@ questionnaire_answer_change_vt := Questionnaire_Answer_Change_VT {
 	answer = proc(s: Questionnaire_Answer_Change, cx: ^Cx, loc := #caller_location) -> (v: Questionnaire_Answer_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1429)
+		use_base_questionnaire()
+		put_op(o, 1429)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10672,7 +11470,8 @@ questionnaire_answer_change_vt := Questionnaire_Answer_Change_VT {
 	item = proc(s: Questionnaire_Answer_Change, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1430)
+		use_base_questionnaire()
+		put_op(o, 1430)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10681,7 +11480,8 @@ questionnaire_answer_change_vt := Questionnaire_Answer_Change_VT {
 	status = proc(s: Questionnaire_Answer_Change, cx: ^Cx, loc := #caller_location) -> (v: Questionnaire_Item_Status) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1431)
+		use_base_questionnaire()
+		put_op(o, 1431)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10711,7 +11511,8 @@ questionnaire_answer_read_vt := Questionnaire_Answer_Read_VT {
 	choices = proc(s: Questionnaire_Answer_Read, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1385)
+		use_base_questionnaire()
+		put_op(o, 1385)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10720,7 +11521,8 @@ questionnaire_answer_read_vt := Questionnaire_Answer_Read_VT {
 	freeform = proc(s: Questionnaire_Answer_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1386)
+		use_base_questionnaire()
+		put_op(o, 1386)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10729,7 +11531,8 @@ questionnaire_answer_read_vt := Questionnaire_Answer_Read_VT {
 	is_empty = proc(s: Questionnaire_Answer_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1387)
+		use_base_questionnaire()
+		put_op(o, 1387)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10760,7 +11563,8 @@ questionnaire_answers_vt := Questionnaire_Answers_VT {
 	get = proc(s: Questionnaire_Answers, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Questionnaire_Answer_Read)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1353)
+		use_base_questionnaire()
+		put_op(o, 1353)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -10770,7 +11574,8 @@ questionnaire_answers_vt := Questionnaire_Answers_VT {
 	is_empty = proc(s: Questionnaire_Answers, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1041)
+		use_base_questionnaire()
+		put_op(o, 1041)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10779,7 +11584,8 @@ questionnaire_answers_vt := Questionnaire_Answers_VT {
 	iter = proc(s: Questionnaire_Answers, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_Temp_String_Questionnaire_Answer_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1354)
+		use_base_questionnaire()
+		put_op(o, 1354)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10788,7 +11594,8 @@ questionnaire_answers_vt := Questionnaire_Answers_VT {
 	len_ = proc(s: Questionnaire_Answers, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1042)
+		use_base_questionnaire()
+		put_op(o, 1042)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10800,7 +11607,8 @@ questionnaire_answers_default :: proc(cx: ^Cx, loc := #caller_location) -> Quest
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1483)
+	use_base_questionnaire()
+	put_op(o, 1483)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &questionnaire_answers_vt}
 }
@@ -10830,7 +11638,8 @@ questionnaire_choice_definition_read_vt := Questionnaire_Choice_Definition_Read_
 	accessibility_label = proc(s: Questionnaire_Choice_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1388)
+		use_base_questionnaire()
+		put_op(o, 1388)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10839,7 +11648,8 @@ questionnaire_choice_definition_read_vt := Questionnaire_Choice_Definition_Read_
 	description = proc(s: Questionnaire_Choice_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1389)
+		use_base_questionnaire()
+		put_op(o, 1389)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10848,7 +11658,8 @@ questionnaire_choice_definition_read_vt := Questionnaire_Choice_Definition_Read_
 	is_default_selected = proc(s: Questionnaire_Choice_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1390)
+		use_base_questionnaire()
+		put_op(o, 1390)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10857,7 +11668,8 @@ questionnaire_choice_definition_read_vt := Questionnaire_Choice_Definition_Read_
 	is_disabled = proc(s: Questionnaire_Choice_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1391)
+		use_base_questionnaire()
+		put_op(o, 1391)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10866,7 +11678,8 @@ questionnaire_choice_definition_read_vt := Questionnaire_Choice_Definition_Read_
 	value = proc(s: Questionnaire_Choice_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1392)
+		use_base_questionnaire()
+		put_op(o, 1392)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10875,7 +11688,8 @@ questionnaire_choice_definition_read_vt := Questionnaire_Choice_Definition_Read_
 	try_value = proc(s: Questionnaire_Choice_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String, ok: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1392)
+		use_base_questionnaire()
+		put_op(o, 1392)
 		put_u64(o, s.h)
 		r := state_try(s.h, cx, req[:], loc) or_return
 		rd_into(&r, &v)
@@ -10908,7 +11722,8 @@ questionnaire_choice_state_vt := Questionnaire_Choice_State_VT {
 	is_disabled = proc(s: Questionnaire_Choice_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1043)
+		use_base_questionnaire()
+		put_op(o, 1043)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10917,7 +11732,8 @@ questionnaire_choice_state_vt := Questionnaire_Choice_State_VT {
 	is_invalid = proc(s: Questionnaire_Choice_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1044)
+		use_base_questionnaire()
+		put_op(o, 1044)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10926,7 +11742,8 @@ questionnaire_choice_state_vt := Questionnaire_Choice_State_VT {
 	is_selected = proc(s: Questionnaire_Choice_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1045)
+		use_base_questionnaire()
+		put_op(o, 1045)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10935,7 +11752,8 @@ questionnaire_choice_state_vt := Questionnaire_Choice_State_VT {
 	shortcut = proc(s: Questionnaire_Choice_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1046)
+		use_base_questionnaire()
+		put_op(o, 1046)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10944,7 +11762,8 @@ questionnaire_choice_state_vt := Questionnaire_Choice_State_VT {
 	value = proc(s: Questionnaire_Choice_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1047)
+		use_base_questionnaire()
+		put_op(o, 1047)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10953,7 +11772,8 @@ questionnaire_choice_state_vt := Questionnaire_Choice_State_VT {
 	try_value = proc(s: Questionnaire_Choice_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String, ok: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1047)
+		use_base_questionnaire()
+		put_op(o, 1047)
 		put_u64(o, s.h)
 		r := state_try(s.h, cx, req[:], loc) or_return
 		rd_into(&r, &v)
@@ -10983,7 +11803,8 @@ questionnaire_input_definition_read_vt := Questionnaire_Input_Definition_Read_VT
 	accessibility_label = proc(s: Questionnaire_Input_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1393)
+		use_base_questionnaire()
+		put_op(o, 1393)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -10992,7 +11813,8 @@ questionnaire_input_definition_read_vt := Questionnaire_Input_Definition_Read_VT
 	is_disabled = proc(s: Questionnaire_Input_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1394)
+		use_base_questionnaire()
+		put_op(o, 1394)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11001,7 +11823,8 @@ questionnaire_input_definition_read_vt := Questionnaire_Input_Definition_Read_VT
 	state_ = proc(s: Questionnaire_Input_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Input_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1590)
+		use_base_questionnaire()
+		put_op(o, 1590)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11037,7 +11860,8 @@ questionnaire_item_definition_read_vt := Questionnaire_Item_Definition_Read_VT {
 	accessibility_label = proc(s: Questionnaire_Item_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1395)
+		use_base_questionnaire()
+		put_op(o, 1395)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11046,7 +11870,8 @@ questionnaire_item_definition_read_vt := Questionnaire_Item_Definition_Read_VT {
 	choices = proc(s: Questionnaire_Item_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: []Questionnaire_Choice_Definition_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1396)
+		use_base_questionnaire()
+		put_op(o, 1396)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11055,7 +11880,8 @@ questionnaire_item_definition_read_vt := Questionnaire_Item_Definition_Read_VT {
 	description = proc(s: Questionnaire_Item_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1397)
+		use_base_questionnaire()
+		put_op(o, 1397)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11064,7 +11890,8 @@ questionnaire_item_definition_read_vt := Questionnaire_Item_Definition_Read_VT {
 	input = proc(s: Questionnaire_Item_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Questionnaire_Input_Definition_Read)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1398)
+		use_base_questionnaire()
+		put_op(o, 1398)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11073,7 +11900,8 @@ questionnaire_item_definition_read_vt := Questionnaire_Item_Definition_Read_VT {
 	is_disabled = proc(s: Questionnaire_Item_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1399)
+		use_base_questionnaire()
+		put_op(o, 1399)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11082,7 +11910,8 @@ questionnaire_item_definition_read_vt := Questionnaire_Item_Definition_Read_VT {
 	is_multiple = proc(s: Questionnaire_Item_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1400)
+		use_base_questionnaire()
+		put_op(o, 1400)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11091,7 +11920,8 @@ questionnaire_item_definition_read_vt := Questionnaire_Item_Definition_Read_VT {
 	is_required = proc(s: Questionnaire_Item_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1401)
+		use_base_questionnaire()
+		put_op(o, 1401)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11100,7 +11930,8 @@ questionnaire_item_definition_read_vt := Questionnaire_Item_Definition_Read_VT {
 	name = proc(s: Questionnaire_Item_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1402)
+		use_base_questionnaire()
+		put_op(o, 1402)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11109,7 +11940,8 @@ questionnaire_item_definition_read_vt := Questionnaire_Item_Definition_Read_VT {
 	validator = proc(s: Questionnaire_Item_Definition_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Questionnaire_Validator)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1763)
+		use_base_questionnaire()
+		put_op(o, 1763)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11143,7 +11975,8 @@ questionnaire_item_state_vt := Questionnaire_Item_State_VT {
 	has_input = proc(s: Questionnaire_Item_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1048)
+		use_base_questionnaire()
+		put_op(o, 1048)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11152,7 +11985,8 @@ questionnaire_item_state_vt := Questionnaire_Item_State_VT {
 	is_disabled = proc(s: Questionnaire_Item_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1049)
+		use_base_questionnaire()
+		put_op(o, 1049)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11161,7 +11995,8 @@ questionnaire_item_state_vt := Questionnaire_Item_State_VT {
 	is_invalid = proc(s: Questionnaire_Item_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1050)
+		use_base_questionnaire()
+		put_op(o, 1050)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11170,7 +12005,8 @@ questionnaire_item_state_vt := Questionnaire_Item_State_VT {
 	is_multiple = proc(s: Questionnaire_Item_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1051)
+		use_base_questionnaire()
+		put_op(o, 1051)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11179,7 +12015,8 @@ questionnaire_item_state_vt := Questionnaire_Item_State_VT {
 	is_required = proc(s: Questionnaire_Item_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1052)
+		use_base_questionnaire()
+		put_op(o, 1052)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11188,7 +12025,8 @@ questionnaire_item_state_vt := Questionnaire_Item_State_VT {
 	name = proc(s: Questionnaire_Item_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1053)
+		use_base_questionnaire()
+		put_op(o, 1053)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11197,7 +12035,8 @@ questionnaire_item_state_vt := Questionnaire_Item_State_VT {
 	status = proc(s: Questionnaire_Item_State, cx: ^Cx, loc := #caller_location) -> (v: Questionnaire_Item_Status) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1054)
+		use_base_questionnaire()
+		put_op(o, 1054)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11229,7 +12068,8 @@ questionnaire_navigation_state_vt := Questionnaire_Navigation_State_VT {
 	is_confirmable = proc(s: Questionnaire_Navigation_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1055)
+		use_base_questionnaire()
+		put_op(o, 1055)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11238,7 +12078,8 @@ questionnaire_navigation_state_vt := Questionnaire_Navigation_State_VT {
 	is_next_visible = proc(s: Questionnaire_Navigation_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1056)
+		use_base_questionnaire()
+		put_op(o, 1056)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11247,7 +12088,8 @@ questionnaire_navigation_state_vt := Questionnaire_Navigation_State_VT {
 	is_previous_visible = proc(s: Questionnaire_Navigation_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1057)
+		use_base_questionnaire()
+		put_op(o, 1057)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11256,7 +12098,8 @@ questionnaire_navigation_state_vt := Questionnaire_Navigation_State_VT {
 	is_skip_visible = proc(s: Questionnaire_Navigation_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1058)
+		use_base_questionnaire()
+		put_op(o, 1058)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11265,7 +12108,8 @@ questionnaire_navigation_state_vt := Questionnaire_Navigation_State_VT {
 	is_submit_visible = proc(s: Questionnaire_Navigation_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1059)
+		use_base_questionnaire()
+		put_op(o, 1059)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11277,7 +12121,8 @@ questionnaire_navigation_state_default :: proc(cx: ^Cx, loc := #caller_location)
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1484)
+	use_base_questionnaire()
+	put_op(o, 1484)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &questionnaire_navigation_state_vt}
 }
@@ -11303,7 +12148,8 @@ questionnaire_progress_state_vt := Questionnaire_Progress_State_VT {
 	current = proc(s: Questionnaire_Progress_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1060)
+		use_base_questionnaire()
+		put_op(o, 1060)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11312,7 +12158,8 @@ questionnaire_progress_state_vt := Questionnaire_Progress_State_VT {
 	total = proc(s: Questionnaire_Progress_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1061)
+		use_base_questionnaire()
+		put_op(o, 1061)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11382,7 +12229,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	answer = proc(s: Questionnaire_State, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Questionnaire_Answer_Read)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1355)
+		use_base_questionnaire()
+		put_op(o, 1355)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := state_get(s.h, cx, req[:], loc)
@@ -11392,7 +12240,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	answers = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: Questionnaire_Answers) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1064)
+		use_base_questionnaire()
+		put_op(o, 1064)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11401,7 +12250,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	choice_definition = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Questionnaire_Choice_Definition_Read)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1356)
+		use_base_questionnaire()
+		put_op(o, 1356)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11412,7 +12262,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	choice_focus_handle = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Focus_Handle)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1647)
+		use_base_questionnaire()
+		put_op(o, 1647)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11423,7 +12274,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	choice_for_shortcut = proc(s: Questionnaire_State, cx: ^Cx, item: string, key: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1065)
+		use_base_questionnaire()
+		put_op(o, 1065)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, key)
@@ -11434,7 +12286,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	choice_position = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Tuple_Int_Int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1066)
+		use_base_questionnaire()
+		put_op(o, 1066)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11445,7 +12298,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	choice_state = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Questionnaire_Choice_State)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1067)
+		use_base_questionnaire()
+		put_op(o, 1067)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11456,7 +12310,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	current_input_has_text = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1071)
+		use_base_questionnaire()
+		put_op(o, 1071)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11465,7 +12320,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	current_item = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1072)
+		use_base_questionnaire()
+		put_op(o, 1072)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11474,7 +12330,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	current_ix = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1073)
+		use_base_questionnaire()
+		put_op(o, 1073)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11483,7 +12340,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	error = proc(s: Questionnaire_State, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Questionnaire_Validation_Error)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1074)
+		use_base_questionnaire()
+		put_op(o, 1074)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := state_get(s.h, cx, req[:], loc)
@@ -11493,7 +12351,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	focus_handle = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: Focus_Handle) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1648)
+		use_base_questionnaire()
+		put_op(o, 1648)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11502,7 +12361,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	input_state = proc(s: Questionnaire_State, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Input_State)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1587)
+		use_base_questionnaire()
+		put_op(o, 1587)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := state_get(s.h, cx, req[:], loc)
@@ -11512,7 +12372,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	is_complete = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1084)
+		use_base_questionnaire()
+		put_op(o, 1084)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11521,7 +12382,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	item_definition = proc(s: Questionnaire_State, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Questionnaire_Item_Definition_Read)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1357)
+		use_base_questionnaire()
+		put_op(o, 1357)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := state_get(s.h, cx, req[:], loc)
@@ -11531,7 +12393,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	item_focus_handle = proc(s: Questionnaire_State, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Focus_Handle)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1649)
+		use_base_questionnaire()
+		put_op(o, 1649)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := state_get(s.h, cx, req[:], loc)
@@ -11541,7 +12404,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	item_state = proc(s: Questionnaire_State, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Questionnaire_Item_State)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1086)
+		use_base_questionnaire()
+		put_op(o, 1086)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := state_get(s.h, cx, req[:], loc)
@@ -11551,7 +12415,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	navigation_state = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: Questionnaire_Navigation_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1088)
+		use_base_questionnaire()
+		put_op(o, 1088)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11560,7 +12425,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	progress = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: Questionnaire_Progress_State) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1090)
+		use_base_questionnaire()
+		put_op(o, 1090)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11569,7 +12435,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	shortcut_for_choice = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1098)
+		use_base_questionnaire()
+		put_op(o, 1098)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11580,7 +12447,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	shortcut_mode = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Questionnaire_Shortcut_Mode)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1099)
+		use_base_questionnaire()
+		put_op(o, 1099)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11589,7 +12457,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	total = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1103)
+		use_base_questionnaire()
+		put_op(o, 1103)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11598,7 +12467,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	activate_choice = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1062)
+		use_base_questionnaire()
+		put_op(o, 1062)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11609,7 +12479,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	activate_shortcut = proc(s: Questionnaire_State, cx: ^Cx, key: string, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1063)
+		use_base_questionnaire()
+		put_op(o, 1063)
 		put_u64(o, s.h)
 		put_str(o, key)
 		r := state_call(s.h, cx, req[:], loc)
@@ -11619,7 +12490,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	choose = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1068)
+		use_base_questionnaire()
+		put_op(o, 1068)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11630,7 +12502,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	clear_external_error = proc(s: Questionnaire_State, cx: ^Cx, item: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1069)
+		use_base_questionnaire()
+		put_op(o, 1069)
 		put_u64(o, s.h)
 		put_str(o, item)
 		r := state_call(s.h, cx, req[:], loc)
@@ -11640,7 +12513,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	confirm_current = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1070)
+		use_base_questionnaire()
+		put_op(o, 1070)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11649,7 +12523,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	focus_choice = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1075)
+		use_base_questionnaire()
+		put_op(o, 1075)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11660,7 +12535,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	focus_current_item = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1076)
+		use_base_questionnaire()
+		put_op(o, 1076)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11669,7 +12545,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	focus_input = proc(s: Questionnaire_State, cx: ^Cx, item: string, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1077)
+		use_base_questionnaire()
+		put_op(o, 1077)
 		put_u64(o, s.h)
 		put_str(o, item)
 		r := state_call(s.h, cx, req[:], loc)
@@ -11679,7 +12556,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	focus_invalid_item = proc(s: Questionnaire_State, cx: ^Cx, item: string, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1078)
+		use_base_questionnaire()
+		put_op(o, 1078)
 		put_u64(o, s.h)
 		put_str(o, item)
 		r := state_call(s.h, cx, req[:], loc)
@@ -11689,7 +12567,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	focus_next_answer = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1079)
+		use_base_questionnaire()
+		put_op(o, 1079)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11698,7 +12577,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	focus_previous_answer = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1080)
+		use_base_questionnaire()
+		put_op(o, 1080)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11707,7 +12587,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	focused_current_choice = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1081)
+		use_base_questionnaire()
+		put_op(o, 1081)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11716,7 +12597,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	go_next = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1082)
+		use_base_questionnaire()
+		put_op(o, 1082)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11725,7 +12607,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	go_previous = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1083)
+		use_base_questionnaire()
+		put_op(o, 1083)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11734,7 +12617,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	is_current_input_focused = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1085)
+		use_base_questionnaire()
+		put_op(o, 1085)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11743,7 +12627,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	move_current_radio = proc(s: Questionnaire_State, cx: ^Cx, direction: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1087)
+		use_base_questionnaire()
+		put_op(o, 1087)
 		put_u64(o, s.h)
 		put_u64(o, u64(direction))
 		r := state_call(s.h, cx, req[:], loc)
@@ -11753,7 +12638,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	set_answer = proc(s: Questionnaire_State, cx: ^Cx, item: string, answer: Questionnaire_Answer, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1092)
+		use_base_questionnaire()
+		put_op(o, 1092)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_vtape(o, answer.nd)
@@ -11764,7 +12650,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	set_choice_disabled = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, disabled: bool, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1093)
+		use_base_questionnaire()
+		put_op(o, 1093)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11776,7 +12663,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	set_current_item = proc(s: Questionnaire_State, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1094)
+		use_base_questionnaire()
+		put_op(o, 1094)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := state_call(s.h, cx, req[:], loc)
@@ -11786,7 +12674,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	set_external_error = proc(s: Questionnaire_State, cx: ^Cx, item: string, error: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1095)
+		use_base_questionnaire()
+		put_op(o, 1095)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, error)
@@ -11797,7 +12686,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	set_input_value = proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1096)
+		use_base_questionnaire()
+		put_op(o, 1096)
 		put_u64(o, s.h)
 		put_str(o, item)
 		put_str(o, value)
@@ -11808,7 +12698,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	set_item_disabled = proc(s: Questionnaire_State, cx: ^Cx, name: string, disabled: bool, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1097)
+		use_base_questionnaire()
+		put_op(o, 1097)
 		put_u64(o, s.h)
 		put_str(o, name)
 		put_u8(o, u8(disabled))
@@ -11819,7 +12710,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	skip_current = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1100)
+		use_base_questionnaire()
+		put_op(o, 1100)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11828,7 +12720,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	submit = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1101)
+		use_base_questionnaire()
+		put_op(o, 1101)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11837,7 +12730,8 @@ questionnaire_state_vt := Questionnaire_State_VT {
 	reset = proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1091)
+		use_base_questionnaire()
+		put_op(o, 1091)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -11845,7 +12739,7 @@ questionnaire_state_vt := Questionnaire_State_VT {
 		slot, generation := keep_handler(cx, h, 89, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1102)
+		put_op(o, 1102)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -11872,14 +12766,14 @@ Questionnaire_State_Builder_VT :: struct {
 questionnaire_state_builder_vt := Questionnaire_State_Builder_VT {
 	with_current_item = proc(b: Questionnaire_State_Builder, name: string) -> Questionnaire_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_str(o, name)
 		o[b.count_at] += 1
 		return b
 	},
 	with_shortcuts = proc(b: Questionnaire_State_Builder, mode: Questionnaire_Shortcut_Mode) -> Questionnaire_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u16(o, u16(mode))
 		o[b.count_at] += 1
 		return b
@@ -11893,7 +12787,8 @@ questionnaire_state :: proc(cx: ^Cx, items: []Questionnaire_Item_Definition, loc
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1089)
+	use_base_questionnaire()
+	put_op(o, 1089)
 	put_u32(o, u32(len(items)))
 	for x0 in items {
 		put_vtape(o, x0.nd)
@@ -11923,7 +12818,8 @@ questionnaire_submission_vt := Questionnaire_Submission_VT {
 	answer = proc(s: Questionnaire_Submission, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Questionnaire_Answer_Read)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1432)
+		use_base_questionnaire()
+		put_op(o, 1432)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -11933,7 +12829,8 @@ questionnaire_submission_vt := Questionnaire_Submission_VT {
 	items = proc(s: Questionnaire_Submission, cx: ^Cx, loc := #caller_location) -> (v: []Questionnaire_Submission_Item) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1433)
+		use_base_questionnaire()
+		put_op(o, 1433)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11945,7 +12842,8 @@ questionnaire_submission_default :: proc(cx: ^Cx, loc := #caller_location) -> Qu
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1485)
+	use_base_questionnaire()
+	put_op(o, 1485)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &questionnaire_submission_vt}
 }
@@ -11972,7 +12870,8 @@ questionnaire_submission_item_vt := Questionnaire_Submission_Item_VT {
 	answer = proc(s: Questionnaire_Submission_Item, cx: ^Cx, loc := #caller_location) -> (v: Questionnaire_Answer_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1434)
+		use_base_questionnaire()
+		put_op(o, 1434)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11981,7 +12880,8 @@ questionnaire_submission_item_vt := Questionnaire_Submission_Item_VT {
 	name = proc(s: Questionnaire_Submission_Item, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1435)
+		use_base_questionnaire()
+		put_op(o, 1435)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -11990,7 +12890,8 @@ questionnaire_submission_item_vt := Questionnaire_Submission_Item_VT {
 	status = proc(s: Questionnaire_Submission_Item, cx: ^Cx, loc := #caller_location) -> (v: Questionnaire_Item_Status) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1436)
+		use_base_questionnaire()
+		put_op(o, 1436)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12022,7 +12923,8 @@ range_decoration_collection_vt := Range_Decoration_Collection_VT {
 	get_ranges = proc(s: Range_Decoration_Collection, cx: ^Cx, loc := #caller_location) -> (v: []Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 930)
+		use_base_input()
+		put_op(o, 930)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12031,7 +12933,8 @@ range_decoration_collection_vt := Range_Decoration_Collection_VT {
 	append = proc(s: Range_Decoration_Collection, cx: ^Cx, decorations: []Range_Decoration, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 927)
+		use_base_input()
+		put_op(o, 927)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -12042,21 +12945,24 @@ range_decoration_collection_vt := Range_Decoration_Collection_VT {
 	clear = proc(s: Range_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 928)
+		use_base_input()
+		put_op(o, 928)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	dispose = proc(s: Range_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 929)
+		use_base_input()
+		put_op(o, 929)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set = proc(s: Range_Decoration_Collection, cx: ^Cx, decorations: []Range_Decoration, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 931)
+		use_base_input()
+		put_op(o, 931)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -12087,7 +12993,8 @@ range_highlight_vt := Range_Highlight_VT {
 	background = proc(s: Range_Highlight, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 788)
+		use_base_text()
+		put_op(o, 788)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12096,7 +13003,8 @@ range_highlight_vt := Range_Highlight_VT {
 	range = proc(s: Range_Highlight, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 790)
+		use_base_text()
+		put_op(o, 790)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12108,7 +13016,8 @@ range_highlight :: proc(cx: ^Cx, range: Range, background: Color, loc := #caller
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 789)
+	use_base_text()
+	put_op(o, 789)
 	put_range(o, range)
 	put_color(o, background)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -12139,7 +13048,8 @@ rendered_text_vt := Rendered_Text_VT {
 	as_str = proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 791)
+		use_base_text()
+		put_op(o, 791)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12148,7 +13058,8 @@ rendered_text_vt := Rendered_Text_VT {
 	is_empty = proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 792)
+		use_base_text()
+		put_op(o, 792)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12157,7 +13068,8 @@ rendered_text_vt := Rendered_Text_VT {
 	len_ = proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 793)
+		use_base_text()
+		put_op(o, 793)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12166,7 +13078,8 @@ rendered_text_vt := Rendered_Text_VT {
 	range_for_source = proc(s: Rendered_Text, cx: ^Cx, source: Range, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 794)
+		use_base_text()
+		put_op(o, 794)
 		put_u64(o, s.h)
 		put_range(o, source)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -12176,7 +13089,8 @@ rendered_text_vt := Rendered_Text_VT {
 	source = proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 795)
+		use_base_text()
+		put_op(o, 795)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12206,7 +13120,8 @@ resizable_state_vt := Resizable_State_VT {
 	container_size = proc(s: Resizable_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1527)
+		use_base_resizable()
+		put_op(o, 1527)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12215,7 +13130,8 @@ resizable_state_vt := Resizable_State_VT {
 	sizes = proc(s: Resizable_State, cx: ^Cx, loc := #caller_location) -> (v: []f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1533)
+		use_base_resizable()
+		put_op(o, 1533)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12224,14 +13140,16 @@ resizable_state_vt := Resizable_State_VT {
 	clear = proc(s: Resizable_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1526)
+		use_base_resizable()
+		put_op(o, 1526)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	insert_panel = proc(s: Resizable_State, cx: ^Cx, size: Maybe(f32), ix: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1528)
+		use_base_resizable()
+		put_op(o, 1528)
 		put_u64(o, s.h)
 		if x0, ok := size.?; ok {
 			put_u8(o, 1)
@@ -12250,7 +13168,8 @@ resizable_state_vt := Resizable_State_VT {
 	remove_panel = proc(s: Resizable_State, cx: ^Cx, panel_ix: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1530)
+		use_base_resizable()
+		put_op(o, 1530)
 		put_u64(o, s.h)
 		put_usize(o, panel_ix)
 		state_set(cx, req[:], loc)
@@ -12258,7 +13177,8 @@ resizable_state_vt := Resizable_State_VT {
 	reset_panel = proc(s: Resizable_State, cx: ^Cx, panel_ix: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1531)
+		use_base_resizable()
+		put_op(o, 1531)
 		put_u64(o, s.h)
 		put_usize(o, panel_ix)
 		state_set(cx, req[:], loc)
@@ -12266,7 +13186,8 @@ resizable_state_vt := Resizable_State_VT {
 	resize_panel = proc(s: Resizable_State, cx: ^Cx, ix: int, size: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1532)
+		use_base_resizable()
+		put_op(o, 1532)
 		put_u64(o, s.h)
 		put_usize(o, ix)
 		put_f32(o, size)
@@ -12276,7 +13197,7 @@ resizable_state_vt := Resizable_State_VT {
 		slot, generation := keep_handler(cx, h, 96, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1534)
+		put_op(o, 1534)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -12289,7 +13210,8 @@ resizable_state :: proc(cx: ^Cx, loc := #caller_location) -> Resizable_State {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1529)
+	use_base_resizable()
+	put_op(o, 1529)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &resizable_state_vt}
 }
@@ -12309,7 +13231,8 @@ root_vt := Root_VT {
 	view = proc(s: Root, cx: ^Cx, loc := #caller_location) -> (v: View) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1645)
+		use_base_root()
+		put_op(o, 1645)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12337,7 +13260,8 @@ sankey_graph_vt := Sankey_Graph_VT {
 	layer_count = proc(s: Sankey_Graph, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1482)
+		use_base_plot()
+		put_op(o, 1482)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12349,7 +13273,8 @@ sankey_graph_default :: proc(cx: ^Cx, loc := #caller_location) -> Sankey_Graph {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1481)
+	use_base_plot()
+	put_op(o, 1481)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &sankey_graph_vt}
 }
@@ -12377,7 +13302,8 @@ scale_band_vt := Scale_Band_VT {
 	band_width = proc(s: Scale_Band, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1146)
+		use_base_root()
+		put_op(o, 1146)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12386,7 +13312,8 @@ scale_band_vt := Scale_Band_VT {
 	nearest_index = proc(s: Scale_Band, cx: ^Cx, arg0: f32, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1147)
+		use_base_root()
+		put_op(o, 1147)
 		put_u64(o, s.h)
 		put_f32(o, arg0)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -12396,7 +13323,8 @@ scale_band_vt := Scale_Band_VT {
 	step = proc(s: Scale_Band, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1149)
+		use_base_root()
+		put_op(o, 1149)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12405,7 +13333,8 @@ scale_band_vt := Scale_Band_VT {
 	tick = proc(s: Scale_Band, cx: ^Cx, value: string, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1150)
+		use_base_root()
+		put_op(o, 1150)
 		put_u64(o, s.h)
 		put_str(o, value)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -12434,28 +13363,28 @@ Scale_Band_Builder_VT :: struct {
 scale_band_builder_vt := Scale_Band_Builder_VT {
 	band_count = proc(b: Scale_Band_Builder, count: int) -> Scale_Band_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_usize(o, count)
 		o[b.count_at] += 1
 		return b
 	},
 	max_band_width = proc(b: Scale_Band_Builder, width: f32) -> Scale_Band_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_f32(o, width)
 		o[b.count_at] += 1
 		return b
 	},
 	padding_inner = proc(b: Scale_Band_Builder, padding_inner: f32) -> Scale_Band_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_f32(o, padding_inner)
 		o[b.count_at] += 1
 		return b
 	},
 	padding_outer = proc(b: Scale_Band_Builder, padding_outer: f32) -> Scale_Band_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		put_f32(o, padding_outer)
 		o[b.count_at] += 1
 		return b
@@ -12469,7 +13398,8 @@ scale_band :: proc(cx: ^Cx, domain: []string, range: [2]f32, loc := #caller_loca
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1148)
+	use_base_root()
+	put_op(o, 1148)
 	put_u32(o, u32(len(domain)))
 	for x0 in domain {
 		put_str(o, x0)
@@ -12502,7 +13432,8 @@ scale_linear_vt := Scale_Linear_VT {
 	nearest_index = proc(s: Scale_Linear, cx: ^Cx, arg0: f32, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1151)
+		use_base_plot()
+		put_op(o, 1151)
 		put_u64(o, s.h)
 		put_f32(o, arg0)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -12512,7 +13443,8 @@ scale_linear_vt := Scale_Linear_VT {
 	tick = proc(s: Scale_Linear, cx: ^Cx, value: f64, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1153)
+		use_base_plot()
+		put_op(o, 1153)
 		put_u64(o, s.h)
 		put_u64(o, transmute(u64)f64(value))
 		r := obj_get(s.h, cx, req[:], loc)
@@ -12525,7 +13457,8 @@ scale_linear :: proc(cx: ^Cx, domain: []f64, range: [2]f32, loc := #caller_locat
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1152)
+	use_base_plot()
+	put_op(o, 1152)
 	put_u32(o, u32(len(domain)))
 	for x0 in domain {
 		put_u64(o, transmute(u64)f64(x0))
@@ -12557,7 +13490,8 @@ scale_ordinal_vt := Scale_Ordinal_VT {
 	map_ = proc(s: Scale_Ordinal, cx: ^Cx, value: string, loc := #caller_location) -> (v: Maybe(Hsla)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1154)
+		use_base_root()
+		put_op(o, 1154)
 		put_u64(o, s.h)
 		put_str(o, value)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -12585,7 +13519,7 @@ Scale_Ordinal_Builder_VT :: struct {
 scale_ordinal_builder_vt := Scale_Ordinal_Builder_VT {
 	domain = proc(b: Scale_Ordinal_Builder, domain: []string) -> Scale_Ordinal_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u32(o, u32(len(domain)))
 		for x0 in domain {
 			put_str(o, x0)
@@ -12595,7 +13529,7 @@ scale_ordinal_builder_vt := Scale_Ordinal_Builder_VT {
 	},
 	range = proc(b: Scale_Ordinal_Builder, range: []Color) -> Scale_Ordinal_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u32(o, u32(len(range)))
 		for x0 in range {
 			put_color(o, x0)
@@ -12605,7 +13539,7 @@ scale_ordinal_builder_vt := Scale_Ordinal_Builder_VT {
 	},
 	unknown = proc(b: Scale_Ordinal_Builder, unknown: Color) -> Scale_Ordinal_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_color(o, unknown)
 		o[b.count_at] += 1
 		return b
@@ -12619,7 +13553,8 @@ scale_ordinal :: proc(cx: ^Cx, domain: []string, range: []Color, loc := #caller_
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1155)
+	use_base_root()
+	put_op(o, 1155)
 	put_u32(o, u32(len(domain)))
 	for x0 in domain {
 		put_str(o, x0)
@@ -12654,7 +13589,8 @@ scale_point_vt := Scale_Point_VT {
 	nearest_index = proc(s: Scale_Point, cx: ^Cx, arg0: f32, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1156)
+		use_base_root()
+		put_op(o, 1156)
 		put_u64(o, s.h)
 		put_f32(o, arg0)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -12664,7 +13600,8 @@ scale_point_vt := Scale_Point_VT {
 	tick = proc(s: Scale_Point, cx: ^Cx, value: string, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1158)
+		use_base_root()
+		put_op(o, 1158)
 		put_u64(o, s.h)
 		put_str(o, value)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -12674,7 +13611,8 @@ scale_point_vt := Scale_Point_VT {
 	tick_at = proc(s: Scale_Point, cx: ^Cx, index: int, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1159)
+		use_base_root()
+		put_op(o, 1159)
 		put_u64(o, s.h)
 		put_usize(o, index)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -12687,7 +13625,8 @@ scale_point :: proc(cx: ^Cx, domain: []string, range: [2]f32, loc := #caller_loc
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1157)
+	use_base_root()
+	put_op(o, 1157)
 	put_u32(o, u32(len(domain)))
 	for x0 in domain {
 		put_str(o, x0)
@@ -12724,7 +13663,7 @@ scroll_handle_vt := Scroll_Handle_VT {
 	content_size = proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Size) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1333)
+		put_op(o, 1333)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12733,7 +13672,7 @@ scroll_handle_vt := Scroll_Handle_VT {
 	offset = proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1336)
+		put_op(o, 1336)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12742,7 +13681,7 @@ scroll_handle_vt := Scroll_Handle_VT {
 	viewport_bounds = proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1339)
+		put_op(o, 1339)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12751,14 +13690,14 @@ scroll_handle_vt := Scroll_Handle_VT {
 	end_drag = proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1334)
+		put_op(o, 1334)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_offset = proc(s: Scroll_Handle, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1337)
+		put_op(o, 1337)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, offset)
 		state_set(cx, req[:], loc)
@@ -12766,7 +13705,7 @@ scroll_handle_vt := Scroll_Handle_VT {
 	start_drag = proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1338)
+		put_op(o, 1338)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -12776,7 +13715,7 @@ scroll_handle :: proc(cx: ^Cx, loc := #caller_location) -> Scroll_Handle {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1335)
+	put_op(o, 1335)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &scroll_handle_vt}
 }
@@ -12806,7 +13745,8 @@ scrollbar_motion_read_vt := Scrollbar_Motion_Read_VT {
 	enter = proc(s: Scrollbar_Motion_Read, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1440)
+		use_base_root()
+		put_op(o, 1440)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12815,7 +13755,8 @@ scrollbar_motion_read_vt := Scrollbar_Motion_Read_VT {
 	entrance = proc(s: Scrollbar_Motion_Read, cx: ^Cx, loc := #caller_location) -> (v: Scrollbar_Entrance) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1368)
+		use_base_root()
+		put_op(o, 1368)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12824,7 +13765,8 @@ scrollbar_motion_read_vt := Scrollbar_Motion_Read_VT {
 	exit = proc(s: Scrollbar_Motion_Read, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1441)
+		use_base_root()
+		put_op(o, 1441)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12833,7 +13775,8 @@ scrollbar_motion_read_vt := Scrollbar_Motion_Read_VT {
 	expand = proc(s: Scrollbar_Motion_Read, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1442)
+		use_base_root()
+		put_op(o, 1442)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12842,7 +13785,8 @@ scrollbar_motion_read_vt := Scrollbar_Motion_Read_VT {
 	idle = proc(s: Scrollbar_Motion_Read, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1443)
+		use_base_root()
+		put_op(o, 1443)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12851,7 +13795,8 @@ scrollbar_motion_read_vt := Scrollbar_Motion_Read_VT {
 	thumb_hover_entrance = proc(s: Scrollbar_Motion_Read, cx: ^Cx, loc := #caller_location) -> (v: Scrollbar_Entrance) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1369)
+		use_base_root()
+		put_op(o, 1369)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12880,7 +13825,8 @@ scrollbar_theme_read_vt := Scrollbar_Theme_Read_VT {
 	mode = proc(s: Scrollbar_Theme_Read, cx: ^Cx, loc := #caller_location) -> (v: Scrollbar_Mode) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1370)
+		use_base_root()
+		put_op(o, 1370)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12889,7 +13835,8 @@ scrollbar_theme_read_vt := Scrollbar_Theme_Read_VT {
 	motion = proc(s: Scrollbar_Theme_Read, cx: ^Cx, loc := #caller_location) -> (v: Scrollbar_Motion_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1371)
+		use_base_root()
+		put_op(o, 1371)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12924,7 +13871,8 @@ search_matcher_vt := Search_Matcher_VT {
 	current = proc(s: Search_Matcher, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 932)
+		use_base_input()
+		put_op(o, 932)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12933,7 +13881,8 @@ search_matcher_vt := Search_Matcher_VT {
 	current_match_index = proc(s: Search_Matcher, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 933)
+		use_base_input()
+		put_op(o, 933)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12942,7 +13891,8 @@ search_matcher_vt := Search_Matcher_VT {
 	is_empty = proc(s: Search_Matcher, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 934)
+		use_base_input()
+		put_op(o, 934)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12951,7 +13901,8 @@ search_matcher_vt := Search_Matcher_VT {
 	label = proc(s: Search_Matcher, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 935)
+		use_base_input()
+		put_op(o, 935)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12960,7 +13911,8 @@ search_matcher_vt := Search_Matcher_VT {
 	len_ = proc(s: Search_Matcher, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 936)
+		use_base_input()
+		put_op(o, 936)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12969,7 +13921,8 @@ search_matcher_vt := Search_Matcher_VT {
 	matched_ranges = proc(s: Search_Matcher, cx: ^Cx, loc := #caller_location) -> (v: []Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1474)
+		use_base_input()
+		put_op(o, 1474)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -12978,7 +13931,8 @@ search_matcher_vt := Search_Matcher_VT {
 	update_cursor_by_offset = proc(s: Search_Matcher, cx: ^Cx, offset: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 938)
+		use_base_input()
+		put_op(o, 938)
 		put_u64(o, s.h)
 		put_usize(o, offset)
 		state_set(cx, req[:], loc)
@@ -12986,7 +13940,8 @@ search_matcher_vt := Search_Matcher_VT {
 	update_query = proc(s: Search_Matcher, cx: ^Cx, query: string, case_insensitive: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 939)
+		use_base_input()
+		put_op(o, 939)
 		put_u64(o, s.h)
 		put_str(o, query)
 		put_u8(o, u8(case_insensitive))
@@ -12998,7 +13953,8 @@ search_matcher :: proc(cx: ^Cx, loc := #caller_location) -> Search_Matcher {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 937)
+	use_base_input()
+	put_op(o, 937)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &search_matcher_vt}
 }
@@ -13023,7 +13979,8 @@ search_session_vt := Search_Session_VT {
 	is_active = proc(s: Search_Session, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 940)
+		use_base_input()
+		put_op(o, 940)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13035,7 +13992,8 @@ search_session_default :: proc(cx: ^Cx, loc := #caller_location) -> Search_Sessi
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1475)
+	use_base_input()
+	put_op(o, 1475)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &search_session_vt}
 }
@@ -13061,7 +14019,8 @@ select_state_vt := Select_State_VT {
 	selected_index = proc(s: Select_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Base_Index_Path)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1120)
+		use_component_select()
+		put_op(o, 1120)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13070,7 +14029,8 @@ select_state_vt := Select_State_VT {
 	selected_value = proc(s: Select_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1171)
+		use_component_select()
+		put_op(o, 1171)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13079,14 +14039,16 @@ select_state_vt := Select_State_VT {
 	focus = proc(s: Select_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1118)
+		use_component_select()
+		put_op(o, 1118)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_items = proc(s: Select_State, cx: ^Cx, items: Row_Source, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1121)
+		use_component_select()
+		put_op(o, 1121)
 		put_u64(o, s.h)
 		put_u64(o, items.h)
 		state_set(cx, req[:], loc)
@@ -13094,7 +14056,8 @@ select_state_vt := Select_State_VT {
 	set_selected_index = proc(s: Select_State, cx: ^Cx, selected_index: Maybe_Index_Path, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1122)
+		use_component_select()
+		put_op(o, 1122)
 		put_u64(o, s.h)
 		selected_index_rec: Maybe(Base_Index_Path)
 		switch x in selected_index {
@@ -13114,7 +14077,8 @@ select_state_vt := Select_State_VT {
 	set_selected_value = proc(s: Select_State, cx: ^Cx, selected_value: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1172)
+		use_component_select()
+		put_op(o, 1172)
 		put_u64(o, s.h)
 		put_str(o, selected_value)
 		state_set(cx, req[:], loc)
@@ -13123,7 +14087,7 @@ select_state_vt := Select_State_VT {
 		slot, generation := keep_handler(cx, h, 103, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1123)
+		put_op(o, 1123)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -13149,7 +14113,7 @@ Select_State_Builder_VT :: struct {
 select_state_builder_vt := Select_State_Builder_VT {
 	searchable = proc(b: Select_State_Builder, searchable: bool) -> Select_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u8(o, u8(searchable))
 		o[b.count_at] += 1
 		return b
@@ -13163,7 +14127,8 @@ select_state :: proc(cx: ^Cx, delegate: Row_Source, selected_index: Maybe_Index_
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1119)
+	use_component_select()
+	put_op(o, 1119)
 	put_u64(o, delegate.h)
 	selected_index_rec: Maybe(Base_Index_Path)
 	switch x in selected_index {
@@ -13204,7 +14169,8 @@ sequence_vt := Sequence_VT {
 	from = proc(s: Sequence, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1131)
+		use_base_motion()
+		put_op(o, 1131)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13213,7 +14179,8 @@ sequence_vt := Sequence_VT {
 	steps = proc(s: Sequence, cx: ^Cx, loc := #caller_location) -> (v: []Sequence_Step) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1134)
+		use_base_motion()
+		put_op(o, 1134)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13222,7 +14189,8 @@ sequence_vt := Sequence_VT {
 	sample = proc(s: Sequence, cx: ^Cx, loc := #caller_location) -> (v: Sequence_Sample) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1133)
+		use_base_motion()
+		put_op(o, 1133)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13248,7 +14216,7 @@ Sequence_Builder_VT :: struct {
 sequence_builder_vt := Sequence_Builder_VT {
 	with_step = proc(b: Sequence_Builder, target: f32, transition: Transition) -> Sequence_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_f32(o, target)
 		put_vtape(o, transition.nd)
 		o[b.count_at] += 1
@@ -13256,7 +14224,7 @@ sequence_builder_vt := Sequence_Builder_VT {
 	},
 	with_steps = proc(b: Sequence_Builder, steps: []Sequence_Step) -> Sequence_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u32(o, u32(len(steps)))
 		for x0 in steps {
 			put_u64(o, x0.h)
@@ -13273,7 +14241,8 @@ sequence :: proc(cx: ^Cx, id: Transition_Id_Into, from: f32, loc := #caller_loca
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1132)
+	use_base_motion()
+	put_op(o, 1132)
 	put_Transition_Id_Into(o, id)
 	put_f32(o, from)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -13305,7 +14274,8 @@ sequence_sample_vt := Sequence_Sample_VT {
 	is_finished = proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1136)
+		use_base_motion()
+		put_op(o, 1136)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13314,7 +14284,8 @@ sequence_sample_vt := Sequence_Sample_VT {
 	status = proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: Motion_Status) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1137)
+		use_base_motion()
+		put_op(o, 1137)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13323,7 +14294,8 @@ sequence_sample_vt := Sequence_Sample_VT {
 	step = proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1138)
+		use_base_motion()
+		put_op(o, 1138)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13332,7 +14304,8 @@ sequence_sample_vt := Sequence_Sample_VT {
 	value = proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1139)
+		use_base_motion()
+		put_op(o, 1139)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13341,7 +14314,8 @@ sequence_sample_vt := Sequence_Sample_VT {
 	try_value = proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: f32, ok: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1139)
+		use_base_motion()
+		put_op(o, 1139)
 		put_u64(o, s.h)
 		r := state_try(s.h, cx, req[:], loc) or_return
 		rd_into(&r, &v)
@@ -13350,7 +14324,8 @@ sequence_sample_vt := Sequence_Sample_VT {
 	into_value = proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1135)
+		use_base_motion()
+		put_op(o, 1135)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13378,7 +14353,8 @@ sequence_step_vt := Sequence_Step_VT {
 	target = proc(s: Sequence_Step, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1141)
+		use_base_motion()
+		put_op(o, 1141)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13390,7 +14366,8 @@ sequence_step :: proc(cx: ^Cx, target: f32, transition: Transition, loc := #call
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1140)
+	use_base_motion()
+	put_op(o, 1140)
 	put_f32(o, target)
 	put_vtape(o, transition.nd)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -13417,7 +14394,8 @@ shape_key_vt := Shape_Key_VT {
 	finish = proc(s: Shape_Key, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 952)
+		use_base_plot()
+		put_op(o, 952)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13429,7 +14407,8 @@ shape_key :: proc(cx: ^Cx, extra: string, loc := #caller_location) -> Shape_Key 
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 953)
+	use_base_plot()
+	put_op(o, 953)
 	put_str(o, extra)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &shape_key_vt}
@@ -13457,7 +14436,8 @@ slider_state_vt := Slider_State_VT {
 	accessibility_step = proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 346)
+		use_base_slider()
+		put_op(o, 346)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13466,7 +14446,8 @@ slider_state_vt := Slider_State_VT {
 	max_value = proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 347)
+		use_base_slider()
+		put_op(o, 347)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13475,7 +14456,8 @@ slider_state_vt := Slider_State_VT {
 	min_value = proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 348)
+		use_base_slider()
+		put_op(o, 348)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13484,7 +14466,8 @@ slider_state_vt := Slider_State_VT {
 	step_value = proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 350)
+		use_base_slider()
+		put_op(o, 350)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13493,7 +14476,8 @@ slider_state_vt := Slider_State_VT {
 	value = proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: Slider_Value) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 352)
+		use_base_slider()
+		put_op(o, 352)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13502,7 +14486,8 @@ slider_state_vt := Slider_State_VT {
 	try_value = proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: Slider_Value, ok: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 352)
+		use_base_slider()
+		put_op(o, 352)
 		put_u64(o, s.h)
 		r := state_try(s.h, cx, req[:], loc) or_return
 		rd_into(&r, &v)
@@ -13511,7 +14496,8 @@ slider_state_vt := Slider_State_VT {
 	set_value = proc(s: Slider_State, cx: ^Cx, value: Slider_Value_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 646)
+		use_base_slider()
+		put_op(o, 646)
 		put_u64(o, s.h)
 		put_Slider_Value_Into(o, value)
 		state_set(cx, req[:], loc)
@@ -13520,7 +14506,7 @@ slider_state_vt := Slider_State_VT {
 		slot, generation := keep_handler(cx, h, 90, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 351)
+		put_op(o, 351)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -13550,35 +14536,35 @@ Slider_State_Builder_VT :: struct {
 slider_state_builder_vt := Slider_State_Builder_VT {
 	default_value = proc(b: Slider_State_Builder, value: Slider_Value_Into) -> Slider_State_Builder {
 		o := b.req
-		put_u16(o, 5)
+		put_op(o, 5)
 		put_Slider_Value_Into(o, value)
 		o[b.count_at] += 1
 		return b
 	},
 	max = proc(b: Slider_State_Builder, max: f32) -> Slider_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_f32(o, max)
 		o[b.count_at] += 1
 		return b
 	},
 	min = proc(b: Slider_State_Builder, min: f32) -> Slider_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_f32(o, min)
 		o[b.count_at] += 1
 		return b
 	},
 	scale = proc(b: Slider_State_Builder, scale: Slider_Scale) -> Slider_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_u16(o, u16(scale))
 		o[b.count_at] += 1
 		return b
 	},
 	step = proc(b: Slider_State_Builder, step: f32) -> Slider_State_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		put_f32(o, step)
 		o[b.count_at] += 1
 		return b
@@ -13592,7 +14578,8 @@ slider_state :: proc(cx: ^Cx, loc := #caller_location) -> Slider_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 349)
+	use_base_slider()
+	put_op(o, 349)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &slider_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -13621,7 +14608,8 @@ speech_state_vt := Speech_State_VT {
 	has_recognizer = proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 397)
+		use_component_speech()
+		put_op(o, 397)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13630,7 +14618,8 @@ speech_state_vt := Speech_State_VT {
 	is_available = proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 398)
+		use_component_speech()
+		put_op(o, 398)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13639,7 +14628,8 @@ speech_state_vt := Speech_State_VT {
 	levels = proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: []f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1316)
+		use_component_speech()
+		put_op(o, 1316)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13648,7 +14638,8 @@ speech_state_vt := Speech_State_VT {
 	status = proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: Speech_Status) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 401)
+		use_component_speech()
+		put_op(o, 401)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13657,7 +14648,8 @@ speech_state_vt := Speech_State_VT {
 	transcript = proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 405)
+		use_component_speech()
+		put_op(o, 405)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13666,28 +14658,32 @@ speech_state_vt := Speech_State_VT {
 	cancel = proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 396)
+		use_component_speech()
+		put_op(o, 396)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	start = proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 400)
+		use_component_speech()
+		put_op(o, 400)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	stop = proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 402)
+		use_component_speech()
+		put_op(o, 402)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	toggle = proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 404)
+		use_component_speech()
+		put_op(o, 404)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -13695,7 +14691,7 @@ speech_state_vt := Speech_State_VT {
 		slot, generation := keep_handler(cx, h, 93, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 403)
+		put_op(o, 403)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -13722,14 +14718,14 @@ Speech_State_Builder_VT :: struct {
 speech_state_builder_vt := Speech_State_Builder_VT {
 	stop_timeout = proc(b: Speech_State_Builder, timeout: time.Duration) -> Speech_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_ms(o, i64(timeout))
 		o[b.count_at] += 1
 		return b
 	},
 	system_fallback = proc(b: Speech_State_Builder, system_fallback: bool) -> Speech_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u8(o, u8(system_fallback))
 		o[b.count_at] += 1
 		return b
@@ -13743,7 +14739,8 @@ speech_state :: proc(cx: ^Cx, loc := #caller_location) -> Speech_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 399)
+	use_component_speech()
+	put_op(o, 399)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &speech_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -13768,7 +14765,8 @@ stack_vt := Stack_VT {
 	series = proc(s: Stack, cx: ^Cx, loc := #caller_location) -> (v: []Stack_Series) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1639)
+		use_base_plot()
+		put_op(o, 1639)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13795,14 +14793,14 @@ Stack_Builder_VT :: struct {
 stack_builder_vt := Stack_Builder_VT {
 	data = proc(b: Stack_Builder, data: Data) -> Stack_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_data(o, data)
 		o[b.count_at] += 1
 		return b
 	},
 	keys = proc(b: Stack_Builder, keys: []string) -> Stack_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u32(o, u32(len(keys)))
 		for x0 in keys {
 			put_str(o, x0)
@@ -13812,7 +14810,7 @@ stack_builder_vt := Stack_Builder_VT {
 	},
 	value = proc(b: Stack_Builder, value: string) -> Stack_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_field(o, value, .Opt)
 		o[b.count_at] += 1
 		return b
@@ -13826,7 +14824,8 @@ stack :: proc(cx: ^Cx, loc := #caller_location) -> Stack_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1638)
+	use_base_plot()
+	put_op(o, 1638)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &stack_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -13851,7 +14850,8 @@ stagger_vt := Stagger_VT {
 	delay = proc(s: Stagger, cx: ^Cx, index: int, count: int, loc := #caller_location) -> (v: time.Duration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1437)
+		use_base_motion()
+		put_op(o, 1437)
 		put_u64(o, s.h)
 		put_usize(o, index)
 		put_usize(o, count)
@@ -13865,7 +14865,8 @@ stagger :: proc(cx: ^Cx, interval: time.Duration, origin: Stagger_Origin, loc :=
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 796)
+	use_base_motion()
+	put_op(o, 796)
 	put_ms(o, i64(interval))
 	put_Stagger_Origin(o, origin)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
@@ -13909,7 +14910,8 @@ status_colors_vt := Status_Colors_VT {
 	created = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1490)
+		use_component_highlighter()
+		put_op(o, 1490)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13918,7 +14920,8 @@ status_colors_vt := Status_Colors_VT {
 	deleted = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1491)
+		use_component_highlighter()
+		put_op(o, 1491)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13927,7 +14930,8 @@ status_colors_vt := Status_Colors_VT {
 	error = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1492)
+		use_component_highlighter()
+		put_op(o, 1492)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13936,7 +14940,8 @@ status_colors_vt := Status_Colors_VT {
 	error_background = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1493)
+		use_component_highlighter()
+		put_op(o, 1493)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13945,7 +14950,8 @@ status_colors_vt := Status_Colors_VT {
 	error_border = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1494)
+		use_component_highlighter()
+		put_op(o, 1494)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13954,7 +14960,8 @@ status_colors_vt := Status_Colors_VT {
 	hint = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1495)
+		use_component_highlighter()
+		put_op(o, 1495)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13963,7 +14970,8 @@ status_colors_vt := Status_Colors_VT {
 	hint_background = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1496)
+		use_component_highlighter()
+		put_op(o, 1496)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13972,7 +14980,8 @@ status_colors_vt := Status_Colors_VT {
 	hint_border = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1497)
+		use_component_highlighter()
+		put_op(o, 1497)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13981,7 +14990,8 @@ status_colors_vt := Status_Colors_VT {
 	info = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1498)
+		use_component_highlighter()
+		put_op(o, 1498)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13990,7 +15000,8 @@ status_colors_vt := Status_Colors_VT {
 	info_background = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1499)
+		use_component_highlighter()
+		put_op(o, 1499)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -13999,7 +15010,8 @@ status_colors_vt := Status_Colors_VT {
 	info_border = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1500)
+		use_component_highlighter()
+		put_op(o, 1500)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14008,7 +15020,8 @@ status_colors_vt := Status_Colors_VT {
 	modified = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1501)
+		use_component_highlighter()
+		put_op(o, 1501)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14017,7 +15030,8 @@ status_colors_vt := Status_Colors_VT {
 	success = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1502)
+		use_component_highlighter()
+		put_op(o, 1502)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14026,7 +15040,8 @@ status_colors_vt := Status_Colors_VT {
 	success_background = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1503)
+		use_component_highlighter()
+		put_op(o, 1503)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14035,7 +15050,8 @@ status_colors_vt := Status_Colors_VT {
 	success_border = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1504)
+		use_component_highlighter()
+		put_op(o, 1504)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14044,7 +15060,8 @@ status_colors_vt := Status_Colors_VT {
 	warning = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1505)
+		use_component_highlighter()
+		put_op(o, 1505)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14053,7 +15070,8 @@ status_colors_vt := Status_Colors_VT {
 	warning_background = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1506)
+		use_component_highlighter()
+		put_op(o, 1506)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14062,7 +15080,8 @@ status_colors_vt := Status_Colors_VT {
 	warning_border = proc(s: Status_Colors, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1507)
+		use_component_highlighter()
+		put_op(o, 1507)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14074,7 +15093,8 @@ status_colors_default :: proc(cx: ^Cx, loc := #caller_location) -> Status_Colors
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1489)
+	use_component_highlighter()
+	put_op(o, 1489)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &status_colors_vt}
 }
@@ -14100,7 +15120,8 @@ syntax_colors_vt := Syntax_Colors_VT {
 	style = proc(s: Syntax_Colors, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Highlight_Style)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1509)
+		use_component_highlighter()
+		put_op(o, 1509)
 		put_u64(o, s.h)
 		put_str(o, name)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -14110,7 +15131,8 @@ syntax_colors_vt := Syntax_Colors_VT {
 	style_for_index = proc(s: Syntax_Colors, cx: ^Cx, index: int, loc := #caller_location) -> (v: Maybe(Highlight_Style)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1510)
+		use_component_highlighter()
+		put_op(o, 1510)
 		put_u64(o, s.h)
 		put_usize(o, index)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -14123,7 +15145,8 @@ syntax_colors_default :: proc(cx: ^Cx, loc := #caller_location) -> Syntax_Colors
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1508)
+	use_component_highlighter()
+	put_op(o, 1508)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &syntax_colors_vt}
 }
@@ -14149,7 +15172,8 @@ syntax_highlighter_vt := Syntax_Highlighter_VT {
 	language = proc(s: Syntax_Highlighter, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1020)
+		use_component_highlighter()
+		put_op(o, 1020)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14158,7 +15182,8 @@ syntax_highlighter_vt := Syntax_Highlighter_VT {
 	text = proc(s: Syntax_Highlighter, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1276)
+		use_component_highlighter()
+		put_op(o, 1276)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14170,7 +15195,8 @@ syntax_highlighter :: proc(cx: ^Cx, language: string, loc := #caller_location) -
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1021)
+	use_component_highlighter()
+	put_op(o, 1021)
 	put_str(o, language)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &syntax_highlighter_vt}
@@ -14202,7 +15228,8 @@ tab_group_vt := Tab_Group_VT {
 	active_ix = proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1559)
+		use_base_dock()
+		put_op(o, 1559)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14211,7 +15238,8 @@ tab_group_vt := Tab_Group_VT {
 	active_panel = proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Dock_Panel)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1560)
+		use_base_dock()
+		put_op(o, 1560)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14220,7 +15248,8 @@ tab_group_vt := Tab_Group_VT {
 	context_ = proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: Tab_Group_Context) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1562)
+		use_base_dock()
+		put_op(o, 1562)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14229,7 +15258,8 @@ tab_group_vt := Tab_Group_VT {
 	is_closable = proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1563)
+		use_base_dock()
+		put_op(o, 1563)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14238,7 +15268,8 @@ tab_group_vt := Tab_Group_VT {
 	is_collapsed = proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1564)
+		use_base_dock()
+		put_op(o, 1564)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14247,7 +15278,8 @@ tab_group_vt := Tab_Group_VT {
 	is_zoomed = proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1565)
+		use_base_dock()
+		put_op(o, 1565)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14256,7 +15288,8 @@ tab_group_vt := Tab_Group_VT {
 	node = proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: Node_Id) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1566)
+		use_base_dock()
+		put_op(o, 1566)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14265,7 +15298,8 @@ tab_group_vt := Tab_Group_VT {
 	panels = proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: []Dock_Panel) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1567)
+		use_base_dock()
+		put_op(o, 1567)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14274,7 +15308,8 @@ tab_group_vt := Tab_Group_VT {
 	close_panel = proc(s: Tab_Group, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1561)
+		use_base_dock()
+		put_op(o, 1561)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		state_set(cx, req[:], loc)
@@ -14282,7 +15317,8 @@ tab_group_vt := Tab_Group_VT {
 	select_tab = proc(s: Tab_Group, cx: ^Cx, ix: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1568)
+		use_base_dock()
+		put_op(o, 1568)
 		put_u64(o, s.h)
 		put_usize(o, ix)
 		state_set(cx, req[:], loc)
@@ -14290,7 +15326,8 @@ tab_group_vt := Tab_Group_VT {
 	toggle_zoom = proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1570)
+		use_base_dock()
+		put_op(o, 1570)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -14298,7 +15335,7 @@ tab_group_vt := Tab_Group_VT {
 		slot, generation := keep_handler(cx, h, 88, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1569)
+		put_op(o, 1569)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -14324,7 +15361,7 @@ Tab_Group_Builder_VT :: struct {
 tab_group_builder_vt := Tab_Group_Builder_VT {
 	with_renderer = proc(b: Tab_Group_Builder, renderer: Dock_Renderer) -> Tab_Group_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u64(o, renderer.h)
 		o[b.count_at] += 1
 		return b
@@ -14371,7 +15408,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	active_ix = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1571)
+		use_base_dock()
+		put_op(o, 1571)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14380,7 +15418,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	active_panel = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Dock_Panel)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1572)
+		use_base_dock()
+		put_op(o, 1572)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14389,7 +15428,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	drag_panel = proc(s: Tab_Group_Context, cx: ^Cx, ix: int, loc := #caller_location) -> (v: Maybe(Drag_Panel)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1745)
+		use_base_dock()
+		put_op(o, 1745)
 		put_u64(o, s.h)
 		put_usize(o, ix)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -14399,7 +15439,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	drop_indicator = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Drop_Indicator)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1574)
+		use_base_dock()
+		put_op(o, 1574)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14408,7 +15449,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	is_closable = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1576)
+		use_base_dock()
+		put_op(o, 1576)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14417,7 +15459,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	is_collapsed = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1577)
+		use_base_dock()
+		put_op(o, 1577)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14426,7 +15469,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	is_draggable = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1578)
+		use_base_dock()
+		put_op(o, 1578)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14435,7 +15479,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	is_droppable = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1579)
+		use_base_dock()
+		put_op(o, 1579)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14444,7 +15489,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	is_locked = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1580)
+		use_base_dock()
+		put_op(o, 1580)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14453,7 +15499,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	is_panel_closable = proc(s: Tab_Group_Context, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1581)
+		use_base_dock()
+		put_op(o, 1581)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		r := obj_get(s.h, cx, req[:], loc)
@@ -14463,7 +15510,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	is_zoomed = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1582)
+		use_base_dock()
+		put_op(o, 1582)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14472,7 +15520,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	node = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: Node_Id) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1583)
+		use_base_dock()
+		put_op(o, 1583)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14481,7 +15530,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	panels = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: []Dock_Panel) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1584)
+		use_base_dock()
+		put_op(o, 1584)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14490,7 +15540,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	close = proc(s: Tab_Group_Context, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1573)
+		use_base_dock()
+		put_op(o, 1573)
 		put_u64(o, s.h)
 		put_u64(o, u64(panel))
 		state_set(cx, req[:], loc)
@@ -14498,7 +15549,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	drop_item = proc(s: Tab_Group_Context, cx: ^Cx, item: Any_Drag, placement: Maybe(Placement), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1575)
+		use_base_dock()
+		put_op(o, 1575)
 		put_u64(o, s.h)
 		put_u64(o, item.h)
 		if x0, ok := placement.?; ok {
@@ -14512,7 +15564,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	drop_panel = proc(s: Tab_Group_Context, cx: ^Cx, drag: Drag_Panel, ix: Maybe(int), activate: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1746)
+		use_base_dock()
+		put_op(o, 1746)
 		put_u64(o, s.h)
 		put_u64(o, drag.h)
 		if x0, ok := ix.?; ok {
@@ -14527,7 +15580,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	select_tab = proc(s: Tab_Group_Context, cx: ^Cx, ix: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1585)
+		use_base_dock()
+		put_op(o, 1585)
 		put_u64(o, s.h)
 		put_usize(o, ix)
 		state_set(cx, req[:], loc)
@@ -14535,7 +15589,8 @@ tab_group_context_vt := Tab_Group_Context_VT {
 	toggle_zoom = proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1586)
+		use_base_dock()
+		put_op(o, 1586)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -14581,7 +15636,8 @@ table_state_vt := Table_State_VT {
 	col_width = proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 701)
+		use_component_table()
+		put_op(o, 701)
 		put_u64(o, s.h)
 		put_usize(o, col_ix)
 		r := state_get(s.h, cx, req[:], loc)
@@ -14591,7 +15647,8 @@ table_state_vt := Table_State_VT {
 	delegate = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Row_Source) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1183)
+		use_component_table()
+		put_op(o, 1183)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14600,7 +15657,8 @@ table_state_vt := Table_State_VT {
 	dump = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Tuple_Temp_String_Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 702)
+		use_component_table()
+		put_op(o, 702)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14609,7 +15667,8 @@ table_state_vt := Table_State_VT {
 	dump_range = proc(s: Table_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Tuple_Temp_String_Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 703)
+		use_component_table()
+		put_op(o, 703)
 		put_u64(o, s.h)
 		put_range(o, range)
 		r := state_get(s.h, cx, req[:], loc)
@@ -14619,7 +15678,8 @@ table_state_vt := Table_State_VT {
 	headers = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 705)
+		use_component_table()
+		put_op(o, 705)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14628,7 +15688,8 @@ table_state_vt := Table_State_VT {
 	right_clicked_cell = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Tuple_Int_Int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 709)
+		use_component_table()
+		put_op(o, 709)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14637,7 +15698,8 @@ table_state_vt := Table_State_VT {
 	right_clicked_row = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 710)
+		use_component_table()
+		put_op(o, 710)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14646,7 +15708,8 @@ table_state_vt := Table_State_VT {
 	selected_cell = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Tuple_Int_Int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 713)
+		use_component_table()
+		put_op(o, 713)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14655,7 +15718,8 @@ table_state_vt := Table_State_VT {
 	selected_col = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 714)
+		use_component_table()
+		put_op(o, 714)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14664,7 +15728,8 @@ table_state_vt := Table_State_VT {
 	selected_row = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 715)
+		use_component_table()
+		put_op(o, 715)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14673,7 +15738,8 @@ table_state_vt := Table_State_VT {
 	selection = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Table_Selection) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 716)
+		use_component_table()
+		put_op(o, 716)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14682,7 +15748,8 @@ table_state_vt := Table_State_VT {
 	visible_range_cols = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1740)
+		use_component_table()
+		put_op(o, 1740)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14691,7 +15758,8 @@ table_state_vt := Table_State_VT {
 	visible_range_rows = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1741)
+		use_component_table()
+		put_op(o, 1741)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14700,7 +15768,8 @@ table_state_vt := Table_State_VT {
 	delegate_mut = proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Row_Source) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1184)
+		use_component_table()
+		put_op(o, 1184)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14709,7 +15778,8 @@ table_state_vt := Table_State_VT {
 	fit_col = proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 704)
+		use_component_table()
+		put_op(o, 704)
 		put_u64(o, s.h)
 		put_usize(o, col_ix)
 		r := state_call(s.h, cx, req[:], loc)
@@ -14719,28 +15789,32 @@ table_state_vt := Table_State_VT {
 	clear_selection = proc(s: Table_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 700)
+		use_component_table()
+		put_op(o, 700)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	refresh = proc(s: Table_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 707)
+		use_component_table()
+		put_op(o, 707)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	refresh_header_layout = proc(s: Table_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 708)
+		use_component_table()
+		put_op(o, 708)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	scroll_to_col = proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 711)
+		use_component_table()
+		put_op(o, 711)
 		put_u64(o, s.h)
 		put_usize(o, col_ix)
 		state_set(cx, req[:], loc)
@@ -14748,7 +15822,8 @@ table_state_vt := Table_State_VT {
 	scroll_to_row = proc(s: Table_State, cx: ^Cx, row_ix: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 712)
+		use_component_table()
+		put_op(o, 712)
 		put_u64(o, s.h)
 		put_usize(o, row_ix)
 		state_set(cx, req[:], loc)
@@ -14756,7 +15831,8 @@ table_state_vt := Table_State_VT {
 	set_right_clicked_row = proc(s: Table_State, cx: ^Cx, row: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 717)
+		use_component_table()
+		put_op(o, 717)
 		put_u64(o, s.h)
 		if x0, ok := row.?; ok {
 			put_u8(o, 1)
@@ -14769,7 +15845,8 @@ table_state_vt := Table_State_VT {
 	set_selected_cell = proc(s: Table_State, cx: ^Cx, row_ix: int, col_ix: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 718)
+		use_component_table()
+		put_op(o, 718)
 		put_u64(o, s.h)
 		put_usize(o, row_ix)
 		put_usize(o, col_ix)
@@ -14778,7 +15855,8 @@ table_state_vt := Table_State_VT {
 	set_selected_col = proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 719)
+		use_component_table()
+		put_op(o, 719)
 		put_u64(o, s.h)
 		put_usize(o, col_ix)
 		state_set(cx, req[:], loc)
@@ -14786,7 +15864,8 @@ table_state_vt := Table_State_VT {
 	set_selected_row = proc(s: Table_State, cx: ^Cx, row_ix: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 720)
+		use_component_table()
+		put_op(o, 720)
 		put_u64(o, s.h)
 		put_usize(o, row_ix)
 		state_set(cx, req[:], loc)
@@ -14794,7 +15873,8 @@ table_state_vt := Table_State_VT {
 	set_selection = proc(s: Table_State, cx: ^Cx, selection: Table_Selection, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 721)
+		use_component_table()
+		put_op(o, 721)
 		put_u64(o, s.h)
 		put_Table_Selection(o, selection)
 		state_set(cx, req[:], loc)
@@ -14803,7 +15883,7 @@ table_state_vt := Table_State_VT {
 		slot, generation := keep_handler(cx, h, 100, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 722)
+		put_op(o, 722)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -14837,63 +15917,63 @@ Table_State_Builder_VT :: struct {
 table_state_builder_vt := Table_State_Builder_VT {
 	cell_selectable = proc(b: Table_State_Builder, cell_selectable: bool) -> Table_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u8(o, u8(cell_selectable))
 		o[b.count_at] += 1
 		return b
 	},
 	col_movable = proc(b: Table_State_Builder, col_movable: bool) -> Table_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u8(o, u8(col_movable))
 		o[b.count_at] += 1
 		return b
 	},
 	col_resizable = proc(b: Table_State_Builder, col_resizable: bool) -> Table_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_u8(o, u8(col_resizable))
 		o[b.count_at] += 1
 		return b
 	},
 	col_selectable = proc(b: Table_State_Builder, col_selectable: bool) -> Table_State_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		put_u8(o, u8(col_selectable))
 		o[b.count_at] += 1
 		return b
 	},
 	loop_selection = proc(b: Table_State_Builder, loop_selection: bool) -> Table_State_Builder {
 		o := b.req
-		put_u16(o, 5)
+		put_op(o, 5)
 		put_u8(o, u8(loop_selection))
 		o[b.count_at] += 1
 		return b
 	},
 	row_header = proc(b: Table_State_Builder, row_header: bool) -> Table_State_Builder {
 		o := b.req
-		put_u16(o, 6)
+		put_op(o, 6)
 		put_u8(o, u8(row_header))
 		o[b.count_at] += 1
 		return b
 	},
 	row_selectable = proc(b: Table_State_Builder, row_selectable: bool) -> Table_State_Builder {
 		o := b.req
-		put_u16(o, 7)
+		put_op(o, 7)
 		put_u8(o, u8(row_selectable))
 		o[b.count_at] += 1
 		return b
 	},
 	select_on_modifier_click = proc(b: Table_State_Builder, select_on_modifier_click: bool) -> Table_State_Builder {
 		o := b.req
-		put_u16(o, 8)
+		put_op(o, 8)
 		put_u8(o, u8(select_on_modifier_click))
 		o[b.count_at] += 1
 		return b
 	},
 	sortable = proc(b: Table_State_Builder, sortable: bool) -> Table_State_Builder {
 		o := b.req
-		put_u16(o, 9)
+		put_op(o, 9)
 		put_u8(o, u8(sortable))
 		o[b.count_at] += 1
 		return b
@@ -14907,7 +15987,8 @@ table_state :: proc(cx: ^Cx, delegate: Row_Source, loc := #caller_location) -> T
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 706)
+	use_component_table()
+	put_op(o, 706)
 	put_u64(o, delegate.h)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &table_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -14934,7 +16015,8 @@ table_visible_range_vt := Table_Visible_Range_VT {
 	cols = proc(s: Table_Visible_Range, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1512)
+		use_component_table()
+		put_op(o, 1512)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14943,7 +16025,8 @@ table_visible_range_vt := Table_Visible_Range_VT {
 	rows = proc(s: Table_Visible_Range, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1513)
+		use_component_table()
+		put_op(o, 1513)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14955,7 +16038,8 @@ table_visible_range_default :: proc(cx: ^Cx, loc := #caller_location) -> Table_V
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1511)
+	use_component_table()
+	put_op(o, 1511)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &table_visible_range_vt}
 }
@@ -14982,7 +16066,8 @@ task_toggle_event_vt := Task_Toggle_Event_VT {
 	checked = proc(s: Task_Toggle_Event, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1318)
+		use_base_text()
+		put_op(o, 1318)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -14991,7 +16076,8 @@ task_toggle_event_vt := Task_Toggle_Event_VT {
 	item_range = proc(s: Task_Toggle_Event, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1319)
+		use_base_text()
+		put_op(o, 1319)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15000,7 +16086,8 @@ task_toggle_event_vt := Task_Toggle_Event_VT {
 	marker_range = proc(s: Task_Toggle_Event, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1320)
+		use_base_text()
+		put_op(o, 1320)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15031,7 +16118,8 @@ text_decoration_collection_vt := Text_Decoration_Collection_VT {
 	get_ranges = proc(s: Text_Decoration_Collection, cx: ^Cx, loc := #caller_location) -> (v: []Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1686)
+		use_base_input()
+		put_op(o, 1686)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15040,7 +16128,8 @@ text_decoration_collection_vt := Text_Decoration_Collection_VT {
 	append = proc(s: Text_Decoration_Collection, cx: ^Cx, decorations: []Text_Decoration, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1684)
+		use_base_input()
+		put_op(o, 1684)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -15051,14 +16140,16 @@ text_decoration_collection_vt := Text_Decoration_Collection_VT {
 	clear = proc(s: Text_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1685)
+		use_base_input()
+		put_op(o, 1685)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set = proc(s: Text_Decoration_Collection, cx: ^Cx, decorations: []Text_Decoration, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1687)
+		use_base_input()
+		put_op(o, 1687)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(decorations)))
 		for x0 in decorations {
@@ -15088,7 +16179,8 @@ text_selection_endpoint_vt := Text_Selection_Endpoint_VT {
 	content_point = proc(s: Text_Selection_Endpoint, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 797)
+		use_base_text_selection()
+		put_op(o, 797)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15120,7 +16212,8 @@ text_selection_handle_vt := Text_Selection_Handle_VT {
 	has_local_selection = proc(s: Text_Selection_Handle, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 798)
+		use_base_text_selection()
+		put_op(o, 798)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15129,7 +16222,8 @@ text_selection_handle_vt := Text_Selection_Handle_VT {
 	snapshot = proc(s: Text_Selection_Handle, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Text_Selection_Snapshot)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 804)
+		use_base_text_selection()
+		put_op(o, 804)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15138,7 +16232,8 @@ text_selection_handle_vt := Text_Selection_Handle_VT {
 	paint_touch_handles = proc(s: Text_Selection_Handle, cx: ^Cx, layout: Touch_Handle_Layout, color: Color, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 800)
+		use_base_text_selection()
+		put_op(o, 800)
 		put_u64(o, s.h)
 		put_vtape(o, layout.nd)
 		put_color(o, color)
@@ -15147,7 +16242,8 @@ text_selection_handle_vt := Text_Selection_Handle_VT {
 	set_fallback_copy_text = proc(s: Text_Selection_Handle, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 802)
+		use_base_text_selection()
+		put_op(o, 802)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -15155,7 +16251,8 @@ text_selection_handle_vt := Text_Selection_Handle_VT {
 	set_local_selection = proc(s: Text_Selection_Handle, cx: ^Cx, active: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 803)
+		use_base_text_selection()
+		put_op(o, 803)
 		put_u64(o, s.h)
 		put_u8(o, u8(active))
 		state_set(cx, req[:], loc)
@@ -15166,7 +16263,8 @@ text_selection_handle :: proc(cx: ^Cx, fallback_copy_text: string, loc := #calle
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 799)
+	use_base_text_selection()
+	put_op(o, 799)
 	put_str(o, fallback_copy_text)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &text_selection_handle_vt}
@@ -15194,7 +16292,8 @@ text_selection_projection_default :: proc(cx: ^Cx, loc := #caller_location) -> T
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1459)
+	use_base_text_selection()
+	put_op(o, 1459)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &text_selection_projection_vt}
 }
@@ -15223,7 +16322,8 @@ text_selection_snapshot_vt := Text_Selection_Snapshot_VT {
 	anchor = proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Text_Selection_Endpoint) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 806)
+		use_base_text_selection()
+		put_op(o, 806)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15232,7 +16332,8 @@ text_selection_snapshot_vt := Text_Selection_Snapshot_VT {
 	coverage = proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Text_Selection_Coverage) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 807)
+		use_base_text_selection()
+		put_op(o, 807)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15241,7 +16342,8 @@ text_selection_snapshot_vt := Text_Selection_Snapshot_VT {
 	cursor = proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Text_Selection_Endpoint) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 808)
+		use_base_text_selection()
+		put_op(o, 808)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15250,7 +16352,8 @@ text_selection_snapshot_vt := Text_Selection_Snapshot_VT {
 	is_selecting = proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 809)
+		use_base_text_selection()
+		put_op(o, 809)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15259,7 +16362,8 @@ text_selection_snapshot_vt := Text_Selection_Snapshot_VT {
 	window_points = proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Text_Selection_Window_Points)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 810)
+		use_base_text_selection()
+		put_op(o, 810)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15288,7 +16392,8 @@ text_selection_window_points_vt := Text_Selection_Window_Points_VT {
 	anchor = proc(s: Text_Selection_Window_Points, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 811)
+		use_base_text_selection()
+		put_op(o, 811)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15297,7 +16402,8 @@ text_selection_window_points_vt := Text_Selection_Window_Points_VT {
 	cursor = proc(s: Text_Selection_Window_Points, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 812)
+		use_base_text_selection()
+		put_op(o, 812)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15327,7 +16433,8 @@ text_view_defaults_vt := Text_View_Defaults_VT {
 	has_code_block_highlighter = proc(s: Text_View_Defaults, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 814)
+		use_base_text()
+		put_op(o, 814)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15336,7 +16443,8 @@ text_view_defaults_vt := Text_View_Defaults_VT {
 	inherit_text_color = proc(s: Text_View_Defaults, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 815)
+		use_base_text()
+		put_op(o, 815)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15345,7 +16453,8 @@ text_view_defaults_vt := Text_View_Defaults_VT {
 	install = proc(s: Text_View_Defaults, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 816)
+		use_base_text()
+		put_op(o, 816)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -15370,21 +16479,21 @@ Text_View_Defaults_Builder_VT :: struct {
 text_view_defaults_builder_vt := Text_View_Defaults_Builder_VT {
 	with_code_block_highlighter = proc(b: Text_View_Defaults_Builder, highlighter: Ask(Code_Block, []Tuple_Range_Highlight_Style)) -> Text_View_Defaults_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u64(o, highlighter.src.h)
 		o[b.count_at] += 1
 		return b
 	},
 	with_inherit_text_color = proc(b: Text_View_Defaults_Builder, inherit: bool) -> Text_View_Defaults_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u8(o, u8(inherit))
 		o[b.count_at] += 1
 		return b
 	},
 	with_style = proc(b: Text_View_Defaults_Builder, style: Base_Text_View_Style) -> Text_View_Defaults_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_vtape(o, style.nd)
 		o[b.count_at] += 1
 		return b
@@ -15398,7 +16507,8 @@ text_view_defaults :: proc(cx: ^Cx, loc := #caller_location) -> Text_View_Defaul
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 817)
+	use_base_text()
+	put_op(o, 817)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &text_view_defaults_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -15407,7 +16517,8 @@ text_view_defaults_global :: proc(cx: ^Cx, loc := #caller_location) -> Text_View
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 813)
+	use_base_text()
+	put_op(o, 813)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &text_view_defaults_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -15442,7 +16553,8 @@ text_view_state_vt := Text_View_State_VT {
 	is_clamped = proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 308)
+		use_base_text()
+		put_op(o, 308)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15451,7 +16563,8 @@ text_view_state_vt := Text_View_State_VT {
 	rendered_text = proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) -> (v: Rendered_Text) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 818)
+		use_base_text()
+		put_op(o, 818)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15460,7 +16573,8 @@ text_view_state_vt := Text_View_State_VT {
 	selected_source_range = proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 312)
+		use_base_text()
+		put_op(o, 312)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15469,7 +16583,8 @@ text_view_state_vt := Text_View_State_VT {
 	selected_text = proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 313)
+		use_base_text()
+		put_op(o, 313)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15478,7 +16593,8 @@ text_view_state_vt := Text_View_State_VT {
 	reveal_range = proc(s: Text_View_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1032)
+		use_base_text()
+		put_op(o, 1032)
 		put_u64(o, s.h)
 		put_range(o, range)
 		r := state_call(s.h, cx, req[:], loc)
@@ -15488,7 +16604,8 @@ text_view_state_vt := Text_View_State_VT {
 	set_range_highlights = proc(s: Text_View_State, cx: ^Cx, highlights: []Range_Highlight, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1033)
+		use_base_text()
+		put_op(o, 1033)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(highlights)))
 		for x0 in highlights {
@@ -15501,28 +16618,32 @@ text_view_state_vt := Text_View_State_VT {
 	clear_range_highlights = proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 304)
+		use_base_text()
+		put_op(o, 304)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	clear_selection = proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 305)
+		use_base_text()
+		put_op(o, 305)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	invalidate_inline_layout = proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 307)
+		use_base_text()
+		put_op(o, 307)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	push_str = proc(s: Text_View_State, cx: ^Cx, new_text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 310)
+		use_base_text()
+		put_op(o, 310)
 		put_u64(o, s.h)
 		put_str(o, new_text)
 		state_set(cx, req[:], loc)
@@ -15530,14 +16651,16 @@ text_view_state_vt := Text_View_State_VT {
 	select_all = proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 311)
+		use_base_text()
+		put_op(o, 311)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_motion = proc(s: Text_View_State, cx: ^Cx, motion: Text_View_Motion, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 819)
+		use_base_text()
+		put_op(o, 819)
 		put_u64(o, s.h)
 		put_vtape(o, motion.nd)
 		state_set(cx, req[:], loc)
@@ -15545,7 +16668,8 @@ text_view_state_vt := Text_View_State_VT {
 	set_scrollable = proc(s: Text_View_State, cx: ^Cx, scrollable: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 314)
+		use_base_text()
+		put_op(o, 314)
 		put_u64(o, s.h)
 		put_u8(o, u8(scrollable))
 		state_set(cx, req[:], loc)
@@ -15553,7 +16677,8 @@ text_view_state_vt := Text_View_State_VT {
 	set_selectable = proc(s: Text_View_State, cx: ^Cx, selectable: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 315)
+		use_base_text()
+		put_op(o, 315)
 		put_u64(o, s.h)
 		put_u8(o, u8(selectable))
 		state_set(cx, req[:], loc)
@@ -15561,7 +16686,8 @@ text_view_state_vt := Text_View_State_VT {
 	set_selection_format = proc(s: Text_View_State, cx: ^Cx, selection_format: Selection_Format, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 316)
+		use_base_text()
+		put_op(o, 316)
 		put_u64(o, s.h)
 		put_u16(o, u16(selection_format))
 		state_set(cx, req[:], loc)
@@ -15569,7 +16695,8 @@ text_view_state_vt := Text_View_State_VT {
 	set_text = proc(s: Text_View_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 317)
+		use_base_text()
+		put_op(o, 317)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -15596,28 +16723,28 @@ Text_View_State_Builder_VT :: struct {
 text_view_state_builder_vt := Text_View_State_Builder_VT {
 	motion = proc(b: Text_View_State_Builder, motion: Text_View_Motion) -> Text_View_State_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		put_vtape(o, motion.nd)
 		o[b.count_at] += 1
 		return b
 	},
 	scrollable = proc(b: Text_View_State_Builder, scrollable: bool) -> Text_View_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u8(o, u8(scrollable))
 		o[b.count_at] += 1
 		return b
 	},
 	selectable = proc(b: Text_View_State_Builder, selectable: bool) -> Text_View_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u8(o, u8(selectable))
 		o[b.count_at] += 1
 		return b
 	},
 	selection_format = proc(b: Text_View_State_Builder, selection_format: Selection_Format) -> Text_View_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_u16(o, u16(selection_format))
 		o[b.count_at] += 1
 		return b
@@ -15631,7 +16758,8 @@ text_view_state_html :: proc(cx: ^Cx, text: string, loc := #caller_location) -> 
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 306)
+	use_base_text()
+	put_op(o, 306)
 	put_str(o, text)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &text_view_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -15641,7 +16769,8 @@ text_view_state_markdown :: proc(cx: ^Cx, text: string, loc := #caller_location)
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 309)
+	use_base_text()
+	put_op(o, 309)
 	put_str(o, text)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &text_view_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
@@ -15774,7 +16903,8 @@ textarea_state_vt := Textarea_State_VT {
 	content = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Content) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 941)
+		use_base_input()
+		put_op(o, 941)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15783,7 +16913,8 @@ textarea_state_vt := Textarea_State_VT {
 	context_menu_capabilities = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Context_Menu_Capabilities_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1351)
+		use_base_input()
+		put_op(o, 1351)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15792,7 +16923,8 @@ textarea_state_vt := Textarea_State_VT {
 	cursor = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 537)
+		use_base_input()
+		put_op(o, 537)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15801,7 +16933,8 @@ textarea_state_vt := Textarea_State_VT {
 	cursor_position = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Lsp_Position) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1476)
+		use_base_input()
+		put_op(o, 1476)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15810,7 +16943,8 @@ textarea_state_vt := Textarea_State_VT {
 	diagnostic_popover = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diagnostic_Entry_Rc)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1145)
+		use_base_input()
+		put_op(o, 1145)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15819,7 +16953,8 @@ textarea_state_vt := Textarea_State_VT {
 	diagnostics = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diagnostic_Set)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 942)
+		use_base_input()
+		put_op(o, 942)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15828,7 +16963,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_buffer_line_count = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1723)
+		use_base_input()
+		put_op(o, 1723)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15837,7 +16973,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_buffer_line_to_display_row = proc(s: Textarea_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1724)
+		use_base_input()
+		put_op(o, 1724)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15847,7 +16984,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_buffer_line_to_display_row_range = proc(s: Textarea_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1725)
+		use_base_input()
+		put_op(o, 1725)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15857,7 +16995,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_buffer_pos_to_display_pos = proc(s: Textarea_State, cx: ^Cx, pos: Buffer_Point, loc := #caller_location) -> (v: Display_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1726)
+		use_base_input()
+		put_op(o, 1726)
 		put_u64(o, s.h)
 		put_Buffer_Point(o, pos)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15867,7 +17006,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_display_pos_to_buffer_pos = proc(s: Textarea_State, cx: ^Cx, pos: Display_Point, loc := #caller_location) -> (v: Buffer_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1727)
+		use_base_input()
+		put_op(o, 1727)
 		put_u64(o, s.h)
 		put_Display_Point(o, pos)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15877,7 +17017,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_display_row_count = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1728)
+		use_base_input()
+		put_op(o, 1728)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15886,7 +17027,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_display_row_to_buffer_line = proc(s: Textarea_State, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1729)
+		use_base_input()
+		put_op(o, 1729)
 		put_u64(o, s.h)
 		put_usize(o, display_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15896,7 +17038,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_display_row_to_wrap_row = proc(s: Textarea_State, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1730)
+		use_base_input()
+		put_op(o, 1730)
 		put_u64(o, s.h)
 		put_usize(o, display_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15906,7 +17049,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_folded_ranges = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: []Fold_Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1731)
+		use_base_input()
+		put_op(o, 1731)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15915,7 +17059,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_is_buffer_line_hidden = proc(s: Textarea_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1732)
+		use_base_input()
+		put_op(o, 1732)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15925,7 +17070,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_is_fold_candidate = proc(s: Textarea_State, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1733)
+		use_base_input()
+		put_op(o, 1733)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15935,7 +17081,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_is_folded_at = proc(s: Textarea_State, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1734)
+		use_base_input()
+		put_op(o, 1734)
 		put_u64(o, s.h)
 		put_usize(o, start_line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15945,7 +17092,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_nearest_visible_display_row = proc(s: Textarea_State, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1735)
+		use_base_input()
+		put_op(o, 1735)
 		put_u64(o, s.h)
 		put_usize(o, wrap_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15955,7 +17103,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_text = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1736)
+		use_base_input()
+		put_op(o, 1736)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15964,7 +17113,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_visible_wrap_row_count_for_buffer_line = proc(s: Textarea_State, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1737)
+		use_base_input()
+		put_op(o, 1737)
 		put_u64(o, s.h)
 		put_usize(o, line)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15974,7 +17124,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_wrap_row_count = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1738)
+		use_base_input()
+		put_op(o, 1738)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -15983,7 +17134,8 @@ textarea_state_vt := Textarea_State_VT {
 	display_map_wrap_row_to_display_row = proc(s: Textarea_State, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1739)
+		use_base_input()
+		put_op(o, 1739)
 		put_u64(o, s.h)
 		put_usize(o, wrap_row)
 		r := state_get(s.h, cx, req[:], loc)
@@ -15993,7 +17145,8 @@ textarea_state_vt := Textarea_State_VT {
 	input_bounds = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 541)
+		use_base_input()
+		put_op(o, 541)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16002,7 +17155,8 @@ textarea_state_vt := Textarea_State_VT {
 	is_code_editor = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 543)
+		use_base_input()
+		put_op(o, 543)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16011,7 +17165,8 @@ textarea_state_vt := Textarea_State_VT {
 	is_copyable = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 544)
+		use_base_input()
+		put_op(o, 544)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16020,7 +17175,8 @@ textarea_state_vt := Textarea_State_VT {
 	is_editable = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 545)
+		use_base_input()
+		put_op(o, 545)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16029,7 +17185,8 @@ textarea_state_vt := Textarea_State_VT {
 	is_multi_line = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 546)
+		use_base_input()
+		put_op(o, 546)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16038,7 +17195,8 @@ textarea_state_vt := Textarea_State_VT {
 	is_replaceable = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 547)
+		use_base_input()
+		put_op(o, 547)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16047,7 +17205,8 @@ textarea_state_vt := Textarea_State_VT {
 	is_selection_reversed = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 548)
+		use_base_input()
+		put_op(o, 548)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16056,7 +17215,8 @@ textarea_state_vt := Textarea_State_VT {
 	is_single_line = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 549)
+		use_base_input()
+		put_op(o, 549)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16065,7 +17225,8 @@ textarea_state_vt := Textarea_State_VT {
 	line_height = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(f32)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 550)
+		use_base_input()
+		put_op(o, 550)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16074,7 +17235,8 @@ textarea_state_vt := Textarea_State_VT {
 	presentation = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Presentation) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 943)
+		use_base_input()
+		put_op(o, 943)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16083,7 +17245,8 @@ textarea_state_vt := Textarea_State_VT {
 	range_to_bounds = proc(s: Textarea_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Maybe(Bounds)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 553)
+		use_base_input()
+		put_op(o, 553)
 		put_u64(o, s.h)
 		put_range(o, range)
 		r := state_get(s.h, cx, req[:], loc)
@@ -16093,7 +17256,8 @@ textarea_state_vt := Textarea_State_VT {
 	scroll_offset = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 557)
+		use_base_input()
+		put_op(o, 557)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16102,7 +17266,8 @@ textarea_state_vt := Textarea_State_VT {
 	search_activation_revision = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 558)
+		use_base_input()
+		put_op(o, 558)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16111,7 +17276,8 @@ textarea_state_vt := Textarea_State_VT {
 	search_session = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Search_Session) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 559)
+		use_base_input()
+		put_op(o, 559)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16120,7 +17286,8 @@ textarea_state_vt := Textarea_State_VT {
 	selected_range = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 637)
+		use_base_input()
+		put_op(o, 637)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16129,7 +17296,8 @@ textarea_state_vt := Textarea_State_VT {
 	selected_text = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1274)
+		use_base_input()
+		put_op(o, 1274)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16138,7 +17306,8 @@ textarea_state_vt := Textarea_State_VT {
 	selected_value = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 562)
+		use_base_input()
+		put_op(o, 562)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16147,7 +17316,8 @@ textarea_state_vt := Textarea_State_VT {
 	text = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1275)
+		use_base_input()
+		put_op(o, 1275)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16156,7 +17326,8 @@ textarea_state_vt := Textarea_State_VT {
 	text_bounds = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Bounds)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 584)
+		use_base_input()
+		put_op(o, 584)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16165,7 +17336,8 @@ textarea_state_vt := Textarea_State_VT {
 	text_input_configuration = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Text_Input_Configuration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 585)
+		use_base_input()
+		put_op(o, 585)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16174,7 +17346,8 @@ textarea_state_vt := Textarea_State_VT {
 	tokens = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: []Inline_Token_Span) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 945)
+		use_base_input()
+		put_op(o, 945)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16183,7 +17356,8 @@ textarea_state_vt := Textarea_State_VT {
 	touch_selection = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Touch_Selection_Snapshot)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 946)
+		use_base_input()
+		put_op(o, 946)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16192,7 +17366,8 @@ textarea_state_vt := Textarea_State_VT {
 	unmask_value = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 587)
+		use_base_input()
+		put_op(o, 587)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16201,7 +17376,8 @@ textarea_state_vt := Textarea_State_VT {
 	value = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 589)
+		use_base_input()
+		put_op(o, 589)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16210,7 +17386,8 @@ textarea_state_vt := Textarea_State_VT {
 	visible_row_range = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 645)
+		use_base_input()
+		put_op(o, 645)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16219,7 +17396,8 @@ textarea_state_vt := Textarea_State_VT {
 	try_value = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String, ok: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 589)
+		use_base_input()
+		put_op(o, 589)
 		put_u64(o, s.h)
 		r := state_try(s.h, cx, req[:], loc) or_return
 		rd_into(&r, &v)
@@ -16228,7 +17406,8 @@ textarea_state_vt := Textarea_State_VT {
 	diagnostics_mut = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diagnostic_Set)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1613)
+		use_base_input()
+		put_op(o, 1613)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16237,7 +17416,8 @@ textarea_state_vt := Textarea_State_VT {
 	has_selection_focus = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1038)
+		use_base_input()
+		put_op(o, 1038)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16246,7 +17426,8 @@ textarea_state_vt := Textarea_State_VT {
 	next_search_match = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 633)
+		use_base_input()
+		put_op(o, 633)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16255,7 +17436,8 @@ textarea_state_vt := Textarea_State_VT {
 	previous_search_match = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 634)
+		use_base_input()
+		put_op(o, 634)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -16264,7 +17446,8 @@ textarea_state_vt := Textarea_State_VT {
 	replace_all_search_matches = proc(s: Textarea_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 635)
+		use_base_input()
+		put_op(o, 635)
 		put_u64(o, s.h)
 		put_str(o, replacement)
 		r := state_call(s.h, cx, req[:], loc)
@@ -16274,7 +17457,8 @@ textarea_state_vt := Textarea_State_VT {
 	replace_current_search_match = proc(s: Textarea_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 636)
+		use_base_input()
+		put_op(o, 636)
 		put_u64(o, s.h)
 		put_str(o, replacement)
 		r := state_call(s.h, cx, req[:], loc)
@@ -16284,7 +17468,8 @@ textarea_state_vt := Textarea_State_VT {
 	replace_range_with_token = proc(s: Textarea_State, cx: ^Cx, range: Range, token: Inline_Token, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1039)
+		use_base_input()
+		put_op(o, 1039)
 		put_u64(o, s.h)
 		put_range(o, range)
 		put_vtape(o, token.nd)
@@ -16295,7 +17480,8 @@ textarea_state_vt := Textarea_State_VT {
 	replace_with_token = proc(s: Textarea_State, cx: ^Cx, token: Inline_Token, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1040)
+		use_base_input()
+		put_op(o, 1040)
 		put_u64(o, s.h)
 		put_vtape(o, token.nd)
 		r := state_call(s.h, cx, req[:], loc)
@@ -16305,7 +17491,8 @@ textarea_state_vt := Textarea_State_VT {
 	add_selection = proc(s: Textarea_State, cx: ^Cx, range: Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 533)
+		use_base_input()
+		put_op(o, 533)
 		put_u64(o, s.h)
 		put_range(o, range)
 		state_set(cx, req[:], loc)
@@ -16313,7 +17500,8 @@ textarea_state_vt := Textarea_State_VT {
 	apply_highlighter_fold_candidates = proc(s: Textarea_State, cx: ^Cx, candidates: []Fold_Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 631)
+		use_base_input()
+		put_op(o, 631)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(candidates)))
 		for x0 in candidates {
@@ -16324,7 +17512,8 @@ textarea_state_vt := Textarea_State_VT {
 	begin_edge_drag = proc(s: Textarea_State, cx: ^Cx, edge: Selection_Edge, finger: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 632)
+		use_base_input()
+		put_op(o, 632)
 		put_u64(o, s.h)
 		put_u16(o, u16(edge))
 		put_Gpui_Point(o, finger)
@@ -16333,35 +17522,40 @@ textarea_state_vt := Textarea_State_VT {
 	clean = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 534)
+		use_base_input()
+		put_op(o, 534)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	close_edit_menu = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 535)
+		use_base_input()
+		put_op(o, 535)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	close_search = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 536)
+		use_base_input()
+		put_op(o, 536)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	end_edge_drag = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 538)
+		use_base_input()
+		put_op(o, 538)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	ensure_highlighter_factory = proc(s: Textarea_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1621)
+		use_base_input()
+		put_op(o, 1621)
 		put_u64(o, s.h)
 		put_u64(o, factory.h)
 		state_set(cx, req[:], loc)
@@ -16369,21 +17563,24 @@ textarea_state_vt := Textarea_State_VT {
 	ensure_number_mask = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 539)
+		use_base_input()
+		put_op(o, 539)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	focus = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 540)
+		use_base_input()
+		put_op(o, 540)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	insert = proc(s: Textarea_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 542)
+		use_base_input()
+		put_op(o, 542)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -16391,7 +17588,8 @@ textarea_state_vt := Textarea_State_VT {
 	on_context_menu = proc(s: Textarea_State, cx: ^Cx, handler: Handler, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1352)
+		use_base_input()
+		put_op(o, 1352)
 		put_u64(o, s.h)
 		put_kept_handler(o, handler, 114)
 		state_set(cx, req[:], loc)
@@ -16399,7 +17597,8 @@ textarea_state_vt := Textarea_State_VT {
 	open_search = proc(s: Textarea_State, cx: ^Cx, replace_mode: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 552)
+		use_base_input()
+		put_op(o, 552)
 		put_u64(o, s.h)
 		put_u8(o, u8(replace_mode))
 		state_set(cx, req[:], loc)
@@ -16407,7 +17606,8 @@ textarea_state_vt := Textarea_State_VT {
 	prewrap = proc(s: Textarea_State, cx: ^Cx, font: Font, font_size: f32, width: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1273)
+		use_base_input()
+		put_op(o, 1273)
 		put_u64(o, s.h)
 		{ fv := font; put_value(o, &fv, type_info_of(Font)) }
 		put_f32(o, font_size)
@@ -16417,14 +17617,16 @@ textarea_state_vt := Textarea_State_VT {
 	refresh = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 554)
+		use_base_input()
+		put_op(o, 554)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	replace = proc(s: Textarea_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 555)
+		use_base_input()
+		put_op(o, 555)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -16432,7 +17634,8 @@ textarea_state_vt := Textarea_State_VT {
 	replace_all = proc(s: Textarea_State, cx: ^Cx, text: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 556)
+		use_base_input()
+		put_op(o, 556)
 		put_u64(o, s.h)
 		put_str(o, text)
 		state_set(cx, req[:], loc)
@@ -16440,21 +17643,24 @@ textarea_state_vt := Textarea_State_VT {
 	select_all = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 560)
+		use_base_input()
+		put_op(o, 560)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	select_all_from_edit_menu = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 561)
+		use_base_input()
+		put_op(o, 561)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_accessibility = proc(s: Textarea_State, cx: ^Cx, accessibility: Input_Accessibility, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 944)
+		use_base_input()
+		put_op(o, 944)
 		put_u64(o, s.h)
 		put_vtape(o, accessibility.nd)
 		state_set(cx, req[:], loc)
@@ -16462,7 +17668,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_auto_grow = proc(s: Textarea_State, cx: ^Cx, min_rows: int, max_rows: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 563)
+		use_base_input()
+		put_op(o, 563)
 		put_u64(o, s.h)
 		put_usize(o, min_rows)
 		put_usize(o, max_rows)
@@ -16471,7 +17678,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_clean_on_escape = proc(s: Textarea_State, cx: ^Cx, clean: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 564)
+		use_base_input()
+		put_op(o, 564)
 		put_u64(o, s.h)
 		put_u8(o, u8(clean))
 		state_set(cx, req[:], loc)
@@ -16479,7 +17687,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_context_menu_enabled = proc(s: Textarea_State, cx: ^Cx, enabled: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 565)
+		use_base_input()
+		put_op(o, 565)
 		put_u64(o, s.h)
 		put_u8(o, u8(enabled))
 		state_set(cx, req[:], loc)
@@ -16487,7 +17696,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_cursor_position = proc(s: Textarea_State, cx: ^Cx, position: Lsp_Position, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1477)
+		use_base_input()
+		put_op(o, 1477)
 		put_u64(o, s.h)
 		{ lv := position; put_value(o, &lv, type_info_of(Lsp_Position)) }
 		state_set(cx, req[:], loc)
@@ -16495,7 +17705,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_cursor_surrounding_lines = proc(s: Textarea_State, cx: ^Cx, lines: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 566)
+		use_base_input()
+		put_op(o, 566)
 		put_u64(o, s.h)
 		if x0, ok := lines.?; ok {
 			put_u8(o, 1)
@@ -16508,7 +17719,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_disabled = proc(s: Textarea_State, cx: ^Cx, disabled: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 567)
+		use_base_input()
+		put_op(o, 567)
 		put_u64(o, s.h)
 		put_u8(o, u8(disabled))
 		state_set(cx, req[:], loc)
@@ -16516,7 +17728,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_editor_style = proc(s: Textarea_State, cx: ^Cx, style: Input_Editor_Style, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1688)
+		use_base_input()
+		put_op(o, 1688)
 		put_u64(o, s.h)
 		put_Input_Editor_Style(o, style)
 		state_set(cx, req[:], loc)
@@ -16524,7 +17737,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_fold_background = proc(s: Textarea_State, cx: ^Cx, color: Maybe(Color), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 638)
+		use_base_input()
+		put_op(o, 638)
 		put_u64(o, s.h)
 		if x0, ok := color.?; ok {
 			put_u8(o, 1)
@@ -16537,7 +17751,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_fold_placeholder_renderer = proc(s: Textarea_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1678)
+		use_base_input()
+		put_op(o, 1678)
 		put_u64(o, s.h)
 		if x0, ok := renderer.?; ok {
 			put_u8(o, 1)
@@ -16550,7 +17765,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_highlighter = proc(s: Textarea_State, cx: ^Cx, new_language: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 568)
+		use_base_input()
+		put_op(o, 568)
 		put_u64(o, s.h)
 		put_str(o, new_language)
 		state_set(cx, req[:], loc)
@@ -16558,7 +17774,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_highlighter_factory = proc(s: Textarea_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1622)
+		use_base_input()
+		put_op(o, 1622)
 		put_u64(o, s.h)
 		put_u64(o, factory.h)
 		state_set(cx, req[:], loc)
@@ -16566,7 +17783,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_mask_pattern = proc(s: Textarea_State, cx: ^Cx, pattern: Mask_Pattern_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 639)
+		use_base_input()
+		put_op(o, 639)
 		put_u64(o, s.h)
 		put_Mask_Pattern_Into(o, pattern)
 		state_set(cx, req[:], loc)
@@ -16574,7 +17792,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_placeholder = proc(s: Textarea_State, cx: ^Cx, placeholder: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 569)
+		use_base_input()
+		put_op(o, 569)
 		put_u64(o, s.h)
 		put_str(o, placeholder)
 		state_set(cx, req[:], loc)
@@ -16582,7 +17801,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_readonly = proc(s: Textarea_State, cx: ^Cx, readonly: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 570)
+		use_base_input()
+		put_op(o, 570)
 		put_u64(o, s.h)
 		put_u8(o, u8(readonly))
 		state_set(cx, req[:], loc)
@@ -16590,7 +17810,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_rows = proc(s: Textarea_State, cx: ^Cx, rows: int, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 571)
+		use_base_input()
+		put_op(o, 571)
 		put_u64(o, s.h)
 		put_usize(o, rows)
 		state_set(cx, req[:], loc)
@@ -16598,7 +17819,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_scroll_beyond_last_line = proc(s: Textarea_State, cx: ^Cx, rows: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 572)
+		use_base_input()
+		put_op(o, 572)
 		put_u64(o, s.h)
 		if x0, ok := rows.?; ok {
 			put_u8(o, 1)
@@ -16611,7 +17833,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_scroll_bounce = proc(s: Textarea_State, cx: ^Cx, scroll_bounce: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 573)
+		use_base_input()
+		put_op(o, 573)
 		put_u64(o, s.h)
 		put_u8(o, u8(scroll_bounce))
 		state_set(cx, req[:], loc)
@@ -16619,7 +17842,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_scroll_offset = proc(s: Textarea_State, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 640)
+		use_base_input()
+		put_op(o, 640)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, offset)
 		state_set(cx, req[:], loc)
@@ -16627,7 +17851,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_scrollbar_renderer = proc(s: Textarea_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1614)
+		use_base_input()
+		put_op(o, 1614)
 		put_u64(o, s.h)
 		if x0, ok := renderer.?; ok {
 			put_u8(o, 1)
@@ -16640,7 +17865,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_search_query = proc(s: Textarea_State, cx: ^Cx, query: string, case_insensitive: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 574)
+		use_base_input()
+		put_op(o, 574)
 		put_u64(o, s.h)
 		put_str(o, query)
 		put_u8(o, u8(case_insensitive))
@@ -16649,7 +17875,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_searchable = proc(s: Textarea_State, cx: ^Cx, searchable: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 575)
+		use_base_input()
+		put_op(o, 575)
 		put_u64(o, s.h)
 		put_u8(o, u8(searchable))
 		state_set(cx, req[:], loc)
@@ -16657,7 +17884,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_selected_range = proc(s: Textarea_State, cx: ^Cx, range: Range, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 576)
+		use_base_input()
+		put_op(o, 576)
 		put_u64(o, s.h)
 		put_range(o, range)
 		state_set(cx, req[:], loc)
@@ -16665,7 +17893,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_selected_range_with_direction = proc(s: Textarea_State, cx: ^Cx, range: Range, reversed: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 577)
+		use_base_input()
+		put_op(o, 577)
 		put_u64(o, s.h)
 		put_range(o, range)
 		put_u8(o, u8(reversed))
@@ -16674,7 +17903,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_selection_focus = proc(s: Textarea_State, cx: ^Cx, focus: Maybe(Focus_Handle), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 641)
+		use_base_input()
+		put_op(o, 641)
 		put_u64(o, s.h)
 		if x0, ok := focus.?; ok {
 			put_u8(o, 1)
@@ -16687,7 +17917,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_show_whitespaces = proc(s: Textarea_State, cx: ^Cx, show: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 578)
+		use_base_input()
+		put_op(o, 578)
 		put_u64(o, s.h)
 		put_u8(o, u8(show))
 		state_set(cx, req[:], loc)
@@ -16695,7 +17926,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_soft_wrap = proc(s: Textarea_State, cx: ^Cx, wrap: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 579)
+		use_base_input()
+		put_op(o, 579)
 		put_u64(o, s.h)
 		put_u8(o, u8(wrap))
 		state_set(cx, req[:], loc)
@@ -16703,7 +17935,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_submit_on_enter = proc(s: Textarea_State, cx: ^Cx, submit: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 580)
+		use_base_input()
+		put_op(o, 580)
 		put_u64(o, s.h)
 		put_u8(o, u8(submit))
 		state_set(cx, req[:], loc)
@@ -16711,7 +17944,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_tab_size = proc(s: Textarea_State, cx: ^Cx, tab: Tab_Size, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 642)
+		use_base_input()
+		put_op(o, 642)
 		put_u64(o, s.h)
 		put_Tab_Size(o, tab)
 		state_set(cx, req[:], loc)
@@ -16719,7 +17953,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_text_align = proc(s: Textarea_State, cx: ^Cx, text_align: Text_Align, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 581)
+		use_base_input()
+		put_op(o, 581)
 		put_u64(o, s.h)
 		put_u16(o, u16(text_align))
 		state_set(cx, req[:], loc)
@@ -16727,7 +17962,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_value = proc(s: Textarea_State, cx: ^Cx, value: Input_Content_Into, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 643)
+		use_base_input()
+		put_op(o, 643)
 		put_u64(o, s.h)
 		put_Input_Content_Into(o, value)
 		state_set(cx, req[:], loc)
@@ -16735,7 +17971,8 @@ textarea_state_vt := Textarea_State_VT {
 	set_wrapping_indent = proc(s: Textarea_State, cx: ^Cx, wrapping_indent: Wrapping_Indent, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 582)
+		use_base_input()
+		put_op(o, 582)
 		put_u64(o, s.h)
 		put_u16(o, u16(wrapping_indent))
 		state_set(cx, req[:], loc)
@@ -16743,21 +17980,24 @@ textarea_state_vt := Textarea_State_VT {
 	toggle_masked = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 586)
+		use_base_input()
+		put_op(o, 586)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	unselect = proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 588)
+		use_base_input()
+		put_op(o, 588)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	update_edge_drag = proc(s: Textarea_State, cx: ^Cx, finger: Gpui_Point, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 644)
+		use_base_input()
+		put_op(o, 644)
 		put_u64(o, s.h)
 		put_Gpui_Point(o, finger)
 		state_set(cx, req[:], loc)
@@ -16766,7 +18006,7 @@ textarea_state_vt := Textarea_State_VT {
 		slot, generation := keep_handler(cx, h, 97, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 583)
+		put_op(o, 583)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -16777,7 +18017,7 @@ textarea_state_vt := Textarea_State_VT {
 		slot, generation := keep_handler(cx, h, 120, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1752)
+		put_op(o, 1752)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -16815,7 +18055,7 @@ Textarea_State_Builder_VT :: struct {
 textarea_state_builder_vt := Textarea_State_Builder_VT {
 	auto_grow = proc(b: Textarea_State_Builder, min_rows: int, max_rows: int) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_usize(o, min_rows)
 		put_usize(o, max_rows)
 		o[b.count_at] += 1
@@ -16823,34 +18063,34 @@ textarea_state_builder_vt := Textarea_State_Builder_VT {
 	},
 	autocapitalize = proc(b: Textarea_State_Builder, autocapitalize: Autocapitalize) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u16(o, u16(autocapitalize))
 		o[b.count_at] += 1
 		return b
 	},
 	autocorrect = proc(b: Textarea_State_Builder, autocorrect: bool) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 3)
+		put_op(o, 3)
 		put_u8(o, u8(autocorrect))
 		o[b.count_at] += 1
 		return b
 	},
 	clean_on_escape = proc(b: Textarea_State_Builder) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 4)
+		put_op(o, 4)
 		o[b.count_at] += 1
 		return b
 	},
 	context_menu = proc(b: Textarea_State_Builder, enable: bool) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 5)
+		put_op(o, 5)
 		put_u8(o, u8(enable))
 		o[b.count_at] += 1
 		return b
 	},
 	cursor_surrounding_lines = proc(b: Textarea_State_Builder, lines: Maybe(int)) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 6)
+		put_op(o, 6)
 		if x0, ok := lines.?; ok {
 			put_u8(o, 1)
 			put_usize(o, x0)
@@ -16862,35 +18102,35 @@ textarea_state_builder_vt := Textarea_State_Builder_VT {
 	},
 	default_value = proc(b: Textarea_State_Builder, value: string) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 7)
+		put_op(o, 7)
 		put_str(o, value)
 		o[b.count_at] += 1
 		return b
 	},
 	input_action = proc(b: Textarea_State_Builder, action: Text_Input_Action) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 8)
+		put_op(o, 8)
 		put_u16(o, u16(action))
 		o[b.count_at] += 1
 		return b
 	},
 	mask_pattern = proc(b: Textarea_State_Builder, pattern: Mask_Pattern_Into) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 13)
+		put_op(o, 13)
 		put_Mask_Pattern_Into(o, pattern)
 		o[b.count_at] += 1
 		return b
 	},
 	placeholder = proc(b: Textarea_State_Builder, placeholder: string) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 9)
+		put_op(o, 9)
 		put_str(o, placeholder)
 		o[b.count_at] += 1
 		return b
 	},
 	scroll_beyond_last_line = proc(b: Textarea_State_Builder, rows: Maybe(int)) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 10)
+		put_op(o, 10)
 		if x0, ok := rows.?; ok {
 			put_u8(o, 1)
 			put_usize(o, x0)
@@ -16902,14 +18142,14 @@ textarea_state_builder_vt := Textarea_State_Builder_VT {
 	},
 	scroll_bounce = proc(b: Textarea_State_Builder, scroll_bounce: bool) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 11)
+		put_op(o, 11)
 		put_u8(o, u8(scroll_bounce))
 		o[b.count_at] += 1
 		return b
 	},
 	searchable = proc(b: Textarea_State_Builder, searchable: bool) -> Textarea_State_Builder {
 		o := b.req
-		put_u16(o, 12)
+		put_op(o, 12)
 		put_u8(o, u8(searchable))
 		o[b.count_at] += 1
 		return b
@@ -16923,7 +18163,8 @@ textarea_state :: proc(cx: ^Cx, loc := #caller_location) -> Textarea_State_Build
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 551)
+	use_base_input()
+	put_op(o, 551)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &textarea_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -16936,7 +18177,8 @@ reg_theme :: proc "contextless" () {
 theme_change :: proc(cx: ^Cx, mode: Theme_Mode_Into, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1163)
+	use_component_theme()
+	put_op(o, 1163)
 	put_Theme_Mode_Into(o, mode)
 	state_set(cx, req[:], loc)
 }
@@ -16944,7 +18186,8 @@ theme_change :: proc(cx: ^Cx, mode: Theme_Mode_Into, loc := #caller_location) {
 theme_global :: proc(cx: ^Cx, loc := #caller_location) -> Theme {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 959)
+	use_component_theme()
+	put_op(o, 959)
 	r := obj_get(0, cx, req[:], loc)
 	return {state = {h = rd_u64(&r)}, vt = &theme_vt}
 }
@@ -16952,7 +18195,8 @@ theme_global :: proc(cx: ^Cx, loc := #caller_location) -> Theme {
 theme_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Theme {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 960)
+	use_component_theme()
+	put_op(o, 960)
 	r := obj_get(0, cx, req[:], loc)
 	return {state = {h = rd_u64(&r)}, vt = &theme_vt}
 }
@@ -16960,7 +18204,8 @@ theme_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Theme {
 theme_set_scrollbar_mode :: proc(cx: ^Cx, mode: Scrollbar_Mode, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 971)
+	use_component_theme()
+	put_op(o, 971)
 	put_u16(o, u16(mode))
 	state_set(cx, req[:], loc)
 }
@@ -16968,21 +18213,24 @@ theme_set_scrollbar_mode :: proc(cx: ^Cx, mode: Scrollbar_Mode, loc := #caller_l
 theme_sync_base :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 974)
+	use_component_theme()
+	put_op(o, 974)
 	state_set(cx, req[:], loc)
 }
 
 theme_sync_scrollbar_appearance :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 975)
+	use_component_theme()
+	put_op(o, 975)
 	state_set(cx, req[:], loc)
 }
 
 theme_sync_system_appearance :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1164)
+	use_component_theme()
+	put_op(o, 1164)
 	state_set(cx, req[:], loc)
 }
 
@@ -17061,7 +18309,8 @@ theme_vt := Theme_VT {
 	color_tokens = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_Color_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 958)
+		use_component_theme()
+		put_op(o, 958)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17070,7 +18319,8 @@ theme_vt := Theme_VT {
 	colors = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Kit_Theme_Color_2) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1194)
+		use_component_theme()
+		put_op(o, 1194)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17079,7 +18329,8 @@ theme_vt := Theme_VT {
 	cursor_blink = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Cursor_Blink_Read) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1359)
+		use_component_theme()
+		put_op(o, 1359)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17088,7 +18339,8 @@ theme_vt := Theme_VT {
 	dark_theme = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Theme_Config_Rc) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1195)
+		use_component_theme()
+		put_op(o, 1195)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17097,7 +18349,8 @@ theme_vt := Theme_VT {
 	focus_ring = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1196)
+		use_component_theme()
+		put_op(o, 1196)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17106,7 +18359,8 @@ theme_vt := Theme_VT {
 	font_family = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1197)
+		use_component_theme()
+		put_op(o, 1197)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17115,7 +18369,8 @@ theme_vt := Theme_VT {
 	font_size = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1198)
+		use_component_theme()
+		put_op(o, 1198)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17124,7 +18379,8 @@ theme_vt := Theme_VT {
 	highlight_theme = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Highlight_Theme_Arc) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1199)
+		use_component_theme()
+		put_op(o, 1199)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17133,7 +18389,8 @@ theme_vt := Theme_VT {
 	input_background = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 961)
+		use_component_theme()
+		put_op(o, 961)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17142,7 +18399,8 @@ theme_vt := Theme_VT {
 	is_dark = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 962)
+		use_component_theme()
+		put_op(o, 962)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17151,7 +18409,8 @@ theme_vt := Theme_VT {
 	light_theme = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Theme_Config_Rc) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1200)
+		use_component_theme()
+		put_op(o, 1200)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17160,7 +18419,8 @@ theme_vt := Theme_VT {
 	list = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_List_Settings) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1201)
+		use_component_theme()
+		put_op(o, 1201)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17169,7 +18429,8 @@ theme_vt := Theme_VT {
 	mode = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Theme_Mode) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1202)
+		use_component_theme()
+		put_op(o, 1202)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17178,7 +18439,8 @@ theme_vt := Theme_VT {
 	mono_font_family = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1203)
+		use_component_theme()
+		put_op(o, 1203)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17187,7 +18449,8 @@ theme_vt := Theme_VT {
 	mono_font_size = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1204)
+		use_component_theme()
+		put_op(o, 1204)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17196,7 +18459,8 @@ theme_vt := Theme_VT {
 	motion = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Kit_Motion_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1205)
+		use_component_theme()
+		put_op(o, 1205)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17205,7 +18469,8 @@ theme_vt := Theme_VT {
 	motion_tokens = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Kit_Motion_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 963)
+		use_component_theme()
+		put_op(o, 963)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17214,7 +18479,8 @@ theme_vt := Theme_VT {
 	notification = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Kit_Notification_Settings) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1206)
+		use_component_theme()
+		put_op(o, 1206)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17223,7 +18489,8 @@ theme_vt := Theme_VT {
 	radius = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1207)
+		use_component_theme()
+		put_op(o, 1207)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17232,7 +18499,8 @@ theme_vt := Theme_VT {
 	radius_2xl = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 964)
+		use_component_theme()
+		put_op(o, 964)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17241,7 +18509,8 @@ theme_vt := Theme_VT {
 	radius_3xl = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 965)
+		use_component_theme()
+		put_op(o, 965)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17250,7 +18519,8 @@ theme_vt := Theme_VT {
 	radius_4xl = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 966)
+		use_component_theme()
+		put_op(o, 966)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17259,7 +18529,8 @@ theme_vt := Theme_VT {
 	radius_full = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 967)
+		use_component_theme()
+		put_op(o, 967)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17268,7 +18539,8 @@ theme_vt := Theme_VT {
 	radius_lg = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1208)
+		use_component_theme()
+		put_op(o, 1208)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17277,7 +18549,8 @@ theme_vt := Theme_VT {
 	radius_tokens = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_Radius_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 968)
+		use_component_theme()
+		put_op(o, 968)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17286,7 +18559,8 @@ theme_vt := Theme_VT {
 	resolve_semantic_config = proc(s: Theme, cx: ^Cx, config: Semantic_Theme_Config, loc := #caller_location) -> (v: Base_Semantic_Theme_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 969)
+		use_component_theme()
+		put_op(o, 969)
 		put_u64(o, s.h)
 		put_vtape(o, config.nd)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -17296,7 +18570,8 @@ theme_vt := Theme_VT {
 	scrollbar_mode = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Scrollbar_Mode) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1209)
+		use_component_theme()
+		put_op(o, 1209)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17305,7 +18580,8 @@ theme_vt := Theme_VT {
 	semantic_tokens = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_Semantic_Theme_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 970)
+		use_component_theme()
+		put_op(o, 970)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17314,7 +18590,8 @@ theme_vt := Theme_VT {
 	shadow = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1230)
+		use_component_theme()
+		put_op(o, 1230)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17323,7 +18600,8 @@ theme_vt := Theme_VT {
 	shadow_tokens = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_Shadow_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 972)
+		use_component_theme()
+		put_op(o, 972)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17332,7 +18610,8 @@ theme_vt := Theme_VT {
 	sheet = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Kit_Sheet_Settings) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1231)
+		use_component_theme()
+		put_op(o, 1231)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17341,7 +18620,8 @@ theme_vt := Theme_VT {
 	spacing_tokens = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_Spacing_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 973)
+		use_component_theme()
+		put_op(o, 973)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17350,7 +18630,8 @@ theme_vt := Theme_VT {
 	theme_name = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 976)
+		use_component_theme()
+		put_op(o, 976)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17359,7 +18640,8 @@ theme_vt := Theme_VT {
 	tokens = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Theme_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1232)
+		use_component_theme()
+		put_op(o, 1232)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17368,7 +18650,8 @@ theme_vt := Theme_VT {
 	transparent = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1233)
+		use_component_theme()
+		put_op(o, 1233)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17377,7 +18660,8 @@ theme_vt := Theme_VT {
 	typography_tokens = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_Typography_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 977)
+		use_component_theme()
+		put_op(o, 977)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17386,7 +18670,8 @@ theme_vt := Theme_VT {
 	window_radius = proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1234)
+		use_component_theme()
+		put_op(o, 1234)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17395,7 +18680,8 @@ theme_vt := Theme_VT {
 	apply_semantic_config = proc(s: Theme, cx: ^Cx, config: Semantic_Theme_Config, loc := #caller_location) -> (v: Base_Semantic_Theme_Tokens) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 956)
+		use_component_theme()
+		put_op(o, 956)
 		put_u64(o, s.h)
 		put_vtape(o, config.nd)
 		r := state_call(s.h, cx, req[:], loc)
@@ -17405,7 +18691,8 @@ theme_vt := Theme_VT {
 	apply_semantic_config_str = proc(s: Theme, cx: ^Cx, content: string, loc := #caller_location) -> (v: Fallible(Base_Semantic_Theme_Tokens)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1162)
+		use_component_theme()
+		put_op(o, 1162)
 		put_u64(o, s.h)
 		put_str(o, content)
 		r := state_call(s.h, cx, req[:], loc)
@@ -17415,7 +18702,8 @@ theme_vt := Theme_VT {
 	apply_config = proc(s: Theme, cx: ^Cx, config: Theme_Config_Rc, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1161)
+		use_component_theme()
+		put_op(o, 1161)
 		put_u64(o, s.h)
 		put_u64(o, config.h)
 		state_set(cx, req[:], loc)
@@ -17423,7 +18711,8 @@ theme_vt := Theme_VT {
 	apply_semantic_tokens = proc(s: Theme, cx: ^Cx, tokens: Semantic_Theme_Tokens, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 957)
+		use_component_theme()
+		put_op(o, 957)
 		put_u64(o, s.h)
 		put_vtape(o, tokens.nd)
 		state_set(cx, req[:], loc)
@@ -17431,7 +18720,8 @@ theme_vt := Theme_VT {
 	set_colors = proc(s: Theme, cx: ^Cx, value: Kit_Theme_Color, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1210)
+		use_component_theme()
+		put_op(o, 1210)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -17439,7 +18729,8 @@ theme_vt := Theme_VT {
 	set_cursor_blink = proc(s: Theme, cx: ^Cx, value: Cursor_Blink, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1211)
+		use_component_theme()
+		put_op(o, 1211)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -17447,7 +18738,8 @@ theme_vt := Theme_VT {
 	set_dark_theme = proc(s: Theme, cx: ^Cx, value: Theme_Config_Rc, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1212)
+		use_component_theme()
+		put_op(o, 1212)
 		put_u64(o, s.h)
 		put_u64(o, value.h)
 		state_set(cx, req[:], loc)
@@ -17455,7 +18747,8 @@ theme_vt := Theme_VT {
 	set_focus_ring = proc(s: Theme, cx: ^Cx, value: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1213)
+		use_component_theme()
+		put_op(o, 1213)
 		put_u64(o, s.h)
 		put_u8(o, u8(value))
 		state_set(cx, req[:], loc)
@@ -17463,7 +18756,8 @@ theme_vt := Theme_VT {
 	set_font_family = proc(s: Theme, cx: ^Cx, value: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1214)
+		use_component_theme()
+		put_op(o, 1214)
 		put_u64(o, s.h)
 		put_str(o, value)
 		state_set(cx, req[:], loc)
@@ -17471,7 +18765,8 @@ theme_vt := Theme_VT {
 	set_font_size = proc(s: Theme, cx: ^Cx, value: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1215)
+		use_component_theme()
+		put_op(o, 1215)
 		put_u64(o, s.h)
 		put_f32(o, value)
 		state_set(cx, req[:], loc)
@@ -17479,7 +18774,8 @@ theme_vt := Theme_VT {
 	set_highlight_theme = proc(s: Theme, cx: ^Cx, value: Highlight_Theme_Arc, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1216)
+		use_component_theme()
+		put_op(o, 1216)
 		put_u64(o, s.h)
 		put_u64(o, value.h)
 		state_set(cx, req[:], loc)
@@ -17487,7 +18783,8 @@ theme_vt := Theme_VT {
 	set_light_theme = proc(s: Theme, cx: ^Cx, value: Theme_Config_Rc, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1217)
+		use_component_theme()
+		put_op(o, 1217)
 		put_u64(o, s.h)
 		put_u64(o, value.h)
 		state_set(cx, req[:], loc)
@@ -17495,7 +18792,8 @@ theme_vt := Theme_VT {
 	set_list = proc(s: Theme, cx: ^Cx, value: List_Settings, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1218)
+		use_component_theme()
+		put_op(o, 1218)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -17503,7 +18801,8 @@ theme_vt := Theme_VT {
 	set_mode = proc(s: Theme, cx: ^Cx, value: Theme_Mode, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1219)
+		use_component_theme()
+		put_op(o, 1219)
 		put_u64(o, s.h)
 		put_u16(o, u16(value))
 		state_set(cx, req[:], loc)
@@ -17511,7 +18810,8 @@ theme_vt := Theme_VT {
 	set_mono_font_family = proc(s: Theme, cx: ^Cx, value: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1220)
+		use_component_theme()
+		put_op(o, 1220)
 		put_u64(o, s.h)
 		put_str(o, value)
 		state_set(cx, req[:], loc)
@@ -17519,7 +18819,8 @@ theme_vt := Theme_VT {
 	set_mono_font_size = proc(s: Theme, cx: ^Cx, value: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1221)
+		use_component_theme()
+		put_op(o, 1221)
 		put_u64(o, s.h)
 		put_f32(o, value)
 		state_set(cx, req[:], loc)
@@ -17527,7 +18828,8 @@ theme_vt := Theme_VT {
 	set_motion = proc(s: Theme, cx: ^Cx, value: Motion_Tokens, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1222)
+		use_component_theme()
+		put_op(o, 1222)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -17535,7 +18837,8 @@ theme_vt := Theme_VT {
 	set_notification = proc(s: Theme, cx: ^Cx, value: Notification_Settings, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1223)
+		use_component_theme()
+		put_op(o, 1223)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -17543,7 +18846,8 @@ theme_vt := Theme_VT {
 	set_radius = proc(s: Theme, cx: ^Cx, value: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1224)
+		use_component_theme()
+		put_op(o, 1224)
 		put_u64(o, s.h)
 		put_f32(o, value)
 		state_set(cx, req[:], loc)
@@ -17551,7 +18855,8 @@ theme_vt := Theme_VT {
 	set_radius_lg = proc(s: Theme, cx: ^Cx, value: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1225)
+		use_component_theme()
+		put_op(o, 1225)
 		put_u64(o, s.h)
 		put_f32(o, value)
 		state_set(cx, req[:], loc)
@@ -17559,7 +18864,8 @@ theme_vt := Theme_VT {
 	set_shadow = proc(s: Theme, cx: ^Cx, value: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1226)
+		use_component_theme()
+		put_op(o, 1226)
 		put_u64(o, s.h)
 		put_u8(o, u8(value))
 		state_set(cx, req[:], loc)
@@ -17567,7 +18873,8 @@ theme_vt := Theme_VT {
 	set_sheet = proc(s: Theme, cx: ^Cx, value: Sheet_Settings, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1227)
+		use_component_theme()
+		put_op(o, 1227)
 		put_u64(o, s.h)
 		put_vtape(o, value.nd)
 		state_set(cx, req[:], loc)
@@ -17575,7 +18882,8 @@ theme_vt := Theme_VT {
 	set_transparent = proc(s: Theme, cx: ^Cx, value: Color, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1228)
+		use_component_theme()
+		put_op(o, 1228)
 		put_u64(o, s.h)
 		put_color(o, value)
 		state_set(cx, req[:], loc)
@@ -17583,7 +18891,8 @@ theme_vt := Theme_VT {
 	set_window_radius = proc(s: Theme, cx: ^Cx, value: f32, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1229)
+		use_component_theme()
+		put_op(o, 1229)
 		put_u64(o, s.h)
 		put_f32(o, value)
 		state_set(cx, req[:], loc)
@@ -17612,7 +18921,8 @@ theme_color_arc :: proc(cx: ^Cx, value: Kit_Theme_Color, loc := #caller_location
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1237)
+	use_component_theme()
+	put_op(o, 1237)
 	put_vtape(o, value.nd)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &theme_color_arc_vt}
@@ -17640,7 +18950,8 @@ theme_config_rc :: proc(cx: ^Cx, value: Theme_Config, loc := #caller_location) -
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1235)
+	use_component_theme()
+	put_op(o, 1235)
 	put_vtape(o, value.nd)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &theme_config_rc_vt}
@@ -17654,7 +18965,8 @@ reg_theme_registry :: proc "contextless" () {
 theme_registry_global :: proc(cx: ^Cx, loc := #caller_location) -> Theme_Registry {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 978)
+	use_component_theme()
+	put_op(o, 978)
 	r := obj_get(0, cx, req[:], loc)
 	return {state = {h = rd_u64(&r)}, vt = &theme_registry_vt}
 }
@@ -17662,7 +18974,8 @@ theme_registry_global :: proc(cx: ^Cx, loc := #caller_location) -> Theme_Registr
 theme_registry_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Theme_Registry {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 979)
+	use_component_theme()
+	put_op(o, 979)
 	r := obj_get(0, cx, req[:], loc)
 	return {state = {h = rd_u64(&r)}, vt = &theme_registry_vt}
 }
@@ -17670,7 +18983,8 @@ theme_registry_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Theme_Reg
 theme_registry_watch_dir :: proc(cx: ^Cx, themes_dir: string, on_load: Handler, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
-	put_u16(o, 1290)
+	use_component_theme()
+	put_op(o, 1290)
 	put_str(o, themes_dir)
 	put_kept_handler(o, on_load, 3)
 	r := state_call(0, cx, req[:], loc)
@@ -17698,7 +19012,8 @@ theme_registry_vt := Theme_Registry_VT {
 	default_dark_theme = proc(s: Theme_Registry, cx: ^Cx, loc := #caller_location) -> (v: Theme_Config_Rc) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1165)
+		use_component_theme()
+		put_op(o, 1165)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17707,7 +19022,8 @@ theme_registry_vt := Theme_Registry_VT {
 	default_light_theme = proc(s: Theme_Registry, cx: ^Cx, loc := #caller_location) -> (v: Theme_Config_Rc) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1166)
+		use_component_theme()
+		put_op(o, 1166)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17716,7 +19032,8 @@ theme_registry_vt := Theme_Registry_VT {
 	default_themes = proc(s: Theme_Registry, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_Theme_Mode_Theme_Config_Rc) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1167)
+		use_component_theme()
+		put_op(o, 1167)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17725,7 +19042,8 @@ theme_registry_vt := Theme_Registry_VT {
 	sorted_themes = proc(s: Theme_Registry, cx: ^Cx, loc := #caller_location) -> (v: []Theme_Config_Rc) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1169)
+		use_component_theme()
+		put_op(o, 1169)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17734,7 +19052,8 @@ theme_registry_vt := Theme_Registry_VT {
 	themes = proc(s: Theme_Registry, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_Temp_String_Theme_Config_Rc) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1170)
+		use_component_theme()
+		put_op(o, 1170)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17743,7 +19062,8 @@ theme_registry_vt := Theme_Registry_VT {
 	load_themes_from_str = proc(s: Theme_Registry, cx: ^Cx, content: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1168)
+		use_component_theme()
+		put_op(o, 1168)
 		put_u64(o, s.h)
 		put_str(o, content)
 		r := state_call(s.h, cx, req[:], loc)
@@ -17773,7 +19093,8 @@ time_field_state_vt := Time_Field_State_VT {
 	selected_segment = proc(s: Time_Field_State, cx: ^Cx, loc := #caller_location) -> (v: Time_Segment) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 319)
+		use_base_time_field()
+		put_op(o, 319)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17782,7 +19103,8 @@ time_field_state_vt := Time_Field_State_VT {
 	time = proc(s: Time_Field_State, cx: ^Cx, loc := #caller_location) -> (v: Naive_Time) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1330)
+		use_base_time_field()
+		put_op(o, 1330)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17791,14 +19113,16 @@ time_field_state_vt := Time_Field_State_VT {
 	focus = proc(s: Time_Field_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 407)
+		use_base_time_field()
+		put_op(o, 407)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	set_hour_cycle = proc(s: Time_Field_State, cx: ^Cx, hour_cycle: Hour_Cycle, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 320)
+		use_base_time_field()
+		put_op(o, 320)
 		put_u64(o, s.h)
 		put_u16(o, u16(hour_cycle))
 		state_set(cx, req[:], loc)
@@ -17806,7 +19130,8 @@ time_field_state_vt := Time_Field_State_VT {
 	set_precision = proc(s: Time_Field_State, cx: ^Cx, precision: Time_Precision, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 321)
+		use_base_time_field()
+		put_op(o, 321)
 		put_u64(o, s.h)
 		put_u16(o, u16(precision))
 		state_set(cx, req[:], loc)
@@ -17814,7 +19139,8 @@ time_field_state_vt := Time_Field_State_VT {
 	set_time = proc(s: Time_Field_State, cx: ^Cx, time: Naive_Time, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1329)
+		use_base_time_field()
+		put_op(o, 1329)
 		put_u64(o, s.h)
 		put_naive_time(o, time)
 		state_set(cx, req[:], loc)
@@ -17823,7 +19149,7 @@ time_field_state_vt := Time_Field_State_VT {
 		slot, generation := keep_handler(cx, h, 111, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 322)
+		put_op(o, 322)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -17850,14 +19176,14 @@ Time_Field_State_Builder_VT :: struct {
 time_field_state_builder_vt := Time_Field_State_Builder_VT {
 	hour_cycle = proc(b: Time_Field_State_Builder, hour_cycle: Hour_Cycle) -> Time_Field_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u16(o, u16(hour_cycle))
 		o[b.count_at] += 1
 		return b
 	},
 	precision = proc(b: Time_Field_State_Builder, precision: Time_Precision) -> Time_Field_State_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_u16(o, u16(precision))
 		o[b.count_at] += 1
 		return b
@@ -17871,7 +19197,8 @@ time_field_state :: proc(cx: ^Cx, loc := #caller_location) -> Time_Field_State_B
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 318)
+	use_base_time_field()
+	put_op(o, 318)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &time_field_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -17904,7 +19231,8 @@ toast_manager_vt := Toast_Manager_VT {
 	get = proc(s: Toast_Manager, cx: ^Cx, id: u64, loc := #caller_location) -> (v: Maybe(u64)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1628)
+		use_base_toast()
+		put_op(o, 1628)
 		put_u64(o, s.h)
 		put_u64(o, u64(id))
 		r := obj_get(s.h, cx, req[:], loc)
@@ -17914,7 +19242,8 @@ toast_manager_vt := Toast_Manager_VT {
 	is_empty = proc(s: Toast_Manager, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1629)
+		use_base_toast()
+		put_op(o, 1629)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17923,7 +19252,8 @@ toast_manager_vt := Toast_Manager_VT {
 	iter = proc(s: Toast_Manager, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_U64_U64_Toast_Transition_Status) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1630)
+		use_base_toast()
+		put_op(o, 1630)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17932,7 +19262,8 @@ toast_manager_vt := Toast_Manager_VT {
 	len_ = proc(s: Toast_Manager, cx: ^Cx, loc := #caller_location) -> (v: int) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1631)
+		use_base_toast()
+		put_op(o, 1631)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -17941,7 +19272,8 @@ toast_manager_vt := Toast_Manager_VT {
 	visible = proc(s: Toast_Manager, cx: ^Cx, limit: int, loc := #caller_location) -> (v: []Tuple_U64_U64_Toast_Transition_Status) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1634)
+		use_base_toast()
+		put_op(o, 1634)
 		put_u64(o, s.h)
 		put_usize(o, limit)
 		r := obj_get(s.h, cx, req[:], loc)
@@ -17951,7 +19283,8 @@ toast_manager_vt := Toast_Manager_VT {
 	advance = proc(s: Toast_Manager, cx: ^Cx, now: time.Duration, paused: bool, loc := #caller_location) -> (v: Toast_Advance_U64_U64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1625)
+		use_base_toast()
+		put_op(o, 1625)
 		put_u64(o, s.h)
 		put_i64(o, i64(now))
 		put_u8(o, u8(paused))
@@ -17962,7 +19295,8 @@ toast_manager_vt := Toast_Manager_VT {
 	dismiss = proc(s: Toast_Manager, cx: ^Cx, id: u64, now: time.Duration, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1626)
+		use_base_toast()
+		put_op(o, 1626)
 		put_u64(o, s.h)
 		put_u64(o, u64(id))
 		put_i64(o, i64(now))
@@ -17973,7 +19307,8 @@ toast_manager_vt := Toast_Manager_VT {
 	dismiss_all = proc(s: Toast_Manager, cx: ^Cx, now: time.Duration, loc := #caller_location) -> (v: []u64) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1627)
+		use_base_toast()
+		put_op(o, 1627)
 		put_u64(o, s.h)
 		put_i64(o, i64(now))
 		r := state_call(s.h, cx, req[:], loc)
@@ -17983,7 +19318,8 @@ toast_manager_vt := Toast_Manager_VT {
 	push = proc(s: Toast_Manager, cx: ^Cx, id: u64, value: u64, options: Toast_Options, now: time.Duration, loc := #caller_location) -> (v: Maybe(u64)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1633)
+		use_base_toast()
+		put_op(o, 1633)
 		put_u64(o, s.h)
 		put_u64(o, u64(id))
 		put_u64(o, u64(value))
@@ -17999,7 +19335,8 @@ toast_manager :: proc(cx: ^Cx, motion: Toast_Motion, loc := #caller_location) ->
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1632)
+	use_base_toast()
+	put_op(o, 1632)
 	put_Toast_Motion(o, motion)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &toast_manager_vt}
@@ -18025,7 +19362,8 @@ toast_stack_state_vt := Toast_Stack_State_VT {
 	is_expanded = proc(s: Toast_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1461)
+		use_base_toast()
+		put_op(o, 1461)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18037,7 +19375,8 @@ toast_stack_state_default :: proc(cx: ^Cx, loc := #caller_location) -> Toast_Sta
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1460)
+	use_base_toast()
+	put_op(o, 1460)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &toast_stack_state_vt}
 }
@@ -18064,7 +19403,8 @@ tooltip_defaults_vt := Tooltip_Defaults_VT {
 	grace_period = proc(s: Tooltip_Defaults, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1438)
+		use_base_tooltip()
+		put_op(o, 1438)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18073,7 +19413,8 @@ tooltip_defaults_vt := Tooltip_Defaults_VT {
 	show_delay = proc(s: Tooltip_Defaults, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1439)
+		use_base_tooltip()
+		put_op(o, 1439)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18082,7 +19423,8 @@ tooltip_defaults_vt := Tooltip_Defaults_VT {
 	install = proc(s: Tooltip_Defaults, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 823)
+		use_base_tooltip()
+		put_op(o, 823)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -18106,14 +19448,14 @@ Tooltip_Defaults_Builder_VT :: struct {
 tooltip_defaults_builder_vt := Tooltip_Defaults_Builder_VT {
 	with_grace_period = proc(b: Tooltip_Defaults_Builder, period: time.Duration) -> Tooltip_Defaults_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_ms(o, i64(period))
 		o[b.count_at] += 1
 		return b
 	},
 	with_show_delay = proc(b: Tooltip_Defaults_Builder, delay: time.Duration) -> Tooltip_Defaults_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_ms(o, i64(delay))
 		o[b.count_at] += 1
 		return b
@@ -18127,7 +19469,8 @@ tooltip_defaults :: proc(cx: ^Cx, loc := #caller_location) -> Tooltip_Defaults_B
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 824)
+	use_base_tooltip()
+	put_op(o, 824)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &tooltip_defaults_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -18136,7 +19479,8 @@ tooltip_defaults_global :: proc(cx: ^Cx, loc := #caller_location) -> Tooltip_Def
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 822)
+	use_base_tooltip()
+	put_op(o, 822)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &tooltip_defaults_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -18158,21 +19502,24 @@ tooltip_overlay_vt := Tooltip_Overlay_VT {
 	hide = proc(s: Tooltip_Overlay, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 323)
+		use_base_tooltip()
+		put_op(o, 323)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	request_hide = proc(s: Tooltip_Overlay, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 325)
+		use_base_tooltip()
+		put_op(o, 325)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	request_show = proc(s: Tooltip_Overlay, cx: ^Cx, content: Tooltip_Request, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 825)
+		use_base_tooltip()
+		put_op(o, 825)
 		put_u64(o, s.h)
 		put_vtape(o, content.nd)
 		state_set(cx, req[:], loc)
@@ -18196,7 +19543,7 @@ Tooltip_Overlay_Builder_VT :: struct {
 tooltip_overlay_builder_vt := Tooltip_Overlay_Builder_VT {
 	render_with = proc(b: Tooltip_Overlay_Builder, renderer: Row_Source) -> Tooltip_Overlay_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u64(o, items_check(renderer, 22))
 		o[b.count_at] += 1
 		return b
@@ -18210,7 +19557,8 @@ tooltip_overlay :: proc(cx: ^Cx, loc := #caller_location) -> Tooltip_Overlay_Bui
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 324)
+	use_base_tooltip()
+	put_op(o, 324)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &tooltip_overlay_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -18242,7 +19590,8 @@ touch_selection_snapshot_vt := Touch_Selection_Snapshot_VT {
 	bounds = proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Bounds)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 826)
+		use_base_touch_selection()
+		put_op(o, 826)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18251,7 +19600,8 @@ touch_selection_snapshot_vt := Touch_Selection_Snapshot_VT {
 	dragging = proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Selection_Edge)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 827)
+		use_base_touch_selection()
+		put_op(o, 827)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18260,7 +19610,8 @@ touch_selection_snapshot_vt := Touch_Selection_Snapshot_VT {
 	edge = proc(s: Touch_Selection_Snapshot, cx: ^Cx, edge: Selection_Edge, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 828)
+		use_base_touch_selection()
+		put_op(o, 828)
 		put_u64(o, s.h)
 		put_u16(o, u16(edge))
 		r := obj_get(s.h, cx, req[:], loc)
@@ -18270,7 +19621,8 @@ touch_selection_snapshot_vt := Touch_Selection_Snapshot_VT {
 	end = proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 829)
+		use_base_touch_selection()
+		put_op(o, 829)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18279,7 +19631,8 @@ touch_selection_snapshot_vt := Touch_Selection_Snapshot_VT {
 	is_edge_visible = proc(s: Touch_Selection_Snapshot, cx: ^Cx, edge: Selection_Edge, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 830)
+		use_base_touch_selection()
+		put_op(o, 830)
 		put_u64(o, s.h)
 		put_u16(o, u16(edge))
 		r := obj_get(s.h, cx, req[:], loc)
@@ -18289,7 +19642,8 @@ touch_selection_snapshot_vt := Touch_Selection_Snapshot_VT {
 	is_empty = proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 831)
+		use_base_touch_selection()
+		put_op(o, 831)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18298,7 +19652,8 @@ touch_selection_snapshot_vt := Touch_Selection_Snapshot_VT {
 	is_menu_open = proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 832)
+		use_base_touch_selection()
+		put_op(o, 832)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18307,7 +19662,8 @@ touch_selection_snapshot_vt := Touch_Selection_Snapshot_VT {
 	start = proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 833)
+		use_base_touch_selection()
+		put_op(o, 833)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18335,7 +19691,8 @@ transition_state_vt := Transition_State_VT {
 	sample = proc(s: Transition_State, cx: ^Cx, target: f32, policy: Transition, loc := #caller_location) -> (v: Motion_Value_F32) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1680)
+		use_base_motion()
+		put_op(o, 1680)
 		put_u64(o, s.h)
 		put_f32(o, target)
 		put_vtape(o, policy.nd)
@@ -18349,7 +19706,8 @@ transition_state_default :: proc(cx: ^Cx, loc := #caller_location) -> Transition
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1679)
+	use_base_motion()
+	put_op(o, 1679)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &transition_state_vt}
 }
@@ -18381,7 +19739,8 @@ tree_state_vt := Tree_State_VT {
 	entry = proc(s: Tree_State, cx: ^Cx, ix: int, loc := #caller_location) -> (v: Maybe(Base_Tree_Entry)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 841)
+		use_base_tree()
+		put_op(o, 841)
 		put_u64(o, s.h)
 		put_usize(o, ix)
 		r := state_get(s.h, cx, req[:], loc)
@@ -18391,7 +19750,8 @@ tree_state_vt := Tree_State_VT {
 	index_of = proc(s: Tree_State, cx: ^Cx, id: string, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 682)
+		use_base_tree()
+		put_op(o, 682)
 		put_u64(o, s.h)
 		put_str(o, id)
 		r := state_get(s.h, cx, req[:], loc)
@@ -18401,7 +19761,8 @@ tree_state_vt := Tree_State_VT {
 	scroll_handle = proc(s: Tree_State, cx: ^Cx, loc := #caller_location) -> (v: Scroll_Handle) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1640)
+		use_base_tree()
+		put_op(o, 1640)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18410,7 +19771,8 @@ tree_state_vt := Tree_State_VT {
 	selected_entry = proc(s: Tree_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Base_Tree_Entry)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 842)
+		use_base_tree()
+		put_op(o, 842)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18419,7 +19781,8 @@ tree_state_vt := Tree_State_VT {
 	selected_index = proc(s: Tree_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 686)
+		use_base_tree()
+		put_op(o, 686)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18428,7 +19791,8 @@ tree_state_vt := Tree_State_VT {
 	selected_item = proc(s: Tree_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Base_Tree_Item)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 687)
+		use_base_tree()
+		put_op(o, 687)
 		put_u64(o, s.h)
 		r := state_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18437,14 +19801,16 @@ tree_state_vt := Tree_State_VT {
 	focus = proc(s: Tree_State, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 681)
+		use_base_tree()
+		put_op(o, 681)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	reveal_item = proc(s: Tree_State, cx: ^Cx, id: string, strategy: Scroll_Strategy, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 684)
+		use_base_tree()
+		put_op(o, 684)
 		put_u64(o, s.h)
 		put_str(o, id)
 		put_u16(o, u16(strategy))
@@ -18453,7 +19819,8 @@ tree_state_vt := Tree_State_VT {
 	scroll_to_item = proc(s: Tree_State, cx: ^Cx, ix: int, strategy: Scroll_Strategy, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 685)
+		use_base_tree()
+		put_op(o, 685)
 		put_u64(o, s.h)
 		put_usize(o, ix)
 		put_u16(o, u16(strategy))
@@ -18462,7 +19829,8 @@ tree_state_vt := Tree_State_VT {
 	set_items = proc(s: Tree_State, cx: ^Cx, items: []Tree_Item, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 843)
+		use_base_tree()
+		put_op(o, 843)
 		put_u64(o, s.h)
 		put_u32(o, u32(len(items)))
 		for x0 in items {
@@ -18473,7 +19841,8 @@ tree_state_vt := Tree_State_VT {
 	set_selected_index = proc(s: Tree_State, cx: ^Cx, ix: Maybe(int), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 688)
+		use_base_tree()
+		put_op(o, 688)
 		put_u64(o, s.h)
 		if x0, ok := ix.?; ok {
 			put_u8(o, 1)
@@ -18486,7 +19855,8 @@ tree_state_vt := Tree_State_VT {
 	set_selected_item = proc(s: Tree_State, cx: ^Cx, item: Maybe(Tree_Item), loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 844)
+		use_base_tree()
+		put_op(o, 844)
 		put_u64(o, s.h)
 		if x0, ok := item.?; ok {
 			put_u8(o, 1)
@@ -18500,7 +19870,7 @@ tree_state_vt := Tree_State_VT {
 		slot, generation := keep_handler(cx, h, 86, loc)
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 689)
+		put_op(o, 689)
 		put_u64(o, s.h)
 		put_u32(o, slot)
 		put_u32(o, generation)
@@ -18526,7 +19896,7 @@ Tree_State_Builder_VT :: struct {
 tree_state_builder_vt := Tree_State_Builder_VT {
 	items = proc(b: Tree_State_Builder, items: []Tree_Item) -> Tree_State_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_u32(o, u32(len(items)))
 		for x0 in items {
 			put_vtape(o, x0.nd)
@@ -18543,7 +19913,8 @@ tree_state :: proc(cx: ^Cx, loc := #caller_location) -> Tree_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 683)
+	use_base_tree()
+	put_op(o, 683)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &tree_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -18577,7 +19948,8 @@ undo_history_vt := Undo_History_VT {
 	can_redo = proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1303)
+		use_base_root()
+		put_op(o, 1303)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18586,7 +19958,8 @@ undo_history_vt := Undo_History_VT {
 	can_undo = proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1304)
+		use_base_root()
+		put_op(o, 1304)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18595,7 +19968,8 @@ undo_history_vt := Undo_History_VT {
 	is_ignoring = proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1307)
+		use_base_root()
+		put_op(o, 1307)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18604,7 +19978,8 @@ undo_history_vt := Undo_History_VT {
 	redo = proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: Maybe([]Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1310)
+		use_base_root()
+		put_op(o, 1310)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18613,7 +19988,8 @@ undo_history_vt := Undo_History_VT {
 	undo = proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: Maybe([]Temp_String)) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1313)
+		use_base_root()
+		put_op(o, 1313)
 		put_u64(o, s.h)
 		r := state_call(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18622,21 +19998,24 @@ undo_history_vt := Undo_History_VT {
 	clear = proc(s: Undo_History, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1305)
+		use_base_root()
+		put_op(o, 1305)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	end_grouping = proc(s: Undo_History, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1306)
+		use_base_root()
+		put_op(o, 1306)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	push = proc(s: Undo_History, cx: ^Cx, item: string, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1309)
+		use_base_root()
+		put_op(o, 1309)
 		put_u64(o, s.h)
 		put_str(o, item)
 		state_set(cx, req[:], loc)
@@ -18644,7 +20023,8 @@ undo_history_vt := Undo_History_VT {
 	set_ignoring = proc(s: Undo_History, cx: ^Cx, ignoring: bool, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1311)
+		use_base_root()
+		put_op(o, 1311)
 		put_u64(o, s.h)
 		put_u8(o, u8(ignoring))
 		state_set(cx, req[:], loc)
@@ -18652,7 +20032,8 @@ undo_history_vt := Undo_History_VT {
 	start_grouping = proc(s: Undo_History, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1312)
+		use_base_root()
+		put_op(o, 1312)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
@@ -18676,14 +20057,14 @@ Undo_History_Builder_VT :: struct {
 undo_history_builder_vt := Undo_History_Builder_VT {
 	group_interval = proc(b: Undo_History_Builder, group_interval: time.Duration) -> Undo_History_Builder {
 		o := b.req
-		put_u16(o, 1)
+		put_op(o, 1)
 		put_ms(o, i64(group_interval))
 		o[b.count_at] += 1
 		return b
 	},
 	max_undos = proc(b: Undo_History_Builder, max_undos: int) -> Undo_History_Builder {
 		o := b.req
-		put_u16(o, 2)
+		put_op(o, 2)
 		put_usize(o, max_undos)
 		o[b.count_at] += 1
 		return b
@@ -18697,7 +20078,8 @@ undo_history :: proc(cx: ^Cx, loc := #caller_location) -> Undo_History_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 1308)
+	use_base_root()
+	put_op(o, 1308)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {vt = &undo_history_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
@@ -18724,7 +20106,8 @@ virtual_list_scroll_handle_vt := Virtual_List_Scroll_Handle_VT {
 	base_handle = proc(s: Virtual_List_Scroll_Handle, cx: ^Cx, loc := #caller_location) -> (v: Scroll_Handle) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 1340)
+		use_base_virtual_list()
+		put_op(o, 1340)
 		put_u64(o, s.h)
 		r := obj_get(s.h, cx, req[:], loc)
 		rd_into(&r, &v)
@@ -18733,14 +20116,16 @@ virtual_list_scroll_handle_vt := Virtual_List_Scroll_Handle_VT {
 	scroll_to_bottom = proc(s: Virtual_List_Scroll_Handle, cx: ^Cx, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 846)
+		use_base_virtual_list()
+		put_op(o, 846)
 		put_u64(o, s.h)
 		state_set(cx, req[:], loc)
 	},
 	scroll_to_item = proc(s: Virtual_List_Scroll_Handle, cx: ^Cx, ix: int, strategy: Scroll_Strategy, loc := #caller_location) {
 		req := make(Tape, 0, 32, context.temp_allocator)
 		o := &req
-		put_u16(o, 847)
+		use_base_virtual_list()
+		put_op(o, 847)
 		put_u64(o, s.h)
 		put_usize(o, ix)
 		put_u16(o, u16(strategy))
@@ -18752,7 +20137,8 @@ virtual_list_scroll_handle :: proc(cx: ^Cx, loc := #caller_location) -> Virtual_
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
 	o := req
-	put_u16(o, 845)
+	use_base_virtual_list()
+	put_op(o, 845)
 	put_u16(o, 0) // how many builder ops follow (at most 255 are counted here)
 	return {state = {h = state_make(cx, req[:], loc)}, vt = &virtual_list_scroll_handle_vt}
 }

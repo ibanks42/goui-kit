@@ -21,12 +21,14 @@ Bubble_VT :: struct {
 }
 
 bubble :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bubble {
+	use_component_bubble()
 	e := Bubble{new_node(598, loc), &bubble_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 bubble_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bubble {
+	use_component_bubble()
 	e := Bubble{new_node(597, loc), &bubble_vt}
 	tokens(e.el, flags)
 	return e
@@ -78,12 +80,14 @@ Bubble_Content_VT :: struct {
 }
 
 bubble_content :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bubble_Content {
+	use_component_bubble()
 	e := Bubble_Content{new_node(600, loc), &bubble_content_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 bubble_content_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bubble_Content {
+	use_component_bubble()
 	e := Bubble_Content{new_node(599, loc), &bubble_content_vt}
 	tokens(e.el, flags)
 	return e
@@ -115,12 +119,14 @@ Bubble_Group_VT :: struct {
 }
 
 bubble_group :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bubble_Group {
+	use_component_bubble()
 	e := Bubble_Group{new_node(602, loc), &bubble_group_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 bubble_group_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bubble_Group {
+	use_component_bubble()
 	e := Bubble_Group{new_node(601, loc), &bubble_group_vt}
 	tokens(e.el, flags)
 	return e
@@ -155,12 +161,14 @@ Bubble_Reactions_VT :: struct {
 }
 
 bubble_reactions :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bubble_Reactions {
+	use_component_bubble()
 	e := Bubble_Reactions{new_node(604, loc), &bubble_reactions_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 bubble_reactions_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bubble_Reactions {
+	use_component_bubble()
 	e := Bubble_Reactions{new_node(603, loc), &bubble_reactions_vt}
 	tokens(e.el, flags)
 	return e

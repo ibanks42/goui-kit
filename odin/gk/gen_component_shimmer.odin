@@ -76,6 +76,7 @@ Shimmer_Text_VT :: struct {
 }
 
 shimmer_text :: proc(text: string, flags: ..Style_Flag, loc := #caller_location) -> Shimmer_Text {
+	use_component_shimmer()
 	e := Shimmer_Text{new_node(752, loc), &shimmer_text_vt}
 	o := node_args()
 	put_str(o, text)

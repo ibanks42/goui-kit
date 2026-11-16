@@ -11,6 +11,7 @@ func (e KbdEl) node() *node { return e.n }
 
 // Kbd is <gpui_kit::component::kbd::Kbd>::new.
 func Kbd(stroke Keystroke, st ...Style) KbdEl {
+	useComponentKbd()
 	n := newNode(684)
 	o := nodeArgs(n)
 	putKeystroke(o, stroke)

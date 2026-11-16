@@ -18,6 +18,7 @@ Cross_Line_VT :: struct {
 }
 
 cross_line :: proc(point: Gpui_Point, loc := #caller_location) -> Cross_Line {
+	use_component_plot()
 	e := Cross_Line{new_node(712, loc), &cross_line_vt}
 	o := node_args()
 	put_Gpui_Point(o, point)
@@ -77,6 +78,7 @@ Dot_VT :: struct {
 }
 
 dot :: proc(point: Gpui_Point, loc := #caller_location) -> Dot {
+	use_component_plot()
 	e := Dot{new_node(713, loc), &dot_vt}
 	o := node_args()
 	put_Gpui_Point(o, point)
@@ -213,6 +215,7 @@ Tooltip_VT :: struct {
 }
 
 tooltip :: proc(cursor: Gpui_Point, within: Gpui_Size, flags: ..Style_Flag, loc := #caller_location) -> Tooltip {
+	use_component_plot()
 	e := Tooltip{new_node(714, loc), &tooltip_vt}
 	o := node_args()
 	put_Gpui_Point(o, cursor)

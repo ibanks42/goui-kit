@@ -15,6 +15,7 @@ func (e ResizeHandleEl) node() *node { return e.n }
 
 // KitResizeHandle is gpui_kit::component::resize_handle.
 func KitResizeHandle(id ID, axis Axis) ResizeHandleEl {
+	useBaseResizable()
 	n := newNode(870)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -24,6 +25,7 @@ func KitResizeHandle(id ID, axis Axis) ResizeHandleEl {
 
 // ResizeHandle is gpui_kit::base::resize_handle.
 func ResizeHandle(id ID, axis Axis) ResizeHandleEl {
+	useBaseResizable()
 	n := newNode(869)
 	o := nodeArgs(n)
 	putID(o, id)

@@ -11,6 +11,7 @@ func (e ScrollableMaskEl) node() *node { return e.n }
 
 // ScrollableMask is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::new.
 func ScrollableMask(axis Axis, scrollHandle ScrollHandle) ScrollableMaskEl {
+	useBaseScrollableMask()
 	n := newNode(843)
 	o := nodeArgs(n)
 	o.u16(uint16(axis))
@@ -20,6 +21,7 @@ func ScrollableMask(axis Axis, scrollHandle ScrollHandle) ScrollableMaskEl {
 
 // ScrollableMaskVerticalWheel is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::vertical_wheel.
 func ScrollableMaskVerticalWheel(scrollHandle ScrollHandle) ScrollableMaskEl {
+	useBaseScrollableMask()
 	n := newNode(844)
 	o := nodeArgs(n)
 	putObj(o, scrollHandle.h)

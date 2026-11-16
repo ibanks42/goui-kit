@@ -19,6 +19,10 @@
 #                              @rpath/libgpuikit.dylib) | gpuikit.dll, gpuikit.dll.lib (MSVC import
 #                              library, for Odin), libgpuikit.dll.a and gpuikit.def (MinGW import
 #                              library, for Go's cgo; tools/win-implib.sh)
+#   lib/VARIANT/libgpuikit_static.a   the same library, static, which Go apps link (universal on
+#                              macOS; built for Rust's MinGW target on Windows); on Linux beside
+#                              libgpuikit_sys.so and on Windows beside libgpuikit_sys.a, which name
+#                              the system libraries it needs
 #   lib/VARIANT/ref-*          with GK_REFS=1: the Rust reference apps the gates compare against
 #   lib/licences/              THIRD_PARTY.md and texts/ for every crate linked in (tools/licences.py)
 #
@@ -95,6 +99,12 @@ for v in "$@"; do
   if [ "$v" = ship ]; then echo "$engine" > "$out/$v/ENGINE"; else echo gpui-fast > "$out/$v/ENGINE"; fi
   case $os in
     linux) cp $rd/libgpuikit.so "$out/$v/"
+      # The static library, for Go apps that opt into the component families they use (docs/GO.md
+      # section 8), and a linker script naming the system libraries it needs by their run-time
+      # names, so linking it needs no -dev packages (the same libraries the shared one loads).
+      cp $rd/libgpuikit.a "$out/$v/libgpuikit_static.a"
+      printf '%s\n' '/* GNU ld script: the system libraries libgpuikit_static.a needs (tools/build-lib.sh). */' \
+        'INPUT(AS_NEEDED(libxkbcommon.so.0 libxkbcommon-x11.so.0 libxcb.so.1 libfreetype.so.6))' > "$out/$v/libgpuikit_sys.so"
       if [ ${#refs[@]} -gt 0 ]; then
         for f in $rd/ref-*; do case $f in *.d) ;; *) cp "$f" "$out/$v/" ;; esac; done
       fi
@@ -117,6 +127,9 @@ for v in "$@"; do
       f=$out/$v/libgpuikit.dylib
       lipo -create -output "$f" "$sl"/*.dylib
       rm -rf "$sl"
+      # The static library, universal too, for Go apps (docs/GO.md section 8).
+      statics=(); for t in "${mac_targets[@]}"; do statics+=("target/$t/release/libgpuikit.a"); done
+      lipo -create -output "$out/$v/libgpuikit_static.a" "${statics[@]}"
       lipo -info "$f"
       got=$(lipo -archs "$f" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' '); need=$(printf '%s\n' "${archs[@]}" | sort | tr '\n' ' ')
       [ "$got" = "$need" ] || { echo "build-lib.sh: $f has the slices $got, not $need" >&2; exit 1; }
@@ -125,7 +138,29 @@ for v in "$@"; do
       done ;;
     windows)
       cp $rd/gpuikit.dll $rd/gpuikit.dll.lib "$out/$v/"
-      tools/win-implib.sh "$out/$v" ;;
+      tools/win-implib.sh "$out/$v"
+      # The static library in MSVC's format, which Odin links (lld-link drops what the app does not
+      # use), and the import library of the Windows API it links (windows-targets' MSVC one).
+      cp $rd/gpuikit.lib "$out/$v/gpuikit_static.lib"
+      msvcimp=$(find "${CARGO_HOME:-$HOME/.cargo}/registry/src" -path '*windows_x86_64_msvc-0.52*' -name windows.0.52.0.lib | sort | tail -1)
+      [ -n "$msvcimp" ] || { echo "build-lib.sh: no windows.0.52.0.lib under ${CARGO_HOME:-$HOME/.cargo}/registry/src" >&2; exit 1; }
+      cp "$msvcimp" "$out/$v/gpuikit_sys.lib"
+      # The static library for Go apps (docs/GO.md section 8). Go's cgo links with MinGW-w64, which
+      # cannot link MSVC's objects, so this one is built for Rust's MinGW target, by the toolchain
+      # hosted on MinGW (with the MSVC-hosted one, gpui's build script compiles its resources with
+      # MSVC's rc.exe, in a format MinGW's linker cannot read). Needs MinGW-w64's gcc, dlltool and
+      # windres on PATH. libgpuikit_sys.a is the import library of the Windows API it links
+      # (windows-targets' libwindows.0.52.0.a). Rust's MinGW target puts each object's code in one
+      # section, so no linker could drop a single function; -Zfunction-sections (an unstable option,
+      # hence RUSTC_BOOTSTRAP) gives each function its own, which an app's linker drops when nothing
+      # uses it (with lld: GNU ld keeps every function that has unwind data on Windows).
+      gnu="$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)-x86_64-pc-windows-gnu"
+      RUSTC_BOOTSTRAP=1 RUSTFLAGS="${RUSTFLAGS:-} -Zfunction-sections=yes" \
+        cargo "+$gnu" build --release --locked ${jobs[@]+"${jobs[@]}"} --target x86_64-pc-windows-gnu -p gk-capi ${feats[@]+"${feats[@]}"}
+      cp target/x86_64-pc-windows-gnu/release/libgpuikit.a "$out/$v/libgpuikit_static.a"
+      implib=$(find "${CARGO_HOME:-$HOME/.cargo}/registry/src" -path '*windows_x86_64_gnu-0.52*' -name libwindows.0.52.0.a | sort | tail -1)
+      [ -n "$implib" ] || { echo "build-lib.sh: no libwindows.0.52.0.a under ${CARGO_HOME:-$HOME/.cargo}/registry/src" >&2; exit 1; }
+      cp "$implib" "$out/$v/libgpuikit_sys.a" ;;
   esac
   echo "build-lib: $v built in $(( $(date +%s) - start )) s"; ls -l "$out/$v"
 done

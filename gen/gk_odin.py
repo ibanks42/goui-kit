@@ -852,27 +852,27 @@ class Odin:
         for it in reads:
             R = self.otype(it["ret"], True)
             lines = [f"\t{sname(it['name'])} = proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) -> (v: {R}) {{", req,
-                     "\t\to := &req", f"\t\tput_u16(o, {it['op']})", "\t\tput_u64(o, s.h)"]
+                     "\t\to := &req", f"\t\tput_op(o, {it['op']})", "\t\tput_u64(o, s.h)"]
             lines += ["\t\t" + x for x in self.body(it)]
             lines += [f"\t\tr := {get}(s.h, cx, req[:], loc)", "\t\trd_into(&r, &v)", "\t\treturn", "\t},"]
             self.item(["item", it["id"]], lines)
         for it in tries:
             R = self.otype(it["ret"], True)
             lines = [f"\ttry_{it['name']} = proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) -> (v: {R}, ok: bool) {{", req,
-                     "\t\to := &req", f"\t\tput_u16(o, {it['op']})", "\t\tput_u64(o, s.h)"]
+                     "\t\to := &req", f"\t\tput_op(o, {it['op']})", "\t\tput_u64(o, s.h)"]
             lines += ["\t\t" + x for x in self.body(it)]
             lines += ["\t\tr := state_try(s.h, cx, req[:], loc) or_return", "\t\trd_into(&r, &v)", "\t\treturn v, true", "\t},"]
             self.item(["item", it["id"]], lines)
         for it in calls:
             R = self.otype(it["ret"], True)
             lines = [f"\t{sname(it['name'])} = proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) -> (v: {R}) {{", req,
-                     "\t\to := &req", f"\t\tput_u16(o, {it['op']})", "\t\tput_u64(o, s.h)"]
+                     "\t\to := &req", f"\t\tput_op(o, {it['op']})", "\t\tput_u64(o, s.h)"]
             lines += ["\t\t" + x for x in self.body(it)]
             lines += ["\t\tr := state_call(s.h, cx, req[:], loc)", "\t\trd_into(&r, &v)", "\t\treturn", "\t},"]
             self.item(["item", it["id"]], lines)
         for it in writes:
             lines = [f"\t{sname(it['name'])} = proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) {{", req,
-                     "\t\to := &req", f"\t\tput_u16(o, {it['op']})", "\t\tput_u64(o, s.h)"]
+                     "\t\to := &req", f"\t\tput_op(o, {it['op']})", "\t\tput_u64(o, s.h)"]
             lines += ["\t\t" + x for x in self.body(it)] + ["\t\tstate_set(cx, req[:], loc)", "\t},"]
             self.item(["item", it["id"]], lines)
         for ev in st["events"]:
@@ -882,7 +882,7 @@ class Odin:
             self.item(["item", ev["id"]], [
                 f"\t{ev['odin']} = proc(s: {S}, cx: ^Cx, h: Handler, loc := #caller_location) -> Subscription {{",
                 f"\t\tslot, generation := keep_handler(cx, h, {m.shapes[ev['shape']]['num']}, loc)", req, "\t\to := &req",
-                f"\t\tput_u16(o, {ev['op']})", "\t\tput_u64(o, s.h)", "\t\tput_u32(o, slot)", "\t\tput_u32(o, generation)",
+                f"\t\tput_op(o, {ev['op']})", "\t\tput_u64(o, s.h)", "\t\tput_u32(o, slot)", "\t\tput_u32(o, generation)",
                 "\t\tr := state_get(s.h, cx, req[:], loc)", "\t\treturn {rd_u64(&r), slot}", "\t},"])
         self.add("}", "")
         B = S + "_Builder" if builders else S
@@ -896,14 +896,14 @@ class Odin:
             self.add(f"\tbuild: proc(b: {B}) -> {S},", "}", "", "@(private)", f"{low}_builder_vt := {B}_VT {{")
             for it in builders:
                 lines = [f"\t{oname(it['name'])} = proc({', '.join(self.params(it, ['b: ' + B]))}) -> {B} {{", "\t\to := b.req",
-                         f"\t\tput_u16(o, {it['op']})"] + ["\t\t" + x for x in self.body(it)]
+                         f"\t\tput_op(o, {it['op']})"] + ["\t\t" + x for x in self.body(it)]
                 lines += ["\t\to[b.count_at] += 1", "\t\treturn b", "\t},"]
                 self.item(["item", it["id"]], lines)
             self.add(f"\tbuild = proc(b: {B}) -> {S} {{", f"\t\treturn {{state = {{h = state_make(b.cx, b.req[:])}}, vt = &{low}_vt}}", "\t},", "}", "")
         for it in sorted([i for i in st["ctors"] if ok(i)], key=lambda i: i["odin"]):
             ps = ["cx: ^Cx"] + self.params(it) + ["loc := #caller_location"]
             lines = [f"{it['odin']} :: proc({', '.join(ps)}) -> {B} {{", "\treq := new(Tape, context.temp_allocator)",
-                     "\treq^ = make(Tape, 0, 64, context.temp_allocator)", "\to := req", f"\tput_u16(o, {it['op']})"]
+                     "\treq^ = make(Tape, 0, 64, context.temp_allocator)", "\to := req", f"\tput_op(o, {it['op']})"]
             lines += ["\t" + x for x in self.body(it)] + ["\tput_u16(o, 0) // how many builder ops follow (at most 255 are counted here)"]
             if builders:
                 lines += [f"\treturn {{vt = &{low}_builder_vt, cx = cx, req = req, count_at = len(req) - 2}}"]
@@ -918,7 +918,7 @@ class Odin:
         S = st["odin"]
         for it in sorted([i for i in st["globals"] + st["statics"] if i["status"] == "bridged"], key=lambda i: i["odin"]):
             ps = ["cx: ^Cx"] + self.params(it) + ["loc := #caller_location"]
-            head = ["\treq := make(Tape, 0, 32, context.temp_allocator)", "\to := &req", f"\tput_u16(o, {it['op']})"]
+            head = ["\treq := make(Tape, 0, 32, context.temp_allocator)", "\to := &req", f"\tput_op(o, {it['op']})"]
             head += ["\t" + x for x in self.body(it)]
             if it["kind"] == "obj-global":
                 lines = [f"{it['odin']} :: proc({', '.join(ps)}) -> {S} {{"] + head + [

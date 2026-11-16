@@ -20,6 +20,7 @@ Color_Picker_VT :: struct {
 }
 
 color_picker :: proc(state: Color_Picker_State, flags: ..Style_Flag, loc := #caller_location) -> Color_Picker {
+	use_component_color_picker()
 	e := Color_Picker{new_node(623, loc), &color_picker_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -80,6 +81,7 @@ Color_Select_VT :: struct {
 }
 
 color_select :: proc(state: Color_Picker_State, flags: ..Style_Flag, loc := #caller_location) -> Color_Select {
+	use_component_color_picker()
 	e := Color_Select{new_node(624, loc), &color_select_vt}
 	o := node_args()
 	put_u64(o, state.h)

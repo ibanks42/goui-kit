@@ -11,6 +11,7 @@ Cancel_VT :: struct {
 }
 
 cancel_default :: proc(loc := #caller_location) -> Cancel {
+	use_base_actions()
 	e := Cancel{new_value(430, loc), &cancel_vt}
 	return e
 }
@@ -29,6 +30,7 @@ Select_Down_VT :: struct {
 }
 
 select_down_default :: proc(loc := #caller_location) -> Select_Down {
+	use_base_actions()
 	e := Select_Down{new_value(431, loc), &select_down_vt}
 	return e
 }
@@ -47,6 +49,7 @@ Select_First_VT :: struct {
 }
 
 select_first_default :: proc(loc := #caller_location) -> Select_First {
+	use_base_actions()
 	e := Select_First{new_value(432, loc), &select_first_vt}
 	return e
 }
@@ -65,6 +68,7 @@ Select_Last_VT :: struct {
 }
 
 select_last_default :: proc(loc := #caller_location) -> Select_Last {
+	use_base_actions()
 	e := Select_Last{new_value(433, loc), &select_last_vt}
 	return e
 }
@@ -83,6 +87,7 @@ Select_Left_VT :: struct {
 }
 
 select_left_default :: proc(loc := #caller_location) -> Select_Left {
+	use_base_actions()
 	e := Select_Left{new_value(434, loc), &select_left_vt}
 	return e
 }
@@ -101,6 +106,7 @@ Select_Next_Column_VT :: struct {
 }
 
 select_next_column_default :: proc(loc := #caller_location) -> Select_Next_Column {
+	use_base_actions()
 	e := Select_Next_Column{new_value(435, loc), &select_next_column_vt}
 	return e
 }
@@ -119,6 +125,7 @@ Select_Page_Down_VT :: struct {
 }
 
 select_page_down_default :: proc(loc := #caller_location) -> Select_Page_Down {
+	use_base_actions()
 	e := Select_Page_Down{new_value(436, loc), &select_page_down_vt}
 	return e
 }
@@ -137,6 +144,7 @@ Select_Page_Up_VT :: struct {
 }
 
 select_page_up_default :: proc(loc := #caller_location) -> Select_Page_Up {
+	use_base_actions()
 	e := Select_Page_Up{new_value(437, loc), &select_page_up_vt}
 	return e
 }
@@ -155,6 +163,7 @@ Select_Prev_Column_VT :: struct {
 }
 
 select_prev_column_default :: proc(loc := #caller_location) -> Select_Prev_Column {
+	use_base_actions()
 	e := Select_Prev_Column{new_value(438, loc), &select_prev_column_vt}
 	return e
 }
@@ -173,6 +182,7 @@ Select_Right_VT :: struct {
 }
 
 select_right_default :: proc(loc := #caller_location) -> Select_Right {
+	use_base_actions()
 	e := Select_Right{new_value(439, loc), &select_right_vt}
 	return e
 }
@@ -191,6 +201,7 @@ Select_Up_VT :: struct {
 }
 
 select_up_default :: proc(loc := #caller_location) -> Select_Up {
+	use_base_actions()
 	e := Select_Up{new_value(440, loc), &select_up_vt}
 	return e
 }

@@ -11,6 +11,7 @@ func (e AlertEl) node() *node { return e.n }
 
 // Alert is <gpui_kit::component::alert::Alert>::new.
 func Alert(id ID, message TextInto, st ...Style) AlertEl {
+	useComponentAlert()
 	n := newNode(578)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -21,6 +22,7 @@ func Alert(id ID, message TextInto, st ...Style) AlertEl {
 
 // AlertError is <gpui_kit::component::alert::Alert>::error.
 func AlertError(id ID, message TextInto, st ...Style) AlertEl {
+	useComponentAlert()
 	n := newNode(576)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -31,6 +33,7 @@ func AlertError(id ID, message TextInto, st ...Style) AlertEl {
 
 // AlertInfo is <gpui_kit::component::alert::Alert>::info.
 func AlertInfo(id ID, message TextInto, st ...Style) AlertEl {
+	useComponentAlert()
 	n := newNode(577)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -41,6 +44,7 @@ func AlertInfo(id ID, message TextInto, st ...Style) AlertEl {
 
 // AlertSuccess is <gpui_kit::component::alert::Alert>::success.
 func AlertSuccess(id ID, message TextInto, st ...Style) AlertEl {
+	useComponentAlert()
 	n := newNode(579)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -51,6 +55,7 @@ func AlertSuccess(id ID, message TextInto, st ...Style) AlertEl {
 
 // AlertWarning is <gpui_kit::component::alert::Alert>::warning.
 func AlertWarning(id ID, message TextInto, st ...Style) AlertEl {
+	useComponentAlert()
 	n := newNode(580)
 	o := nodeArgs(n)
 	putID(o, id)

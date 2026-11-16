@@ -15,6 +15,7 @@ func (e TabEl) node() *node { return e.n }
 
 // Tab is <gpui_kit::component::tab::Tab>::new.
 func Tab(st ...Style) TabEl {
+	useComponentTab()
 	n := newNode(770)
 	tokens(n, st)
 	return TabEl{n}
@@ -22,6 +23,7 @@ func Tab(st ...Style) TabEl {
 
 // TabDefault is <gpui_kit::component::tab::Tab as Default>::default.
 func TabDefault(st ...Style) TabEl {
+	useComponentTab()
 	n := newNode(769)
 	tokens(n, st)
 	return TabEl{n}
@@ -530,6 +532,7 @@ func (e TabBarEl) node() *node { return e.n }
 
 // TabBar is <gpui_kit::component::tab::TabBar>::new.
 func TabBar(id ID, st ...Style) TabBarEl {
+	useComponentTab()
 	n := newNode(771)
 	o := nodeArgs(n)
 	putID(o, id)

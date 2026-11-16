@@ -15,6 +15,7 @@ func (e ActivateToken) valueNode() *node { return e.n }
 
 // NewActivateTokenDefault is <gpui_kit::base::input::ActivateToken as Default>::default.
 func NewActivateTokenDefault() ActivateToken {
+	useBaseInput()
 	n := newValue(459)
 	return ActivateToken{n}
 }
@@ -26,6 +27,7 @@ func (e AddCursorAbove) valueNode() *node { return e.n }
 
 // NewAddCursorAboveDefault is <gpui_kit::base::input::AddCursorAbove as Default>::default.
 func NewAddCursorAboveDefault() AddCursorAbove {
+	useBaseInput()
 	n := newValue(460)
 	return AddCursorAbove{n}
 }
@@ -37,6 +39,7 @@ func (e AddCursorBelow) valueNode() *node { return e.n }
 
 // NewAddCursorBelowDefault is <gpui_kit::base::input::AddCursorBelow as Default>::default.
 func NewAddCursorBelowDefault() AddCursorBelow {
+	useBaseInput()
 	n := newValue(461)
 	return AddCursorBelow{n}
 }
@@ -72,6 +75,7 @@ func (e Backspace) valueNode() *node { return e.n }
 
 // NewBackspaceDefault is <gpui_kit::base::input::Backspace as Default>::default.
 func NewBackspaceDefault() Backspace {
+	useBaseInput()
 	n := newValue(463)
 	return Backspace{n}
 }
@@ -97,6 +101,7 @@ func (e Copy) valueNode() *node { return e.n }
 
 // NewCopyDefault is <gpui_kit::base::input::Copy as Default>::default.
 func NewCopyDefault() Copy {
+	useBaseInput()
 	n := newValue(465)
 	return Copy{n}
 }
@@ -140,6 +145,7 @@ func (e Cut) valueNode() *node { return e.n }
 
 // NewCutDefault is <gpui_kit::base::input::Cut as Default>::default.
 func NewCutDefault() Cut {
+	useBaseInput()
 	n := newValue(469)
 	return Cut{n}
 }
@@ -151,6 +157,7 @@ func (e Delete) valueNode() *node { return e.n }
 
 // NewDeleteDefault is <gpui_kit::base::input::Delete as Default>::default.
 func NewDeleteDefault() Delete {
+	useBaseInput()
 	n := newValue(470)
 	return Delete{n}
 }
@@ -162,6 +169,7 @@ func (e DeleteToBeginningOfLine) valueNode() *node { return e.n }
 
 // NewDeleteToBeginningOfLineDefault is <gpui_kit::base::input::DeleteToBeginningOfLine as Default>::default.
 func NewDeleteToBeginningOfLineDefault() DeleteToBeginningOfLine {
+	useBaseInput()
 	n := newValue(471)
 	return DeleteToBeginningOfLine{n}
 }
@@ -173,6 +181,7 @@ func (e DeleteToEndOfLine) valueNode() *node { return e.n }
 
 // NewDeleteToEndOfLineDefault is <gpui_kit::base::input::DeleteToEndOfLine as Default>::default.
 func NewDeleteToEndOfLineDefault() DeleteToEndOfLine {
+	useBaseInput()
 	n := newValue(472)
 	return DeleteToEndOfLine{n}
 }
@@ -184,6 +193,7 @@ func (e DeleteToNextWordEnd) valueNode() *node { return e.n }
 
 // NewDeleteToNextWordEndDefault is <gpui_kit::base::input::DeleteToNextWordEnd as Default>::default.
 func NewDeleteToNextWordEndDefault() DeleteToNextWordEnd {
+	useBaseInput()
 	n := newValue(473)
 	return DeleteToNextWordEnd{n}
 }
@@ -195,6 +205,7 @@ func (e DeleteToPreviousWordStart) valueNode() *node { return e.n }
 
 // NewDeleteToPreviousWordStartDefault is <gpui_kit::base::input::DeleteToPreviousWordStart as Default>::default.
 func NewDeleteToPreviousWordStartDefault() DeleteToPreviousWordStart {
+	useBaseInput()
 	n := newValue(474)
 	return DeleteToPreviousWordStart{n}
 }
@@ -238,6 +249,7 @@ func (e Escape) valueNode() *node { return e.n }
 
 // NewEscapeDefault is <gpui_kit::base::input::Escape as Default>::default.
 func NewEscapeDefault() Escape {
+	useBaseInput()
 	n := newValue(478)
 	return Escape{n}
 }
@@ -249,6 +261,7 @@ func (e GoToDefinition) valueNode() *node { return e.n }
 
 // NewGoToDefinitionDefault is <gpui_kit::base::input::GoToDefinition as Default>::default.
 func NewGoToDefinitionDefault() GoToDefinition {
+	useBaseInput()
 	n := newValue(479)
 	return GoToDefinition{n}
 }
@@ -293,6 +306,7 @@ func (e Indent) valueNode() *node { return e.n }
 
 // NewIndentDefault is <gpui_kit::base::input::Indent as Default>::default.
 func NewIndentDefault() Indent {
+	useBaseInput()
 	n := newValue(482)
 	return Indent{n}
 }
@@ -304,6 +318,7 @@ func (e IndentInline) valueNode() *node { return e.n }
 
 // NewIndentInlineDefault is <gpui_kit::base::input::IndentInline as Default>::default.
 func NewIndentInlineDefault() IndentInline {
+	useBaseInput()
 	n := newValue(483)
 	return IndentInline{n}
 }
@@ -419,6 +434,7 @@ func (e BaseMoveDown) valueNode() *node { return e.n }
 
 // NewBaseMoveDownDefault is <gpui_kit::base::input::MoveDown as Default>::default.
 func NewBaseMoveDownDefault() BaseMoveDown {
+	useBaseInput()
 	n := newValue(489)
 	return BaseMoveDown{n}
 }
@@ -430,6 +446,7 @@ func (e MoveEnd) valueNode() *node { return e.n }
 
 // NewMoveEndDefault is <gpui_kit::base::input::MoveEnd as Default>::default.
 func NewMoveEndDefault() MoveEnd {
+	useBaseInput()
 	n := newValue(490)
 	return MoveEnd{n}
 }
@@ -441,6 +458,7 @@ func (e MoveHome) valueNode() *node { return e.n }
 
 // NewMoveHomeDefault is <gpui_kit::base::input::MoveHome as Default>::default.
 func NewMoveHomeDefault() MoveHome {
+	useBaseInput()
 	n := newValue(491)
 	return MoveHome{n}
 }
@@ -452,6 +470,7 @@ func (e BaseMoveLeft) valueNode() *node { return e.n }
 
 // NewBaseMoveLeftDefault is <gpui_kit::base::input::MoveLeft as Default>::default.
 func NewBaseMoveLeftDefault() BaseMoveLeft {
+	useBaseInput()
 	n := newValue(492)
 	return BaseMoveLeft{n}
 }
@@ -463,6 +482,7 @@ func (e MovePageDown) valueNode() *node { return e.n }
 
 // NewMovePageDownDefault is <gpui_kit::base::input::MovePageDown as Default>::default.
 func NewMovePageDownDefault() MovePageDown {
+	useBaseInput()
 	n := newValue(493)
 	return MovePageDown{n}
 }
@@ -474,6 +494,7 @@ func (e MovePageUp) valueNode() *node { return e.n }
 
 // NewMovePageUpDefault is <gpui_kit::base::input::MovePageUp as Default>::default.
 func NewMovePageUpDefault() MovePageUp {
+	useBaseInput()
 	n := newValue(494)
 	return MovePageUp{n}
 }
@@ -485,6 +506,7 @@ func (e BaseMoveRight) valueNode() *node { return e.n }
 
 // NewBaseMoveRightDefault is <gpui_kit::base::input::MoveRight as Default>::default.
 func NewBaseMoveRightDefault() BaseMoveRight {
+	useBaseInput()
 	n := newValue(495)
 	return BaseMoveRight{n}
 }
@@ -496,6 +518,7 @@ func (e MoveToEnd) valueNode() *node { return e.n }
 
 // NewMoveToEndDefault is <gpui_kit::base::input::MoveToEnd as Default>::default.
 func NewMoveToEndDefault() MoveToEnd {
+	useBaseInput()
 	n := newValue(496)
 	return MoveToEnd{n}
 }
@@ -507,6 +530,7 @@ func (e MoveToEndOfLine) valueNode() *node { return e.n }
 
 // NewMoveToEndOfLineDefault is <gpui_kit::base::input::MoveToEndOfLine as Default>::default.
 func NewMoveToEndOfLineDefault() MoveToEndOfLine {
+	useBaseInput()
 	n := newValue(497)
 	return MoveToEndOfLine{n}
 }
@@ -518,6 +542,7 @@ func (e MoveToNextWord) valueNode() *node { return e.n }
 
 // NewMoveToNextWordDefault is <gpui_kit::base::input::MoveToNextWord as Default>::default.
 func NewMoveToNextWordDefault() MoveToNextWord {
+	useBaseInput()
 	n := newValue(498)
 	return MoveToNextWord{n}
 }
@@ -529,6 +554,7 @@ func (e MoveToPreviousWord) valueNode() *node { return e.n }
 
 // NewMoveToPreviousWordDefault is <gpui_kit::base::input::MoveToPreviousWord as Default>::default.
 func NewMoveToPreviousWordDefault() MoveToPreviousWord {
+	useBaseInput()
 	n := newValue(499)
 	return MoveToPreviousWord{n}
 }
@@ -540,6 +566,7 @@ func (e MoveToStart) valueNode() *node { return e.n }
 
 // NewMoveToStartDefault is <gpui_kit::base::input::MoveToStart as Default>::default.
 func NewMoveToStartDefault() MoveToStart {
+	useBaseInput()
 	n := newValue(500)
 	return MoveToStart{n}
 }
@@ -551,6 +578,7 @@ func (e MoveToStartOfLine) valueNode() *node { return e.n }
 
 // NewMoveToStartOfLineDefault is <gpui_kit::base::input::MoveToStartOfLine as Default>::default.
 func NewMoveToStartOfLineDefault() MoveToStartOfLine {
+	useBaseInput()
 	n := newValue(501)
 	return MoveToStartOfLine{n}
 }
@@ -562,6 +590,7 @@ func (e BaseMoveUp) valueNode() *node { return e.n }
 
 // NewBaseMoveUpDefault is <gpui_kit::base::input::MoveUp as Default>::default.
 func NewBaseMoveUpDefault() BaseMoveUp {
+	useBaseInput()
 	n := newValue(502)
 	return BaseMoveUp{n}
 }
@@ -573,6 +602,7 @@ func (e Outdent) valueNode() *node { return e.n }
 
 // NewOutdentDefault is <gpui_kit::base::input::Outdent as Default>::default.
 func NewOutdentDefault() Outdent {
+	useBaseInput()
 	n := newValue(505)
 	return Outdent{n}
 }
@@ -584,6 +614,7 @@ func (e OutdentInline) valueNode() *node { return e.n }
 
 // NewOutdentInlineDefault is <gpui_kit::base::input::OutdentInline as Default>::default.
 func NewOutdentInlineDefault() OutdentInline {
+	useBaseInput()
 	n := newValue(506)
 	return OutdentInline{n}
 }
@@ -628,6 +659,7 @@ func (e Paste) valueNode() *node { return e.n }
 
 // NewPasteDefault is <gpui_kit::base::input::Paste as Default>::default.
 func NewPasteDefault() Paste {
+	useBaseInput()
 	n := newValue(509)
 	return Paste{n}
 }
@@ -666,6 +698,7 @@ func (e Redo) valueNode() *node { return e.n }
 
 // NewRedoDefault is <gpui_kit::base::input::Redo as Default>::default.
 func NewRedoDefault() Redo {
+	useBaseInput()
 	n := newValue(511)
 	return Redo{n}
 }
@@ -677,6 +710,7 @@ func (e Replace) valueNode() *node { return e.n }
 
 // NewReplaceDefault is <gpui_kit::base::input::Replace as Default>::default.
 func NewReplaceDefault() Replace {
+	useBaseInput()
 	n := newValue(512)
 	return Replace{n}
 }
@@ -688,6 +722,7 @@ func (e Search) valueNode() *node { return e.n }
 
 // NewSearchDefault is <gpui_kit::base::input::Search as Default>::default.
 func NewSearchDefault() Search {
+	useBaseInput()
 	n := newValue(513)
 	return Search{n}
 }
@@ -699,6 +734,7 @@ func (e SelectAll) valueNode() *node { return e.n }
 
 // NewSelectAllDefault is <gpui_kit::base::input::SelectAll as Default>::default.
 func NewSelectAllDefault() SelectAll {
+	useBaseInput()
 	n := newValue(514)
 	return SelectAll{n}
 }
@@ -710,6 +746,7 @@ func (e SelectToEnd) valueNode() *node { return e.n }
 
 // NewSelectToEndDefault is <gpui_kit::base::input::SelectToEnd as Default>::default.
 func NewSelectToEndDefault() SelectToEnd {
+	useBaseInput()
 	n := newValue(515)
 	return SelectToEnd{n}
 }
@@ -721,6 +758,7 @@ func (e SelectToEndOfLine) valueNode() *node { return e.n }
 
 // NewSelectToEndOfLineDefault is <gpui_kit::base::input::SelectToEndOfLine as Default>::default.
 func NewSelectToEndOfLineDefault() SelectToEndOfLine {
+	useBaseInput()
 	n := newValue(516)
 	return SelectToEndOfLine{n}
 }
@@ -732,6 +770,7 @@ func (e SelectToNextWordEnd) valueNode() *node { return e.n }
 
 // NewSelectToNextWordEndDefault is <gpui_kit::base::input::SelectToNextWordEnd as Default>::default.
 func NewSelectToNextWordEndDefault() SelectToNextWordEnd {
+	useBaseInput()
 	n := newValue(517)
 	return SelectToNextWordEnd{n}
 }
@@ -743,6 +782,7 @@ func (e SelectToPreviousWordStart) valueNode() *node { return e.n }
 
 // NewSelectToPreviousWordStartDefault is <gpui_kit::base::input::SelectToPreviousWordStart as Default>::default.
 func NewSelectToPreviousWordStartDefault() SelectToPreviousWordStart {
+	useBaseInput()
 	n := newValue(518)
 	return SelectToPreviousWordStart{n}
 }
@@ -754,6 +794,7 @@ func (e SelectToStart) valueNode() *node { return e.n }
 
 // NewSelectToStartDefault is <gpui_kit::base::input::SelectToStart as Default>::default.
 func NewSelectToStartDefault() SelectToStart {
+	useBaseInput()
 	n := newValue(519)
 	return SelectToStart{n}
 }
@@ -765,6 +806,7 @@ func (e SelectToStartOfLine) valueNode() *node { return e.n }
 
 // NewSelectToStartOfLineDefault is <gpui_kit::base::input::SelectToStartOfLine as Default>::default.
 func NewSelectToStartOfLineDefault() SelectToStartOfLine {
+	useBaseInput()
 	n := newValue(520)
 	return SelectToStartOfLine{n}
 }
@@ -776,6 +818,7 @@ func (e ShowCharacterPalette) valueNode() *node { return e.n }
 
 // NewShowCharacterPaletteDefault is <gpui_kit::base::input::ShowCharacterPalette as Default>::default.
 func NewShowCharacterPaletteDefault() ShowCharacterPalette {
+	useBaseInput()
 	n := newValue(521)
 	return ShowCharacterPalette{n}
 }
@@ -787,6 +830,7 @@ func (e ShowCompletions) valueNode() *node { return e.n }
 
 // NewShowCompletionsDefault is <gpui_kit::base::input::ShowCompletions as Default>::default.
 func NewShowCompletionsDefault() ShowCompletions {
+	useBaseInput()
 	n := newValue(522)
 	return ShowCompletions{n}
 }
@@ -798,6 +842,7 @@ func (e ToggleCodeActions) valueNode() *node { return e.n }
 
 // NewToggleCodeActionsDefault is <gpui_kit::base::input::ToggleCodeActions as Default>::default.
 func NewToggleCodeActionsDefault() ToggleCodeActions {
+	useBaseInput()
 	n := newValue(523)
 	return ToggleCodeActions{n}
 }
@@ -809,6 +854,7 @@ func (e Undo) valueNode() *node { return e.n }
 
 // NewUndoDefault is <gpui_kit::base::input::Undo as Default>::default.
 func NewUndoDefault() Undo {
+	useBaseInput()
 	n := newValue(524)
 	return Undo{n}
 }

@@ -11,6 +11,7 @@ func (e AreaChartEl) node() *node { return e.n }
 
 // AreaChart is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::new.
 func AreaChart(data Data) AreaChartEl {
+	useComponentChart()
 	n := newNode(816)
 	o := nodeArgs(n)
 	putData(o, data)
@@ -233,6 +234,7 @@ func (e BarChartEl) node() *node { return e.n }
 
 // BarChart is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::new.
 func BarChart(data Data) BarChartEl {
+	useComponentChart()
 	n := newNode(817)
 	o := nodeArgs(n)
 	putData(o, data)
@@ -456,6 +458,7 @@ func (e CandlestickChartEl) node() *node { return e.n }
 
 // CandlestickChart is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::new.
 func CandlestickChart(data Data) CandlestickChartEl {
+	useComponentChart()
 	n := newNode(818)
 	o := nodeArgs(n)
 	putData(o, data)
@@ -609,6 +612,7 @@ func (e LineChartEl) node() *node { return e.n }
 
 // LineChart is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::new.
 func LineChart(data Data) LineChartEl {
+	useComponentChart()
 	n := newNode(819)
 	o := nodeArgs(n)
 	putData(o, data)
@@ -830,6 +834,7 @@ func (e PieChartEl) node() *node { return e.n }
 
 // PieChart is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::new.
 func PieChart(data Data) PieChartEl {
+	useComponentChart()
 	n := newNode(820)
 	o := nodeArgs(n)
 	putData(o, data)
@@ -976,6 +981,7 @@ func (e RadarChartEl) node() *node { return e.n }
 
 // RadarChart is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::new.
 func RadarChart(data Data) RadarChartEl {
+	useComponentChart()
 	n := newNode(821)
 	o := nodeArgs(n)
 	putData(o, data)
@@ -1128,6 +1134,7 @@ func (e SankeyChartEl) node() *node { return e.n }
 
 // SankeyChart is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::new.
 func SankeyChart(nodes Data, links []SankeyLink) SankeyChartEl {
+	useComponentChart()
 	n := newNode(822)
 	o := nodeArgs(n)
 	putData(o, nodes)

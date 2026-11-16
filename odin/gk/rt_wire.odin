@@ -39,6 +39,12 @@ put_bool :: proc(b: ^Tape, v: bool) {
 put_u16 :: proc(b: ^Tape, v: u16) {
 	intrinsics.unaligned_store(cast(^u16)grow(b, 2), v)
 }
+// put_op writes a generated call's op: put_u16 under a name of its own, so gen/gk_fam.py finds
+// the call ops of the generated procedures and links each one's component family.
+@(private)
+put_op :: #force_inline proc(b: ^Tape, op: u16) {
+	put_u16(b, op)
+}
 @(private)
 put_u32 :: proc(b: ^Tape, v: u32) {
 	intrinsics.unaligned_store(cast(^u32)grow(b, 4), v)

@@ -23,6 +23,7 @@ func NewFrontmatterPluginDefault() FrontmatterPlugin {
 
 // Setup is <gpui_kit::component::text::FrontmatterPlugin as gpui_kit::component::text::TextViewPlugin>::setup: it makes a TextViewEl of the element.
 func (e FrontmatterPlugin) Setup(textView TextViewEl) TextViewEl {
+	useBaseText()
 	src := takeNode(e.n, true)
 	n := newNode(410)
 	o := nodeArgs(n)
@@ -38,6 +39,7 @@ func (e TextViewEl) node() *node { return e.n }
 
 // HTML is gpui_kit::component::text::html.
 func HTML(source string, st ...Style) TextViewEl {
+	useBaseText()
 	n := newNode(796)
 	o := nodeArgs(n)
 	o.str(source)
@@ -47,6 +49,7 @@ func HTML(source string, st ...Style) TextViewEl {
 
 // Markdown is gpui_kit::component::text::markdown.
 func Markdown(source string, st ...Style) TextViewEl {
+	useBaseText()
 	n := newNode(797)
 	o := nodeArgs(n)
 	o.str(source)
@@ -56,6 +59,7 @@ func Markdown(source string, st ...Style) TextViewEl {
 
 // TextView is <gpui_kit::component::text::TextView>::new.
 func TextView(state TextViewState, st ...Style) TextViewEl {
+	useBaseText()
 	n := newNode(795)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -65,6 +69,7 @@ func TextView(state TextViewState, st ...Style) TextViewEl {
 
 // TextViewHTML is <gpui_kit::component::text::TextView>::html.
 func TextViewHTML(id ID, text string, st ...Style) TextViewEl {
+	useBaseText()
 	n := newNode(793)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -75,6 +80,7 @@ func TextViewHTML(id ID, text string, st ...Style) TextViewEl {
 
 // TextViewMarkdown is <gpui_kit::component::text::TextView>::markdown.
 func TextViewMarkdown(id ID, text string, st ...Style) TextViewEl {
+	useBaseText()
 	n := newNode(794)
 	o := nodeArgs(n)
 	putID(o, id)

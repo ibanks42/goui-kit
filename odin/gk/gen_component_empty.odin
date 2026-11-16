@@ -19,12 +19,14 @@ Empty_VT :: struct {
 }
 
 empty :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty {
+	use_component_empty()
 	e := Empty{new_node(653, loc), &empty_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 empty_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty {
+	use_component_empty()
 	e := Empty{new_node(652, loc), &empty_vt}
 	tokens(e.el, flags)
 	return e
@@ -66,12 +68,14 @@ Empty_Content_VT :: struct {
 }
 
 empty_content :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Content {
+	use_component_empty()
 	e := Empty_Content{new_node(655, loc), &empty_content_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 empty_content_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Content {
+	use_component_empty()
 	e := Empty_Content{new_node(654, loc), &empty_content_vt}
 	tokens(e.el, flags)
 	return e
@@ -103,12 +107,14 @@ Empty_Description_VT :: struct {
 }
 
 empty_description :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Description {
+	use_component_empty()
 	e := Empty_Description{new_node(657, loc), &empty_description_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 empty_description_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Description {
+	use_component_empty()
 	e := Empty_Description{new_node(656, loc), &empty_description_vt}
 	tokens(e.el, flags)
 	return e
@@ -140,12 +146,14 @@ Empty_Header_VT :: struct {
 }
 
 empty_header :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Header {
+	use_component_empty()
 	e := Empty_Header{new_node(659, loc), &empty_header_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 empty_header_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Header {
+	use_component_empty()
 	e := Empty_Header{new_node(658, loc), &empty_header_vt}
 	tokens(e.el, flags)
 	return e
@@ -190,12 +198,14 @@ Empty_Media_VT :: struct {
 }
 
 empty_media :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Media {
+	use_component_empty()
 	e := Empty_Media{new_node(661, loc), &empty_media_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 empty_media_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Media {
+	use_component_empty()
 	e := Empty_Media{new_node(660, loc), &empty_media_vt}
 	tokens(e.el, flags)
 	return e
@@ -232,12 +242,14 @@ Empty_Title_VT :: struct {
 }
 
 empty_title :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Title {
+	use_component_empty()
 	e := Empty_Title{new_node(663, loc), &empty_title_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 empty_title_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Empty_Title {
+	use_component_empty()
 	e := Empty_Title{new_node(662, loc), &empty_title_vt}
 	tokens(e.el, flags)
 	return e

@@ -40,12 +40,14 @@ func (e Grid) valueNode() *node { return e.n }
 
 // NewGrid is <gpui_kit::base::plot::Grid>::new.
 func NewGrid() Grid {
+	useBasePlot()
 	n := newValue(528)
 	return Grid{n}
 }
 
 // NewGridDefault is <gpui_kit::base::plot::Grid as Default>::default.
 func NewGridDefault() Grid {
+	useBasePlot()
 	n := newValue(527)
 	return Grid{n}
 }
@@ -94,6 +96,7 @@ func (e PlotAppearScopeEl) node() *node { return e.n }
 
 // PlotAppearScope is <gpui_kit::base::plot::PlotAppearScope>::new.
 func PlotAppearScope(id ID, child Element) PlotAppearScopeEl {
+	useBasePlot()
 	n := newNode(529)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -108,12 +111,14 @@ func (e PlotAxis) valueNode() *node { return e.n }
 
 // NewPlotAxis is <gpui_kit::base::plot::PlotAxis>::new.
 func NewPlotAxis() PlotAxis {
+	useBasePlot()
 	n := newValue(531)
 	return PlotAxis{n}
 }
 
 // NewPlotAxisDefault is <gpui_kit::base::plot::PlotAxis as Default>::default.
 func NewPlotAxisDefault() PlotAxis {
+	useBasePlot()
 	n := newValue(530)
 	return PlotAxis{n}
 }
@@ -230,12 +235,14 @@ func (e AreaShape) valueNode() *node { return e.n }
 
 // NewAreaShape is <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::new.
 func NewAreaShape() AreaShape {
+	useBasePlot()
 	n := newValue(809)
 	return AreaShape{n}
 }
 
 // NewAreaShapeDefault is <gpui_kit::base::plot::shape::Area<crate::data::Datum> as Default>::default.
 func NewAreaShapeDefault() AreaShape {
+	useBasePlot()
 	n := newValue(808)
 	return AreaShape{n}
 }
@@ -296,12 +303,14 @@ func (e BarShape) valueNode() *node { return e.n }
 
 // NewBarShape is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::new.
 func NewBarShape() BarShape {
+	useBasePlot()
 	n := newValue(811)
 	return BarShape{n}
 }
 
 // NewBarShapeDefault is <gpui_kit::base::plot::shape::Bar<crate::data::Datum> as Default>::default.
 func NewBarShapeDefault() BarShape {
+	useBasePlot()
 	n := newValue(810)
 	return BarShape{n}
 }
@@ -369,12 +378,14 @@ func (e LineShape) valueNode() *node { return e.n }
 
 // NewLineShape is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::new.
 func NewLineShape() LineShape {
+	useBasePlot()
 	n := newValue(813)
 	return LineShape{n}
 }
 
 // NewLineShapeDefault is <gpui_kit::base::plot::shape::Line<crate::data::Datum> as Default>::default.
 func NewLineShapeDefault() LineShape {
+	useBasePlot()
 	n := newValue(812)
 	return LineShape{n}
 }
@@ -455,12 +466,14 @@ func (e RadialLineShape) valueNode() *node { return e.n }
 
 // NewRadialLineShape is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::new.
 func NewRadialLineShape() RadialLineShape {
+	useBasePlot()
 	n := newValue(815)
 	return RadialLineShape{n}
 }
 
 // NewRadialLineShapeDefault is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum> as Default>::default.
 func NewRadialLineShapeDefault() RadialLineShape {
+	useBasePlot()
 	n := newValue(814)
 	return RadialLineShape{n}
 }

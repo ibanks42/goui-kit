@@ -11,6 +11,7 @@ func (e SpeechButtonEl) node() *node { return e.n }
 
 // SpeechButton is <gpui_kit::component::speech::SpeechButton>::new.
 func SpeechButton(state SpeechState, st ...Style) SpeechButtonEl {
+	useComponentSpeech()
 	n := newNode(761)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -250,6 +251,7 @@ func (e SpeechIndicatorEl) node() *node { return e.n }
 
 // SpeechIndicator is <gpui_kit::component::speech::SpeechIndicator>::new.
 func SpeechIndicator(state SpeechState) SpeechIndicatorEl {
+	useComponentSpeech()
 	n := newNode(762)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -271,6 +273,7 @@ func (e SpeechWaveformEl) node() *node { return e.n }
 
 // SpeechWaveform is <gpui_kit::component::speech::SpeechWaveform>::new.
 func SpeechWaveform(state SpeechState, st ...Style) SpeechWaveformEl {
+	useComponentSpeech()
 	n := newNode(763)
 	o := nodeArgs(n)
 	o.u64(state.h)

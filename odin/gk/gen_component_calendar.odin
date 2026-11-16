@@ -17,6 +17,7 @@ Calendar_VT :: struct {
 }
 
 calendar :: proc(state: Calendar_State, flags: ..Style_Flag, loc := #caller_location) -> Calendar {
+	use_component_time()
 	e := Calendar{new_node(611, loc), &calendar_vt}
 	o := node_args()
 	put_u64(o, state.h)

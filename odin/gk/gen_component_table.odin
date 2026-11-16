@@ -140,6 +140,7 @@ Data_Table_VT :: struct {
 }
 
 data_table :: proc(state: Table_State, loc := #caller_location) -> Data_Table {
+	use_component_table()
 	e := Data_Table{new_node(805, loc), &data_table_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -206,6 +207,7 @@ Table_VT :: struct {
 }
 
 table :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table {
+	use_component_table()
 	e := Table{new_node(774, loc), &table_vt}
 	tokens(e.el, flags)
 	return e
@@ -297,6 +299,7 @@ Table_Body_VT :: struct {
 }
 
 table_body :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Body {
+	use_component_table()
 	e := Table_Body{new_node(775, loc), &table_body_vt}
 	tokens(e.el, flags)
 	return e
@@ -384,6 +387,7 @@ Table_Caption_VT :: struct {
 }
 
 table_caption :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Caption {
+	use_component_table()
 	e := Table_Caption{new_node(776, loc), &table_caption_vt}
 	tokens(e.el, flags)
 	return e
@@ -502,6 +506,7 @@ Table_Cell_VT :: struct {
 }
 
 table_cell :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Cell {
+	use_component_table()
 	e := Table_Cell{new_node(777, loc), &table_cell_vt}
 	tokens(e.el, flags)
 	return e
@@ -629,6 +634,7 @@ Table_Footer_VT :: struct {
 }
 
 table_footer :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Footer {
+	use_component_table()
 	e := Table_Footer{new_node(778, loc), &table_footer_vt}
 	tokens(e.el, flags)
 	return e
@@ -799,6 +805,7 @@ Table_Head_VT :: struct {
 }
 
 table_head :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Head {
+	use_component_table()
 	e := Table_Head{new_node(779, loc), &table_head_vt}
 	tokens(e.el, flags)
 	return e
@@ -926,6 +933,7 @@ Table_Header_VT :: struct {
 }
 
 table_header :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Header {
+	use_component_table()
 	e := Table_Header{new_node(780, loc), &table_header_vt}
 	tokens(e.el, flags)
 	return e
@@ -1012,6 +1020,7 @@ Table_Row_VT :: struct {
 }
 
 table_row :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Row {
+	use_component_table()
 	e := Table_Row{new_node(781, loc), &table_row_vt}
 	tokens(e.el, flags)
 	return e

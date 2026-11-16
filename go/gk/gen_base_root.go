@@ -15,6 +15,7 @@ func (e BaseAccordionEl) node() *node { return e.n }
 
 // BaseAccordion is <gpui_kit::base::Accordion>::new.
 func BaseAccordion(id ID, st ...Style) BaseAccordionEl {
+	useBaseAccordion()
 	n := newNode(263)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -592,6 +593,7 @@ func (e AccordionHeaderEl) node() *node { return e.n }
 
 // AccordionHeader is <gpui_kit::base::AccordionHeader>::new.
 func AccordionHeader(trigger AccordionTriggerEl, st ...Style) AccordionHeaderEl {
+	useBaseAccordion()
 	n := newNode(264)
 	o := nodeArgs(n)
 	o.u32(takeNode(trigger.n, false))
@@ -913,6 +915,7 @@ func (e BaseAccordionItemEl) node() *node { return e.n }
 
 // BaseAccordionItem is <gpui_kit::base::AccordionItem>::new.
 func BaseAccordionItem(st ...Style) BaseAccordionItemEl {
+	useBaseAccordion()
 	n := newNode(265)
 	tokens(n, st)
 	return BaseAccordionItemEl{n}
@@ -1282,6 +1285,7 @@ func (e AccordionPanelEl) node() *node { return e.n }
 
 // AccordionPanel is <gpui_kit::base::AccordionPanel>::new.
 func AccordionPanel(st ...Style) AccordionPanelEl {
+	useBaseAccordion()
 	n := newNode(266)
 	tokens(n, st)
 	return AccordionPanelEl{n}
@@ -1593,6 +1597,7 @@ func (e AccordionTriggerEl) node() *node { return e.n }
 
 // AccordionTrigger is <gpui_kit::base::AccordionTrigger>::new.
 func AccordionTrigger(id ID, st ...Style) AccordionTriggerEl {
+	useBaseAccordion()
 	n := newNode(267)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -2260,6 +2265,7 @@ func (e BaseAlertDialogEl) node() *node { return e.n }
 
 // BaseAlertDialog is <gpui_kit::base::AlertDialog>::new.
 func BaseAlertDialog(st ...Style) BaseAlertDialogEl {
+	useBaseAlertDialog()
 	n := newNode(268)
 	tokens(n, st)
 	return BaseAlertDialogEl{n}
@@ -2635,6 +2641,7 @@ func (e AlertDialogActionEl) node() *node { return e.n }
 
 // AlertDialogAction is <gpui_kit::base::AlertDialogAction>::new.
 func AlertDialogAction(st ...Style) AlertDialogActionEl {
+	useBaseAlertDialog()
 	n := newNode(270)
 	tokens(n, st)
 	return AlertDialogActionEl{n}
@@ -2642,6 +2649,7 @@ func AlertDialogAction(st ...Style) AlertDialogActionEl {
 
 // AlertDialogActionDefault is <gpui_kit::base::AlertDialogAction as Default>::default.
 func AlertDialogActionDefault(st ...Style) AlertDialogActionEl {
+	useBaseAlertDialog()
 	n := newNode(269)
 	tokens(n, st)
 	return AlertDialogActionEl{n}
@@ -2983,6 +2991,7 @@ func (e AlertDialogBackdropEl) node() *node { return e.n }
 
 // AlertDialogBackdrop is <gpui_kit::base::AlertDialogBackdrop>::new.
 func AlertDialogBackdrop(st ...Style) AlertDialogBackdropEl {
+	useBaseAlertDialog()
 	n := newNode(272)
 	tokens(n, st)
 	return AlertDialogBackdropEl{n}
@@ -2990,6 +2999,7 @@ func AlertDialogBackdrop(st ...Style) AlertDialogBackdropEl {
 
 // AlertDialogBackdropDefault is <gpui_kit::base::AlertDialogBackdrop as Default>::default.
 func AlertDialogBackdropDefault(st ...Style) AlertDialogBackdropEl {
+	useBaseAlertDialog()
 	n := newNode(271)
 	tokens(n, st)
 	return AlertDialogBackdropEl{n}
@@ -3400,6 +3410,7 @@ func (e AlertDialogCancelEl) node() *node { return e.n }
 
 // AlertDialogCancel is <gpui_kit::base::AlertDialogCancel>::new.
 func AlertDialogCancel(st ...Style) AlertDialogCancelEl {
+	useBaseAlertDialog()
 	n := newNode(274)
 	tokens(n, st)
 	return AlertDialogCancelEl{n}
@@ -3407,6 +3418,7 @@ func AlertDialogCancel(st ...Style) AlertDialogCancelEl {
 
 // AlertDialogCancelDefault is <gpui_kit::base::AlertDialogCancel as Default>::default.
 func AlertDialogCancelDefault(st ...Style) AlertDialogCancelEl {
+	useBaseAlertDialog()
 	n := newNode(273)
 	tokens(n, st)
 	return AlertDialogCancelEl{n}
@@ -3748,6 +3760,7 @@ func (e AlertDialogCloseEl) node() *node { return e.n }
 
 // AlertDialogClose is <gpui_kit::base::AlertDialogClose>::new.
 func AlertDialogClose(st ...Style) AlertDialogCloseEl {
+	useBaseAlertDialog()
 	n := newNode(276)
 	tokens(n, st)
 	return AlertDialogCloseEl{n}
@@ -3755,6 +3768,7 @@ func AlertDialogClose(st ...Style) AlertDialogCloseEl {
 
 // AlertDialogCloseDefault is <gpui_kit::base::AlertDialogClose as Default>::default.
 func AlertDialogCloseDefault(st ...Style) AlertDialogCloseEl {
+	useBaseAlertDialog()
 	n := newNode(275)
 	tokens(n, st)
 	return AlertDialogCloseEl{n}
@@ -4087,6 +4101,7 @@ func (e AlertDialogDescriptionEl) node() *node { return e.n }
 
 // AlertDialogDescription is <gpui_kit::base::AlertDialogDescription>::new.
 func AlertDialogDescription(st ...Style) AlertDialogDescriptionEl {
+	useBaseAlertDialog()
 	n := newNode(278)
 	tokens(n, st)
 	return AlertDialogDescriptionEl{n}
@@ -4094,6 +4109,7 @@ func AlertDialogDescription(st ...Style) AlertDialogDescriptionEl {
 
 // AlertDialogDescriptionDefault is <gpui_kit::base::AlertDialogDescription as Default>::default.
 func AlertDialogDescriptionDefault(st ...Style) AlertDialogDescriptionEl {
+	useBaseAlertDialog()
 	n := newNode(277)
 	tokens(n, st)
 	return AlertDialogDescriptionEl{n}
@@ -4534,6 +4550,7 @@ func (e AlertDialogPopupEl) node() *node { return e.n }
 
 // AlertDialogPopup is <gpui_kit::base::AlertDialogPopup>::new.
 func AlertDialogPopup(st ...Style) AlertDialogPopupEl {
+	useBaseAlertDialog()
 	n := newNode(280)
 	tokens(n, st)
 	return AlertDialogPopupEl{n}
@@ -4541,6 +4558,7 @@ func AlertDialogPopup(st ...Style) AlertDialogPopupEl {
 
 // AlertDialogPopupDefault is <gpui_kit::base::AlertDialogPopup as Default>::default.
 func AlertDialogPopupDefault(st ...Style) AlertDialogPopupEl {
+	useBaseAlertDialog()
 	n := newNode(279)
 	tokens(n, st)
 	return AlertDialogPopupEl{n}
@@ -4873,6 +4891,7 @@ func (e AlertDialogTitleEl) node() *node { return e.n }
 
 // AlertDialogTitle is <gpui_kit::base::AlertDialogTitle>::new.
 func AlertDialogTitle(st ...Style) AlertDialogTitleEl {
+	useBaseAlertDialog()
 	n := newNode(282)
 	tokens(n, st)
 	return AlertDialogTitleEl{n}
@@ -4880,6 +4899,7 @@ func AlertDialogTitle(st ...Style) AlertDialogTitleEl {
 
 // AlertDialogTitleDefault is <gpui_kit::base::AlertDialogTitle as Default>::default.
 func AlertDialogTitleDefault(st ...Style) AlertDialogTitleEl {
+	useBaseAlertDialog()
 	n := newNode(281)
 	tokens(n, st)
 	return AlertDialogTitleEl{n}
@@ -5212,6 +5232,7 @@ func (e AlertDialogTriggerEl) node() *node { return e.n }
 
 // AlertDialogTrigger is <gpui_kit::base::AlertDialogTrigger>::new.
 func AlertDialogTrigger(trigger Element) AlertDialogTriggerEl {
+	useBaseAlertDialog()
 	n := newNode(283)
 	o := nodeArgs(n)
 	o.u32(take(trigger))
@@ -5239,6 +5260,7 @@ func (e BaseAvatarEl) node() *node { return e.n }
 
 // BaseAvatar is <gpui_kit::base::Avatar>::new.
 func BaseAvatar(st ...Style) BaseAvatarEl {
+	useBaseAvatar()
 	n := newNode(285)
 	tokens(n, st)
 	return BaseAvatarEl{n}
@@ -5246,6 +5268,7 @@ func BaseAvatar(st ...Style) BaseAvatarEl {
 
 // BaseAvatarDefault is <gpui_kit::base::Avatar as Default>::default.
 func BaseAvatarDefault(st ...Style) BaseAvatarEl {
+	useBaseAvatar()
 	n := newNode(284)
 	tokens(n, st)
 	return BaseAvatarEl{n}
@@ -5598,6 +5621,7 @@ func (e AvatarFallbackEl) node() *node { return e.n }
 
 // AvatarFallback is <gpui_kit::base::AvatarFallback>::new.
 func AvatarFallback(st ...Style) AvatarFallbackEl {
+	useBaseAvatar()
 	n := newNode(287)
 	tokens(n, st)
 	return AvatarFallbackEl{n}
@@ -5605,6 +5629,7 @@ func AvatarFallback(st ...Style) AvatarFallbackEl {
 
 // AvatarFallbackDefault is <gpui_kit::base::AvatarFallback as Default>::default.
 func AvatarFallbackDefault(st ...Style) AvatarFallbackEl {
+	useBaseAvatar()
 	n := newNode(286)
 	tokens(n, st)
 	return AvatarFallbackEl{n}
@@ -5895,6 +5920,7 @@ func (e AvatarImageEl) node() *node { return e.n }
 
 // AvatarImage is <gpui_kit::base::AvatarImage>::new.
 func AvatarImage(source ImageSourceInto, st ...Style) AvatarImageEl {
+	useBaseAvatar()
 	n := newNode(288)
 	o := nodeArgs(n)
 	putImageSourceInto(o, source)
@@ -6253,6 +6279,7 @@ func (e BaseButtonEl) node() *node { return e.n }
 
 // BaseButton is <gpui_kit::base::Button>::new.
 func BaseButton(id ID, st ...Style) BaseButtonEl {
+	useBaseButton()
 	n := newNode(289)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -6835,6 +6862,7 @@ func (e BaseCalendarEl) node() *node { return e.n }
 
 // BaseCalendar is <gpui_kit::base::Calendar>::new.
 func BaseCalendar(id ID, state CalendarState, st ...Style) BaseCalendarEl {
+	useBaseCalendar()
 	n := newNode(291)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -7059,6 +7087,7 @@ func (e CalendarItemEl) node() *node { return e.n }
 
 // CalendarItemHanded is crate::items::handed::<gpui_kit::base::CalendarItem>.
 func CalendarItemHanded(index uint8, st ...Style) CalendarItemEl {
+	useBaseCalendar()
 	n := newNode(882)
 	o := nodeArgs(n)
 	o.u8(uint8(index))
@@ -7612,6 +7641,7 @@ func (e BaseCheckboxEl) node() *node { return e.n }
 
 // BaseCheckbox is <gpui_kit::base::Checkbox>::new.
 func BaseCheckbox(id ID, st ...Style) BaseCheckboxEl {
+	useBaseCheckbox()
 	n := newNode(293)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -8220,6 +8250,7 @@ func (e CheckboxIndicatorEl) node() *node { return e.n }
 
 // CheckboxIndicator is <gpui_kit::base::CheckboxIndicator>::new.
 func CheckboxIndicator(st ...Style) CheckboxIndicatorEl {
+	useBaseCheckbox()
 	n := newNode(295)
 	tokens(n, st)
 	return CheckboxIndicatorEl{n}
@@ -8227,6 +8258,7 @@ func CheckboxIndicator(st ...Style) CheckboxIndicatorEl {
 
 // CheckboxIndicatorDefault is <gpui_kit::base::CheckboxIndicator as Default>::default.
 func CheckboxIndicatorDefault(st ...Style) CheckboxIndicatorEl {
+	useBaseCheckbox()
 	n := newNode(294)
 	tokens(n, st)
 	return CheckboxIndicatorEl{n}
@@ -8660,6 +8692,7 @@ func (e BaseCollapsibleEl) node() *node { return e.n }
 
 // BaseCollapsible is <gpui_kit::base::Collapsible>::new.
 func BaseCollapsible(st ...Style) BaseCollapsibleEl {
+	useBaseCollapsible()
 	n := newNode(299)
 	tokens(n, st)
 	return BaseCollapsibleEl{n}
@@ -8667,6 +8700,7 @@ func BaseCollapsible(st ...Style) BaseCollapsibleEl {
 
 // BaseCollapsibleDefault is <gpui_kit::base::Collapsible as Default>::default.
 func BaseCollapsibleDefault(st ...Style) BaseCollapsibleEl {
+	useBaseCollapsible()
 	n := newNode(298)
 	tokens(n, st)
 	return BaseCollapsibleEl{n}
@@ -8994,6 +9028,7 @@ func (e BaseColorPickerEl) node() *node { return e.n }
 
 // BaseColorPicker is <gpui_kit::base::ColorPicker>::new.
 func BaseColorPicker(id ID, st ...Style) BaseColorPickerEl {
+	useBaseColorPicker()
 	n := newNode(300)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -9647,6 +9682,7 @@ func (e ColorSwatchEl) node() *node { return e.n }
 
 // ColorSwatch is <gpui_kit::base::ColorSwatch>::new.
 func ColorSwatch(id ID, color Color, st ...Style) ColorSwatchEl {
+	useBaseColorPicker()
 	n := newNode(301)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -10204,6 +10240,7 @@ func (e BaseComboboxEl) node() *node { return e.n }
 
 // BaseCombobox is <gpui_kit::base::Combobox>::new.
 func BaseCombobox(id ID, st ...Style) BaseComboboxEl {
+	useBaseCombobox()
 	n := newNode(305)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -10488,6 +10525,7 @@ func (e BaseDatePickerEl) node() *node { return e.n }
 
 // BaseDatePicker is <gpui_kit::base::DatePicker>::new.
 func BaseDatePicker(id ID, focusHandle FocusHandle, st ...Style) BaseDatePickerEl {
+	useBaseDatePicker()
 	n := newNode(306)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -11114,6 +11152,7 @@ func (e Decrement) valueNode() *node { return e.n }
 
 // NewDecrementDefault is <gpui_kit::base::Decrement as Default>::default.
 func NewDecrementDefault() Decrement {
+	useBaseNumberInput()
 	n := newValue(307)
 	return Decrement{n}
 }
@@ -11125,6 +11164,7 @@ func (e BaseDialogEl) node() *node { return e.n }
 
 // BaseDialog is <gpui_kit::base::Dialog>::new.
 func BaseDialog(st ...Style) BaseDialogEl {
+	useBaseDialog()
 	n := newNode(308)
 	tokens(n, st)
 	return BaseDialogEl{n}
@@ -11400,6 +11440,7 @@ func (e DialogBackdropEl) node() *node { return e.n }
 
 // DialogBackdrop is <gpui_kit::base::DialogBackdrop>::new.
 func DialogBackdrop(st ...Style) DialogBackdropEl {
+	useBaseDialog()
 	n := newNode(310)
 	tokens(n, st)
 	return DialogBackdropEl{n}
@@ -11407,6 +11448,7 @@ func DialogBackdrop(st ...Style) DialogBackdropEl {
 
 // DialogBackdropDefault is <gpui_kit::base::DialogBackdrop as Default>::default.
 func DialogBackdropDefault(st ...Style) DialogBackdropEl {
+	useBaseDialog()
 	n := newNode(309)
 	tokens(n, st)
 	return DialogBackdropEl{n}
@@ -11697,6 +11739,7 @@ func (e BaseDialogCloseEl) node() *node { return e.n }
 
 // BaseDialogClose is <gpui_kit::base::DialogClose>::new.
 func BaseDialogClose(st ...Style) BaseDialogCloseEl {
+	useBaseDialog()
 	n := newNode(312)
 	tokens(n, st)
 	return BaseDialogCloseEl{n}
@@ -11704,6 +11747,7 @@ func BaseDialogClose(st ...Style) BaseDialogCloseEl {
 
 // BaseDialogCloseDefault is <gpui_kit::base::DialogClose as Default>::default.
 func BaseDialogCloseDefault(st ...Style) BaseDialogCloseEl {
+	useBaseDialog()
 	n := newNode(311)
 	tokens(n, st)
 	return BaseDialogCloseEl{n}
@@ -12016,6 +12060,7 @@ func (e BaseDialogDescriptionEl) node() *node { return e.n }
 
 // BaseDialogDescription is <gpui_kit::base::DialogDescription>::new.
 func BaseDialogDescription(st ...Style) BaseDialogDescriptionEl {
+	useBaseDialog()
 	n := newNode(314)
 	tokens(n, st)
 	return BaseDialogDescriptionEl{n}
@@ -12023,6 +12068,7 @@ func BaseDialogDescription(st ...Style) BaseDialogDescriptionEl {
 
 // BaseDialogDescriptionDefault is <gpui_kit::base::DialogDescription as Default>::default.
 func BaseDialogDescriptionDefault(st ...Style) BaseDialogDescriptionEl {
+	useBaseDialog()
 	n := newNode(313)
 	tokens(n, st)
 	return BaseDialogDescriptionEl{n}
@@ -12463,6 +12509,7 @@ func (e DialogPopupEl) node() *node { return e.n }
 
 // DialogPopup is <gpui_kit::base::DialogPopup>::new.
 func DialogPopup(st ...Style) DialogPopupEl {
+	useBaseDialog()
 	n := newNode(316)
 	tokens(n, st)
 	return DialogPopupEl{n}
@@ -12470,6 +12517,7 @@ func DialogPopup(st ...Style) DialogPopupEl {
 
 // DialogPopupDefault is <gpui_kit::base::DialogPopup as Default>::default.
 func DialogPopupDefault(st ...Style) DialogPopupEl {
+	useBaseDialog()
 	n := newNode(315)
 	tokens(n, st)
 	return DialogPopupEl{n}
@@ -12679,6 +12727,7 @@ func (e BaseDialogTitleEl) node() *node { return e.n }
 
 // BaseDialogTitle is <gpui_kit::base::DialogTitle>::new.
 func BaseDialogTitle(st ...Style) BaseDialogTitleEl {
+	useBaseDialog()
 	n := newNode(318)
 	tokens(n, st)
 	return BaseDialogTitleEl{n}
@@ -12686,6 +12735,7 @@ func BaseDialogTitle(st ...Style) BaseDialogTitleEl {
 
 // BaseDialogTitleDefault is <gpui_kit::base::DialogTitle as Default>::default.
 func BaseDialogTitleDefault(st ...Style) BaseDialogTitleEl {
+	useBaseDialog()
 	n := newNode(317)
 	tokens(n, st)
 	return BaseDialogTitleEl{n}
@@ -12991,6 +13041,7 @@ func (e DialogTriggerEl) node() *node { return e.n }
 
 // DialogTrigger is <gpui_kit::base::DialogTrigger>::new.
 func DialogTrigger(trigger Element) DialogTriggerEl {
+	useBaseDialog()
 	n := newNode(319)
 	o := nodeArgs(n)
 	o.u32(take(trigger))
@@ -13018,6 +13069,7 @@ func (e EditorEl) node() *node { return e.n }
 
 // Editor is <gpui_kit::base::Editor>::new.
 func Editor(state EditorState) EditorEl {
+	useBaseInput()
 	n := newNode(320)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -13276,6 +13328,7 @@ func (e GridLayoutEl) node() *node { return e.n }
 
 // GridLayout is <gpui_kit::base::GridLayout>::new.
 func GridLayout(id ID, state GridLayoutState, st ...Style) GridLayoutEl {
+	useBaseGridLayout()
 	n := newNode(323)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -13286,6 +13339,7 @@ func GridLayout(id ID, state GridLayoutState, st ...Style) GridLayoutEl {
 
 // KitGridLayout is gpui_kit::component::grid_layout::grid_layout.
 func KitGridLayout(id ID, state GridLayoutState, st ...Style) GridLayoutEl {
+	useBaseGridLayout()
 	n := newNode(324)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -13544,6 +13598,7 @@ func (e BaseHoverCardEl) node() *node { return e.n }
 
 // BaseHoverCard is <gpui_kit::base::HoverCard>::new.
 func BaseHoverCard(id ID, st ...Style) BaseHoverCardEl {
+	useBaseHoverCard()
 	n := newNode(325)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -13825,6 +13880,7 @@ func (e Increment) valueNode() *node { return e.n }
 
 // NewIncrementDefault is <gpui_kit::base::Increment as Default>::default.
 func NewIncrementDefault() Increment {
+	useBaseNumberInput()
 	n := newValue(326)
 	return Increment{n}
 }
@@ -13836,6 +13892,7 @@ func (e BaseInputEl) node() *node { return e.n }
 
 // BaseInput is <gpui_kit::base::Input>::new.
 func BaseInput(state InputState) BaseInputEl {
+	useBaseInput()
 	n := newNode(330)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -13863,6 +13920,7 @@ func (e InputBaseEl) node() *node { return e.n }
 
 // InputBase is <gpui_kit::base::InputBase>::new.
 func InputBase(id ID, st ...Style) InputBaseEl {
+	useBaseInput()
 	n := newNode(331)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -14406,6 +14464,7 @@ func (e BaseLinkEl) node() *node { return e.n }
 
 // BaseLink is <gpui_kit::base::Link>::new.
 func BaseLink(id ID, st ...Style) BaseLinkEl {
+	useBaseLink()
 	n := newNode(333)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -14994,6 +15053,7 @@ func (e MotionRevealEl) node() *node { return e.n }
 
 // MotionReveal is <gpui_kit::base::MotionReveal>::new.
 func MotionReveal(id ID, progress float32, child Element) MotionRevealEl {
+	useBaseMotion()
 	n := newNode(338)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -15009,6 +15069,7 @@ func (e NavPageEl) node() *node { return e.n }
 
 // NavPageHanded is crate::items::handed::<gpui_kit::base::NavPage>.
 func NavPageHanded(index uint8, st ...Style) NavPageEl {
+	useBaseNavStack()
 	n := newNode(883)
 	o := nodeArgs(n)
 	o.u8(uint8(index))
@@ -15174,6 +15235,7 @@ func (e NavStackEl) node() *node { return e.n }
 
 // NavStack is <gpui_kit::base::NavStack>::new.
 func NavStack(state NavStackState, st ...Style) NavStackEl {
+	useBaseNavStack()
 	n := newNode(339)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -15349,6 +15411,7 @@ func (e BaseNumberInputEl) node() *node { return e.n }
 
 // BaseNumberInput is <gpui_kit::base::NumberInput>::new.
 func BaseNumberInput(state InputState, st ...Style) BaseNumberInputEl {
+	useBaseNumberInput()
 	n := newNode(340)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -15690,6 +15753,7 @@ func (e NumberInputTextEl) node() *node { return e.n }
 
 // NumberInputText is <gpui_kit::base::NumberInputText>::new.
 func NumberInputText(st ...Style) NumberInputTextEl {
+	useBaseNumberInput()
 	n := newNode(342)
 	tokens(n, st)
 	return NumberInputTextEl{n}
@@ -15697,6 +15761,7 @@ func NumberInputText(st ...Style) NumberInputTextEl {
 
 // NumberInputTextDefault is <gpui_kit::base::NumberInputText as Default>::default.
 func NumberInputTextDefault(st ...Style) NumberInputTextEl {
+	useBaseNumberInput()
 	n := newNode(341)
 	tokens(n, st)
 	return NumberInputTextEl{n}
@@ -16002,6 +16067,7 @@ func (e BaseOtpInputEl) node() *node { return e.n }
 
 // BaseOtpInput is <gpui_kit::base::OtpInput>::new.
 func BaseOtpInput(state OtpState, st ...Style) BaseOtpInputEl {
+	useBaseOtpInput()
 	n := newNode(343)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -16244,6 +16310,7 @@ func (e BasePaginationEl) node() *node { return e.n }
 
 // BasePagination is <gpui_kit::base::Pagination>::new.
 func BasePagination(id ID, state PaginationState, st ...Style) BasePaginationEl {
+	useBasePagination()
 	n := newNode(344)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -16954,6 +17021,7 @@ func (e BasePopoverEl) node() *node { return e.n }
 
 // BasePopover is <gpui_kit::base::Popover>::new.
 func BasePopover(id ID, st ...Style) BasePopoverEl {
+	useBasePopover()
 	n := newNode(349)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -17219,6 +17287,7 @@ func (e PopupEl) node() *node { return e.n }
 
 // Popup is <gpui_kit::base::Popup>::new.
 func Popup(id ID, trigger Element, st ...Style) PopupEl {
+	useBasePopup()
 	n := newNode(350)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -17674,6 +17743,7 @@ func (e PositionerEl) node() *node { return e.n }
 
 // PositionerCorner is <gpui_kit::base::Positioner>::corner.
 func PositionerCorner(anchor Anchor, position GpuiPoint) PositionerEl {
+	useBasePositioner()
 	n := newNode(351)
 	o := nodeArgs(n)
 	o.u16(uint16(anchor))
@@ -17683,6 +17753,7 @@ func PositionerCorner(anchor Anchor, position GpuiPoint) PositionerEl {
 
 // PositionerSide is <gpui_kit::base::Positioner>::side.
 func PositionerSide(triggerBounds Bounds) PositionerEl {
+	useBasePositioner()
 	n := newNode(352)
 	o := nodeArgs(n)
 	putBounds(o, triggerBounds)
@@ -17781,6 +17852,7 @@ func (e BaseProgressEl) node() *node { return e.n }
 
 // BaseProgress is <gpui_kit::base::Progress>::new.
 func BaseProgress(id ID, st ...Style) BaseProgressEl {
+	useBaseProgress()
 	n := newNode(354)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -18349,6 +18421,7 @@ func (e ProgressIndicatorEl) node() *node { return e.n }
 
 // ProgressIndicator is <gpui_kit::base::ProgressIndicator>::new.
 func ProgressIndicator(st ...Style) ProgressIndicatorEl {
+	useBaseProgress()
 	n := newNode(355)
 	tokens(n, st)
 	return ProgressIndicatorEl{n}
@@ -18690,6 +18763,7 @@ func (e ProgressTrackEl) node() *node { return e.n }
 
 // ProgressTrack is <gpui_kit::base::ProgressTrack>::new.
 func ProgressTrack(st ...Style) ProgressTrackEl {
+	useBaseProgress()
 	n := newNode(356)
 	tokens(n, st)
 	return ProgressTrackEl{n}
@@ -18953,6 +19027,7 @@ func (e BaseRadioEl) node() *node { return e.n }
 
 // BaseRadio is <gpui_kit::base::Radio>::new.
 func BaseRadio(id ID, st ...Style) BaseRadioEl {
+	useBaseRadio()
 	n := newNode(357)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -19499,6 +19574,7 @@ func (e BaseRadioGroupEl) node() *node { return e.n }
 
 // BaseRadioGroup is <gpui_kit::base::RadioGroup>::new.
 func BaseRadioGroup(id ID, st ...Style) BaseRadioGroupEl {
+	useBaseRadioGroup()
 	n := newNode(358)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -20135,6 +20211,7 @@ func (e ResizablePanelEl) node() *node { return e.n }
 
 // ResizablePanel is gpui_kit::base::resizable_panel.
 func ResizablePanel(st ...Style) ResizablePanelEl {
+	useBaseResizable()
 	n := newNode(361)
 	tokens(n, st)
 	return ResizablePanelEl{n}
@@ -20452,6 +20529,7 @@ func (e ResizablePanelGroupEl) node() *node { return e.n }
 
 // HResizable is gpui_kit::base::h_resizable.
 func HResizable(id ID) ResizablePanelGroupEl {
+	useBaseResizable()
 	n := newNode(865)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -20460,6 +20538,7 @@ func HResizable(id ID) ResizablePanelGroupEl {
 
 // KitHResizable is gpui_kit::component::h_resizable.
 func KitHResizable(id ID) ResizablePanelGroupEl {
+	useBaseResizable()
 	n := newNode(867)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -20468,6 +20547,7 @@ func KitHResizable(id ID) ResizablePanelGroupEl {
 
 // KitVResizable is gpui_kit::component::v_resizable.
 func KitVResizable(id ID) ResizablePanelGroupEl {
+	useBaseResizable()
 	n := newNode(868)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -20476,6 +20556,7 @@ func KitVResizable(id ID) ResizablePanelGroupEl {
 
 // ResizablePanelGroup is <gpui_kit::base::ResizablePanelGroup>::new.
 func ResizablePanelGroup(id ID) ResizablePanelGroupEl {
+	useBaseResizable()
 	n := newNode(864)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -20484,6 +20565,7 @@ func ResizablePanelGroup(id ID) ResizablePanelGroupEl {
 
 // VResizable is gpui_kit::base::v_resizable.
 func VResizable(id ID) ResizablePanelGroupEl {
+	useBaseResizable()
 	n := newNode(866)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -20553,6 +20635,7 @@ func (e RoundedFrameCoverEl) node() *node { return e.n }
 
 // RoundedFrameCoverUniform is <gpui_kit::base::RoundedFrameCover>::uniform.
 func RoundedFrameCoverUniform(radius float32) RoundedFrameCoverEl {
+	useBaseScrollableMask()
 	n := newNode(363)
 	o := nodeArgs(n)
 	o.f32(radius)
@@ -20580,6 +20663,7 @@ func (e ScrollBounceEl) node() *node { return e.n }
 
 // ScrollBounce is <gpui_kit::base::ScrollBounce>::new.
 func ScrollBounce(id ID, handle ScrollHandle, child Element) ScrollBounceEl {
+	useBaseScrollBounce()
 	n := newNode(839)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -20655,6 +20739,7 @@ func (e ScrollbarEl) node() *node { return e.n }
 
 // Scrollbar is <gpui_kit::base::Scrollbar>::new.
 func Scrollbar(scrollHandle ScrollHandle) ScrollbarEl {
+	useBaseScrollbar()
 	n := newNode(841)
 	o := nodeArgs(n)
 	putObj(o, scrollHandle.h)
@@ -20663,6 +20748,7 @@ func Scrollbar(scrollHandle ScrollHandle) ScrollbarEl {
 
 // ScrollbarHorizontal is <gpui_kit::base::Scrollbar>::horizontal.
 func ScrollbarHorizontal(scrollHandle ScrollHandle) ScrollbarEl {
+	useBaseScrollbar()
 	n := newNode(840)
 	o := nodeArgs(n)
 	putObj(o, scrollHandle.h)
@@ -20671,6 +20757,7 @@ func ScrollbarHorizontal(scrollHandle ScrollHandle) ScrollbarEl {
 
 // ScrollbarVertical is <gpui_kit::base::Scrollbar>::vertical.
 func ScrollbarVertical(scrollHandle ScrollHandle) ScrollbarEl {
+	useBaseScrollbar()
 	n := newNode(842)
 	o := nodeArgs(n)
 	putObj(o, scrollHandle.h)
@@ -20954,6 +21041,7 @@ func (e BaseSelectEl) node() *node { return e.n }
 
 // BaseSelect is <gpui_kit::base::Select>::new.
 func BaseSelect(id ID, st ...Style) BaseSelectEl {
+	useBaseSelect()
 	n := newNode(371)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -21210,6 +21298,7 @@ func (e SelectableTextEl) node() *node { return e.n }
 
 // SelectableText is <gpui_kit::base::SelectableText>::new.
 func SelectableText(id ID, text string) SelectableTextEl {
+	useBaseSelectableText()
 	n := newNode(372)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -21219,6 +21308,7 @@ func SelectableText(id ID, text string) SelectableTextEl {
 
 // SelectableTextWithHandle is <gpui_kit::base::SelectableText>::with_handle.
 func SelectableTextWithHandle(id ID, handle TextSelectionHandle, text string) SelectableTextEl {
+	useBaseSelectableText()
 	n := newNode(823)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -21266,6 +21356,7 @@ func (e BaseSheetEl) node() *node { return e.n }
 
 // BaseSheet is <gpui_kit::base::Sheet>::new.
 func BaseSheet(st ...Style) BaseSheetEl {
+	useBaseSheet()
 	n := newNode(376)
 	tokens(n, st)
 	return BaseSheetEl{n}
@@ -21463,6 +21554,7 @@ func (e BaseSliderEl) node() *node { return e.n }
 
 // BaseSlider is <gpui_kit::base::Slider>::new.
 func BaseSlider(state SliderState, st ...Style) BaseSliderEl {
+	useBaseSlider()
 	n := newNode(377)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -21696,6 +21788,7 @@ func (e SliderIndicatorEl) node() *node { return e.n }
 
 // SliderIndicator is <gpui_kit::base::SliderIndicator>::new.
 func SliderIndicator(state SliderState, st ...Style) SliderIndicatorEl {
+	useBaseSlider()
 	n := newNode(378)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -22315,6 +22408,7 @@ func (e SliderThumbEl) node() *node { return e.n }
 
 // SliderThumb is <gpui_kit::base::SliderThumb>::new.
 func SliderThumb(state SliderState, st ...Style) SliderThumbEl {
+	useBaseSlider()
 	n := newNode(379)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -22856,6 +22950,7 @@ func (e SliderTrackEl) node() *node { return e.n }
 
 // SliderTrack is <gpui_kit::base::SliderTrack>::new.
 func SliderTrack(state SliderState, st ...Style) SliderTrackEl {
+	useBaseSlider()
 	n := newNode(380)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -23450,6 +23545,7 @@ func (e BaseSwitchEl) node() *node { return e.n }
 
 // BaseSwitch is <gpui_kit::base::Switch>::new.
 func BaseSwitch(id ID, st ...Style) BaseSwitchEl {
+	useBaseSwitch()
 	n := newNode(385)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -24021,6 +24117,7 @@ func (e SwitchThumbEl) node() *node { return e.n }
 
 // SwitchThumb is <gpui_kit::base::SwitchThumb>::new.
 func SwitchThumb(checked bool, st ...Style) SwitchThumbEl {
+	useBaseSwitch()
 	n := newNode(387)
 	o := nodeArgs(n)
 	o.bool(checked)
@@ -24271,6 +24368,7 @@ func (e SwitchTrackEl) node() *node { return e.n }
 
 // SwitchTrack is <gpui_kit::base::SwitchTrack>::new.
 func SwitchTrack(id ID, st ...Style) SwitchTrackEl {
+	useBaseSwitch()
 	n := newNode(389)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -24837,6 +24935,7 @@ func (e BaseTabEl) node() *node { return e.n }
 
 // BaseTab is <gpui_kit::base::Tab>::new.
 func BaseTab(id ID, st ...Style) BaseTabEl {
+	useBaseTabs()
 	n := newNode(391)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -25380,6 +25479,7 @@ func (e BaseTableEl) node() *node { return e.n }
 
 // BaseTable is <gpui_kit::base::Table>::new.
 func BaseTable(id ID, st ...Style) BaseTableEl {
+	useBaseTable()
 	n := newNode(393)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -25888,6 +25988,7 @@ func (e BaseTableBodyEl) node() *node { return e.n }
 
 // BaseTableBody is <gpui_kit::base::TableBody>::new.
 func BaseTableBody(id ID, st ...Style) BaseTableBodyEl {
+	useBaseTable()
 	n := newNode(394)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -26465,6 +26566,7 @@ func (e BaseTableCaptionEl) node() *node { return e.n }
 
 // BaseTableCaption is <gpui_kit::base::TableCaption>::new.
 func BaseTableCaption(id ID, st ...Style) BaseTableCaptionEl {
+	useBaseTable()
 	n := newNode(395)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -27111,6 +27213,7 @@ func (e BaseTableCellEl) node() *node { return e.n }
 
 // BaseTableCell is <gpui_kit::base::TableCell>::new.
 func BaseTableCell(id ID, columnIndex int, st ...Style) BaseTableCellEl {
+	useBaseTable()
 	n := newNode(396)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -27689,6 +27792,7 @@ func (e BaseTableHeadEl) node() *node { return e.n }
 
 // BaseTableHead is <gpui_kit::base::TableHead>::new.
 func BaseTableHead(id ID, columnIndex int, st ...Style) BaseTableHeadEl {
+	useBaseTable()
 	n := newNode(397)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -28267,6 +28371,7 @@ func (e BaseTableHeaderEl) node() *node { return e.n }
 
 // BaseTableHeader is <gpui_kit::base::TableHeader>::new.
 func BaseTableHeader(id ID, st ...Style) BaseTableHeaderEl {
+	useBaseTable()
 	n := newNode(398)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -28886,6 +28991,7 @@ func (e BaseTableRowEl) node() *node { return e.n }
 
 // BaseTableRow is <gpui_kit::base::TableRow>::new.
 func BaseTableRow(id ID, rowIndex int, st ...Style) BaseTableRowEl {
+	useBaseTable()
 	n := newNode(399)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -29434,6 +29540,7 @@ func (e TabsEl) node() *node { return e.n }
 
 // Tabs is <gpui_kit::base::Tabs>::new.
 func Tabs(id ID, st ...Style) TabsEl {
+	useBaseTabs()
 	n := newNode(400)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -29870,6 +29977,7 @@ func (e BaseTextViewEl) node() *node { return e.n }
 
 // BaseHTML is gpui_kit::base::html.
 func BaseHTML(source string, st ...Style) BaseTextViewEl {
+	useBaseText()
 	n := newNode(408)
 	o := nodeArgs(n)
 	o.str(source)
@@ -29879,6 +29987,7 @@ func BaseHTML(source string, st ...Style) BaseTextViewEl {
 
 // BaseMarkdown is gpui_kit::base::markdown.
 func BaseMarkdown(source string, st ...Style) BaseTextViewEl {
+	useBaseText()
 	n := newNode(409)
 	o := nodeArgs(n)
 	o.str(source)
@@ -29888,6 +29997,7 @@ func BaseMarkdown(source string, st ...Style) BaseTextViewEl {
 
 // BaseTextView is <gpui_kit::base::TextView>::new.
 func BaseTextView(state TextViewState, st ...Style) BaseTextViewEl {
+	useBaseText()
 	n := newNode(407)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -29897,6 +30007,7 @@ func BaseTextView(state TextViewState, st ...Style) BaseTextViewEl {
 
 // BaseTextViewHTML is <gpui_kit::base::TextView>::html.
 func BaseTextViewHTML(id ID, html string, st ...Style) BaseTextViewEl {
+	useBaseText()
 	n := newNode(405)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -29907,6 +30018,7 @@ func BaseTextViewHTML(id ID, html string, st ...Style) BaseTextViewEl {
 
 // BaseTextViewMarkdown is <gpui_kit::base::TextView>::markdown.
 func BaseTextViewMarkdown(id ID, markdown string, st ...Style) BaseTextViewEl {
+	useBaseText()
 	n := newNode(406)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -30388,6 +30500,7 @@ func (e BaseTextareaEl) node() *node { return e.n }
 
 // BaseTextarea is <gpui_kit::base::Textarea>::new.
 func BaseTextarea(state TextareaState) BaseTextareaEl {
+	useBaseInput()
 	n := newNode(413)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -30415,6 +30528,7 @@ func (e BaseTimeFieldEl) node() *node { return e.n }
 
 // BaseTimeField is <gpui_kit::base::TimeField>::new.
 func BaseTimeField(id ID, state TimeFieldState, st ...Style) BaseTimeFieldEl {
+	useBaseTimeField()
 	n := newNode(414)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -30676,6 +30790,7 @@ func (e TimeFieldSegmentEl) node() *node { return e.n }
 
 // TimeFieldSegmentHanded is crate::items::handed::<gpui_kit::base::TimeFieldSegment>.
 func TimeFieldSegmentHanded(index uint8, st ...Style) TimeFieldSegmentEl {
+	useBaseTimeField()
 	n := newNode(884)
 	o := nodeArgs(n)
 	o.u8(uint8(index))
@@ -31369,6 +31484,7 @@ func (e ToastEl) node() *node { return e.n }
 
 // Toast is <gpui_kit::base::Toast>::new.
 func Toast(id ID, st ...Style) ToastEl {
+	useBaseToast()
 	n := newNode(416)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -31818,6 +31934,7 @@ func (e ToastStackEl) node() *node { return e.n }
 
 // ToastStack is <gpui_kit::base::ToastStack>::new.
 func ToastStack(id ID, state ToastStackState, st ...Style) ToastStackEl {
+	useBaseToast()
 	n := newNode(825)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -32350,6 +32467,7 @@ func (e BaseToggleEl) node() *node { return e.n }
 
 // BaseToggle is <gpui_kit::base::Toggle>::new.
 func BaseToggle(id ID, st ...Style) BaseToggleEl {
+	useBaseToggle()
 	n := newNode(417)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -32896,6 +33014,7 @@ func (e BaseToggleGroupEl) node() *node { return e.n }
 
 // BaseToggleGroup is <gpui_kit::base::ToggleGroup>::new.
 func BaseToggleGroup(id ID, st ...Style) BaseToggleGroupEl {
+	useBaseToggleGroup()
 	n := newNode(418)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -33547,6 +33666,7 @@ func (e BaseToolbarEl) node() *node { return e.n }
 
 // BaseToolbar is <gpui_kit::base::Toolbar>::new.
 func BaseToolbar(id ID, st ...Style) BaseToolbarEl {
+	useBaseToolbar()
 	n := newNode(420)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -34081,6 +34201,7 @@ func (e BaseToolbarGroupEl) node() *node { return e.n }
 
 // BaseToolbarGroup is <gpui_kit::base::ToolbarGroup>::new.
 func BaseToolbarGroup(id ID, st ...Style) BaseToolbarGroupEl {
+	useBaseToolbar()
 	n := newNode(421)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -34734,6 +34855,7 @@ func (e BaseTooltipEl) node() *node { return e.n }
 
 // BaseTooltip is <gpui_kit::base::Tooltip>::new.
 func BaseTooltip(id ID, st ...Style) BaseTooltipEl {
+	useBaseTooltip()
 	n := newNode(422)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -34945,6 +35067,7 @@ func (e TooltipPositionerEl) node() *node { return e.n }
 
 // TooltipPositioner is <gpui_kit::base::TooltipPositioner>::new.
 func TooltipPositioner(triggerBounds Bounds) TooltipPositionerEl {
+	useBaseTooltip()
 	n := newNode(423)
 	o := nodeArgs(n)
 	putBounds(o, triggerBounds)
@@ -35057,6 +35180,7 @@ func (e BaseTreeEl) node() *node { return e.n }
 
 // BaseTree is <gpui_kit::base::Tree>::new.
 func BaseTree(state TreeState, st ...Style) BaseTreeEl {
+	useBaseTree()
 	n := newNode(426)
 	o := nodeArgs(n)
 	o.u64(state.h)

@@ -21,6 +21,7 @@ Alert_VT :: struct {
 }
 
 alert :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #caller_location) -> Alert {
+	use_component_alert()
 	e := Alert{new_node(578, loc), &alert_vt}
 	o := node_args()
 	put_id(o, id)
@@ -30,6 +31,7 @@ alert :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #caller_lo
 }
 
 alert_error :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #caller_location) -> Alert {
+	use_component_alert()
 	e := Alert{new_node(576, loc), &alert_vt}
 	o := node_args()
 	put_id(o, id)
@@ -39,6 +41,7 @@ alert_error :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #cal
 }
 
 alert_info :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #caller_location) -> Alert {
+	use_component_alert()
 	e := Alert{new_node(577, loc), &alert_vt}
 	o := node_args()
 	put_id(o, id)
@@ -48,6 +51,7 @@ alert_info :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #call
 }
 
 alert_success :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #caller_location) -> Alert {
+	use_component_alert()
 	e := Alert{new_node(579, loc), &alert_vt}
 	o := node_args()
 	put_id(o, id)
@@ -57,6 +61,7 @@ alert_success :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #c
 }
 
 alert_warning :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #caller_location) -> Alert {
+	use_component_alert()
 	e := Alert{new_node(580, loc), &alert_vt}
 	o := node_args()
 	put_id(o, id)

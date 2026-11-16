@@ -11,6 +11,7 @@ func (e DiffEl) node() *node { return e.n }
 
 // Diff is <gpui_kit::component::diff::Diff>::new.
 func Diff(state DiffState, st ...Style) DiffEl {
+	useComponentDiff()
 	n := newNode(644)
 	o := nodeArgs(n)
 	o.u64(state.h)

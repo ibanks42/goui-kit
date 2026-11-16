@@ -11,6 +11,7 @@ func (e QuestionnaireEl) node() *node { return e.n }
 
 // Questionnaire is <gpui_kit::component::questionnaire::Questionnaire>::new.
 func Questionnaire(state QuestionnaireState, st ...Style) QuestionnaireEl {
+	useComponentQuestionnaire()
 	n := newNode(718)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -295,6 +296,7 @@ func (e QuestionnaireActionsEl) node() *node { return e.n }
 
 // QuestionnaireActions is <gpui_kit::component::questionnaire::QuestionnaireActions>::new.
 func QuestionnaireActions(state QuestionnaireState, st ...Style) QuestionnaireActionsEl {
+	useComponentQuestionnaire()
 	n := newNode(719)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -741,6 +743,7 @@ func (e QuestionnaireChoiceEl) node() *node { return e.n }
 
 // QuestionnaireChoice is <gpui_kit::component::questionnaire::QuestionnaireChoice>::new.
 func QuestionnaireChoice(state QuestionnaireState, item string, value string, st ...Style) QuestionnaireChoiceEl {
+	useComponentQuestionnaire()
 	n := newNode(720)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -1198,6 +1201,7 @@ func (e QuestionnaireChoiceDescriptionEl) node() *node { return e.n }
 
 // QuestionnaireChoiceDescription is <gpui_kit::component::questionnaire::QuestionnaireChoiceDescription>::new.
 func QuestionnaireChoiceDescription(st ...Style) QuestionnaireChoiceDescriptionEl {
+	useComponentQuestionnaire()
 	n := newNode(722)
 	tokens(n, st)
 	return QuestionnaireChoiceDescriptionEl{n}
@@ -1205,6 +1209,7 @@ func QuestionnaireChoiceDescription(st ...Style) QuestionnaireChoiceDescriptionE
 
 // QuestionnaireChoiceDescriptionDefault is <gpui_kit::component::questionnaire::QuestionnaireChoiceDescription as Default>::default.
 func QuestionnaireChoiceDescriptionDefault(st ...Style) QuestionnaireChoiceDescriptionEl {
+	useComponentQuestionnaire()
 	n := newNode(721)
 	tokens(n, st)
 	return QuestionnaireChoiceDescriptionEl{n}
@@ -1685,6 +1690,7 @@ func (e QuestionnaireChoicesEl) node() *node { return e.n }
 
 // QuestionnaireChoices is <gpui_kit::component::questionnaire::QuestionnaireChoices>::new.
 func QuestionnaireChoices(state QuestionnaireState, item string, st ...Style) QuestionnaireChoicesEl {
+	useComponentQuestionnaire()
 	n := newNode(723)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -2132,6 +2138,7 @@ func (e QuestionnaireDescriptionEl) node() *node { return e.n }
 
 // QuestionnaireDescription is <gpui_kit::component::questionnaire::QuestionnaireDescription>::new.
 func QuestionnaireDescription(state QuestionnaireState, item string, st ...Style) QuestionnaireDescriptionEl {
+	useComponentQuestionnaire()
 	n := newNode(724)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -2609,6 +2616,7 @@ func (e QuestionnaireErrorEl) node() *node { return e.n }
 
 // QuestionnaireError is <gpui_kit::component::questionnaire::QuestionnaireError>::new.
 func QuestionnaireError(state QuestionnaireState, item string, st ...Style) QuestionnaireErrorEl {
+	useComponentQuestionnaire()
 	n := newNode(725)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -3020,6 +3028,7 @@ func (e QuestionnaireInputEl) node() *node { return e.n }
 
 // QuestionnaireInput is <gpui_kit::component::questionnaire::QuestionnaireInput>::new.
 func QuestionnaireInput(state QuestionnaireState, item string, st ...Style) QuestionnaireInputEl {
+	useComponentQuestionnaire()
 	n := newNode(726)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -3407,6 +3416,7 @@ func (e QuestionnaireItemEl) node() *node { return e.n }
 
 // QuestionnaireItem is <gpui_kit::component::questionnaire::QuestionnaireItem>::new.
 func QuestionnaireItem(state QuestionnaireState, item string, st ...Style) QuestionnaireItemEl {
+	useComponentQuestionnaire()
 	n := newNode(727)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -3773,6 +3783,7 @@ func (e QuestionnaireNextEl) node() *node { return e.n }
 
 // QuestionnaireNext is <gpui_kit::component::questionnaire::QuestionnaireNext>::new.
 func QuestionnaireNext(state QuestionnaireState, st ...Style) QuestionnaireNextEl {
+	useComponentQuestionnaire()
 	n := newNode(728)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -4138,6 +4149,7 @@ func (e QuestionnairePreviousEl) node() *node { return e.n }
 
 // QuestionnairePrevious is <gpui_kit::component::questionnaire::QuestionnairePrevious>::new.
 func QuestionnairePrevious(state QuestionnaireState, st ...Style) QuestionnairePreviousEl {
+	useComponentQuestionnaire()
 	n := newNode(729)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -4602,6 +4614,7 @@ func (e QuestionnaireProgressEl) node() *node { return e.n }
 
 // QuestionnaireProgress is <gpui_kit::component::questionnaire::QuestionnaireProgress>::new.
 func QuestionnaireProgress(state QuestionnaireState, st ...Style) QuestionnaireProgressEl {
+	useComponentQuestionnaire()
 	n := newNode(730)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -5066,6 +5079,7 @@ func (e QuestionnaireSkipEl) node() *node { return e.n }
 
 // QuestionnaireSkip is <gpui_kit::component::questionnaire::QuestionnaireSkip>::new.
 func QuestionnaireSkip(state QuestionnaireState, st ...Style) QuestionnaireSkipEl {
+	useComponentQuestionnaire()
 	n := newNode(731)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -5431,6 +5445,7 @@ func (e QuestionnaireSubmitEl) node() *node { return e.n }
 
 // QuestionnaireSubmit is <gpui_kit::component::questionnaire::QuestionnaireSubmit>::new.
 func QuestionnaireSubmit(state QuestionnaireState, st ...Style) QuestionnaireSubmitEl {
+	useComponentQuestionnaire()
 	n := newNode(732)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -5865,6 +5880,7 @@ func (e QuestionnaireTitleEl) node() *node { return e.n }
 
 // QuestionnaireTitle is <gpui_kit::component::questionnaire::QuestionnaireTitle>::new.
 func QuestionnaireTitle(state QuestionnaireState, item string, st ...Style) QuestionnaireTitleEl {
+	useComponentQuestionnaire()
 	n := newNode(733)
 	o := nodeArgs(n)
 	o.u64(state.h)

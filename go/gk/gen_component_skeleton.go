@@ -11,6 +11,7 @@ func (e SkeletonEl) node() *node { return e.n }
 
 // Skeleton is <gpui_kit::component::skeleton::Skeleton>::new.
 func Skeleton(st ...Style) SkeletonEl {
+	useComponentSkeleton()
 	n := newNode(759)
 	tokens(n, st)
 	return SkeletonEl{n}

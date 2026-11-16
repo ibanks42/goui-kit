@@ -862,6 +862,8 @@ plus `SHA256SUMS`. All three hold the same files except the library:
 | file | what |
 |---|---|
 | `lib/libgpuikit.so` | Linux, linked against glibc 2.28 so it loads on any Linux with glibc 2.28 or newer |
+| `lib/libgpuikit_static.a` | the library as a static archive, which apps link into themselves (universal on macOS, MinGW's format on Windows for Go); on Windows also `gpuikit_static.lib`, MSVC's format, for Odin |
+| `lib/libgpuikit_sys.so`, `libgpuikit_sys.a` | Linux: a linker script naming the system libraries the archive needs by their run-time names; Windows: the import library of the Windows API it links |
 | `lib/libgpuikit.dylib` | macOS, one universal file with arm64 and x86_64 slices, install name `@rpath/libgpuikit.dylib`, minimum macOS 11.0 |
 | `lib/gpuikit.dll`, `gpuikit.dll.lib`, `libgpuikit.dll.a`, `gpuikit.def` | Windows: the DLL, MSVC's import library (for Odin) and MinGW's (for Go's cgo) |
 | `windows/gpuikit.manifest`, `gpuikit.rc` | Windows: a program must embed or sit beside this manifest (per-monitor DPI v2, common controls 6), or it exits before `main` |
@@ -871,7 +873,8 @@ plus `SHA256SUMS`. All three hold the same files except the library:
 | `examples/`, `docs/` | the example apps in both languages and the guides |
 | `VERSIONS`, `THIRD_PARTY.md`, licence texts | versions, hashes, what the library needs (glibc, minimum macOS, imported DLLs), and the licences of every crate linked in |
 
-A download is about 25 MB packed and about 80 MB unpacked, most of it the library.
+A download is about 25 MB packed and about 80 MB unpacked, most of it the library; the static
+archive adds about 50 MB packed and 380 MB unpacked.
 
 Also on disk because of the developer's own toolchain: Go's build cache holds the compiled `gk`
 package; Odin has no cache. For comparison, a Rust developer of the same app holds a target
@@ -886,9 +889,16 @@ Delivery:
 - Odin: unpack anywhere, build with `-collection:gpuikit=<dir>/odin`.
 - Go: the app's `go.mod` requires `gpuikit.dev` and replaces it with the download's `go/`
   folder.
-- Linking: the shared library, so rebuild time does not depend on the library's size. To ship
-  an app, copy the library beside the binary (rpath `$ORIGIN` on Linux, `@rpath` on macOS, the
-  DLL beside the `.exe` on Windows).
+- Linking: the static library, into the program, in both languages. The library's dispatchers are
+  split by component family, and each generated procedure (Odin) or function (Go) links the family
+  it uses (`gen/gk_fam.py`), so a program keeps only the families it calls into: one file, about
+  50 to 60 MB for a small app, where a program plus the shared library was 76 MB. Odin's package
+  carries the linker flags itself (`@(extra_linker_flags)` on its `foreign import`); Go can't, so a
+  Go build passes `-ldflags=-extldflags=-Wl,--gc-sections` (`-Wl,-dead_strip` on macOS; on
+  Windows `-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres`, since GNU ld keeps every
+  function with unwind data there; package `gk` embeds the manifest as a .syso). The shared library
+  is still built, for the repository's tests (`-define:GK_SHARED=true`, `-tags gkshared`), but not
+  shipped (GO.md section 8).
 
 How the libraries are built: CI (`.github/workflows/platforms.yml`) runs `tools/ci-lib.sh` on
 each system. Linux is linked by zig against glibc 2.28 (`tools/zigbuild.sh`, with a pinned zig

@@ -15,6 +15,7 @@ func (e SwitchEl) node() *node { return e.n }
 
 // Switch is <gpui_kit::component::switch::Switch>::new.
 func Switch(id ID, st ...Style) SwitchEl {
+	useComponentSwitch()
 	n := newNode(768)
 	o := nodeArgs(n)
 	putID(o, id)

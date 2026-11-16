@@ -11,6 +11,7 @@ Close_Panel_VT :: struct {
 }
 
 close_panel_default :: proc(loc := #caller_location) -> Close_Panel {
+	use_component_dock()
 	e := Close_Panel{new_value(650, loc), &close_panel_vt}
 	return e
 }
@@ -29,6 +30,7 @@ Toggle_Zoom_VT :: struct {
 }
 
 toggle_zoom_default :: proc(loc := #caller_location) -> Toggle_Zoom {
+	use_component_dock()
 	e := Toggle_Zoom{new_value(651, loc), &toggle_zoom_vt}
 	return e
 }

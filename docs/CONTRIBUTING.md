@@ -50,7 +50,17 @@ make lib
 
 This runs `cargo build --release` in the normal `target/` folder and copies the results to `lib/`:
 
-- `lib/ship/` is the library apps link against.
+- `lib/ship/` is the library apps link against. It also holds `libgpuikit_static.a`, the same
+  library as a static archive (Go apps link it and keep only the component families they use;
+  [GO.md](GO.md) section 8), with, on Linux, `libgpuikit_sys.so`, a linker script naming the system
+  libraries the archive needs, and on Windows `libgpuikit_sys.a`, the import library of the Windows
+  API it links. On Windows the archive is built for Rust's MinGW target (Go's cgo links with
+  MinGW-w64), with one section per function (`-Zfunction-sections`, so a Go app's linker can drop
+  what it doesn't use): that needs the Rust toolchain hosted on MinGW (`rustup toolchain install
+  1.99.1-x86_64-pc-windows-gnu`) and MinGW-w64's gcc, dlltool and windres on `PATH`. Go apps embed
+  the Windows manifest through `go/gk/gpuikit_windows_amd64.syso`; after editing
+  `core/windows/gpuikit.manifest`, regenerate it with
+  `windres -O coff -i core/windows/gpuikit.rc -o go/gk/gpuikit_windows_amd64.syso`.
 - `lib/diag/` is a diagnostic build with offscreen rendering and scripted input. The tests use it.
 - `lib/licences/` holds the licence text of every crate linked into the library.
 - On Linux, the Rust reference apps (`ref-counter`, `ref-gallery` and so on) go next to each library.
@@ -126,8 +136,15 @@ The tests are also available one at a time:
 | `make rebuild` | an app rebuilds quickly after a one-line edit | under a minute |
 | `make go-test` | the Go examples, protocol tests, misuse cases and pixels | about a minute |
 | `make go-apps` | the Go apps and tutorial draw the same images as their Odin twins | a few minutes |
+| `make go-static` | the Go and Odin apps built the way an app is (static, only the families each one uses) | a few minutes |
 | `make go-fps` | frame cost of Go against Rust and Odin | about ten minutes |
 | `make cross` | both front ends compile for macOS and Windows (checked from Linux) | under a minute |
+
+The tests link the shared library (Go: the build tag `gkshared`, set in `go/env.sh`; Odin:
+`-define:GK_SHARED=true` in the test scripts), so one program can run against either `lib/ship` or
+`lib/diag`. `make go-static` builds the Go and Odin apps the way a user's app is built, statically
+against `lib/diag`, and runs their scripted sessions: if a generated function forgot to link its
+component family, the app stops and the check fails.
 
 Each test needs about 3 GB of memory at most. They run one after another, never in parallel.
 

@@ -4,33 +4,3 @@
 use crate::genapi::{self, Dx, R};
 use super::*;
 
-pub fn build_component_clipboard(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::clipboard::Clipboard> {
-    let (ty, args, first) = dx.node(n);
-    make_component_clipboard(dx, ty, args, first)
-}
-pub fn make_component_clipboard(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::clipboard::Clipboard> {
-    let r = &mut dx.args(args);
-    let el: gpui_kit::component::clipboard::Clipboard = match ty {
-        621 => { let a0 = element_id(r); <gpui_kit::component::clipboard::Clipboard>::new(a0) }
-        _ => return bad_node("Clipboard", ty),
-    };
-    Some(apply_component_clipboard(dx, el, first))
-}
-#[inline]
-pub fn apply_component_clipboard(dx: &mut Dx, mut el: gpui_kit::component::clipboard::Clipboard, first: u32) -> gpui_kit::component::clipboard::Clipboard {
-    let mut at = first;
-    while let Some((op, mut r)) = dx.op(&mut at) {
-        let r = &mut r;
-        match op {
-            256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::clipboard::Clipboard>::accessibility_label(el, a0) }; }
-            257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::clipboard::Clipboard>::tooltip(el, a0) }; }
-            258 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::component::clipboard::Clipboard>::tooltip_show_delay(el, a0) }; }
-            259 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::clipboard::Clipboard>::value(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: gpui_kit::SharedString, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 6, &a0, window, cx) } }; <gpui_kit::component::clipboard::Clipboard>::on_copied(el, a0) }; }
-            261 => { el = { let a0 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, gpui_kit::SharedString>(h, 104, &(), window, cx) } }; <gpui_kit::component::clipboard::Clipboard>::value_fn(el, a0) }; }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
-            _ => bad_op("Clipboard", op),
-        }
-    }
-    el
-}

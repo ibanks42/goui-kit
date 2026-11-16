@@ -119,13 +119,20 @@ jobs:
           echo "GK_ZIG=$zig" >> "$GITHUB_ENV"
           echo "$bin" >> "$GITHUB_PATH"
 
-      # Go's cgo on Windows needs MinGW-w64 gcc, and tools/win-implib.sh a dlltool. The image's own
-      # MinGW is used when it has both; otherwise MSYS2's (preinstalled on the image) provides them.
-      - name: MinGW-w64 gcc and dlltool
+      # Go's cgo on Windows needs MinGW-w64 gcc; tools/win-implib.sh a dlltool; the static library
+      # (built for Rust's MinGW target by tools/build-lib.sh) dlltool and windres. The image's own
+      # MinGW is used when it has all three; otherwise MSYS2's (preinstalled on the image).
+      - name: MinGW-w64 gcc, dlltool and windres
         if: runner.os == 'Windows'
         run: |
-          if ! command -v gcc > /dev/null || ! command -v dlltool > /dev/null; then
+          if ! command -v gcc > /dev/null || ! command -v dlltool > /dev/null || ! command -v windres > /dev/null; then
             C:/msys64/usr/bin/bash.exe -lc 'pacman -S --noconfirm --needed mingw-w64-ucrt-x86_64-gcc'
+            printf '%s\n' 'C:\msys64\ucrt64\bin' >> "$GITHUB_PATH"
+          fi
+          # lld, which a Go app links with on Windows so unused components are left out
+          # (examples/go/build.sh of the download uses it when ld.lld is on PATH).
+          if ! command -v ld.lld > /dev/null; then
+            C:/msys64/usr/bin/bash.exe -lc 'pacman -S --noconfirm --needed mingw-w64-ucrt-x86_64-lld'
             printf '%s\n' 'C:\msys64\ucrt64\bin' >> "$GITHUB_PATH"
           fi
 
@@ -144,6 +151,10 @@ jobs:
           # macOS: the standard library of both slices (tools/build-lib.sh's GK_MAC_TARGETS).
           if [ "$RUNNER_OS" = macOS ]; then
             rustup target add --toolchain "$channel" aarch64-apple-darwin x86_64-apple-darwin
+          fi
+          # Windows: the toolchain hosted on MinGW too, which builds the static library Go links.
+          if [ "$RUNNER_OS" = Windows ]; then
+            rustup toolchain install "$channel-x86_64-pc-windows-gnu" --profile minimal
           fi
           rustc -vV
 

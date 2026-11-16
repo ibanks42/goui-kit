@@ -11,6 +11,7 @@ func (e LabelEl) node() *node { return e.n }
 
 // Label is <gpui_kit::component::label::Label>::new.
 func Label(label string, st ...Style) LabelEl {
+	useComponentLabel()
 	n := newNode(685)
 	o := nodeArgs(n)
 	o.str(label)

@@ -19,6 +19,7 @@ Icon_VT :: struct {
 }
 
 icon :: proc(icon: Icon_Name, flags: ..Style_Flag, loc := #caller_location) -> Icon {
+	use_component_icon()
 	e := Icon{new_node(887, loc), &icon_vt}
 	o := node_args()
 	put_u16(o, u16(icon))
@@ -27,12 +28,14 @@ icon :: proc(icon: Icon_Name, flags: ..Style_Flag, loc := #caller_location) -> I
 }
 
 icon_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Icon {
+	use_component_icon()
 	e := Icon{new_node(885, loc), &icon_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 icon_empty :: proc(flags: ..Style_Flag, loc := #caller_location) -> Icon {
+	use_component_icon()
 	e := Icon{new_node(886, loc), &icon_vt}
 	tokens(e.el, flags)
 	return e
@@ -158,6 +161,7 @@ Title_Bar_VT :: struct {
 }
 
 title_bar :: proc(flags: ..Style_Flag, loc := #caller_location) -> Title_Bar {
+	use_component_title_bar()
 	e := Title_Bar{new_node(569, loc), &title_bar_vt}
 	tokens(e.el, flags)
 	return e
@@ -192,16 +196,19 @@ Window_Border_VT :: struct {
 }
 
 kit_window_border :: proc(loc := #caller_location) -> Window_Border {
+	use_component_window_border()
 	e := Window_Border{new_node(573, loc), &window_border_vt}
 	return e
 }
 
 window_border :: proc(loc := #caller_location) -> Window_Border {
+	use_component_window_border()
 	e := Window_Border{new_node(572, loc), &window_border_vt}
 	return e
 }
 
 window_border_default :: proc(loc := #caller_location) -> Window_Border {
+	use_component_window_border()
 	e := Window_Border{new_node(571, loc), &window_border_vt}
 	return e
 }

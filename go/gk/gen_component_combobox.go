@@ -11,6 +11,7 @@ func (e CaretEl) node() *node { return e.n }
 
 // Caret is <gpui_kit::component::combobox::Caret>::new.
 func Caret(size Size) CaretEl {
+	useComponentSelect()
 	n := newNode(625)
 	o := nodeArgs(n)
 	putSize(o, size)
@@ -31,6 +32,7 @@ func (e ComboboxEl) node() *node { return e.n }
 
 // Combobox is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::new.
 func Combobox(state ComboboxState, st ...Style) ComboboxEl {
+	useComponentCombobox()
 	n := newNode(830)
 	o := nodeArgs(n)
 	o.u64(state.h)

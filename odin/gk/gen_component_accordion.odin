@@ -20,6 +20,7 @@ Accordion_VT :: struct {
 }
 
 accordion :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Accordion {
+	use_component_accordion()
 	e := Accordion{new_node(574, loc), &accordion_vt}
 	o := node_args()
 	put_id(o, id)
@@ -84,6 +85,7 @@ Accordion_Item_VT :: struct {
 }
 
 accordion_item :: proc(flags: ..Style_Flag, loc := #caller_location) -> Accordion_Item {
+	use_component_accordion()
 	e := Accordion_Item{new_node(575, loc), &accordion_item_vt}
 	tokens(e.el, flags)
 	return e

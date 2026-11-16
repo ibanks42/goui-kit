@@ -11,6 +11,7 @@ func (e TimeFieldEl) node() *node { return e.n }
 
 // TimeField is <gpui_kit::component::time_field::TimeField>::new.
 func TimeField(state TimeFieldState, st ...Style) TimeFieldEl {
+	useComponentTime()
 	n := newNode(799)
 	o := nodeArgs(n)
 	o.u64(state.h)

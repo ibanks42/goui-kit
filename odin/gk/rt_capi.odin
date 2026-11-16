@@ -17,14 +17,79 @@ import "core:fmt"
 import "core:os"
 import "core:strings"
 
-// The shared library is found with -extra-linker-flags (-L and an rpath on Linux and macOS,
-// /LIBPATH: on Windows); the link never reads the Rust code. Linux and macOS link
-// libgpuikit.so / libgpuikit.dylib; Windows links the DLL's import library gpuikit.dll.lib
-// (the MSVC format Odin's linker reads), and gpuikit.dll is found beside the program at run time.
+// The library is linked into the program: libgpuikit_static.a (gpuikit_static.lib on Windows),
+// found with -extra-linker-flags (-L, or /LIBPATH: on Windows). The linker keeps only the component
+// families the program calls into (each generated procedure links its own: gen_use.odin), told to
+// drop the rest by the flags below, so an app needs no flag of its own for it (docs/DESIGN.md
+// section 16). Without -debug the symbol table is left out too (the library's alone is over 20 MB).
+//
+// -define:GK_SHARED=true links the shared library instead (libgpuikit.so, libgpuikit.dylib, or
+// gpuikit.dll through its import library gpuikit.dll.lib), which the program loads at run time.
+// The repository's own tests use it, so one build can run against either library variant.
+GK_SHARED :: #config(GK_SHARED, false)
+
 when ODIN_OS == .Windows {
-	foreign import capi "system:gpuikit.dll.lib"
+	GK_LIB :: "system:gpuikit.dll.lib" when GK_SHARED else "system:gpuikit_static.lib"
+	when GK_SHARED {
+		foreign import capi {GK_LIB}
+	} else {
+		@(extra_linker_flags = "/OPT:REF")
+		foreign import capi {
+			GK_LIB,
+			"system:gpuikit_sys.lib",
+			"system:kernel32.lib",
+			"system:ntdll.lib",
+			"system:userenv.lib",
+			"system:ws2_32.lib",
+			"system:dbghelp.lib",
+		}
+	}
+} else when ODIN_OS == .Darwin {
+	GK_LIB :: "system:gpuikit" when GK_SHARED else "system:gpuikit_static"
+	when GK_SHARED {
+		foreign import capi {GK_LIB}
+	} else {
+		@(extra_linker_flags = "-Wl,-dead_strip" + ("" when ODIN_DEBUG else " -Wl,-x"))
+		foreign import capi {
+			GK_LIB,
+			"system:CoreServices.framework",
+			"system:ApplicationServices.framework",
+			"system:CoreFoundation.framework",
+			"system:CoreVideo.framework",
+			"system:Carbon.framework",
+			"system:AppKit.framework",
+			"system:Foundation.framework",
+			"system:UserNotifications.framework",
+			"system:Security.framework",
+			"system:CoreText.framework",
+			"system:CoreGraphics.framework",
+			"system:CoreData.framework",
+			"system:CoreImage.framework",
+			"system:CloudKit.framework",
+			"system:QuartzCore.framework",
+			"system:UniformTypeIdentifiers.framework",
+			"system:Metal.framework",
+			"system:objc",
+			"system:iconv",
+		}
+	}
 } else {
-	foreign import capi "system:gpuikit"
+	GK_LIB :: "system:gpuikit" when GK_SHARED else "system:gpuikit_static"
+	when GK_SHARED {
+		foreign import capi {GK_LIB}
+	} else {
+		@(extra_linker_flags = "-Wl,--gc-sections" + ("" when ODIN_DEBUG else " -Wl,-s"))
+		foreign import capi {
+			GK_LIB,
+			"system:gpuikit_sys",
+			"system:dl",
+			"system:gcc_s",
+			"system:util",
+			"system:rt",
+			"system:pthread",
+			"system:m",
+		}
+	}
 }
 
 GK_MAGIC :: 0x314b5047
@@ -54,6 +119,8 @@ Gk_App :: struct {
 @(default_calling_convention = "c")
 foreign capi {
 	gk_info_get :: proc() -> ^Gk_Info ---
+	// Registers every component family (gen/gk_fam.py): link_all, and the shared library's start-up.
+	gk_use_all :: proc() ---
 	gk_run :: proc(app: ^Gk_App) -> i32 ---
 	gk_call :: proc(req: [^]u8, len: c.size_t, res: ^[^]u8, res_len: ^c.size_t) -> i32 ---
 	gk_reply :: proc(cb: ^Gk_Cb, out: [^]u8, len: c.size_t) -> i32 ---
@@ -204,6 +271,9 @@ check_library :: proc() {
 		os.exit(1)
 	}
 	versions := string(info.versions[:info.versions_len])
+	when GK_SHARED {
+		gk_use_all() // the shared library holds every family
+	}
 	if info.abi_major != ABI_MAJOR || info.abi_minor < ABI_MINOR || info.api_hash != EXPECT_API_HASH {
 		fmt.eprintf(
 			"gk: the library and this package are from different versions: the library is ABI %d.%d with interface hash %#x (%s); this package was generated for ABI %d.%d and hash %#x\n    Build the app against the odin/ folder of the download its libgpuikit.so came from (or point the rpath or LD_LIBRARY_PATH at the matching lib/).\n",
@@ -285,4 +355,11 @@ start :: proc(state: ^$S, init: proc(s: ^S, cx: ^Cx)) {
 	runtime_init()
 	ctx = context
 	ctx.assertion_failure_proc = app_panic
+}
+
+// link_all links every GPUI-kit component family into the program and registers them all. A
+// program links a family only when it calls into it (gk.button links the button family); link_all
+// is the escape hatch for one that wants all of them, at the size of all of them.
+link_all :: proc() {
+	gk_use_all()
 }

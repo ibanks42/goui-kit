@@ -4,29 +4,3 @@
 use crate::genapi::{self, Dx, R};
 use super::*;
 
-pub fn build_base_scrollable_mask(dx: &mut Dx, n: u32) -> Option<gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>> {
-    let (ty, args, first) = dx.node(n);
-    make_base_scrollable_mask(dx, ty, args, first)
-}
-pub fn make_base_scrollable_mask(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>> {
-    let r = &mut dx.args(args);
-    let el: gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle> = match ty {
-        843 => { let a0 = en_4(r.u16()); let a1 = genapi::obj_shown::<gpui_kit::ScrollHandle>(r.u64()); <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::new(a0, &a1) }
-        844 => { let a0 = genapi::obj_shown::<gpui_kit::ScrollHandle>(r.u64()); <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::vertical_wheel(&a0) }
-        _ => return bad_node("ScrollableMask", ty),
-    };
-    Some(apply_base_scrollable_mask(dx, el, first))
-}
-#[inline]
-pub fn apply_base_scrollable_mask(dx: &mut Dx, mut el: gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>, first: u32) -> gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle> {
-    let mut at = first;
-    while let Some((op, mut r)) = dx.op(&mut at) {
-        let r = &mut r;
-        match op {
-            256 => { el = { <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::debug(el) }; }
-            257 => { el = { let a0 = element_id(r); <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::id(el, a0) }; }
-            _ => bad_op("ScrollableMask", op),
-        }
-    }
-    el
-}

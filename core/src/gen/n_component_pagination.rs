@@ -4,37 +4,3 @@
 use crate::genapi::{self, Dx, R};
 use super::*;
 
-pub fn build_component_pagination(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::pagination::Pagination> {
-    let (ty, args, first) = dx.node(n);
-    make_component_pagination(dx, ty, args, first)
-}
-pub fn make_component_pagination(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::pagination::Pagination> {
-    let r = &mut dx.args(args);
-    let el: gpui_kit::component::pagination::Pagination = match ty {
-        711 => { let a0 = element_id(r); <gpui_kit::component::pagination::Pagination>::new(a0) }
-        _ => return bad_node("Pagination", ty),
-    };
-    Some(apply_component_pagination(dx, el, first))
-}
-#[inline]
-pub fn apply_component_pagination(dx: &mut Dx, mut el: gpui_kit::component::pagination::Pagination, first: u32) -> gpui_kit::component::pagination::Pagination {
-    let mut at = first;
-    while let Some((op, mut r)) = dx.op(&mut at) {
-        let r = &mut r;
-        match op {
-            256 => { el = { <gpui_kit::component::pagination::Pagination>::compact(el) }; }
-            257 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::pagination::Pagination>::current_page(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::pagination::Pagination>::on_click(el, a0) }; }
-            259 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::pagination::Pagination>::total_pages(el, a0) }; }
-            260 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::pagination::Pagination>::visible_pages(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17024..=17151 => { el = tr_disableable_5(el, op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
-            4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
-            16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            _ => bad_op("Pagination", op),
-        }
-    }
-    el
-}

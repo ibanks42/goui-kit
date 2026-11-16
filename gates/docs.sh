@@ -29,7 +29,7 @@ progs=()
 for d in "$repo"/docs/tutorial/*/ "$repo"/docs/snippets/*/ $(cited $guides_odin); do
   [ -f "$d/main.odin" ] || continue
   name=docs-$(basename "$(dirname "$d")")-$(basename "$d")
-  if ! "$odin" build "$d" -o:minimal -collection:gpuikit="$repo/odin" \
+  if ! "$odin" build "$d" -o:minimal -define:GK_SHARED=true -collection:gpuikit="$repo/odin" \
       "-extra-linker-flags:-L$root/ship" -out:"$bin/$name" > "$out/$name.build.log" 2>&1; then
     head -20 "$out/$name.build.log"; fail "$d does not build"
   fi

@@ -13,6 +13,7 @@ Activate_Token_VT :: struct {
 }
 
 activate_token_default :: proc(loc := #caller_location) -> Activate_Token {
+	use_base_input()
 	e := Activate_Token{new_value(459, loc), &activate_token_vt}
 	return e
 }
@@ -31,6 +32,7 @@ Add_Cursor_Above_VT :: struct {
 }
 
 add_cursor_above_default :: proc(loc := #caller_location) -> Add_Cursor_Above {
+	use_base_input()
 	e := Add_Cursor_Above{new_value(460, loc), &add_cursor_above_vt}
 	return e
 }
@@ -49,6 +51,7 @@ Add_Cursor_Below_VT :: struct {
 }
 
 add_cursor_below_default :: proc(loc := #caller_location) -> Add_Cursor_Below {
+	use_base_input()
 	e := Add_Cursor_Below{new_value(461, loc), &add_cursor_below_vt}
 	return e
 }
@@ -97,6 +100,7 @@ Backspace_VT :: struct {
 }
 
 backspace_default :: proc(loc := #caller_location) -> Backspace {
+	use_base_input()
 	e := Backspace{new_value(463, loc), &backspace_vt}
 	return e
 }
@@ -136,6 +140,7 @@ Copy_VT :: struct {
 }
 
 copy_default :: proc(loc := #caller_location) -> Copy {
+	use_base_input()
 	e := Copy{new_value(465, loc), &copy_vt}
 	return e
 }
@@ -190,6 +195,7 @@ Cut_VT :: struct {
 }
 
 cut_default :: proc(loc := #caller_location) -> Cut {
+	use_base_input()
 	e := Cut{new_value(469, loc), &cut_vt}
 	return e
 }
@@ -208,6 +214,7 @@ Delete_VT :: struct {
 }
 
 delete_default :: proc(loc := #caller_location) -> Delete {
+	use_base_input()
 	e := Delete{new_value(470, loc), &delete_vt}
 	return e
 }
@@ -226,6 +233,7 @@ Delete_To_Beginning_Of_Line_VT :: struct {
 }
 
 delete_to_beginning_of_line_default :: proc(loc := #caller_location) -> Delete_To_Beginning_Of_Line {
+	use_base_input()
 	e := Delete_To_Beginning_Of_Line{new_value(471, loc), &delete_to_beginning_of_line_vt}
 	return e
 }
@@ -244,6 +252,7 @@ Delete_To_End_Of_Line_VT :: struct {
 }
 
 delete_to_end_of_line_default :: proc(loc := #caller_location) -> Delete_To_End_Of_Line {
+	use_base_input()
 	e := Delete_To_End_Of_Line{new_value(472, loc), &delete_to_end_of_line_vt}
 	return e
 }
@@ -262,6 +271,7 @@ Delete_To_Next_Word_End_VT :: struct {
 }
 
 delete_to_next_word_end_default :: proc(loc := #caller_location) -> Delete_To_Next_Word_End {
+	use_base_input()
 	e := Delete_To_Next_Word_End{new_value(473, loc), &delete_to_next_word_end_vt}
 	return e
 }
@@ -280,6 +290,7 @@ Delete_To_Previous_Word_Start_VT :: struct {
 }
 
 delete_to_previous_word_start_default :: proc(loc := #caller_location) -> Delete_To_Previous_Word_Start {
+	use_base_input()
 	e := Delete_To_Previous_Word_Start{new_value(474, loc), &delete_to_previous_word_start_vt}
 	return e
 }
@@ -343,6 +354,7 @@ Escape_VT :: struct {
 }
 
 escape_default :: proc(loc := #caller_location) -> Escape {
+	use_base_input()
 	e := Escape{new_value(478, loc), &escape_vt}
 	return e
 }
@@ -361,6 +373,7 @@ Go_To_Definition_VT :: struct {
 }
 
 go_to_definition_default :: proc(loc := #caller_location) -> Go_To_Definition {
+	use_base_input()
 	e := Go_To_Definition{new_value(479, loc), &go_to_definition_vt}
 	return e
 }
@@ -416,6 +429,7 @@ Indent_VT :: struct {
 }
 
 indent_default :: proc(loc := #caller_location) -> Indent {
+	use_base_input()
 	e := Indent{new_value(482, loc), &indent_vt}
 	return e
 }
@@ -434,6 +448,7 @@ Indent_Inline_VT :: struct {
 }
 
 indent_inline_default :: proc(loc := #caller_location) -> Indent_Inline {
+	use_base_input()
 	e := Indent_Inline{new_value(483, loc), &indent_inline_vt}
 	return e
 }
@@ -585,6 +600,7 @@ Base_Move_Down_VT :: struct {
 }
 
 base_move_down_default :: proc(loc := #caller_location) -> Base_Move_Down {
+	use_base_input()
 	e := Base_Move_Down{new_value(489, loc), &base_move_down_vt}
 	return e
 }
@@ -603,6 +619,7 @@ Move_End_VT :: struct {
 }
 
 move_end_default :: proc(loc := #caller_location) -> Move_End {
+	use_base_input()
 	e := Move_End{new_value(490, loc), &move_end_vt}
 	return e
 }
@@ -621,6 +638,7 @@ Move_Home_VT :: struct {
 }
 
 move_home_default :: proc(loc := #caller_location) -> Move_Home {
+	use_base_input()
 	e := Move_Home{new_value(491, loc), &move_home_vt}
 	return e
 }
@@ -639,6 +657,7 @@ Base_Move_Left_VT :: struct {
 }
 
 base_move_left_default :: proc(loc := #caller_location) -> Base_Move_Left {
+	use_base_input()
 	e := Base_Move_Left{new_value(492, loc), &base_move_left_vt}
 	return e
 }
@@ -657,6 +676,7 @@ Move_Page_Down_VT :: struct {
 }
 
 move_page_down_default :: proc(loc := #caller_location) -> Move_Page_Down {
+	use_base_input()
 	e := Move_Page_Down{new_value(493, loc), &move_page_down_vt}
 	return e
 }
@@ -675,6 +695,7 @@ Move_Page_Up_VT :: struct {
 }
 
 move_page_up_default :: proc(loc := #caller_location) -> Move_Page_Up {
+	use_base_input()
 	e := Move_Page_Up{new_value(494, loc), &move_page_up_vt}
 	return e
 }
@@ -693,6 +714,7 @@ Base_Move_Right_VT :: struct {
 }
 
 base_move_right_default :: proc(loc := #caller_location) -> Base_Move_Right {
+	use_base_input()
 	e := Base_Move_Right{new_value(495, loc), &base_move_right_vt}
 	return e
 }
@@ -711,6 +733,7 @@ Move_To_End_VT :: struct {
 }
 
 move_to_end_default :: proc(loc := #caller_location) -> Move_To_End {
+	use_base_input()
 	e := Move_To_End{new_value(496, loc), &move_to_end_vt}
 	return e
 }
@@ -729,6 +752,7 @@ Move_To_End_Of_Line_VT :: struct {
 }
 
 move_to_end_of_line_default :: proc(loc := #caller_location) -> Move_To_End_Of_Line {
+	use_base_input()
 	e := Move_To_End_Of_Line{new_value(497, loc), &move_to_end_of_line_vt}
 	return e
 }
@@ -747,6 +771,7 @@ Move_To_Next_Word_VT :: struct {
 }
 
 move_to_next_word_default :: proc(loc := #caller_location) -> Move_To_Next_Word {
+	use_base_input()
 	e := Move_To_Next_Word{new_value(498, loc), &move_to_next_word_vt}
 	return e
 }
@@ -765,6 +790,7 @@ Move_To_Previous_Word_VT :: struct {
 }
 
 move_to_previous_word_default :: proc(loc := #caller_location) -> Move_To_Previous_Word {
+	use_base_input()
 	e := Move_To_Previous_Word{new_value(499, loc), &move_to_previous_word_vt}
 	return e
 }
@@ -783,6 +809,7 @@ Move_To_Start_VT :: struct {
 }
 
 move_to_start_default :: proc(loc := #caller_location) -> Move_To_Start {
+	use_base_input()
 	e := Move_To_Start{new_value(500, loc), &move_to_start_vt}
 	return e
 }
@@ -801,6 +828,7 @@ Move_To_Start_Of_Line_VT :: struct {
 }
 
 move_to_start_of_line_default :: proc(loc := #caller_location) -> Move_To_Start_Of_Line {
+	use_base_input()
 	e := Move_To_Start_Of_Line{new_value(501, loc), &move_to_start_of_line_vt}
 	return e
 }
@@ -819,6 +847,7 @@ Base_Move_Up_VT :: struct {
 }
 
 base_move_up_default :: proc(loc := #caller_location) -> Base_Move_Up {
+	use_base_input()
 	e := Base_Move_Up{new_value(502, loc), &base_move_up_vt}
 	return e
 }
@@ -837,6 +866,7 @@ Outdent_VT :: struct {
 }
 
 outdent_default :: proc(loc := #caller_location) -> Outdent {
+	use_base_input()
 	e := Outdent{new_value(505, loc), &outdent_vt}
 	return e
 }
@@ -855,6 +885,7 @@ Outdent_Inline_VT :: struct {
 }
 
 outdent_inline_default :: proc(loc := #caller_location) -> Outdent_Inline {
+	use_base_input()
 	e := Outdent_Inline{new_value(506, loc), &outdent_inline_vt}
 	return e
 }
@@ -910,6 +941,7 @@ Paste_VT :: struct {
 }
 
 paste_default :: proc(loc := #caller_location) -> Paste {
+	use_base_input()
 	e := Paste{new_value(509, loc), &paste_vt}
 	return e
 }
@@ -960,6 +992,7 @@ Redo_VT :: struct {
 }
 
 redo_default :: proc(loc := #caller_location) -> Redo {
+	use_base_input()
 	e := Redo{new_value(511, loc), &redo_vt}
 	return e
 }
@@ -978,6 +1011,7 @@ Replace_VT :: struct {
 }
 
 replace_default :: proc(loc := #caller_location) -> Replace {
+	use_base_input()
 	e := Replace{new_value(512, loc), &replace_vt}
 	return e
 }
@@ -996,6 +1030,7 @@ Search_VT :: struct {
 }
 
 search_default :: proc(loc := #caller_location) -> Search {
+	use_base_input()
 	e := Search{new_value(513, loc), &search_vt}
 	return e
 }
@@ -1014,6 +1049,7 @@ Select_All_VT :: struct {
 }
 
 select_all_default :: proc(loc := #caller_location) -> Select_All {
+	use_base_input()
 	e := Select_All{new_value(514, loc), &select_all_vt}
 	return e
 }
@@ -1032,6 +1068,7 @@ Select_To_End_VT :: struct {
 }
 
 select_to_end_default :: proc(loc := #caller_location) -> Select_To_End {
+	use_base_input()
 	e := Select_To_End{new_value(515, loc), &select_to_end_vt}
 	return e
 }
@@ -1050,6 +1087,7 @@ Select_To_End_Of_Line_VT :: struct {
 }
 
 select_to_end_of_line_default :: proc(loc := #caller_location) -> Select_To_End_Of_Line {
+	use_base_input()
 	e := Select_To_End_Of_Line{new_value(516, loc), &select_to_end_of_line_vt}
 	return e
 }
@@ -1068,6 +1106,7 @@ Select_To_Next_Word_End_VT :: struct {
 }
 
 select_to_next_word_end_default :: proc(loc := #caller_location) -> Select_To_Next_Word_End {
+	use_base_input()
 	e := Select_To_Next_Word_End{new_value(517, loc), &select_to_next_word_end_vt}
 	return e
 }
@@ -1086,6 +1125,7 @@ Select_To_Previous_Word_Start_VT :: struct {
 }
 
 select_to_previous_word_start_default :: proc(loc := #caller_location) -> Select_To_Previous_Word_Start {
+	use_base_input()
 	e := Select_To_Previous_Word_Start{new_value(518, loc), &select_to_previous_word_start_vt}
 	return e
 }
@@ -1104,6 +1144,7 @@ Select_To_Start_VT :: struct {
 }
 
 select_to_start_default :: proc(loc := #caller_location) -> Select_To_Start {
+	use_base_input()
 	e := Select_To_Start{new_value(519, loc), &select_to_start_vt}
 	return e
 }
@@ -1122,6 +1163,7 @@ Select_To_Start_Of_Line_VT :: struct {
 }
 
 select_to_start_of_line_default :: proc(loc := #caller_location) -> Select_To_Start_Of_Line {
+	use_base_input()
 	e := Select_To_Start_Of_Line{new_value(520, loc), &select_to_start_of_line_vt}
 	return e
 }
@@ -1140,6 +1182,7 @@ Show_Character_Palette_VT :: struct {
 }
 
 show_character_palette_default :: proc(loc := #caller_location) -> Show_Character_Palette {
+	use_base_input()
 	e := Show_Character_Palette{new_value(521, loc), &show_character_palette_vt}
 	return e
 }
@@ -1158,6 +1201,7 @@ Show_Completions_VT :: struct {
 }
 
 show_completions_default :: proc(loc := #caller_location) -> Show_Completions {
+	use_base_input()
 	e := Show_Completions{new_value(522, loc), &show_completions_vt}
 	return e
 }
@@ -1176,6 +1220,7 @@ Toggle_Code_Actions_VT :: struct {
 }
 
 toggle_code_actions_default :: proc(loc := #caller_location) -> Toggle_Code_Actions {
+	use_base_input()
 	e := Toggle_Code_Actions{new_value(523, loc), &toggle_code_actions_vt}
 	return e
 }
@@ -1194,6 +1239,7 @@ Undo_VT :: struct {
 }
 
 undo_default :: proc(loc := #caller_location) -> Undo {
+	use_base_input()
 	e := Undo{new_value(524, loc), &undo_vt}
 	return e
 }

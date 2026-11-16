@@ -20,16 +20,19 @@ Description_List_VT :: struct {
 }
 
 description_list :: proc(loc := #caller_location) -> Description_List {
+	use_component_description_list()
 	e := Description_List{new_node(632, loc), &description_list_vt}
 	return e
 }
 
 description_list_horizontal :: proc(loc := #caller_location) -> Description_List {
+	use_component_description_list()
 	e := Description_List{new_node(631, loc), &description_list_vt}
 	return e
 }
 
 description_list_vertical :: proc(loc := #caller_location) -> Description_List {
+	use_component_description_list()
 	e := Description_List{new_node(633, loc), &description_list_vt}
 	return e
 }

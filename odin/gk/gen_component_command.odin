@@ -111,6 +111,7 @@ Command_VT :: struct {
 }
 
 command :: proc(state: Command_State, flags: ..Style_Flag, loc := #caller_location) -> Command {
+	use_component_command()
 	e := Command{new_node(626, loc), &command_vt}
 	o := node_args()
 	put_u64(o, state.h)

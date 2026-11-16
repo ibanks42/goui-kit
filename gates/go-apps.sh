@@ -12,10 +12,19 @@
 #   expenses  gates/expenses.script
 #   tutorial  every step a few frames (as gates/docs.sh), the last under gates/docs-tutorial.script
 # Default: all of them. Prints lines starting with GATE. Images in gates/out/go-apps/.
+# GK_STATIC=1: the Go and Odin programs are built the way an app is, against the static library
+# (lib/diag's, for the offscreen runs), so each links only the component families it calls into;
+# every scripted session then shows whether one is missing.
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
-. "$repo/go/env.sh"
-out=$here/out/go-apps; mkdir -p "$out"
 root=${GK_LIB_ROOT:-$repo/lib}; bin=${GK_BIN:-$repo/bin}; mkdir -p "$bin"
+if [ "${GK_STATIC:-}" = 1 ]; then
+  export GOFLAGS="-mod=mod" GOBUILDFLAGS="-ldflags=-extldflags=-Wl,--gc-sections" GK_ODIN_SHARED=false
+  golib=$root/diag; odinlib=$root/diag; odinshared=false; tag=" (static)"; out=$here/out/go-apps-static
+else
+  golib=$root/ship; odinlib=$root/ship; odinshared=true; tag=""; out=$here/out/go-apps
+fi
+. "$repo/go/env.sh"
+mkdir -p "$out"
 odin=${ODIN:-odin}
 [ $# -gt 0 ] || set -- build notes todo reader expenses tutorial
 apps="notes todo reader expenses"
@@ -52,25 +61,26 @@ for phase in "$@"; do
   case "$phase" in
   build)
     t0=$(date +%s.%N)
-    if ! GK_LIB=$root/ship "$repo/examples/go/build.sh" $apps > "$out/build-go.log" 2>&1; then
+    if ! GK_LIB=$golib "$repo/examples/go/build.sh" $apps > "$out/build-go.log" 2>&1; then
       echo "GATE go-apps build FAIL the Go apps"; cat "$out/build-go.log"; rc=1; continue
     fi
     for d in "$repo"/docs/tutorial-go/*/; do
       n=$(basename "$d" | cut -c1-2)
-      ( cd "$repo/docs/tutorial-go" && CGO_LDFLAGS="-L$root/ship -Wl,-rpath,$root/ship" \
-        go build -o "$bin/tut-$n-go" "./$(basename "$d")" ) >> "$out/build-go.log" 2>&1 \
+      ( cd "$repo/docs/tutorial-go" && CGO_LDFLAGS="-L$golib -Wl,-rpath,$root/ship" \
+        go build ${GOBUILDFLAGS:-} -o "$bin/tut-$n-go" "./$(basename "$d")" ) >> "$out/build-go.log" 2>&1 \
         || { echo "GATE go-apps build FAIL docs/tutorial-go/$(basename "$d")"; cat "$out/build-go.log"; rc=1; continue 2; }
     done
     echo "go-apps: Go built in $(printf %.1f "$(echo "$(date +%s.%N) - $t0" | bc)") s"
-    GK_LIB=$root/ship "$repo/examples/odin/build.sh" $apps > "$out/build-odin.log" 2>&1 \
+    GK_LIB=$odinlib "$repo/examples/odin/build.sh" $apps > "$out/build-odin.log" 2>&1 \
       || { echo "GATE go-apps build FAIL the Odin apps"; tail -20 "$out/build-odin.log"; rc=1; continue; }
     for d in "$repo"/docs/tutorial/*/; do
       n=$(basename "$d" | cut -c1-2)
-      "$odin" build "$d" -o:minimal -collection:gpuikit="$repo/odin" "-extra-linker-flags:-L$root/ship" \
+      "$odin" build "$d" -o:minimal -define:GK_SHARED=$odinshared -collection:gpuikit="$repo/odin" "-extra-linker-flags:-L$odinlib" \
         -out:"$bin/tut-$n-odin" >> "$out/build-odin.log" 2>&1 \
         || { echo "GATE go-apps build FAIL $d"; tail -20 "$out/build-odin.log"; rc=1; continue 2; }
     done
-    echo "GATE go-apps build PASS 4 apps and 9 tutorial steps in Go and in Odin" ;;
+    [ -z "$tag" ] || echo "go-apps: static sizes: $(for a in $apps; do printf '%s %s / %s MB  ' "$a" "$(( $(stat -c %s "$bin/$a-go") / 1000000 ))" "$(( $(stat -c %s "$bin/$a-odin") / 1000000 ))"; done)(Go / Odin)"
+    echo "GATE go-apps build$tag PASS 4 apps and 9 tutorial steps in Go and in Odin" ;;
   notes)
     GK_PIXEL_CANDS="odin go" "$here/pixels.sh" notes > "$out/pixels-notes.txt" 2>&1 || rc=1
     grep '^GATE' "$out/pixels-notes.txt"; grep -E 'DIFFERS|exit [1-9]' "$out/pixels-notes.txt" | head -20 ;;

@@ -29,6 +29,7 @@ Select_VT :: struct {
 }
 
 select :: proc(state: Select_State, flags: ..Style_Flag, loc := #caller_location) -> Select {
+	use_component_select()
 	e := Select{new_node(833, loc), &select_vt}
 	o := node_args()
 	put_u64(o, state.h)

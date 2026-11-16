@@ -11,6 +11,7 @@ func (e AlertDialogEl) node() *node { return e.n }
 
 // AlertDialog is <gpui_kit::component::dialog::AlertDialog>::new.
 func AlertDialog(st ...Style) AlertDialogEl {
+	useComponentDialog()
 	n := newNode(634)
 	tokens(n, st)
 	return AlertDialogEl{n}
@@ -380,6 +381,7 @@ func (e DialogEl) node() *node { return e.n }
 
 // Dialog is <gpui_kit::component::dialog::Dialog>::new.
 func Dialog(st ...Style) DialogEl {
+	useComponentDialog()
 	n := newNode(635)
 	tokens(n, st)
 	return DialogEl{n}
@@ -678,6 +680,7 @@ func (e DialogActionEl) node() *node { return e.n }
 
 // DialogAction is <gpui_kit::component::dialog::DialogAction>::new.
 func DialogAction() DialogActionEl {
+	useComponentDialog()
 	n := newNode(636)
 	return DialogActionEl{n}
 }
@@ -768,6 +771,7 @@ func (e DialogCloseEl) node() *node { return e.n }
 
 // DialogClose is <gpui_kit::component::dialog::DialogClose>::new.
 func DialogClose() DialogCloseEl {
+	useComponentDialog()
 	n := newNode(638)
 	return DialogCloseEl{n}
 }
@@ -802,6 +806,7 @@ func (e DialogContentEl) node() *node { return e.n }
 
 // DialogContent is <gpui_kit::component::dialog::DialogContent>::new.
 func DialogContent(st ...Style) DialogContentEl {
+	useComponentDialog()
 	n := newNode(639)
 	tokens(n, st)
 	return DialogContentEl{n}
@@ -1076,6 +1081,7 @@ func (e DialogDescriptionEl) node() *node { return e.n }
 
 // DialogDescription is <gpui_kit::component::dialog::DialogDescription>::new.
 func DialogDescription(st ...Style) DialogDescriptionEl {
+	useComponentDialog()
 	n := newNode(640)
 	tokens(n, st)
 	return DialogDescriptionEl{n}
@@ -1431,6 +1437,7 @@ func (e DialogFooterEl) node() *node { return e.n }
 
 // DialogFooter is <gpui_kit::component::dialog::DialogFooter>::new.
 func DialogFooter(st ...Style) DialogFooterEl {
+	useComponentDialog()
 	n := newNode(641)
 	tokens(n, st)
 	return DialogFooterEl{n}
@@ -1675,6 +1682,7 @@ func (e DialogHeaderEl) node() *node { return e.n }
 
 // DialogHeader is <gpui_kit::component::dialog::DialogHeader>::new.
 func DialogHeader(st ...Style) DialogHeaderEl {
+	useComponentDialog()
 	n := newNode(642)
 	tokens(n, st)
 	return DialogHeaderEl{n}
@@ -1919,6 +1927,7 @@ func (e DialogTitleEl) node() *node { return e.n }
 
 // DialogTitle is <gpui_kit::component::dialog::DialogTitle>::new.
 func DialogTitle(st ...Style) DialogTitleEl {
+	useComponentDialog()
 	n := newNode(643)
 	tokens(n, st)
 	return DialogTitleEl{n}

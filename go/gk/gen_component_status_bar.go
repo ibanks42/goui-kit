@@ -11,6 +11,7 @@ func (e StatusBarEl) node() *node { return e.n }
 
 // StatusBar is <gpui_kit::component::status_bar::StatusBar>::new.
 func StatusBar(st ...Style) StatusBarEl {
+	useComponentStatusBar()
 	n := newNode(765)
 	tokens(n, st)
 	return StatusBarEl{n}

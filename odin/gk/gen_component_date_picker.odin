@@ -22,6 +22,7 @@ Date_Picker_VT :: struct {
 }
 
 date_picker :: proc(state: Date_Picker_State, flags: ..Style_Flag, loc := #caller_location) -> Date_Picker {
+	use_component_time()
 	e := Date_Picker{new_node(630, loc), &date_picker_vt}
 	o := node_args()
 	put_u64(o, state.h)

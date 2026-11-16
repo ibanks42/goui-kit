@@ -19,6 +19,7 @@ Base_Accordion_VT :: struct {
 }
 
 base_accordion :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Accordion {
+	use_base_accordion()
 	e := Base_Accordion{new_node(263, loc), &base_accordion_vt}
 	o := node_args()
 	put_id(o, id)
@@ -52,6 +53,7 @@ Accordion_Header_VT :: struct {
 }
 
 accordion_header :: proc(trigger: Accordion_Trigger, flags: ..Style_Flag, loc := #caller_location) -> Accordion_Header {
+	use_base_accordion()
 	e := Accordion_Header{new_node(264, loc), &accordion_header_vt}
 	o := node_args()
 	put_u32(o, take(trigger.el))
@@ -95,6 +97,7 @@ Base_Accordion_Item_VT :: struct {
 }
 
 base_accordion_item :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Accordion_Item {
+	use_base_accordion()
 	e := Base_Accordion_Item{new_node(265, loc), &base_accordion_item_vt}
 	tokens(e.el, flags)
 	return e
@@ -145,6 +148,7 @@ Accordion_Panel_VT :: struct {
 }
 
 accordion_panel :: proc(flags: ..Style_Flag, loc := #caller_location) -> Accordion_Panel {
+	use_base_accordion()
 	e := Accordion_Panel{new_node(266, loc), &accordion_panel_vt}
 	tokens(e.el, flags)
 	return e
@@ -192,6 +196,7 @@ Accordion_Trigger_VT :: struct {
 }
 
 accordion_trigger :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Accordion_Trigger {
+	use_base_accordion()
 	e := Accordion_Trigger{new_node(267, loc), &accordion_trigger_vt}
 	o := node_args()
 	put_id(o, id)
@@ -248,6 +253,7 @@ Base_Alert_Dialog_VT :: struct {
 }
 
 base_alert_dialog :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Alert_Dialog {
+	use_base_alert_dialog()
 	e := Base_Alert_Dialog{new_node(268, loc), &base_alert_dialog_vt}
 	tokens(e.el, flags)
 	return e
@@ -325,12 +331,14 @@ Alert_Dialog_Action_VT :: struct {
 }
 
 alert_dialog_action :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Action {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Action{new_node(270, loc), &alert_dialog_action_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 alert_dialog_action_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Action {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Action{new_node(269, loc), &alert_dialog_action_vt}
 	tokens(e.el, flags)
 	return e
@@ -358,12 +366,14 @@ Alert_Dialog_Backdrop_VT :: struct {
 }
 
 alert_dialog_backdrop :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Backdrop {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Backdrop{new_node(272, loc), &alert_dialog_backdrop_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 alert_dialog_backdrop_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Backdrop {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Backdrop{new_node(271, loc), &alert_dialog_backdrop_vt}
 	tokens(e.el, flags)
 	return e
@@ -391,12 +401,14 @@ Alert_Dialog_Cancel_VT :: struct {
 }
 
 alert_dialog_cancel :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Cancel {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Cancel{new_node(274, loc), &alert_dialog_cancel_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 alert_dialog_cancel_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Cancel {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Cancel{new_node(273, loc), &alert_dialog_cancel_vt}
 	tokens(e.el, flags)
 	return e
@@ -424,12 +436,14 @@ Alert_Dialog_Close_VT :: struct {
 }
 
 alert_dialog_close :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Close {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Close{new_node(276, loc), &alert_dialog_close_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 alert_dialog_close_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Close {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Close{new_node(275, loc), &alert_dialog_close_vt}
 	tokens(e.el, flags)
 	return e
@@ -457,12 +471,14 @@ Alert_Dialog_Description_VT :: struct {
 }
 
 alert_dialog_description :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Description {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Description{new_node(278, loc), &alert_dialog_description_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 alert_dialog_description_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Description {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Description{new_node(277, loc), &alert_dialog_description_vt}
 	tokens(e.el, flags)
 	return e
@@ -490,12 +506,14 @@ Alert_Dialog_Popup_VT :: struct {
 }
 
 alert_dialog_popup :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Popup {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Popup{new_node(280, loc), &alert_dialog_popup_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 alert_dialog_popup_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Popup {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Popup{new_node(279, loc), &alert_dialog_popup_vt}
 	tokens(e.el, flags)
 	return e
@@ -523,12 +541,14 @@ Alert_Dialog_Title_VT :: struct {
 }
 
 alert_dialog_title :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Title {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Title{new_node(282, loc), &alert_dialog_title_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 alert_dialog_title_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog_Title {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Title{new_node(281, loc), &alert_dialog_title_vt}
 	tokens(e.el, flags)
 	return e
@@ -554,6 +574,7 @@ Alert_Dialog_Trigger_VT :: struct {
 }
 
 alert_dialog_trigger :: proc(trigger: Element, loc := #caller_location) -> Alert_Dialog_Trigger {
+	use_base_alert_dialog()
 	e := Alert_Dialog_Trigger{new_node(283, loc), &alert_dialog_trigger_vt}
 	o := node_args()
 	put_u32(o, take(trigger))
@@ -589,12 +610,14 @@ Base_Avatar_VT :: struct {
 }
 
 base_avatar :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Avatar {
+	use_base_avatar()
 	e := Base_Avatar{new_node(285, loc), &base_avatar_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 base_avatar_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Avatar {
+	use_base_avatar()
 	e := Base_Avatar{new_node(284, loc), &base_avatar_vt}
 	tokens(e.el, flags)
 	return e
@@ -631,12 +654,14 @@ Avatar_Fallback_VT :: struct {
 }
 
 avatar_fallback :: proc(flags: ..Style_Flag, loc := #caller_location) -> Avatar_Fallback {
+	use_base_avatar()
 	e := Avatar_Fallback{new_node(287, loc), &avatar_fallback_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 avatar_fallback_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Avatar_Fallback {
+	use_base_avatar()
 	e := Avatar_Fallback{new_node(286, loc), &avatar_fallback_vt}
 	tokens(e.el, flags)
 	return e
@@ -663,6 +688,7 @@ Avatar_Image_VT :: struct {
 }
 
 avatar_image :: proc(source: Image_Source_Into, flags: ..Style_Flag, loc := #caller_location) -> Avatar_Image {
+	use_base_avatar()
 	e := Avatar_Image{new_node(288, loc), &avatar_image_vt}
 	o := node_args()
 	put_Image_Source_Into(o, source)
@@ -780,6 +806,7 @@ Base_Button_VT :: struct {
 }
 
 base_button :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Button {
+	use_base_button()
 	e := Base_Button{new_node(289, loc), &base_button_vt}
 	o := node_args()
 	put_id(o, id)
@@ -970,6 +997,7 @@ Base_Calendar_VT :: struct {
 }
 
 base_calendar :: proc(id: Id, state: Calendar_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Calendar {
+	use_base_calendar()
 	e := Base_Calendar{new_node(291, loc), &base_calendar_vt}
 	o := node_args()
 	put_id(o, id)
@@ -1022,6 +1050,7 @@ Calendar_Item_VT :: struct {
 
 @(private)
 calendar_item_handed :: proc(index: u8, flags: ..Style_Flag, loc := #caller_location) -> Calendar_Item {
+	use_base_calendar()
 	e := Calendar_Item{new_node(882, loc), &calendar_item_vt}
 	o := node_args()
 	put_u8(o, u8(index))
@@ -1147,6 +1176,7 @@ Base_Checkbox_VT :: struct {
 }
 
 base_checkbox :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Checkbox {
+	use_base_checkbox()
 	e := Base_Checkbox{new_node(293, loc), &base_checkbox_vt}
 	o := node_args()
 	put_id(o, id)
@@ -1314,12 +1344,14 @@ Checkbox_Indicator_VT :: struct {
 }
 
 checkbox_indicator :: proc(flags: ..Style_Flag, loc := #caller_location) -> Checkbox_Indicator {
+	use_base_checkbox()
 	e := Checkbox_Indicator{new_node(295, loc), &checkbox_indicator_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 checkbox_indicator_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Checkbox_Indicator {
+	use_base_checkbox()
 	e := Checkbox_Indicator{new_node(294, loc), &checkbox_indicator_vt}
 	tokens(e.el, flags)
 	return e
@@ -1442,12 +1474,14 @@ Base_Collapsible_VT :: struct {
 }
 
 base_collapsible :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Collapsible {
+	use_base_collapsible()
 	e := Base_Collapsible{new_node(299, loc), &base_collapsible_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 base_collapsible_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Collapsible {
+	use_base_collapsible()
 	e := Base_Collapsible{new_node(298, loc), &base_collapsible_vt}
 	tokens(e.el, flags)
 	return e
@@ -1578,6 +1612,7 @@ Base_Color_Picker_VT :: struct {
 }
 
 base_color_picker :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Color_Picker {
+	use_base_color_picker()
 	e := Base_Color_Picker{new_node(300, loc), &base_color_picker_vt}
 	o := node_args()
 	put_id(o, id)
@@ -1804,6 +1839,7 @@ Color_Swatch_VT :: struct {
 }
 
 color_swatch :: proc(id: Id, color: Color, flags: ..Style_Flag, loc := #caller_location) -> Color_Swatch {
+	use_base_color_picker()
 	e := Color_Swatch{new_node(301, loc), &color_swatch_vt}
 	o := node_args()
 	put_id(o, id)
@@ -1959,6 +1995,7 @@ Base_Combobox_VT :: struct {
 }
 
 base_combobox :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Combobox {
+	use_base_combobox()
 	e := Base_Combobox{new_node(305, loc), &base_combobox_vt}
 	o := node_args()
 	put_id(o, id)
@@ -2028,6 +2065,7 @@ Base_Date_Picker_VT :: struct {
 }
 
 base_date_picker :: proc(id: Id, focus_handle: Focus_Handle, flags: ..Style_Flag, loc := #caller_location) -> Base_Date_Picker {
+	use_base_date_picker()
 	e := Base_Date_Picker{new_node(306, loc), &base_date_picker_vt}
 	o := node_args()
 	put_id(o, id)
@@ -2071,6 +2109,7 @@ Decrement_VT :: struct {
 }
 
 decrement_default :: proc(loc := #caller_location) -> Decrement {
+	use_base_number_input()
 	e := Decrement{new_value(307, loc), &decrement_vt}
 	return e
 }
@@ -2105,6 +2144,7 @@ Base_Dialog_VT :: struct {
 }
 
 base_dialog :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Dialog {
+	use_base_dialog()
 	e := Base_Dialog{new_node(308, loc), &base_dialog_vt}
 	tokens(e.el, flags)
 	return e
@@ -2192,12 +2232,14 @@ Dialog_Backdrop_VT :: struct {
 }
 
 dialog_backdrop :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog_Backdrop {
+	use_base_dialog()
 	e := Dialog_Backdrop{new_node(310, loc), &dialog_backdrop_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 dialog_backdrop_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog_Backdrop {
+	use_base_dialog()
 	e := Dialog_Backdrop{new_node(309, loc), &dialog_backdrop_vt}
 	tokens(e.el, flags)
 	return e
@@ -2226,12 +2268,14 @@ Base_Dialog_Close_VT :: struct {
 }
 
 base_dialog_close :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Dialog_Close {
+	use_base_dialog()
 	e := Base_Dialog_Close{new_node(312, loc), &base_dialog_close_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 base_dialog_close_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Dialog_Close {
+	use_base_dialog()
 	e := Base_Dialog_Close{new_node(311, loc), &base_dialog_close_vt}
 	tokens(e.el, flags)
 	return e
@@ -2264,12 +2308,14 @@ Base_Dialog_Description_VT :: struct {
 }
 
 base_dialog_description :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Dialog_Description {
+	use_base_dialog()
 	e := Base_Dialog_Description{new_node(314, loc), &base_dialog_description_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 base_dialog_description_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Dialog_Description {
+	use_base_dialog()
 	e := Base_Dialog_Description{new_node(313, loc), &base_dialog_description_vt}
 	tokens(e.el, flags)
 	return e
@@ -2297,12 +2343,14 @@ Dialog_Popup_VT :: struct {
 }
 
 dialog_popup :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog_Popup {
+	use_base_dialog()
 	e := Dialog_Popup{new_node(316, loc), &dialog_popup_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 dialog_popup_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog_Popup {
+	use_base_dialog()
 	e := Dialog_Popup{new_node(315, loc), &dialog_popup_vt}
 	tokens(e.el, flags)
 	return e
@@ -2330,12 +2378,14 @@ Base_Dialog_Title_VT :: struct {
 }
 
 base_dialog_title :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Dialog_Title {
+	use_base_dialog()
 	e := Base_Dialog_Title{new_node(318, loc), &base_dialog_title_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 base_dialog_title_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Dialog_Title {
+	use_base_dialog()
 	e := Base_Dialog_Title{new_node(317, loc), &base_dialog_title_vt}
 	tokens(e.el, flags)
 	return e
@@ -2361,6 +2411,7 @@ Dialog_Trigger_VT :: struct {
 }
 
 dialog_trigger :: proc(trigger: Element, loc := #caller_location) -> Dialog_Trigger {
+	use_base_dialog()
 	e := Dialog_Trigger{new_node(319, loc), &dialog_trigger_vt}
 	o := node_args()
 	put_u32(o, take(trigger))
@@ -2391,6 +2442,7 @@ Editor_VT :: struct {
 }
 
 editor :: proc(state: Editor_State, loc := #caller_location) -> Editor {
+	use_base_input()
 	e := Editor{new_node(320, loc), &editor_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -2529,6 +2581,7 @@ Grid_Layout_VT :: struct {
 }
 
 grid_layout :: proc(id: Id, state: Grid_Layout_State, flags: ..Style_Flag, loc := #caller_location) -> Grid_Layout {
+	use_base_grid_layout()
 	e := Grid_Layout{new_node(323, loc), &grid_layout_vt}
 	o := node_args()
 	put_id(o, id)
@@ -2538,6 +2591,7 @@ grid_layout :: proc(id: Id, state: Grid_Layout_State, flags: ..Style_Flag, loc :
 }
 
 kit_grid_layout :: proc(id: Id, state: Grid_Layout_State, flags: ..Style_Flag, loc := #caller_location) -> Grid_Layout {
+	use_base_grid_layout()
 	e := Grid_Layout{new_node(324, loc), &grid_layout_vt}
 	o := node_args()
 	put_id(o, id)
@@ -2628,6 +2682,7 @@ Base_Hover_Card_VT :: struct {
 }
 
 base_hover_card :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Hover_Card {
+	use_base_hover_card()
 	e := Base_Hover_Card{new_node(325, loc), &base_hover_card_vt}
 	o := node_args()
 	put_id(o, id)
@@ -2681,6 +2736,7 @@ Increment_VT :: struct {
 }
 
 increment_default :: proc(loc := #caller_location) -> Increment {
+	use_base_number_input()
 	e := Increment{new_value(326, loc), &increment_vt}
 	return e
 }
@@ -2702,6 +2758,7 @@ Base_Input_VT :: struct {
 }
 
 base_input :: proc(state: Input_State, loc := #caller_location) -> Base_Input {
+	use_base_input()
 	e := Base_Input{new_node(330, loc), &base_input_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -2787,6 +2844,7 @@ Input_Base_VT :: struct {
 }
 
 input_base :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Input_Base {
+	use_base_input()
 	e := Input_Base{new_node(331, loc), &input_base_vt}
 	o := node_args()
 	put_id(o, id)
@@ -2966,6 +3024,7 @@ Base_Link_VT :: struct {
 }
 
 base_link :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Link {
+	use_base_link()
 	e := Base_Link{new_node(333, loc), &base_link_vt}
 	o := node_args()
 	put_id(o, id)
@@ -3179,6 +3238,7 @@ Motion_Reveal_VT :: struct {
 }
 
 motion_reveal :: proc(id: Id, progress: f32, child: Element, loc := #caller_location) -> Motion_Reveal {
+	use_base_motion()
 	e := Motion_Reveal{new_node(338, loc), &motion_reveal_vt}
 	o := node_args()
 	put_id(o, id)
@@ -3204,6 +3264,7 @@ Nav_Page_VT :: struct {
 
 @(private)
 nav_page_handed :: proc(index: u8, flags: ..Style_Flag, loc := #caller_location) -> Nav_Page {
+	use_base_nav_stack()
 	e := Nav_Page{new_node(883, loc), &nav_page_vt}
 	o := node_args()
 	put_u8(o, u8(index))
@@ -3231,6 +3292,7 @@ Nav_Stack_VT :: struct {
 }
 
 nav_stack :: proc(state: Nav_Stack_State, flags: ..Style_Flag, loc := #caller_location) -> Nav_Stack {
+	use_base_nav_stack()
 	e := Nav_Stack{new_node(339, loc), &nav_stack_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -3275,6 +3337,7 @@ Base_Number_Input_VT :: struct {
 }
 
 base_number_input :: proc(state: Input_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Number_Input {
+	use_base_number_input()
 	e := Base_Number_Input{new_node(340, loc), &base_number_input_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -3338,12 +3401,14 @@ Number_Input_Text_VT :: struct {
 }
 
 number_input_text :: proc(flags: ..Style_Flag, loc := #caller_location) -> Number_Input_Text {
+	use_base_number_input()
 	e := Number_Input_Text{new_node(342, loc), &number_input_text_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 number_input_text_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Number_Input_Text {
+	use_base_number_input()
 	e := Number_Input_Text{new_node(341, loc), &number_input_text_vt}
 	tokens(e.el, flags)
 	return e
@@ -3372,6 +3437,7 @@ Base_Otp_Input_VT :: struct {
 }
 
 base_otp_input :: proc(state: Otp_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Otp_Input {
+	use_base_otp_input()
 	e := Base_Otp_Input{new_node(343, loc), &base_otp_input_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -3409,6 +3475,7 @@ Base_Pagination_VT :: struct {
 }
 
 base_pagination :: proc(id: Id, state: Pagination_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Pagination {
+	use_base_pagination()
 	e := Base_Pagination{new_node(344, loc), &base_pagination_vt}
 	o := node_args()
 	put_id(o, id)
@@ -3565,6 +3632,7 @@ Base_Popover_VT :: struct {
 }
 
 base_popover :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Popover {
+	use_base_popover()
 	e := Base_Popover{new_node(349, loc), &base_popover_vt}
 	o := node_args()
 	put_id(o, id)
@@ -3678,6 +3746,7 @@ Popup_VT :: struct {
 }
 
 popup :: proc(id: Id, trigger: Element, flags: ..Style_Flag, loc := #caller_location) -> Popup {
+	use_base_popup()
 	e := Popup{new_node(350, loc), &popup_vt}
 	o := node_args()
 	put_id(o, id)
@@ -3733,6 +3802,7 @@ Positioner_VT :: struct {
 }
 
 positioner_corner :: proc(anchor: Anchor, position: Gpui_Point, loc := #caller_location) -> Positioner {
+	use_base_positioner()
 	e := Positioner{new_node(351, loc), &positioner_vt}
 	o := node_args()
 	put_u16(o, u16(anchor))
@@ -3741,6 +3811,7 @@ positioner_corner :: proc(anchor: Anchor, position: Gpui_Point, loc := #caller_l
 }
 
 positioner_side :: proc(trigger_bounds: Bounds, loc := #caller_location) -> Positioner {
+	use_base_positioner()
 	e := Positioner{new_node(352, loc), &positioner_vt}
 	o := node_args()
 	put_Bounds(o, trigger_bounds)
@@ -3833,6 +3904,7 @@ Base_Progress_VT :: struct {
 }
 
 base_progress :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Progress {
+	use_base_progress()
 	e := Base_Progress{new_node(354, loc), &base_progress_vt}
 	o := node_args()
 	put_id(o, id)
@@ -3879,6 +3951,7 @@ Progress_Indicator_VT :: struct {
 }
 
 progress_indicator :: proc(flags: ..Style_Flag, loc := #caller_location) -> Progress_Indicator {
+	use_base_progress()
 	e := Progress_Indicator{new_node(355, loc), &progress_indicator_vt}
 	tokens(e.el, flags)
 	return e
@@ -3906,6 +3979,7 @@ Progress_Track_VT :: struct {
 }
 
 progress_track :: proc(flags: ..Style_Flag, loc := #caller_location) -> Progress_Track {
+	use_base_progress()
 	e := Progress_Track{new_node(356, loc), &progress_track_vt}
 	tokens(e.el, flags)
 	return e
@@ -3984,6 +4058,7 @@ Base_Radio_VT :: struct {
 }
 
 base_radio :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Radio {
+	use_base_radio()
 	e := Base_Radio{new_node(357, loc), &base_radio_vt}
 	o := node_args()
 	put_id(o, id)
@@ -4108,6 +4183,7 @@ Base_Radio_Group_VT :: struct {
 }
 
 base_radio_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Radio_Group {
+	use_base_radio_group()
 	e := Base_Radio_Group{new_node(358, loc), &base_radio_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -4258,6 +4334,7 @@ Resizable_Panel_VT :: struct {
 }
 
 resizable_panel :: proc(flags: ..Style_Flag, loc := #caller_location) -> Resizable_Panel {
+	use_base_resizable()
 	e := Resizable_Panel{new_node(361, loc), &resizable_panel_vt}
 	tokens(e.el, flags)
 	return e
@@ -4388,6 +4465,7 @@ Resizable_Panel_Group_VT :: struct {
 }
 
 h_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
+	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(865, loc), &resizable_panel_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -4395,6 +4473,7 @@ h_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
 }
 
 kit_h_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
+	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(867, loc), &resizable_panel_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -4402,6 +4481,7 @@ kit_h_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Grou
 }
 
 kit_v_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
+	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(868, loc), &resizable_panel_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -4409,6 +4489,7 @@ kit_v_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Grou
 }
 
 resizable_panel_group :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
+	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(864, loc), &resizable_panel_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -4416,6 +4497,7 @@ resizable_panel_group :: proc(id: Id, loc := #caller_location) -> Resizable_Pane
 }
 
 v_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
+	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(866, loc), &resizable_panel_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -4505,6 +4587,7 @@ Rounded_Frame_Cover_VT :: struct {
 }
 
 rounded_frame_cover_uniform :: proc(radius: f32, loc := #caller_location) -> Rounded_Frame_Cover {
+	use_base_scrollable_mask()
 	e := Rounded_Frame_Cover{new_node(363, loc), &rounded_frame_cover_vt}
 	o := node_args()
 	put_f32(o, radius)
@@ -4539,6 +4622,7 @@ Scroll_Bounce_VT :: struct {
 }
 
 scroll_bounce :: proc(id: Id, handle: Scroll_Handle, child: Element, loc := #caller_location) -> Scroll_Bounce {
+	use_base_scroll_bounce()
 	e := Scroll_Bounce{new_node(839, loc), &scroll_bounce_vt}
 	o := node_args()
 	put_id(o, id)
@@ -4624,6 +4708,7 @@ Scrollbar_VT :: struct {
 }
 
 scrollbar :: proc(scroll_handle: Scroll_Handle, loc := #caller_location) -> Scrollbar {
+	use_base_scrollbar()
 	e := Scrollbar{new_node(841, loc), &scrollbar_vt}
 	o := node_args()
 	put_obj(o, scroll_handle.h)
@@ -4631,6 +4716,7 @@ scrollbar :: proc(scroll_handle: Scroll_Handle, loc := #caller_location) -> Scro
 }
 
 scrollbar_horizontal :: proc(scroll_handle: Scroll_Handle, loc := #caller_location) -> Scrollbar {
+	use_base_scrollbar()
 	e := Scrollbar{new_node(840, loc), &scrollbar_vt}
 	o := node_args()
 	put_obj(o, scroll_handle.h)
@@ -4638,6 +4724,7 @@ scrollbar_horizontal :: proc(scroll_handle: Scroll_Handle, loc := #caller_locati
 }
 
 scrollbar_vertical :: proc(scroll_handle: Scroll_Handle, loc := #caller_location) -> Scrollbar {
+	use_base_scrollbar()
 	e := Scrollbar{new_node(842, loc), &scrollbar_vt}
 	o := node_args()
 	put_obj(o, scroll_handle.h)
@@ -4938,6 +5025,7 @@ Base_Select_VT :: struct {
 }
 
 base_select :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Select {
+	use_base_select()
 	e := Base_Select{new_node(371, loc), &base_select_vt}
 	o := node_args()
 	put_id(o, id)
@@ -5011,6 +5099,7 @@ Selectable_Text_VT :: struct {
 }
 
 selectable_text :: proc(id: Id, text: string, loc := #caller_location) -> Selectable_Text {
+	use_base_selectable_text()
 	e := Selectable_Text{new_node(372, loc), &selectable_text_vt}
 	o := node_args()
 	put_id(o, id)
@@ -5019,6 +5108,7 @@ selectable_text :: proc(id: Id, text: string, loc := #caller_location) -> Select
 }
 
 selectable_text_with_handle :: proc(id: Id, handle: Text_Selection_Handle, text: string, loc := #caller_location) -> Selectable_Text {
+	use_base_selectable_text()
 	e := Selectable_Text{new_node(823, loc), &selectable_text_vt}
 	o := node_args()
 	put_id(o, id)
@@ -5080,6 +5170,7 @@ Base_Sheet_VT :: struct {
 }
 
 base_sheet :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Sheet {
+	use_base_sheet()
 	e := Base_Sheet{new_node(376, loc), &base_sheet_vt}
 	tokens(e.el, flags)
 	return e
@@ -5131,6 +5222,7 @@ Base_Slider_VT :: struct {
 }
 
 base_slider :: proc(state: Slider_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Slider {
+	use_base_slider()
 	e := Base_Slider{new_node(377, loc), &base_slider_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -5190,6 +5282,7 @@ Slider_Indicator_VT :: struct {
 }
 
 slider_indicator :: proc(state: Slider_State, flags: ..Style_Flag, loc := #caller_location) -> Slider_Indicator {
+	use_base_slider()
 	e := Slider_Indicator{new_node(378, loc), &slider_indicator_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -5226,6 +5319,7 @@ Slider_Thumb_VT :: struct {
 }
 
 slider_thumb :: proc(state: Slider_State, flags: ..Style_Flag, loc := #caller_location) -> Slider_Thumb {
+	use_base_slider()
 	e := Slider_Thumb{new_node(379, loc), &slider_thumb_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -5275,6 +5369,7 @@ Slider_Track_VT :: struct {
 }
 
 slider_track :: proc(state: Slider_State, flags: ..Style_Flag, loc := #caller_location) -> Slider_Track {
+	use_base_slider()
 	e := Slider_Track{new_node(380, loc), &slider_track_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -5430,6 +5525,7 @@ Base_Switch_VT :: struct {
 }
 
 base_switch :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Switch {
+	use_base_switch()
 	e := Base_Switch{new_node(385, loc), &base_switch_vt}
 	o := node_args()
 	put_id(o, id)
@@ -5572,6 +5668,7 @@ Switch_Thumb_VT :: struct {
 }
 
 switch_thumb :: proc(checked: bool, flags: ..Style_Flag, loc := #caller_location) -> Switch_Thumb {
+	use_base_switch()
 	e := Switch_Thumb{new_node(387, loc), &switch_thumb_vt}
 	o := node_args()
 	put_u8(o, u8(checked))
@@ -5646,6 +5743,7 @@ Switch_Track_VT :: struct {
 }
 
 switch_track :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Switch_Track {
+	use_base_switch()
 	e := Switch_Track{new_node(389, loc), &switch_track_vt}
 	o := node_args()
 	put_id(o, id)
@@ -5769,6 +5867,7 @@ Base_Tab_VT :: struct {
 }
 
 base_tab :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Tab {
+	use_base_tabs()
 	e := Base_Tab{new_node(391, loc), &base_tab_vt}
 	o := node_args()
 	put_id(o, id)
@@ -5909,6 +6008,7 @@ Base_Table_VT :: struct {
 }
 
 base_table :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Table {
+	use_base_table()
 	e := Base_Table{new_node(393, loc), &base_table_vt}
 	o := node_args()
 	put_id(o, id)
@@ -5957,6 +6057,7 @@ Base_Table_Body_VT :: struct {
 }
 
 base_table_body :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Body {
+	use_base_table()
 	e := Base_Table_Body{new_node(394, loc), &base_table_body_vt}
 	o := node_args()
 	put_id(o, id)
@@ -5990,6 +6091,7 @@ Base_Table_Caption_VT :: struct {
 }
 
 base_table_caption :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Caption {
+	use_base_table()
 	e := Base_Table_Caption{new_node(395, loc), &base_table_caption_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6023,6 +6125,7 @@ Base_Table_Cell_VT :: struct {
 }
 
 base_table_cell :: proc(id: Id, column_index: int, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Cell {
+	use_base_table()
 	e := Base_Table_Cell{new_node(396, loc), &base_table_cell_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6057,6 +6160,7 @@ Base_Table_Head_VT :: struct {
 }
 
 base_table_head :: proc(id: Id, column_index: int, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Head {
+	use_base_table()
 	e := Base_Table_Head{new_node(397, loc), &base_table_head_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6091,6 +6195,7 @@ Base_Table_Header_VT :: struct {
 }
 
 base_table_header :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Header {
+	use_base_table()
 	e := Base_Table_Header{new_node(398, loc), &base_table_header_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6124,6 +6229,7 @@ Base_Table_Row_VT :: struct {
 }
 
 base_table_row :: proc(id: Id, row_index: int, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Row {
+	use_base_table()
 	e := Base_Table_Row{new_node(399, loc), &base_table_row_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6158,6 +6264,7 @@ Tabs_VT :: struct {
 }
 
 tabs :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Tabs {
+	use_base_tabs()
 	e := Tabs{new_node(400, loc), &tabs_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6288,6 +6395,7 @@ Base_Text_View_VT :: struct {
 }
 
 base_html :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
+	use_base_text()
 	e := Base_Text_View{new_node(408, loc), &base_text_view_vt}
 	o := node_args()
 	put_str(o, source)
@@ -6296,6 +6404,7 @@ base_html :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) 
 }
 
 base_markdown :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
+	use_base_text()
 	e := Base_Text_View{new_node(409, loc), &base_text_view_vt}
 	o := node_args()
 	put_str(o, source)
@@ -6304,6 +6413,7 @@ base_markdown :: proc(source: string, flags: ..Style_Flag, loc := #caller_locati
 }
 
 base_text_view :: proc(state: Text_View_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
+	use_base_text()
 	e := Base_Text_View{new_node(407, loc), &base_text_view_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -6312,6 +6422,7 @@ base_text_view :: proc(state: Text_View_State, flags: ..Style_Flag, loc := #call
 }
 
 base_text_view_html :: proc(id: Id, html: string, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
+	use_base_text()
 	e := Base_Text_View{new_node(405, loc), &base_text_view_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6321,6 +6432,7 @@ base_text_view_html :: proc(id: Id, html: string, flags: ..Style_Flag, loc := #c
 }
 
 base_text_view_markdown :: proc(id: Id, markdown: string, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
+	use_base_text()
 	e := Base_Text_View{new_node(406, loc), &base_text_view_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6715,6 +6827,7 @@ Base_Textarea_VT :: struct {
 }
 
 base_textarea :: proc(state: Textarea_State, loc := #caller_location) -> Base_Textarea {
+	use_base_input()
 	e := Base_Textarea{new_node(413, loc), &base_textarea_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -6755,6 +6868,7 @@ Base_Time_Field_VT :: struct {
 }
 
 base_time_field :: proc(id: Id, state: Time_Field_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Time_Field {
+	use_base_time_field()
 	e := Base_Time_Field{new_node(414, loc), &base_time_field_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6802,6 +6916,7 @@ Time_Field_Segment_VT :: struct {
 
 @(private)
 time_field_segment_handed :: proc(index: u8, flags: ..Style_Flag, loc := #caller_location) -> Time_Field_Segment {
+	use_base_time_field()
 	e := Time_Field_Segment{new_node(884, loc), &time_field_segment_vt}
 	o := node_args()
 	put_u8(o, u8(index))
@@ -6884,6 +6999,7 @@ Toast_VT :: struct {
 }
 
 toast :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Toast {
+	use_base_toast()
 	e := Toast{new_node(416, loc), &toast_vt}
 	o := node_args()
 	put_id(o, id)
@@ -6926,6 +7042,7 @@ Toast_Stack_VT :: struct {
 }
 
 toast_stack :: proc(id: Id, state: Toast_Stack_State, flags: ..Style_Flag, loc := #caller_location) -> Toast_Stack {
+	use_base_toast()
 	e := Toast_Stack{new_node(825, loc), &toast_stack_vt}
 	o := node_args()
 	put_id(o, id)
@@ -7028,6 +7145,7 @@ Base_Toggle_VT :: struct {
 }
 
 base_toggle :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Toggle {
+	use_base_toggle()
 	e := Base_Toggle{new_node(417, loc), &base_toggle_vt}
 	o := node_args()
 	put_id(o, id)
@@ -7141,6 +7259,7 @@ Base_Toggle_Group_VT :: struct {
 }
 
 base_toggle_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Toggle_Group {
+	use_base_toggle_group()
 	e := Base_Toggle_Group{new_node(418, loc), &base_toggle_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -7211,6 +7330,7 @@ Base_Toolbar_VT :: struct {
 }
 
 base_toolbar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Toolbar {
+	use_base_toolbar()
 	e := Base_Toolbar{new_node(420, loc), &base_toolbar_vt}
 	o := node_args()
 	put_id(o, id)
@@ -7255,6 +7375,7 @@ Base_Toolbar_Group_VT :: struct {
 }
 
 base_toolbar_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Toolbar_Group {
+	use_base_toolbar()
 	e := Base_Toolbar_Group{new_node(421, loc), &base_toolbar_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -7291,6 +7412,7 @@ Base_Tooltip_VT :: struct {
 }
 
 base_tooltip :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Tooltip {
+	use_base_tooltip()
 	e := Base_Tooltip{new_node(422, loc), &base_tooltip_vt}
 	o := node_args()
 	put_id(o, id)
@@ -7319,6 +7441,7 @@ Tooltip_Positioner_VT :: struct {
 }
 
 tooltip_positioner :: proc(trigger_bounds: Bounds, loc := #caller_location) -> Tooltip_Positioner {
+	use_base_tooltip()
 	e := Tooltip_Positioner{new_node(423, loc), &tooltip_positioner_vt}
 	o := node_args()
 	put_Bounds(o, trigger_bounds)
@@ -7457,6 +7580,7 @@ Base_Tree_VT :: struct {
 }
 
 base_tree :: proc(state: Tree_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Tree {
+	use_base_tree()
 	e := Base_Tree{new_node(426, loc), &base_tree_vt}
 	o := node_args()
 	put_u64(o, state.h)

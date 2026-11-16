@@ -17,6 +17,7 @@ Speech_Button_VT :: struct {
 }
 
 speech_button :: proc(state: Speech_State, flags: ..Style_Flag, loc := #caller_location) -> Speech_Button {
+	use_component_speech()
 	e := Speech_Button{new_node(761, loc), &speech_button_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -49,6 +50,7 @@ Speech_Indicator_VT :: struct {
 }
 
 speech_indicator :: proc(state: Speech_State, loc := #caller_location) -> Speech_Indicator {
+	use_component_speech()
 	e := Speech_Indicator{new_node(762, loc), &speech_indicator_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -75,6 +77,7 @@ Speech_Waveform_VT :: struct {
 }
 
 speech_waveform :: proc(state: Speech_State, flags: ..Style_Flag, loc := #caller_location) -> Speech_Waveform {
+	use_component_speech()
 	e := Speech_Waveform{new_node(763, loc), &speech_waveform_vt}
 	o := node_args()
 	put_u64(o, state.h)

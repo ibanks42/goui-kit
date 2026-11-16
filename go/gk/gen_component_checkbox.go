@@ -15,6 +15,7 @@ func (e CheckboxEl) node() *node { return e.n }
 
 // Checkbox is <gpui_kit::component::checkbox::Checkbox>::new.
 func Checkbox(id ID, st ...Style) CheckboxEl {
+	useComponentCheckbox()
 	n := newNode(620)
 	o := nodeArgs(n)
 	putID(o, id)

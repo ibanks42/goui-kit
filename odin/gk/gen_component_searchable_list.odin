@@ -22,6 +22,7 @@ Searchable_List_Item_Element_VT :: struct {
 }
 
 searchable_list_item_element :: proc(ix: int, flags: ..Style_Flag, loc := #caller_location) -> Searchable_List_Item_Element {
+	use_component_searchable_list()
 	e := Searchable_List_Item_Element{new_node(739, loc), &searchable_list_item_element_vt}
 	o := node_args()
 	put_usize(o, ix)

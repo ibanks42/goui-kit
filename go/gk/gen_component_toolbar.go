@@ -11,6 +11,7 @@ func (e ToolbarEl) node() *node { return e.n }
 
 // Toolbar is <gpui_kit::component::toolbar::Toolbar>::new.
 func Toolbar(id ID, st ...Style) ToolbarEl {
+	useComponentToolbar()
 	n := newNode(800)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -237,6 +238,7 @@ func (e ToolbarGroupEl) node() *node { return e.n }
 
 // ToolbarGroup is <gpui_kit::component::toolbar::ToolbarGroup>::new.
 func ToolbarGroup(id ID, st ...Style) ToolbarGroupEl {
+	useComponentToolbar()
 	n := newNode(801)
 	o := nodeArgs(n)
 	putID(o, id)

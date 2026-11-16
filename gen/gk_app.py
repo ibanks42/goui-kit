@@ -267,7 +267,7 @@ def odin_emit(od):
             lines += [f"{it['odin']} :: proc({', '.join(ps)}) {{"]
         else:
             lines += [f"{it['odin']} :: proc({', '.join(ps)}) -> (v: {od.otype(it['ret'], True)}) {{"]
-        lines += ["\treq := make(Tape, 0, 32, context.temp_allocator)", "\to := &req", f"\tput_u16(o, {it['op']})"]
+        lines += ["\treq := make(Tape, 0, 32, context.temp_allocator)", "\to := &req", f"\tput_op(o, {it['op']})"]
         lines += ["\t" + x for x in od.body(it)]
         if it.get("ret") is None:
             lines += ["\tambient_call(cx, req[:], false, loc)", "}", ""]

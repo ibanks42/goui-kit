@@ -29,6 +29,7 @@ Switch_VT :: struct {
 }
 
 switch_ :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Switch {
+	use_component_switch()
 	e := Switch{new_node(768, loc), &switch_vt}
 	o := node_args()
 	put_id(o, id)

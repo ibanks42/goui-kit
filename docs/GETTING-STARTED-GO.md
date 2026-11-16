@@ -56,10 +56,9 @@ library's:
 
 | path | what |
 |---|---|
-| `lib/libgpuikit.so` | Linux: the library (GPUI-kit 0.9.1 on the gpui-fast engine) behind a C interface |
-| `lib/libgpuikit.dylib` | macOS: the same, universal: one file for Apple silicon and Intel (install name `@rpath/libgpuikit.dylib`) |
-| `lib/gpuikit.dll`, `lib/libgpuikit.dll.a` | Windows: the same, and the import library cgo links (MinGW's format; `gpuikit.def` lists its functions) |
-| `lib/gpuikit.dll.lib` | Windows: the import library in Visual Studio's format, which Odin links |
+| `lib/libgpuikit_static.a` | the library (GPUI-kit 0.9.1 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel, on Windows in MinGW's format |
+| `lib/libgpuikit_sys.so`, `lib/libgpuikit_sys.a` | Linux: a small linker script naming the system libraries it needs; Windows: the import library of the Windows API it uses |
+| `lib/gpuikit_static.lib`, `lib/gpuikit_sys.lib` | Windows: the same in Visual Studio's format, which Odin links |
 | `windows/` | Windows: the manifest a program embeds, and `gpuikit.rc`, which embeds it |
 | `go/` | the Go module `gpuikit.dev`: the package `gpuikit.dev/gk` your app imports, and `s`, `theme`, `palette` beside it |
 | `odin/gk/` | the Odin package (the other front end) |
@@ -90,15 +89,10 @@ package once more (about 12 s) for itself.
 If it does not start, the first line it prints starts with `gk:` and says why. The usual ones:
 
 - `the library and this package are from different versions`: the app was built against the `go/`
-  folder of one download and loads the `libgpuikit.so` of another. Build against the `go/` folder
-  that came with the library.
-- `error while loading shared libraries: libgpuikit.so` (Linux), `Library not loaded:
-  @rpath/libgpuikit.dylib` (macOS): the binary cannot find the library. The build command below
-  puts its location into the binary (`-rpath`); if you moved the binary, move `lib/` with it or
-  set `LD_LIBRARY_PATH` (`DYLD_LIBRARY_PATH` on macOS).
-- Windows says `gpuikit.dll was not found`: Windows looks for the DLL in the program's folder,
-  then on `PATH`. `build.sh` copies it beside the `.exe`; copy it again if you moved the program.
-- `cannot find -lgpuikit` when building: `CGO_LDFLAGS` does not name the download's `lib/` folder.
+  folder of one download and the `lib/` of another. Build against the `go/` folder that came with
+  the library.
+- `cannot find -lgpuikit_static` when building: `CGO_LDFLAGS` does not name the download's `lib/`
+  folder.
 - `the app has no display to open its window on` (Linux): neither `DISPLAY` nor `WAYLAND_DISPLAY` is set
   (an ssh session, a container). Run it in a desktop session, or offscreen (Part 3, "Testing
   without a display").
@@ -122,7 +116,7 @@ and build it with:
 
 ```sh
 G=$PWD/../gpuikit-0.0.1-linux-x86_64
-CGO_LDFLAGS="-L$G/lib -Wl,-rpath,\$ORIGIN/../gpuikit-0.0.1-linux-x86_64/lib" go build -o groceries.bin .
+CGO_LDFLAGS="-L$G/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o groceries.bin .
 ./groceries.bin
 ```
 
@@ -133,19 +127,22 @@ CGO_LDFLAGS="-L$G/lib -Wl,-rpath,\$ORIGIN/../gpuikit-0.0.1-linux-x86_64/lib" go 
   `go/` folder into it, say as `third_party/gpuikit`, and write
   `replace gpuikit.dev => ./third_party/gpuikit`. Copy the whole folder: package `gk` includes its
   C header (`gk/include/`), which `go mod vendor` would leave out.
-- `CGO_LDFLAGS` gives the linker the library: `-L` finds it when linking and `-rpath` when running
-  (`$ORIGIN` is the binary's folder, escaped so the shell leaves it alone). Use the same value for
-  every build (a script or a Makefile): the first build of the app compiles package `gk` for those
-  flags, about 12 s, and every rebuild after an edit then takes half a second. To ship the app, put
-  `libgpuikit.so` next to the binary (`-Wl,-rpath,\$ORIGIN`) or where the dynamic loader looks.
+- `CGO_LDFLAGS` tells the linker where the library is. Use the same value for every build (a
+  script or a Makefile): the first build of the app compiles package `gk` for those flags, about
+  12 s, and every rebuild after an edit then takes half a second.
+- The library is linked into the program, and only the components your app actually calls end
+  up in it. Use `gk.Button` and the button code comes along; never touch the charts and
+  they stay out. You don't list or import anything for this. The `-ldflags` part is what tells the
+  linker to drop the unused parts: without it the app still works but carries every component
+  (about 100 MB instead of about 50 MB for a small app). The program is one file, so shipping it
+  means copying that file. [GO.md](GO.md) section 8 explains the details.
 - The app imports `"gpuikit.dev/gk"`, and `"gpuikit.dev/gk/s"`, `"gpuikit.dev/gk/theme"` or
   `"gpuikit.dev/gk/palette"` when it uses style tokens or colours.
 
-**macOS.** The same, with `@executable_path` in place of `$ORIGIN`
-(`-Wl,-rpath,@executable_path/../gpuikit-0.0.1-macos-universal/lib`). An app bundle carries
-`libgpuikit.dylib` in `Contents/Frameworks` and is built with
-`-Wl,-rpath,@executable_path/../Frameworks`; sign the dylib before the bundle. `go build` builds
-for the Mac it runs on; the library is universal, so the same `CGO_LDFLAGS` build for the other
+**macOS.** The same, with Apple's spelling of the flag:
+`go build -ldflags="-s -w -extldflags=-Wl,-dead_strip"`. The program has the library inside it,
+so an app bundle needs nothing in `Contents/Frameworks` for it. `go build` builds for the Mac it
+runs on; the library is universal, so the same `CGO_LDFLAGS` build for the other
 kind too: `GOARCH=amd64 CC='clang -arch x86_64' go build -o groceries-x86_64.bin .` on Apple
 silicon (`GOARCH=arm64 CC='clang -arch arm64'` on Intel), and `lipo -create -output groceries.bin
 groceries-arm64.bin groceries-x86_64.bin` makes one program for both. `examples/go/build.sh` passes
@@ -153,25 +150,30 @@ groceries-arm64.bin groceries-x86_64.bin` makes one program for both. `examples/
 called from `main` on every system, and on macOS it may not return when the app quits (GPUI can
 end the process inside it there), so put nothing after it that must run.
 
-**Windows.** The linker finds the library through the import library, and the program finds
-`gpuikit.dll` in its own folder at run time (there is no rpath); in PowerShell:
+**Windows.** You need MinGW-w64's gcc and LLVM's linker, lld, on `PATH`: MSYS2's UCRT64
+environment with the `mingw-w64-ucrt-x86_64-gcc` and `mingw-w64-ucrt-x86_64-lld` packages,
+llvm-mingw, or WinLibs' build "with LLVM". In PowerShell:
 
 ```powershell
 $G = "$PWD/../gpuikit-0.0.1-windows-x86_64"
 $env:CGO_ENABLED = "1"; $env:CGO_LDFLAGS = "-L$G/lib"
-go build -o groceries.exe .
-copy $G/lib/gpuikit.dll .
+go build -ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'" -o groceries.exe .
 .\groceries.exe
 ```
 
-- Embed the manifest in `windows/gpuikit.manifest`, or ship it beside the program as
-  `APP.exe.manifest` (the build script does): without it the program does not start, since
-  gpuikit.dll uses common controls 6, which Windows loads only for a program whose manifest asks
-  for it. It also makes the program per-monitor DPI aware (without it Windows draws the window at
-  96 dpi and scales it up, blurred); the library leaves both to the program. With MinGW's `windres`, beside gcc: `windres -O coff -i
-  ../gpuikit-0.0.1-windows-x86_64/windows/gpuikit.rc -o rsrc_windows_amd64.syso` in the app's main
-  package folder; `go build` links every `.syso` there by itself. The same `.rc` gives the window
-  its icon (icon 1; see the comment in it).
+The `.exe` has the library and the Windows manifest inside it; there is nothing to ship next to it.
+`-fuse-ld=lld` is what lets the linker drop the components you don't use: MinGW's own linker (GNU
+ld) can't on Windows, so without lld the program still works but carries all of them (about 72 MB
+instead of about 51 for a small app). `-Xlink=-force:multipleres` lets the gpuikit manifest replace
+the default one MinGW's gcc adds to every program; lld prints a warning about it, which is
+expected.
+
+- The manifest (in `windows/gpuikit.manifest`, embedded by package `gk`) asks for common controls 6,
+  which the library needs: without it Windows refuses to start the program. It also makes the
+  program per-monitor DPI aware (without it Windows draws the window at 96 dpi and scales it up,
+  blurred). To give the window an icon, compile a `.rc` with only the icon into a `.syso` in your
+  main package (`windres -O coff -i app.rc -o rsrc_windows_amd64.syso`); `go build` links every
+  `.syso` there by itself. `windows/gpuikit.rc` shows the line.
 - `-ldflags "-H windowsgui"` builds a program without a console window.
 
 ## Part 2: the tutorial
@@ -716,9 +718,10 @@ func (a *App) chart() gk.Element {
 ### Testing without a display
 
 Any app runs offscreen when the environment names a script: `GK_SCRIPT=session.script ./app.bin`.
-It needs the optional diagnostic library (a second download, `gpuikit-..-diag`): put its `lib/`
-first in `LD_LIBRARY_PATH` (`DYLD_LIBRARY_PATH` on macOS; on Windows its `gpuikit.dll` beside the
-program). A script clicks, types, presses keys and saves screenshots. Screenshots work on Linux and
+It
+needs the optional diagnostic library (a second download, `gpuikit-..-diag`): build a test copy of
+the app against its `lib/` folder instead of the normal one (the library is linked into the
+program, so the copy is what changes). A script clicks, types, presses keys and saves screenshots. Screenshots work on Linux and
 macOS; on Windows the engine has no offscreen renderer, so a script still runs every frame but
 `shot` fails:
 

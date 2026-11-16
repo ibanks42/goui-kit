@@ -109,6 +109,7 @@ Radio_VT :: struct {
 }
 
 radio :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Radio {
+	use_component_radio()
 	e := Radio{new_node(734, loc), &radio_vt}
 	o := node_args()
 	put_id(o, id)
@@ -276,6 +277,7 @@ Radio_Group_VT :: struct {
 }
 
 radio_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Radio_Group {
+	use_component_radio()
 	e := Radio_Group{new_node(736, loc), &radio_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -284,6 +286,7 @@ radio_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Rad
 }
 
 radio_group_horizontal :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Radio_Group {
+	use_component_radio()
 	e := Radio_Group{new_node(735, loc), &radio_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -292,6 +295,7 @@ radio_group_horizontal :: proc(id: Id, flags: ..Style_Flag, loc := #caller_locat
 }
 
 radio_group_vertical :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Radio_Group {
+	use_component_radio()
 	e := Radio_Group{new_node(737, loc), &radio_group_vt}
 	o := node_args()
 	put_id(o, id)

@@ -11,6 +11,7 @@ func (e MarkerEl) node() *node { return e.n }
 
 // Marker is <gpui_kit::component::marker::Marker>::new.
 func Marker(st ...Style) MarkerEl {
+	useComponentMarker()
 	n := newNode(690)
 	tokens(n, st)
 	return MarkerEl{n}
@@ -18,6 +19,7 @@ func Marker(st ...Style) MarkerEl {
 
 // MarkerDefault is <gpui_kit::component::marker::Marker as Default>::default.
 func MarkerDefault(st ...Style) MarkerEl {
+	useComponentMarker()
 	n := newNode(689)
 	tokens(n, st)
 	return MarkerEl{n}
@@ -263,6 +265,7 @@ func (e MarkerContentEl) node() *node { return e.n }
 
 // MarkerContent is <gpui_kit::component::marker::MarkerContent>::new.
 func MarkerContent(st ...Style) MarkerContentEl {
+	useComponentMarker()
 	n := newNode(692)
 	tokens(n, st)
 	return MarkerContentEl{n}
@@ -270,6 +273,7 @@ func MarkerContent(st ...Style) MarkerContentEl {
 
 // MarkerContentDefault is <gpui_kit::component::marker::MarkerContent as Default>::default.
 func MarkerContentDefault(st ...Style) MarkerContentEl {
+	useComponentMarker()
 	n := newNode(691)
 	tokens(n, st)
 	return MarkerContentEl{n}
@@ -549,6 +553,7 @@ func (e MarkerIconEl) node() *node { return e.n }
 
 // MarkerIcon is <gpui_kit::component::marker::MarkerIcon>::new.
 func MarkerIcon(st ...Style) MarkerIconEl {
+	useComponentMarker()
 	n := newNode(694)
 	tokens(n, st)
 	return MarkerIconEl{n}
@@ -556,6 +561,7 @@ func MarkerIcon(st ...Style) MarkerIconEl {
 
 // MarkerIconDefault is <gpui_kit::component::marker::MarkerIcon as Default>::default.
 func MarkerIconDefault(st ...Style) MarkerIconEl {
+	useComponentMarker()
 	n := newNode(693)
 	tokens(n, st)
 	return MarkerIconEl{n}

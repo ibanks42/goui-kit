@@ -11,6 +11,7 @@ func (e CalendarEl) node() *node { return e.n }
 
 // Calendar is <gpui_kit::component::calendar::Calendar>::new.
 func Calendar(state CalendarState, st ...Style) CalendarEl {
+	useComponentTime()
 	n := newNode(611)
 	o := nodeArgs(n)
 	o.u64(state.h)

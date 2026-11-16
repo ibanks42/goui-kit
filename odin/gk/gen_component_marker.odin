@@ -27,12 +27,14 @@ Marker_VT :: struct {
 }
 
 marker :: proc(flags: ..Style_Flag, loc := #caller_location) -> Marker {
+	use_component_marker()
 	e := Marker{new_node(690, loc), &marker_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 marker_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Marker {
+	use_component_marker()
 	e := Marker{new_node(689, loc), &marker_vt}
 	tokens(e.el, flags)
 	return e
@@ -116,12 +118,14 @@ Marker_Content_VT :: struct {
 }
 
 marker_content :: proc(flags: ..Style_Flag, loc := #caller_location) -> Marker_Content {
+	use_component_marker()
 	e := Marker_Content{new_node(692, loc), &marker_content_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 marker_content_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Marker_Content {
+	use_component_marker()
 	e := Marker_Content{new_node(691, loc), &marker_content_vt}
 	tokens(e.el, flags)
 	return e
@@ -159,12 +163,14 @@ Marker_Icon_VT :: struct {
 }
 
 marker_icon :: proc(flags: ..Style_Flag, loc := #caller_location) -> Marker_Icon {
+	use_component_marker()
 	e := Marker_Icon{new_node(694, loc), &marker_icon_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 marker_icon_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Marker_Icon {
+	use_component_marker()
 	e := Marker_Icon{new_node(693, loc), &marker_icon_vt}
 	tokens(e.el, flags)
 	return e

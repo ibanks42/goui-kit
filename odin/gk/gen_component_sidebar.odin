@@ -21,6 +21,7 @@ Grouped_Sidebar_VT :: struct {
 }
 
 grouped_sidebar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Grouped_Sidebar {
+	use_component_sidebar()
 	e := Grouped_Sidebar{new_node(872, loc), &grouped_sidebar_vt}
 	o := node_args()
 	put_id(o, id)
@@ -93,6 +94,7 @@ Sidebar_VT :: struct {
 }
 
 sidebar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Sidebar {
+	use_component_sidebar()
 	e := Sidebar{new_node(873, loc), &sidebar_vt}
 	o := node_args()
 	put_id(o, id)
@@ -164,6 +166,7 @@ Sidebar_Footer_VT :: struct {
 }
 
 sidebar_footer :: proc(flags: ..Style_Flag, loc := #caller_location) -> Sidebar_Footer {
+	use_component_sidebar()
 	e := Sidebar_Footer{new_node(753, loc), &sidebar_footer_vt}
 	tokens(e.el, flags)
 	return e
@@ -238,12 +241,14 @@ Sidebar_Header_VT :: struct {
 }
 
 sidebar_header :: proc(flags: ..Style_Flag, loc := #caller_location) -> Sidebar_Header {
+	use_component_sidebar()
 	e := Sidebar_Header{new_node(755, loc), &sidebar_header_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 sidebar_header_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Sidebar_Header {
+	use_component_sidebar()
 	e := Sidebar_Header{new_node(754, loc), &sidebar_header_vt}
 	tokens(e.el, flags)
 	return e
@@ -426,6 +431,7 @@ Sidebar_Toggle_Button_VT :: struct {
 }
 
 sidebar_toggle_button :: proc(loc := #caller_location) -> Sidebar_Toggle_Button {
+	use_component_sidebar()
 	e := Sidebar_Toggle_Button{new_node(758, loc), &sidebar_toggle_button_vt}
 	return e
 }

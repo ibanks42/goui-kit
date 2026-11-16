@@ -11,6 +11,7 @@ func (e IconEl) node() *node { return e.n }
 
 // Icon is <gpui_kit::component::Icon>::new.
 func Icon(icon IconName, st ...Style) IconEl {
+	useComponentIcon()
 	n := newNode(887)
 	o := nodeArgs(n)
 	o.u16(uint16(icon))
@@ -20,6 +21,7 @@ func Icon(icon IconName, st ...Style) IconEl {
 
 // IconDefault is <gpui_kit::component::Icon as Default>::default.
 func IconDefault(st ...Style) IconEl {
+	useComponentIcon()
 	n := newNode(885)
 	tokens(n, st)
 	return IconEl{n}
@@ -27,6 +29,7 @@ func IconDefault(st ...Style) IconEl {
 
 // IconEmpty is <gpui_kit::component::Icon>::empty.
 func IconEmpty(st ...Style) IconEl {
+	useComponentIcon()
 	n := newNode(886)
 	tokens(n, st)
 	return IconEl{n}
@@ -248,6 +251,7 @@ func (e TitleBarEl) node() *node { return e.n }
 
 // TitleBar is <gpui_kit::component::TitleBar>::new.
 func TitleBar(st ...Style) TitleBarEl {
+	useComponentTitleBar()
 	n := newNode(569)
 	tokens(n, st)
 	return TitleBarEl{n}
@@ -445,18 +449,21 @@ func (e WindowBorderEl) node() *node { return e.n }
 
 // KitWindowBorder is gpui_kit::component::window_border.
 func KitWindowBorder() WindowBorderEl {
+	useComponentWindowBorder()
 	n := newNode(573)
 	return WindowBorderEl{n}
 }
 
 // WindowBorder is <gpui_kit::component::WindowBorder>::new.
 func WindowBorder() WindowBorderEl {
+	useComponentWindowBorder()
 	n := newNode(572)
 	return WindowBorderEl{n}
 }
 
 // WindowBorderDefault is <gpui_kit::component::WindowBorder as Default>::default.
 func WindowBorderDefault() WindowBorderEl {
+	useComponentWindowBorder()
 	n := newNode(571)
 	return WindowBorderEl{n}
 }

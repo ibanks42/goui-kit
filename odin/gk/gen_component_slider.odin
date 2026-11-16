@@ -19,6 +19,7 @@ Slider_VT :: struct {
 }
 
 slider :: proc(state: Slider_State, flags: ..Style_Flag, loc := #caller_location) -> Slider {
+	use_component_slider()
 	e := Slider{new_node(760, loc), &slider_vt}
 	o := node_args()
 	put_u64(o, state.h)

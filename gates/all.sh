@@ -78,6 +78,9 @@ step fps-table env GK_SCROLL=450,300,-24 GK_NAME=table-scroll \
 step go "$here/go.sh" build hello proto misuse pixels rebuild $([ $tier = full ] && echo fps)
 # The Go apps and the tutorial against their Odin twins (gates/go-apps.sh).
 step go-apps "$here/go-apps.sh"
+# The same Go apps built the way an app is: the static library, each linking only the
+# component families it calls into (docs/GO.md section 8); the scripted sessions find a missing one.
+step go-apps-static env GK_STATIC=1 "$here/go-apps.sh" build notes todo reader expenses tutorial
 step memory "$here/memory.sh" $mem
 [ $tier = full ] && step memory-selftest "$here/memory.sh" --selftest
 step coverage "$here/coverage.sh"

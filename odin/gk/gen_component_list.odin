@@ -20,6 +20,7 @@ List_VT :: struct {
 }
 
 list :: proc(state: List_State, flags: ..Style_Flag, loc := #caller_location) -> List {
+	use_component_list()
 	e := List{new_node(804, loc), &list_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -159,6 +160,7 @@ List_Item_VT :: struct {
 }
 
 list_item :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> List_Item {
+	use_component_list()
 	e := List_Item{new_node(687, loc), &list_item_vt}
 	o := node_args()
 	put_id(o, id)

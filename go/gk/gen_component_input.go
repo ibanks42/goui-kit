@@ -15,6 +15,7 @@ func (e InputEl) node() *node { return e.n }
 
 // Input is <gpui_kit::component::input::Input>::new.
 func Input(state InputState, st ...Style) InputEl {
+	useComponentInput()
 	n := newNode(675)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -326,6 +327,7 @@ func (e InputGroupEl) node() *node { return e.n }
 
 // InputGroup is <gpui_kit::component::input::InputGroup>::new.
 func InputGroup(id ID, st ...Style) InputGroupEl {
+	useComponentInput()
 	n := newNode(676)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -558,6 +560,7 @@ func (e InputGroupAddonEl) node() *node { return e.n }
 
 // InputGroupAddon is <gpui_kit::component::input::InputGroupAddon>::new.
 func InputGroupAddon(id ID, st ...Style) InputGroupAddonEl {
+	useComponentInput()
 	n := newNode(677)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -883,6 +886,7 @@ func (e InputGroupButtonEl) node() *node { return e.n }
 
 // InputGroupButton is <gpui_kit::component::input::InputGroupButton>::new.
 func InputGroupButton(id ID, st ...Style) InputGroupButtonEl {
+	useComponentInput()
 	n := newNode(678)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -1505,6 +1509,7 @@ func (e InputGroupTextEl) node() *node { return e.n }
 
 // InputGroupText is <gpui_kit::component::input::InputGroupText>::new.
 func InputGroupText(st ...Style) InputGroupTextEl {
+	useComponentInput()
 	n := newNode(680)
 	tokens(n, st)
 	return InputGroupTextEl{n}
@@ -1512,6 +1517,7 @@ func InputGroupText(st ...Style) InputGroupTextEl {
 
 // InputGroupTextDefault is <gpui_kit::component::input::InputGroupText as Default>::default.
 func InputGroupTextDefault(st ...Style) InputGroupTextEl {
+	useComponentInput()
 	n := newNode(679)
 	tokens(n, st)
 	return InputGroupTextEl{n}
@@ -1813,6 +1819,7 @@ func (e InputTokenEl) node() *node { return e.n }
 
 // InputToken is <gpui_kit::component::input::InputToken>::new.
 func InputToken(context InlineTokenContext, st ...Style) InputTokenEl {
+	useComponentInput()
 	n := newNode(828)
 	o := nodeArgs(n)
 	putObj(o, context.h)
@@ -2000,6 +2007,7 @@ func (e NumberInputEl) node() *node { return e.n }
 
 // NumberInput is <gpui_kit::component::input::NumberInput>::new.
 func NumberInput(state InputState, st ...Style) NumberInputEl {
+	useComponentInput()
 	n := newNode(681)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -2248,6 +2256,7 @@ func (e OtpInputEl) node() *node { return e.n }
 
 // OtpInput is <gpui_kit::component::input::OtpInput>::new.
 func OtpInput(state OtpState) OtpInputEl {
+	useComponentInput()
 	n := newNode(682)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -2280,6 +2289,7 @@ func (e TextareaEl) node() *node { return e.n }
 
 // Textarea is <gpui_kit::component::input::Textarea>::new.
 func Textarea(state TextareaState, st ...Style) TextareaEl {
+	useComponentInput()
 	n := newNode(683)
 	o := nodeArgs(n)
 	o.u64(state.h)

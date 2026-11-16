@@ -11,6 +11,7 @@ func (e AvatarEl) node() *node { return e.n }
 
 // Avatar is <gpui_kit::component::avatar::Avatar>::new.
 func Avatar(st ...Style) AvatarEl {
+	useComponentAvatar()
 	n := newNode(592)
 	tokens(n, st)
 	return AvatarEl{n}
@@ -336,6 +337,7 @@ func (e AvatarGroupEl) node() *node { return e.n }
 
 // AvatarGroup is <gpui_kit::component::avatar::AvatarGroup>::new.
 func AvatarGroup(st ...Style) AvatarGroupEl {
+	useComponentAvatar()
 	n := newNode(593)
 	tokens(n, st)
 	return AvatarGroupEl{n}

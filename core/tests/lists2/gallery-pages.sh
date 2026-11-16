@@ -14,7 +14,7 @@ out=$here/gates/out/gallery-$prefix
 rm -rf "$out"; mkdir -p "$out" "$bin"
 export LD_LIBRARY_PATH=$lib
 unset WAYLAND_DISPLAY DISPLAY
-"$odin" build "$here/examples/odin/gallery" -o:minimal -collection:gpuikit="$here/odin" \
+"$odin" build "$here/examples/odin/gallery" -o:minimal -define:GK_SHARED=true -collection:gpuikit="$here/odin" \
   "-extra-linker-flags:-L$lib -Wl,-rpath,\$ORIGIN/../lib/diag" -out:"$bin/gallery-odin" || { echo "GATE gallery-$prefix FAIL build"; exit 1; }
 grep -E "^$prefix" "$here/ref/gallery/pages.txt" > "$out/pages.txt"
 first=$(head -1 "$out/pages.txt" | cut -d'|' -f1 | tr -d ' ')

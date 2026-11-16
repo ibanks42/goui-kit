@@ -11,6 +11,7 @@ func (e BreadcrumbEl) node() *node { return e.n }
 
 // Breadcrumb is <gpui_kit::component::breadcrumb::Breadcrumb>::new.
 func Breadcrumb(st ...Style) BreadcrumbEl {
+	useComponentBreadcrumb()
 	n := newNode(595)
 	tokens(n, st)
 	return BreadcrumbEl{n}
@@ -206,6 +207,7 @@ func (e BreadcrumbItemEl) node() *node { return e.n }
 
 // BreadcrumbItem is <gpui_kit::component::breadcrumb::BreadcrumbItem>::new.
 func BreadcrumbItem(label string, st ...Style) BreadcrumbItemEl {
+	useComponentBreadcrumb()
 	n := newNode(596)
 	o := nodeArgs(n)
 	o.str(label)

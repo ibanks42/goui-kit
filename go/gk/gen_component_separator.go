@@ -11,6 +11,7 @@ func (e SeparatorEl) node() *node { return e.n }
 
 // SeparatorHorizontal is <gpui_kit::component::separator::Separator>::horizontal.
 func SeparatorHorizontal(st ...Style) SeparatorEl {
+	useComponentSeparator()
 	n := newNode(740)
 	tokens(n, st)
 	return SeparatorEl{n}
@@ -18,6 +19,7 @@ func SeparatorHorizontal(st ...Style) SeparatorEl {
 
 // SeparatorHorizontalDashed is <gpui_kit::component::separator::Separator>::horizontal_dashed.
 func SeparatorHorizontalDashed(st ...Style) SeparatorEl {
+	useComponentSeparator()
 	n := newNode(741)
 	tokens(n, st)
 	return SeparatorEl{n}
@@ -25,6 +27,7 @@ func SeparatorHorizontalDashed(st ...Style) SeparatorEl {
 
 // SeparatorVertical is <gpui_kit::component::separator::Separator>::vertical.
 func SeparatorVertical(st ...Style) SeparatorEl {
+	useComponentSeparator()
 	n := newNode(742)
 	tokens(n, st)
 	return SeparatorEl{n}
@@ -32,6 +35,7 @@ func SeparatorVertical(st ...Style) SeparatorEl {
 
 // SeparatorVerticalDashed is <gpui_kit::component::separator::Separator>::vertical_dashed.
 func SeparatorVerticalDashed(st ...Style) SeparatorEl {
+	useComponentSeparator()
 	n := newNode(743)
 	tokens(n, st)
 	return SeparatorEl{n}

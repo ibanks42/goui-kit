@@ -108,12 +108,14 @@ Field_VT :: struct {
 }
 
 field :: proc(flags: ..Style_Flag, loc := #caller_location) -> Field {
+	use_component_form()
 	e := Field{new_node(664, loc), &field_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 kit_field :: proc(flags: ..Style_Flag, loc := #caller_location) -> Field {
+	use_component_form()
 	e := Field{new_node(665, loc), &field_vt}
 	tokens(e.el, flags)
 	return e
@@ -291,36 +293,42 @@ Form_VT :: struct {
 }
 
 form :: proc(flags: ..Style_Flag, loc := #caller_location) -> Form {
+	use_component_form()
 	e := Form{new_node(668, loc), &form_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 form_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Form {
+	use_component_form()
 	e := Form{new_node(666, loc), &form_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 form_horizontal :: proc(flags: ..Style_Flag, loc := #caller_location) -> Form {
+	use_component_form()
 	e := Form{new_node(667, loc), &form_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 form_vertical :: proc(flags: ..Style_Flag, loc := #caller_location) -> Form {
+	use_component_form()
 	e := Form{new_node(669, loc), &form_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 h_form :: proc(flags: ..Style_Flag, loc := #caller_location) -> Form {
+	use_component_form()
 	e := Form{new_node(670, loc), &form_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 v_form :: proc(flags: ..Style_Flag, loc := #caller_location) -> Form {
+	use_component_form()
 	e := Form{new_node(671, loc), &form_vt}
 	tokens(e.el, flags)
 	return e

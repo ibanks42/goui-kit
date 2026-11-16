@@ -11,6 +11,7 @@ func (e MessageEl) node() *node { return e.n }
 
 // Message is <gpui_kit::component::message::Message>::new.
 func Message(st ...Style) MessageEl {
+	useComponentMessage()
 	n := newNode(697)
 	tokens(n, st)
 	return MessageEl{n}
@@ -18,6 +19,7 @@ func Message(st ...Style) MessageEl {
 
 // MessageDefault is <gpui_kit::component::message::Message as Default>::default.
 func MessageDefault(st ...Style) MessageEl {
+	useComponentMessage()
 	n := newNode(696)
 	tokens(n, st)
 	return MessageEl{n}
@@ -247,6 +249,7 @@ func (e MessageAvatarEl) node() *node { return e.n }
 
 // MessageAvatar is <gpui_kit::component::message::MessageAvatar>::new.
 func MessageAvatar(st ...Style) MessageAvatarEl {
+	useComponentMessage()
 	n := newNode(699)
 	tokens(n, st)
 	return MessageAvatarEl{n}
@@ -254,6 +257,7 @@ func MessageAvatar(st ...Style) MessageAvatarEl {
 
 // MessageAvatarDefault is <gpui_kit::component::message::MessageAvatar as Default>::default.
 func MessageAvatarDefault(st ...Style) MessageAvatarEl {
+	useComponentMessage()
 	n := newNode(698)
 	tokens(n, st)
 	return MessageAvatarEl{n}
@@ -528,6 +532,7 @@ func (e MessageContentEl) node() *node { return e.n }
 
 // MessageContent is <gpui_kit::component::message::MessageContent>::new.
 func MessageContent(st ...Style) MessageContentEl {
+	useComponentMessage()
 	n := newNode(701)
 	tokens(n, st)
 	return MessageContentEl{n}
@@ -535,6 +540,7 @@ func MessageContent(st ...Style) MessageContentEl {
 
 // MessageContentDefault is <gpui_kit::component::message::MessageContent as Default>::default.
 func MessageContentDefault(st ...Style) MessageContentEl {
+	useComponentMessage()
 	n := newNode(700)
 	tokens(n, st)
 	return MessageContentEl{n}
@@ -843,6 +849,7 @@ func (e MessageFooterEl) node() *node { return e.n }
 
 // MessageFooter is <gpui_kit::component::message::MessageFooter>::new.
 func MessageFooter(st ...Style) MessageFooterEl {
+	useComponentMessage()
 	n := newNode(703)
 	tokens(n, st)
 	return MessageFooterEl{n}
@@ -850,6 +857,7 @@ func MessageFooter(st ...Style) MessageFooterEl {
 
 // MessageFooterDefault is <gpui_kit::component::message::MessageFooter as Default>::default.
 func MessageFooterDefault(st ...Style) MessageFooterEl {
+	useComponentMessage()
 	n := newNode(702)
 	tokens(n, st)
 	return MessageFooterEl{n}
@@ -1131,6 +1139,7 @@ func (e MessageGroupEl) node() *node { return e.n }
 
 // MessageGroup is <gpui_kit::component::message::MessageGroup>::new.
 func MessageGroup(st ...Style) MessageGroupEl {
+	useComponentMessage()
 	n := newNode(705)
 	tokens(n, st)
 	return MessageGroupEl{n}
@@ -1138,6 +1147,7 @@ func MessageGroup(st ...Style) MessageGroupEl {
 
 // MessageGroupDefault is <gpui_kit::component::message::MessageGroup as Default>::default.
 func MessageGroupDefault(st ...Style) MessageGroupEl {
+	useComponentMessage()
 	n := newNode(704)
 	tokens(n, st)
 	return MessageGroupEl{n}
@@ -1382,6 +1392,7 @@ func (e MessageHeaderEl) node() *node { return e.n }
 
 // MessageHeader is <gpui_kit::component::message::MessageHeader>::new.
 func MessageHeader(st ...Style) MessageHeaderEl {
+	useComponentMessage()
 	n := newNode(707)
 	tokens(n, st)
 	return MessageHeaderEl{n}
@@ -1389,6 +1400,7 @@ func MessageHeader(st ...Style) MessageHeaderEl {
 
 // MessageHeaderDefault is <gpui_kit::component::message::MessageHeader as Default>::default.
 func MessageHeaderDefault(st ...Style) MessageHeaderEl {
+	useComponentMessage()
 	n := newNode(706)
 	tokens(n, st)
 	return MessageHeaderEl{n}

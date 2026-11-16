@@ -20,6 +20,7 @@ Clipboard_VT :: struct {
 }
 
 clipboard :: proc(id: Id, loc := #caller_location) -> Clipboard {
+	use_component_clipboard()
 	e := Clipboard{new_node(621, loc), &clipboard_vt}
 	o := node_args()
 	put_id(o, id)

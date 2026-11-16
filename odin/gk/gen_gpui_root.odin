@@ -66,6 +66,7 @@ div_vt := Div_VT {
 	},
 	context_menu = proc(e: Div, f: Popup_Menu) -> Context_Menu_Div {
 		src := take(e.el, receiver = true)
+		use_component_menu()
 		n := Context_Menu_Div{new_node(831), &context_menu_div_vt}
 		o := node_args()
 		put_u32(o, src)
@@ -82,6 +83,7 @@ div_vt := Div_VT {
 	},
 	overflow_scrollbar = proc(e: Div) -> Scrollable_Div {
 		src := take(e.el, receiver = true)
+		use_component_scroll()
 		n := Scrollable_Div{new_node(861), &scrollable_div_vt}
 		o := node_args()
 		put_u32(o, src)
@@ -89,6 +91,7 @@ div_vt := Div_VT {
 	},
 	overflow_x_scrollbar = proc(e: Div) -> Scrollable_Div {
 		src := take(e.el, receiver = true)
+		use_component_scroll()
 		n := Scrollable_Div{new_node(862), &scrollable_div_vt}
 		o := node_args()
 		put_u32(o, src)
@@ -96,6 +99,7 @@ div_vt := Div_VT {
 	},
 	overflow_y_scrollbar = proc(e: Div) -> Scrollable_Div {
 		src := take(e.el, receiver = true)
+		use_component_scroll()
 		n := Scrollable_Div{new_node(863), &scrollable_div_vt}
 		o := node_args()
 		put_u32(o, src)

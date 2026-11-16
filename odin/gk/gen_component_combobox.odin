@@ -12,6 +12,7 @@ Caret_VT :: struct {
 }
 
 caret :: proc(size: Size, loc := #caller_location) -> Caret {
+	use_component_select()
 	e := Caret{new_node(625, loc), &caret_vt}
 	o := node_args()
 	put_Size(o, size)
@@ -54,6 +55,7 @@ Combobox_VT :: struct {
 }
 
 combobox :: proc(state: Combobox_State, flags: ..Style_Flag, loc := #caller_location) -> Combobox {
+	use_component_combobox()
 	e := Combobox{new_node(830, loc), &combobox_vt}
 	o := node_args()
 	put_u64(o, state.h)

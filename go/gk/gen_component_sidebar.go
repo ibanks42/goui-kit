@@ -11,6 +11,7 @@ func (e GroupedSidebarEl) node() *node { return e.n }
 
 // GroupedSidebar is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::new.
 func GroupedSidebar(id ID, st ...Style) GroupedSidebarEl {
+	useComponentSidebar()
 	n := newNode(872)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -342,6 +343,7 @@ func (e SidebarEl) node() *node { return e.n }
 
 // Sidebar is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::new.
 func Sidebar(id ID, st ...Style) SidebarEl {
+	useComponentSidebar()
 	n := newNode(873)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -562,6 +564,7 @@ func (e SidebarFooterEl) node() *node { return e.n }
 
 // SidebarFooter is <gpui_kit::component::sidebar::SidebarFooter>::new.
 func SidebarFooter(st ...Style) SidebarFooterEl {
+	useComponentSidebar()
 	n := newNode(753)
 	tokens(n, st)
 	return SidebarFooterEl{n}
@@ -1049,6 +1052,7 @@ func (e SidebarHeaderEl) node() *node { return e.n }
 
 // SidebarHeader is <gpui_kit::component::sidebar::SidebarHeader>::new.
 func SidebarHeader(st ...Style) SidebarHeaderEl {
+	useComponentSidebar()
 	n := newNode(755)
 	tokens(n, st)
 	return SidebarHeaderEl{n}
@@ -1056,6 +1060,7 @@ func SidebarHeader(st ...Style) SidebarHeaderEl {
 
 // SidebarHeaderDefault is <gpui_kit::component::sidebar::SidebarHeader as Default>::default.
 func SidebarHeaderDefault(st ...Style) SidebarHeaderEl {
+	useComponentSidebar()
 	n := newNode(754)
 	tokens(n, st)
 	return SidebarHeaderEl{n}
@@ -2048,6 +2053,7 @@ func (e SidebarToggleButtonEl) node() *node { return e.n }
 
 // SidebarToggleButton is <gpui_kit::component::sidebar::SidebarToggleButton>::new.
 func SidebarToggleButton() SidebarToggleButtonEl {
+	useComponentSidebar()
 	n := newNode(758)
 	return SidebarToggleButtonEl{n}
 }

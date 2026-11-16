@@ -4,38 +4,3 @@
 use crate::genapi::{self, Dx, R};
 use super::*;
 
-pub fn build_component_link(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::link::Link> {
-    let (ty, args, first) = dx.node(n);
-    make_component_link(dx, ty, args, first)
-}
-pub fn make_component_link(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::link::Link> {
-    let r = &mut dx.args(args);
-    let el: gpui_kit::component::link::Link = match ty {
-        686 => { let a0 = element_id(r); <gpui_kit::component::link::Link>::new(a0) }
-        _ => return bad_node("Link", ty),
-    };
-    Some(apply_component_link(dx, el, first))
-}
-#[inline]
-pub fn apply_component_link(dx: &mut Dx, mut el: gpui_kit::component::link::Link, first: u32) -> gpui_kit::component::link::Link {
-    let mut at = first;
-    while let Some((op, mut r)) = dx.op(&mut at) {
-        let r = &mut r;
-        match op {
-            256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::link::Link>::disabled(el, a0) }; }
-            257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::link::Link>::href(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::link::Link>::on_click(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
-            17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
-            16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
-            2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
-            3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
-            _ => bad_op("Link", op),
-        }
-    }
-    el
-}

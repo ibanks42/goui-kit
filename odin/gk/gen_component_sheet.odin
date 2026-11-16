@@ -104,6 +104,7 @@ Sheet_VT :: struct {
 }
 
 sheet :: proc(flags: ..Style_Flag, loc := #caller_location) -> Sheet {
+	use_component_sheet()
 	e := Sheet{new_node(834, loc), &sheet_vt}
 	tokens(e.el, flags)
 	return e

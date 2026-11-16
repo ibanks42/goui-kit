@@ -11,6 +11,7 @@ func (e PopoverEl) node() *node { return e.n }
 
 // Popover is <gpui_kit::component::popover::Popover>::new.
 func Popover(id ID, st ...Style) PopoverEl {
+	useComponentPopover()
 	n := newNode(715)
 	o := nodeArgs(n)
 	putID(o, id)

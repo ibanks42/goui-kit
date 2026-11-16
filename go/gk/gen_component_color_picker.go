@@ -11,6 +11,7 @@ func (e ColorPickerEl) node() *node { return e.n }
 
 // ColorPicker is <gpui_kit::component::color_picker::ColorPicker>::new.
 func ColorPicker(state ColorPickerState, st ...Style) ColorPickerEl {
+	useComponentColorPicker()
 	n := newNode(623)
 	o := nodeArgs(n)
 	o.u64(state.h)
@@ -252,6 +253,7 @@ func (e ColorSelectEl) node() *node { return e.n }
 
 // ColorSelect is <gpui_kit::component::color_picker::ColorSelect>::new.
 func ColorSelect(state ColorPickerState, st ...Style) ColorSelectEl {
+	useComponentColorPicker()
 	n := newNode(624)
 	o := nodeArgs(n)
 	o.u64(state.h)

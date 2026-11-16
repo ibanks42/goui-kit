@@ -11,6 +11,7 @@ func (e CrossLineEl) node() *node { return e.n }
 
 // CrossLine is <gpui_kit::component::plot::tooltip::CrossLine>::new.
 func CrossLine(point GpuiPoint) CrossLineEl {
+	useComponentPlot()
 	n := newNode(712)
 	o := nodeArgs(n)
 	putGpuiPoint(o, point)
@@ -73,6 +74,7 @@ func (e DotEl) node() *node { return e.n }
 
 // Dot is <gpui_kit::component::plot::tooltip::Dot>::new.
 func Dot(point GpuiPoint) DotEl {
+	useComponentPlot()
 	n := newNode(713)
 	o := nodeArgs(n)
 	putGpuiPoint(o, point)
@@ -114,6 +116,7 @@ func (e TooltipEl) node() *node { return e.n }
 
 // Tooltip is <gpui_kit::component::plot::tooltip::Tooltip>::new.
 func Tooltip(cursor GpuiPoint, within GpuiSize, st ...Style) TooltipEl {
+	useComponentPlot()
 	n := newNode(714)
 	o := nodeArgs(n)
 	putGpuiPoint(o, cursor)

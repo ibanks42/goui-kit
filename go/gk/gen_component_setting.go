@@ -610,6 +610,7 @@ func (e SettingFieldText) valueNode() *node { return e.n }
 
 // NewSettingFieldTextElement is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::element.
 func NewSettingFieldTextElement(element Element, st ...Style) SettingFieldText {
+	useComponentSetting()
 	n := newValue(854)
 	o := nodeArgs(n)
 	o.u32(take(element))
@@ -619,6 +620,7 @@ func NewSettingFieldTextElement(element Element, st ...Style) SettingFieldText {
 
 // NewSettingFieldTextRender is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::render.
 func NewSettingFieldTextRender(elementRender Element, st ...Style) SettingFieldText {
+	useComponentSetting()
 	n := newValue(856)
 	o := nodeArgs(n)
 	o.u32(take(elementRender))
@@ -1251,6 +1253,7 @@ func (e SettingsEl) node() *node { return e.n }
 
 // Settings is <gpui_kit::component::setting::Settings>::new.
 func Settings(id ID) SettingsEl {
+	useComponentSetting()
 	n := newNode(748)
 	o := nodeArgs(n)
 	putID(o, id)

@@ -15,6 +15,7 @@ func (e ButtonEl) node() *node { return e.n }
 
 // Button is <gpui_kit::component::button::Button>::new.
 func Button(id ID, st ...Style) ButtonEl {
+	useComponentButton()
 	n := newNode(605)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -557,6 +558,7 @@ func (e ButtonGroupEl) node() *node { return e.n }
 
 // ButtonGroup is <gpui_kit::component::button::ButtonGroup>::new.
 func ButtonGroup(id ID, st ...Style) ButtonGroupEl {
+	useComponentButton()
 	n := newNode(607)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -833,6 +835,7 @@ func (e DropdownButtonEl) node() *node { return e.n }
 
 // DropdownButton is <gpui_kit::component::button::DropdownButton>::new.
 func DropdownButton(id ID, st ...Style) DropdownButtonEl {
+	useComponentButton()
 	n := newNode(608)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -1188,6 +1191,7 @@ func (e ToggleEl) node() *node { return e.n }
 
 // Toggle is <gpui_kit::component::button::Toggle>::new.
 func Toggle(id ID, st ...Style) ToggleEl {
+	useComponentButton()
 	n := newNode(609)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -1421,6 +1425,7 @@ func (e ToggleGroupEl) node() *node { return e.n }
 
 // ToggleGroup is <gpui_kit::component::button::ToggleGroup>::new.
 func ToggleGroup(id ID, st ...Style) ToggleGroupEl {
+	useComponentButton()
 	n := newNode(610)
 	o := nodeArgs(n)
 	putID(o, id)

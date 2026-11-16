@@ -22,6 +22,7 @@ Toolbar_VT :: struct {
 }
 
 toolbar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Toolbar {
+	use_component_toolbar()
 	e := Toolbar{new_node(800, loc), &toolbar_vt}
 	o := node_args()
 	put_id(o, id)
@@ -396,6 +397,7 @@ Toolbar_Group_VT :: struct {
 }
 
 toolbar_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Toolbar_Group {
+	use_component_toolbar()
 	e := Toolbar_Group{new_node(801, loc), &toolbar_group_vt}
 	o := node_args()
 	put_id(o, id)

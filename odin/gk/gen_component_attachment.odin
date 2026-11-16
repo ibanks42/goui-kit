@@ -26,12 +26,14 @@ Attachment_VT :: struct {
 }
 
 attachment :: proc(flags: ..Style_Flag, loc := #caller_location) -> Attachment {
+	use_component_attachment()
 	e := Attachment{new_node(582, loc), &attachment_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 attachment_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Attachment {
+	use_component_attachment()
 	e := Attachment{new_node(581, loc), &attachment_vt}
 	tokens(e.el, flags)
 	return e
@@ -116,12 +118,14 @@ Attachment_Actions_VT :: struct {
 }
 
 attachment_actions :: proc(flags: ..Style_Flag, loc := #caller_location) -> Attachment_Actions {
+	use_component_attachment()
 	e := Attachment_Actions{new_node(584, loc), &attachment_actions_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 attachment_actions_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Attachment_Actions {
+	use_component_attachment()
 	e := Attachment_Actions{new_node(583, loc), &attachment_actions_vt}
 	tokens(e.el, flags)
 	return e
@@ -155,12 +159,14 @@ Attachment_Content_VT :: struct {
 }
 
 attachment_content :: proc(flags: ..Style_Flag, loc := #caller_location) -> Attachment_Content {
+	use_component_attachment()
 	e := Attachment_Content{new_node(586, loc), &attachment_content_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 attachment_content_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Attachment_Content {
+	use_component_attachment()
 	e := Attachment_Content{new_node(585, loc), &attachment_content_vt}
 	tokens(e.el, flags)
 	return e
@@ -200,6 +206,7 @@ Attachment_Description_VT :: struct {
 }
 
 attachment_description :: proc(text: string, flags: ..Style_Flag, loc := #caller_location) -> Attachment_Description {
+	use_component_attachment()
 	e := Attachment_Description{new_node(587, loc), &attachment_description_vt}
 	o := node_args()
 	put_str(o, text)
@@ -237,6 +244,7 @@ Attachment_Group_VT :: struct {
 }
 
 attachment_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Attachment_Group {
+	use_component_attachment()
 	e := Attachment_Group{new_node(588, loc), &attachment_group_vt}
 	o := node_args()
 	put_id(o, id)
@@ -283,12 +291,14 @@ Attachment_Media_VT :: struct {
 }
 
 attachment_media :: proc(flags: ..Style_Flag, loc := #caller_location) -> Attachment_Media {
+	use_component_attachment()
 	e := Attachment_Media{new_node(590, loc), &attachment_media_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 attachment_media_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Attachment_Media {
+	use_component_attachment()
 	e := Attachment_Media{new_node(589, loc), &attachment_media_vt}
 	tokens(e.el, flags)
 	return e
@@ -330,6 +340,7 @@ Attachment_Title_VT :: struct {
 }
 
 attachment_title :: proc(text: string, flags: ..Style_Flag, loc := #caller_location) -> Attachment_Title {
+	use_component_attachment()
 	e := Attachment_Title{new_node(591, loc), &attachment_title_vt}
 	o := node_args()
 	put_str(o, text)

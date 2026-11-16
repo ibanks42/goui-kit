@@ -11,6 +11,7 @@ func (e BubbleEl) node() *node { return e.n }
 
 // Bubble is <gpui_kit::component::bubble::Bubble>::new.
 func Bubble(st ...Style) BubbleEl {
+	useComponentBubble()
 	n := newNode(598)
 	tokens(n, st)
 	return BubbleEl{n}
@@ -18,6 +19,7 @@ func Bubble(st ...Style) BubbleEl {
 
 // BubbleDefault is <gpui_kit::component::bubble::Bubble as Default>::default.
 func BubbleDefault(st ...Style) BubbleEl {
+	useComponentBubble()
 	n := newNode(597)
 	tokens(n, st)
 	return BubbleEl{n}
@@ -221,6 +223,7 @@ func (e BubbleContentEl) node() *node { return e.n }
 
 // BubbleContent is <gpui_kit::component::bubble::BubbleContent>::new.
 func BubbleContent(st ...Style) BubbleContentEl {
+	useComponentBubble()
 	n := newNode(600)
 	tokens(n, st)
 	return BubbleContentEl{n}
@@ -228,6 +231,7 @@ func BubbleContent(st ...Style) BubbleContentEl {
 
 // BubbleContentDefault is <gpui_kit::component::bubble::BubbleContent as Default>::default.
 func BubbleContentDefault(st ...Style) BubbleContentEl {
+	useComponentBubble()
 	n := newNode(599)
 	tokens(n, st)
 	return BubbleContentEl{n}
@@ -502,6 +506,7 @@ func (e BubbleGroupEl) node() *node { return e.n }
 
 // BubbleGroup is <gpui_kit::component::bubble::BubbleGroup>::new.
 func BubbleGroup(st ...Style) BubbleGroupEl {
+	useComponentBubble()
 	n := newNode(602)
 	tokens(n, st)
 	return BubbleGroupEl{n}
@@ -509,6 +514,7 @@ func BubbleGroup(st ...Style) BubbleGroupEl {
 
 // BubbleGroupDefault is <gpui_kit::component::bubble::BubbleGroup as Default>::default.
 func BubbleGroupDefault(st ...Style) BubbleGroupEl {
+	useComponentBubble()
 	n := newNode(601)
 	tokens(n, st)
 	return BubbleGroupEl{n}
@@ -726,6 +732,7 @@ func (e BubbleReactionsEl) node() *node { return e.n }
 
 // BubbleReactions is <gpui_kit::component::bubble::BubbleReactions>::new.
 func BubbleReactions(st ...Style) BubbleReactionsEl {
+	useComponentBubble()
 	n := newNode(604)
 	tokens(n, st)
 	return BubbleReactionsEl{n}
@@ -733,6 +740,7 @@ func BubbleReactions(st ...Style) BubbleReactionsEl {
 
 // BubbleReactionsDefault is <gpui_kit::component::bubble::BubbleReactions as Default>::default.
 func BubbleReactionsDefault(st ...Style) BubbleReactionsEl {
+	useComponentBubble()
 	n := newNode(603)
 	tokens(n, st)
 	return BubbleReactionsEl{n}

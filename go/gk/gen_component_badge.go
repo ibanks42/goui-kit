@@ -11,6 +11,7 @@ func (e BadgeEl) node() *node { return e.n }
 
 // Badge is <gpui_kit::component::badge::Badge>::new.
 func Badge() BadgeEl {
+	useComponentBadge()
 	n := newNode(594)
 	return BadgeEl{n}
 }

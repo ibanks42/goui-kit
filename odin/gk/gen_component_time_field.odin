@@ -17,6 +17,7 @@ Time_Field_VT :: struct {
 }
 
 time_field :: proc(state: Time_Field_State, flags: ..Style_Flag, loc := #caller_location) -> Time_Field {
+	use_component_time()
 	e := Time_Field{new_node(799, loc), &time_field_vt}
 	o := node_args()
 	put_u64(o, state.h)

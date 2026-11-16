@@ -23,6 +23,7 @@ Rating_VT :: struct {
 }
 
 rating :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Rating {
+	use_component_rating()
 	e := Rating{new_node(738, loc), &rating_vt}
 	o := node_args()
 	put_id(o, id)

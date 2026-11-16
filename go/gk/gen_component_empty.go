@@ -11,6 +11,7 @@ func (e EmptyEl) node() *node { return e.n }
 
 // Empty is <gpui_kit::component::empty::Empty>::new.
 func Empty(st ...Style) EmptyEl {
+	useComponentEmpty()
 	n := newNode(653)
 	tokens(n, st)
 	return EmptyEl{n}
@@ -18,6 +19,7 @@ func Empty(st ...Style) EmptyEl {
 
 // EmptyDefault is <gpui_kit::component::empty::Empty as Default>::default.
 func EmptyDefault(st ...Style) EmptyEl {
+	useComponentEmpty()
 	n := newNode(652)
 	tokens(n, st)
 	return EmptyEl{n}
@@ -201,6 +203,7 @@ func (e EmptyContentEl) node() *node { return e.n }
 
 // EmptyContent is <gpui_kit::component::empty::EmptyContent>::new.
 func EmptyContent(st ...Style) EmptyContentEl {
+	useComponentEmpty()
 	n := newNode(655)
 	tokens(n, st)
 	return EmptyContentEl{n}
@@ -208,6 +211,7 @@ func EmptyContent(st ...Style) EmptyContentEl {
 
 // EmptyContentDefault is <gpui_kit::component::empty::EmptyContent as Default>::default.
 func EmptyContentDefault(st ...Style) EmptyContentEl {
+	useComponentEmpty()
 	n := newNode(654)
 	tokens(n, st)
 	return EmptyContentEl{n}
@@ -452,6 +456,7 @@ func (e EmptyDescriptionEl) node() *node { return e.n }
 
 // EmptyDescription is <gpui_kit::component::empty::EmptyDescription>::new.
 func EmptyDescription(st ...Style) EmptyDescriptionEl {
+	useComponentEmpty()
 	n := newNode(657)
 	tokens(n, st)
 	return EmptyDescriptionEl{n}
@@ -459,6 +464,7 @@ func EmptyDescription(st ...Style) EmptyDescriptionEl {
 
 // EmptyDescriptionDefault is <gpui_kit::component::empty::EmptyDescription as Default>::default.
 func EmptyDescriptionDefault(st ...Style) EmptyDescriptionEl {
+	useComponentEmpty()
 	n := newNode(656)
 	tokens(n, st)
 	return EmptyDescriptionEl{n}
@@ -805,6 +811,7 @@ func (e EmptyHeaderEl) node() *node { return e.n }
 
 // EmptyHeader is <gpui_kit::component::empty::EmptyHeader>::new.
 func EmptyHeader(st ...Style) EmptyHeaderEl {
+	useComponentEmpty()
 	n := newNode(659)
 	tokens(n, st)
 	return EmptyHeaderEl{n}
@@ -812,6 +819,7 @@ func EmptyHeader(st ...Style) EmptyHeaderEl {
 
 // EmptyHeaderDefault is <gpui_kit::component::empty::EmptyHeader as Default>::default.
 func EmptyHeaderDefault(st ...Style) EmptyHeaderEl {
+	useComponentEmpty()
 	n := newNode(658)
 	tokens(n, st)
 	return EmptyHeaderEl{n}
@@ -1029,6 +1037,7 @@ func (e EmptyMediaEl) node() *node { return e.n }
 
 // EmptyMedia is <gpui_kit::component::empty::EmptyMedia>::new.
 func EmptyMedia(st ...Style) EmptyMediaEl {
+	useComponentEmpty()
 	n := newNode(661)
 	tokens(n, st)
 	return EmptyMediaEl{n}
@@ -1036,6 +1045,7 @@ func EmptyMedia(st ...Style) EmptyMediaEl {
 
 // EmptyMediaDefault is <gpui_kit::component::empty::EmptyMedia as Default>::default.
 func EmptyMediaDefault(st ...Style) EmptyMediaEl {
+	useComponentEmpty()
 	n := newNode(660)
 	tokens(n, st)
 	return EmptyMediaEl{n}
@@ -1242,6 +1252,7 @@ func (e EmptyTitleEl) node() *node { return e.n }
 
 // EmptyTitle is <gpui_kit::component::empty::EmptyTitle>::new.
 func EmptyTitle(st ...Style) EmptyTitleEl {
+	useComponentEmpty()
 	n := newNode(663)
 	tokens(n, st)
 	return EmptyTitleEl{n}
@@ -1249,6 +1260,7 @@ func EmptyTitle(st ...Style) EmptyTitleEl {
 
 // EmptyTitleDefault is <gpui_kit::component::empty::EmptyTitle as Default>::default.
 func EmptyTitleDefault(st ...Style) EmptyTitleEl {
+	useComponentEmpty()
 	n := newNode(662)
 	tokens(n, st)
 	return EmptyTitleEl{n}

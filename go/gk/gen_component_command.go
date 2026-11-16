@@ -11,6 +11,7 @@ func (e CommandEl) node() *node { return e.n }
 
 // Command is <gpui_kit::component::command::Command>::new.
 func Command(state CommandState, st ...Style) CommandEl {
+	useComponentCommand()
 	n := newNode(626)
 	o := nodeArgs(n)
 	o.u64(state.h)

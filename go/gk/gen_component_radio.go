@@ -15,6 +15,7 @@ func (e RadioEl) node() *node { return e.n }
 
 // Radio is <gpui_kit::component::radio::Radio>::new.
 func Radio(id ID, st ...Style) RadioEl {
+	useComponentRadio()
 	n := newNode(734)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -525,6 +526,7 @@ func (e RadioGroupEl) node() *node { return e.n }
 
 // RadioGroup is <gpui_kit::component::radio::RadioGroup>::new.
 func RadioGroup(id ID, st ...Style) RadioGroupEl {
+	useComponentRadio()
 	n := newNode(736)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -534,6 +536,7 @@ func RadioGroup(id ID, st ...Style) RadioGroupEl {
 
 // RadioGroupHorizontal is <gpui_kit::component::radio::RadioGroup>::horizontal.
 func RadioGroupHorizontal(id ID, st ...Style) RadioGroupEl {
+	useComponentRadio()
 	n := newNode(735)
 	o := nodeArgs(n)
 	putID(o, id)
@@ -543,6 +546,7 @@ func RadioGroupHorizontal(id ID, st ...Style) RadioGroupEl {
 
 // RadioGroupVertical is <gpui_kit::component::radio::RadioGroup>::vertical.
 func RadioGroupVertical(id ID, st ...Style) RadioGroupEl {
+	useComponentRadio()
 	n := newNode(737)
 	o := nodeArgs(n)
 	putID(o, id)

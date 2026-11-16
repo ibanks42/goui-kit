@@ -26,6 +26,7 @@ Message_Scroller_VT :: struct {
 }
 
 message_scroller :: proc(id: Id, state: Message_Scroller_State, renderer: Row_Source, flags: ..Style_Flag, loc := #caller_location) -> Message_Scroller {
+	use_component_message_scroller()
 	e := Message_Scroller{new_node(849, loc), &message_scroller_vt}
 	o := node_args()
 	put_id(o, id)

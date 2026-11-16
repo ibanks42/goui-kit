@@ -43,6 +43,7 @@ func (e DivEl) OnChildrenPrepainted(listener func(cx *Cx, e []Bounds)) DivEl {
 
 // ContextMenu is <gpui_kit::Div as gpui_kit::component::menu::ContextMenuExt>::context_menu: it makes a ContextMenuDivEl of the element.
 func (e DivEl) ContextMenu(f PopupMenu) ContextMenuDivEl {
+	useComponentMenu()
 	src := takeNode(e.n, true)
 	n := newNode(831)
 	o := nodeArgs(n)
@@ -63,6 +64,7 @@ func (e DivEl) ID(id ID) StatefulDivEl {
 
 // OverflowScrollbar is <gpui_kit::Div as gpui_kit::component::scroll::ScrollableElement>::overflow_scrollbar: it makes a ScrollableDivEl of the element.
 func (e DivEl) OverflowScrollbar() ScrollableDivEl {
+	useComponentScroll()
 	src := takeNode(e.n, true)
 	n := newNode(861)
 	o := nodeArgs(n)
@@ -72,6 +74,7 @@ func (e DivEl) OverflowScrollbar() ScrollableDivEl {
 
 // OverflowXScrollbar is <gpui_kit::Div as gpui_kit::component::scroll::ScrollableElement>::overflow_x_scrollbar: it makes a ScrollableDivEl of the element.
 func (e DivEl) OverflowXScrollbar() ScrollableDivEl {
+	useComponentScroll()
 	src := takeNode(e.n, true)
 	n := newNode(862)
 	o := nodeArgs(n)
@@ -81,6 +84,7 @@ func (e DivEl) OverflowXScrollbar() ScrollableDivEl {
 
 // OverflowYScrollbar is <gpui_kit::Div as gpui_kit::component::scroll::ScrollableElement>::overflow_y_scrollbar: it makes a ScrollableDivEl of the element.
 func (e DivEl) OverflowYScrollbar() ScrollableDivEl {
+	useComponentScroll()
 	src := takeNode(e.n, true)
 	n := newNode(863)
 	o := nodeArgs(n)

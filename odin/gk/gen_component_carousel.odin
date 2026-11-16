@@ -19,6 +19,7 @@ Carousel_VT :: struct {
 }
 
 carousel :: proc(id: Id, state: Carousel_State, flags: ..Style_Flag, loc := #caller_location) -> Carousel {
+	use_component_carousel()
 	e := Carousel{new_node(612, loc), &carousel_vt}
 	o := node_args()
 	put_id(o, id)
@@ -60,6 +61,7 @@ Carousel_Content_VT :: struct {
 }
 
 carousel_content :: proc(state: Carousel_State, flags: ..Style_Flag, loc := #caller_location) -> Carousel_Content {
+	use_component_carousel()
 	e := Carousel_Content{new_node(613, loc), &carousel_content_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -99,6 +101,7 @@ Carousel_Item_VT :: struct {
 }
 
 carousel_item :: proc(id: Id, index: int, state: Carousel_State, flags: ..Style_Flag, loc := #caller_location) -> Carousel_Item {
+	use_component_carousel()
 	e := Carousel_Item{new_node(614, loc), &carousel_item_vt}
 	o := node_args()
 	put_id(o, id)
@@ -141,6 +144,7 @@ Carousel_Next_VT :: struct {
 }
 
 carousel_next :: proc(state: Carousel_State, flags: ..Style_Flag, loc := #caller_location) -> Carousel_Next {
+	use_component_carousel()
 	e := Carousel_Next{new_node(615, loc), &carousel_next_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -181,6 +185,7 @@ Carousel_Pagination_VT :: struct {
 }
 
 carousel_pagination :: proc(flags: ..Style_Flag, loc := #caller_location) -> Carousel_Pagination {
+	use_component_carousel()
 	e := Carousel_Pagination{new_node(616, loc), &carousel_pagination_vt}
 	tokens(e.el, flags)
 	return e
@@ -219,6 +224,7 @@ Carousel_Pagination_Item_VT :: struct {
 }
 
 carousel_pagination_item :: proc(id: Id, index: int, state: Carousel_State, flags: ..Style_Flag, loc := #caller_location) -> Carousel_Pagination_Item {
+	use_component_carousel()
 	e := Carousel_Pagination_Item{new_node(617, loc), &carousel_pagination_item_vt}
 	o := node_args()
 	put_id(o, id)
@@ -262,6 +268,7 @@ Carousel_Previous_VT :: struct {
 }
 
 carousel_previous :: proc(state: Carousel_State, flags: ..Style_Flag, loc := #caller_location) -> Carousel_Previous {
+	use_component_carousel()
 	e := Carousel_Previous{new_node(618, loc), &carousel_previous_vt}
 	o := node_args()
 	put_u64(o, state.h)

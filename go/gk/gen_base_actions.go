@@ -11,6 +11,7 @@ func (e Cancel) valueNode() *node { return e.n }
 
 // NewCancelDefault is <gpui_kit::base::actions::Cancel as Default>::default.
 func NewCancelDefault() Cancel {
+	useBaseActions()
 	n := newValue(430)
 	return Cancel{n}
 }
@@ -22,6 +23,7 @@ func (e SelectDown) valueNode() *node { return e.n }
 
 // NewSelectDownDefault is <gpui_kit::base::actions::SelectDown as Default>::default.
 func NewSelectDownDefault() SelectDown {
+	useBaseActions()
 	n := newValue(431)
 	return SelectDown{n}
 }
@@ -33,6 +35,7 @@ func (e SelectFirst) valueNode() *node { return e.n }
 
 // NewSelectFirstDefault is <gpui_kit::base::actions::SelectFirst as Default>::default.
 func NewSelectFirstDefault() SelectFirst {
+	useBaseActions()
 	n := newValue(432)
 	return SelectFirst{n}
 }
@@ -44,6 +47,7 @@ func (e SelectLast) valueNode() *node { return e.n }
 
 // NewSelectLastDefault is <gpui_kit::base::actions::SelectLast as Default>::default.
 func NewSelectLastDefault() SelectLast {
+	useBaseActions()
 	n := newValue(433)
 	return SelectLast{n}
 }
@@ -55,6 +59,7 @@ func (e SelectLeft) valueNode() *node { return e.n }
 
 // NewSelectLeftDefault is <gpui_kit::base::actions::SelectLeft as Default>::default.
 func NewSelectLeftDefault() SelectLeft {
+	useBaseActions()
 	n := newValue(434)
 	return SelectLeft{n}
 }
@@ -66,6 +71,7 @@ func (e SelectNextColumn) valueNode() *node { return e.n }
 
 // NewSelectNextColumnDefault is <gpui_kit::base::actions::SelectNextColumn as Default>::default.
 func NewSelectNextColumnDefault() SelectNextColumn {
+	useBaseActions()
 	n := newValue(435)
 	return SelectNextColumn{n}
 }
@@ -77,6 +83,7 @@ func (e SelectPageDown) valueNode() *node { return e.n }
 
 // NewSelectPageDownDefault is <gpui_kit::base::actions::SelectPageDown as Default>::default.
 func NewSelectPageDownDefault() SelectPageDown {
+	useBaseActions()
 	n := newValue(436)
 	return SelectPageDown{n}
 }
@@ -88,6 +95,7 @@ func (e SelectPageUp) valueNode() *node { return e.n }
 
 // NewSelectPageUpDefault is <gpui_kit::base::actions::SelectPageUp as Default>::default.
 func NewSelectPageUpDefault() SelectPageUp {
+	useBaseActions()
 	n := newValue(437)
 	return SelectPageUp{n}
 }
@@ -99,6 +107,7 @@ func (e SelectPrevColumn) valueNode() *node { return e.n }
 
 // NewSelectPrevColumnDefault is <gpui_kit::base::actions::SelectPrevColumn as Default>::default.
 func NewSelectPrevColumnDefault() SelectPrevColumn {
+	useBaseActions()
 	n := newValue(438)
 	return SelectPrevColumn{n}
 }
@@ -110,6 +119,7 @@ func (e SelectRight) valueNode() *node { return e.n }
 
 // NewSelectRightDefault is <gpui_kit::base::actions::SelectRight as Default>::default.
 func NewSelectRightDefault() SelectRight {
+	useBaseActions()
 	n := newValue(439)
 	return SelectRight{n}
 }
@@ -121,6 +131,7 @@ func (e SelectUp) valueNode() *node { return e.n }
 
 // NewSelectUpDefault is <gpui_kit::base::actions::SelectUp as Default>::default.
 func NewSelectUpDefault() SelectUp {
+	useBaseActions()
 	n := newValue(440)
 	return SelectUp{n}
 }

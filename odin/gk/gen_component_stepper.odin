@@ -23,6 +23,7 @@ Stepper_VT :: struct {
 }
 
 stepper :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Stepper {
+	use_component_stepper()
 	e := Stepper{new_node(766, loc), &stepper_vt}
 	o := node_args()
 	put_id(o, id)
@@ -99,6 +100,7 @@ Stepper_Item_VT :: struct {
 }
 
 stepper_item :: proc(flags: ..Style_Flag, loc := #caller_location) -> Stepper_Item {
+	use_component_stepper()
 	e := Stepper_Item{new_node(767, loc), &stepper_item_vt}
 	tokens(e.el, flags)
 	return e

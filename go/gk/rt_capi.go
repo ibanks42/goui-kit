@@ -13,9 +13,12 @@ package gk
 
 /*
 #cgo CFLAGS: -I${SRCDIR}/include
-#cgo linux LDFLAGS: -lgpuikit
-#cgo darwin LDFLAGS: -lgpuikit
-#cgo windows LDFLAGS: -lgpuikit
+#cgo linux,gkshared LDFLAGS: -lgpuikit
+#cgo linux,!gkshared LDFLAGS: -lgpuikit_static -lgpuikit_sys -ldl -lgcc_s -lutil -lrt -lpthread -lm -lc
+#cgo darwin,gkshared LDFLAGS: -lgpuikit
+#cgo darwin,!gkshared LDFLAGS: -lgpuikit_static -framework CoreServices -framework ApplicationServices -framework CoreFoundation -framework CoreVideo -framework Carbon -framework AppKit -framework Foundation -framework UserNotifications -framework Security -framework CoreText -framework CoreGraphics -framework CoreData -framework CoreImage -framework CloudKit -framework QuartzCore -framework UniformTypeIdentifiers -framework Metal -lobjc -liconv -lc -lm
+#cgo windows,gkshared LDFLAGS: -lgpuikit
+#cgo windows,!gkshared LDFLAGS: -lgpuikit_static -lgpuikit_sys -lkernel32 -lntdll -luserenv -lws2_32 -ldbghelp
 #include <stdlib.h>
 #include "gpuikit.h"
 int32_t gk_go_run(int headless, const uint8_t *script, size_t len, uint16_t major, uint16_t minor,

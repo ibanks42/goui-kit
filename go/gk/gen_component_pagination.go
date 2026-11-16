@@ -11,6 +11,7 @@ func (e PaginationEl) node() *node { return e.n }
 
 // Pagination is <gpui_kit::component::pagination::Pagination>::new.
 func Pagination(id ID, st ...Style) PaginationEl {
+	useComponentPagination()
 	n := newNode(711)
 	o := nodeArgs(n)
 	putID(o, id)

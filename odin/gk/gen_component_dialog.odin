@@ -39,6 +39,7 @@ Alert_Dialog_VT :: struct {
 }
 
 alert_dialog :: proc(flags: ..Style_Flag, loc := #caller_location) -> Alert_Dialog {
+	use_component_dialog()
 	e := Alert_Dialog{new_node(634, loc), &alert_dialog_vt}
 	tokens(e.el, flags)
 	return e
@@ -275,6 +276,7 @@ Dialog_VT :: struct {
 }
 
 dialog :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog {
+	use_component_dialog()
 	e := Dialog{new_node(635, loc), &dialog_vt}
 	tokens(e.el, flags)
 	return e
@@ -470,6 +472,7 @@ Dialog_Action_VT :: struct {
 }
 
 dialog_action :: proc(loc := #caller_location) -> Dialog_Action {
+	use_component_dialog()
 	e := Dialog_Action{new_node(636, loc), &dialog_action_vt}
 	return e
 }
@@ -553,6 +556,7 @@ Dialog_Close_VT :: struct {
 }
 
 dialog_close :: proc(loc := #caller_location) -> Dialog_Close {
+	use_component_dialog()
 	e := Dialog_Close{new_node(638, loc), &dialog_close_vt}
 	return e
 }
@@ -584,6 +588,7 @@ Dialog_Content_VT :: struct {
 }
 
 dialog_content :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog_Content {
+	use_component_dialog()
 	e := Dialog_Content{new_node(639, loc), &dialog_content_vt}
 	tokens(e.el, flags)
 	return e
@@ -615,6 +620,7 @@ Dialog_Description_VT :: struct {
 }
 
 dialog_description :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog_Description {
+	use_component_dialog()
 	e := Dialog_Description{new_node(640, loc), &dialog_description_vt}
 	tokens(e.el, flags)
 	return e
@@ -646,6 +652,7 @@ Dialog_Footer_VT :: struct {
 }
 
 dialog_footer :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog_Footer {
+	use_component_dialog()
 	e := Dialog_Footer{new_node(641, loc), &dialog_footer_vt}
 	tokens(e.el, flags)
 	return e
@@ -677,6 +684,7 @@ Dialog_Header_VT :: struct {
 }
 
 dialog_header :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog_Header {
+	use_component_dialog()
 	e := Dialog_Header{new_node(642, loc), &dialog_header_vt}
 	tokens(e.el, flags)
 	return e
@@ -708,6 +716,7 @@ Dialog_Title_VT :: struct {
 }
 
 dialog_title :: proc(flags: ..Style_Flag, loc := #caller_location) -> Dialog_Title {
+	use_component_dialog()
 	e := Dialog_Title{new_node(643, loc), &dialog_title_vt}
 	tokens(e.el, flags)
 	return e

@@ -4,32 +4,3 @@
 use crate::genapi::{self, Dx, R};
 use super::*;
 
-pub fn build_base_effect_transition(dx: &mut Dx, n: u32) -> Option<gpui_kit::base::animation::EffectTransition> {
-    let (ty, args, first) = dx.node(n);
-    make_base_effect_transition(dx, ty, args, first)
-}
-pub fn make_base_effect_transition(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::base::animation::EffectTransition> {
-    let r = &mut dx.args(args);
-    let el: gpui_kit::base::animation::EffectTransition = match ty {
-        441 => { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::base::animation::EffectTransition>::new(a0) }
-        _ => return bad_node("EffectTransition", ty),
-    };
-    Some(apply_base_effect_transition(dx, el, first))
-}
-#[inline]
-pub fn apply_base_effect_transition(dx: &mut Dx, mut el: gpui_kit::base::animation::EffectTransition, first: u32) -> gpui_kit::base::animation::EffectTransition {
-    let mut at = first;
-    while let Some((op, mut r)) = dx.op(&mut at) {
-        let r = &mut r;
-        match op {
-            256 => { el = { let a0 = r.f32(); let a1 = r.f32(); <gpui_kit::base::animation::EffectTransition>::fade(el, a0, a1) }; }
-            257 => { el = { let a0 = gpui_kit::px(r.f32()); let a1 = gpui_kit::px(r.f32()); <gpui_kit::base::animation::EffectTransition>::height(el, a0, a1) }; }
-            258 => { el = { let a0 = gpui_kit::px(r.f32()); let a1 = gpui_kit::px(r.f32()); <gpui_kit::base::animation::EffectTransition>::slide_x(el, a0, a1) }; }
-            259 => { el = { let a0 = gpui_kit::px(r.f32()); let a1 = gpui_kit::px(r.f32()); <gpui_kit::base::animation::EffectTransition>::slide_y(el, a0, a1) }; }
-            260 => { el = { let a0 = gpui_kit::px(r.f32()); let a1 = gpui_kit::px(r.f32()); <gpui_kit::base::animation::EffectTransition>::width(el, a0, a1) }; }
-            261 => { el = { let a0 = { let e = crate::shim_editor::Expr::new(r.str()); move |a0: f32| { (e.eval(&[(a0 as f64)]) as f32) } }; <gpui_kit::base::animation::EffectTransition>::ease(el, a0) }; }
-            _ => bad_op("EffectTransition", op),
-        }
-    }
-    el
-}

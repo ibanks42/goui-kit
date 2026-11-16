@@ -11,6 +11,7 @@ func (e SliderEl) node() *node { return e.n }
 
 // Slider is <gpui_kit::component::slider::Slider>::new.
 func Slider(state SliderState, st ...Style) SliderEl {
+	useComponentSlider()
 	n := newNode(760)
 	o := nodeArgs(n)
 	o.u64(state.h)

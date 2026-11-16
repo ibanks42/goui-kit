@@ -31,7 +31,7 @@ out=$base/profile; rm -rf "$out"; mkdir -p "$out/lib/ship" "$out/bin" "$out/runs
 [ -f "$sym/libgpuikit.so" ] && [ -f "$sym/ref-$scene" ] || { echo "profile.sh: no unstripped library and ref-$scene in $sym"; exit 2; }
 cp "$sym/libgpuikit.so" "$sym/ref-$scene" "$out/lib/ship/"
 "$cc" -shared -fPIC -O2 -o "$out/sampler.so" "$repo/tools/profile/sampler.c"
-"$odin" build "$repo/examples/odin/$scene" -o:speed -collection:gpuikit="$repo/odin" \
+"$odin" build "$repo/examples/odin/$scene" -o:speed -define:GK_SHARED=true -collection:gpuikit="$repo/odin" \
   "-extra-linker-flags:-L$out/lib/ship -Wl,-rpath,\$ORIGIN/../lib/ship" -out:"$out/bin/$scene-odin-speed"
 export GK_FRAMES=${GK_FRAMES:-60,600} LD_LIBRARY_PATH=$out/lib/ship
 "$here/display.sh" --hz 60 bash -c '

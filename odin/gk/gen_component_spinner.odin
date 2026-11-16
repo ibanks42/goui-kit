@@ -15,6 +15,7 @@ Spinner_VT :: struct {
 }
 
 spinner :: proc(loc := #caller_location) -> Spinner {
+	use_component_spinner()
 	e := Spinner{new_node(764, loc), &spinner_vt}
 	return e
 }

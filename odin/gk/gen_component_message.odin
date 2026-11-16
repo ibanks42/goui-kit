@@ -23,12 +23,14 @@ Message_VT :: struct {
 }
 
 message :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message {
+	use_component_message()
 	e := Message{new_node(697, loc), &message_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 message_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message {
+	use_component_message()
 	e := Message{new_node(696, loc), &message_vt}
 	tokens(e.el, flags)
 	return e
@@ -102,12 +104,14 @@ Message_Avatar_VT :: struct {
 }
 
 message_avatar :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Avatar {
+	use_component_message()
 	e := Message_Avatar{new_node(699, loc), &message_avatar_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 message_avatar_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Avatar {
+	use_component_message()
 	e := Message_Avatar{new_node(698, loc), &message_avatar_vt}
 	tokens(e.el, flags)
 	return e
@@ -140,12 +144,14 @@ Message_Content_VT :: struct {
 }
 
 message_content :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Content {
+	use_component_message()
 	e := Message_Content{new_node(701, loc), &message_content_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 message_content_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Content {
+	use_component_message()
 	e := Message_Content{new_node(700, loc), &message_content_vt}
 	tokens(e.el, flags)
 	return e
@@ -183,12 +189,14 @@ Message_Footer_VT :: struct {
 }
 
 message_footer :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Footer {
+	use_component_message()
 	e := Message_Footer{new_node(703, loc), &message_footer_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 message_footer_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Footer {
+	use_component_message()
 	e := Message_Footer{new_node(702, loc), &message_footer_vt}
 	tokens(e.el, flags)
 	return e
@@ -225,12 +233,14 @@ Message_Group_VT :: struct {
 }
 
 message_group :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Group {
+	use_component_message()
 	e := Message_Group{new_node(705, loc), &message_group_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 message_group_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Group {
+	use_component_message()
 	e := Message_Group{new_node(704, loc), &message_group_vt}
 	tokens(e.el, flags)
 	return e
@@ -263,12 +273,14 @@ Message_Header_VT :: struct {
 }
 
 message_header :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Header {
+	use_component_message()
 	e := Message_Header{new_node(707, loc), &message_header_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 message_header_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Message_Header {
+	use_component_message()
 	e := Message_Header{new_node(706, loc), &message_header_vt}
 	tokens(e.el, flags)
 	return e

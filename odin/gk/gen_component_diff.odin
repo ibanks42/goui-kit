@@ -39,6 +39,7 @@ Diff_VT :: struct {
 }
 
 diff :: proc(state: Diff_State, flags: ..Style_Flag, loc := #caller_location) -> Diff {
+	use_component_diff()
 	e := Diff{new_node(644, loc), &diff_vt}
 	o := node_args()
 	put_u64(o, state.h)

@@ -145,7 +145,7 @@ One archive serves both languages. Inside it:
 
 | path | what |
 |---|---|
-| `lib/` | the library: `libgpuikit.so` (Linux), `libgpuikit.dylib` (macOS), `gpuikit.dll` and its import libraries (Windows) |
+| `lib/` | the library, which your app links into itself: `libgpuikit_static.a` (on Windows also `gpuikit_static.lib`, Visual Studio's format, for Odin), with a small helper naming the system libraries it needs |
 | `odin/gk/` | the Odin package, imported as `gpuikit:gk` |
 | `go/` | the Go module `gpuikit.dev` (package `gk`, and `s`, `theme`, `palette` for styles and colours) |
 | `include/` | the C header, if you want to bind another language |
@@ -177,8 +177,7 @@ To build your own app, put its folder next to the unpacked download.
 
 ```sh
 G=gpuikit-0.0.1-linux-x86_64
-odin build myapp -o:minimal -collection:gpuikit=$G/odin \
-  "-extra-linker-flags:-L$G/lib -Wl,-rpath,\$ORIGIN/$G/lib" -out:myapp.bin
+odin build myapp -o:minimal -collection:gpuikit=$G/odin "-extra-linker-flags:-L$G/lib" -out:myapp.bin
 ```
 
 **Go** (you need Go 1.27 or newer and a C compiler for cgo). Your `go.mod` points `gpuikit.dev` at
@@ -191,21 +190,30 @@ replace gpuikit.dev => ../gpuikit-0.0.1-linux-x86_64/go
 ```
 
 ```sh
-CGO_LDFLAGS="-L$PWD/../gpuikit-0.0.1-linux-x86_64/lib -Wl,-rpath,\$ORIGIN/../gpuikit-0.0.1-linux-x86_64/lib" go build -o myapp.bin .
+CGO_LDFLAGS="-L$PWD/../gpuikit-0.0.1-linux-x86_64/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o myapp.bin .
 ```
 
-The `-rpath` lets the program find the library relative to itself. When you ship your app, put the
-library next to the program (`-Wl,-rpath,\$ORIGIN`) or somewhere the system's loader looks.
+Your app links the library statically, and **only the components it uses** end up in the
+program: call `gk.Button` (`gk.button` in Odin) and the button code is linked in, never call
+`gk.LineChart` and the chart code is left out. There is nothing to list or import for it. Odin
+needs no extra flag for it; in Go the `-ldflags` part tells the linker to drop what isn't used
+(Go doesn't let a package ask for that itself), and without it the app still works, it just
+carries every component (about 100 MB instead of about 50 MB for a small app). The result is one
+file with nothing to ship next to it. [docs/GO.md](docs/GO.md) section 8 explains how it works.
 
 Things to know per system (the guides cover each in detail):
 
-- **macOS**: use `@executable_path` instead of `$ORIGIN`. The library is universal, so you can
-  build for either kind of Mac and join the two with `lipo`.
-- **Windows**: copy `gpuikit.dll` next to your `.exe`. Every program also needs the manifest in
-  `windows/gpuikit.manifest`, either embedded or copied next to the program as `APP.exe.manifest`;
-  without it the program exits before `main` (the library uses common controls 6, which Windows only
-  loads when a manifest asks for it). Odin programs link with `-linker:lld`; Go uses MinGW-w64 gcc
-  for cgo.
+- **macOS**: the Go flag is `-ldflags="-s -w -extldflags=-Wl,-dead_strip"` (Apple's linker spells
+  "drop what isn't used" differently). The library is universal, so you can build for either
+  kind of Mac and join the two with `lipo`.
+- **Windows**: Go uses MinGW-w64 gcc with LLVM's linker, lld (MSYS2's `mingw-w64-ucrt-x86_64-lld`,
+  llvm-mingw, or WinLibs' LLVM build), and the flag is
+  `-ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'"`. (GNU ld
+  can't drop unused code on Windows, so without lld the app works but carries every component.)
+  The `.exe` has the library and the Windows manifest inside it. An Odin program links with
+  `-linker:lld` and needs the manifest in `windows/gpuikit.manifest`, embedded or copied next to
+  the program as `APP.exe.manifest`; without it the program exits before `main` (the library uses
+  common controls 6, which Windows only loads when a manifest asks for it).
 - The library and the package check each other's version at start. If you mix files from two
   downloads, the app stops with a message saying so instead of misbehaving.
 

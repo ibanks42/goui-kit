@@ -23,6 +23,7 @@ Group_Box_VT :: struct {
 }
 
 group_box :: proc(flags: ..Style_Flag, loc := #caller_location) -> Group_Box {
+	use_component_group_box()
 	e := Group_Box{new_node(672, loc), &group_box_vt}
 	tokens(e.el, flags)
 	return e

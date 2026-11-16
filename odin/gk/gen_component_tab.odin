@@ -73,12 +73,14 @@ Tab_VT :: struct {
 }
 
 tab :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tab {
+	use_component_tab()
 	e := Tab{new_node(770, loc), &tab_vt}
 	tokens(e.el, flags)
 	return e
 }
 
 tab_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tab {
+	use_component_tab()
 	e := Tab{new_node(769, loc), &tab_vt}
 	tokens(e.el, flags)
 	return e
@@ -225,6 +227,7 @@ Tab_Bar_VT :: struct {
 }
 
 tab_bar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Tab_Bar {
+	use_component_tab()
 	e := Tab_Bar{new_node(771, loc), &tab_bar_vt}
 	o := node_args()
 	put_id(o, id)

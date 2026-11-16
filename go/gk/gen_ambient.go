@@ -10,6 +10,7 @@ import (
 
 // Amber is gpui_kit::component::amber.
 func Amber(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(744)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -18,12 +19,14 @@ func Amber(cx *Cx, scale int) Hsla {
 
 // BaseApplySystemReduceMotion is gpui_kit::base::apply_system_reduce_motion.
 func BaseApplySystemReduceMotion(cx *Cx) {
+	useBaseRoot()
 	o := newReq(726)
 	ambientCall(cx, o, false)
 }
 
 // BaseAxisGutter is gpui_kit::base::plot::axis_gutter.
 func BaseAxisGutter(cx *Cx, fontSize float32) float32 {
+	useBasePlot()
 	o := newReq(728)
 	o.f32(fontSize)
 	r := ambientCall(cx, o, true)
@@ -32,6 +35,7 @@ func BaseAxisGutter(cx *Cx, fontSize float32) float32 {
 
 // BaseBoxShadow is gpui_kit::base::box_shadow.
 func BaseBoxShadow(cx *Cx, x float32, y float32, blur float32, spread float32, color Color) BoxShadow {
+	useBaseRoot()
 	o := newReq(1446)
 	o.f32(x)
 	o.f32(y)
@@ -44,6 +48,7 @@ func BaseBoxShadow(cx *Cx, x float32, y float32, blur float32, spread float32, c
 
 // BaseDockSizingClamp is (|value: gpui_kit::base::dock::DockSizing, size| <gpui_kit::base::dock::DockSizing>::clamp(&value, size)).
 func BaseDockSizingClamp(cx *Cx, value DockSizing, size float32) float32 {
+	useBaseDock()
 	o := newReq(1657)
 	putVtape(o, value.n)
 	o.f32(size)
@@ -53,6 +58,7 @@ func BaseDockSizingClamp(cx *Cx, value DockSizing, size float32) float32 {
 
 // BaseDockSizingSizeFromPointer is (|value: gpui_kit::base::dock::DockSizing, pointer| <gpui_kit::base::dock::DockSizing>::size_from_pointer(&value, pointer)).
 func BaseDockSizingSizeFromPointer(cx *Cx, value DockSizing, pointer GpuiPoint) float32 {
+	useBaseDock()
 	o := newReq(1658)
 	putVtape(o, value.n)
 	putGpuiPoint(o, pointer)
@@ -62,6 +68,7 @@ func BaseDockSizingSizeFromPointer(cx *Cx, value DockSizing, pointer GpuiPoint) 
 
 // BaseEaseInCubic is gpui_kit::base::animation::ease_in_cubic.
 func BaseEaseInCubic(cx *Cx, t float32) float32 {
+	useBaseAnimation()
 	o := newReq(723)
 	o.f32(t)
 	r := ambientCall(cx, o, true)
@@ -70,6 +77,7 @@ func BaseEaseInCubic(cx *Cx, t float32) float32 {
 
 // BaseEaseInOutCubic is gpui_kit::base::animation::ease_in_out_cubic.
 func BaseEaseInOutCubic(cx *Cx, t float32) float32 {
+	useBaseAnimation()
 	o := newReq(724)
 	o.f32(t)
 	r := ambientCall(cx, o, true)
@@ -78,6 +86,7 @@ func BaseEaseInOutCubic(cx *Cx, t float32) float32 {
 
 // BaseEaseOutCubic is gpui_kit::base::animation::ease_out_cubic.
 func BaseEaseOutCubic(cx *Cx, t float32) float32 {
+	useBaseAnimation()
 	o := newReq(725)
 	o.f32(t)
 	r := ambientCall(cx, o, true)
@@ -86,6 +95,7 @@ func BaseEaseOutCubic(cx *Cx, t float32) float32 {
 
 // BaseEnabledByDefault is gpui_kit::base::ScrollBounce::enabled_by_default.
 func BaseEnabledByDefault(cx *Cx) bool {
+	useBaseScrollBounce()
 	o := newReq(1175)
 	r := ambientCall(cx, o, true)
 	return r.bool()
@@ -100,6 +110,7 @@ func BaseExtensions(cx *Cx) []string {
 
 // BaseHandleKeyDown is gpui_kit::base::questionnaire::handle_key_down.
 func BaseHandleKeyDown(cx *Cx, state QuestionnaireState, event KeyDownEvent) {
+	useBaseQuestionnaire()
 	o := newReq(733)
 	o.u64(state.h)
 	putKeyDownEvent(o, event)
@@ -108,6 +119,7 @@ func BaseHandleKeyDown(cx *Cx, state QuestionnaireState, event KeyDownEvent) {
 
 // BaseIsMobile is gpui_kit::base::is_mobile.
 func BaseIsMobile(cx *Cx) bool {
+	useBaseRoot()
 	o := newReq(727)
 	r := ambientCall(cx, o, true)
 	return r.bool()
@@ -115,6 +127,7 @@ func BaseIsMobile(cx *Cx) bool {
 
 // BaseLastHorizontalScrollClaim is gpui_kit::base::last_horizontal_scroll_claim.
 func BaseLastHorizontalScrollClaim(cx *Cx) Option[HorizontalScrollClaim] {
+	useBaseRoot()
 	o := newReq(1031)
 	r := ambientCall(cx, o, true)
 	return rdOpt(r, func(r *reader) HorizontalScrollClaim { return HorizontalScrollClaim{h: r.u64()} })
@@ -122,6 +135,7 @@ func BaseLastHorizontalScrollClaim(cx *Cx) Option[HorizontalScrollClaim] {
 
 // BaseMeasureTextWidth is gpui_kit::base::plot::label::measure_text_width.
 func BaseMeasureTextWidth(cx *Cx, text string, fontSize float32) float32 {
+	useBasePlot()
 	o := newReq(731)
 	o.str(text)
 	o.f32(fontSize)
@@ -131,6 +145,7 @@ func BaseMeasureTextWidth(cx *Cx, text string, fontSize float32) float32 {
 
 // BaseResolvedCorner is gpui_kit::base::Popup::resolved_corner.
 func BaseResolvedCorner(cx *Cx, anchor Anchor, triggerBounds Bounds) GpuiPoint {
+	useBasePopup()
 	o := newReq(1174)
 	o.u16(uint16(anchor))
 	putBounds(o, triggerBounds)
@@ -140,6 +155,7 @@ func BaseResolvedCorner(cx *Cx, anchor Anchor, triggerBounds Bounds) GpuiPoint {
 
 // BaseSankeyLayoutFrom is (|value: gpui_kit::base::plot::shape::Sankey, graph| <gpui_kit::base::plot::shape::Sankey>::layout_from(&value, graph)).
 func BaseSankeyLayoutFrom(cx *Cx, value Sankey, graph SankeyGraph) SankeyGraph {
+	useBasePlot()
 	o := newReq(1660)
 	putVtape(o, value.n)
 	o.u64(graph.h)
@@ -149,6 +165,7 @@ func BaseSankeyLayoutFrom(cx *Cx, value Sankey, graph SankeyGraph) SankeyGraph {
 
 // BaseSetLanguageConfig is gpui_kit::base::input::set_language_config.
 func BaseSetLanguageConfig(cx *Cx, language string, config LanguageConfig) {
+	useBaseInput()
 	o := newReq(1030)
 	o.str(language)
 	putVtape(o, config.n)
@@ -157,6 +174,7 @@ func BaseSetLanguageConfig(cx *Cx, language string, config LanguageConfig) {
 
 // BaseSetLanguageProvider is gpui_kit::base::input::set_language_provider.
 func BaseSetLanguageProvider(cx *Cx, provider RowSource) {
+	useBaseInput()
 	o := newReq(1624)
 	o.u64(provider.h)
 	ambientCall(cx, o, false)
@@ -164,6 +182,7 @@ func BaseSetLanguageProvider(cx *Cx, provider RowSource) {
 
 // BaseStepValue is gpui_kit::base::step_value.
 func BaseStepValue(cx *Cx, value string, action StepAction, step float64, min_ Option[float64], max_ Option[float64]) Option[string] {
+	useBaseRoot()
 	o := newReq(734)
 	o.str(value)
 	o.u16(uint16(action))
@@ -186,6 +205,7 @@ func BaseStepValue(cx *Cx, value string, action StepAction, step float64, min_ O
 
 // BaseTimingSample is (|value: gpui_kit::base::Timing, elapsed| <gpui_kit::base::Timing>::sample(&value, elapsed)).
 func BaseTimingSample(cx *Cx, value Timing, elapsed time.Duration) TimingSample {
+	useBaseMotion()
 	o := newReq(1656)
 	putVtape(o, value.n)
 	putMs(o, elapsed)
@@ -195,6 +215,7 @@ func BaseTimingSample(cx *Cx, value Timing, elapsed time.Duration) TimingSample 
 
 // BaseTruncateTextToWidth is gpui_kit::base::plot::label::truncate_text_to_width.
 func BaseTruncateTextToWidth(cx *Cx, text string, fontSize float32, maxWidth float32) string {
+	useBasePlot()
 	o := newReq(732)
 	o.str(text)
 	o.f32(fontSize)
@@ -205,6 +226,7 @@ func BaseTruncateTextToWidth(cx *Cx, text string, fontSize float32, maxWidth flo
 
 // Blue is gpui_kit::component::blue.
 func Blue(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(745)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -213,30 +235,35 @@ func Blue(cx *Cx, scale int) Hsla {
 
 // ClearNotifications is <gpui_kit::Window as gpui_kit::component::WindowExt>::clear_notifications.
 func ClearNotifications(cx *Cx) {
+	useComponentWindowExt()
 	o := newReq(735)
 	ambientCall(cx, o, false)
 }
 
 // CloseAllDialogs is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_all_dialogs.
 func CloseAllDialogs(cx *Cx) {
+	useComponentWindowExt()
 	o := newReq(736)
 	ambientCall(cx, o, false)
 }
 
 // CloseDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_dialog.
 func CloseDialog(cx *Cx) {
+	useComponentWindowExt()
 	o := newReq(737)
 	ambientCall(cx, o, false)
 }
 
 // CloseSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_sheet.
 func CloseSheet(cx *Cx) {
+	useComponentWindowExt()
 	o := newReq(738)
 	ambientCall(cx, o, false)
 }
 
 // Cyan is gpui_kit::component::cyan.
 func Cyan(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(746)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -245,6 +272,7 @@ func Cyan(cx *Cx, scale int) Hsla {
 
 // Dark is gpui_kit::component::ThemeColor::dark.
 func Dark(cx *Cx) ThemeColorArc {
+	useComponentTheme()
 	o := newReq(1176)
 	r := ambientCall(cx, o, true)
 	return ThemeColorArc{h: r.u64()}
@@ -252,6 +280,7 @@ func Dark(cx *Cx) ThemeColorArc {
 
 // DiffFileParseError is (|patch| <gpui_kit::component::diff::DiffFile>::parse(patch).err()).
 func DiffFileParseError(cx *Cx, patch string) Option[DiffParseError] {
+	useComponentDiff()
 	o := newReq(1643)
 	o.str(patch)
 	r := ambientCall(cx, o, true)
@@ -260,6 +289,7 @@ func DiffFileParseError(cx *Cx, patch string) Option[DiffParseError] {
 
 // DiffFileParseWithError is (|patch, options| <gpui_kit::component::diff::DiffFile>::parse_with(patch, options).err()).
 func DiffFileParseWithError(cx *Cx, patch string, options DiffParseOptions) Option[DiffParseError] {
+	useComponentDiff()
 	o := newReq(1644)
 	o.str(patch)
 	putVtape(o, options.n)
@@ -269,6 +299,7 @@ func DiffFileParseWithError(cx *Cx, patch string, options DiffParseOptions) Opti
 
 // Emerald is gpui_kit::component::emerald.
 func Emerald(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(747)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -277,6 +308,7 @@ func Emerald(cx *Cx, scale int) Hsla {
 
 // FocusedInput is <gpui_kit::Window as gpui_kit::component::WindowExt>::focused_input.
 func FocusedInput(cx *Cx) Option[AnyInputState] {
+	useComponentWindowExt()
 	o := newReq(739)
 	r := ambientCall(cx, o, true)
 	return rdOpt(r, func(r *reader) AnyInputState { return rdAnyInputState(r) })
@@ -284,6 +316,7 @@ func FocusedInput(cx *Cx) Option[AnyInputState] {
 
 // Format is gpui_kit::component::kbd::Kbd::format.
 func Format(cx *Cx, key Keystroke) string {
+	useComponentKbd()
 	o := newReq(1179)
 	putKeystroke(o, key)
 	r := ambientCall(cx, o, true)
@@ -292,6 +325,7 @@ func Format(cx *Cx, key Keystroke) string {
 
 // Fuchsia is gpui_kit::component::fuchsia.
 func Fuchsia(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(748)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -300,6 +334,7 @@ func Fuchsia(cx *Cx, scale int) Hsla {
 
 // Gray is gpui_kit::component::gray.
 func Gray(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(749)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -308,6 +343,7 @@ func Gray(cx *Cx, scale int) Hsla {
 
 // Green is gpui_kit::component::green.
 func Green(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(750)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -316,6 +352,7 @@ func Green(cx *Cx, scale int) Hsla {
 
 // HasActiveDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_dialog.
 func HasActiveDialog(cx *Cx) bool {
+	useComponentWindowExt()
 	o := newReq(740)
 	r := ambientCall(cx, o, true)
 	return r.bool()
@@ -323,6 +360,7 @@ func HasActiveDialog(cx *Cx) bool {
 
 // HasActiveSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_sheet.
 func HasActiveSheet(cx *Cx) bool {
+	useComponentWindowExt()
 	o := newReq(741)
 	r := ambientCall(cx, o, true)
 	return r.bool()
@@ -330,6 +368,7 @@ func HasActiveSheet(cx *Cx) bool {
 
 // HasFocusedInput is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_focused_input.
 func HasFocusedInput(cx *Cx) bool {
+	useComponentWindowExt()
 	o := newReq(742)
 	r := ambientCall(cx, o, true)
 	return r.bool()
@@ -337,6 +376,7 @@ func HasFocusedInput(cx *Cx) bool {
 
 // Hsl is gpui_kit::component::hsl.
 func Hsl(cx *Cx, h float32, s_ float32, l float32) Hsla {
+	useComponentRoot()
 	o := newReq(751)
 	o.f32(h)
 	o.f32(s_)
@@ -347,6 +387,7 @@ func Hsl(cx *Cx, h float32, s_ float32, l float32) Hsla {
 
 // Indigo is gpui_kit::component::indigo.
 func Indigo(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(752)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -355,6 +396,7 @@ func Indigo(cx *Cx, scale int) Hsla {
 
 // KitTheme is <gpui_kit::App as gpui_kit::component::ActiveTheme>::theme.
 func KitTheme(cx *Cx) Theme {
+	useComponentTheme()
 	o := newReq(1447)
 	r := ambientCall(cx, o, true)
 	return Theme{h: r.u64()}
@@ -362,6 +404,7 @@ func KitTheme(cx *Cx) Theme {
 
 // Light is gpui_kit::component::ThemeColor::light.
 func Light(cx *Cx) ThemeColorArc {
+	useComponentTheme()
 	o := newReq(1177)
 	r := ambientCall(cx, o, true)
 	return ThemeColorArc{h: r.u64()}
@@ -369,6 +412,7 @@ func Light(cx *Cx) ThemeColorArc {
 
 // Lime is gpui_kit::component::lime.
 func Lime(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(754)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -377,6 +421,7 @@ func Lime(cx *Cx, scale int) Hsla {
 
 // Locale is gpui_kit::component::locale.
 func Locale(cx *Cx) string {
+	useComponentRoot()
 	o := newReq(1448)
 	r := ambientCall(cx, o, true)
 	return r.str()
@@ -384,6 +429,7 @@ func Locale(cx *Cx) string {
 
 // Neutral is gpui_kit::component::neutral.
 func Neutral(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(755)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -392,6 +438,7 @@ func Neutral(cx *Cx, scale int) Hsla {
 
 // Notifications is <gpui_kit::Window as gpui_kit::component::WindowExt>::notifications.
 func Notifications(cx *Cx) []Notification {
+	useComponentWindowExt()
 	o := newReq(1514)
 	r := ambientCall(cx, o, true)
 	return rdList(r, func(r *reader) Notification { return Notification{h: r.u64()} })
@@ -399,6 +446,7 @@ func Notifications(cx *Cx) []Notification {
 
 // Oklch is gpui_kit::component::oklch.
 func Oklch(cx *Cx, lightness float32, chroma float32, hue float32) Hsla {
+	useComponentRoot()
 	o := newReq(756)
 	o.f32(lightness)
 	o.f32(chroma)
@@ -409,6 +457,7 @@ func Oklch(cx *Cx, lightness float32, chroma float32, hue float32) Hsla {
 
 // OpenAlertDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_alert_dialog.
 func OpenAlertDialog(cx *Cx, build Built[AlertDialogEl]) {
+	useComponentWindowExt()
 	o := newReq(1124)
 	putBuilt(o, build.View)
 	ambientCall(cx, o, false)
@@ -416,6 +465,7 @@ func OpenAlertDialog(cx *Cx, build Built[AlertDialogEl]) {
 
 // OpenDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_dialog.
 func OpenDialog(cx *Cx, build Built[DialogEl]) {
+	useComponentWindowExt()
 	o := newReq(1125)
 	putBuilt(o, build.View)
 	ambientCall(cx, o, false)
@@ -423,6 +473,7 @@ func OpenDialog(cx *Cx, build Built[DialogEl]) {
 
 // OpenSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet.
 func OpenSheet(cx *Cx, build Built[SheetEl]) {
+	useComponentWindowExt()
 	o := newReq(1126)
 	putBuilt(o, build.View)
 	ambientCall(cx, o, false)
@@ -430,6 +481,7 @@ func OpenSheet(cx *Cx, build Built[SheetEl]) {
 
 // OpenSheetAt is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet_at.
 func OpenSheetAt(cx *Cx, placement Placement, build Built[SheetEl]) {
+	useComponentWindowExt()
 	o := newReq(1127)
 	o.u16(uint16(placement))
 	putBuilt(o, build.View)
@@ -438,6 +490,7 @@ func OpenSheetAt(cx *Cx, placement Placement, build Built[SheetEl]) {
 
 // Orange is gpui_kit::component::orange.
 func Orange(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(757)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -446,6 +499,7 @@ func Orange(cx *Cx, scale int) Hsla {
 
 // Pink is gpui_kit::component::pink.
 func Pink(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(758)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -454,6 +508,7 @@ func Pink(cx *Cx, scale int) Hsla {
 
 // Purple is gpui_kit::component::purple.
 func Purple(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(759)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -462,6 +517,7 @@ func Purple(cx *Cx, scale int) Hsla {
 
 // PushNotification is <gpui_kit::Window as gpui_kit::component::WindowExt>::push_notification.
 func PushNotification(cx *Cx, note string) {
+	useComponentWindowExt()
 	o := newReq(743)
 	o.str(note)
 	ambientCall(cx, o, false)
@@ -469,6 +525,7 @@ func PushNotification(cx *Cx, note string) {
 
 // Red is gpui_kit::component::red.
 func Red(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(760)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -477,6 +534,7 @@ func Red(cx *Cx, scale int) Hsla {
 
 // ResolveIconPath is gpui_kit::component::resolve_icon_path.
 func ResolveIconPath(cx *Cx, path string) string {
+	useComponentRoot()
 	o := newReq(761)
 	o.str(path)
 	r := ambientCall(cx, o, true)
@@ -485,6 +543,7 @@ func ResolveIconPath(cx *Cx, path string) string {
 
 // Rose is gpui_kit::component::rose.
 func Rose(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(762)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -493,6 +552,7 @@ func Rose(cx *Cx, scale int) Hsla {
 
 // SetLocale is gpui_kit::component::set_locale.
 func SetLocale(cx *Cx, locale string) {
+	useComponentRoot()
 	o := newReq(763)
 	o.str(locale)
 	ambientCall(cx, o, false)
@@ -500,6 +560,7 @@ func SetLocale(cx *Cx, locale string) {
 
 // SetNativeTouchSelection is gpui_kit::component::input::set_native_touch_selection.
 func SetNativeTouchSelection(cx *Cx, enabled bool) {
+	useComponentInput()
 	o := newReq(753)
 	o.bool(enabled)
 	ambientCall(cx, o, false)
@@ -507,6 +568,7 @@ func SetNativeTouchSelection(cx *Cx, enabled bool) {
 
 // Sky is gpui_kit::component::sky.
 func Sky(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(764)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -515,6 +577,7 @@ func Sky(cx *Cx, scale int) Hsla {
 
 // Slate is gpui_kit::component::slate.
 func Slate(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(765)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -523,6 +586,7 @@ func Slate(cx *Cx, scale int) Hsla {
 
 // Stone is gpui_kit::component::stone.
 func Stone(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(766)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -531,6 +595,7 @@ func Stone(cx *Cx, scale int) Hsla {
 
 // Teal is gpui_kit::component::teal.
 func Teal(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(767)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -539,6 +604,7 @@ func Teal(cx *Cx, scale int) Hsla {
 
 // TitleBarOptions is gpui_kit::component::TitleBar::title_bar_options.
 func TitleBarOptions(cx *Cx) TitlebarOptions {
+	useComponentTitleBar()
 	o := newReq(1178)
 	r := ambientCall(cx, o, true)
 	return rdTitlebarOptions(r)
@@ -546,6 +612,7 @@ func TitleBarOptions(cx *Cx) TitlebarOptions {
 
 // Violet is gpui_kit::component::violet.
 func Violet(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(768)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -554,6 +621,7 @@ func Violet(cx *Cx, scale int) Hsla {
 
 // WindowCornerRadii is gpui_kit::component::window_corner_radii.
 func WindowCornerRadii(cx *Cx) Corners {
+	useComponentRoot()
 	o := newReq(769)
 	r := ambientCall(cx, o, true)
 	return rdCorners(r)
@@ -561,6 +629,7 @@ func WindowCornerRadii(cx *Cx) Corners {
 
 // WindowPaddings is gpui_kit::component::window_paddings.
 func WindowPaddings(cx *Cx) GpuiEdges {
+	useComponentRoot()
 	o := newReq(770)
 	r := ambientCall(cx, o, true)
 	return rdGpuiEdges(r)
@@ -568,6 +637,7 @@ func WindowPaddings(cx *Cx) GpuiEdges {
 
 // Yellow is gpui_kit::component::yellow.
 func Yellow(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(771)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
@@ -576,6 +646,7 @@ func Yellow(cx *Cx, scale int) Hsla {
 
 // Zinc is gpui_kit::component::zinc.
 func Zinc(cx *Cx, scale int) Hsla {
+	useComponentRoot()
 	o := newReq(772)
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)

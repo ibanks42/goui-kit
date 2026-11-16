@@ -16,6 +16,7 @@ Tree_VT :: struct {
 }
 
 kit_tree :: proc(state: Tree_State, render_item: Row_Source, flags: ..Style_Flag, loc := #caller_location) -> Tree {
+	use_component_tree()
 	e := Tree{new_node(807, loc), &tree_vt}
 	o := node_args()
 	put_u64(o, state.h)
@@ -25,6 +26,7 @@ kit_tree :: proc(state: Tree_State, render_item: Row_Source, flags: ..Style_Flag
 }
 
 tree :: proc(state: Tree_State, render_item: Row_Source, flags: ..Style_Flag, loc := #caller_location) -> Tree {
+	use_component_tree()
 	e := Tree{new_node(806, loc), &tree_vt}
 	o := node_args()
 	put_u64(o, state.h)

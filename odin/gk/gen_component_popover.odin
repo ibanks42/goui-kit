@@ -30,6 +30,7 @@ Popover_VT :: struct {
 }
 
 popover :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Popover {
+	use_component_popover()
 	e := Popover{new_node(715, loc), &popover_vt}
 	o := node_args()
 	put_id(o, id)

@@ -15,6 +15,7 @@ func (e HoverCardEl) node() *node { return e.n }
 
 // HoverCard is <gpui_kit::component::hover_card::HoverCard>::new.
 func HoverCard(id ID, st ...Style) HoverCardEl {
+	useComponentHoverCard()
 	n := newNode(674)
 	o := nodeArgs(n)
 	putID(o, id)

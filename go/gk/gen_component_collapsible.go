@@ -11,6 +11,7 @@ func (e CollapsibleEl) node() *node { return e.n }
 
 // Collapsible is <gpui_kit::component::collapsible::Collapsible>::new.
 func Collapsible(st ...Style) CollapsibleEl {
+	useComponentCollapsible()
 	n := newNode(622)
 	tokens(n, st)
 	return CollapsibleEl{n}

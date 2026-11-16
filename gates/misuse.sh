@@ -118,7 +118,7 @@ NEG_BIN=negative-odin
 # The compile-time case: lent text assigned to a string must be refused by the compiler.
 total=$((total + 1))
 if "${ODIN:-odin}" check "${SRC:-$repo/examples/odin}/negative_compile" \
-     -collection:gpuikit="$repo/odin" > "$out/compile.log" 2>&1; then
+     -define:GK_SHARED=true -collection:gpuikit="$repo/odin" > "$out/compile.log" 2>&1; then
   echo "FAIL compile: the program compiled"
 elif grep -q "Temp_String" "$out/compile.log"; then
   ok "compile: refused; $(grep -m1 Temp_String "$out/compile.log" | cut -c1-150)"

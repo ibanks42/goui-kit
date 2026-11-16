@@ -20,6 +20,7 @@ Link_VT :: struct {
 }
 
 link :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Link {
+	use_component_link()
 	e := Link{new_node(686, loc), &link_vt}
 	o := node_args()
 	put_id(o, id)
