@@ -200,12 +200,12 @@ case "$GK_PLATFORM" in
 esac
 librows=$(for f in "${libs[@]}"; do
   case $f in
-    "$main") echo "| lib/$f | $libdesc; an app keeps only the component families it uses |" ;;
-    gpuikit_static.lib) echo "| lib/$f | the same library in MSVC's format, which Odin apps link into themselves |" ;;
-    gpuikit_sys.lib) echo "| lib/$f | the import library of the Windows API it links, in MSVC's format |" ;;
-    libgpuikit_sys.so) echo "| lib/$f | a linker script that names the system libraries the static library needs |" ;;
-    libgpuikit_sys.a) echo "| lib/$f | the import library of the Windows API the static library links |" ;;
-    *) echo "| lib/$f | an import library of gpuikit.dll |" ;;
+    ("$main") echo "| lib/$f | $libdesc; an app keeps only the component families it uses |" ;;
+    (gpuikit_static.lib) echo "| lib/$f | the same library in MSVC's format, which Odin apps link into themselves |" ;;
+    (gpuikit_sys.lib) echo "| lib/$f | the import library of the Windows API it links, in MSVC's format |" ;;
+    (libgpuikit_sys.so) echo "| lib/$f | a linker script that names the system libraries the static library needs |" ;;
+    (libgpuikit_sys.a) echo "| lib/$f | the import library of the Windows API the static library links |" ;;
+    (*) echo "| lib/$f | an import library of gpuikit.dll |" ;;
   esac
 done
 [ "$GK_PLATFORM" != windows-x86_64 ] || echo "| windows/ | the manifest a program embeds, and the resource script that embeds it |")
