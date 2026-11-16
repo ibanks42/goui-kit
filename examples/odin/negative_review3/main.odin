@@ -96,9 +96,9 @@ clicked :: proc(a: ^App, cx: ^gk.Cx) {
 		gk.dispatch_action(cx, gk.Action{id = 4242})
 	case "rv-temp-later":
 		if a.clicks == 1 {
-			a.tree, _ = a.dock->layout(cx, .Center).? // temporary: not retained
+			a.tree, _ = gk.layout(a.dock, cx, .Center).? // temporary: not retained
 		} else {
-			_ = a.tree->panels(cx)
+			_ = gk.panels(a.tree, cx)
 		}
 	case "rv-panel-released":
 		gk.release(cx, a.panel)
@@ -133,7 +133,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 		a.dock = gk.dock_area_skinned(cx, "rv")
 		a.panel_v = gk.view(a, nil, panel_view)
 		a.panel = gk.panel(cx, a.panel_v, {name = "p", title = "P"})
-		a.dock->set_center(cx, gk.dock_layout_tabs()->panel_view(a.panel))
+		gk.set_center(a.dock, cx, gk.dock_layout_tabs()->panel_view(a.panel))
 	}
 }
 

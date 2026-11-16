@@ -89,7 +89,7 @@ button_click :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 input :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	return gk.v_flex(.Gap_2)->
 		child(gk.div()->w(gk.px(240))->child(gk.input(a.name)))->
-		child(gk.label(fmt.tprintf("hello %s", a.name->value(cx))))
+		child(gk.label(fmt.tprintf("hello %s", gk.value(a.name, cx))))
 }
 
 input_cleanable :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {

@@ -1,7 +1,9 @@
 """gk_odin: writes the generated half of the Odin package from the interface description.
 
 Shape (docs/DESIGN.md section 14): every node type is a small value {using el: Element,
-using vt: ^T_VT}, so x->f(a) calls the procedure in field f. Builder traits are one table per
+using vt: ^T_VT}, so x->f(a) calls the procedure in field f. A kit state or library object is a
+handle {using state: State} with plain procedures, low_NAME(s, cx, ..), and a procedure group
+NAME where that name is free (emit_groups). Builder traits are one table per
 trait (a parametric struct), implemented once over Any_El and shared by every implementor
 through a pointer cast, so the package holds one procedure per upstream method, not one per
 method and type. Style tokens are one enum (decision 1).
@@ -278,14 +280,52 @@ put_action :: proc(b: ^Tape, a: Action) {
 '''
 
 
+# The procedures every Odin package sees without an import (base:builtin and the runtime's @builtin
+# ones): a state procedure group of one of these names would hide it inside package gk.
+BUILTINS = set("""
+abs align_of append append_elem append_elems append_elem_string append_fixed_capacity_elem
+append_fixed_capacity_elems append_fixed_capacity_string append_nothing append_nothing_dynamic_array
+append_nothing_fixed_capacity_dynamic_array append_nothing_soa append_soa append_soa_elem
+append_soa_elems append_string assert assign_at assign_at_elem
+assign_at_elem_fixed_capacity_dynamic_array assign_at_elems
+assign_at_elems_fixed_capacity_dynamic_array assign_at_elem_string
+assign_at_elem_string_fixed_capacity_dynamic_array auto_cast byte cap card cast clamp clear
+clear_dynamic_array clear_fixed_capacity_dynamic_array clear_soa clear_soa_dynamic_array complex
+compress_values conj container_of copy copy_from_string copy_from_string16 copy_slice delete
+delete_cstring delete_cstring16 delete_dynamic_array delete_slice delete_soa
+delete_soa_dynamic_array delete_soa_slice delete_string delete_string16 distinct ensure
+ensure_contextless expand_values false free free_all imag init_global_temporary_allocator inject_at
+inject_at_elem inject_at_elem_fixed_capacity_dynamic_array inject_at_elems
+inject_at_elems_fixed_capacity_dynamic_array inject_at_elem_soa inject_at_elems_soa
+inject_at_elem_string inject_at_elem_string_fixed_capacity_dynamic_array jmag kmag len make
+make_aligned make_dynamic_array make_dynamic_array_len make_dynamic_array_len_cap make_multi_pointer
+make_slice make_soa make_soa_aligned make_soa_dynamic_array make_soa_dynamic_array_len
+make_soa_dynamic_array_len_cap make_soa_slice max mem_free mem_free_all min new new_aligned
+new_clone non_zero_append non_zero_append_elem non_zero_append_elem_fixed_capacity_string
+non_zero_append_elems non_zero_append_elem_string non_zero_append_soa_elem non_zero_append_soa_elems
+non_zero_make non_zero_make_dynamic_array_len non_zero_make_dynamic_array_len_cap
+non_zero_make_multi_pointer non_zero_make_slice non_zero_reserve non_zero_reserve_dynamic_array
+non_zero_reserve_soa non_zero_resize non_zero_resize_dynamic_array
+non_zero_resize_fixed_capacity_dynamic_array non_zero_resize_soa offset_of offset_of_by_string
+offset_of_selector ordered_remove ordered_remove_dynamic_array
+ordered_remove_fixed_capacity_dynamic_array ordered_remove_soa panic panic_contextless pop
+pop_dynamic_array pop_fixed_capacity_dynamic_array pop_front pop_front_dynamic_array
+pop_front_fixed_capacity_dynamic_array pop_front_safe pop_front_safe_dynamic_array
+pop_front_safe_fixed_capacity_dynamic_array pop_front_safe_soa pop_front_soa pop_safe
+pop_safe_dynamic_array pop_safe_fixed_capacity_dynamic_array pop_safe_soa pop_soa quaternion
+quaternion128 quaternion256 raw_data raw_soa_footer_dynamic_array raw_soa_footer_slice real
+remove_range remove_range_dynamic_array remove_range_fixed_capacity_dynamic_array reserve
+reserve_dynamic_array reserve_soa resize resize_dynamic_array resize_fixed_capacity_dynamic_array
+resize_soa shrink shrink_dynamic_array size_of soa_unzip soa_zip swizzle transmute typeid_of
+type_info_of type_of unimplemented unimplemented_contextless unordered_remove
+unordered_remove_dynamic_array unordered_remove_fixed_capacity_dynamic_array unordered_remove_soa
+unreachable
+""".split())
+
+
 def oname(name):
     return name + "_" if name in KEYWORDS else name
 
-
-def sname(name):
-    """A state or object method's name: also escapes the fields every such type has (`using state:
-    State, using vt: ^T_VT`), which a method named state would shadow (PROTOCOLS.md 11.8)."""
-    return name + "_" if name in ("state", "vt") else oname(name)
 
 
 def pname(name):
@@ -301,6 +341,7 @@ class Odin:
         self.collisions = []
         self.tuples = {}
         self.handles = {}
+        self.groups = {}      # a state method's name -> the procedures of that name (groups())
         # Names the hand-written files of the package declare (the runtime, the bridges): a
         # generated type or procedure that would take one gets the crate prefix instead (a
         # library object TreeEntry beside the rows family's record Tree_Entry).
@@ -795,6 +836,7 @@ class Odin:
         import gk_items  # noqa: PLC0415
         gk_items.odin_emit(self)  # gk.items, after every builder that takes one was written (PROTOCOLS.md 9.41)
         self.files["gen_support.odin"] = SUPPORT.replace("OP_TEXT_N", str(OP_TEXT))
+        self.emit_groups()
         os.makedirs(self.out, exist_ok=True)
         for f in os.listdir(self.out):
             if f.startswith("gen_") and f.endswith(".odin") and f not in self.files:
@@ -802,6 +844,24 @@ class Odin:
         for name, text in self.files.items():
             open(os.path.join(self.out, name), "w").write(text)
         return self.spans
+
+    def emit_groups(self):
+        """gk.value(s, cx) beside gk.input_state_value(s, cx): one procedure group per state method
+        name, for each name no other declaration of the package has (a clashing name keeps only the
+        prefixed procedures). Odin resolves a group at compile time, so it links nothing extra."""
+        taken = set(self.names)
+        texts = list(self.files.values())
+        for fn in sorted(os.listdir(self.out)) if os.path.isdir(self.out) else []:
+            if fn.endswith(".odin") and not fn.startswith("gen_"):
+                texts.append(open(os.path.join(self.out, fn)).read())
+        for text in texts:  # constants, procedures and package variables (`views: [dynamic]View`)
+            taken |= set(re.findall(r"(?m)^(\w+)\s*:", text))
+        lines = ["", "// State procedures by method name: gk.value(s, cx) is gk.input_state_value(s, cx) for an",
+                 "// Input_State. A name another declaration of the package has is left out: use the prefixed procedure."]
+        for name, procs in sorted(self.groups.items()):
+            if name not in taken and name not in BUILTINS:
+                lines.append(f"{name} :: proc{{{', '.join(procs)}}}")
+        self.files["gen_state.odin"] += "\n".join(lines) + "\n"
 
     def state(self, st):
         self.in_call = True  # a state's or object's call ops: values travel as tapes of their own
@@ -819,7 +879,7 @@ class Odin:
         writes = sorted([i for i in st["writes"] if ok(i)], key=lambda i: i["name"])
         calls = sorted([i for i in st.get("calls", []) if ok(i)], key=lambda i: i["name"])
         builders = sorted([i for i in st["builders"] if ok(i)], key=lambda i: i["name"])
-        req = "\t\treq := make(Tape, 0, 32, context.temp_allocator)"
+        req = "\treq := make(Tape, 0, 32, context.temp_allocator)"
         names = {i["name"] for i in reads + writes + calls}
         # try_NAME: the read for a handler the component may call from inside its own update
         # (ok is false while the state is busy), for the reads overrides.toml names in
@@ -832,59 +892,56 @@ class Odin:
         what = ("a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an "
                 "event hands it out (gk.retain keeps it), a kept one from its constructor" if obj else "an entity the library keeps")
         if obj:
-            self.add("@(init, private)", f"reg_{low} :: proc \"contextless\" () {{", f"\tregister_obj(typeid_of({S}), &{low}_vt)", "}", "")
             self.globals_statics(st)
-        self.add(f"// {S} is a handle to {st['path']}, {what}.", f"{S} :: struct {{",
-                 "\tusing state: State,", f"\tusing vt: ^{S}_VT,", "}", "", f"{S}_VT :: struct {{")
+        # A handle and plain procedures, low_NAME(s, cx, ..), not a method table: a table holds
+        # every method, so a program that could get a handle would link the component family of
+        # each of its methods. A procedure is linked only when called (docs/DESIGN.md section 16).
+        self.add(f"// {S} is a handle to {st['path']}, {what}. Its procedures are named {low}_*.",
+                 f"{S} :: struct {{", "\tusing state: State,", "}", "")
+        sig = lambda it, nm, ret: f"{nm} :: proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}){ret} {{"  # noqa: E731
+        group = lambda name, proc: self.groups.setdefault(oname(name), []).append(proc)  # noqa: E731
         for it in reads:
-            self.item(["item", it["id"]], [f"\t{sname(it['name'])}: proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) -> {self.otype(it['ret'], True)},"])
+            R = self.otype(it["ret"], True)
+            nm = f"{low}_{it['name']}"
+            group(it["name"], nm)
+            lines = [sig(it, nm, f" -> (v: {R})"), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
+            lines += ["\t" + x for x in self.body(it)]
+            lines += [f"\tr := {get}(s.h, cx, req[:], loc)", "\trd_into(&r, &v)", "\treturn", "}", ""]
+            self.item(["item", it["id"]], lines)
         for it in tries:
-            self.item(["item", it["id"]], [f"\ttry_{it['name']}: proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) -> ({self.otype(it['ret'], True)}, bool),"])
-        for it in writes:
-            self.item(["item", it["id"]], [f"\t{sname(it['name'])}: proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}),"])
+            R = self.otype(it["ret"], True)
+            nm = f"{low}_try_{it['name']}"
+            group("try_" + it["name"], nm)
+            lines = [sig(it, nm, f" -> (v: {R}, ok: bool)"), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
+            lines += ["\t" + x for x in self.body(it)]
+            lines += ["\tr := state_try(s.h, cx, req[:], loc) or_return", "\trd_into(&r, &v)", "\treturn v, true", "}", ""]
+            self.item(["item", it["id"]], lines)
         for it in calls:
-            self.item(["item", it["id"]], [f"\t{sname(it['name'])}: proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) -> {self.otype(it['ret'], True)},"])
+            R = self.otype(it["ret"], True)
+            nm = f"{low}_{it['name']}"
+            group(it["name"], nm)
+            lines = [sig(it, nm, f" -> (v: {R})"), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
+            lines += ["\t" + x for x in self.body(it)]
+            lines += ["\tr := state_call(s.h, cx, req[:], loc)", "\trd_into(&r, &v)", "\treturn", "}", ""]
+            self.item(["item", it["id"]], lines)
+        for it in writes:
+            nm = f"{low}_{it['name']}"
+            group(it["name"], nm)
+            lines = [sig(it, nm, ""), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
+            lines += ["\t" + x for x in self.body(it)] + ["\tstate_set(cx, req[:], loc)", "}", ""]
+            self.item(["item", it["id"]], lines)
         for ev in st["events"]:
             ev["odin"] = "on_" + snake(ev["name"])
-            if ev["odin"] not in names:
-                self.item(["item", ev["id"]], [f"\t{ev['odin']}: proc(s: {S}, cx: ^Cx, h: Handler, loc := #caller_location) -> Subscription,"])
-        self.add("}", "", "@(private)", f"{low}_vt := {S}_VT {{")
-        for it in reads:
-            R = self.otype(it["ret"], True)
-            lines = [f"\t{sname(it['name'])} = proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) -> (v: {R}) {{", req,
-                     "\t\to := &req", f"\t\tput_op(o, {it['op']})", "\t\tput_u64(o, s.h)"]
-            lines += ["\t\t" + x for x in self.body(it)]
-            lines += [f"\t\tr := {get}(s.h, cx, req[:], loc)", "\t\trd_into(&r, &v)", "\t\treturn", "\t},"]
-            self.item(["item", it["id"]], lines)
-        for it in tries:
-            R = self.otype(it["ret"], True)
-            lines = [f"\ttry_{it['name']} = proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) -> (v: {R}, ok: bool) {{", req,
-                     "\t\to := &req", f"\t\tput_op(o, {it['op']})", "\t\tput_u64(o, s.h)"]
-            lines += ["\t\t" + x for x in self.body(it)]
-            lines += ["\t\tr := state_try(s.h, cx, req[:], loc) or_return", "\t\trd_into(&r, &v)", "\t\treturn v, true", "\t},"]
-            self.item(["item", it["id"]], lines)
-        for it in calls:
-            R = self.otype(it["ret"], True)
-            lines = [f"\t{sname(it['name'])} = proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) -> (v: {R}) {{", req,
-                     "\t\to := &req", f"\t\tput_op(o, {it['op']})", "\t\tput_u64(o, s.h)"]
-            lines += ["\t\t" + x for x in self.body(it)]
-            lines += ["\t\tr := state_call(s.h, cx, req[:], loc)", "\t\trd_into(&r, &v)", "\t\treturn", "\t},"]
-            self.item(["item", it["id"]], lines)
-        for it in writes:
-            lines = [f"\t{sname(it['name'])} = proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}) {{", req,
-                     "\t\to := &req", f"\t\tput_op(o, {it['op']})", "\t\tput_u64(o, s.h)"]
-            lines += ["\t\t" + x for x in self.body(it)] + ["\t\tstate_set(cx, req[:], loc)", "\t},"]
-            self.item(["item", it["id"]], lines)
-        for ev in st["events"]:
             if ev["odin"] in names:
                 continue
+            nm = f"{low}_{ev['odin']}"
+            group(ev["odin"], nm)
             # A Subscription, not a bare Handle: gk.release on it also frees the kept handler.
             self.item(["item", ev["id"]], [
-                f"\t{ev['odin']} = proc(s: {S}, cx: ^Cx, h: Handler, loc := #caller_location) -> Subscription {{",
-                f"\t\tslot, generation := keep_handler(cx, h, {m.shapes[ev['shape']]['num']}, loc)", req, "\t\to := &req",
-                f"\t\tput_op(o, {ev['op']})", "\t\tput_u64(o, s.h)", "\t\tput_u32(o, slot)", "\t\tput_u32(o, generation)",
-                "\t\tr := state_get(s.h, cx, req[:], loc)", "\t\treturn {rd_u64(&r), slot}", "\t},"])
-        self.add("}", "")
+                f"{nm} :: proc(s: {S}, cx: ^Cx, h: Handler, loc := #caller_location) -> Subscription {{",
+                f"\tslot, generation := keep_handler(cx, h, {m.shapes[ev['shape']]['num']}, loc)", req.replace("\t\t", "\t"), "\to := &req",
+                f"\tput_op(o, {ev['op']})", "\tput_u64(o, s.h)", "\tput_u32(o, slot)", "\tput_u32(o, generation)",
+                "\tr := state_get(s.h, cx, req[:], loc)", "\treturn {rd_u64(&r), slot}", "}", ""])
         B = S + "_Builder" if builders else S
         if builders:
             self.add(f"// {B} is the chain of {st['name']}'s `self -> Self` methods; build makes the entity, in one crossing.",
@@ -899,7 +956,7 @@ class Odin:
                          f"\t\tput_op(o, {it['op']})"] + ["\t\t" + x for x in self.body(it)]
                 lines += ["\t\to[b.count_at] += 1", "\t\treturn b", "\t},"]
                 self.item(["item", it["id"]], lines)
-            self.add(f"\tbuild = proc(b: {B}) -> {S} {{", f"\t\treturn {{state = {{h = state_make(b.cx, b.req[:])}}, vt = &{low}_vt}}", "\t},", "}", "")
+            self.add(f"\tbuild = proc(b: {B}) -> {S} {{", f"\t\treturn {{state = {{h = state_make(b.cx, b.req[:])}}}}", "\t},", "}", "")
         for it in sorted([i for i in st["ctors"] if ok(i)], key=lambda i: i["odin"]):
             ps = ["cx: ^Cx"] + self.params(it) + ["loc := #caller_location"]
             lines = [f"{it['odin']} :: proc({', '.join(ps)}) -> {B} {{", "\treq := new(Tape, context.temp_allocator)",
@@ -908,7 +965,7 @@ class Odin:
             if builders:
                 lines += [f"\treturn {{vt = &{low}_builder_vt, cx = cx, req = req, count_at = len(req) - 2}}"]
             else:
-                lines += [f"\treturn {{state = {{h = state_make(cx, req[:], loc)}}, vt = &{low}_vt}}"]
+                lines += [f"\treturn {{state = {{h = state_make(cx, req[:], loc)}}}}"]
             lines += ["}", ""]
             self.item(["item", it["id"]], lines)
 
@@ -922,7 +979,7 @@ class Odin:
             head += ["\t" + x for x in self.body(it)]
             if it["kind"] == "obj-global":
                 lines = [f"{it['odin']} :: proc({', '.join(ps)}) -> {S} {{"] + head + [
-                    "\tr := obj_get(0, cx, req[:], loc)", f"\treturn {{state = {{h = rd_u64(&r)}}, vt = &{S.lower()}_vt}}", "}", ""]
+                    "\tr := obj_get(0, cx, req[:], loc)", "\treturn {state = {h = rd_u64(&r)}}", "}", ""]
             elif it["kind"] == "obj-scall":
                 R = self.otype(it["ret"], True)
                 lines = [f"{it['odin']} :: proc({', '.join(ps)}) -> (v: {R}) {{"] + head + [

@@ -139,7 +139,7 @@ loaded :: proc(a: ^App, cx: ^gk.Cx, m: Loaded) {
 // resort: the list's articles, filtered by the search and in the chosen order; then refresh.
 resort :: proc(a: ^App, cx: ^gk.Cx) {
 	clear(&a.shown)
-	needle := strings.to_lower(string(a.search->value(cx)), context.temp_allocator)
+	needle := strings.to_lower(string(gk.value(a.search, cx)), context.temp_allocator)
 	for art, i in a.articles {
 		if needle == "" || strings.contains(strings.to_lower(art.title, context.temp_allocator), needle) {
 			append(&a.shown, i)
@@ -195,18 +195,18 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	gk.shortcut(cx, "alt-up", gk.on(prev_article))
 
 	a.search = gk.input_state(cx)->placeholder("Search titles")->build()
-	a.search->on_input_event(cx, gk.on(search_changed))
+	gk.on_input_event(a.search, cx, gk.on(search_changed))
 	a.list = gk.list_state(cx, gk.list_source(cx, a, shown_count, article_row))->build()
-	a.list->on_list_event(cx, gk.on(list_event))
+	gk.on_list_event(a.list, cx, gk.on(list_event))
 
 	a.font = gk.slider_state(cx)->min(12)->max(24)->step(1)->default_value(a.font_size)->build()
-	a.font->on_slider_event(cx, gk.on(font_changed))
+	gk.on_slider_event(a.font, cx, gk.on(font_changed))
 	a.theme_select = gk.select_state(cx, gk.search_source(cx, a, THEMES[:]), nil)->build()
-	a.theme_select->set_selected_value(cx, "light")
-	a.theme_select->on_select_event(cx, gk.on(theme_selected))
+	gk.set_selected_value(a.theme_select, cx, "light")
+	gk.on_select_event(a.theme_select, cx, gk.on(theme_selected))
 	a.order_select = gk.select_state(cx, gk.search_source(cx, a, ORDERS[:]), nil)->build()
-	a.order_select->set_selected_value(cx, "newest")
-	a.order_select->on_select_event(cx, gk.on(order_selected))
+	gk.set_selected_value(a.order_select, cx, "newest")
+	gk.on_select_event(a.order_select, cx, gk.on(order_selected))
 
 	start_load(a, cx)
 }
@@ -347,7 +347,7 @@ summaries_toggled :: proc(a: ^App, cx: ^gk.Cx, on: bool) {
 set_dark :: proc(a: ^App, cx: ^gk.Cx, dark: bool) {
 	a.dark = dark
 	gk.theme_change(cx, gk.Theme_Mode.Dark if dark else gk.Theme_Mode.Light)
-	a.theme_select->set_selected_value(cx, "dark" if dark else "light")
+	gk.set_selected_value(a.theme_select, cx, "dark" if dark else "light")
 	gk.refresh(cx)
 }
 

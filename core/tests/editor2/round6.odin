@@ -54,7 +54,7 @@ init6 :: proc(a: ^App, cx: ^gk.Cx) {
 			motion(gk.text_view_motion_default()->with_stream_fade(200 * time.Millisecond))->build()
 		d := gk.text_view_defaults(cx)->with_style(gk.base_text_view_style_default()->with_paragraph_gap(6))->
 			with_inherit_text_color(true)->build()
-		fmt.printf("editor2 chain inherit=%v\n", d->inherit_text_color(cx))
+		fmt.printf("editor2 chain inherit=%v\n", gk.inherit_text_color(d, cx))
 	case "decorate":
 		r.plus = gk.row_source(cx, a, 0, plus_row, initial = 1)
 		r.minus = gk.row_source(cx, a, 0, minus_row, initial = 1)
@@ -62,19 +62,19 @@ init6 :: proc(a: ^App, cx: ^gk.Cx) {
 	case "lsp":
 		r.hl = gk.ask(cx, a, highlight)
 		a.ed = gk.editor_state(cx)->default_value("let x = 1\n")->build()
-		a.ed->lsp_mut(cx, gk.lsp_default()->with_completion_highlighter(r.hl))
+		gk.lsp_mut(a.ed, cx, gk.lsp_default()->with_completion_highlighter(r.hl))
 	case "diagnostic":
 		a.ed = gk.editor_state(cx)->default_value("let x = 1\n")->build()
-		a.ed->present_diagnostic(cx, {0, 3}, gk.diagnostic({{0, 0}, {0, 3}}, "unused")->with_severity(.Warning)->with_code("W1"))
+		gk.present_diagnostic(a.ed, cx, {0, 3}, gk.diagnostic({{0, 0}, {0, 3}}, "unused")->with_severity(.Warning)->with_code("W1"))
 	case "overlay-keys":
 		a.ed = gk.editor_state(cx)->default_value("let x = 1\n")->build()
-		a.ed->set_overlay_action_handler(cx, {{.Completion, "input::Tab"}, {.Code_Action, "input::Escape"}})
+		gk.set_overlay_action_handler(a.ed, cx, {{.Completion, "input::Tab"}, {.Code_Action, "input::Escape"}})
 	case "edits":
 		a.inp = gk.input_state(cx)->default_value("ab")->build()
-		r.edits = a.inp->on_input_edits_event(cx, gk.on(on_edits))
+		r.edits = gk.on_input_edits_event(a.inp, cx, gk.on(on_edits))
 	case "context-menu":
 		a.inp = gk.input_state(cx)->default_value("menu text")->build()
-		a.inp->on_context_menu(cx, gk.on(on_menu))
+		gk.on_context_menu(a.inp, cx, gk.on(on_menu))
 	case:
 		init7(a, cx) // round7.odin
 	}
@@ -169,15 +169,15 @@ on_leaves :: proc(a: ^App, cx: ^gk.Cx, e: gk.Leaf_Geometry_Event) {
 	a.r6.events += 1
 	for l in e.leaves {
 		g := l.geometry
-		b := g->bounds(cx)
-		fmt.printf("editor2 leaf key=%d len=%d empty=%v sized=%v line=%v caret=%v\n", l.key, g->len_(cx), g->is_empty(cx),
-			b.size.width > 0 && b.size.height > 0, g->line_height(cx) > 0, g->caret_height(cx) > 0)
+		b := gk.bounds(g, cx)
+		fmt.printf("editor2 leaf key=%d len=%d empty=%v sized=%v line=%v caret=%v\n", l.key, gk.len_(g, cx), gk.is_empty(g, cx),
+			b.size.width > 0 && b.size.height > 0, gk.line_height(g, cx) > 0, gk.caret_height(g, cx) > 0)
 		if l.key == 2 {
-			p := g->position_for_index(cx, 3)
-			c := g->caret_for_position(cx, p)
-			back := g->position_for_caret(cx, c)
-			_, atom := g->atom_at(cx, p).?
-			fmt.printf("editor2 leaf hit index=%d caret=%d same=%v atom=%v\n", g->index_for_position(cx, p), c.index,
+			p := gk.position_for_index(g, cx, 3)
+			c := gk.caret_for_position(g, cx, p)
+			back := gk.position_for_caret(g, cx, c)
+			_, atom := gk.atom_at(g, cx, p).?
+			fmt.printf("editor2 leaf hit index=%d caret=%d same=%v atom=%v\n", gk.index_for_position(g, cx, p), c.index,
 				back == p, atom)
 		}
 	}
@@ -191,9 +191,9 @@ step6 :: proc(a: ^App, cx: ^gk.Cx) -> bool {
 		fmt.printf("editor2 host hosts=%d leaves=%d delivered=%d events=%d\n", hosts, leaves, delivered, r.events)
 		row := []gk.Paragraph{gk.paragraph_default()->push(gk.inline_node("cell")), gk.paragraph_default()->push(gk.inline_node("two"))}
 		t := gk.base_table_2(cx, {row}, {.Left, .Right})
-		rows := t->rows(cx)
-		first := rows[0][0]->children(cx)
-		fmt.printf("editor2 host table rows=%d cells=%d first=%q aligns=%v\n", len(rows), len(rows[0]), first[0]->text(cx), t->column_aligns(cx))
+		rows := gk.base_table_2_rows(t, cx)
+		first := gk.children(rows[0][0], cx)
+		fmt.printf("editor2 host table rows=%d cells=%d first=%q aligns=%v\n", len(rows), len(rows[0]), gk.inline_node_read_text(first[0], cx), gk.column_aligns(t, cx))
 	case "chain":
 		fmt.printf("editor2 chain drawn\n")
 	case "decorate":
@@ -205,11 +205,11 @@ step6 :: proc(a: ^App, cx: ^gk.Cx) -> bool {
 	case "diagnostic":
 		fmt.printf("editor2 diagnostic presented\n")
 	case "overlay-keys":
-		fmt.printf("editor2 overlay-keys routed=%v\n", a.ed->route_overlay_action(cx, gk.action(cx, "input::Tab")))
+		fmt.printf("editor2 overlay-keys routed=%v\n", gk.route_overlay_action(a.ed, cx, gk.action(cx, "input::Tab")))
 	case "edits":
 		fmt.printf("editor2 %s stepped\n", a.mode)
 	case "context-menu":
-		caps := a.inp->context_menu_capabilities(cx)
+		caps := gk.context_menu_capabilities(a.inp, cx)
 		fmt.printf("editor2 context-menu events=%d caps=%v\n", r.events, caps.h != 0)
 	case:
 		return step7(a, cx) // round7.odin

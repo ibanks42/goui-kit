@@ -146,8 +146,8 @@ overlay_dock_init :: proc(a: ^App, cx: ^gk.Cx) {
 	files := gk.panel(cx, gk.view(&panel_bodies[0], nil, text_panel_view), {name = "files", title = "Files"})
 	editor := gk.panel(cx, gk.view(&panel_bodies[1], nil, text_panel_view), {name = "editor", title = "Editor"})
 	outline := gk.panel(cx, gk.view(&panel_bodies[2], nil, text_panel_view), {name = "outline", title = "Outline"})
-	dock->set_center(cx, gk.dock_layout_tabs()->panel(files)->panel(editor))
-	dock->set_dock(cx, .Left, gk.dock_layout_tabs()->panel(outline))
+	gk.set_center(dock, cx, gk.dock_layout_tabs()->panel(files)->panel(editor))
+	gk.set_dock(dock, cx, .Left, gk.dock_layout_tabs()->panel(outline))
 }
 
 overlay_dock_page :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
@@ -170,11 +170,11 @@ dock_split_init :: proc(a: ^App, cx: ^gk.Cx) {
 	files := gk.panel(cx, gk.view(&r3_bodies[0], nil, text_panel_view), {name = "files", title = "Files"})
 	editor := gk.panel(cx, gk.view(&r3_bodies[1], nil, text_panel_view), {name = "editor", title = "Editor"})
 	outline := gk.panel(cx, gk.view(&r3_bodies[2], nil, text_panel_view), {name = "outline", title = "Outline"})
-	split_dock->set_center(cx, gk.dock_layout_tabs()->panel(files)->panel(editor)->panel(outline))
-	tree, _ := split_dock->layout(cx, .Center).? // a read: the layout above is applied first
-	group, _ := tree->find_panel_node(cx, gk.panel_id(cx, editor)).?
-	split_dock->split_at(cx, group, gk.panel_id(cx, outline), .Right)
-	split_dock->split_at(cx, group, gk.panel_id(cx, editor), .Bottom)
+	gk.set_center(split_dock, cx, gk.dock_layout_tabs()->panel(files)->panel(editor)->panel(outline))
+	tree, _ := gk.layout(split_dock, cx, .Center).? // a read: the layout above is applied first
+	group, _ := gk.find_panel_node(tree, cx, gk.panel_id(cx, editor)).?
+	gk.split_at(split_dock, cx, group, gk.panel_id(cx, outline), .Right)
+	gk.split_at(split_dock, cx, group, gk.panel_id(cx, editor), .Bottom)
 }
 
 // A panel's title suffix and toolbar buttons, from views the app pushed.
@@ -198,7 +198,7 @@ dock_hooks_init :: proc(a: ^App, cx: ^gk.Cx) {
 	hooked := gk.panel(cx, gk.view(&r3_bodies[3], nil, text_panel_view), data)
 	// panel_view: the kit's PanelHandle over the panel, through which the skin draws its title,
 	// suffix, toolbar and menu (->panel adds the bare panel, drawn with its name)
-	hooks_dock->set_center(cx, gk.dock_layout_tabs()->panel_view(hooked))
+	gk.set_center(hooks_dock, cx, gk.dock_layout_tabs()->panel_view(hooked))
 }
 
 // A saved layout loaded: the registry asks for each panel, the app fills it.
@@ -237,13 +237,13 @@ dock_restore_init :: proc(a: ^App, cx: ^gk.Cx) {
 	state := gk.Dock_Area_State {
 		center = {panel_name = "StackPanel", children = groups, info = gk.Panel_Info_Stack{sizes = {200, 400}, axis = 0}},
 	}
-	restore_dock->load(cx, state)
+	gk.load(restore_dock, cx, state)
 }
 
 dock_r3_init :: proc(a: ^App, cx: ^gk.Cx) {
 	skin_dock = gk.dock_area_skinned(cx, "skin")
 	one := gk.panel(cx, gk.view(&r3_bodies[0], nil, text_panel_view), {name = "files", title = "Files"})
-	skin_dock->set_center(cx, gk.dock_layout_tabs()->panel(one))
+	gk.set_center(skin_dock, cx, gk.dock_layout_tabs()->panel(one))
 	gk.dock_skin_set_panel_style(cx, skin_dock, .Tab_Bar) // a tab bar even for one panel
 	gk.dock_skin_set_close_button_visible(cx, skin_dock, false)
 	dock_split_init(a, cx)
@@ -339,8 +339,8 @@ dock_r4_init :: proc(a: ^App, cx: ^gk.Cx) {
 	render_dock = gk.dock_area(cx, "rendered", nil)->with_renderer(r)->build()
 	files := gk.panel(cx, gk.view(&r4_bodies[0], nil, text_panel_view), {name = "files", title = "Files"})
 	outline := gk.panel(cx, gk.view(&r4_bodies[1], nil, text_panel_view), {name = "outline", title = "Outline"})
-	render_dock->set_center(cx, gk.dock_layout_tabs()->panel(files))
-	render_dock->set_dock(cx, .Left, gk.dock_layout_tabs()->panel(outline))
+	gk.set_center(render_dock, cx, gk.dock_layout_tabs()->panel(files))
+	gk.set_dock(render_dock, cx, .Left, gk.dock_layout_tabs()->panel(outline))
 }
 
 dock_renderer_page :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {

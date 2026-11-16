@@ -18,7 +18,7 @@ App :: struct {
 
 init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.new_name = gk.input_state(cx)->placeholder("Add an item and press Enter")->build()
-	a.new_name->on_input_event(cx, gk.on(new_name_event))
+	gk.on_input_event(a.new_name, cx, gk.on(new_name_event))
 	a.list = gk.list_state(cx, gk.list_source(cx, a, item_count, item_row))->build()
 	add_item(a, "Milk", 2)
 	add_item(a, "Bread", 1)
@@ -51,12 +51,12 @@ new_name_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	if _, enter := e.(gk.Input_Event_Press_Enter); !enter {
 		return
 	}
-	name := strings.trim_space(string(a.new_name->value(cx))) // lent text: add_item clones it
+	name := strings.trim_space(string(gk.value(a.new_name, cx))) // lent text: add_item clones it
 	if name == "" {
 		return
 	}
 	add_item(a, name, 1)
-	a.new_name->set_value(cx, "")
+	gk.set_value(a.new_name, cx, "")
 	gk.select_row(cx, a.list, len(a.items) - 1, scroll = true)
 	gk.refresh(cx)
 }

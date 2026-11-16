@@ -48,16 +48,16 @@ counts :: proc(cx: ^gk.Cx, what: string) {
 objects :: proc(a: ^App, cx: ^gk.Cx) {
 	counts(cx, "before")
 	d := gk.dock(cx, 240)
-	fmt.printf("handles dock open=%v size=%.0f\n", d->is_open(cx), d->size(cx))
-	d->set_open(cx, false)
-	d->set_size(cx, 300)
-	d->set_resizing(cx, true)
-	fmt.printf("handles dock written open=%v size=%.0f resizing=%v\n", d->is_open(cx), d->size(cx), d->is_resizing(cx))
+	fmt.printf("handles dock open=%v size=%.0f\n", gk.is_open(d, cx), gk.size(d, cx))
+	gk.set_open(d, cx, false)
+	gk.set_size(d, cx, 300)
+	gk.set_resizing(d, cx, true)
+	fmt.printf("handles dock written open=%v size=%.0f resizing=%v\n", gk.is_open(d, cx), gk.size(d, cx), gk.is_resizing(d, cx))
 	p := gk.diff_line_position(cx, "src/a.rs", .Modified, 7)
-	fmt.printf("handles position path=%s side=%v line=%d\n", p->path(cx), p->side(cx), p->line(cx))
+	fmt.printf("handles position path=%s side=%v line=%d\n", gk.path(p, cx), gk.side(p, cx), gk.line(p, cx))
 	m := gk.search_matcher(cx)
-	m->update_query(cx, "needle", true)
-	fmt.printf("handles matcher len=%d empty=%v label=%q\n", m->len_(cx), m->is_empty(cx), m->label(cx))
+	gk.update_query(m, cx, "needle", true)
+	fmt.printf("handles matcher len=%d empty=%v label=%q\n", gk.len_(m, cx), gk.is_empty(m, cx), gk.search_matcher_label(m, cx))
 	counts(cx, "made")
 	gk.release(cx, d)
 	gk.release(cx, p)
@@ -71,17 +71,17 @@ temps :: proc(a: ^App, cx: ^gk.Cx) {
 	case 1:
 		a.input = gk.input_state(cx)->placeholder("type here")->build()
 		counts(cx, "before")
-		a.temp = a.input->presentation(cx)
-		a.kept = gk.retain(cx, a.input->presentation(cx))
-		fmt.printf("handles temp placeholder=%q editable=%v multi_line=%v\n", a.temp->placeholder(cx), a.temp->is_editable(cx), a.temp->is_multi_line(cx))
+		a.temp = gk.presentation(a.input, cx)
+		a.kept = gk.retain(cx, gk.presentation(a.input, cx))
+		fmt.printf("handles temp placeholder=%q editable=%v multi_line=%v\n", gk.placeholder(a.temp, cx), gk.is_editable(a.temp, cx), gk.is_multi_line(a.temp, cx))
 		counts(cx, "handed out")
 	case 2:
 		counts(cx, "next frame")
-		fmt.printf("handles kept placeholder=%q\n", a.kept->placeholder(cx))
+		fmt.printf("handles kept placeholder=%q\n", gk.placeholder(a.kept, cx))
 		gk.release(cx, a.kept)
 		if a.mode == "obj-stale-temp" {
 			fmt.println("handles reading the swept temporary")
-			fmt.println(a.temp->placeholder(cx)) // stops: it was temporary
+			fmt.println(gk.placeholder(a.temp, cx)) // stops: it was temporary
 		}
 	}
 }
@@ -90,7 +90,7 @@ temps :: proc(a: ^App, cx: ^gk.Cx) {
 global :: proc(a: ^App, cx: ^gk.Cx) {
 	th := gk.theme_global(cx)
 	again := gk.theme_global_mut(cx)
-	fmt.printf("handles theme same=%v dark=%v name=%q radius_full=%.0f\n", th.h == again.h, th->is_dark(cx), th->theme_name(cx), th->radius_full(cx))
+	fmt.printf("handles theme same=%v dark=%v name=%q radius_full=%.0f\n", th.h == again.h, gk.is_dark(th, cx), gk.theme_name(th, cx), gk.radius_full(th, cx))
 	reg := gk.theme_registry_global(cx)
 	fmt.printf("handles registry ok=%v\n", reg.h != 0)
 	counts(cx, "globals")
@@ -101,12 +101,12 @@ dialog :: proc(a: ^App, cx: ^gk.Cx) {
 	switch a.clicks {
 	case 1:
 		a.dialog = gk.dialog_handle(cx, false)
-		fmt.printf("handles dialog open=%v\n", a.dialog->is_open(cx))
-		a.dialog->open(cx)
+		fmt.printf("handles dialog open=%v\n", gk.is_open(a.dialog, cx))
+		gk.open(a.dialog, cx)
 	case 2:
-		fmt.printf("handles dialog open=%v\n", a.dialog->is_open(cx))
-		a.dialog->close(cx)
-		fmt.printf("handles dialog closed open=%v\n", a.dialog->is_open(cx))
+		fmt.printf("handles dialog open=%v\n", gk.is_open(a.dialog, cx))
+		gk.close(a.dialog, cx)
+		fmt.printf("handles dialog closed open=%v\n", gk.is_open(a.dialog, cx))
 	}
 }
 
@@ -127,16 +127,16 @@ list :: proc(a: ^App, cx: ^gk.Cx) {
 		a.src = gk.list_source(cx, a, ROWS, list_row, gk.on(list_event), initial = 20)
 		a.list = gk.list_state(cx, a.src)->build()
 	case 2:
-		a.list->set_selected_index(cx, 120)
-		a.list->scroll_to_item(cx, 120, .Top)
-		a.scroll = gk.retain(cx, a.list->scroll_handle(cx))
+		gk.set_selected_index(a.list, cx, 120)
+		gk.scroll_to_item(a.list, cx, 120, .Top)
+		a.scroll = gk.retain(cx, gk.list_state_scroll_handle(a.list, cx))
 	case 3:
-		sel, ok := a.list->selected_index(cx).?
+		sel, ok := gk.selected_index(a.list, cx).?
 		fmt.printf("handles list selected ok=%v row=%d\n", ok, sel.row)
-		a.scroll->scroll_to_item(cx, 3, .Top)
-		a.list->set_selected_index(cx, nil)
+		gk.scroll_to_item(a.scroll, cx, 3, .Top)
+		gk.set_selected_index(a.list, cx, nil)
 	case 4:
-		_, ok := a.list->selected_index(cx).?
+		_, ok := gk.selected_index(a.list, cx).?
 		fmt.printf("handles list cleared selected=%v\n", ok)
 	}
 }
@@ -144,8 +144,8 @@ list :: proc(a: ^App, cx: ^gk.Cx) {
 // An object a method takes by value and cannot copy is given away: its handle is released.
 given_away :: proc(a: ^App, cx: ^gk.Cx) {
 	t := gk.tooltip_defaults(cx)->with_show_delay(250 * time.Millisecond)->build()
-	t->install(cx) // TooltipDefaults::install(self, cx): copied (it is Clone), the handle stays
-	t->install(cx)
+	gk.install(t, cx) // TooltipDefaults::install(self, cx): copied (it is Clone), the handle stays
+	gk.install(t, cx)
 	counts(cx, "installed twice")
 	gk.release(cx, t)
 }
@@ -157,27 +157,27 @@ values :: proc(a: ^App, cx: ^gk.Cx) {
 	case 1:
 		a.tree = gk.tree_state(cx)->build()
 		src := gk.tree_item("src", "src")->expanded(true)->child(gk.tree_item("src/a.rs", "a.rs"))->child(gk.tree_item("src/b.rs", "b.rs"))
-		a.tree->set_items(cx, {src, gk.tree_item("README", "README")})
+		gk.set_items(a.tree, cx, {src, gk.tree_item("README", "README")})
 		a.grid = gk.grid_layout_state(cx)->build()
-		a.grid->set_areas(cx, {gk.grid_area("one")->col(1)->row(2)->col_span(3), gk.grid_area("two")})
+		gk.set_areas(a.grid, cx, {gk.grid_area("one")->col(1)->row(2)->col_span(3), gk.grid_area("two")})
 		a.kept_v = gk.tree_item("late", "late")
 	case 2:
 		n := 0
 		for i in 0 ..< 8 {
-			e, ok := a.tree->entry(cx, i).?
+			e, ok := gk.entry(a.tree, cx, i).?
 			if !ok {break}
-			it := e->item(cx)
-			fmt.printf("handles tree entry %d id=%s depth=%d folder=%v\n", i, it.id, e->depth(cx), e->is_folder(cx))
+			it := gk.item(e, cx)
+			fmt.printf("handles tree entry %d id=%s depth=%d folder=%v\n", i, it.id, gk.depth(e, cx), gk.is_folder(e, cx))
 			n += 1
 		}
 		fmt.printf("handles tree entries=%d\n", n)
-		areas := a.grid->areas(cx)
+		areas := gk.areas(a.grid, cx)
 		for ar in areas {
 			fmt.printf("handles grid area id=%s col=%d row=%d col_span=%d\n", ar.id, ar.col, ar.row, ar.col_span)
 		}
 		if a.mode == "obj-stale-value" {
 			fmt.println("handles giving a value of an earlier turn")
-			a.tree->set_items(cx, {a.kept_v}) // stops: a value lives for the turn that made it
+			gk.set_items(a.tree, cx, {a.kept_v}) // stops: a value lives for the turn that made it
 		}
 	}
 }
@@ -194,12 +194,12 @@ columns :: proc(a: ^App, cx: ^gk.Cx) {
 		gk.table_columns(cx, a.tsrc, {gk.column("name", "Name")->width(140)->sortable(), gk.column("size", "Size")->width(60)->text_right()})
 		a.table = gk.table_state(cx, a.tsrc)->build()
 	case 2:
-		hs := a.table->headers(cx)
-		w0, _ := a.table->col_width(cx, 0).?
+		hs := gk.headers(a.table, cx)
+		w0, _ := gk.col_width(a.table, cx, 0).?
 		fmt.printf("handles columns n=%d first=%s second=%s width0=%.0f\n", len(hs), hs[0] if len(hs) > 0 else "", hs[1] if len(hs) > 1 else "", w0)
 		gk.table_columns(cx, a.tsrc, {gk.column("name", "Name"), gk.column("size", "Size"), gk.column("kind", "Kind")}, a.table)
 	case 3:
-		fmt.printf("handles columns replaced n=%d\n", len(a.table->headers(cx)))
+		fmt.printf("handles columns replaced n=%d\n", len(gk.headers(a.table, cx)))
 	}
 }
 
@@ -229,7 +229,7 @@ root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	body := gk.div(.Size_Full)->id("all")->on_click(gk.on(clicked))
 	if a.mode == "obj-global" {
 		// a read of a global in a view procedure: a read, allowed
-		body = body->child(gk.text(fmt.tprintf("dark %v", gk.theme_global(cx)->is_dark(cx))))
+		body = body->child(gk.text(fmt.tprintf("dark %v", gk.is_dark(gk.theme_global(cx), cx))))
 	}
 	if a.mode == "obj-columns" && a.table.h != 0 {
 		body = body->child(gk.div()->w(gk.px(300))->h(gk.px(240))->child(gk.data_table(a.table)))

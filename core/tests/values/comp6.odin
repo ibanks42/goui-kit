@@ -79,14 +79,14 @@ background :: proc(a: ^App, cx: ^gk.Cx) {
 matcher :: proc(a: ^App, cx: ^gk.Cx) {
 	d := gk.Naive_Date{2026, 11, 12}
 	cal := gk.calendar_state(cx)->disabled_matcher(gk.Matcher_Interval{gk.Interval_Matcher{before = d, after = nil}})->build()
-	print_matcher("interval", cal->disabled_matcher_ref(cx))
-	cal->set_disabled_matcher(cx, gk.Matcher_Range{gk.Range_Matcher{from = gk.Naive_Date{2026, 1, 1}, to = gk.Naive_Date{2026, 1, 31}}})
-	print_matcher("range", cal->disabled_matcher_ref(cx))
+	print_matcher("interval", gk.disabled_matcher_ref(cal, cx))
+	gk.set_disabled_matcher(cal, cx, gk.Matcher_Range{gk.Range_Matcher{from = gk.Naive_Date{2026, 1, 1}, to = gk.Naive_Date{2026, 1, 31}}})
+	print_matcher("range", gk.disabled_matcher_ref(cal, cx))
 	days := []gk.Naive_Date{{2026, 12, 24}, {2026, 12, 25}}
-	cal->set_disabled_matcher(cx, gk.Matcher_Custom{days})
-	print_matcher("custom", cal->disabled_matcher_ref(cx))
-	cal->set_disabled_matcher(cx, []u32{0, 6})
-	print_matcher("weekdays", cal->disabled_matcher_ref(cx))
+	gk.set_disabled_matcher(cal, cx, gk.Matcher_Custom{days})
+	print_matcher("custom", gk.disabled_matcher_ref(cal, cx))
+	gk.set_disabled_matcher(cal, cx, []u32{0, 6})
+	print_matcher("weekdays", gk.disabled_matcher_ref(cal, cx))
 }
 
 print_matcher :: proc(what: string, m: Maybe(gk.Matcher)) {
@@ -119,24 +119,24 @@ q_rules :: proc(a: ^App, cx: ^gk.Cx) {
 	plain := gk.questionnaire_item_definition("plain", "No rules")->
 		with_choice(gk.questionnaire_choice_definition("x", "X"))
 	q := gk.questionnaire_state(cx, {color, plain})->build()
-	_ = q->set_answer(cx, "color", gk.questionnaire_answer()->with_choices({"red", "blue"}))
-	_ = q->go_next(cx)
+	_ = gk.set_answer(q, cx, "color", gk.questionnaire_answer()->with_choices({"red", "blue"}))
+	_ = gk.go_next(q, cx)
 	print_error(q, cx, "two")
-	_ = q->set_answer(cx, "color", gk.questionnaire_answer()->with_choices({"blue"}))
-	_ = q->go_next(cx)
+	_ = gk.set_answer(q, cx, "color", gk.questionnaire_answer()->with_choices({"blue"}))
+	_ = gk.go_next(q, cx)
 	print_error(q, cx, "one")
 	has, phas := false, false
-	if def, dok := q->item_definition(cx, "color").?; dok {
-		_, has = def->validator(cx).?
+	if def, dok := gk.item_definition(q, cx, "color").?; dok {
+		_, has = gk.validator(def, cx).?
 	}
-	if pdef, pok := q->item_definition(cx, "plain").?; pok {
-		_, phas = pdef->validator(cx).?
+	if pdef, pok := gk.item_definition(q, cx, "plain").?; pok {
+		_, phas = gk.validator(pdef, cx).?
 	}
 	fmt.printf("values c6 rules validator color=%v plain=%v\n", has, phas)
 }
 
 print_error :: proc(q: gk.Questionnaire_State, cx: ^gk.Cx, what: string) {
-	e, ok := q->error(cx, "color").?
+	e, ok := gk.error(q, cx, "color").?
 	if !ok {
 		fmt.printf("values c6 rules %s valid\n", what)
 		return
@@ -151,18 +151,18 @@ print_error :: proc(q: gk.Questionnaire_State, cx: ^gk.Cx, what: string) {
 
 chains :: proc(a: ^App, cx: ^gk.Cx) {
 	picker := gk.color_picker_state(cx)->default_value(gk.hsla(0.5, 1, 0.5, 1))->build()
-	v, has := picker->value(cx).?
+	v, has := gk.value(picker, cx).?
 	fmt.printf("values c6 chains picker has=%v h=%.2f\n", has, v.h)
 	grid := gk.grid_layout_state(cx)->default_areas({gk.grid_area("a"), gk.grid_area("b")})->build()
-	fmt.printf("values c6 chains grid areas=%d\n", len(grid->areas(cx)))
+	fmt.printf("values c6 chains grid areas=%d\n", len(gk.areas(grid, cx)))
 	tree := gk.tree_state(cx)->items({gk.tree_item("r", "root")->expanded(true)->child(gk.tree_item("c", "child"))})->build()
-	_, e0 := tree->entry(cx, 0).?
-	_, e1 := tree->entry(cx, 1).?
-	_, e2 := tree->entry(cx, 2).?
+	_, e0 := gk.entry(tree, cx, 0).?
+	_, e1 := gk.entry(tree, cx, 1).?
+	_, e2 := gk.entry(tree, cx, 2).?
 	fmt.printf("values c6 chains tree entries=%v,%v,%v\n", e0, e1, e2)
 	scale := gk.scale_ordinal(cx, {"a", "b"}, {gk.hsla(0, 1, 0.5, 1), gk.hsla(0.5, 1, 0.5, 1)})->
 		range({gk.hsla(0.25, 1, 0.5, 1), gk.hsla(0.75, 1, 0.5, 1)})->unknown(gk.hsla(0, 0, 0.5, 1))->build()
-	b, _ := scale->map_(cx, "b").?
-	z, hz := scale->map_(cx, "zz").?
+	b, _ := gk.map_(scale, cx, "b").?
+	z, hz := gk.map_(scale, cx, "zz").?
 	fmt.printf("values c6 chains scale b_h=%.2f unknown=%v unknown_l=%.2f unknown_s=%.2f\n", b.h, hz, z.l, z.s)
 }

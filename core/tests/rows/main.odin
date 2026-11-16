@@ -63,7 +63,7 @@ list_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.List_Delegate_Event) {
 	ix, has := e.index.?
 	fmt.printf("rows list %v has=%v section=%d row=%d secondary=%v id=%d query=%q\n", e.kind, has, ix.section, ix.row, e.secondary, e.id, e.query)
 	if e.kind == .Confirm {
-		ix, ok := a.list->selected_index(cx).?
+		ix, ok := gk.selected_index(a.list, cx).?
 		fmt.printf("rows list-state read selected_index ok=%v row=%d\n", ok, ix.row)
 	}
 	if e.kind == .Search {
@@ -91,7 +91,7 @@ list_state_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.List_Event) {
 list_step :: proc(a: ^App, cx: ^gk.Cx) {
 	a.clicks += 1
 	if a.mode == "table" {
-		a.table->scroll_to_row(cx, 50_000) // a far jump through the generated write
+		gk.scroll_to_row(a.table, cx, 50_000) // a far jump through the generated write
 		fmt.printf("rows table-state scroll_to_row 50000\n")
 		return
 	}
@@ -153,7 +153,7 @@ table_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Table_Delegate_Event) {
 	if e.kind == .Sort {
 		a.sorted = e.sort == .Descending
 		gk.table_invalidate(cx, a.src, 0, TABLE_ROWS)
-		row, ok := a.table->selected_row(cx).?
+		row, ok := gk.selected_row(a.table, cx).?
 		fmt.printf("rows table-state read selected_row ok=%v row=%d\n", ok, row)
 	}
 }
@@ -205,7 +205,7 @@ tree_row :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.List_Item {
 }
 
 tree_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Tree_Event) {
-	ix, ok := a.tree->selected_index(cx).?
+	ix, ok := gk.selected_index(a.tree, cx).?
 	fmt.printf("rows tree-state %v selected ok=%v ix=%d\n", e, ok, ix)
 }
 
@@ -223,7 +223,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	case "list", "list-sections", "released":
 		a.src = gk.list_source(cx, a, ROWS, list_row, gk.on(list_event), initial = 20)
 		a.list = gk.list_state(cx, a.src)->build()
-		a.sub = a.list->on_list_event(cx, gk.on(list_state_event))
+		a.sub = gk.on_list_event(a.list, cx, gk.on(list_state_event))
 		d := gk.default_delegate_data()
 		d.placeholder_height = 32
 		if a.mode == "list-sections" {
@@ -251,14 +251,14 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	case "table", "table-scroll":
 		a.src = gk.table_source(cx, a, TABLE_ROWS, COLUMNS[:], cell, gk.on(table_event), initial_rows = 12)
 		a.table = gk.table_state(cx, a.src)->build()
-		a.sub = a.table->on_table_event(cx, gk.on(table_state_event))
+		a.sub = gk.on_table_event(a.table, cx, gk.on(table_state_event))
 		d := gk.default_delegate_data()
 		d.visible_events = true
 		gk.delegate_data(cx, a.table, d)
 	case "tree":
 		a.tree = gk.tree_state(cx)->build()
 		gk.tree_set_items(cx, a.tree, TREE[:])
-		a.sub = a.tree->on_tree_event(cx, gk.on(tree_event))
+		a.sub = gk.on_tree_event(a.tree, cx, gk.on(tree_event))
 		a.tree_rows = gk.tree_source(cx, a, tree_row, initial = 8)
 	}
 }

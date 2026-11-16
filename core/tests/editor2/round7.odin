@@ -51,17 +51,17 @@ init7 :: proc(a: ^App, cx: ^gk.Cx) {
 	case "overlay-fire", "overlay-control":
 		a.ed = gk.editor_state(cx)->default_value("ab")->build()
 		if a.mode == "overlay-fire" {
-			a.ed->set_overlay_action_handler(cx, {{.Completion, "input::Enter"}})
+			gk.set_overlay_action_handler(a.ed, cx, {{.Completion, "input::Enter"}})
 		}
-		a.r6.edits = a.ed->on_input_edits_event(cx, gk.on(present_on_edit))
+		a.r6.edits = gk.on_input_edits_event(a.ed, cx, gk.on(present_on_edit))
 	case "lsp-ask":
 		a.r6.hl = gk.ask(cx, a, highlight7)
 		a.ed = gk.editor_state(cx)->default_value("fi")->build()
-		a.ed->lsp_mut(cx, gk.lsp_default()->with_completion_highlighter(a.r6.hl))
-		a.r6.edits = a.ed->on_input_edits_event(cx, gk.on(present_on_edit))
+		gk.lsp_mut(a.ed, cx, gk.lsp_default()->with_completion_highlighter(a.r6.hl))
+		a.r6.edits = gk.on_input_edits_event(a.ed, cx, gk.on(present_on_edit))
 	case "diagnostic-shown":
 		a.ed = gk.editor_state(cx)->default_value("let x = 1\n")->build()
-		a.ed->present_diagnostic(cx, {4, 5}, gk.diagnostic({{0, 4}, {0, 5}}, "unused x")->with_severity(.Warning))
+		gk.present_diagnostic(a.ed, cx, {4, 5}, gk.diagnostic({{0, 4}, {0, 5}}, "unused x")->with_severity(.Warning))
 	}
 }
 
@@ -75,7 +75,7 @@ present_on_edit :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Edits_Event) {
 	r.presented = true
 	last := e.edits[len(e.edits) - 1]
 	items := []gk.Completion_Item{{label = "first", kind = 3, detail = "fn first()"}, {label = "second", kind = 6}}
-	a.ed->present_completion_items(cx, last.v0.new_end_byte, "", items)
+	gk.present_completion_items(a.ed, cx, last.v0.new_end_byte, "", items)
 	fmt.printf("editor2 %s presented at=%d text=%q\n", a.mode, last.v0.new_end_byte, last.v1)
 }
 
@@ -127,7 +127,7 @@ on_leaves7 :: proc(a: ^App, cx: ^gk.Cx, e: gk.Leaf_Geometry_Event) {
 	r := &a.r7
 	r.leaf_events += 1
 	for l in e.leaves {
-		b := l.geometry->bounds(cx)
+		b := gk.bounds(l.geometry, cx)
 		r.tops[l.key] = b.origin.y
 		r.bottoms[l.key] = b.origin.y + b.size.height
 	}
@@ -142,19 +142,19 @@ step7 :: proc(a: ^App, cx: ^gk.Cx) -> bool {
 		fmt.printf("editor2 custom leaves=%d events=%d placed=%v gap_with=%.0f gap_without=%.0f\n", len(r.tops),
 			r.leaf_events, gap_with > gap_without, gap_with, gap_without)
 	case "overlay-fire", "overlay-control":
-		routed := a.ed->route_overlay_action(cx, gk.action(cx, "input::Enter"))
-		fmt.printf("editor2 %s value=%q routed_after=%v taken=%v\n", a.mode, a.ed->value(cx), routed,
-			a.ed->has_overlay_action_handler(cx))
+		routed := gk.route_overlay_action(a.ed, cx, gk.action(cx, "input::Enter"))
+		fmt.printf("editor2 %s value=%q routed_after=%v taken=%v\n", a.mode, gk.value(a.ed, cx), routed,
+			gk.has_overlay_action_handler(a.ed, cx))
 	case "lsp-ask":
 		fmt.printf("editor2 lsp-ask asked=%d\n", r.asked)
 	case "diagnostic-shown":
 		switch a.step {
 		case 1:
-			_, shown := a.ed->diagnostic_popover(cx).?
+			_, shown := gk.diagnostic_popover(a.ed, cx).?
 			fmt.printf("editor2 diagnostic-shown popover=%v\n", shown)
-			a.ed->clear_diagnostic_popover(cx)
+			gk.clear_diagnostic_popover(a.ed, cx)
 		case 2:
-			_, shown := a.ed->diagnostic_popover(cx).?
+			_, shown := gk.diagnostic_popover(a.ed, cx).?
 			fmt.printf("editor2 diagnostic-shown cleared popover=%v\n", shown)
 		}
 	case:

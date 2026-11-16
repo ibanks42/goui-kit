@@ -59,17 +59,17 @@ FOLD_TEXT :: "top {\nhidden\n}\nlast\n"
 block_row :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {
 	a.block_rows += 1
 	n := gk.row_context(cx, a.blocks, at, gk.Markdown_Node_Read)
-	fmt.printf("editor2 block row=%d name=%s text=%q markdown=%q\n", at.row, n->name(cx), n->as_text(cx), n->as_markdown(cx))
-	return gk.label(fmt.tprintf("[%s]", n->as_text(cx)))
+	fmt.printf("editor2 block row=%d name=%s text=%q markdown=%q\n", at.row, gk.name(n, cx), gk.as_text(n, cx), gk.as_markdown(n, cx))
+	return gk.label(fmt.tprintf("[%s]", gk.as_text(n, cx)))
 }
 
 inline_row :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {
 	a.inline_rows += 1
 	v := gk.row_context(cx, a.inlines, at, gk.Markdown_Inline)
-	fmt.printf("editor2 inline row=%d name=%s text=%q font_ok=%v line_ok=%v rem_ok=%v\n", at.row, v.node->name(cx),
-		v.node->as_text(cx), v.typography->font_size(cx) > 0, v.typography->line_height(cx) >= v.typography->font_size(cx),
-		v.typography->rem_size(cx) > 0)
-	return gk.label(fmt.tprintf("<%s>", v.node->as_text(cx)))
+	fmt.printf("editor2 inline row=%d name=%s text=%q font_ok=%v line_ok=%v rem_ok=%v\n", at.row, gk.name(v.node, cx),
+		gk.as_text(v.node, cx), gk.font_size(v.typography, cx) > 0, gk.line_height(v.typography, cx) >= gk.font_size(v.typography, cx),
+		gk.rem_size(v.typography, cx) > 0)
+	return gk.label(fmt.tprintf("<%s>", gk.as_text(v.node, cx)))
 }
 
 tip_row :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {
@@ -108,7 +108,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 		a.ed = gk.editor_state(cx)->default_value("hello world\n")->build()
 	case "mask-variant":
 		a.inp = gk.input_state(cx)->build()
-		a.inp->set_mask_pattern(cx, gk.Mask_Pattern_Pattern{pattern = "999-999"})
+		gk.set_mask_pattern(a.inp, cx, gk.Mask_Pattern_Pattern{pattern = "999-999"})
 	case "display-map":
 		a.ed = gk.editor_state(cx)->default_value(FOLD_TEXT)->build()
 	case "editor-style":
@@ -116,8 +116,8 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 		langs := [?]string{"odin"}
 		a.hl = gk.highlighter(cx, a, keyword_runs, languages = langs[:])
 		a.ed = gk.editor_state(cx)->language("odin")->default_value("main :: proc() {}\n")->build()
-		a.ed->set_highlighter_factory(cx, a.hl.src)
-		a.ed->set_editor_style(cx, gk.Input_Editor_Style {
+		gk.set_highlighter_factory(a.ed, cx, a.hl.src)
+		gk.set_editor_style(a.ed, cx, gk.Input_Editor_Style {
 			foreground = gk.theme(.Foreground), muted_foreground = gk.theme(.Muted_Foreground),
 			background = gk.theme(.Background), border = gk.theme(.Border), selection = gk.theme(.Selection),
 			caret = gk.theme(.Caret), diagnostics = {gk.theme(.Danger), gk.theme(.Warning), gk.theme(.Info), gk.theme(.Info)},
@@ -131,16 +131,16 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	case "history":
 		a.hist = gk.history(cx)->build()
 		for e in ([]string{"a", "b", "c", "d"}) {
-			a.hist->push(cx, e)
+			gk.push(a.hist, cx, e)
 		}
 	case "fold":
 		a.folds = gk.row_source(cx, a, 0, fold_row, initial = 0)
 		a.ed = gk.editor_state(cx)->default_value(FOLD_TEXT)->build()
-		a.ed->set_folding(cx, true)
-		a.ed->set_line_number(cx, true)
-		a.ed->set_fold_placeholder_renderer(cx, a.folds)
+		gk.set_folding(a.ed, cx, true)
+		gk.set_line_number(a.ed, cx, true)
+		gk.set_fold_placeholder_renderer(a.ed, cx, a.folds)
 		folds := [?]gk.Fold_Range{{start_line = 0, end_line = 2}}
-		a.ed->apply_highlighter_fold_candidates(cx, folds[:])
+		gk.apply_highlighter_fold_candidates(a.ed, cx, folds[:])
 	case "owner":
 		a.ed = gk.editor_state(cx)->default_value("x")->build()
 	case "bad-owner":
@@ -195,9 +195,9 @@ step :: proc(a: ^App, cx: ^gk.Cx) {
 		_, rows := gk.test_editor_text(cx)
 		fmt.printf("editor2 tooltip view_rows=%d described=%d\n", rows, a.tip_rows)
 	case "history":
-		a.hist->retain(cx, []string{"b", "d", "x"})
-		es := a.hist->entries(cx)
-		cur, _ := a.hist->current(cx).?
+		gk.history_retain(a.hist, cx, []string{"b", "d", "x"})
+		es := gk.entries(a.hist, cx)
+		cur, _ := gk.current(a.hist, cx).?
 		fmt.printf("editor2 history entries=%v current=%q\n", es, cur)
 	case "conflict":
 		f := gk.parse_conflicts(cx, "a.txt", CONFLICT)
@@ -206,45 +206,45 @@ step :: proc(a: ^App, cx: ^gk.Cx) {
 			fmt.printf("editor2 conflict parse failed: %s\n", f.err)
 			return
 		}
-		cs := file->conflicts(cx)
+		cs := gk.conflicts(file, cx)
 		fmt.printf("editor2 conflict n=%d\n", len(cs))
 		for c in cs {
-			base, has_base := c->base_lines(cx).?
-			bl, has_bl := c->base_label(cx).?
+			base, has_base := gk.base_lines(c, cx).?
+			bl, has_bl := gk.base_label(c, cx).?
 			fmt.printf("editor2 conflict lines=%v current=%v incoming=%v base=%v/%v current_label=%q incoming_label=%q base_label=%v/%q\n",
-				c->lines(cx), c->current_lines(cx), c->incoming_lines(cx), has_base, base, c->current_label(cx),
-				c->incoming_label(cx), has_bl, bl)
+				gk.lines(c, cx), gk.current_lines(c, cx), gk.incoming_lines(c, cx), has_base, base, gk.current_label(c, cx),
+				gk.incoming_label(c, cx), has_bl, bl)
 		}
 	case "annotation":
 		an := gk.diff_annotation_file(cx, "ann-1", "src/a.rs")
-		fmt.printf("editor2 annotation id=%q path=%q\n", an->id(cx), an->path(cx))
+		fmt.printf("editor2 annotation id=%q path=%q\n", gk.diff_annotation_id(an, cx), gk.path(an, cx))
 	case "fold":
 		fmt.printf("editor2 fold described=%d\n", a.fold_rows)
 	case "display-map":
-		folds := a.ed->display_map_folded_ranges(cx)
+		folds := gk.editor_state_display_map_folded_ranges(a.ed, cx)
 		fmt.printf("editor2 display-map lines=%d text=%q rows=%d folded=%v hidden=%v row1=%d folds=%d\n",
-			a.ed->display_map_buffer_line_count(cx), a.ed->display_map_text(cx), a.ed->display_map_display_row_count(cx),
-			a.ed->display_map_is_folded_at(cx, 0), a.ed->display_map_is_buffer_line_hidden(cx, 1),
-			a.ed->display_map_buffer_line_to_display_row(cx, 1), len(folds))
+			gk.editor_state_display_map_buffer_line_count(a.ed, cx), gk.editor_state_display_map_text(a.ed, cx), gk.editor_state_display_map_display_row_count(a.ed, cx),
+			gk.editor_state_display_map_is_folded_at(a.ed, cx, 0), gk.editor_state_display_map_is_buffer_line_hidden(a.ed, cx, 1),
+			gk.editor_state_display_map_buffer_line_to_display_row(a.ed, cx, 1), len(folds))
 	case "mask-variant":
-		fmt.printf("editor2 mask-variant value=%q\n", a.inp->value(cx))
+		fmt.printf("editor2 mask-variant value=%q\n", gk.value(a.inp, cx))
 	case "route":
 		act := gk.action(cx, "editor2.nothing")
-		fmt.printf("editor2 route handled=%v\n", a.ed->route_overlay_action(cx, act))
+		fmt.printf("editor2 route handled=%v\n", gk.route_overlay_action(a.ed, cx, act))
 	case "decorations":
 		switch a.step {
 		case 1:
 			first := []gk.Text_Decoration{{range = {0, 5}, style = {color = gk.theme(.Danger), font_weight = gk.Font_Weight{700}}}}
 			// a call's object is temporary (until the next frame): kept across the steps
-			a.coll = gk.retain(cx, a.ed->create_decorations_collection(cx, first))
-			fmt.printf("editor2 decorations made ranges=%v\n", a.coll->get_ranges(cx))
+			a.coll = gk.retain(cx, gk.create_decorations_collection(a.ed, cx, first))
+			fmt.printf("editor2 decorations made ranges=%v\n", gk.get_ranges(a.coll, cx))
 			more := []gk.Text_Decoration{{range = {6, 11}, style = {background_color = gk.theme(.Accent)}}}
-			a.coll->append(cx, more)
+			gk.text_decoration_collection_append(a.coll, cx, more)
 		case 2:
-			fmt.printf("editor2 decorations appended ranges=%v\n", a.coll->get_ranges(cx))
-			a.coll->clear(cx)
+			fmt.printf("editor2 decorations appended ranges=%v\n", gk.get_ranges(a.coll, cx))
+			gk.text_decoration_collection_clear(a.coll, cx)
 		case 3:
-			fmt.printf("editor2 decorations cleared ranges=%v\n", a.coll->get_ranges(cx))
+			fmt.printf("editor2 decorations cleared ranges=%v\n", gk.get_ranges(a.coll, cx))
 		}
 	case:
 		step6(a, cx) // round6.odin

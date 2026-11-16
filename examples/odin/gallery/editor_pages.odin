@@ -75,7 +75,7 @@ editor_pages_init :: proc(a: ^App, cx: ^gk.Cx) {
 	p.jump = gk.row_source(cx, a, 1, proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {return gk.label("latest")}, initial = 1)
 	p.hl = gk.ask(cx, a, editor_highlight)
 	p.lsp = gk.editor_state(cx)->default_value("fi")->build()
-	p.lsp->lsp_mut(cx, gk.lsp_default()->with_completion_highlighter(p.hl))
+	gk.lsp_mut(p.lsp, cx, gk.lsp_default()->with_completion_highlighter(p.hl))
 	p.diag = gk.editor_state(cx)->default_value("let x = 1\n")->build()
 }
 
@@ -101,12 +101,12 @@ editor_heading :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 
 editor_badge_row :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {
 	n := gk.row_context(cx, a.editor.blocks, at, gk.Markdown_Node_Read)
-	return gk.label(fmt.tprintf("[%s]", n->as_text(cx)))
+	return gk.label(fmt.tprintf("[%s]", gk.as_text(n, cx)))
 }
 
 editor_code_row :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {
 	v := gk.row_context(cx, a.editor.inlines, at, gk.Markdown_Inline)
-	return gk.label(fmt.tprintf("<%s>", v.node->as_text(cx)))
+	return gk.label(fmt.tprintf("<%s>", gk.as_text(v.node, cx)))
 }
 
 editor_plugin :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
@@ -178,7 +178,7 @@ editor_highlight :: proc(a: ^App, cx: ^gk.Cx, key: gk.Tuple_Temp_String_Completi
 
 editor_complete :: proc(a: ^App, cx: ^gk.Cx) {
 	items := []gk.Completion_Item{{label = "first", kind = 3, detail = "fn first()"}, {label = "fifth", kind = 6}}
-	a.editor.lsp->present_completion_items(cx, 2, "fi", items)
+	gk.present_completion_items(a.editor.lsp, cx, 2, "fi", items)
 }
 
 editor_lsp :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
@@ -187,7 +187,7 @@ editor_lsp :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 }
 
 editor_diagnose :: proc(a: ^App, cx: ^gk.Cx) {
-	a.editor.diag->present_diagnostic(cx, {4, 5}, gk.diagnostic({{0, 4}, {0, 5}}, "unused x")->with_severity(.Warning))
+	gk.present_diagnostic(a.editor.diag, cx, {4, 5}, gk.diagnostic({{0, 4}, {0, 5}}, "unused x")->with_severity(.Warning))
 }
 
 editor_diagnostic :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {

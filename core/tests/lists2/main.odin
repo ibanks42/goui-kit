@@ -66,7 +66,7 @@ key :: proc(section, row: int) -> u64 {
 select_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Select_Event) {
 	a.events += 1
 	v, has := e.v0.?
-	now, ok := a.sel->selected_value(cx).?
+	now, ok := gk.selected_value(a.sel, cx).?
 	fmt.printf("lists2 select confirm has=%v value=%q now=%q same=%v\n", has, v, now, ok && string(now) == string(v))
 }
 
@@ -86,7 +86,7 @@ search_request :: proc(a: ^App, cx: ^gk.Cx, e: gk.Search_Request) {
 	fmt.printf("lists2 search request id=%d query=%q\n", e.id, e.query)
 	found := [?]gk.Search_Item{gk.search_item("xenon", "Xenon"), gk.search_item("xylophone", "Xylophone")}
 	gk.search_items(cx, a.src, found[:])
-	a.sel->set_items(cx, a.src)
+	gk.set_items(a.sel, cx, a.src)
 	gk.answer(cx, a.src, e.id, true)
 }
 
@@ -151,50 +151,50 @@ step :: proc(a: ^App, cx: ^gk.Cx) {
 	case "select":
 		switch a.step {
 		case 1:
-			a.sel->set_selected_value(cx, "cherry")
+			gk.set_selected_value(a.sel, cx, "cherry")
 		case 2:
-			v, ok := a.sel->selected_value(cx).?
-			ix, iok := a.sel->selected_index(cx).?
+			v, ok := gk.selected_value(a.sel, cx).?
+			ix, iok := gk.selected_index(a.sel, cx).?
 			fmt.printf("lists2 select set_selected_value value=%q ok=%v row=%d index_ok=%v\n", v, ok, ix.row, iok)
-			a.sel->set_selected_index(cx, 4)
+			gk.set_selected_index(a.sel, cx, 4)
 		case 3:
-			v, _ := a.sel->selected_value(cx).?
+			v, _ := gk.selected_value(a.sel, cx).?
 			fmt.printf("lists2 select set_selected_index value=%q\n", v)
 			// New items: mango stays (by value), the others go.
 			items := [?]gk.Search_Item{gk.search_item("mango", "Mango"), gk.search_item("plum", "Plum")}
 			gk.search_items(cx, a.src, items[:])
-			a.sel->set_items(cx, a.src)
+			gk.set_items(a.sel, cx, a.src)
 		case 4:
-			v, ok := a.sel->selected_value(cx).?
-			ix, _ := a.sel->selected_index(cx).?
+			v, ok := gk.selected_value(a.sel, cx).?
+			ix, _ := gk.selected_index(a.sel, cx).?
 			fmt.printf("lists2 select set_items value=%q ok=%v row=%d\n", v, ok, ix.row)
-			a.sel->set_selected_index(cx, nil)
+			gk.set_selected_index(a.sel, cx, nil)
 		case 5:
-			_, ok := a.sel->selected_value(cx).?
+			_, ok := gk.selected_value(a.sel, cx).?
 			fmt.printf("lists2 select cleared has=%v\n", ok)
 		}
 	case "will-change":
-		fmt.printf("lists2 will-change values=%v\n", a.combo->selected_values(cx))
+		fmt.printf("lists2 will-change values=%v\n", gk.selected_values(a.combo, cx))
 	case "combobox":
 		switch a.step {
 		case 1:
-			vs := a.combo->selected_values(cx)
-			sel := a.combo->selection(cx)
+			vs := gk.selected_values(a.combo, cx)
+			sel := gk.selection(a.combo, cx)
 			fmt.printf("lists2 combobox initial values=%v n=%d first=%s row=%d\n", vs, len(sel), len(sel) > 0 ? sel[0].v1.title : "", len(sel) > 0 ? sel[0].v0.row : -1)
-			added := a.combo->add_selected_index(cx, 0)
-			again := a.combo->add_selected_index(cx, 0)
-			fmt.printf("lists2 combobox add first=%v again=%v values=%v\n", added, again, a.combo->selected_values(cx))
-			removed := a.combo->remove_selected_index(cx, gk.Base_Index_Path{row = 1})
-			fmt.printf("lists2 combobox remove=%v values=%v\n", removed, a.combo->selected_values(cx))
+			added := gk.add_selected_index(a.combo, cx, 0)
+			again := gk.add_selected_index(a.combo, cx, 0)
+			fmt.printf("lists2 combobox add first=%v again=%v values=%v\n", added, again, gk.selected_values(a.combo, cx))
+			removed := gk.remove_selected_index(a.combo, cx, gk.Base_Index_Path{row = 1})
+			fmt.printf("lists2 combobox remove=%v values=%v\n", removed, gk.selected_values(a.combo, cx))
 			vals := [?]string{"apple", "mango"}
-			a.combo->set_selected_values(cx, vals[:])
-			a.combo->set_query(cx, "an")
+			gk.set_selected_values(a.combo, cx, vals[:])
+			gk.set_query(a.combo, cx, "an")
 		case 2:
-			fmt.printf("lists2 combobox set values=%v query=%q\n", a.combo->selected_values(cx), a.combo->query(cx))
-			a.combo->clear_selection(cx)
+			fmt.printf("lists2 combobox set values=%v query=%q\n", gk.selected_values(a.combo, cx), gk.query(a.combo, cx))
+			gk.clear_selection(a.combo, cx)
 		case 3:
-			_, has := a.combo->selected_value(cx).?
-			fmt.printf("lists2 combobox cleared n=%d has=%v\n", len(a.combo->selected_values(cx)), has)
+			_, has := gk.selected_value(a.combo, cx).?
+			fmt.printf("lists2 combobox cleared n=%d has=%v\n", len(gk.selected_values(a.combo, cx)), has)
 		}
 	case "table":
 		switch a.step {
@@ -215,11 +215,11 @@ step :: proc(a: ^App, cx: ^gk.Cx) {
 				row_style = gk.style_refinement_default()->text_color(gk.theme(.Muted_Foreground)),
 			})
 		case 2:
-			d := a.table->dump_range(cx, gk.Range{0, 3})
+			d := gk.dump_range(a.table, cx, gk.Range{0, 3})
 			fmt.printf("lists2 table dump headers=%v rows=%v\n", d.v0, d.v1)
-			fit := a.table->fit_col(cx, 1)
-			nofit := a.table->fit_col(cx, 2)
-			back := a.table->delegate(cx)
+			fit := gk.fit_col(a.table, cx, 1)
+			nofit := gk.fit_col(a.table, cx, 2)
+			back := gk.delegate(a.table, cx)
 			fmt.printf("lists2 table fit=%v nofit=%v delegate_is_source=%v\n", fit, nofit, back.h == a.cells.h)
 		}
 	case "released":
@@ -230,21 +230,21 @@ step :: proc(a: ^App, cx: ^gk.Cx) {
 		case 1:
 			// Select and scroll each from code (generated state calls).
 			fmt.printf("lists2 drive before list=%v table=%v tree=%v\n", drawn(a, "list", 500), drawn(a, "table", 700), drawn(a, "tree", 150))
-			a.list->set_selected_index(cx, 500)
-			a.list->scroll_to_item(cx, 500, .Top)
-			a.table->set_selected_row(cx, 700)
-			a.table->scroll_to_row(cx, 700)
-			a.tree->set_selected_index(cx, 150)
-			a.tree->scroll_to_item(cx, 150, .Top)
+			gk.set_selected_index(a.list, cx, 500)
+			gk.scroll_to_item(a.list, cx, 500, .Top)
+			gk.set_selected_row(a.table, cx, 700)
+			gk.scroll_to_row(a.table, cx, 700)
+			gk.set_selected_index(a.tree, cx, 150)
+			gk.scroll_to_item(a.tree, cx, 150, .Top)
 		case 2:
-			li, lok := a.list->selected_index(cx).?
-			tr, tok := a.table->selected_row(cx).?
-			ti, iok := a.tree->selected_index(cx).?
+			li, lok := gk.selected_index(a.list, cx).?
+			tr, tok := gk.selected_row(a.table, cx).?
+			ti, iok := gk.selected_index(a.tree, cx).?
 			fmt.printf("lists2 drive selected list=%d table=%d tree=%d ok=%v\n", li.row, tr, ti, lok && tok && iok)
 			fmt.printf("lists2 drive scrolled list=%v table=%v tree=%v\n", drawn(a, "list", 500), drawn(a, "table", 700), drawn(a, "tree", 150))
 			// The list's scroll handle (an object a read hands out, temporary).
-			a.list->scroll_handle(cx)->scroll_to_item(cx, 900, .Top)
-			a.table->scroll_to_row(cx, 0)
+			gk.scroll_to_item(gk.list_state_scroll_handle(a.list, cx), cx, 900, .Top)
+			gk.scroll_to_row(a.table, cx, 0)
 		case 3:
 			fmt.printf("lists2 drive handle list900=%v table0=%v\n", drawn(a, "list", 900), drawn(a, "table", 0))
 		}
@@ -252,8 +252,8 @@ step :: proc(a: ^App, cx: ^gk.Cx) {
 		switch a.step {
 		case 1:
 			// Handlers given to calls (a builder's validate, set_validator) belong to the state.
-			a.in2->set_validator(cx, gk.on(no_x))
-			a.in2->set_validator(cx, gk.on(no_x))
+			gk.set_validator(a.in2, cx, gk.on(no_x))
+			gk.set_validator(a.in2, cx, gk.on(no_x))
 		case 2:
 			a.mode = "kept-gone" // the view stops showing the inputs before they are released
 		case 3:
@@ -282,13 +282,13 @@ step :: proc(a: ^App, cx: ^gk.Cx) {
 	case "status-colors":
 		// A library object with no constructor but Default (PROTOCOLS.md 9.13): its reads.
 		sc := gk.status_colors_default(cx)
-		e := sc->error(cx)
-		fmt.printf("lists2 status error=%v warning=%v\n", e, sc->warning(cx))
+		e := gk.error(sc, cx)
+		fmt.printf("lists2 status error=%v warning=%v\n", e, gk.warning(sc, cx))
 		fmt.printf("lists2 status error_opaque=%v error_not_warning=%v created_is_success=%v deleted_is_error=%v border_is_error=%v\n",
-			e.a == 1, e != sc->warning(cx), sc->created(cx) == sc->success(cx), sc->deleted(cx) == e, sc->error_border(cx) == e)
+			e.a == 1, e != gk.warning(sc, cx), gk.created(sc, cx) == gk.success(sc, cx), gk.deleted(sc, cx) == e, gk.error_border(sc, cx) == e)
 		syn := gk.syntax_colors_default(cx)
-		_, has := syn->style(cx, "keyword").?
-		_, has0 := syn->style_for_index(cx, 0).?
+		_, has := gk.style(syn, cx, "keyword").?
+		_, has0 := gk.style_for_index(syn, cx, 0).?
 		fmt.printf("lists2 status syntax keyword=%v index0=%v\n", has, has0)
 		gk.release(cx, sc)
 		gk.release(cx, syn)
@@ -296,25 +296,25 @@ step :: proc(a: ^App, cx: ^gk.Cx) {
 		switch a.step {
 		case 1:
 			// A mask the binding could not set before: the Number variant (a char separator).
-			a.in2->set_mask_pattern(cx, gk.Mask_Pattern_Number{separator = ',', fraction = 2})
+			gk.set_mask_pattern(a.in2, cx, gk.Mask_Pattern_Number{separator = ',', fraction = 2})
 		case 2:
-			fmt.printf("lists2 mask pattern=%q number=%q\n", a.in1->value(cx), a.in2->value(cx))
+			fmt.printf("lists2 mask pattern=%q number=%q\n", gk.value(a.in1, cx), gk.value(a.in2, cx))
 		}
 	case "validate":
-		fmt.printf("lists2 validate value=%q calls=%d\n", a.in1->value(cx), a.checks)
+		fmt.printf("lists2 validate value=%q calls=%d\n", gk.value(a.in1, cx), a.checks)
 	case "text":
-		a.in1->set_selected_range(cx, gk.Range{6, 11})
-		fmt.printf("lists2 text text=%q selected=%q\n", a.in1->text(cx), a.in1->selected_text(cx))
+		gk.set_selected_range(a.in1, cx, gk.Range{6, 11})
+		fmt.printf("lists2 text text=%q selected=%q\n", gk.input_state_text(a.in1, cx), gk.selected_text(a.in1, cx))
 	case "expr":
-		fmt.printf("lists2 expr step_by=%q by_value=%q\n", a.in1->value(cx), a.in2->value(cx))
+		fmt.printf("lists2 expr step_by=%q by_value=%q\n", gk.value(a.in1, cx), gk.value(a.in2, cx))
 	case "display-map":
 		dm := gk.display_map(cx, gk.font("Inter"), 14, nil)
 		folds := [?]gk.Fold_Range{}
-		dm->set_fold_candidates(cx, folds[:])
-		dm->set_font(cx, gk.font("Inter", 700), 16)
+		gk.set_fold_candidates(dm, cx, folds[:])
+		gk.set_font(dm, cx, gk.font("Inter", 700), 16)
 		fmt.printf("lists2 display-map lines=%d rows=%d wraps=%d text=%q folded=%v candidate=%v\n",
-			dm->buffer_line_count(cx), dm->display_row_count(cx), dm->wrap_row_count(cx), dm->text(cx),
-			dm->is_folded_at(cx, 0), dm->is_fold_candidate(cx, 0))
+			gk.buffer_line_count(dm, cx), gk.display_row_count(dm, cx), gk.wrap_row_count(dm, cx), gk.display_map_text(dm, cx),
+			gk.is_folded_at(dm, cx, 0), gk.is_fold_candidate(dm, cx, 0))
 		gk.release(cx, dm)
 	}
 }
@@ -390,31 +390,31 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	case "select":
 		a.src = gk.search_source(cx, a, FRUIT[:])
 		a.sel = gk.select_state(cx, a.src, nil)->build()
-		a.sub = a.sel->on_select_event(cx, gk.on(select_event))
+		a.sub = gk.on_select_event(a.sel, cx, gk.on(select_event))
 	case "search":
 		a.src = gk.search_source(cx, a, FRUIT[:])
 		a.sel = gk.select_state(cx, a.src, nil)->searchable(true)->build()
-		a.sub = a.sel->on_select_event(cx, gk.on(select_event))
+		a.sub = gk.on_select_event(a.sel, cx, gk.on(select_event))
 	case "search-requests":
 		a.src = gk.search_source(cx, a, FRUIT[:], requests = gk.on(search_request))
 		a.sel = gk.select_state(cx, a.src, nil)->searchable(true)->build()
-		a.sub = a.sel->on_select_event(cx, gk.on(select_event))
+		a.sub = gk.on_select_event(a.sel, cx, gk.on(select_event))
 	case "rows", "released":
 		groups := [?]gk.Search_Group{{title = "Fruit", items = FRUIT[:]}, {title = "Veg", items = VEG[:]}}
 		a.src = gk.search_source_groups(cx, a, groups[:], item_row, headers = true)
 		a.sel = gk.select_state(cx, a.src, nil)->build()
-		a.sub = a.sel->on_select_event(cx, gk.on(select_event))
+		a.sub = gk.on_select_event(a.sel, cx, gk.on(select_event))
 	case "combobox":
 		a.src = gk.search_source(cx, a, FRUIT[:])
 		a.combo = gk.combobox_state(cx, a.src, []int{1})->multiple(true)->build()
-		a.sub = a.combo->on_combobox_event(cx, gk.on(combo_event))
+		a.sub = gk.on_combobox_event(a.combo, cx, gk.on(combo_event))
 	case "will-change":
 		// The combobox mode's start, with rules (PROTOCOLS.md 11.25): Cherry, which Down and Enter add
 		// there, is blocked here; Banana is locked.
 		a.src = gk.search_source(cx, a, FRUIT[:])
 		start := [?]gk.Base_Index_Path{{row = 1}}
 		a.combo = gk.combobox_state(cx, a.src, start[:])->multiple(true)->build()
-		a.sub = a.combo->on_combobox_event(cx, gk.on(combo_event))
+		a.sub = gk.on_combobox_event(a.combo, cx, gk.on(combo_event))
 		gk.search_will_change(cx, a.src, gk.Search_Rules{locked = []string{"banana"}, blocked = []string{"cherry"}})
 	case "table":
 		a.cells = gk.table_source(cx, a, 20, COLUMNS[:], cell, initial_rows = 8)
@@ -457,7 +457,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 		a.in1 = gk.input_state(cx)->default_value("9")->step_by("x < 10 ? 1 : 10")->build()
 		// The same as NumberStep's ByValue variant, which the binding could not give before.
 		a.in2 = gk.input_state(cx)->default_value("3")->build()
-		a.in2->set_step(cx, gk.Number_Step_By_Value{"y == 1 ? x : 0.5"}) // Increment doubles, Decrement takes 0.5
+		gk.set_step(a.in2, cx, gk.Number_Step_By_Value{"y == 1 ? x : 0.5"}) // Increment doubles, Decrement takes 0.5
 	case "bad-expr":
 		a.in1 = gk.input_state(cx)->step_by("x < 10 ? 1")->build()
 	case "providers":

@@ -57,7 +57,7 @@ controls_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 // echo_view reads kit state through its handle: the library observes the input and has this
 // view described again when it changes.
 echo_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
-	name := a.name->value(cx) // gk.Temp_String, valid until this turn ends
+	name := gk.value(a.name, cx) // gk.Temp_String, valid until this turn ends
 	if gk_test != "" {
 		fmt.printf("gk-test echo value=%q\n", name)
 	}
@@ -84,13 +84,13 @@ handler_checks :: proc(a: ^App, cx: ^gk.Cx) {
 	no := gk.handler(proc(a: ^App, cx: ^gk.Cx) -> bool {return false})
 	fmt.printf("gk-test return true=%d false=%d\n", gk.test_fire(cx, yes), gk.test_fire(cx, no))
 	inside := gk.handler(proc(a: ^App, cx: ^gk.Cx) -> bool {
-		_, ok := a.name->try_value(cx) // the input is on lease here
+		_, ok := gk.try_value(a.name, cx) // the input is on lease here
 		a.busy = !ok
-		a.name->set_value(cx, "deferred") // a write; lands after the update
+		gk.set_value(a.name, cx, "deferred") // a write; lands after the update
 		return true
 	})
 	ret := gk.test_fire_in_update(cx, a.name, inside)
-	fmt.printf("gk-test lease busy=%v ret=%d value_right_after=%q\n", a.busy, ret, a.name->value(cx))
+	fmt.printf("gk-test lease busy=%v ret=%d value_right_after=%q\n", a.busy, ret, gk.value(a.name, cx))
 }
 
 tick :: proc(a: ^App, cx: ^gk.Cx) {

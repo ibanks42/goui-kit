@@ -105,13 +105,13 @@ input_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	a.events += 1
 	switch v in e {
 	case gk.Input_Event_Change:
-		fmt.printf("proto input change value=%q\n", a.name->value(cx))
+		fmt.printf("proto input change value=%q\n", gk.value(a.name, cx))
 	case gk.Input_Event_Press_Enter:
 		fmt.printf("proto input enter secondary=%v shift=%v\n", v.secondary, v.shift)
 		if a.mode == "state" {
 			// Read your own write: a read flushes the buffered write first.
-			a.name->set_value(cx, "written")
-			fmt.printf("proto read-after-write value=%q\n", a.name->value(cx))
+			gk.set_value(a.name, cx, "written")
+			fmt.printf("proto read-after-write value=%q\n", gk.value(a.name, cx))
 			gk.release(cx, a.sub)
 			fmt.println("proto unsubscribed")
 		}
@@ -134,14 +134,14 @@ boom :: proc(a: ^App, cx: ^gk.Cx) {
 		gk.test_panic(cx, true)
 	case "stale":
 		gk.release(cx, a.name)
-		fmt.printf("proto stale value=%q\n", a.name->value(cx))
+		fmt.printf("proto stale value=%q\n", gk.value(a.name, cx))
 	case "stale-write":
 		gk.release(cx, a.name)
-		a.name->set_value(cx, "to a released handle") // buffered: fails after this handler
+		gk.set_value(a.name, cx, "to a released handle") // buffered: fails after this handler
 		fmt.println("proto stale-write buffered")
 	case "wrong-type":
-		fake := gk.Input_State{{a.rows.h}, a.name.vt}
-		fmt.printf("proto wrong value=%q\n", fake->value(cx))
+		fake := gk.Input_State{{a.rows.h}}
+		fmt.printf("proto wrong value=%q\n", gk.value(fake, cx))
 	case "thread":
 		a.cx = cx
 		t := thread.create_and_start_with_poly_data(a, proc(a: ^App) {
@@ -233,15 +233,15 @@ memory_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 // put back and lands after; a queued event runs after the update and reads freely.
 lease :: proc(a: ^App, cx: ^gk.Cx) {
 	inside := gk.handler(proc(a: ^App, cx: ^gk.Cx) -> bool {
-		_, ok := a.name->try_value(cx)
-		a.name->set_value(cx, "written inside the update")
+		_, ok := gk.try_value(a.name, cx)
+		gk.set_value(a.name, cx, "written inside the update")
 		fmt.printf("proto lease busy=%v\n", !ok)
 		return true
 	})
 	ret := gk.test_fire_in_update(cx, a.name, inside)
-	fmt.printf("proto lease ret=%d value_after=%q\n", ret, a.name->value(cx))
+	fmt.printf("proto lease ret=%d value_after=%q\n", ret, gk.value(a.name, cx))
 	gk.test_fire_queued(cx, a.name, gk.on(proc(a: ^App, cx: ^gk.Cx, row: int) {
-		text, ok := a.name->try_value(cx)
+		text, ok := gk.try_value(a.name, cx)
 		fmt.printf("proto queued row=%d ok=%v value=%q\n", row, ok, text)
 	}), 42)
 	fmt.println("proto queued not yet")
@@ -251,7 +251,7 @@ lease :: proc(a: ^App, cx: ^gk.Cx) {
 
 frame :: proc(a: ^App, cx: ^gk.Cx) {
 	a.frame += 1
-	a.name->set_value(cx, fmt.tprintf("frame %d", a.frame))
+	gk.set_value(a.name, cx, fmt.tprintf("frame %d", a.frame))
 }
 
 // A frame handler that touches nothing the views show: it must still run before every frame.
@@ -393,7 +393,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.focus = gk.focus_handle(cx)
 	switch a.mode {
 	case "state":
-		a.sub = a.name->on_input_event(cx, gk.on(input_event))
+		a.sub = gk.on_input_event(a.name, cx, gk.on(input_event))
 	case "write-rule":
 		gk.on_frame(cx, frame)
 	case "frames":
@@ -439,10 +439,10 @@ root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	value: gk.Temp_String
 	switch a.mode {
 	case "state", "write-rule":
-		value = a.name->value(cx) // a dependency: described again when the input changes
+		value = gk.value(a.name, cx) // a dependency: described again when the input changes
 		fmt.printf("proto echo view=%d frame=%d value=%q\n", a.views, a.frame, value)
 	case "view-write":
-		a.name->set_value(cx, "written by a view")
+		gk.set_value(a.name, cx, "written by a view")
 	}
 	col := gk.v_flex(.Size_Full, .P_4)->bg(gk.theme(.Background))->text_color(gk.theme(.Foreground))->
 		child(row)->

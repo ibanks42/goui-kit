@@ -2,8 +2,8 @@ package gk
 
 // Library objects behind handles (docs/PROTOCOLS.md section 13): kit values that are not
 // entities (a dialog's handle, a scroll handle, a search matcher, the theme). A generated
-// object type is struct {using state: State, using vt: ^T_VT}, like kit state, with a handle of
-// kind OBJ. What generated code uses from here: obj_get, register_obj. What the app uses:
+// object type is struct {using state: State}, like kit state, with a handle of kind OBJ, and
+// procedures named after it. What generated code uses from here: obj_get. What the app uses:
 // gk.retain.
 //
 // An object a constructor makes is kept until gk.release. One that a read, a call or an event
@@ -13,47 +13,17 @@ package gk
 import "base:intrinsics"
 import "base:runtime"
 
-@(private)
-MAX_OBJ_TYPES :: 512
-
-@(private)
-Obj_Type :: struct {
-	id: typeid,
-	vt: rawptr,
-}
-
-@(private)
-obj_types: [MAX_OBJ_TYPES]Obj_Type
-@(private)
-n_obj_types: int
-
-// register_obj records the method table of a generated object type, so that a value of it
-// read by reflection (an event's payload, a read's result) gets its table: on the wire it is
-// only the handle.
-@(private)
-register_obj :: proc "contextless" (id: typeid, vt: rawptr) {
-	if n_obj_types < MAX_OBJ_TYPES {
-		obj_types[n_obj_types] = {id, vt}
-		n_obj_types += 1
-	}
-}
-
-// read_obj reads an object handle into a value of a generated object type and gives it its
-// method table. False for any other type. Called by rd_value for every struct.
+// read_obj reads a handle into a value of a generated state or object type (struct {using
+// state: State}): on the wire it is only the handle. False for any other type. Called by
+// rd_value for every struct.
 @(private)
 read_obj :: proc(r: ^Reader, p: rawptr, ti: ^runtime.Type_Info) -> bool {
 	s, ok := runtime.type_info_base(ti).variant.(runtime.Type_Info_Struct)
-	if !ok || s.field_count != 2 || s.names[0] != "state" || s.types[0].id != State {
+	if !ok || s.field_count != 1 || s.names[0] != "state" || s.types[0].id != State {
 		return false
 	}
-	for i in 0 ..< n_obj_types {
-		if obj_types[i].id == ti.id {
-			(cast(^u64)p)^ = rd_u64(r)
-			intrinsics.unaligned_store(cast(^rawptr)(uintptr(p) + s.offsets[1]), obj_types[i].vt)
-			return true
-		}
-	}
-	return false
+	(cast(^u64)p)^ = rd_u64(r)
+	return true
 }
 
 // obj_get runs a read call op of a library object (or of none: a global accessor). Buffered

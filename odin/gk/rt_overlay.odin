@@ -150,7 +150,7 @@ app_menu_bar :: proc(cx: ^Cx, loc := #caller_location) -> App_Menu_Bar {
 	req := make(Tape, 0, 8, context.temp_allocator)
 	put_u16(&req, C_APP_MENU_BAR_NEW)
 	r := Reader{must_call(req[:], loc), 0}
-	return App_Menu_Bar{state = {h = rd_u64(&r)}, vt = &app_menu_bar_vt}
+	return App_Menu_Bar{state = {h = rd_u64(&r)}}
 }
 
 app_menu_bar_view :: proc(bar: App_Menu_Bar, loc := #caller_location) -> Element {

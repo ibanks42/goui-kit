@@ -70,23 +70,23 @@ act :: proc(a: ^App, cx: ^gk.Cx) {
 		gk.release(cx, a.src)
 		fmt.println("gk-neg table-freed released the source")
 	case "huge-count":
-		a.table->scroll_to_row(cx, 2_147_483_700)
+		gk.scroll_to_row(a.table, cx, 2_147_483_700)
 	case "nul":
 		in_ := "a\x00b"
-		a.name->set_value(cx, in_)
-		v := a.name->value(cx)
+		gk.set_value(a.name, cx, in_)
+		v := gk.value(a.name, cx)
 		fmt.printf("gk-neg nul len=%d same=%v\n", len(v), string(v) == in_)
 	case "utf8":
 		bad := [?]u8{'o', 'k', 0xff, 'x'}
-		a.name->set_value(cx, string(bad[:]))
-		v := a.name->value(cx)
+		gk.set_value(a.name, cx, string(bad[:]))
+		v := gk.value(a.name, cx)
 		fmt.printf("gk-neg utf8 accepted value=%q len=%d\n", v, len(v))
 	}
 }
 
 changed :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	if _, ok := e.(gk.Input_Event_Change); ok {
-		v := gk.keep(a.name->value(cx))
+		v := gk.keep(gk.value(a.name, cx))
 		gk.release(cx, a.name) // its own input, which the view still shows
 		fmt.printf("gk-neg input-release released in its handler value=%q\n", v)
 	}
@@ -106,7 +106,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	case "nul", "utf8", "input-release":
 		a.name = gk.input_state(cx)->build()
 		if a.mode == "input-release" {
-			a.sub = a.name->on_input_event(cx, gk.on(changed))
+			a.sub = gk.on_input_event(a.name, cx, gk.on(changed))
 		}
 	}
 }

@@ -130,7 +130,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	case "items-nav":
 		a.nav = gk.nav_stack_state(cx)
 		a.page = gk.view(a, nil, page_view)
-		a.nav->push(cx, a.page, .Immediate)
+		gk.push(a.nav, cx, a.page, .Immediate)
 	}
 }
 

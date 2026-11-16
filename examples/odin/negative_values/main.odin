@@ -42,7 +42,7 @@ clicked :: proc(a: ^App, cx: ^gk.Cx) {
 		t = t->child(t)
 	case "val-bad-time":
 		tf := gk.time_field_state(cx)->build()
-		tf->set_time(cx, gk.Naive_Time{24, 0, 0, 0})
+		gk.set_time(tf, cx, gk.Naive_Time{24, 0, 0, 0})
 	case "val-scroll-freed":
 		gk.release(cx, a.scroll)
 	case "c6-rules-source":
@@ -62,14 +62,14 @@ view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	switch a.mode {
 	case "val-ok":
 		if a.band.h != 0 {
-			x, _ := a.band->tick(cx, "y").?
+			x, _ := gk.tick(a.band, cx, "y").?
 			body = body->child(gk.text(fmt.tprintf("y at %.0f", x)))
 		}
 	case "val-self-view":
 		t := gk.tree_item("a", "A")
 		t = t->child(t)
 	case "val-write-view":
-		gk.theme_global(cx)->set_font_size(cx, 20)
+		gk.set_font_size(gk.theme_global(cx), cx, 20)
 	case "val-action-view":
 		_ = gk.action_of(cx, gk.cancel_default())
 	case "val-scroll-freed":

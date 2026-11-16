@@ -87,7 +87,7 @@ Rust's `.when(cond, |this| this.bg(..))` is an ordinary `if` in Odin, since a ch
   `gk.open_window_with(cx, {width = 320, height = 240, title = "More", min_width = 200}, gk.view(a, nil, columns))`
   sets four fields and leaves the rest.
 - An `IndexPath` (a row of a list, a select or a combobox) is the row alone where a call takes one
-  (`a.list->set_selected_index(cx, 4)`, `a.list->scroll_to_item(cx, 4, .Top)`), or the full
+  (`gk.set_selected_index(a.list, cx, 4)`, `gk.scroll_to_item(a.list, cx, 4, .Top)`), or the full
   `gk.Base_Index_Path{section = 1, row = 4}`; an `Option<IndexPath>` also takes `nil`, a list of
   them `[]int{0, 2}`. Reads and events hand back the full record (`c.row`).
 - A closure parameter is a handler (below) or, where the kit draws a part of a component per item
@@ -103,9 +103,9 @@ Rust's `.when(cond, |this| this.bg(..))` is an ordinary `if` in Odin, since a ch
 | `cx.open_window(options, \|window, cx\| ..)` | `gk.open_window(cx, "API", {640, 480}, gk.view(a, init, view))`; every other option: `gk.open_window_with` |
 | `cx.new(\|cx\| InputState::new(window, cx).placeholder("Name"))` | `gk.input_state(cx)->placeholder("Name")->build()`, in `init`, kept in your struct |
 | `Input::new(&self.name)` | `gk.input(a.name)` |
-| `self.name.read(cx).value()` | `a.name->value(cx)` (a `gk.Temp_String`, lent until the handler returns) |
-| `self.name.update(cx, \|s, cx\| s.set_value("", window, cx))` | `a.name->set_value(cx, "")` (applied when the handler returns) |
-| `cx.subscribe(&self.name, \|this, _, e: &InputEvent, cx\| ..)` | `a.name->on_input_event(cx, gk.on(name_event))` |
+| `self.name.read(cx).value()` | `gk.value(a.name, cx)` (a `gk.Temp_String`, lent until the handler returns) |
+| `self.name.update(cx, \|s, cx\| s.set_value("", window, cx))` | `gk.set_value(a.name, cx, "")` (applied when the handler returns) |
+| `cx.subscribe(&self.name, \|this, _, e: &InputEvent, cx\| ..)` | `gk.on_input_event(a.name, cx, gk.on(name_event))` |
 | `.on_click(cx.listener(\|this, e: &ClickEvent, window, cx\| ..))` | `->on_click(gk.on(clicked))` with `clicked :: proc(a: ^App, cx: ^gk.Cx, e: gk.Click_Event)` |
 | a closure that captures `ix` | `gk.on(remove, 3)`: the value is copied and handed after `cx` (or after the event) |
 | `cx.stop_propagation()` | `gk.stop_propagation(cx)` |
@@ -138,7 +138,7 @@ where upstream's closure returns one.
 | your state struct | as long as you keep it | the binding holds only the pointer you gave `gk.view`/`gk.run`; keep it alive (a local in `main` before `gk.run` is fine) |
 | elements and values (`gk.label(..)`, a menu, a column) | one call of the view procedure that made them | make them again on each call; a procedure that returns one is how parts are reused |
 | handles: `gk.Input_State`, `gk.List_State` and every kit state type, `gk.View`, `gk.Action`, `gk.Window`, `gk.Timer`, row sources | until `gk.release(cx, a.list)` | keep them in your struct |
-| `gk.Temp_String` (a read like `a.name->value(cx)`, event text) | until the handler, `init` or view procedure returns | `gk.keep(text)` or `strings.clone(string(text))`; it does not assign to a `string` by itself |
+| `gk.Temp_String` (a read like `gk.value(a.name, cx)`, event text) | until the handler, `init` or view procedure returns | `gk.keep(text)` or `strings.clone(string(text))`; it does not assign to a `string` by itself |
 | `^gk.Cx` | the call it was given to | never; every procedure the binding calls gets one |
 | `context.temp_allocator` | the call it was used in | the binding frees it after each call |
 | a value given to `gk.on(remove, 3)` | copied, strings too; pointers are refused | it is yours in the handler |
@@ -166,8 +166,8 @@ types, is in its generated file.
 - **`gk.Icon`** (Icon, element): `gk.icon_default()` or `gk.icon_empty()` or `gk.icon(icon)`; `->small`, `->large`, `->data`, `->path`, `->rotate`, `->transform`, `->with_size`, `->xsmall`
 - **`gk.Title_Bar`** (TitleBar, element): `gk.title_bar()`; `->on_close_window`
 - **`gk.Window_Border`** (WindowBorder, element): `gk.kit_window_border()` or `gk.window_border()` or `gk.window_border_default()`; `->resize_hit_size`, `->shadow_size`
-- **`gk.Theme`** (Theme, kit state): handed out by the kit (no constructor); reads `->apply_semantic_config`, `->apply_semantic_config_str`, `->color_tokens`, `->colors`, `->cursor_blink`, `->dark_theme`, `->focus_ring`, `->font_family` and 31 more; writes `->apply_config`, `->apply_semantic_tokens`, `->set_colors`, `->set_cursor_blink`, `->set_dark_theme`, `->set_focus_ring`, `->set_font_family`, `->set_font_size` and 14 more
-- **`gk.Theme_Registry`** (ThemeRegistry, kit state): handed out by the kit (no constructor); reads `->default_dark_theme`, `->default_light_theme`, `->default_themes`, `->load_themes_from_str`, `->sorted_themes`, `->themes`
+- **`gk.Theme`** (Theme, kit state): handed out by the kit (no constructor); reads `gk.apply_semantic_config`, `gk.apply_semantic_config_str`, `gk.color_tokens`, `gk.colors`, `gk.cursor_blink`, `gk.dark_theme`, `gk.focus_ring`, `gk.font_family` and 31 more; writes `gk.apply_config`, `gk.apply_semantic_tokens`, `gk.set_colors`, `gk.set_cursor_blink`, `gk.set_dark_theme`, `gk.set_focus_ring`, `gk.set_font_family`, `gk.set_font_size` and 14 more
+- **`gk.Theme_Registry`** (ThemeRegistry, kit state): handed out by the kit (no constructor); reads `gk.default_dark_theme`, `gk.default_light_theme`, `gk.default_themes`, `gk.load_themes_from_str`, `gk.sorted_themes`, `gk.themes`
 
 ### component::accordion
 
@@ -231,7 +231,7 @@ types, is in its generated file.
 - **`gk.Carousel_Pagination`** (CarouselPagination, element): `gk.carousel_pagination()`
 - **`gk.Carousel_Pagination_Item`** (CarouselPaginationItem, element): `gk.carousel_pagination_item(id, index, state)`; `->small`, `->large`, `->with_size`, `->xsmall`
 - **`gk.Carousel_Previous`** (CarouselPrevious, element): `gk.carousel_previous(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Carousel_State`** (CarouselState, kit state): `gk.carousel_state(cx, item_count)->…->build()`; shown by `gk.carousel(state)`, `gk.carousel_content(state)`, `gk.carousel_item(state)`, `gk.carousel_next(state)`, `gk.carousel_pagination_item(state)`, `gk.carousel_previous(state)`; built with `->with_axis`, `->with_looping`, `->with_selected_index`; reads `->axis`, `->has_next`, `->has_previous`, `->is_looping`, `->item_count`, `->select_first`, `->select_index`, `->select_last` and 3 more; writes `->set_axis`, `->set_item_count`, `->set_looping`, `->set_selected_index`; events `->on_carousel_event(cx, gk.on(p))`
+- **`gk.Carousel_State`** (CarouselState, kit state): `gk.carousel_state(cx, item_count)->…->build()`; shown by `gk.carousel(state)`, `gk.carousel_content(state)`, `gk.carousel_item(state)`, `gk.carousel_next(state)`, `gk.carousel_pagination_item(state)`, `gk.carousel_previous(state)`; built with `->with_axis`, `->with_looping`, `->with_selected_index`; reads `gk.axis`, `gk.has_next`, `gk.has_previous`, `gk.is_looping`, `gk.item_count`, `gk.select_first`, `gk.select_index`, `gk.select_last` and 3 more; writes `gk.set_axis`, `gk.set_item_count`, `gk.set_looping`, `gk.set_selected_index`; events `gk.on_carousel_event(s, cx, gk.on(p))`
 
 ### component::chart
 
@@ -265,19 +265,19 @@ types, is in its generated file.
 
 - **`gk.Caret`** (Caret, element): `gk.caret(size)`
 - **`gk.Combobox`** (Combobox<GkSearchDelegate>, element): `gk.combobox(state)`; `->icon`, `->placeholder`, `->footer`, `->small`, `->large`, `->disabled`, `->appearance`, `->check_icon` and 7 more
-- **`gk.Combobox_State`** (ComboboxState<GkSearchDelegate>, kit state): `gk.combobox_state(cx, gk.search_source(cx, a, items), selected_indices)->…->build()`; shown by `gk.combobox(state)`; built with `->multiple`, `->searchable`; reads `->add_selected_index`, `->query`, `->remove_selected_index`, `->selected_value`, `->selected_values`, `->selection`; writes `->clear_selection`, `->focus`, `->set_items`, `->set_query`, `->set_selected_indices`, `->set_selected_values`; events `->on_combobox_event(cx, gk.on(p))`
+- **`gk.Combobox_State`** (ComboboxState<GkSearchDelegate>, kit state): `gk.combobox_state(cx, gk.search_source(cx, a, items), selected_indices)->…->build()`; shown by `gk.combobox(state)`; built with `->multiple`, `->searchable`; reads `gk.add_selected_index`, `gk.query`, `gk.remove_selected_index`, `gk.selected_value`, `gk.selected_values`, `gk.selection`; writes `gk.clear_selection`, `gk.combobox_state_focus`, `gk.set_items`, `gk.set_query`, `gk.set_selected_indices`, `gk.set_selected_values`; events `gk.on_combobox_event(s, cx, gk.on(p))`
 
 ### component::command
 
 - **`gk.Command`** (Command, element): `gk.command(state)`; `->placeholder`, `->on_select`, `->bordered`, `->filterable`, `->item`, `->items`, `->on_cancel`, `->on_confirm` and 4 more
-- **`gk.Command_State`** (CommandState, kit state): handed out by the kit (no constructor); shown by `gk.command(state)`; reads `->is_loading`, `->matched_count`, `->query`, `->selected_index`; writes `->focus`, `->set_loading`, `->set_query`, `->set_selected_index`
+- **`gk.Command_State`** (CommandState, kit state): handed out by the kit (no constructor); shown by `gk.command(state)`; reads `gk.is_loading`, `gk.matched_count`, `gk.query`, `gk.selected_index`; writes `gk.command_state_focus`, `gk.set_loading`, `gk.set_query`, `gk.set_selected_index`
 - **`gk.Command_Group`** (CommandGroup, value): `gk.command_group()`; `->label`, `->item`, `->items`
 - **`gk.Command_Item`** (CommandItem, value): `gk.command_item()` or `gk.command_item_default()`; `->label`, `->child`, `->checked`, `->icon`, `->disabled`, `->action`, `->keywords`
 
 ### component::date_picker
 
 - **`gk.Date_Picker`** (DatePicker, element): `gk.date_picker(state)`; `->placeholder`, `->small`, `->large`, `->disabled`, `->appearance`, `->cleanable`, `->number_of_months`, `->presets` and 2 more
-- **`gk.Date_Picker_State`** (DatePickerState, kit state): `gk.date_picker_state(cx)->…->build()` or `gk.date_picker_state_range(cx)->…->build()`; shown by `gk.date_picker(state)`; built with `->date_format`, `->default_time`, `->disabled_matcher`, `->first_day_of_week`, `->hour_cycle`, `->number_of_months`, `->time_precision`; reads `->date`, `->date_time`; writes `->set_date`, `->set_date_time`, `->set_year_range`; events `->on_date_picker_event(cx, gk.on(p))`
+- **`gk.Date_Picker_State`** (DatePickerState, kit state): `gk.date_picker_state(cx)->…->build()` or `gk.date_picker_state_range(cx)->…->build()`; shown by `gk.date_picker(state)`; built with `->date_format`, `->default_time`, `->disabled_matcher`, `->first_day_of_week`, `->hour_cycle`, `->number_of_months`, `->time_precision`; reads `gk.date`, `gk.date_time`; writes `gk.set_date`, `gk.set_date_time`, `gk.set_year_range`; events `gk.on_date_picker_event(s, cx, gk.on(p))`
 - **`gk.Date_Range_Preset`** (DateRangePreset, value): `gk.date_range_preset_date_time(label, value)` or `gk.date_range_preset_single(label, date)` or `gk.date_range_preset_range(label, start, end)`
 
 ### component::description_list
@@ -300,14 +300,14 @@ types, is in its generated file.
 ### component::diff
 
 - **`gk.Diff`** (Diff, element): `gk.diff(state)`; `->annotations`, `->change_background`, `->change_indicator`, `->decorations`, `->gutter_markers`, `->header_visible`, `->hover_highlight`, `->hunk_separator` and 6 more
-- **`gk.Diff_Annotation`** (DiffAnnotation, kit state): handed out by the kit (no constructor); reads `->id`, `->path`, `->position`
-- **`gk.Diff_Conflict`** (DiffConflict, kit state): handed out by the kit (no constructor); reads `->base_label`, `->base_lines`, `->current_label`, `->current_lines`, `->incoming_label`, `->incoming_lines`, `->lines`
-- **`gk.Diff_File_Read`** (DiffFile, kit state): handed out by the kit (no constructor); reads `->additions`, `->conflicts`, `->deletions`, `->extended_headers`, `->has_changes`, `->is_binary`, `->is_truncated`, `->language` and 4 more
-- **`gk.Diff_Gutter_Marker_Read`** (DiffGutterMarker, kit state): handed out by the kit (no constructor); reads `->label`, `->id`, `->position`
-- **`gk.Diff_Line_Position`** (DiffLinePosition, kit state): handed out by the kit (no constructor); reads `->line`, `->path`, `->side`
-- **`gk.Diff_Line_Range_Read`** (DiffLineRange, kit state): handed out by the kit (no constructor); reads `->end`, `->end_side`, `->path`, `->side`, `->start`
-- **`gk.Diff_Parse_Error`** (DiffParseError, kit state): handed out by the kit (no constructor); reads `->line`, `->message`
-- **`gk.Diff_State`** (DiffState, kit state): `gk.diff_state(cx, files)->…->build()`; shown by `gk.diff(state)`; built with `->with_context_lines`, `->with_expansion_lines`, `->with_inline_max_line_length`, `->with_inline_unit`, `->with_min_collapsed_lines`, `->with_mode`, `->with_syntax_highlighter`, `->with_syntax_max_line_length`; reads `->conflict_resolution`, `->context_lines`, `->expansion_lines`, `->files`, `->inline_max_line_length`, `->inline_unit`, `->is_file_collapsed`, `->min_collapsed_lines` and 5 more; writes `->clear_syntax_highlighter`, `->collapse_unchanged`, `->expand_unchanged`, `->next_change`, `->previous_change`, `->resolve_conflict`, `->scroll_to_file`, `->scroll_to_line` and 11 more; events `->on_diff_event(cx, gk.on(p))`
+- **`gk.Diff_Annotation`** (DiffAnnotation, kit state): handed out by the kit (no constructor); reads `gk.diff_annotation_id`, `gk.path`, `gk.position`
+- **`gk.Diff_Conflict`** (DiffConflict, kit state): handed out by the kit (no constructor); reads `gk.base_label`, `gk.base_lines`, `gk.current_label`, `gk.current_lines`, `gk.incoming_label`, `gk.incoming_lines`, `gk.lines`
+- **`gk.Diff_File_Read`** (DiffFile, kit state): handed out by the kit (no constructor); reads `gk.additions`, `gk.conflicts`, `gk.deletions`, `gk.extended_headers`, `gk.has_changes`, `gk.is_binary`, `gk.is_truncated`, `gk.language` and 4 more
+- **`gk.Diff_Gutter_Marker_Read`** (DiffGutterMarker, kit state): handed out by the kit (no constructor); reads `gk.diff_gutter_marker_read_id`, `gk.diff_gutter_marker_read_label`, `gk.position`
+- **`gk.Diff_Line_Position`** (DiffLinePosition, kit state): handed out by the kit (no constructor); reads `gk.line`, `gk.path`, `gk.side`
+- **`gk.Diff_Line_Range_Read`** (DiffLineRange, kit state): handed out by the kit (no constructor); reads `gk.diff_line_range_read_start`, `gk.end`, `gk.end_side`, `gk.path`, `gk.side`
+- **`gk.Diff_Parse_Error`** (DiffParseError, kit state): handed out by the kit (no constructor); reads `gk.diff_parse_error_message`, `gk.line`
+- **`gk.Diff_State`** (DiffState, kit state): `gk.diff_state(cx, files)->…->build()`; shown by `gk.diff(state)`; built with `->with_context_lines`, `->with_expansion_lines`, `->with_inline_max_line_length`, `->with_inline_unit`, `->with_min_collapsed_lines`, `->with_mode`, `->with_syntax_highlighter`, `->with_syntax_max_line_length`; reads `gk.conflict_resolution`, `gk.context_lines`, `gk.expansion_lines`, `gk.files`, `gk.inline_max_line_length`, `gk.inline_unit`, `gk.is_file_collapsed`, `gk.min_collapsed_lines` and 5 more; writes `gk.clear_syntax_highlighter`, `gk.collapse_unchanged`, `gk.expand_unchanged`, `gk.next_change`, `gk.previous_change`, `gk.resolve_conflict`, `gk.scroll_to_file`, `gk.scroll_to_line` and 11 more; events `gk.on_diff_event(s, cx, gk.on(p))`
 - **`gk.Diff_Decoration`** (DiffDecoration, value): `gk.diff_decoration(range)`; `->with_background`
 - **`gk.Diff_File`** (DiffFile, value): `gk.diff_file_parse_at(patch, index)` or `gk.diff_file_unchanged(path, text)` or `gk.diff_file_parse_with_at(patch, options, index)`; `->with_language`
 - **`gk.Diff_Gutter_Marker`** (DiffGutterMarker, value): `gk.diff_gutter_marker(id, position)`; `->with_label`
@@ -316,7 +316,7 @@ types, is in its generated file.
 
 ### component::dock
 
-- **`gk.Panel_Handle`** (PanelHandle, kit state): handed out by the kit (no constructor); reads `->panel`
+- **`gk.Panel_Handle`** (PanelHandle, kit state): handed out by the kit (no constructor); reads `gk.panel_handle_panel`
 
 ### component::empty
 
@@ -338,9 +338,9 @@ types, is in its generated file.
 
 ### component::highlighter
 
-- **`gk.Status_Colors`** (StatusColors, kit state): handed out by the kit (no constructor); reads `->created`, `->deleted`, `->error`, `->error_background`, `->error_border`, `->hint`, `->hint_background`, `->hint_border` and 10 more
-- **`gk.Syntax_Colors`** (SyntaxColors, kit state): handed out by the kit (no constructor); reads `->style`, `->style_for_index`
-- **`gk.Syntax_Highlighter`** (SyntaxHighlighter, kit state): handed out by the kit (no constructor); reads `->text`, `->language`
+- **`gk.Status_Colors`** (StatusColors, kit state): handed out by the kit (no constructor); reads `gk.created`, `gk.deleted`, `gk.error`, `gk.error_background`, `gk.error_border`, `gk.hint`, `gk.hint_background`, `gk.hint_border` and 10 more
+- **`gk.Syntax_Colors`** (SyntaxColors, kit state): handed out by the kit (no constructor); reads `gk.style`, `gk.style_for_index`
+- **`gk.Syntax_Highlighter`** (SyntaxHighlighter, kit state): handed out by the kit (no constructor); reads `gk.language`, `gk.syntax_highlighter_text`
 
 ### component::hover_card
 
@@ -374,7 +374,7 @@ types, is in its generated file.
 
 - **`gk.List`** (List<GkListDelegate>, element): `gk.list(state)`; `->small`, `->large`, `->scroll_bounce`, `->scrollbar_visible`, `->search_placeholder`, `->with_size`, `->xsmall`
 - **`gk.List_Item`** (ListItem, element): `gk.list_item(id)`; `->selected`, `->on_click`, `->tooltip`, `->suffix`, `->disabled`, `->check_icon`, `->confirmed`, `->on_mouse_enter` and 3 more
-- **`gk.List_State`** (ListState<GkListDelegate>, kit state): `gk.list_state(cx, gk.list_source(cx, a, count, row))->…->build()`; shown by `gk.list(state)`; built with `->searchable`, `->selectable`; reads `->delegate`, `->delegate_mut`, `->right_clicked_index`, `->scroll_handle`, `->selected_index`; writes `->focus`, `->scroll_to_item`, `->scroll_to_selected_item`, `->set_item_to_measure_index`, `->set_query`, `->set_right_clicked_index`, `->set_searchable`, `->set_selectable` and 1 more; events `->on_list_event(cx, gk.on(p))`
+- **`gk.List_State`** (ListState<GkListDelegate>, kit state): `gk.list_state(cx, gk.list_source(cx, a, count, row))->…->build()`; shown by `gk.list(state)`; built with `->searchable`, `->selectable`; reads `gk.delegate`, `gk.delegate_mut`, `gk.list_state_scroll_handle`, `gk.right_clicked_index`, `gk.selected_index`; writes `gk.list_state_focus`, `gk.scroll_to_item`, `gk.scroll_to_selected_item`, `gk.set_item_to_measure_index`, `gk.set_query`, `gk.set_right_clicked_index`, `gk.set_searchable`, `gk.set_selectable` and 1 more; events `gk.on_list_event(s, cx, gk.on(p))`
 
 ### component::marker
 
@@ -384,7 +384,7 @@ types, is in its generated file.
 
 ### component::menu
 
-- **`gk.App_Menu_Bar`** (AppMenuBar, kit state): handed out by the kit (no constructor); writes `->reload`
+- **`gk.App_Menu_Bar`** (AppMenuBar, kit state): handed out by the kit (no constructor); writes `gk.reload`
 - **`gk.Popup_Menu`** (PopupMenu, value): `gk.popup_menu()`; `->label`, `->action_context`, `->check_side`, `->external_link_icon`, `->item`, `->link`, `->link_with_disabled`, `->link_with_icon` and 18 more
 - **`gk.Popup_Menu_Item`** (PopupMenuItem, value): `gk.popup_menu_item_separator()` or `gk.popup_menu_item(label)` or `gk.popup_menu_item_element(builder)` (and 2 more); `->checked`, `->icon`, `->on_click`, `->disabled`, `->action`
 
@@ -400,7 +400,7 @@ types, is in its generated file.
 ### component::message_scroller
 
 - **`gk.Message_Scroller`** (MessageScroller, element): `gk.message_scroller(id, state, renderer)`; `->jump_button`, `->with_bottom_fade`, `->with_content_style`, `->with_jump_button_label`, `->with_jump_button_renderer`, `->with_jump_button_style`, `->with_jump_button_transition`, `->with_list_style` and 1 more
-- **`gk.Message_Scroller_State`** (MessageScrollerState, kit state): handed out by the kit (no constructor); shown by `gk.message_scroller(state)`; reads `->append`, `->is_following_tail`, `->is_scrolled_up`, `->item_count`, `->logical_scroll_top`, `->prepend`, `->remeasure_items`, `->scroll_to_item` and 1 more; writes `->remeasure`, `->reset`, `->scroll_to_end`
+- **`gk.Message_Scroller_State`** (MessageScrollerState, kit state): handed out by the kit (no constructor); shown by `gk.message_scroller(state)`; reads `gk.is_following_tail`, `gk.is_scrolled_up`, `gk.item_count`, `gk.logical_scroll_top`, `gk.message_scroller_state_append`, `gk.prepend`, `gk.remeasure_items`, `gk.scroll_to_item` and 1 more; writes `gk.remeasure`, `gk.reset`, `gk.scroll_to_end`
 
 ### component::native_menu
 
@@ -408,8 +408,8 @@ types, is in its generated file.
 
 ### component::notification
 
-- **`gk.Notification`** (Notification, kit state): `gk.notification(cx)->…->build()` or `gk.notification_error(cx, message)->…->build()` or `gk.notification_info(cx, message)->…->build()` (and 2 more); built with `->title`, `->icon`, `->on_click`, `->autohide`, `->delivery`, `->in_app_and_system`, `->message`, `->on_close` and 3 more; writes `->dismiss`
-- **`gk.Notification_List`** (NotificationList, kit state): handed out by the kit (no constructor); reads `->notifications`; writes `->clear`, `->push`
+- **`gk.Notification`** (Notification, kit state): `gk.notification(cx)->…->build()` or `gk.notification_error(cx, message)->…->build()` or `gk.notification_info(cx, message)->…->build()` (and 2 more); built with `->title`, `->icon`, `->on_click`, `->autohide`, `->delivery`, `->in_app_and_system`, `->message`, `->on_close` and 3 more; writes `gk.dismiss`
+- **`gk.Notification_List`** (NotificationList, kit state): handed out by the kit (no constructor); reads `gk.notification_list_notifications`; writes `gk.notification_list_clear`, `gk.push`
 
 ### component::pagination
 
@@ -464,7 +464,7 @@ types, is in its generated file.
 ### component::select
 
 - **`gk.Select`** (Select<GkSearchDelegate>, element): `gk.select(state)`; `->icon`, `->placeholder`, `->small`, `->large`, `->disabled`, `->appearance`, `->cleanable`, `->empty` and 7 more
-- **`gk.Select_State`** (SelectState<GkSearchDelegate>, kit state): `gk.select_state(cx, gk.search_source(cx, a, items), selected_index)->…->build()`; shown by `gk.select(state)`; built with `->searchable`; reads `->selected_index`, `->selected_value`; writes `->focus`, `->set_items`, `->set_selected_index`, `->set_selected_value`; events `->on_select_event(cx, gk.on(p))`
+- **`gk.Select_State`** (SelectState<GkSearchDelegate>, kit state): `gk.select_state(cx, gk.search_source(cx, a, items), selected_index)->…->build()`; shown by `gk.select(state)`; built with `->searchable`; reads `gk.selected_index`, `gk.selected_value`; writes `gk.select_state_focus`, `gk.set_items`, `gk.set_selected_index`, `gk.set_selected_value`; events `gk.on_select_event(s, cx, gk.on(p))`
 
 ### component::separator
 
@@ -513,8 +513,8 @@ types, is in its generated file.
 - **`gk.Speech_Button`** (SpeechButton, element): `gk.speech_button(state)`; `->small`, `->large`, `->disabled`, `->show_when_unsupported`, `->with_size`, `->xsmall`
 - **`gk.Speech_Indicator`** (SpeechIndicator, element): `gk.speech_indicator(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
 - **`gk.Speech_Waveform`** (SpeechWaveform, element): `gk.speech_waveform(state)`; `->small`, `->large`, `->liquid`, `->with_size`, `->xsmall`
-- **`gk.Audio_Format`** (AudioFormat, kit state): handed out by the kit (no constructor); reads `->channels`, `->sample_rate`
-- **`gk.Speech_State`** (SpeechState, kit state): `gk.speech_state(cx)->…->build()`; shown by `gk.speech_button(state)`, `gk.speech_indicator(state)`, `gk.speech_waveform(state)`; built with `->stop_timeout`, `->system_fallback`; reads `->has_recognizer`, `->is_available`, `->levels`, `->status`, `->transcript`; writes `->cancel`, `->start`, `->stop`, `->toggle`; events `->on_speech_event(cx, gk.on(p))`
+- **`gk.Audio_Format`** (AudioFormat, kit state): handed out by the kit (no constructor); reads `gk.channels`, `gk.sample_rate`
+- **`gk.Speech_State`** (SpeechState, kit state): `gk.speech_state(cx)->…->build()`; shown by `gk.speech_button(state)`, `gk.speech_indicator(state)`, `gk.speech_waveform(state)`; built with `->stop_timeout`, `->system_fallback`; reads `gk.has_recognizer`, `gk.is_available`, `gk.levels`, `gk.status`, `gk.transcript`; writes `gk.cancel`, `gk.speech_state_start`, `gk.speech_state_stop`, `gk.speech_state_toggle`; events `gk.on_speech_event(s, cx, gk.on(p))`
 
 ### component::spinner
 
@@ -549,8 +549,8 @@ types, is in its generated file.
 - **`gk.Table_Head`** (TableHead, element): `gk.table_head()`; `->small`, `->large`, `->text_center`, `->text_right`, `->with_ix`, `->with_size`, `->xsmall`
 - **`gk.Table_Header`** (TableHeader, element): `gk.table_header()`; `->child`, `->children`, `->small`, `->large`, `->with_ix`, `->with_size`, `->xsmall`
 - **`gk.Table_Row`** (TableRow, element): `gk.table_row()`; `->child`, `->children`, `->small`, `->large`, `->with_ix`, `->with_size`, `->xsmall`
-- **`gk.Table_State`** (TableState<GkTableDelegate>, kit state): `gk.table_state(cx, gk.table_source(cx, a, rows, columns, cell))->…->build()`; shown by `gk.data_table(state)`; built with `->cell_selectable`, `->col_movable`, `->col_resizable`, `->col_selectable`, `->loop_selection`, `->row_header`, `->row_selectable`, `->select_on_modifier_click` and 1 more; reads `->col_width`, `->delegate`, `->delegate_mut`, `->dump`, `->dump_range`, `->fit_col`, `->headers`, `->right_clicked_cell` and 7 more; writes `->clear_selection`, `->refresh`, `->refresh_header_layout`, `->scroll_to_col`, `->scroll_to_row`, `->set_right_clicked_row`, `->set_selected_cell`, `->set_selected_col` and 2 more; events `->on_table_event(cx, gk.on(p))`
-- **`gk.Table_Visible_Range`** (TableVisibleRange, kit state): handed out by the kit (no constructor); reads `->cols`, `->rows`
+- **`gk.Table_State`** (TableState<GkTableDelegate>, kit state): `gk.table_state(cx, gk.table_source(cx, a, rows, columns, cell))->…->build()`; shown by `gk.data_table(state)`; built with `->cell_selectable`, `->col_movable`, `->col_resizable`, `->col_selectable`, `->loop_selection`, `->row_header`, `->row_selectable`, `->select_on_modifier_click` and 1 more; reads `gk.col_width`, `gk.delegate`, `gk.delegate_mut`, `gk.dump`, `gk.dump_range`, `gk.fit_col`, `gk.headers`, `gk.right_clicked_cell` and 7 more; writes `gk.clear_selection`, `gk.refresh_header_layout`, `gk.scroll_to_col`, `gk.scroll_to_row`, `gk.set_right_clicked_row`, `gk.set_selected_cell`, `gk.set_selected_col`, `gk.set_selected_row` and 2 more; events `gk.on_table_event(s, cx, gk.on(p))`
+- **`gk.Table_Visible_Range`** (TableVisibleRange, kit state): handed out by the kit (no constructor); reads `gk.cols`, `gk.table_visible_range_rows`
 - **`gk.Column`** (Column, value): `gk.column_default()` or `gk.column(key, name)`; `->ascending`, `->descending`, `->fixed`, `->fixed_left`, `->fixed_right`, `->max_width`, `->min_width`, `->movable` and 9 more
 
 ### component::tag
@@ -676,51 +676,51 @@ types, is in its generated file.
 - **`gk.Toast`** (Toast, element): `gk.toast(id)`; `->transition_status`
 - **`gk.Toast_Stack`** (ToastStack, element): `gk.toast_stack(id, state)`; `->focus_handle`, `->item`, `->motion`, `->placement`
 - **`gk.Tooltip_Positioner`** (TooltipPositioner, element): `gk.tooltip_positioner(trigger_bounds)`; `->placement`
-- **`gk.Auto_Scroll`** (AutoScroll, kit state): handed out by the kit (no constructor); reads `->delta`, `->is_active`; writes `->stop`
-- **`gk.Base_Theme`** (Theme, kit state): handed out by the kit (no constructor); reads `->appearance`, `->cursor_blink`, `->plot`, `->resizable`, `->scrollbar`, `->tokens`; writes `->set_appearance`, `->set_cursor_blink`, `->set_plot`, `->set_resizable`, `->set_scrollbar`, `->set_tokens`
-- **`gk.Base_Tree_Entry`** (TreeEntry, kit state): handed out by the kit (no constructor); reads `->depth`, `->is_disabled`, `->is_expanded`, `->is_folder`, `->is_root`, `->item`
-- **`gk.Calendar_State`** (CalendarState, kit state): `gk.calendar_state(cx)->…->build()`; shown by `gk.base_calendar(state)`, `gk.calendar(state)`; built with `->disabled_matcher`, `->year_range`; reads `->activate_date`, `->apply_date`, `->current_month`, `->current_year`, `->date`, `->days`, `->disabled_matcher_ref`, `->has_next_year_page` and 10 more; writes `->next_month`, `->prev_month`, `->select_month`, `->select_year`, `->set_date`, `->set_disabled_matcher`, `->set_number_of_months`, `->set_view` and 1 more; events `->on_calendar_event(cx, gk.on(p))`
-- **`gk.Color_Picker_State`** (ColorPickerState, kit state): `gk.color_picker_state(cx)->…->build()`; shown by `gk.color_picker(state)`, `gk.color_select(state)`; built with `->default_value`; reads `->value`, `->active_tab`, `->commit_hex`, `->displayed_color`, `->hex_input`, `->is_open`, `->preview`, `->preview_hex` and 2 more; writes `->clear_preview`, `->clear_value`, `->preview_color`, `->select_color`, `->set_active_tab`, `->set_open`, `->set_value`, `->sync_pending_value` and 2 more; events `->on_color_picker_event(cx, gk.on(p))`
-- **`gk.Dialog_Handle`** (DialogHandle, kit state): handed out by the kit (no constructor); reads `->is_open`; writes `->close`, `->open`
-- **`gk.Discrete`** (Discrete<f32>, kit state): handed out by the kit (no constructor); reads `->sample`, `->switch_at`
-- **`gk.Grid_Layout_State`** (GridLayoutState, kit state): `gk.grid_layout_state(cx)->…->build()`; shown by `gk.grid_layout(state)`, `gk.kit_grid_layout(state)`; built with `->cols`, `->compaction`, `->default_areas`, `->draggable`, `->prevent_collision`, `->resizable`; reads `->active_item`, `->area`, `->areas`, `->column_count`, `->compaction_axis`, `->is_collision_prevented`, `->is_draggable`, `->is_resizable` and 3 more; writes `->set_areas`, `->set_cols`, `->set_compaction`, `->set_draggable`, `->set_prevent_collision`, `->set_resizable`, `->set_selected_item`; events `->on_grid_layout_event(cx, gk.on(p))`
-- **`gk.History`** (History<SharedString>, kit state): `gk.history(cx)->…->build()`; built with `->max_entries`; reads `->back`, `->can_back`, `->can_forward`, `->current`, `->entries`, `->forward`, `->forward_entries`, `->remove_current`; writes `->clear`, `->push`, `->replace_current`, `->retain`
-- **`gk.Horizontal_Scroll_Claim`** (HorizontalScrollClaim, kit state): handed out by the kit (no constructor); reads `->at`, `->delta_x`
-- **`gk.Hsla_Sliders`** (HslaSliders, kit state): handed out by the kit (no constructor); reads `->alpha`, `->hue`, `->lightness`, `->saturation`
-- **`gk.Inline_Render_Context`** (InlineRenderContext, kit state): handed out by the kit (no constructor); reads `->font_size`, `->line_height`, `->rem_size`, `->text_style`
-- **`gk.Keyframes`** (Keyframes<f32>, kit state): handed out by the kit (no constructor); reads `->is_empty`, `->len_`, `->sample`
-- **`gk.Markdown_Node_Read`** (MarkdownNode, kit state): handed out by the kit (no constructor); reads `->accessibility_name`, `->as_markdown`, `->as_text`, `->name`, `->source_range`
-- **`gk.Nav_Stack_State`** (NavStackState, kit state): handed out by the kit (no constructor); shown by `gk.nav_stack(state)`; reads `->current`, `->depth`, `->forward`, `->forward_views`, `->is_empty`, `->pop`, `->pop_to_root`, `->replace` and 1 more; writes `->clear`, `->push`; events `->on_nav_stack_event(cx, gk.on(p))`
-- **`gk.Otp_State`** (OtpState, kit state): `gk.otp_state(cx, length)->…->build()`; shown by `gk.base_otp_input(state)`, `gk.otp_input(state)`; built with `->default_value`, `->masked`; reads `->value`, `->cursor_visible`, `->is_empty`, `->is_masked`, `->len_`, `->try_value`; writes `->focus`, `->set_masked`, `->set_value`; events `->on_otp_event(cx, gk.on(p))`
-- **`gk.Plot_Theme_Read`** (PlotTheme, kit state): handed out by the kit (no constructor); reads `->motion`
-- **`gk.Popover_State`** (PopoverState, kit state): handed out by the kit (no constructor); reads `->is_open`; writes `->dismiss`, `->show`
-- **`gk.Range_Highlight`** (RangeHighlight, kit state): handed out by the kit (no constructor); reads `->background`, `->range`
-- **`gk.Rendered_Text`** (RenderedText, kit state): handed out by the kit (no constructor); reads `->as_str`, `->is_empty`, `->len_`, `->range_for_source`, `->source`
-- **`gk.Resizable_State`** (ResizableState, kit state): handed out by the kit (no constructor); reads `->container_size`, `->sizes`; writes `->clear`, `->insert_panel`, `->remove_panel`, `->reset_panel`, `->resize_panel`; events `->on_resizable_panel_event(cx, gk.on(p))`
-- **`gk.Root`** (Root, kit state): handed out by the kit (no constructor); reads `->view`
-- **`gk.Scrollbar_Motion_Read`** (ScrollbarMotion, kit state): handed out by the kit (no constructor); reads `->enter`, `->entrance`, `->exit`, `->expand`, `->idle`, `->thumb_hover_entrance`
-- **`gk.Scrollbar_Theme_Read`** (ScrollbarTheme, kit state): handed out by the kit (no constructor); reads `->mode`, `->motion`
-- **`gk.Sequence`** (Sequence<f32>, kit state): `gk.sequence(cx, id, from)->…->build()`; built with `->with_step`, `->with_steps`; reads `->from`, `->sample`, `->steps`
-- **`gk.Sequence_Sample`** (SequenceSample<f32>, kit state): handed out by the kit (no constructor); reads `->value`, `->into_value`, `->is_finished`, `->status`, `->step`, `->try_value`
-- **`gk.Sequence_Step`** (SequenceStep<f32>, kit state): handed out by the kit (no constructor); reads `->target`
-- **`gk.Stagger`** (Stagger, kit state): handed out by the kit (no constructor); reads `->delay`
-- **`gk.Task_Toggle_Event`** (TaskToggleEvent, kit state): handed out by the kit (no constructor); reads `->checked`, `->item_range`, `->marker_range`
-- **`gk.Text_Selection_Endpoint`** (TextSelectionEndpoint, kit state): handed out by the kit (no constructor); reads `->content_point`
-- **`gk.Text_Selection_Handle`** (TextSelectionHandle, kit state): handed out by the kit (no constructor); reads `->has_local_selection`, `->snapshot`; writes `->paint_touch_handles`, `->set_fallback_copy_text`, `->set_local_selection`
-- **`gk.Text_Selection_Snapshot`** (TextSelectionSnapshot, kit state): handed out by the kit (no constructor); reads `->anchor`, `->coverage`, `->cursor`, `->is_selecting`, `->window_points`
-- **`gk.Text_Selection_Window_Points`** (TextSelectionWindowPoints, kit state): handed out by the kit (no constructor); reads `->anchor`, `->cursor`
-- **`gk.Text_View_Defaults`** (TextViewDefaults, kit state): `gk.text_view_defaults(cx)->…->build()` or `gk.text_view_defaults_global(cx)->…->build()`; built with `->with_code_block_highlighter`, `->with_inherit_text_color`, `->with_style`; reads `->has_code_block_highlighter`, `->inherit_text_color`; writes `->install`
-- **`gk.Text_View_State`** (TextViewState, kit state): `gk.text_view_state_html(cx, text)->…->build()` or `gk.text_view_state_markdown(cx, text)->…->build()`; shown by `gk.base_text_view(state)`, `gk.text_view(state)`; built with `->motion`, `->scrollable`, `->selectable`, `->selection_format`; reads `->is_clamped`, `->rendered_text`, `->reveal_range`, `->selected_source_range`, `->selected_text`, `->set_range_highlights`; writes `->clear_range_highlights`, `->clear_selection`, `->invalidate_inline_layout`, `->push_str`, `->select_all`, `->set_motion`, `->set_scrollable`, `->set_selectable` and 2 more
-- **`gk.Time_Field_State`** (TimeFieldState, kit state): `gk.time_field_state(cx)->…->build()`; shown by `gk.base_time_field(state)`, `gk.time_field(state)`; built with `->hour_cycle`, `->precision`; reads `->selected_segment`, `->time`; writes `->focus`, `->set_hour_cycle`, `->set_precision`, `->set_time`; events `->on_time_field_event(cx, gk.on(p))`
-- **`gk.Toast_Manager`** (ToastManager<u64, kit state): handed out by the kit (no constructor); reads `->advance`, `->dismiss`, `->dismiss_all`, `->get`, `->is_empty`, `->iter`, `->len_`, `->push` and 1 more
-- **`gk.Toast_Stack_State`** (ToastStackState, kit state): handed out by the kit (no constructor); shown by `gk.toast_stack(state)`; reads `->is_expanded`
-- **`gk.Tooltip_Defaults`** (TooltipDefaults, kit state): `gk.tooltip_defaults(cx)->…->build()` or `gk.tooltip_defaults_global(cx)->…->build()`; built with `->with_grace_period`, `->with_show_delay`; reads `->grace_period`, `->show_delay`; writes `->install`
-- **`gk.Tooltip_Overlay`** (TooltipOverlay, kit state): `gk.tooltip_overlay(cx)->…->build()`; writes `->hide`, `->request_hide`, `->request_show`
-- **`gk.Touch_Selection_Snapshot`** (TouchSelectionSnapshot, kit state): handed out by the kit (no constructor); reads `->bounds`, `->dragging`, `->edge`, `->end`, `->is_edge_visible`, `->is_empty`, `->is_menu_open`, `->start`
-- **`gk.Transition_State`** (TransitionState<f32>, kit state): handed out by the kit (no constructor); reads `->sample`
-- **`gk.Tree_State`** (TreeState, kit state): `gk.tree_state(cx)->…->build()`; shown by `gk.base_tree(state)`, `gk.kit_tree(state)`, `gk.tree(state)`; built with `->items`; reads `->entry`, `->index_of`, `->scroll_handle`, `->selected_entry`, `->selected_index`, `->selected_item`; writes `->focus`, `->reveal_item`, `->scroll_to_item`, `->set_items`, `->set_selected_index`, `->set_selected_item`; events `->on_tree_event(cx, gk.on(p))`
-- **`gk.Undo_History`** (UndoHistory<SharedString>, kit state): `gk.undo_history(cx)->…->build()`; built with `->group_interval`, `->max_undos`; reads `->can_redo`, `->can_undo`, `->is_ignoring`, `->redo`, `->undo`; writes `->clear`, `->end_grouping`, `->push`, `->set_ignoring`, `->start_grouping`
-- **`gk.Virtual_List_Scroll_Handle`** (VirtualListScrollHandle, kit state): handed out by the kit (no constructor); reads `->base_handle`; writes `->scroll_to_bottom`, `->scroll_to_item`
+- **`gk.Auto_Scroll`** (AutoScroll, kit state): handed out by the kit (no constructor); reads `gk.delta`, `gk.is_active`; writes `gk.auto_scroll_stop`
+- **`gk.Base_Theme`** (Theme, kit state): handed out by the kit (no constructor); reads `gk.appearance`, `gk.base_theme_plot`, `gk.base_theme_scrollbar`, `gk.base_theme_tokens`, `gk.cursor_blink`, `gk.resizable`; writes `gk.set_appearance`, `gk.set_cursor_blink`, `gk.set_plot`, `gk.set_resizable`, `gk.set_scrollbar`, `gk.set_tokens`
+- **`gk.Base_Tree_Entry`** (TreeEntry, kit state): handed out by the kit (no constructor); reads `gk.depth`, `gk.is_disabled`, `gk.is_expanded`, `gk.is_folder`, `gk.is_root`, `gk.item`
+- **`gk.Calendar_State`** (CalendarState, kit state): `gk.calendar_state(cx)->…->build()`; shown by `gk.base_calendar(state)`, `gk.calendar(state)`; built with `->disabled_matcher`, `->year_range`; reads `gk.activate_date`, `gk.apply_date`, `gk.calendar_state_view`, `gk.current_month`, `gk.current_year`, `gk.date`, `gk.days`, `gk.disabled_matcher_ref` and 10 more; writes `gk.next_month`, `gk.prev_month`, `gk.select_month`, `gk.select_year`, `gk.set_date`, `gk.set_disabled_matcher`, `gk.set_number_of_months`, `gk.set_view` and 1 more; events `gk.on_calendar_event(s, cx, gk.on(p))`
+- **`gk.Color_Picker_State`** (ColorPickerState, kit state): `gk.color_picker_state(cx)->…->build()`; shown by `gk.color_picker(state)`, `gk.color_select(state)`; built with `->default_value`; reads `gk.value`, `gk.active_tab`, `gk.commit_hex`, `gk.displayed_color`, `gk.hex_input`, `gk.is_open`, `gk.preview`, `gk.preview_hex` and 2 more; writes `gk.clear_preview`, `gk.clear_value`, `gk.preview_color`, `gk.select_color`, `gk.set_active_tab`, `gk.set_open`, `gk.set_value`, `gk.sync_pending_value` and 2 more; events `gk.on_color_picker_event(s, cx, gk.on(p))`
+- **`gk.Dialog_Handle`** (DialogHandle, kit state): handed out by the kit (no constructor); reads `gk.is_open`; writes `gk.close`, `gk.open`
+- **`gk.Discrete`** (Discrete<f32>, kit state): handed out by the kit (no constructor); reads `gk.sample`, `gk.switch_at`
+- **`gk.Grid_Layout_State`** (GridLayoutState, kit state): `gk.grid_layout_state(cx)->…->build()`; shown by `gk.grid_layout(state)`, `gk.kit_grid_layout(state)`; built with `->cols`, `->compaction`, `->default_areas`, `->draggable`, `->prevent_collision`, `->resizable`; reads `gk.active_item`, `gk.area`, `gk.areas`, `gk.column_count`, `gk.compaction_axis`, `gk.is_collision_prevented`, `gk.is_draggable`, `gk.is_resizable` and 3 more; writes `gk.set_areas`, `gk.set_cols`, `gk.set_compaction`, `gk.set_draggable`, `gk.set_prevent_collision`, `gk.set_resizable`, `gk.set_selected_item`; events `gk.on_grid_layout_event(s, cx, gk.on(p))`
+- **`gk.History`** (History<SharedString>, kit state): `gk.history(cx)->…->build()`; built with `->max_entries`; reads `gk.back`, `gk.can_back`, `gk.can_forward`, `gk.current`, `gk.entries`, `gk.forward`, `gk.forward_entries`, `gk.remove_current`; writes `gk.history_clear`, `gk.history_retain`, `gk.push`, `gk.replace_current`
+- **`gk.Horizontal_Scroll_Claim`** (HorizontalScrollClaim, kit state): handed out by the kit (no constructor); reads `gk.at`, `gk.delta_x`
+- **`gk.Hsla_Sliders`** (HslaSliders, kit state): handed out by the kit (no constructor); reads `gk.alpha`, `gk.hue`, `gk.lightness`, `gk.saturation`
+- **`gk.Inline_Render_Context`** (InlineRenderContext, kit state): handed out by the kit (no constructor); reads `gk.font_size`, `gk.line_height`, `gk.rem_size`, `gk.text_style`
+- **`gk.Keyframes`** (Keyframes<f32>, kit state): handed out by the kit (no constructor); reads `gk.is_empty`, `gk.keyframes_len`, `gk.sample`
+- **`gk.Markdown_Node_Read`** (MarkdownNode, kit state): handed out by the kit (no constructor); reads `gk.accessibility_name`, `gk.as_markdown`, `gk.as_text`, `gk.name`, `gk.source_range`
+- **`gk.Nav_Stack_State`** (NavStackState, kit state): handed out by the kit (no constructor); shown by `gk.nav_stack(state)`; reads `gk.current`, `gk.depth`, `gk.forward`, `gk.forward_views`, `gk.is_empty`, `gk.nav_stack_state_pop`, `gk.nav_stack_state_views`, `gk.pop_to_root` and 1 more; writes `gk.nav_stack_state_clear`, `gk.push`; events `gk.on_nav_stack_event(s, cx, gk.on(p))`
+- **`gk.Otp_State`** (OtpState, kit state): `gk.otp_state(cx, length)->…->build()`; shown by `gk.base_otp_input(state)`, `gk.otp_input(state)`; built with `->default_value`, `->masked`; reads `gk.value`, `gk.cursor_visible`, `gk.is_empty`, `gk.is_masked`, `gk.otp_state_len`, `gk.try_value`; writes `gk.otp_state_focus`, `gk.set_masked`, `gk.set_value`; events `gk.on_otp_event(s, cx, gk.on(p))`
+- **`gk.Plot_Theme_Read`** (PlotTheme, kit state): handed out by the kit (no constructor); reads `gk.plot_theme_read_motion`
+- **`gk.Popover_State`** (PopoverState, kit state): handed out by the kit (no constructor); reads `gk.is_open`; writes `gk.dismiss`, `gk.show`
+- **`gk.Range_Highlight`** (RangeHighlight, kit state): handed out by the kit (no constructor); reads `gk.background`, `gk.range`
+- **`gk.Rendered_Text`** (RenderedText, kit state): handed out by the kit (no constructor); reads `gk.as_str`, `gk.is_empty`, `gk.range_for_source`, `gk.rendered_text_len`, `gk.source`
+- **`gk.Resizable_State`** (ResizableState, kit state): handed out by the kit (no constructor); reads `gk.container_size`, `gk.sizes`; writes `gk.insert_panel`, `gk.remove_panel`, `gk.reset_panel`, `gk.resizable_state_clear`, `gk.resize_panel`; events `gk.on_resizable_panel_event(s, cx, gk.on(p))`
+- **`gk.Root`** (Root, kit state): handed out by the kit (no constructor); reads `gk.root_view`
+- **`gk.Scrollbar_Motion_Read`** (ScrollbarMotion, kit state): handed out by the kit (no constructor); reads `gk.enter`, `gk.entrance`, `gk.exit`, `gk.expand`, `gk.idle`, `gk.thumb_hover_entrance`
+- **`gk.Scrollbar_Theme_Read`** (ScrollbarTheme, kit state): handed out by the kit (no constructor); reads `gk.mode`, `gk.scrollbar_theme_read_motion`
+- **`gk.Sequence`** (Sequence<f32>, kit state): `gk.sequence(cx, id, from)->…->build()`; built with `->with_step`, `->with_steps`; reads `gk.from`, `gk.sample`, `gk.steps`
+- **`gk.Sequence_Sample`** (SequenceSample<f32>, kit state): handed out by the kit (no constructor); reads `gk.value`, `gk.into_value`, `gk.is_finished`, `gk.status`, `gk.step`, `gk.try_value`
+- **`gk.Sequence_Step`** (SequenceStep<f32>, kit state): handed out by the kit (no constructor); reads `gk.target`
+- **`gk.Stagger`** (Stagger, kit state): handed out by the kit (no constructor); reads `gk.delay`
+- **`gk.Task_Toggle_Event`** (TaskToggleEvent, kit state): handed out by the kit (no constructor); reads `gk.checked`, `gk.item_range`, `gk.marker_range`
+- **`gk.Text_Selection_Endpoint`** (TextSelectionEndpoint, kit state): handed out by the kit (no constructor); reads `gk.content_point`
+- **`gk.Text_Selection_Handle`** (TextSelectionHandle, kit state): handed out by the kit (no constructor); reads `gk.has_local_selection`, `gk.snapshot`; writes `gk.paint_touch_handles`, `gk.set_fallback_copy_text`, `gk.set_local_selection`
+- **`gk.Text_Selection_Snapshot`** (TextSelectionSnapshot, kit state): handed out by the kit (no constructor); reads `gk.anchor`, `gk.coverage`, `gk.cursor`, `gk.is_selecting`, `gk.window_points`
+- **`gk.Text_Selection_Window_Points`** (TextSelectionWindowPoints, kit state): handed out by the kit (no constructor); reads `gk.anchor`, `gk.cursor`
+- **`gk.Text_View_Defaults`** (TextViewDefaults, kit state): `gk.text_view_defaults(cx)->…->build()` or `gk.text_view_defaults_global(cx)->…->build()`; built with `->with_code_block_highlighter`, `->with_inherit_text_color`, `->with_style`; reads `gk.has_code_block_highlighter`, `gk.inherit_text_color`; writes `gk.install`
+- **`gk.Text_View_State`** (TextViewState, kit state): `gk.text_view_state_html(cx, text)->…->build()` or `gk.text_view_state_markdown(cx, text)->…->build()`; shown by `gk.base_text_view(state)`, `gk.text_view(state)`; built with `->motion`, `->scrollable`, `->selectable`, `->selection_format`; reads `gk.is_clamped`, `gk.rendered_text`, `gk.reveal_range`, `gk.selected_source_range`, `gk.selected_text`, `gk.set_range_highlights`; writes `gk.clear_range_highlights`, `gk.clear_selection`, `gk.invalidate_inline_layout`, `gk.push_str`, `gk.select_all`, `gk.set_motion`, `gk.set_scrollable`, `gk.set_selectable` and 2 more
+- **`gk.Time_Field_State`** (TimeFieldState, kit state): `gk.time_field_state(cx)->…->build()`; shown by `gk.base_time_field(state)`, `gk.time_field(state)`; built with `->hour_cycle`, `->precision`; reads `gk.selected_segment`, `gk.time`; writes `gk.set_hour_cycle`, `gk.set_precision`, `gk.set_time`, `gk.time_field_state_focus`; events `gk.on_time_field_event(s, cx, gk.on(p))`
+- **`gk.Toast_Manager`** (ToastManager<u64, kit state): handed out by the kit (no constructor); reads `gk.advance`, `gk.dismiss`, `gk.dismiss_all`, `gk.is_empty`, `gk.iter`, `gk.push`, `gk.toast_manager_get`, `gk.toast_manager_len` and 1 more
+- **`gk.Toast_Stack_State`** (ToastStackState, kit state): handed out by the kit (no constructor); shown by `gk.toast_stack(state)`; reads `gk.is_expanded`
+- **`gk.Tooltip_Defaults`** (TooltipDefaults, kit state): `gk.tooltip_defaults(cx)->…->build()` or `gk.tooltip_defaults_global(cx)->…->build()`; built with `->with_grace_period`, `->with_show_delay`; reads `gk.grace_period`, `gk.show_delay`; writes `gk.install`
+- **`gk.Tooltip_Overlay`** (TooltipOverlay, kit state): `gk.tooltip_overlay(cx)->…->build()`; writes `gk.hide`, `gk.request_hide`, `gk.request_show`
+- **`gk.Touch_Selection_Snapshot`** (TouchSelectionSnapshot, kit state): handed out by the kit (no constructor); reads `gk.bounds`, `gk.dragging`, `gk.edge`, `gk.end`, `gk.is_edge_visible`, `gk.is_empty`, `gk.is_menu_open`, `gk.touch_selection_snapshot_start`
+- **`gk.Transition_State`** (TransitionState<f32>, kit state): handed out by the kit (no constructor); reads `gk.sample`
+- **`gk.Tree_State`** (TreeState, kit state): `gk.tree_state(cx)->…->build()`; shown by `gk.base_tree(state)`, `gk.kit_tree(state)`, `gk.tree(state)`; built with `->items`; reads `gk.entry`, `gk.index_of`, `gk.selected_entry`, `gk.selected_index`, `gk.selected_item`, `gk.tree_state_scroll_handle`; writes `gk.reveal_item`, `gk.scroll_to_item`, `gk.set_items`, `gk.set_selected_index`, `gk.set_selected_item`, `gk.tree_state_focus`; events `gk.on_tree_event(s, cx, gk.on(p))`
+- **`gk.Undo_History`** (UndoHistory<SharedString>, kit state): `gk.undo_history(cx)->…->build()`; built with `->group_interval`, `->max_undos`; reads `gk.can_redo`, `gk.can_undo`, `gk.is_ignoring`, `gk.redo`, `gk.undo`; writes `gk.end_grouping`, `gk.push`, `gk.set_ignoring`, `gk.start_grouping`, `gk.undo_history_clear`
+- **`gk.Virtual_List_Scroll_Handle`** (VirtualListScrollHandle, kit state): handed out by the kit (no constructor); reads `gk.base_handle`; writes `gk.scroll_to_bottom`, `gk.scroll_to_item`
 - **`gk.Base_Text_View_Style`** (TextViewStyle, value): `gk.base_text_view_style_default()` or `gk.base_text_view_style_from_theme(theme)`; `->with_blockquote_style`, `->with_border`, `->with_code_background`, `->with_code_block`, `->with_dark`, `->with_foreground`, `->with_heading`, `->with_inline_code` and 10 more
 - **`gk.Button_Styles`** (ButtonStyles, value): `gk.button_styles_default()`; `->selected`, `->disabled`
 - **`gk.Checkbox_Indicator_Styles`** (CheckboxIndicatorStyles, value): `gk.checkbox_indicator_styles_default()`; `->checked`, `->disabled`, `->indeterminate`
@@ -759,47 +759,47 @@ types, is in its generated file.
 
 ### base::dock
 
-- **`gk.Dock`** (Dock, kit state): handed out by the kit (no constructor); reads `->is_collapsible`, `->is_open`, `->is_resizing`, `->size`; writes `->set_collapsible`, `->set_open`, `->set_resizing`, `->set_size`
-- **`gk.Dock_Area`** (DockArea, kit state): `gk.dock_area(cx, id, version)->…->build()`; built with `->with_renderer`; reads `->bounds`, `->dock_size`, `->dump`, `->has_dock`, `->id`, `->is_dock_collapsible`, `->is_dock_open`, `->is_empty` and 7 more; writes `->add_panel`, `->add_panel_view`, `->move_panel`, `->remove_dock`, `->remove_panel`, `->select_panel`, `->set_center`, `->set_dock` and 9 more; events `->on_dock_event(cx, gk.on(p))`
-- **`gk.Dock_Context`** (DockContext, kit state): handed out by the kit (no constructor); reads `->is_collapsible`, `->is_open`, `->placement`, `->size`; writes `->end_resize`, `->resize_to`, `->toggle`
-- **`gk.Dock_State`** (DockState, kit state): handed out by the kit (no constructor); reads `->open`, `->panel`, `->placement`, `->size`
-- **`gk.Drag_Panel`** (DragPanel, kit state): handed out by the kit (no constructor); reads `->drag_offset`, `->drag_session_id`, `->panel`, `->preview_size`, `->source`; writes `->set_drag_offset`, `->set_preview_size`
-- **`gk.Drop_Indicator`** (DropIndicator, kit state): handed out by the kit (no constructor); reads `->bounds`, `->drag_session_id`, `->epoch`, `->from`, `->placement`, `->to`
-- **`gk.Drop_Placeholder_Bounds`** (DropPlaceholderBounds, kit state): handed out by the kit (no constructor); reads `->origin`, `->size`
-- **`gk.Drop_Target`** (DropTarget, kit state): handed out by the kit (no constructor); reads `->node`, `->placement`
-- **`gk.Edit_Result`** (EditResult, kit state): handed out by the kit (no constructor); reads `->changed`
-- **`gk.Pane_Node`** (PaneNode, kit state): handed out by the kit (no constructor); reads `->id`
-- **`gk.Pane_Tree`** (PaneTree, kit state): handed out by the kit (no constructor); reads `->contains_panel`, `->find_node`, `->find_panel_node`, `->insert_panel`, `->move_panel`, `->node_ids`, `->panels`, `->remove_panel` and 5 more; writes `->normalize`
-- **`gk.Tab_Group`** (TabGroup, kit state): handed out by the kit (no constructor); built with `->with_renderer`; reads `->active_ix`, `->active_panel`, `->context_`, `->is_closable`, `->is_collapsed`, `->is_zoomed`, `->node`, `->panels`; writes `->close_panel`, `->select_tab`, `->toggle_zoom`; events `->on_tab_group_event(cx, gk.on(p))`
-- **`gk.Tab_Group_Context`** (TabGroupContext, kit state): handed out by the kit (no constructor); reads `->active_ix`, `->active_panel`, `->drag_panel`, `->drop_indicator`, `->is_closable`, `->is_collapsed`, `->is_draggable`, `->is_droppable` and 5 more; writes `->close`, `->drop_item`, `->drop_panel`, `->select_tab`, `->toggle_zoom`
+- **`gk.Dock`** (Dock, kit state): handed out by the kit (no constructor); reads `gk.is_collapsible`, `gk.is_open`, `gk.is_resizing`, `gk.size`; writes `gk.set_collapsible`, `gk.set_open`, `gk.set_resizing`, `gk.set_size`
+- **`gk.Dock_Area`** (DockArea, kit state): `gk.dock_area(cx, id, version)->…->build()`; built with `->with_renderer`; reads `gk.bounds`, `gk.dock_area_dock_size`, `gk.dock_area_id`, `gk.dock_area_panel`, `gk.dump`, `gk.has_dock`, `gk.is_dock_collapsible`, `gk.is_dock_open` and 7 more; writes `gk.add_panel`, `gk.add_panel_view`, `gk.move_panel`, `gk.remove_dock`, `gk.remove_panel`, `gk.select_panel`, `gk.set_center`, `gk.set_dock` and 9 more; events `gk.on_dock_event(s, cx, gk.on(p))`
+- **`gk.Dock_Context`** (DockContext, kit state): handed out by the kit (no constructor); reads `gk.is_collapsible`, `gk.is_open`, `gk.placement`, `gk.size`; writes `gk.dock_context_toggle`, `gk.end_resize`, `gk.resize_to`
+- **`gk.Dock_State`** (DockState, kit state): handed out by the kit (no constructor); reads `gk.dock_state_panel`, `gk.open`, `gk.placement`, `gk.size`
+- **`gk.Drag_Panel`** (DragPanel, kit state): handed out by the kit (no constructor); reads `gk.drag_offset`, `gk.drag_panel_panel`, `gk.drag_session_id`, `gk.preview_size`, `gk.source`; writes `gk.set_drag_offset`, `gk.set_preview_size`
+- **`gk.Drop_Indicator`** (DropIndicator, kit state): handed out by the kit (no constructor); reads `gk.bounds`, `gk.drag_session_id`, `gk.epoch`, `gk.from`, `gk.placement`, `gk.to`
+- **`gk.Drop_Placeholder_Bounds`** (DropPlaceholderBounds, kit state): handed out by the kit (no constructor); reads `gk.origin`, `gk.size`
+- **`gk.Drop_Target`** (DropTarget, kit state): handed out by the kit (no constructor); reads `gk.node`, `gk.placement`
+- **`gk.Edit_Result`** (EditResult, kit state): handed out by the kit (no constructor); reads `gk.changed`
+- **`gk.Pane_Node`** (PaneNode, kit state): handed out by the kit (no constructor); reads `gk.pane_node_id`
+- **`gk.Pane_Tree`** (PaneTree, kit state): handed out by the kit (no constructor); reads `gk.contains_panel`, `gk.find_node`, `gk.find_panel_node`, `gk.insert_panel`, `gk.move_panel`, `gk.node_ids`, `gk.panels`, `gk.remove_panel` and 5 more; writes `gk.normalize`
+- **`gk.Tab_Group`** (TabGroup, kit state): handed out by the kit (no constructor); built with `->with_renderer`; reads `gk.active_ix`, `gk.active_panel`, `gk.is_closable`, `gk.is_collapsed`, `gk.is_zoomed`, `gk.node`, `gk.panels`, `gk.tab_group_context`; writes `gk.close_panel`, `gk.select_tab`, `gk.toggle_zoom`; events `gk.on_tab_group_event(s, cx, gk.on(p))`
+- **`gk.Tab_Group_Context`** (TabGroupContext, kit state): handed out by the kit (no constructor); reads `gk.active_ix`, `gk.active_panel`, `gk.drop_indicator`, `gk.is_closable`, `gk.is_collapsed`, `gk.is_draggable`, `gk.is_droppable`, `gk.is_locked` and 5 more; writes `gk.close`, `gk.drop_item`, `gk.drop_panel`, `gk.select_tab`, `gk.toggle_zoom`
 - **`gk.Dock_Layout`** (DockLayout, value): `gk.dock_layout_h_split()` or `gk.dock_layout_tabs()` or `gk.dock_layout_v_split()`; `->child`, `->active_index`, `->panel`, `->panel_view`
 - **`gk.Dock_Sizing`** (DockSizing, value): `gk.dock_sizing(placement)`; `->with_area_bounds`, `->with_area_height`, `->with_area_width`, `->with_opposite_dock_size`
 
 ### base::input
 
-- **`gk.Code_Action_Menu_State`** (CodeActionMenuState, kit state): handed out by the kit (no constructor); reads `->revision`
-- **`gk.Completion_Menu_State`** (CompletionMenuState, kit state): handed out by the kit (no constructor); reads `->revision`
-- **`gk.Cursor_Blink_Read`** (CursorBlink, kit state): handed out by the kit (no constructor); reads `->idle_timeout`, `->interval`, `->is_steady`
-- **`gk.Diagnostic_Set`** (DiagnosticSet, kit state): handed out by the kit (no constructor); reads `->for_offset`, `->is_empty`, `->iter`, `->len_`, `->range`; writes `->clear`, `->extend`, `->push`
-- **`gk.Display_Map`** (DisplayMap, kit state): handed out by the kit (no constructor); reads `->text`, `->buffer_line_count`, `->buffer_line_to_display_row`, `->buffer_line_to_display_row_range`, `->buffer_pos_to_display_pos`, `->display_pos_to_buffer_pos`, `->display_row_count`, `->display_row_to_buffer_line` and 9 more; writes `->clear_folds`, `->on_layout_changed`, `->set_fold_candidates`, `->set_folded`, `->set_font`, `->set_wrapping_indent`, `->toggle_fold`
-- **`gk.Editor_Scrollbar_Context`** (EditorScrollbarContext, kit state): handed out by the kit (no constructor); reads `->axis`, `->scroll_viewport_size`
-- **`gk.Editor_State`** (EditorState, kit state): `gk.editor_state(cx)->…->build()`; shown by `gk.editor(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->gutter_decorations_width` and 6 more; reads `->text`, `->value`, `->context_menu_capabilities`, `->create_decorations_collection`, `->create_gutter_decorations_collection`, `->create_overview_ruler_decorations_collection`, `->create_range_decorations_collection`, `->cursor` and 55 more; writes `->add_selection`, `->apply_highlighter_fold_candidates`, `->begin_edge_drag`, `->clean`, `->clear_diagnostic_popover`, `->clear_hover_state`, `->close_edit_menu`, `->close_search` and 61 more; events `->on_input_event(cx, gk.on(p))`, `->on_input_edits_event(cx, gk.on(p))`
-- **`gk.Gutter_Decoration_Collection`** (GutterDecorationCollection, kit state): handed out by the kit (no constructor); reads `->get_ranges`; writes `->append`, `->clear`, `->dispose`, `->set`
-- **`gk.Inline_Token_Click_Event`** (InlineTokenClickEvent, kit state): handed out by the kit (no constructor); reads `->bounds`, `->click`, `->range`, `->token`
-- **`gk.Inline_Token_Context`** (InlineTokenContext, kit state): handed out by the kit (no constructor); reads `->available_width`, `->is_disabled`, `->is_readonly`, `->is_selected`, `->line_height`, `->range`, `->token`
-- **`gk.Inline_Token_Hover_Event`** (InlineTokenHoverEvent, kit state): handed out by the kit (no constructor); reads `->bounds`, `->is_hovered`, `->range`, `->range_utf16`, `->token`
-- **`gk.Inline_Token_Read`** (InlineToken, kit state): handed out by the kit (no constructor); reads `->label`, `->text`, `->id`
-- **`gk.Inline_Token_Span`** (InlineTokenSpan, kit state): handed out by the kit (no constructor); reads `->range`, `->token`
-- **`gk.Input_Content`** (InputContent, kit state): handed out by the kit (no constructor); reads `->text`, `->tokens`, `->with_token`
-- **`gk.Input_Context_Menu_Capabilities_Read`** (InputContextMenuCapabilities, kit state): handed out by the kit (no constructor); reads `->has_code_actions`, `->has_definition`, `->has_selection`, `->is_code_editor`, `->is_copyable`, `->is_disabled`, `->is_editable`, `->is_masked` and 1 more
-- **`gk.Input_Presentation`** (InputPresentation, kit state): handed out by the kit (no constructor); reads `->placeholder`, `->focus_handle`, `->is_code_editor`, `->is_disabled`, `->is_editable`, `->is_loading`, `->is_masked`, `->is_multi_line` and 3 more
-- **`gk.Input_State`** (InputState, kit state): `gk.input_state(cx)->…->build()`; shown by `gk.base_input(state)`, `gk.base_number_input(state)`, `gk.input(state)`, `gk.number_input(state)`, `gk.questionnaire_input_definition(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->input_action` and 8 more; reads `->text`, `->value`, `->content`, `->context_menu_capabilities`, `->cursor`, `->cursor_position`, `->diagnostic_popover`, `->diagnostics` and 49 more; writes `->add_selection`, `->apply_highlighter_fold_candidates`, `->begin_edge_drag`, `->clean`, `->close_edit_menu`, `->close_search`, `->end_edge_drag`, `->ensure_highlighter_factory` and 45 more; events `->on_input_event(cx, gk.on(p))`, `->on_input_edits_event(cx, gk.on(p))`
-- **`gk.Overview_Ruler_Decoration_Collection`** (OverviewRulerDecorationCollection, kit state): handed out by the kit (no constructor); reads `->get_ranges`; writes `->append`, `->clear`, `->dispose`, `->set`
-- **`gk.Range_Decoration_Collection`** (RangeDecorationCollection, kit state): handed out by the kit (no constructor); reads `->get_ranges`; writes `->append`, `->clear`, `->dispose`, `->set`
-- **`gk.Search_Matcher`** (SearchMatcher, kit state): handed out by the kit (no constructor); reads `->label`, `->current`, `->current_match_index`, `->is_empty`, `->len_`, `->matched_ranges`; writes `->update_cursor_by_offset`, `->update_query`
-- **`gk.Search_Session`** (SearchSession, kit state): handed out by the kit (no constructor); reads `->is_active`
-- **`gk.Text_Decoration_Collection`** (TextDecorationCollection, kit state): handed out by the kit (no constructor); reads `->get_ranges`; writes `->append`, `->clear`, `->set`
-- **`gk.Textarea_State`** (TextareaState, kit state): `gk.textarea_state(cx)->…->build()`; shown by `gk.base_textarea(state)`, `gk.textarea(state)`; built with `->placeholder`, `->auto_grow`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value` and 5 more; reads `->text`, `->value`, `->content`, `->context_menu_capabilities`, `->cursor`, `->cursor_position`, `->diagnostic_popover`, `->diagnostics` and 49 more; writes `->add_selection`, `->apply_highlighter_fold_candidates`, `->begin_edge_drag`, `->clean`, `->close_edit_menu`, `->close_search`, `->end_edge_drag`, `->ensure_highlighter_factory` and 46 more; events `->on_input_event(cx, gk.on(p))`, `->on_input_edits_event(cx, gk.on(p))`
+- **`gk.Code_Action_Menu_State`** (CodeActionMenuState, kit state): handed out by the kit (no constructor); reads `gk.revision`
+- **`gk.Completion_Menu_State`** (CompletionMenuState, kit state): handed out by the kit (no constructor); reads `gk.revision`
+- **`gk.Cursor_Blink_Read`** (CursorBlink, kit state): handed out by the kit (no constructor); reads `gk.idle_timeout`, `gk.interval`, `gk.is_steady`
+- **`gk.Diagnostic_Set`** (DiagnosticSet, kit state): handed out by the kit (no constructor); reads `gk.diagnostic_set_len`, `gk.for_offset`, `gk.is_empty`, `gk.iter`, `gk.range`; writes `gk.diagnostic_set_clear`, `gk.extend`, `gk.push`
+- **`gk.Display_Map`** (DisplayMap, kit state): handed out by the kit (no constructor); reads `gk.buffer_line_count`, `gk.buffer_line_to_display_row`, `gk.buffer_line_to_display_row_range`, `gk.buffer_pos_to_display_pos`, `gk.display_map_text`, `gk.display_pos_to_buffer_pos`, `gk.display_row_count`, `gk.display_row_to_buffer_line` and 9 more; writes `gk.clear_folds`, `gk.on_layout_changed`, `gk.set_fold_candidates`, `gk.set_folded`, `gk.set_font`, `gk.set_wrapping_indent`, `gk.toggle_fold`
+- **`gk.Editor_Scrollbar_Context`** (EditorScrollbarContext, kit state): handed out by the kit (no constructor); reads `gk.axis`, `gk.scroll_viewport_size`
+- **`gk.Editor_State`** (EditorState, kit state): `gk.editor_state(cx)->…->build()`; shown by `gk.editor(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->gutter_decorations_width` and 6 more; reads `gk.value`, `gk.context_menu_capabilities`, `gk.create_decorations_collection`, `gk.create_gutter_decorations_collection`, `gk.create_overview_ruler_decorations_collection`, `gk.create_range_decorations_collection`, `gk.cursor`, `gk.cursor_position` and 55 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.clear_diagnostic_popover`, `gk.clear_hover_state`, `gk.close_edit_menu`, `gk.close_search` and 61 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
+- **`gk.Gutter_Decoration_Collection`** (GutterDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.dispose`, `gk.gutter_decoration_collection_append`, `gk.gutter_decoration_collection_clear`, `gk.gutter_decoration_collection_set`
+- **`gk.Inline_Token_Click_Event`** (InlineTokenClickEvent, kit state): handed out by the kit (no constructor); reads `gk.bounds`, `gk.click`, `gk.range`, `gk.token`
+- **`gk.Inline_Token_Context`** (InlineTokenContext, kit state): handed out by the kit (no constructor); reads `gk.available_width`, `gk.is_disabled`, `gk.is_readonly`, `gk.is_selected`, `gk.line_height`, `gk.range`, `gk.token`
+- **`gk.Inline_Token_Hover_Event`** (InlineTokenHoverEvent, kit state): handed out by the kit (no constructor); reads `gk.bounds`, `gk.is_hovered`, `gk.range`, `gk.range_utf16`, `gk.token`
+- **`gk.Inline_Token_Read`** (InlineToken, kit state): handed out by the kit (no constructor); reads `gk.inline_token_read_id`, `gk.inline_token_read_label`, `gk.inline_token_read_text`
+- **`gk.Inline_Token_Span`** (InlineTokenSpan, kit state): handed out by the kit (no constructor); reads `gk.range`, `gk.token`
+- **`gk.Input_Content`** (InputContent, kit state): handed out by the kit (no constructor); reads `gk.input_content_text`, `gk.input_content_tokens`, `gk.with_token`
+- **`gk.Input_Context_Menu_Capabilities_Read`** (InputContextMenuCapabilities, kit state): handed out by the kit (no constructor); reads `gk.has_code_actions`, `gk.has_definition`, `gk.has_selection`, `gk.is_code_editor`, `gk.is_copyable`, `gk.is_disabled`, `gk.is_editable`, `gk.is_masked` and 1 more
+- **`gk.Input_Presentation`** (InputPresentation, kit state): handed out by the kit (no constructor); reads `gk.placeholder`, `gk.input_presentation_focus_handle`, `gk.is_code_editor`, `gk.is_disabled`, `gk.is_editable`, `gk.is_loading`, `gk.is_masked`, `gk.is_multi_line` and 3 more
+- **`gk.Input_State`** (InputState, kit state): `gk.input_state(cx)->…->build()`; shown by `gk.base_input(state)`, `gk.base_number_input(state)`, `gk.input(state)`, `gk.number_input(state)`, `gk.questionnaire_input_definition(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->input_action` and 8 more; reads `gk.value`, `gk.content`, `gk.context_menu_capabilities`, `gk.cursor`, `gk.cursor_position`, `gk.diagnostic_popover`, `gk.diagnostics`, `gk.diagnostics_mut` and 49 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 45 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
+- **`gk.Overview_Ruler_Decoration_Collection`** (OverviewRulerDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.dispose`, `gk.overview_ruler_decoration_collection_append`, `gk.overview_ruler_decoration_collection_clear`, `gk.overview_ruler_decoration_collection_set`
+- **`gk.Range_Decoration_Collection`** (RangeDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.dispose`, `gk.range_decoration_collection_append`, `gk.range_decoration_collection_clear`, `gk.range_decoration_collection_set`
+- **`gk.Search_Matcher`** (SearchMatcher, kit state): handed out by the kit (no constructor); reads `gk.current`, `gk.current_match_index`, `gk.is_empty`, `gk.matched_ranges`, `gk.search_matcher_label`, `gk.search_matcher_len`; writes `gk.update_cursor_by_offset`, `gk.update_query`
+- **`gk.Search_Session`** (SearchSession, kit state): handed out by the kit (no constructor); reads `gk.is_active`
+- **`gk.Text_Decoration_Collection`** (TextDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.text_decoration_collection_append`, `gk.text_decoration_collection_clear`, `gk.text_decoration_collection_set`
+- **`gk.Textarea_State`** (TextareaState, kit state): `gk.textarea_state(cx)->…->build()`; shown by `gk.base_textarea(state)`, `gk.textarea(state)`; built with `->placeholder`, `->auto_grow`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value` and 5 more; reads `gk.value`, `gk.content`, `gk.context_menu_capabilities`, `gk.cursor`, `gk.cursor_position`, `gk.diagnostic_popover`, `gk.diagnostics`, `gk.diagnostics_mut` and 49 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 46 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
 - **`gk.Auto_Closing_Pair`** (AutoClosingPair, value): `gk.auto_closing_pair(open, close)`; `->not_in_`
 - **`gk.Bracket_Pair`** (BracketPair, value): `gk.bracket_pair(open, close)`
 - **`gk.Cursor_Blink`** (CursorBlink, value): `gk.cursor_blink_default()` or `gk.cursor_blink_steady()` or `gk.cursor_blink_blinking(interval)`; `->with_idle_timeout`
@@ -815,17 +815,17 @@ types, is in its generated file.
 ### base::plot
 
 - **`gk.Plot_Appear_Scope`** (PlotAppearScope, element): `gk.plot_appear_scope(id, child)`
-- **`gk.Path_Cache`** (PathCache, kit state): handed out by the kit (no constructor); reads `->is_warm`
-- **`gk.Pie`** (Pie<Datum>, kit state): `gk.pie(cx)->…->build()`; built with `->value`, `->end_angle`, `->pad_angle`, `->start_angle`; reads `->arcs`
-- **`gk.Plot_Appear`** (PlotAppear, kit state): handed out by the kit (no constructor); reads `->is_appearing`, `->progress`, `->staggered`
-- **`gk.Plot_Label`** (PlotLabel, kit state): handed out by the kit (no constructor); writes `->paint`
-- **`gk.Sankey_Graph`** (SankeyGraph, kit state): handed out by the kit (no constructor); reads `->layer_count`
-- **`gk.Scale_Band`** (ScaleBand<SharedString>, kit state): `gk.scale_band(cx, domain, range)->…->build()`; built with `->band_count`, `->max_band_width`, `->padding_inner`, `->padding_outer`; reads `->band_width`, `->nearest_index`, `->step`, `->tick`
-- **`gk.Scale_Linear`** (ScaleLinear<f64>, kit state): handed out by the kit (no constructor); reads `->nearest_index`, `->tick`
-- **`gk.Scale_Ordinal`** (ScaleOrdinal<SharedString, kit state): `gk.scale_ordinal(cx, domain, range)->…->build()`; built with `->domain`, `->range`, `->unknown`; reads `->map_`
-- **`gk.Scale_Point`** (ScalePoint<SharedString>, kit state): handed out by the kit (no constructor); reads `->nearest_index`, `->tick`, `->tick_at`
-- **`gk.Shape_Key`** (ShapeKey, kit state): handed out by the kit (no constructor); reads `->finish`
-- **`gk.Stack`** (Stack<Datum>, kit state): `gk.stack(cx)->…->build()`; built with `->value`, `->data`, `->keys`; reads `->series`
+- **`gk.Path_Cache`** (PathCache, kit state): handed out by the kit (no constructor); reads `gk.is_warm`
+- **`gk.Pie`** (Pie<Datum>, kit state): `gk.pie(cx)->…->build()`; built with `->value`, `->end_angle`, `->pad_angle`, `->start_angle`; reads `gk.arcs`
+- **`gk.Plot_Appear`** (PlotAppear, kit state): handed out by the kit (no constructor); reads `gk.is_appearing`, `gk.plot_appear_progress`, `gk.staggered`
+- **`gk.Plot_Label`** (PlotLabel, kit state): handed out by the kit (no constructor); writes `gk.paint`
+- **`gk.Sankey_Graph`** (SankeyGraph, kit state): handed out by the kit (no constructor); reads `gk.layer_count`
+- **`gk.Scale_Band`** (ScaleBand<SharedString>, kit state): `gk.scale_band(cx, domain, range)->…->build()`; built with `->band_count`, `->max_band_width`, `->padding_inner`, `->padding_outer`; reads `gk.band_width`, `gk.nearest_index`, `gk.step`, `gk.tick`
+- **`gk.Scale_Linear`** (ScaleLinear<f64>, kit state): handed out by the kit (no constructor); reads `gk.nearest_index`, `gk.tick`
+- **`gk.Scale_Ordinal`** (ScaleOrdinal<SharedString, kit state): `gk.scale_ordinal(cx, domain, range)->…->build()`; built with `->domain`, `->range`, `->unknown`; reads `gk.scale_ordinal_map`
+- **`gk.Scale_Point`** (ScalePoint<SharedString>, kit state): handed out by the kit (no constructor); reads `gk.nearest_index`, `gk.tick`, `gk.tick_at`
+- **`gk.Shape_Key`** (ShapeKey, kit state): handed out by the kit (no constructor); reads `gk.shape_key_finish`
+- **`gk.Stack`** (Stack<Datum>, kit state): `gk.stack(cx)->…->build()`; built with `->value`, `->data`, `->keys`; reads `gk.series`
 - **`gk.Area_Shape`** (Area<Datum>, value): `gk.area_shape()` or `gk.area_shape_default()`; `->curve`, `->data`, `->fill`, `->stroke`, `->x`, `->y0`, `->y1`
 - **`gk.Axis_Text`** (AxisText, value): `gk.axis_text(text, tick, color)`; `->align`, `->font_size`
 - **`gk.Bar_Shape`** (Bar<Datum>, value): `gk.bar_shape()` or `gk.bar_shape_default()`; `->label`, `->value`, `->alignment`, `->band_width`, `->base`, `->corner_radii`, `->cross`, `->data` and 1 more
@@ -839,19 +839,19 @@ types, is in its generated file.
 
 ### base::questionnaire
 
-- **`gk.Questionnaire_Answer_Change`** (QuestionnaireAnswerChange, kit state): handed out by the kit (no constructor); reads `->answer`, `->item`, `->status`
-- **`gk.Questionnaire_Answer_Read`** (QuestionnaireAnswer, kit state): handed out by the kit (no constructor); reads `->choices`, `->freeform`, `->is_empty`
-- **`gk.Questionnaire_Answers`** (QuestionnaireAnswers, kit state): handed out by the kit (no constructor); reads `->get`, `->is_empty`, `->iter`, `->len_`
-- **`gk.Questionnaire_Choice_Definition_Read`** (QuestionnaireChoiceDefinition, kit state): handed out by the kit (no constructor); reads `->value`, `->description`, `->accessibility_label`, `->is_default_selected`, `->is_disabled`, `->try_value`
-- **`gk.Questionnaire_Choice_State`** (QuestionnaireChoiceState, kit state): handed out by the kit (no constructor); reads `->value`, `->is_disabled`, `->is_invalid`, `->is_selected`, `->shortcut`, `->try_value`
-- **`gk.Questionnaire_Input_Definition_Read`** (QuestionnaireInputDefinition, kit state): handed out by the kit (no constructor); reads `->accessibility_label`, `->is_disabled`, `->state_`
-- **`gk.Questionnaire_Item_Definition_Read`** (QuestionnaireItemDefinition, kit state): handed out by the kit (no constructor); reads `->description`, `->accessibility_label`, `->choices`, `->input`, `->is_disabled`, `->is_multiple`, `->is_required`, `->name` and 1 more
-- **`gk.Questionnaire_Item_State`** (QuestionnaireItemState, kit state): handed out by the kit (no constructor); reads `->has_input`, `->is_disabled`, `->is_invalid`, `->is_multiple`, `->is_required`, `->name`, `->status`
-- **`gk.Questionnaire_Navigation_State`** (QuestionnaireNavigationState, kit state): handed out by the kit (no constructor); reads `->is_confirmable`, `->is_next_visible`, `->is_previous_visible`, `->is_skip_visible`, `->is_submit_visible`
-- **`gk.Questionnaire_Progress_State`** (QuestionnaireProgressState, kit state): handed out by the kit (no constructor); reads `->current`, `->total`
-- **`gk.Questionnaire_State`** (QuestionnaireState, kit state): `gk.questionnaire_state(cx, items)->…->build()`; shown by `gk.questionnaire(state)`, `gk.questionnaire_actions(state)`, `gk.questionnaire_choice(state)`, `gk.questionnaire_choices(state)`, `gk.questionnaire_description(state)`, `gk.questionnaire_error(state)`, `gk.questionnaire_input(state)`, `gk.questionnaire_item(state)`, `gk.questionnaire_next(state)`, `gk.questionnaire_previous(state)`, `gk.questionnaire_progress(state)`, `gk.questionnaire_skip(state)`, `gk.questionnaire_submit(state)`, `gk.questionnaire_title(state)`; built with `->with_current_item`, `->with_shortcuts`; reads `->activate_choice`, `->activate_shortcut`, `->answer`, `->answers`, `->choice_definition`, `->choice_focus_handle`, `->choice_for_shortcut`, `->choice_position` and 38 more; writes `->reset`; events `->on_questionnaire_event(cx, gk.on(p))`
-- **`gk.Questionnaire_Submission`** (QuestionnaireSubmission, kit state): handed out by the kit (no constructor); reads `->answer`, `->items`
-- **`gk.Questionnaire_Submission_Item`** (QuestionnaireSubmissionItem, kit state): handed out by the kit (no constructor); reads `->answer`, `->name`, `->status`
+- **`gk.Questionnaire_Answer_Change`** (QuestionnaireAnswerChange, kit state): handed out by the kit (no constructor); reads `gk.item`, `gk.questionnaire_answer_change_answer`, `gk.status`
+- **`gk.Questionnaire_Answer_Read`** (QuestionnaireAnswer, kit state): handed out by the kit (no constructor); reads `gk.choices`, `gk.freeform`, `gk.is_empty`
+- **`gk.Questionnaire_Answers`** (QuestionnaireAnswers, kit state): handed out by the kit (no constructor); reads `gk.is_empty`, `gk.iter`, `gk.questionnaire_answers_get`, `gk.questionnaire_answers_len`
+- **`gk.Questionnaire_Choice_Definition_Read`** (QuestionnaireChoiceDefinition, kit state): handed out by the kit (no constructor); reads `gk.value`, `gk.description`, `gk.accessibility_label`, `gk.is_default_selected`, `gk.is_disabled`, `gk.try_value`
+- **`gk.Questionnaire_Choice_State`** (QuestionnaireChoiceState, kit state): handed out by the kit (no constructor); reads `gk.value`, `gk.is_disabled`, `gk.is_invalid`, `gk.is_selected`, `gk.questionnaire_choice_state_shortcut`, `gk.try_value`
+- **`gk.Questionnaire_Input_Definition_Read`** (QuestionnaireInputDefinition, kit state): handed out by the kit (no constructor); reads `gk.accessibility_label`, `gk.is_disabled`, `gk.state`
+- **`gk.Questionnaire_Item_Definition_Read`** (QuestionnaireItemDefinition, kit state): handed out by the kit (no constructor); reads `gk.description`, `gk.accessibility_label`, `gk.choices`, `gk.is_disabled`, `gk.is_multiple`, `gk.is_required`, `gk.name`, `gk.questionnaire_item_definition_read_input` and 1 more
+- **`gk.Questionnaire_Item_State`** (QuestionnaireItemState, kit state): handed out by the kit (no constructor); reads `gk.has_input`, `gk.is_disabled`, `gk.is_invalid`, `gk.is_multiple`, `gk.is_required`, `gk.name`, `gk.status`
+- **`gk.Questionnaire_Navigation_State`** (QuestionnaireNavigationState, kit state): handed out by the kit (no constructor); reads `gk.is_confirmable`, `gk.is_next_visible`, `gk.is_previous_visible`, `gk.is_skip_visible`, `gk.is_submit_visible`
+- **`gk.Questionnaire_Progress_State`** (QuestionnaireProgressState, kit state): handed out by the kit (no constructor); reads `gk.current`, `gk.total`
+- **`gk.Questionnaire_State`** (QuestionnaireState, kit state): `gk.questionnaire_state(cx, items)->…->build()`; shown by `gk.questionnaire(state)`, `gk.questionnaire_actions(state)`, `gk.questionnaire_choice(state)`, `gk.questionnaire_choices(state)`, `gk.questionnaire_description(state)`, `gk.questionnaire_error(state)`, `gk.questionnaire_input(state)`, `gk.questionnaire_item(state)`, `gk.questionnaire_next(state)`, `gk.questionnaire_previous(state)`, `gk.questionnaire_progress(state)`, `gk.questionnaire_skip(state)`, `gk.questionnaire_submit(state)`, `gk.questionnaire_title(state)`; built with `->with_current_item`, `->with_shortcuts`; reads `gk.activate_choice`, `gk.activate_shortcut`, `gk.answers`, `gk.choice_definition`, `gk.choice_focus_handle`, `gk.choice_for_shortcut`, `gk.choice_position`, `gk.choice_state` and 38 more; writes `gk.reset`; events `gk.on_questionnaire_event(s, cx, gk.on(p))`
+- **`gk.Questionnaire_Submission`** (QuestionnaireSubmission, kit state): handed out by the kit (no constructor); reads `gk.questionnaire_submission_answer`, `gk.questionnaire_submission_items`
+- **`gk.Questionnaire_Submission_Item`** (QuestionnaireSubmissionItem, kit state): handed out by the kit (no constructor); reads `gk.name`, `gk.questionnaire_submission_item_answer`, `gk.status`
 - **`gk.Questionnaire_Answer`** (QuestionnaireAnswer, value): `gk.questionnaire_answer()` or `gk.questionnaire_answer_default()`; `->with_choices`, `->with_freeform`
 - **`gk.Questionnaire_Choice_Definition`** (QuestionnaireChoiceDefinition, value): `gk.questionnaire_choice_definition(value, accessibility_label)`; `->with_default_selected`, `->with_description`, `->with_disabled`
 - **`gk.Questionnaire_Input_Definition`** (QuestionnaireInputDefinition, value): `gk.questionnaire_input_definition(state, accessibility_label)`; `->with_disabled`
@@ -859,15 +859,15 @@ types, is in its generated file.
 
 ### base::slider
 
-- **`gk.Slider_State`** (SliderState, kit state): `gk.slider_state(cx)->…->build()`; shown by `gk.base_slider(state)`, `gk.slider(state)`, `gk.slider_indicator(state)`, `gk.slider_thumb(state)`, `gk.slider_track(state)`; built with `->default_value`, `->max`, `->min`, `->scale`, `->step`; reads `->value`, `->accessibility_step`, `->max_value`, `->min_value`, `->step_value`, `->try_value`; writes `->set_value`; events `->on_slider_event(cx, gk.on(p))`
+- **`gk.Slider_State`** (SliderState, kit state): `gk.slider_state(cx)->…->build()`; shown by `gk.base_slider(state)`, `gk.slider(state)`, `gk.slider_indicator(state)`, `gk.slider_thumb(state)`, `gk.slider_track(state)`; built with `->default_value`, `->max`, `->min`, `->scale`, `->step`; reads `gk.value`, `gk.accessibility_step`, `gk.max_value`, `gk.min_value`, `gk.step_value`, `gk.try_value`; writes `gk.set_value`; events `gk.on_slider_event(s, cx, gk.on(p))`
 
 ### base::text
 
-- **`gk.Base_Table_2`** (Table, kit state): handed out by the kit (no constructor); reads `->column_aligns`, `->rows`
-- **`gk.Image_Node`** (ImageNode, kit state): handed out by the kit (no constructor); reads `->title`
-- **`gk.Inline_Node_Read`** (InlineNode, kit state): handed out by the kit (no constructor); reads `->text`, `->as_custom`, `->as_image`, `->mark_runs`
-- **`gk.Leaf_Geometry`** (LeafGeometry, kit state): handed out by the kit (no constructor); reads `->atom_at`, `->bounds`, `->caret_for_position`, `->caret_height`, `->index_for_position`, `->is_empty`, `->len_`, `->line_height` and 2 more
-- **`gk.Paragraph_Read`** (Paragraph, kit state): handed out by the kit (no constructor); reads `->children`
+- **`gk.Base_Table_2`** (Table, kit state): handed out by the kit (no constructor); reads `gk.base_table_2_rows`, `gk.column_aligns`
+- **`gk.Image_Node`** (ImageNode, kit state): handed out by the kit (no constructor); reads `gk.title`
+- **`gk.Inline_Node_Read`** (InlineNode, kit state): handed out by the kit (no constructor); reads `gk.as_custom`, `gk.as_image`, `gk.inline_node_read_text`, `gk.mark_runs`
+- **`gk.Leaf_Geometry`** (LeafGeometry, kit state): handed out by the kit (no constructor); reads `gk.atom_at`, `gk.bounds`, `gk.caret_for_position`, `gk.caret_height`, `gk.index_for_position`, `gk.is_empty`, `gk.leaf_geometry_len`, `gk.line_height` and 2 more
+- **`gk.Paragraph_Read`** (Paragraph, kit state): handed out by the kit (no constructor); reads `gk.children`
 - **`gk.Base_Code_Block`** (CodeBlock, value): `gk.base_code_block_from_code(code, lang)` or `gk.base_code_block(code, lang, span)`; `->with_leaf_key`, `->with_meta`
 - **`gk.Flow_Position`** (FlowPosition, value): `gk.flow_position_at(blocks, ix, is_last)`; `->first`, `->last`
 - **`gk.Inline_Node`** (InlineNode, value): `gk.inline_node_default()` or `gk.inline_node(text)` or `gk.inline_node_image(image)`; `->marks`

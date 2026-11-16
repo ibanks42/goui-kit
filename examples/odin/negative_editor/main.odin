@@ -51,7 +51,7 @@ MD :: "> [!note]\n> inside\n\n```badge\nok\n```\n"
 badge :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {
 	a.rowed += 1
 	n := gk.row_context(cx, a.rows, at, gk.Markdown_Node_Read)
-	return gk.label(string(n->as_text(cx)))
+	return gk.label(string(gk.as_text(n, cx)))
 }
 
 init :: proc(a: ^App, cx: ^gk.Cx) {
@@ -108,7 +108,7 @@ plus :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {
 
 leaves :: proc(a: ^App, cx: ^gk.Cx, e: gk.Leaf_Geometry_Event) {
 	for l in e.leaves {
-		a.leaves += l.geometry->len_(cx) // read in the handler: correct
+		a.leaves += gk.len_(l.geometry, cx) // read in the handler: correct
 		if a.mode == "ed6-leaf-stale" {
 			a.leaf = l.geometry // kept without gk.retain: temporary, swept when the next frame begins
 		}
@@ -117,10 +117,10 @@ leaves :: proc(a: ^App, cx: ^gk.Cx, e: gk.Leaf_Geometry_Event) {
 
 view6 :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	if g, ok := a.leaf.?; ok {
-		_ = g->len_(cx) // a released temporary: stops here
+		_ = gk.len_(g, cx) // a released temporary: stops here
 	}
 	if a.mode == "ed6-lent-view" {
-		a.ed->lsp_mut(cx, gk.lsp_default())
+		gk.lsp_mut(a.ed, cx, gk.lsp_default())
 	}
 	blocks := make([dynamic]gk.Block_Node, context.temp_allocator)
 	append(&blocks, gk.Block_Node_Paragraph{v0 = gk.paragraph_default()->push(gk.inline_node("mine"))->with_leaf_key(7)})

@@ -41,7 +41,7 @@ open :: proc(a: ^App, cx: ^gk.Cx) {
 		gk.open_dialog(cx, gk.Built(gk.Dialog){})
 	case "dock-node":
 		a.dock = gk.dock_area_skinned(cx, "neg")
-		a.dock->set_zoomed_in(cx, gk.Node_Id(424242)) // made up: no read handed it out
+		gk.set_zoomed_in(a.dock, cx, gk.Node_Id(424242)) // made up: no read handed it out
 	case:
 		a.dlg = gk.built(cx, a, good)
 		gk.open_dialog(cx, a.dlg)

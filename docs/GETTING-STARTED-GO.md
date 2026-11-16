@@ -38,7 +38,7 @@ package you download.
 
 ### Download and unpack
 
-The download is one file per system: `gpuikit-0.0.1-linux-x86_64.tar.zst` (24.2 MB),
+The download is one file per system: `gpuikit-0.0.1-linux-x86_64.tar.zst` (about 66 MB),
 `gpuikit-0.0.1-macos-universal.tar.zst` or `gpuikit-0.0.1-windows-x86_64.zip`, from release `v0.0.1`
 of the bindings' GitHub releases
 ([github.com/ibanks42/gpui-kit-bindings/releases](https://github.com/ibanks42/gpui-kit-bindings/releases)).
@@ -715,37 +715,13 @@ func (a *App) chart() gk.Element {
   when the view runs; a type with a `String` method, like `Category`, is text). The rows are read
   when the chart is made. A chart has no size of its own: put it in a sized `gk.Div`.
 
-### Testing without a display
+### Checking that it starts, in CI
 
-Any app runs offscreen when the environment names a script: `GK_SCRIPT=session.script ./app.bin`.
-It
-needs the optional diagnostic library (a second download, `gpuikit-..-diag`): build a test copy of
-the app against its `lib/` folder instead of the normal one (the library is linked into the
-program, so the copy is what changes). A script clicks, types, presses keys and saves screenshots. Screenshots work on Linux and
-macOS; on Windows the engine has no offscreen renderer, so a script still runs every frame but
-`shot` fails:
-
-```
-size 520 560
-frame
-key ctrl-n
-type Eggs
-key enter
-sleep 600
-frame
-advance 500
-shot added.png
-```
-
-`click X Y`, `dblclick X Y`, `rclick X Y`, `move X Y`, `drag X1 Y1 X2 Y2`, `scroll X Y DY`,
-`key NAME`, `type TEXT` and `shot FILE.png` act on the window; `sleep MS` lets your goroutines run
-and `advance MS` moves the window's clock: animations, toasts and your `gk.After` and `gk.Every`
-timers move only with it (a timer due during a `sleep` fires at the next `advance`), while
-`time.Now()` in your code is the real clock. Coordinates are the window's logical pixels, as in
-`size`; the offscreen window draws at scale 2, so `shot` writes an image twice that size (a
-520 by 560 window gives 1040 by 1120 pixels): halve what you measure on it.
-`gk.RunHeadless(script, start)` does the same with a script in memory. The tutorial's last step
-is tested exactly this way.
+`GK_FRAMES=5,30 ./app.bin` draws 30 frames and exits with status 0, so a CI job can check that the
+program starts and draws. On Linux without a display, run it under a virtual one:
+`xvfb-run -a env GK_FRAMES=5,30 ./app.bin` (packages `xvfb`, and Mesa's Vulkan driver
+`mesa-vulkan-drivers` when the machine has no GPU). macOS and Windows CI machines have a desktop,
+so the program runs there as it is.
 
 ### Where next
 

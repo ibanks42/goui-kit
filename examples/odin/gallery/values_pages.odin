@@ -56,12 +56,12 @@ values_pages_init :: proc(a: ^App, cx: ^gk.Cx) {
 	vp.band = gk.scale_band(cx, {"a", "b", "c", "d"}, {0, 400})->padding_inner(0.2)->build()
 	vp.linear = gk.scale_linear(cx, {0, 10}, {0, 200})
 	th := gk.theme_global(cx)
-	vp.font_size, vp.radius = th->font_size(cx), th->radius(cx)
+	vp.font_size, vp.radius = gk.font_size(th, cx), gk.radius(th, cx)
 	// PROTOCOLS.md 13.13, 13.14
 	vp.cal = gk.calendar_state(cx)->build()
-	vp.cal->set_date(cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
+	gk.set_date(vp.cal, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
 	vp.scroll = gk.scroll_handle(cx)
-	vp.scroll->set_offset(cx, {0, -120})
+	gk.set_offset(vp.scroll, cx, {0, -120})
 	// PROTOCOLS.md 13.19, 13.20
 	vp.dark = gk.cell(cx, false)
 	vp.compact = gk.cell(cx, true)
@@ -84,7 +84,7 @@ sample :: proc() -> gk.Element {
 
 @(private = "file")
 toggle_mode :: proc(a: ^App, cx: ^gk.Cx) {
-	dark := gk.theme_global(cx)->is_dark(cx)
+	dark := gk.is_dark(gk.theme_global(cx), cx)
 	gk.theme_change(cx, gk.Theme_Mode.Light if dark else gk.Theme_Mode.Dark)
 }
 
@@ -97,12 +97,12 @@ values_theme_mode_page :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 @(private = "file")
 toggle_edit :: proc(a: ^App, cx: ^gk.Cx) {
 	th := gk.theme_global(cx)
-	if th->radius(cx) == vp.radius {
-		th->set_radius(cx, 0)
-		th->set_font_size(cx, 20)
+	if gk.radius(th, cx) == vp.radius {
+		gk.set_radius(th, cx, 0)
+		gk.set_font_size(th, cx, 20)
 	} else {
-		th->set_radius(cx, vp.radius)
-		th->set_font_size(cx, vp.font_size)
+		gk.set_radius(th, cx, vp.radius)
+		gk.set_font_size(th, cx, vp.font_size)
 	}
 }
 
@@ -116,10 +116,10 @@ values_scales_page :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	names := [4]string{"a", "b", "c", "d"}
 	vals := [4]f64{3, 7, 5, 9}
 	plot := gk.div(.Relative)->w(gk.px(400))->h(gk.px(200))->bg(gk.theme(.Muted))
-	w := vp.band->band_width(cx)
+	w := gk.band_width(vp.band, cx)
 	for n, i in names {
-		x, _ := vp.band->tick(cx, n).?
-		h, _ := vp.linear->tick(cx, vals[i]).?
+		x, _ := gk.tick(vp.band, cx, n).?
+		h, _ := gk.tick(vp.linear, cx, vals[i]).?
 		plot = plot->child(gk.div(.Absolute)->left(gk.px(x))->bottom(gk.px(0))->w(gk.px(w))->h(gk.px(h))->bg(gk.theme(.Primary)))
 	}
 	return plot
@@ -244,10 +244,10 @@ comp6_pages_init :: proc(a: ^App, cx: ^gk.Cx) {
 	c6p.handles = gk.row_source(cx, a, 0, comp6_handle_row)
 	c6p.cal_range = gk.calendar_state(cx)->
 		disabled_matcher(gk.Matcher_Range{gk.Range_Matcher{from = gk.Naive_Date{2024, 2, 12}, to = gk.Naive_Date{2024, 2, 16}}})->build()
-	c6p.cal_range->set_date(cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
+	gk.set_date(c6p.cal_range, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
 	c6p.cal_days = gk.calendar_state(cx)->build()
-	c6p.cal_days->set_disabled_matcher(cx, gk.Matcher_Custom{[]gk.Naive_Date{{2024, 2, 5}, {2024, 2, 20}}})
-	c6p.cal_days->set_date(cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
+	gk.set_disabled_matcher(c6p.cal_days, cx, gk.Matcher_Custom{[]gk.Naive_Date{{2024, 2, 5}, {2024, 2, 20}}})
+	gk.set_date(c6p.cal_days, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
 	columns := [?]gk.Table_Column{gk.table_column("id", "Id", 60), gk.table_column("name", "Name", 100)}
 	c6p.cells = gk.table_source(cx, a, 4, columns[:], comp6_cell)
 	c6p.table = gk.table_state(cx, c6p.cells)->build()

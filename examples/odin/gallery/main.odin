@@ -148,7 +148,7 @@ next :: proc(a: ^App, cx: ^gk.Cx) {
 	a.page = (a.page + 1) % len(a.ids)
 	a.count = 0
 	a.flag = false
-	a.name->set_value(cx, "")
+	gk.set_value(a.name, cx, "")
 }
 
 root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {

@@ -48,7 +48,7 @@ select :: proc(a: ^App, cx: ^gk.Cx, title: string) {
 
 store :: proc(a: ^App, cx: ^gk.Cx) {
 	a.clicks += 1
-	text := a.name->value(cx) // gk.Temp_String: lent for this turn
+	text := gk.value(a.name, cx) // gk.Temp_String: lent for this turn
 	switch a.mode {
 	case "keep":
 		a.kept = gk.keep(text)

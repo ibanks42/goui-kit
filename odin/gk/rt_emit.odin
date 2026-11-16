@@ -200,7 +200,7 @@ register :: proc(h: Handler, shape: u16) -> u32 {
 // --- kit state behind handles -----------------------------------------------------------------
 
 // State is a handle to a kit entity that lives in the library. A generated state type is
-// struct {using state: State, using vt: ^T_VT}.
+// struct {using state: State}, with procedures named after it (gk.input_state_value(s, cx)).
 State :: struct {
 	h: u64,
 }

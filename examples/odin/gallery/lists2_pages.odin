@@ -61,12 +61,12 @@ lists2_pages_init :: proc(a: ^App, cx: ^gk.Cx) {
 	// a token drawn by a row of the app's (9.16), a diff's header suffixes, an editor
 	// whose diagnostics are lent and given back (9.17) and whose highlighter is the app's (9.18).
 	p.token = gk.input_state(cx)->default_value("Hello world")->build()
-	_ = p.token->replace_range_with_token(cx, gk.Range{6, 11}, gk.inline_token("t1", "world")->with_label("World"))
+	_ = gk.replace_range_with_token(p.token, cx, gk.Range{6, 11}, gk.inline_token("t1", "world")->with_label("World"))
 	p.keywords = gk.highlighter(cx, a, editor_keywords)
 	p.editor = gk.editor_state(cx)->language("odin")->default_value(EDITOR_DIAG_TEXT)->build()
-	p.editor->set_highlighter_factory(cx, p.keywords.src)
-	if d, ok := p.editor->diagnostics_mut(cx).?; ok {
-		d->push(cx, gk.diagnostic({gk.Lsp_Position{1, 4}, gk.Lsp_Position{1, 10}}, "never called"))
+	gk.set_highlighter_factory(p.editor, cx, p.keywords.src)
+	if d, ok := gk.diagnostics_mut(p.editor, cx).?; ok {
+		gk.push(d, cx, gk.diagnostic({gk.Lsp_Position{1, 4}, gk.Lsp_Position{1, 10}}, "never called"))
 	}
 	src := gk.search_source(cx, a, LISTS2_FRUIT[:])
 	p.select = gk.select_state(cx, src, 4)->build()
@@ -189,7 +189,7 @@ text_token :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 
 // diff-header: each file's header ends with its path in brackets, an item procedure over the file.
 diff_header_item :: proc(a: ^App, cx: ^gk.Cx, f: gk.Diff_File_Read) -> gk.Element {
-	return gk.label(fmt.tprintf("[%s]", f->path(cx)))
+	return gk.label(fmt.tprintf("[%s]", gk.path(f, cx)))
 }
 
 diff_header :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {

@@ -49,24 +49,24 @@ App :: struct {
 // chain in one crossing, read at once; Scale::tick and nearest_index through the trait.
 scales :: proc(a: ^App, cx: ^gk.Cx) {
 	band := gk.scale_band(cx, {"a", "b", "c"}, {0, 300})->padding_inner(0.1)->build()
-	bw, st := band->band_width(cx), band->step(cx)
-	ta, _ := band->tick(cx, "a").?
-	tc, _ := band->tick(cx, "c").?
-	_, missing := band->tick(cx, "zz").?
+	bw, st := gk.band_width(band, cx), gk.step(band, cx)
+	ta, _ := gk.tick(band, cx, "a").?
+	tc, _ := gk.tick(band, cx, "c").?
+	_, missing := gk.tick(band, cx, "zz").?
 	fmt.printf("values band width_ok=%v step_ok=%v order=%v missing=%v nearest=%d\n",
-		bw > 0 && bw < 100, st >= bw, ta < tc, !missing, band->nearest_index(cx, tc))
+		bw > 0 && bw < 100, st >= bw, ta < tc, !missing, gk.nearest_index(band, cx, tc))
 	lin := gk.scale_linear(cx, {0, 100}, {0, 200})
-	t0, _ := lin->tick(cx, 0).?
-	t50, _ := lin->tick(cx, 50).?
-	t100, _ := lin->tick(cx, 100).?
+	t0, _ := gk.tick(lin, cx, 0).?
+	t50, _ := gk.tick(lin, cx, 50).?
+	t100, _ := gk.tick(lin, cx, 100).?
 	fmt.printf("values linear t0=%.0f t50=%.0f t100=%.0f\n", t0, t50, t100)
 	pt := gk.scale_point(cx, {"x", "y", "z"}, {0, 100})
-	p0, _ := pt->tick_at(cx, 0).?
-	p2, _ := pt->tick_at(cx, 2).?
-	_, none := pt->tick_at(cx, 9).?
+	p0, _ := gk.tick_at(pt, cx, 0).?
+	p2, _ := gk.tick_at(pt, cx, 2).?
+	_, none := gk.tick_at(pt, cx, 9).?
 	fmt.printf("values point first=%.0f last=%.0f out_of_range=%v\n", p0, p2, !none)
 	ord := gk.scale_ordinal(cx, {"red", "blue"}, {gk.hsla(0, 1, 0.5, 1), gk.hsla(0.66, 1, 0.5, 1)})->build()
-	c, ok := ord->map_(cx, "blue").?
+	c, ok := gk.map_(ord, cx, "blue").?
 	fmt.printf("values ordinal found=%v hue=%.2f\n", ok, c.h)
 	gk.release(cx, band)
 	gk.release(cx, lin)
@@ -78,16 +78,16 @@ scales :: proc(a: ^App, cx: ^gk.Cx) {
 motion :: proc(a: ^App, cx: ^gk.Cx) {
 	kf := gk.keyframes_try_new(cx, {{offset = 0, value = 0, easing = gk.Easing_Linear{}}, {offset = 1, value = 10, easing = gk.Easing_Linear{}}})
 	k, kok := kf.value.?
-	fmt.printf("values keyframes ok=%v len=%d mid=%.1f\n", kf.ok, k->len_(cx) if kok else -1, k->sample(cx, 0.5) if kok else -1)
+	fmt.printf("values keyframes ok=%v len=%d mid=%.1f\n", kf.ok, gk.len_(k, cx) if kok else -1, gk.sample(k, cx, 0.5) if kok else -1)
 	bad := gk.keyframes_try_new(cx, {})
 	fmt.printf("values keyframes empty ok=%v err=%v\n", bad.ok, len(bad.err) > 0)
 	d := gk.discrete(cx, 1, 2)
-	fmt.printf("values discrete before=%.0f after=%.0f\n", d->sample(cx, 0.2), d->sample(cx, 0.9))
-	sw := d->switch_at(cx, 0.1)
+	fmt.printf("values discrete before=%.0f after=%.0f\n", gk.sample(d, cx, 0.2), gk.sample(d, cx, 0.9))
+	sw := gk.switch_at(d, cx, 0.1)
 	fmt.printf("values discrete switch ok=%v\n", sw.ok)
 	step := gk.sequence_step(cx, 5, gk.transition(10 * time.Millisecond))
 	seq := gk.sequence(cx, gk.Id("seq"), 1)->with_steps({step})->build()
-	fmt.printf("values sequence from=%.0f steps=%d\n", seq->from(cx), len(seq->steps(cx)))
+	fmt.printf("values sequence from=%.0f steps=%d\n", gk.from(seq, cx), len(gk.steps(seq, cx)))
 }
 
 // The theme: the registry's themes (a map, read back sorted), a config applied, the mode
@@ -96,14 +96,14 @@ theme :: proc(a: ^App, cx: ^gk.Cx) {
 	switch a.clicks {
 	case 1:
 		reg := gk.theme_registry_global(cx)
-		themes := reg->themes(cx)
-		light := reg->default_light_theme(cx)
+		themes := gk.themes(reg, cx)
+		light := gk.default_light_theme(reg, cx)
 		th := gk.theme_global(cx)
-		th->apply_config(cx, light)
-		fmt.printf("values registry themes=%v dark=%v\n", len(themes) > 0, th->is_dark(cx))
+		gk.apply_config(th, cx, light)
+		fmt.printf("values registry themes=%v dark=%v\n", len(themes) > 0, gk.is_dark(th, cx))
 		gk.theme_change(cx, gk.Theme_Mode.Dark)
-		th->set_font_size(cx, 17)
-		err := reg->load_themes_from_str(cx, "not json")
+		gk.set_font_size(th, cx, 17)
+		err := gk.load_themes_from_str(reg, cx, "not json")
 		_, failed := err.?
 		fmt.printf("values registry bad json refused=%v\n", failed)
 		ok := gk.try_parse_color(cx, "#ff0000")
@@ -114,10 +114,10 @@ theme :: proc(a: ^App, cx: ^gk.Cx) {
 		fmt.printf("values config made=%v\n", cfg.h != 0)
 	case 2:
 		th := gk.theme_global(cx)
-		fmt.printf("values theme dark=%v font_size=%.0f\n", th->is_dark(cx), th->font_size(cx))
+		fmt.printf("values theme dark=%v font_size=%.0f\n", gk.is_dark(th, cx), gk.font_size(th, cx))
 		gk.theme_change(cx, gk.Theme_Mode.Light)
 	case 3:
-		fmt.printf("values theme light again dark=%v\n", gk.theme_global(cx)->is_dark(cx))
+		fmt.printf("values theme light again dark=%v\n", gk.is_dark(gk.theme_global(cx), cx))
 	}
 }
 
@@ -146,7 +146,7 @@ pins :: proc(a: ^App, cx: ^gk.Cx) {
 child_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	a.builds += 1
 	body := gk.div()->w(gk.px(300))->h(gk.px(200))
-	if p, ok := a.ann->position(cx).?; ok {
+	if p, ok := gk.position(a.ann, cx).?; ok {
 		body = body->child(gk.diff(a.diff)->gutter_markers({gk.diff_gutter_marker(gk.Id("m"), p)}))
 	}
 	return body
@@ -171,26 +171,26 @@ copy_value :: proc(a: ^App, cx: ^gk.Cx) -> string {
 // weeks, a date picker's date and date with time, a time field's time, a preset of a range.
 dates :: proc(a: ^App, cx: ^gk.Cx) {
 	cal := gk.calendar_state(cx)->build()
-	cal->set_date(cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
-	got := cal->date(cx)
+	gk.set_date(cal, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})
+	got := gk.date(cal, cx)
 	d, _ := got.(gk.Date_Single).v0.?
-	today := cal->today(cx)
-	weeks := cal->days(cx)
+	today := gk.today(cal, cx)
+	weeks := gk.days(cal, cx)
 	fmt.printf("values calendar date=%d-%02d-%02d today_ok=%v weeks=%d week_len=%d\n", d.year, d.month, d.day,
 		today.year >= 2024 && today.month >= 1 && today.month <= 12, len(weeks), len(weeks[0]) if len(weeks) > 0 else 0)
-	ok := cal->apply_date(cx, gk.Date_Range{gk.Naive_Date{2026, 1, 5}, gk.Naive_Date{2026, 1, 9}})
-	r, _ := cal->date(cx).(gk.Date_Range)
+	ok := gk.apply_date(cal, cx, gk.Date_Range{gk.Naive_Date{2026, 1, 5}, gk.Naive_Date{2026, 1, 9}})
+	r, _ := gk.date(cal, cx).(gk.Date_Range)
 	s, _ := r.v0.?
 	e, _ := r.v1.?
 	fmt.printf("values calendar range applied=%v start=%d-%02d-%02d end=%d\n", ok, s.year, s.month, s.day, e.day)
 	dp := gk.date_picker_state(cx)->build()
-	dp->set_date_time(cx, gk.Date_Time_Single{gk.Naive_Date_Time{{2026, 11, 11}, {9, 30, 15, 0}}})
-	dt, _ := dp->date_time(cx).(gk.Date_Time_Single).v0.?
+	gk.set_date_time(dp, cx, gk.Date_Time_Single{gk.Naive_Date_Time{{2026, 11, 11}, {9, 30, 15, 0}}})
+	dt, _ := gk.date_time(dp, cx).(gk.Date_Time_Single).v0.?
 	fmt.printf("values picker date_time=%d-%02d-%02d %02d:%02d:%02d\n", dt.date.year, dt.date.month, dt.date.day,
 		dt.time.hour, dt.time.minute, dt.time.second)
 	tf := gk.time_field_state(cx)->build()
-	tf->set_time(cx, gk.Naive_Time{23, 59, 0, 0}) // the field keeps minutes by default
-	t := tf->time(cx)
+	gk.set_time(tf, cx, gk.Naive_Time{23, 59, 0, 0}) // the field keeps minutes by default
+	t := gk.time(tf, cx)
 	fmt.printf("values time %02d:%02d:%02d\n", t.hour, t.minute, t.second)
 	_ = gk.date_range_preset_date_time("Launch", gk.Date_Time_Single{gk.Naive_Date_Time{{2026, 11, 11}, {12, 0, 0, 0}}})
 	gk.release(cx, cal)
@@ -202,7 +202,7 @@ dates :: proc(a: ^App, cx: ^gk.Cx) {
 bad_date :: proc(a: ^App, cx: ^gk.Cx) {
 	cal := gk.calendar_state(cx)->build()
 	fmt.println("values writing February 30")
-	cal->set_date(cx, gk.Date_Single{gk.Naive_Date{2026, 2, 30}})
+	gk.set_date(cal, cx, gk.Date_Single{gk.Naive_Date{2026, 2, 30}})
 	fmt.println("values not stopped")
 }
 
@@ -212,12 +212,12 @@ scroll :: proc(a: ^App, cx: ^gk.Cx) {
 	h := a.scroll
 	switch a.clicks {
 	case 1:
-		c := h->content_size(cx)
-		v := h->viewport_bounds(cx)
-		fmt.printf("values scroll content_taller=%v viewport_h=%.0f offset=%.0f\n", c.height > v.size.height, v.size.height, h->offset(cx).y)
-		h->set_offset(cx, {0, -200})
+		c := gk.content_size(h, cx)
+		v := gk.viewport_bounds(h, cx)
+		fmt.printf("values scroll content_taller=%v viewport_h=%.0f offset=%.0f\n", c.height > v.size.height, v.size.height, gk.offset(h, cx).y)
+		gk.set_offset(h, cx, {0, -200})
 	case 2:
-		fmt.printf("values scroll offset=%.0f\n", h->offset(cx).y)
+		fmt.printf("values scroll offset=%.0f\n", gk.offset(h, cx).y)
 	}
 }
 
@@ -227,23 +227,23 @@ readback :: proc(a: ^App, cx: ^gk.Cx) {
 	color := gk.questionnaire_item_definition("color", "Favourite colour")->with_required(true)->
 		with_choice(gk.questionnaire_choice_definition("red", "Red"))->with_choice(gk.questionnaire_choice_definition("blue", "Blue"))
 	a.quest = gk.questionnaire_state(cx, {color})->build()
-	_ = a.quest->on_questionnaire_event(cx, gk.on(quest_event))
+	_ = gk.on_questionnaire_event(a.quest, cx, gk.on(quest_event))
 	q := a.quest
-	err := q->set_answer(cx, "color", gk.questionnaire_answer()->with_choices({"blue"}))
+	err := gk.set_answer(q, cx, "color", gk.questionnaire_answer()->with_choices({"blue"}))
 	e, failed := err.?
-	ans, ok := q->answer(cx, "color").?
-	ch := ans->choices(cx) if ok else nil
+	ans, ok := gk.questionnaire_state_answer(q, cx, "color").?
+	ch := gk.choices(ans, cx) if ok else nil
 	fmt.printf("values answer set_failed=%v ok=%v choices=%d first=%s empty=%v err=%s\n", failed, ok, len(ch),
-		ch[0] if len(ch) > 0 else "", ans->is_empty(cx) if ok else true, e)
-	def, dok := q->item_definition(cx, "color").?
+		ch[0] if len(ch) > 0 else "", gk.is_empty(ans, cx) if ok else true, e)
+	def, dok := gk.item_definition(q, cx, "color").?
 	if dok {
-		cs := def->choices(cx)
-		fmt.printf("values definition name=%s required=%v choices=%d second=%s\n", def->name(cx), def->is_required(cx),
-			len(cs), cs[1]->value(cx) if len(cs) > 1 else "")
+		cs := gk.choices(def, cx)
+		fmt.printf("values definition name=%s required=%v choices=%d second=%s\n", gk.name(def, cx), gk.is_required(def, cx),
+			len(cs), gk.value(cs[1], cx) if len(cs) > 1 else "")
 	}
-	all := q->answers(cx)
-	got, gok := all->get(cx, "color").?
-	fmt.printf("values answers len=%d get=%v first=%s\n", all->len_(cx), gok, got->choices(cx)[0] if gok else "")
+	all := gk.answers(q, cx)
+	got, gok := gk.questionnaire_answers_get(all, cx, "color").?
+	fmt.printf("values answers len=%d get=%v first=%s\n", gk.len_(all, cx), gok, gk.choices(got, cx)[0] if gok else "")
 }
 
 // The questionnaire's event: an answer change hands out a QuestionnaireAnswerChange object.
@@ -251,26 +251,26 @@ quest_event :: proc(a: ^App, cx: ^gk.Cx, ev: gk.Questionnaire_Event) {
 	#partial switch e in ev {
 	case gk.Questionnaire_Event_Answer_Changed:
 		a.events += 1
-		ch := e.v0->answer(cx)->choices(cx)
-		fmt.printf("values event answer_changed item=%s choices=%d\n", e.v0->item(cx), len(ch))
+		ch := gk.choices(gk.questionnaire_answer_change_answer(e.v0, cx), cx)
+		fmt.printf("values event answer_changed item=%s choices=%d\n", gk.item(e.v0, cx), len(ch))
 	}
 }
 
 // Kit state a read hands out (PROTOCOLS.md 13.16): a colour picker's sliders, each a SliderState.
 handed :: proc(a: ^App, cx: ^gk.Cx) {
 	a.picker = gk.color_picker_state(cx)->build()
-	sl := a.picker->sliders(cx)
-	hue := sl->hue(cx)
-	again := sl->hue(cx)
-	v := hue->value(cx)
-	fmt.printf("values handed hue_max=%.0f same_handle=%v value_kind=%v\n", hue->max_value(cx), hue.h == again.h, v)
+	sl := gk.sliders(a.picker, cx)
+	hue := gk.hue(sl, cx)
+	again := gk.hue(sl, cx)
+	v := gk.value(hue, cx)
+	fmt.printf("values handed hue_max=%.0f same_handle=%v value_kind=%v\n", gk.max_value(hue, cx), hue.h == again.h, v)
 	gk.release(cx, hue)
 }
 
 // Ambient reads (PROTOCOLS.md 11.5): the locale, the theme through ActiveTheme.
 ambient :: proc(a: ^App, cx: ^gk.Cx) {
 	th := gk.kit_theme(cx)
-	fmt.printf("values ambient locale=%s theme_font=%v\n", gk.locale(cx), th->font_size(cx) > 0)
+	fmt.printf("values ambient locale=%s theme_font=%v\n", gk.locale(cx), gk.font_size(th, cx) > 0)
 }
 
 // A tooltip that is the app's view (PROTOCOLS.md 13.18): the closure hands the view back.
@@ -356,15 +356,15 @@ quest_events_start :: proc(a: ^App, cx: ^gk.Cx) {
 	color := gk.questionnaire_item_definition("color", "Favourite colour")->
 		with_choice(gk.questionnaire_choice_definition("red", "Red"))->with_choice(gk.questionnaire_choice_definition("blue", "Blue"))
 	a.quest = gk.questionnaire_state(cx, {color})->build()
-	_ = a.quest->on_questionnaire_event(cx, gk.on(quest_event2))
+	_ = gk.on_questionnaire_event(a.quest, cx, gk.on(quest_event2))
 }
 
 quest_event2 :: proc(a: ^App, cx: ^gk.Cx, ev: gk.Questionnaire_Event) {
 	#partial switch e in ev {
 	case gk.Questionnaire_Event_Answer_Changed:
 		a.answers += 1
-		ch := e.v0->answer(cx)->choices(cx)
-		fmt.printf("values quest answer_changed item=%s choice=%s\n", e.v0->item(cx), ch[0] if len(ch) > 0 else "")
+		ch := gk.choices(gk.questionnaire_answer_change_answer(e.v0, cx), cx)
+		fmt.printf("values quest answer_changed item=%s choice=%s\n", gk.item(e.v0, cx), ch[0] if len(ch) > 0 else "")
 	case gk.Questionnaire_Event_Submit:
 		a.submits += 1
 		fmt.printf("values quest submit\n")

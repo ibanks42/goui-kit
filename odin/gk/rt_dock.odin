@@ -135,7 +135,7 @@ dock_area_skinned :: proc(cx: ^Cx, id: string, version: Maybe(int) = nil, loc :=
 	put_u8(&req, u8(has))
 	put_u64(&req, u64(ver))
 	r := Reader{must_call(req[:], loc), 0}
-	return Dock_Area{state = {h = rd_u64(&r)}, vt = &dock_area_vt}
+	return Dock_Area{state = {h = rd_u64(&r)}}
 }
 
 // dock_view draws a dock area where the view puts it.
@@ -165,7 +165,7 @@ panel_group :: proc(cx: ^Cx, p: Dock_Panel, loc := #caller_location) -> (Tab_Gro
 	if h == 0 {
 		return {}, false
 	}
-	return Tab_Group{state = {h = h}, vt = &tab_group_vt}, true
+	return Tab_Group{state = {h = h}}, true
 }
 
 // panel_id is the PanelId of panel `p`, for the dock's calls that name a panel (select_panel).
@@ -245,7 +245,7 @@ dock_layout_shapes :: proc "contextless" () {
 
 // dock_area_of is the dock area a Panel_Build names.
 dock_area_of :: proc(h: u64) -> Dock_Area {
-	return Dock_Area{state = {h = h}, vt = &dock_area_vt}
+	return Dock_Area{state = {h = h}}
 }
 
 // register_panel makes the panel registry build panels named `name`: each asks `h` for its view
@@ -332,7 +332,7 @@ pane_tree_from_state :: proc(cx: ^Cx, dock: Dock_Area, state: Panel_State, root:
 	put_value(&req, &st, type_info_of(Panel_State))
 	put_u16(&req, u16(root))
 	r := Reader{must_call(req[:], loc), 0}
-	return Pane_Tree{state = {h = rd_u64(&r)}, vt = &pane_tree_vt}
+	return Pane_Tree{state = {h = rd_u64(&r)}}
 }
 
 // Pane_Kind is a pane node's shape (PaneNode::kind): a split with its children (temporary handles)

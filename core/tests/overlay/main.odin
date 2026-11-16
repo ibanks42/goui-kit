@@ -196,18 +196,18 @@ items :: proc(dup: bool) -> []gk.Questionnaire_Item_Definition {
 
 questionnaire :: proc(a: ^App, cx: ^gk.Cx) {
 	a.q = gk.questionnaire_state(cx, items(a.mode == "questionnaire-dup"))->build()
-	cur, _ := a.q->current_item(cx).?
-	fmt.printf("overlay q made total=%d current=%s\n", a.q->total(cx), cur)
-	err, failed := a.q->choose(cx, "color", "green").?
+	cur, _ := gk.current_item(a.q, cx).?
+	fmt.printf("overlay q made total=%d current=%s\n", gk.total(a.q, cx), cur)
+	err, failed := gk.choose(a.q, cx, "color", "green").?
 	fmt.printf("overlay q choose unknown failed=%v err=%s\n", failed, err)
-	_, failed2 := a.q->choose(cx, "color", "blue").?
+	_, failed2 := gk.choose(a.q, cx, "color", "blue").?
 	fmt.printf("overlay q choose blue failed=%v\n", failed2)
-	moved := a.q->go_next(cx)
-	cur2, _ := a.q->current_item(cx).?
+	moved := gk.go_next(a.q, cx)
+	cur2, _ := gk.current_item(a.q, cx).?
 	fmt.printf("overlay q next moved=%v current=%s\n", moved, cur2)
-	_, failed3 := a.q->set_current_item(cx, "nope").?
+	_, failed3 := gk.set_current_item(a.q, cx, "nope").?
 	fmt.printf("overlay q set_current_item unknown failed=%v\n", failed3)
-	fmt.printf("overlay done mode=questionnaire complete=%v\n", a.q->is_complete(cx))
+	fmt.printf("overlay done mode=questionnaire complete=%v\n", gk.is_complete(a.q, cx))
 }
 
 // --- the dock: two Odin views as panels ---------------------------------------------------------
@@ -228,24 +228,24 @@ dock_make :: proc(a: ^App, cx: ^gk.Cx) {
 		v := gk.view(&a.bodies[i], nil, body_view)
 		a.panels[i] = gk.panel(cx, v, {name = i == 0 ? "first" : "second", title = a.bodies[i].text}, gk.on(panel_event, i))
 	}
-	a.dock->set_center(cx, gk.dock_layout_tabs()->panel(a.panels[0])->panel(a.panels[1]))
+	gk.set_center(a.dock, cx, gk.dock_layout_tabs()->panel(a.panels[0])->panel(a.panels[1]))
 	fmt.println("overlay dock made")
 }
 
 dock_check :: proc(a: ^App, cx: ^gk.Cx) {
 	fmt.printf("overlay dock described first=%d second=%d empty=%v\n", a.bodies[0].described, a.bodies[1].described,
-		a.dock->is_empty(cx, .Center))
+		gk.is_empty(a.dock, cx, .Center))
 	gk.panel_set(cx, a.panels[0], {name = "first", title = "renamed", not_closable = true})
 	gk.panel_emit(cx, a.panels[0], .Zoom_In)
 }
 
 dock_zoomed :: proc(a: ^App, cx: ^gk.Cx) {
-	fmt.printf("overlay dock zoomed=%v\n", a.dock->is_zoomed(cx))
-	a.dock->remove_panel(cx, a.panels[1])
+	fmt.printf("overlay dock zoomed=%v\n", gk.is_zoomed(a.dock, cx))
+	gk.remove_panel(a.dock, cx, a.panels[1])
 }
 
 dock_done :: proc(a: ^App, cx: ^gk.Cx) {
-	fmt.printf("overlay done mode=dock zoomed=%v\n", a.dock->is_zoomed(cx))
+	fmt.printf("overlay done mode=dock zoomed=%v\n", gk.is_zoomed(a.dock, cx))
 }
 
 dock_root :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
@@ -261,54 +261,54 @@ dock_ids :: proc(a: ^App, cx: ^gk.Cx) {
 	g, ok := gk.panel_group(cx, a.panels[0])
 	fmt.printf("overlay ids group=%v\n", ok)
 	if !ok {return}
-	a.node = g->node(cx)
-	ps := g->panels(cx)
-	ctx := g->context_(cx)
+	a.node = gk.node(g, cx)
+	ps := gk.panels(g, cx)
+	ctx := gk.context_(g, cx)
 	fmt.printf("overlay ids panels=%d same=%v,%v active=%d ctx_node_same=%v ctx_panels=%d closable=%v\n", len(ps),
 		len(ps) == 2 && ps[0].h == a.panels[0].h, len(ps) == 2 && ps[1].h == a.panels[1].h,
-		g->active_ix(cx), ctx->node(cx) == a.node, len(ctx->panels(cx)), ctx->is_panel_closable(cx, gk.panel_id(cx, a.panels[0])))
-	p, found := a.dock->panel(cx, gk.panel_id(cx, a.panels[1])).?
+		gk.active_ix(g, cx), gk.node(ctx, cx) == a.node, len(gk.panels(ctx, cx)), gk.is_panel_closable(ctx, cx, gk.panel_id(cx, a.panels[0])))
+	p, found := gk.dock_area_panel(a.dock, cx, gk.panel_id(cx, a.panels[1])).?
 	fmt.printf("overlay ids dock panel found=%v same=%v\n", found, found && p.h == a.panels[1].h)
 	// split the group: the second panel goes to the right of it, in a new group
-	a.dock->split_at(cx, a.node, gk.panel_id(cx, a.panels[1]), .Right)
+	gk.split_at(a.dock, cx, a.node, gk.panel_id(cx, a.panels[1]), .Right)
 }
 
 dock_ids_split :: proc(a: ^App, cx: ^gk.Cx) {
-	tree, ok := a.dock->layout(cx, .Center).?
-	ids := tree->node_ids(cx)
-	n1, _ := tree->find_panel_node(cx, gk.panel_id(cx, a.panels[0])).?
-	n2, _ := tree->find_panel_node(cx, gk.panel_id(cx, a.panels[1])).?
-	root := tree->root(cx)->id(cx)
+	tree, ok := gk.layout(a.dock, cx, .Center).?
+	ids := gk.node_ids(tree, cx)
+	n1, _ := gk.find_panel_node(tree, cx, gk.panel_id(cx, a.panels[0])).?
+	n2, _ := gk.find_panel_node(tree, cx, gk.panel_id(cx, a.panels[1])).?
+	root := gk.pane_node_id(gk.root(tree, cx), cx)
 	fmt.printf("overlay ids split tree=%v nodes=%d first_kept=%v second_moved=%v\n", ok, len(ids), n1 == a.node, n2 != a.node)
-	kind := gk.pane_node_kind(cx, tree->root(cx))
+	kind := gk.pane_node_kind(cx, gk.root(tree, cx))
 	sp, is_split := kind.(gk.Pane_Split)
-	walked := gk.pane_node_walk(cx, tree->root(cx))
+	walked := gk.pane_node_walk(cx, gk.root(tree, cx))
 	fmt.printf("overlay ids kind split=%v children=%d walk=%d\n", is_split, len(sp.children), len(walked))
 	if len(sp.children) > 0 {
 		tabs, is_tabs := gk.pane_node_kind(cx, sp.children[0]).(gk.Pane_Tabs)
 		fmt.printf("overlay ids first child tabs=%v panels=%d\n", is_tabs, len(tabs.panels))
 	}
-	a.dock->set_split_sizes(cx, root, {200, 440})
-	a.dock->set_zoomed_in(cx, n2)
+	gk.set_split_sizes(a.dock, cx, root, {200, 440})
+	gk.set_zoomed_in(a.dock, cx, n2)
 }
 
 dock_ids_zoom :: proc(a: ^App, cx: ^gk.Cx) {
-	z, zoomed := a.dock->zoomed_group(cx).?
-	tree, _ := a.dock->layout(cx, .Center).?
-	n2, _ := tree->find_panel_node(cx, gk.panel_id(cx, a.panels[1])).?
+	z, zoomed := gk.zoomed_group(a.dock, cx).?
+	tree, _ := gk.layout(a.dock, cx, .Center).?
+	n2, _ := gk.find_panel_node(tree, cx, gk.panel_id(cx, a.panels[1])).?
 	fmt.printf("overlay ids zoomed=%v group=%v\n", zoomed, z == n2)
-	a.dock->set_zoomed_out(cx)
+	gk.set_zoomed_out(a.dock, cx)
 	gk.dock_skin_set_panel_style(cx, a.dock, .Tab_Bar)
 	gk.dock_skin_set_toggle_button_visible(cx, a.dock, false)
 	fmt.printf("overlay ids skin style=%v toggle=%v\n", gk.dock_skin_panel_style(cx, a.dock), gk.dock_skin_toggle_button_visible(cx, a.dock))
-	saved := a.dock->dump(cx)
+	saved := gk.dump(a.dock, cx)
 	sizes: []f32
 	if s, ok := saved.center.info.(gk.Panel_Info_Stack); ok {sizes = s.sizes}
 	fmt.printf("overlay done mode=dock-ids children=%d sizes=%v\n", len(saved.center.children), sizes)
 }
 
 bad_node :: proc(a: ^App, cx: ^gk.Cx) {
-	a.dock->set_zoomed_in(cx, gk.Node_Id(987654321)) // never handed out
+	gk.set_zoomed_in(a.dock, cx, gk.Node_Id(987654321)) // never handed out
 }
 
 // --- a saved layout restored through the registry --------------------------------------
@@ -341,23 +341,23 @@ layout_save :: proc(a: ^App, cx: ^gk.Cx) {
 }
 
 layout_load :: proc(a: ^App, cx: ^gk.Cx) {
-	saved := a.dock->dump(cx)
+	saved := gk.dump(a.dock, cx)
 	a.saved = fmt.aprint(print_state(saved.center))
 	fmt.printf("overlay layout saved %s\n", a.saved)
 	gk.register_panel(cx, "first", gk.on(restore))
 	gk.register_panel(cx, "second", gk.on(restore))
 	a.builds = 0
-	err, failed := a.dock->load(cx, saved).?
+	err, failed := gk.load(a.dock, cx, saved).?
 	fmt.printf("overlay layout loaded failed=%v err=%s\n", failed, err)
 }
 
 layout_check :: proc(a: ^App, cx: ^gk.Cx) {
-	again := fmt.tprint(print_state(a.dock->dump(cx).center))
+	again := fmt.tprint(print_state(gk.dump(a.dock, cx).center))
 	fmt.printf("overlay layout again same=%v described=%d,%d\n", again == a.saved, a.bodies[0].described, a.bodies[1].described)
-	tree, _ := a.dock->layout(cx, .Center).?
+	tree, _ := gk.layout(a.dock, cx, .Center).?
 	st := gk.pane_tree_to_state(cx, tree, a.dock)
 	t2 := gk.pane_tree_from_state(cx, a.dock, st, .Split)
-	fmt.printf("overlay layout tree to_state=%s from_state_panels=%d\n", print_state(st), len(t2->panels(cx)))
+	fmt.printf("overlay layout tree to_state=%s from_state_panels=%d\n", print_state(st), len(gk.panels(t2, cx)))
 	p, ok := gk.build_panel(cx, a.dock, {panel_name = "second", info = gk.Panel_Info_Panel{}})
 	q, ok2 := gk.build_panel(cx, a.dock, {panel_name = "nobody", info = gk.Panel_Info_Panel{}})
 	fmt.printf("overlay layout build_panel known=%v unknown=%v\n", ok && p.h != 0, ok2)
@@ -373,24 +373,24 @@ nav_make :: proc(a: ^App, cx: ^gk.Cx) {
 	a.pages = {{text = "home"}, {text = "details"}}
 	for i in 0 ..< 2 {a.page_views[i] = gk.view(&a.pages[i], nil, body_view)}
 	a.nav = gk.nav_stack_state(cx)
-	a.nav->push(cx, a.page_views[0], .Immediate)
-	a.nav->push(cx, a.page_views[1], .Immediate)
+	gk.push(a.nav, cx, a.page_views[0], .Immediate)
+	gk.push(a.nav, cx, a.page_views[1], .Immediate)
 }
 
 nav_check :: proc(a: ^App, cx: ^gk.Cx) {
-	cur, ok := a.nav->current(cx).?
-	vs := a.nav->views(cx)
-	fmt.printf("overlay nav depth=%d current=%v views=%d,%v\n", a.nav->depth(cx), ok && cur.h == a.page_views[1].h,
+	cur, ok := gk.current(a.nav, cx).?
+	vs := gk.nav_stack_state_views(a.nav, cx)
+	fmt.printf("overlay nav depth=%d current=%v views=%d,%v\n", gk.depth(a.nav, cx), ok && cur.h == a.page_views[1].h,
 		len(vs), len(vs) == 2 && vs[0].h == a.page_views[0].h)
-	popped, pok := a.nav->pop(cx, .Immediate).?
-	cur2, _ := a.nav->current(cx).?
+	popped, pok := gk.nav_stack_state_pop(a.nav, cx, .Immediate).?
+	cur2, _ := gk.current(a.nav, cx).?
 	fmt.printf("overlay nav popped=%v now=%v forward=%d\n", pok && popped.h == a.page_views[1].h, cur2.h == a.page_views[0].h,
-		len(a.nav->forward_views(cx)))
+		len(gk.forward_views(a.nav, cx)))
 	bar := gk.app_menu_bar(cx)
-	bar->reload(cx)
+	gk.reload(bar, cx)
 	a.bar = bar
 	r := gk.resizable_state(cx)
-	fmt.printf("overlay done mode=nav sizes=%d container=%v\n", len(r->sizes(cx)), r->container_size(cx))
+	fmt.printf("overlay done mode=nav sizes=%d container=%v\n", len(gk.sizes(r, cx)), gk.container_size(r, cx))
 }
 nav_root :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	if a.nav.h == 0 {return gk.div(.Size_Full)}
@@ -457,14 +457,14 @@ asked :: proc(a: ^App, cx: ^gk.Cx, q: gk.Dock_Render) {
 	case .Frame:
 		gk.dock_render_answer(cx, q.renderer, q.hook, q.key, a.frame_v)
 	case .Dock:
-		a.chrome.placement = q.dock->placement(cx)
-		a.chrome.open = q.dock->is_open(cx)
+		a.chrome.placement = gk.placement(q.dock, cx)
+		a.chrome.open = gk.is_open(q.dock, cx)
 		a.dock_ctx = q.dock
 		fmt.printf("overlay render asked Dock placement=%v open=%v key=%d same=%v\n", q.placement, a.chrome.open, q.key,
 			q.placement == a.chrome.placement)
 		gk.dock_render_answer(cx, q.renderer, q.hook, q.key, a.chrome_v)
 	case .Tab_Bar:
-		fmt.printf("overlay render asked Tab_Bar panels=%d\n", len(q.group->panels(cx)))
+		fmt.printf("overlay render asked Tab_Bar panels=%d\n", len(gk.panels(q.group, cx)))
 		gk.dock_render_answer(cx, q.renderer, q.hook, q.key, a.tabbar_v)
 	}
 }
@@ -480,8 +480,8 @@ render_make :: proc(a: ^App, cx: ^gk.Cx) {
 		v := gk.view(&a.bodies[i], nil, body_view)
 		a.panels[i] = gk.panel(cx, v, {name = i == 0 ? "first" : "second", title = a.bodies[i].text})
 	}
-	a.dock->set_center(cx, gk.dock_layout_tabs()->panel(a.panels[0]))
-	a.dock->set_dock(cx, .Left, gk.dock_layout_tabs()->panel(a.panels[1]))
+	gk.set_center(a.dock, cx, gk.dock_layout_tabs()->panel(a.panels[0]))
+	gk.set_dock(a.dock, cx, .Left, gk.dock_layout_tabs()->panel(a.panels[1]))
 	a.toggle_sub = gk.on_dock_toggle(cx, a.dock, gk.on(proc(a: ^App, cx: ^gk.Cx, t: gk.Dock_Toggle) { a.toggles += 1 }))
 	fmt.println("overlay render made")
 }
@@ -493,12 +493,12 @@ render_check :: proc(a: ^App, cx: ^gk.Cx) {
 	fmt.printf("overlay render described chrome=%v tabbar=%v frame=%v bodies=%v\n", a.chrome.described > 0, a.tabbars > 0,
 		a.frames > 0, a.bodies[0].described > 0 && a.bodies[1].described > 0)
 	_ = sent
-	a.dock_ctx->toggle(cx) // the chrome's own call: the dock closes, its context changes, it is asked again
+	gk.dock_context_toggle(a.dock_ctx, cx) // the chrome's own call: the dock closes, its context changes, it is asked again
 }
 
 render_done :: proc(a: ^App, cx: ^gk.Cx) {
 	// the kit reports a toggle of the user's (the skin's buttons) only: the chrome's call is the app's
-	fmt.printf("overlay done mode=render open=%v dock_asks=%d chrome_open=%v toggles=%d sub=%v\n", a.dock->is_dock_open(cx, .Left),
+	fmt.printf("overlay done mode=render open=%v dock_asks=%d chrome_open=%v toggles=%d sub=%v\n", gk.is_dock_open(a.dock, cx, .Left),
 		a.asks[.Dock], a.chrome.open, a.toggles, a.toggle_sub.h != 0)
 }
 
@@ -507,25 +507,25 @@ render_done :: proc(a: ^App, cx: ^gk.Cx) {
 toast_run :: proc(a: ^App, cx: ^gk.Cx) {
 	a.toasts = gk.toast_manager(cx, gk.Toast_Motion{duration = 100 * time.Millisecond, exit_duration = 50 * time.Millisecond})
 	t0 := gk.clock_now(cx)
-	a.toasts->push(cx, 1, 100, gk.Toast_Options{timeout = 300 * time.Millisecond}, t0)
-	a.toasts->push(cx, 2, 200, gk.Toast_Options{}, t0)
-	replaced := a.toasts->push(cx, 2, 201, gk.Toast_Options{}, t0)
-	v2, ok2 := a.toasts->get(cx, 2).?
-	fmt.printf("overlay toast len=%d replaced=%v get2=%v\n", a.toasts->len_(cx), replaced, v2)
+	gk.push(a.toasts, cx, 1, 100, gk.Toast_Options{timeout = 300 * time.Millisecond}, t0)
+	gk.push(a.toasts, cx, 2, 200, gk.Toast_Options{}, t0)
+	replaced := gk.push(a.toasts, cx, 2, 201, gk.Toast_Options{}, t0)
+	v2, ok2 := gk.toast_manager_get(a.toasts, cx, 2).?
+	fmt.printf("overlay toast len=%d replaced=%v get2=%v\n", gk.len_(a.toasts, cx), replaced, v2)
 	_ = ok2
-	adv := a.toasts->advance(cx, t0 + 150 * time.Millisecond, false)
+	adv := gk.advance(a.toasts, cx, t0 + 150 * time.Millisecond, false)
 	fmt.printf("overlay toast presented=%v changed=%v\n", adv.presented, adv.changed)
-	adv = a.toasts->advance(cx, t0 + 500 * time.Millisecond, false)
+	adv = gk.advance(a.toasts, cx, t0 + 500 * time.Millisecond, false)
 	fmt.printf("overlay toast ending=%v\n", adv.ending)
-	adv = a.toasts->advance(cx, t0 + 600 * time.Millisecond, false)
+	adv = gk.advance(a.toasts, cx, t0 + 600 * time.Millisecond, false)
 	removed := len(adv.removed) > 0 ? adv.removed[0] : gk.Tuple_U64_U64{}
-	fmt.printf("overlay toast removed=%d value=%d left=%d\n", removed.v0, removed.v1, a.toasts->len_(cx))
-	dismissed := a.toasts->dismiss(cx, 2, t0 + 600 * time.Millisecond)
-	visible := a.toasts->visible(cx, 5)
-	fmt.printf("overlay toast dismissed=%v visible=%d status=%v empty=%v\n", dismissed, len(visible), len(visible) > 0 ? visible[0].v2 : gk.Toast_Transition_Status.Starting, a.toasts->is_empty(cx))
-	a.toasts->push(cx, 3, 300, gk.Toast_Options{}, t0 + 600 * time.Millisecond)
-	all := a.toasts->iter(cx)
-	gone := a.toasts->dismiss_all(cx, t0 + 700 * time.Millisecond)
+	fmt.printf("overlay toast removed=%d value=%d left=%d\n", removed.v0, removed.v1, gk.len_(a.toasts, cx))
+	dismissed := gk.dismiss(a.toasts, cx, 2, t0 + 600 * time.Millisecond)
+	visible := gk.visible(a.toasts, cx, 5)
+	fmt.printf("overlay toast dismissed=%v visible=%d status=%v empty=%v\n", dismissed, len(visible), len(visible) > 0 ? visible[0].v2 : gk.Toast_Transition_Status.Starting, gk.is_empty(a.toasts, cx))
+	gk.push(a.toasts, cx, 3, 300, gk.Toast_Options{}, t0 + 600 * time.Millisecond)
+	all := gk.iter(a.toasts, cx)
+	gone := gk.dismiss_all(a.toasts, cx, t0 + 700 * time.Millisecond)
 	later := gk.clock_now(cx)
 	fmt.printf("overlay done mode=toast iter=%d dismissed_all=%v clock_moves=%v\n", len(all), gone, later >= t0)
 }
@@ -603,7 +603,7 @@ value_calls :: proc(a: ^App, cx: ^gk.Cx) {
 	g := gk.base_sankey_layout(cx, gk.sankey()->size(300, 200), 3, links[:])
 	layers := -1
 	if graph, ok := g.value.?; ok {
-		layers = graph->layer_count(cx)
+		layers = gk.layer_count(graph, cx)
 	}
 	bad := gk.base_sankey_layout(cx, gk.sankey(), 1, links[:]) // a link to a node that is not there
 	fmt.printf("overlay done mode=values ok=%v layers=%d bad_ok=%v bad_err=%v\n", g.ok, layers, bad.ok, len(bad.err) > 0)

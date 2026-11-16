@@ -24,7 +24,7 @@ Loaded :: struct {
 init :: proc(a: ^App, cx: ^gk.Cx) {
 	// Kit state: Rust's cx.new(|cx| InputState::new(window, cx).placeholder("Name"))
 	a.name = gk.input_state(cx)->placeholder("Name")->build()
-	a.name->on_input_event(cx, gk.on(name_event))
+	gk.on_input_event(a.name, cx, gk.on(name_event))
 	a.list = gk.list_state(cx, gk.list_source(cx, a, item_count, item_row))->build()
 	// actions!, KeyBinding::new and on_action, in one call
 	a.save = gk.shortcut(cx, "ctrl-s", gk.on(save))
@@ -76,9 +76,9 @@ remove :: proc(a: ^App, cx: ^gk.Cx, row: int) {
 name_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	#partial switch v in e {
 	case gk.Input_Event_Press_Enter:
-		text := a.name->value(cx) // gk.Temp_String: lent until this handler returns
+		text := gk.value(a.name, cx) // gk.Temp_String: lent until this handler returns
 		append(&a.items, gk.keep(text)) // a copy the app owns
-		a.name->set_value(cx, "")
+		gk.set_value(a.name, cx, "")
 		gk.refresh(cx)
 	}
 }
@@ -104,8 +104,8 @@ forget :: proc(a: ^App, cx: ^gk.Cx) {
 }
 
 pick :: proc(a: ^App, cx: ^gk.Cx) {
-	a.list->set_selected_index(cx, 4) // an IndexPath: the row alone, or gk.Base_Index_Path{section = 1, row = 4}
-	a.list->scroll_to_item(cx, 4, .Top)
+	gk.set_selected_index(a.list, cx, 4) // an IndexPath: the row alone, or gk.Base_Index_Path{section = 1, row = 4}
+	gk.scroll_to_item(a.list, cx, 4, .Top)
 }
 
 more :: proc(a: ^App, cx: ^gk.Cx) {

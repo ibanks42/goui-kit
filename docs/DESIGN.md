@@ -428,7 +428,7 @@ The app never defines a Rust type. A small fixed set of Rust types in the librar
   trait the app would implement are instantiated with the binding's bridge type
   (`TableState<GkTable>`), listed in `api/overrides.toml`. Upstream's `InputBaseState<M>` is
   instantiated by the generator as `InputState`, `EditorState` and `TextareaState`.
-- **Events from kit state** (the `EventEmitter` types): `state->on_event(cx, handler)` is
+- **Events from kit state** (the `EventEmitter` types): `gk.on_event(state, cx, handler)` is
   `cx.subscribe`; the `Subscription` lives in the handle table until the state is released.
 - **Focus.** `cx->focus_handle()` returns a handle; `track_focus(h)` is a generated builder;
   `focus(h)` is a call op; every `GkView` has its own `FocusHandle`.
@@ -493,7 +493,7 @@ call site.
 - `gk.Model(T)` in Odin and `gk.Model[T]` in Go hold a value and the set of views that read
   it; `get` in a view build records the view, `set` or `update` marks those views dirty. No
   crossing. It is optional: small apps need only the automatic mark.
-- A view procedure that reads kit state through a handle (`s.name->value(cx)` inside a view)
+- A view procedure that reads kit state through a handle (`gk.value(s.name, cx)` inside a view)
   records the handle in the tape's dependency list. When the tape is accepted, the runtime
   observes those entities (`cx.observe`) and marks the view dirty when one notifies. That is
   what a Rust view that reads `input.read(cx).value()` pays: one re-render per change.
@@ -755,11 +755,11 @@ view :: proc(s: ^App, cx: ^gk.Cx) -> gk.Element { // runs only when this view is
 }
 
 add_row :: proc(s: ^App, cx: ^gk.Cx) {
-	name := s.name->value(cx) // gk.Temp_String, valid until this handler returns
+	name := gk.value(s.name, cx) // gk.Temp_String, valid until this handler returns
 	if len(name) == 0 do return
 	append(&s.rows, Person{u64(len(s.rows)), gk.keep(name), 0}) // a Temp_String does not assign to a string
 	s.added += 1
-	s.name->set_value(cx, "")
+	gk.set_value(s.name, cx, "")
 } // the view that registered this handler is marked dirty on return
 
 main :: proc() {
@@ -772,9 +772,13 @@ main :: proc() {
 
 How the package is shaped:
 
-- Every element, builder and handle is a small value `{using el: Element, using vt:
-  ^Button_VT}`; `x->f(a)` calls the procedure in field `f` with `x` first. A chain continued
-  on the next line ends its lines with `->`.
+- Every element and builder is a small value `{using el: Element, using vt: ^Button_VT}`;
+  `x->f(a)` calls the procedure in field `f` with `x` first. A chain continued on the next line
+  ends its lines with `->`. A kit state or library object handle is `{using state: State}` with
+  plain procedures named after its type, `gk.input_state_value(s, cx)`, and a procedure group
+  per method name, `gk.value(s, cx)`, where that name is free in the package: a method table
+  would link the component family of every method of every handle a program could get
+  (section 16).
 - Styles: the no-argument `Styled` methods are members of one enum, `gk.Style_Flag`, written
   with implicit selectors in constructors and `->style(..)`. Styled methods with arguments are
   normal methods (`->bg(c)`, `->w(gk.px(120))`).
@@ -856,16 +860,14 @@ from source. An app developer never needs Rust, a cargo cache or a `target/` dir
 
 The developer downloads one archive per platform from the repository's GitHub releases:
 `gpuikit-VERSION-linux-x86_64.tar.zst`, `gpuikit-VERSION-macos-universal.tar.zst` or
-`gpuikit-VERSION-windows-x86_64.zip`, each with a `-diag` twin holding the diagnostic library,
-plus `SHA256SUMS`. All three hold the same files except the library:
+`gpuikit-VERSION-windows-x86_64.zip`, plus `SHA256SUMS`. All three hold the same files except the
+library. The diagnostic library (offscreen rendering, scripted input) is not shipped: it is for
+this repository's own tests.
 
 | file | what |
 |---|---|
-| `lib/libgpuikit.so` | Linux, linked against glibc 2.28 so it loads on any Linux with glibc 2.28 or newer |
-| `lib/libgpuikit_static.a` | the library as a static archive, which apps link into themselves (universal on macOS, MinGW's format on Windows for Go); on Windows also `gpuikit_static.lib`, MSVC's format, for Odin |
+| `lib/libgpuikit_static.a` | the library as a static archive, which apps link into themselves: on Linux built against glibc 2.28, so programs run on any Linux with glibc 2.28 or newer; universal (arm64 and x86_64, minimum macOS 11.0) on macOS; MinGW's format on Windows, for Go, beside `gpuikit_static.lib`, MSVC's format, for Odin |
 | `lib/libgpuikit_sys.so`, `libgpuikit_sys.a` | Linux: a linker script naming the system libraries the archive needs by their run-time names; Windows: the import library of the Windows API it links |
-| `lib/libgpuikit.dylib` | macOS, one universal file with arm64 and x86_64 slices, install name `@rpath/libgpuikit.dylib`, minimum macOS 11.0 |
-| `lib/gpuikit.dll`, `gpuikit.dll.lib`, `libgpuikit.dll.a`, `gpuikit.def` | Windows: the DLL, MSVC's import library (for Odin) and MinGW's (for Go's cgo) |
 | `windows/gpuikit.manifest`, `gpuikit.rc` | Windows: a program must embed or sit beside this manifest (per-monitor DPI v2, common controls 6), or it exits before `main` |
 | `include/` | the C headers |
 | `odin/gk/` | the Odin package |
@@ -873,8 +875,8 @@ plus `SHA256SUMS`. All three hold the same files except the library:
 | `examples/`, `docs/` | the example apps in both languages and the guides |
 | `VERSIONS`, `THIRD_PARTY.md`, licence texts | versions, hashes, what the library needs (glibc, minimum macOS, imported DLLs), and the licences of every crate linked in |
 
-A download is about 25 MB packed and about 80 MB unpacked, most of it the library; the static
-archive adds about 50 MB packed and 380 MB unpacked.
+A download is mostly the library: on Linux about 66 MB packed and 390 MB unpacked (the static
+archive keeps every component family; a program keeps only the ones it uses).
 
 Also on disk because of the developer's own toolchain: Go's build cache holds the compiled `gk`
 package; Odin has no cache. For comparison, a Rust developer of the same app holds a target
@@ -900,7 +902,7 @@ Delivery:
   is still built, for the repository's tests (`-define:GK_SHARED=true`, `-tags gkshared`), but not
   shipped (GO.md section 8).
 
-How the libraries are built: CI (`.github/workflows/platforms.yml`) runs `tools/ci-lib.sh` on
+How the libraries are built: CI (`.github/workflows/platforms.yml`) runs `tools/build-lib.sh` on
 each system. Linux is linked by zig against glibc 2.28 (`tools/zigbuild.sh`, with a pinned zig
 and cargo-zigbuild). Windows is built natively with MSVC, because gpui-fast's build script
 compiles the release shaders with `fxc.exe` only on a Windows host. macOS builds both slices on

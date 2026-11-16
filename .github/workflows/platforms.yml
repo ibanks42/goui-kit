@@ -1,28 +1,27 @@
 # The library and the download for Linux x86-64, macOS (universal: arm64 and x86_64) and Windows
 # x86-64, and the GitHub release apps download them from.
 #
-# Per platform, one path (tools/build-lib.sh: ship and diag, release): macOS and Windows
+# Per platform, one path (tools/build-lib.sh ship, release): macOS and Windows
 # natively on the runner (macOS needs Xcode's SDK and Metal compiler, Windows needs MSVC and the
 # Windows SDK's fxc.exe, neither of which can be used off their own system; the Apple silicon
 # runner builds both macOS slices, aarch64-apple-darwin and x86_64-apple-darwin, and lipo joins
-# them into one universal libgpuikit.dylib); Linux linked by zig against glibc 2.28, so the
+# them into one universal library); Linux linked by zig against glibc 2.28, so the
 # library loads on older distributions too (tools/zigbuild.sh holds the pinned zig,
 # cargo-zigbuild and link setup; the Rust of rust-toolchain.toml). Then the download
 # (tools/dist.sh), then what a newcomer does
 # first, from the unpacked download (tools/dist-test.sh): the hello example built in Odin and in
-# Go with the download's own build scripts and run offscreen against the diagnostic library
-# (30 frames; a screenshot on Linux, through wgpu on Mesa's lavapipe, and on macOS, where
-# gpui-fast has a Metal offscreen renderer; none on Windows, which has no offscreen renderer in
-# gpui-fast). On macOS also for the other architecture: x86_64 builds of hello in both languages,
-# run under Rosetta 2 when the runner has it, else built and linked only (the log says which).
-# Each platform's two archives are the artifact gpuikit-PLATFORM; the test output is
-# test-PLATFORM.
+# Go with the download's own build scripts, and each program run in a window for 30 frames
+# (Linux: under Xvfb, drawn by Mesa's lavapipe). On macOS also for the other architecture:
+# x86_64 builds of hello in both languages, run under Rosetta 2 when the runner has it, else built
+# and linked only (the log says which). The diagnostic library (offscreen rendering, scripted
+# input) is not built here: it is for the repository's own tests (docs/CONTRIBUTING.md). Each
+# platform's archive is the artifact gpuikit-PLATFORM; the test output is test-PLATFORM.
 #
 # Release: a pushed tag vVERSION (or a manual run with `release` set to VERSION) runs the job
-# `release` after all three platforms pass: tools/release-assets.sh checks the six archives'
+# `release` after all three platforms pass: tools/release-assets.sh checks the three archives'
 # names, that VERSION is the version tools/dist.sh wrote (Cargo.toml), that every VERSIONS states
 # the source's interface hash and the commit being released, and writes SHA256SUMS; then
-# `gh release create vVERSION` publishes the six archives and SHA256SUMS. A release that exists
+# `gh release create vVERSION` publishes the three archives and SHA256SUMS. A release that exists
 # already is never replaced.
 #
 # Needs no secrets: the Odin compiler is fetched from odin-lang/Odin's releases and the release
@@ -88,10 +87,10 @@ jobs:
         with:
           persist-credentials: false
 
-      # What the link and the offscreen run need: the -dev packages of the system libraries the
-      # library links (tools/zigbuild.sh's link folder: freetype, fontconfig, xkbcommon,
-      # xkbcommon-x11, xcb) and the others a build script could look for; Mesa's Vulkan (lavapipe) and EGL for wgpu without a GPU; clang,
-      # which Odin links with.
+      # What the link and the test run need: the -dev packages of the system libraries the library
+      # links (tools/zigbuild.sh's link folder: freetype, fontconfig, xkbcommon, xkbcommon-x11,
+      # xcb) and the others a build script could look for; Xvfb, and Mesa's Vulkan (lavapipe) and
+      # EGL for wgpu without a GPU; clang, which Odin links with.
       - name: Linux packages
         if: runner.os == 'Linux'
         run: |
@@ -99,7 +98,7 @@ jobs:
           sudo apt-get install -y -q --no-install-recommends \
             pkg-config libfreetype-dev libfontconfig-dev libxkbcommon-dev libxkbcommon-x11-dev \
             libxcb1-dev libxcb-xkb-dev libx11-dev libwayland-dev \
-            mesa-vulkan-drivers libvulkan1 libegl1 libegl-mesa0 clang zstd binutils
+            mesa-vulkan-drivers libvulkan1 libegl1 libegl-mesa0 clang zstd binutils xvfb xauth
 
       # The pinned zig and cargo-zigbuild (versions and sha256 in tools/zigbuild.sh), kept between
       # runs so ziglang.org is not asked every time.
@@ -180,11 +179,11 @@ jobs:
           shared-key: lib-${{ matrix.platform }}
           save-if: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Library (ship and diag) and its licences
+      - name: Library and its licences
         # Linux: linked against glibc 2.28 (GK_TARGET), so it loads on older distributions too.
         run: |
           [ "$RUNNER_OS" != Linux ] || export GK_TARGET=x86_64-unknown-linux-gnu.2.28
-          tools/build-lib.sh ship diag
+          tools/build-lib.sh ship
 
       - uses: actions/setup-go@v6.0.0
         with:
@@ -223,7 +222,7 @@ jobs:
           GK_PLATFORM=${{ matrix.platform }} tools/dist.sh
           cat dist/gpuikit-*-${{ matrix.platform }}/VERSIONS
 
-      - name: Hello in Odin and Go, offscreen, from the download
+      - name: Hello in Odin and Go, from the download, in a window
         run: |
           ver=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
           tools/dist-test.sh "dist/gpuikit-$ver-${{ matrix.platform }}"
@@ -287,7 +286,7 @@ jobs:
           path: release
           merge-multiple: true
 
-      - name: Check the six archives, write SHA256SUMS
+      - name: Check the three archives, write SHA256SUMS
         run: tools/release-assets.sh "$VERSION" release "$GITHUB_SHA"
 
       - name: GitHub release
@@ -301,8 +300,7 @@ jobs:
             echo "and Windows x86-64."
             echo
             echo "Built from $GITHUB_SHA by $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID;"
-            echo "interface hash $hash. Each -diag archive is the optional diagnostic library (offscreen"
-            echo "rendering and scripted input, for tests). SHA256SUMS lists every file's sha256."
+            echo "interface hash $hash. SHA256SUMS lists every file's sha256."
           } > notes.md
           pre=(); case $VERSION in *-*) pre=(--prerelease) ;; esac   # 0.1.0-rc.1: not marked latest
           gh release create "v$VERSION" release/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \

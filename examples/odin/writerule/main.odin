@@ -27,7 +27,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 
 frame :: proc(a: ^App, cx: ^gk.Cx) {
 	a.frame += 1
-	a.name->set_value(cx, fmt.tprintf("frame %d", a.frame))
+	gk.set_value(a.name, cx, fmt.tprintf("frame %d", a.frame))
 }
 
 root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
@@ -39,7 +39,7 @@ root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 }
 
 echo_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
-	return gk.h_flex()->child(gk.label(fmt.tprintf("echo %s", a.name->value(cx))))
+	return gk.h_flex()->child(gk.label(fmt.tprintf("echo %s", gk.value(a.name, cx))))
 }
 
 start :: proc(a: ^App, cx: ^gk.Cx) {

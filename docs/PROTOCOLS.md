@@ -247,7 +247,10 @@ A constructor that takes `&Entity<State>` in a decode arm: `genapi::state::<T>(h
 gives the `Entity<T>`.
 
 **Generated Odin** (all in `rt_emit.odin`): a state type is
-`struct {using state: State, using vt: ^T_VT}`; methods are built from
+`struct {using state: State}`, and each method is a procedure `low_NAME(s, cx, ..)`
+(`gk.input_state_value`), with a procedure group `NAME` where the name is free in the package
+(`gk.value`). Not a method table: a table holds every method, so a program that could get a
+handle would link the component family of each one (DESIGN.md section 16). Methods are built from
 
 ```odin
 state_get(s.h, cx, req[:], loc) -> Reader         // a read: flushes buffered writes first; inside a view
@@ -260,9 +263,8 @@ keep_handler(cx, h, shape, loc) -> (slot, generation: u32)   // for subscription
 dep(s.h)                                          // only if a method reads without state_get
 ```
 
-A method in a `_VT` struct may end its parameter list with `loc := #caller_location` (Odin
-allows the default in a procedure type): `s->value(cx)` then reports the app's line when it
-stops. The sample's state methods do; element builders do not need it (the element's
+Each state procedure ends its parameter list with `loc := #caller_location`: `gk.value(s, cx)`
+then reports the app's line when it stops. Element builders do not need it (the element's
 constructor and `gk.on` already carry the line).
 
 ## 6. App state, background posts, panics, versions
@@ -556,7 +558,7 @@ is described again when they change), may not write, and registers handlers whos
   `matches`, the rendering as the row's view).
 - **Tree**: `tree(&state, render_item)` gets a render closure over a source whose keys are
   the tree's flat indices; the row procedure reads the entry it draws through the
-  `TreeState` handle (`tree->entry(cx, at.row)`: a state read in a view build, so every
+  `TreeState` handle (`gk.entry(tree, cx, at.row)`: a state read in a view build, so every
   bound row is described again when the tree state changes, e.g. on expand).
 - **States.** `ListState<GkListDelegate>`, `TableState<GkTableDelegate>`: instantiated by the
   generator rule of 9.6 (`"ListState<crate::shim_rows::GkListDelegate> as ListState"`), so
@@ -590,7 +592,7 @@ is described again when they change), may not write, and registers handlers whos
   the emitters; the rows family only adds its lines.
   The Rust type is `gpui_kit::base::input::InputBaseState<gpui_kit::base::input::InputMode>`,
   the same `TypeId` as the alias, so handles stay compatible, and the generated names give
-  the calls (`gk.input_state(cx)->placeholder(..)->build()`, `->value(cx)`, `->set_value`,
+  the calls (`gk.input_state(cx)->placeholder(..)->build()`, `gk.value(s, cx)`, `gk.set_value`,
   `->focus`, `->on_event`) working.
 - **Providers.** The `Lsp` of an input holds `Rc<dyn CompletionProvider>` and the like. Each
   provider is a shim over a row source used only for its request channel (count 0):
@@ -840,7 +842,7 @@ an element closure that gets the window, the app and one to three values the app
 - Odin: the app passes a `gk.Row_Source` (made in init or a handler, count 0); its row procedure
   reads the values with `gk.row_context(cx, src, at, T)` (T the closure's value, or a struct of
   its values in order). A library object comes as a copy behind a temporary handle, valid while
-  the row is described, so the row can call its reads (`t->is_selected(cx)`) or give it to an
+  the row is described, so the row can call its reads (`gk.is_selected(t, cx)`) or give it to an
   element (`gk.input_token(t)`: pinned to the row's build, 13.12).
 - Rows: each call of the closure in a frame is a row, in the order of the calls (the count starts
   again at the next frame: `window.on_next_frame`), or the index itself when the closure's only
@@ -883,7 +885,7 @@ call op can decode (`gk_lists.CALL_SAFE`). The trait methods count as bridged th
 
 | upstream | Odin | the app answers |
 |---|---|---|
-| `InputHighlighterFactory` (`set_highlighter_factory`, `ensure_highlighter_factory`) | `hl := gk.highlighter(cx, a, styles, folds = nil, languages = nil)`, then `ed->set_highlighter_factory(cx, hl.src)` | `styles(q: gk.Highlight_Query{language, text, range}) -> []gk.Highlight_Run{range, name}`: named runs, resolved by the editor's resolver (the kit's editor: the theme's syntax colours), the gaps unstyled; `folds(gk.Fold_Query) -> []gk.Fold_Range` |
+| `InputHighlighterFactory` (`set_highlighter_factory`, `ensure_highlighter_factory`) | `hl := gk.highlighter(cx, a, styles, folds = nil, languages = nil)`, then `gk.set_highlighter_factory(ed, cx, hl.src)` | `styles(q: gk.Highlight_Query{language, text, range}) -> []gk.Highlight_Run{range, name}`: named runs, resolved by the editor's resolver (the kit's editor: the theme's syntax colours), the gaps unstyled; `folds(gk.Fold_Query) -> []gk.Fold_Range` |
 | `Rc<dyn LanguageProvider>` (`set_language_provider`) | `p := gk.language_provider(cx, a, aliases, syntax = nil)`, `gk.base_set_language_provider(cx, p)` | aliases as data (`language_name`); `syntax(gk.Syntax_Query{language, text, offset}) -> gk.Syntax_Context` (`SyntaxContextProvider::context_at`, Code until answered); `config` is upstream's default (an app's configs go through `set_language_config`, which takes precedence) |
 
 `InputHighlighter::update` keeps the editor's text and drops the answers about the old text;
@@ -898,7 +900,7 @@ Calls `HIGHLIGHTER_NEW 184` (`u64 styles ask, u64 folds ask (0 none), u32 n, str
   error type is a library object that is Clone (`gk.diff_file_parse_error(cx, patch) ->
   Maybe(gk.Diff_Parse_Error)`, with `line` and `message`).
 - gpui's `UniformListScrollHandle` read back (`TreeState::scroll_handle`) is the gpui ScrollHandle it
-  scrolls by, the scroll-handle object (13.14): `tree->scroll_handle(cx)->set_offset(cx, ..)`.
+  scrolls by, the scroll-handle object (13.14): `gk.set_offset(gk.tree_state_scroll_handle(tree, cx), cx, ..)`.
 - Third-party types these rules carry (`gk_lists.THIRD_PARTY`, hooked into `rtype`): ropey's
   `Rope` inside a tuple (an editor's text, 9.11), and LSP's `CompletionItem` going in as
   `gk.Completion_Item` (label, kind, detail, insert text; `Unwire` in shim_input.rs), so the
@@ -926,7 +928,7 @@ Two data closures with no window and no app, which upstream calls synchronously,
 gives once:
 
 - `FnMut(&T) -> bool` over a string or an integer (`History::retain`): `["keyset", key]`, Odin
-  `[]T`: the keys for which the predicate holds (`h->retain(cx, []string{"b", "d"})`).
+  `[]T`: the keys for which the predicate holds (`gk.history_retain(h, cx, []string{"b", "d"})`).
 - `Fn(u8) -> V` (`TextViewStyle::with_heading`, a heading level): `["table", V, .., rust V]`, Odin
   `[]V`: the value at index k; an index past the end is V's default (`StyleRefinement::default()`).
 
@@ -993,7 +995,7 @@ read-back value's reads are classified after the reachability pass
 keeps every object's lists and statuses, and `gk_editor.revive` gives back those of an object such a
 read returns (by value, a list or an option of it, Clone) before the reads are classified:
 `DiffFile::conflicts() -> &[DiffConflict]` makes `DiffConflict`'s seven reads bound (`gk.parse_conflicts(cx,
-path, text)`, then `file->conflicts(cx)`).
+path, text)`, then `gk.conflicts(file, cx)`).
 
 ### 9.26 Records with colours in call ops; one-method data delegates
 
@@ -1022,7 +1024,7 @@ path, text)`, then `file->conflicts(cx)`).
 A state read `fn x(&self) -> &T` where T is a library object that cannot be copied out of the borrow
 (not Clone: `InputState::display_map() -> &DisplayMap`) was refused. Its object's reads become reads
 of the state, each a synthetic state read that calls the object's read on the borrow in place
-(`gk_editor.project`): `ed->display_map_folded_ranges(cx)`, `display_map_buffer_line_to_display_row(cx,
+(`gk_editor.project`): `gk.input_state_display_map_folded_ranges(ed, cx)`, `display_map_buffer_line_to_display_row(cx,
 line)`, `display_map_text(cx)`, 17 per state; a read that returns a borrow returns an owned copy
 (`ToOwned`). The upstream function counts as bridged by them (also on the generic state's row). The
 same rule reaches `TableState::visible_range() -> &TableVisibleRange` (its `rows`, `cols`).
@@ -1152,7 +1154,7 @@ without a window).
 (`EditorState::lsp_mut -> &mut Lsp`): a state write that takes a value of V (a tape of its own, 13.6) and
 applies its builder ops, not its constructor, to the state's own V in place (`editor_text::LentEdit`:
 the value is taken, the ops applied with the update's window and app, the result put back):
-`ed->lsp_mut(cx, gk.lsp_default()->with_completion_highlighter(ask))`. `Rc<CompletionHighlighter>`, an alias
+`gk.lsp_mut(ed, cx, gk.lsp_default()->with_completion_highlighter(ask))`. `Rc<CompletionHighlighter>`, an alias
 of `dyn Fn(&str, &CompletionItem) -> Vec<Range<usize>>`, is the closure behind the pointer (`gk_editor.alias`),
 answered by an ask (9.14) keyed by the query and the item (`Wire for CompletionItem`, shim_input.rs).
 
@@ -1161,7 +1163,7 @@ answered by an ask (9.14) keyed by the query and the item (`Wire for CompletionI
 A state call whose argument is a struct with public fields, one of them a value node the app builds
 (`present_diagnostic(DiagnosticEntry { range, diagnostic: Diagnostic })`), was refused as an opaque object
 (the struct is a record only read back elsewhere). Its fields become the call's arguments and the callee
-builds the struct (`gk_editor.flat_records`): `ed->present_diagnostic(cx, {0, 3}, gk.diagnostic(range,
+builds the struct (`gk_editor.flat_records`): `gk.present_diagnostic(ed, cx, {0, 3}, gk.diagnostic(range,
 "unused")->with_severity(.Warning))`.
 
 ### 9.35 Event payloads made of their reads
@@ -1169,7 +1171,7 @@ builds the struct (`gk_editor.flat_records`): `ed->present_diagnostic(cx, {0, 3}
 `EventEmitter<E>` of kit state where E has no public field and is no object the binding holds, but has
 `&self` reads that take nothing (`InputEditsEvent::edits() -> &[(InputEdit, Rope)]`): the payload is a
 record of the reads' results, copied when the event is raised (`gk.Input_Edits_Event{edits = []{edit,
-text after it}}`, subscribed with `inp->on_input_edits_event(cx, gk.on(..))`); the reads count as bridged
+text after it}}`, subscribed with `gk.on_input_edits_event(inp, cx, gk.on(..))`); the reads count as bridged
 by it (`gk_editor.event_reads`, its Wire impl calls the reads). This applies to every event (9.38).
 
 ### 9.36 Answers given in advance
@@ -1177,7 +1179,7 @@ by it (`gk_editor.event_reads`, its Wire impl calls the reads). This applies to 
 `set_x(handler: impl Fn(E, Box<dyn Action>, &mut Window, &mut Context<..>) -> bool)` with E an enum the
 binding reads (`EditorState::set_overlay_action_handler(InputOverlayKind, action)`): upstream needs the
 answer at once, while it dispatches a key, so the app gives it in advance: the pairs (E, action name) it
-takes (`ed->set_overlay_action_handler(cx, {{.Completion, "input::Tab"}})`). The handler answers true for
+takes (`gk.set_overlay_action_handler(ed, cx, {{.Completion, "input::Tab"}})`). The handler answers true for
 those, so the overlay leaves them alone (and closes for Enter and Escape); the app handles them with its own
 key bindings (`gk_editor.answer_sets`).
 
@@ -1728,7 +1730,7 @@ answers each hook from an app view the app gave for that hook and a key, between
   One frame of the default at most, as for a restored panel (11.8).
 - The contexts upstream hands the hooks reach the app in the request: `dock: gk.Dock_Context` (the
   dock hook) and `group: gk.Tab_Group_Context` (the tab group hooks), library objects whose reads and
-  calls are bound by the object rule (13), `dock->toggle(cx)`, `group->select_tab(cx, i)`. They are kept
+  calls are bound by the object rule (13), `gk.dock_context_toggle(dock, cx)`, `gk.select_tab(group, cx, i)`. They are kept
   by the library until the next request for the same key (so a click handler of the chrome can call
   them), then released. Because the library hands them out, `DockContext` is reachable
   (`gk_overlay.LIBRARY_HANDOUTS`, a synthetic hand-out item that is not counted).
@@ -2525,7 +2527,7 @@ objects instantiated by `[values] objects` (13.8) for a row of a data table (12.
   named in the object and state classifiers too (`gk_overlay.named_text`), as it did for node methods.
 
 ```odin
-arcs := gk.pie(cx)->value("visits")->build()->arcs(cx, gk.data(rows[:]))   // one Arc_Data per row with a value
+arcs := gk.arcs(gk.pie(cx)->value("visits")->build(), cx, gk.data(rows[:]))   // one Arc_Data per row with a value
 st := gk.stack(cx)->data(gk.data(rows[:]))->keys({"apples", "pears"})->value("")->build()
 ```
 
@@ -2591,14 +2593,14 @@ not a plain record and not generic, has no lifetime parameter, and has reads or 
 (`&self`, `&mut self`) or is a kit global (`impl Global`) (`Model.is_obj`). Examples:
 `DialogHandle`, `VirtualListScrollHandle`, `SearchMatcher`, `DisplayMap`, `DiagnosticSet`,
 `PaneTree`, `TreeEntry`, `InputPresentation`, `Theme` and `ThemeRegistry` (globals). In Odin an
-object type is `struct {using state: State, using vt: ^T_VT}`, like kit state: `x->len(cx)`.
+object type is `struct {using state: State}`, like kit state: `gk.search_matcher_len(x, cx)`.
 
 ### 13.2 Handles and lifetimes
 
 | how the app gets one | lifetime | example |
 |---|---|---|
 | a constructor (`new`, any static returning `Self`), with its `self -> Self` chain as builder ops, one crossing | **kept**: until `gk.release` | `gk.dialog_handle(cx, false)`, `gk.tooltip_defaults(cx)->with_show_delay(d)->build()` |
-| a read, a call or an event that hands one out (by value, or a copy of a borrowed one) | **temporary**: until the next frame begins (the pre-frame hook sweeps it), after the buffered writes of the turn that got it; `gk.retain(cx, x)` keeps it | `list->scroll_handle(cx)`, `input->presentation(cx)`, `tree->entry(cx, i)` |
+| a read, a call or an event that hands one out (by value, or a copy of a borrowed one) | **temporary**: until the next frame begins (the pre-frame hook sweeps it), after the buffered writes of the turn that got it; `gk.retain(cx, x)` keeps it | `gk.list_state_scroll_handle(list, cx)`, `gk.presentation(input, cx)`, `gk.entry(tree, cx, i)` |
 | a kit global's accessor (`fn global(cx) -> &Self`, `global_mut`) | one interned handle per type, reads and updates the global in place (`cx.global`, `cx.update_global`); never temporary | `gk.theme_global(cx)` |
 
 A temporary handle used after its frame stops with the library's message ("... was released
@@ -2675,7 +2677,7 @@ procedure cannot be given to a call (a view may not write anyway). A handler ins
 made outside a view stops at `gk.on`'s registration, as before.
 
 A builder type that is also a plain record with public fields (`IndexPath`) travels as the
-record instead (`call_desc`): `list->set_selected_index(cx, gk.Base_Index_Path{row = 120})`.
+record instead (`call_desc`): `gk.set_selected_index(list, cx, gk.Base_Index_Path{row = 120})`.
 This is what makes a list selectable and scrollable from code (`set_selected_index`,
 `scroll_to_item`, `scroll_handle()->scroll_to_item`).
 
@@ -2717,7 +2719,7 @@ its own type fallibly (`Keyframes::try_new -> Result<Self, E>`) makes the object
 Lines today: `ScaleBand<SharedString>`, `ScalePoint<SharedString>`, `ScaleLinear<f64>`,
 `ScaleOrdinal<SharedString, Hsla>`, and over `f32` `Sequence`, `SequenceStep`, `SequenceSample`,
 `Keyframes`, `Discrete`. Odin: `gk.scale_band(cx, {"a", "b"}, {0, 300})->padding_inner(0.1)->build()`,
-`band->tick(cx, "a")` (a `Maybe(f32)`), `gk.keyframes_try_new(cx, frames)` (a `gk.Fallible`).
+`gk.tick(band, cx, "a")` (a `Maybe(f32)`), `gk.keyframes_try_new(cx, frames)` (a `gk.Fallible`).
 
 ### 13.9 Results read back: Result<T, E>, maps
 
@@ -2763,9 +2765,9 @@ counts the rest after every `make gen` and fails `--check` when one has no state
 - **Self-generic builder traits**: `trait StyleSized<T: Styled>`, implemented for every `T:
   Styled`, is a builder trait bound as `E: StyleSized<E> + Styled`: 13 functions.
 - **Public fields of a kit global** (the two `Theme`s): a read and a write each, synthetic items
-  (not upstream functions, not counted in the coverage table): `th->font_size(cx)`,
-  `th->set_font_size(cx, 17)`, `th->set_list(cx, gk.list_settings_default()->..)`,
-  `th->colors(cx)`. A write runs with the turn's writes and redraws every window
+  (not upstream functions, not counted in the coverage table): `gk.font_size(th, cx)`,
+  `gk.set_font_size(th, cx, 17)`, `gk.set_list(th, cx, gk.list_settings_default()->..)`,
+  `gk.colors(th, cx)`. A write runs with the turn's writes and redraws every window
   (`cx.refresh_windows()`); like any write it may not run in a view procedure.
 
 Count (gates/accept.py, the same definition before and after): 138 types with 251 usable
@@ -2811,8 +2813,8 @@ time that does not exist ("the date 2026-02-30 does not exist"); the library's `
 (core/src/values.rs) take what a raw C client sends anyway as the first day of the era or
 midnight, never a panic. This makes upstream's `Date` and `DateTime` enums buildable: a calendar's,
 a date picker's and a time field's dates and times are written and read
-(`cal->set_date(cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})`, `cal->days(cx)`,
-`picker->date_time(cx)`, `field->time(cx)`, `gk.date_range_preset_date_time`). core/Cargo.toml
+(`gk.set_date(cal, cx, gk.Date_Single{gk.Naive_Date{2024, 2, 29}})`, `gk.days(cal, cx)`,
+`gk.date_time(picker, cx)`, `gk.time(field, cx)`, `gk.date_range_preset_date_time`). core/Cargo.toml
 names chrono at the version gpui-base already links (no new crate).
 
 A `std::time::Duration` read back (a result or a payload) is i64 nanoseconds, Odin's
@@ -2837,7 +2839,7 @@ A kit value type the app builds (a node that is not an element) and that has no 
 cannot travel out as a record. Read back (`QuestionnaireState::answer -> Option<QuestionnaireAnswer>`,
 `item_definition -> Option<&QuestionnaireItemDefinition>`), it is a copy behind a temporary handle,
 a library object of its own named `X_Read` (`gk.Questionnaire_Answer_Read`), whose methods are
-the type's `&self` reads (`answer->choices(cx)`, `def->choices(cx)` handing out more read-back
+the type's `&self` reads (`gk.choices(answer, cx)`, `gk.choices(def, cx)` handing out more read-back
 values). Only a Clone type can be one. The reads are synthetic items: upstream's functions keep
 their row (a read of a builder the app is writing, skipped).
 
@@ -2987,7 +2989,7 @@ Tests: modes `val-drag` (a drag from a source onto a target runs the drop handle
   kit's Root the library makes around the app's view in every window (`WINDOW_ROOTS` in
   gen/gk_values.py; Rust `crate::values::window_root::<Root>`, an ambient call): Odin
   `gk.root_read(cx) -> Maybe(gk.Root)`, nil when the window's root is not one. Its reads follow
-  (`root->view(cx)`, the app's root view back as a `gk.View`). `Root::update` (a closure given the
+  (`gk.root_view(root, cx)`, the app's root view back as a `gk.View`). `Root::update` (a closure given the
   Root by `&mut`) and `Theme::update` (the theme by `&mut`) are skipped as Rust-only: the app changes
   them through the state's calls and the theme's fields.
 - **Focus handles read back** (`QuestionnaireState::focus_handle`, `item_focus_handle`,

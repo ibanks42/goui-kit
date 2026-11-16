@@ -40,9 +40,9 @@ input_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	a.events += 1
 	switch v in e {
 	case gk.Input_Event_Change:
-		fmt.printf("input change value=%q cursor=%d\n", a.input->value(cx), a.input->cursor(cx))
+		fmt.printf("input change value=%q cursor=%d\n", gk.value(a.input, cx), gk.cursor(a.input, cx))
 	case gk.Input_Event_Press_Enter:
-		fmt.printf("input enter secondary=%v shift=%v value=%q\n", v.secondary, v.shift, a.input->value(cx))
+		fmt.printf("input enter secondary=%v shift=%v value=%q\n", v.secondary, v.shift, gk.value(a.input, cx))
 	case gk.Input_Event_Focus:
 		fmt.println("input focus")
 	case gk.Input_Event_Blur:
@@ -52,33 +52,33 @@ input_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 
 text_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	if _, ok := e.(gk.Input_Event_Change); ok {
-		fmt.printf("textarea change value=%q multi=%v\n", a.text->value(cx), a.text->is_multi_line(cx))
+		fmt.printf("textarea change value=%q multi=%v\n", gk.value(a.text, cx), gk.is_multi_line(a.text, cx))
 	}
 }
 
 editor_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	if _, ok := e.(gk.Input_Event_Change); ok {
-		fmt.printf("editor change value=%q code=%v\n", a.editor->value(cx), a.editor->is_code_editor(cx))
+		fmt.printf("editor change value=%q code=%v\n", gk.value(a.editor, cx), gk.is_code_editor(a.editor, cx))
 	}
 }
 
 number_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	if _, ok := e.(gk.Input_Event_Change); ok {
-		fmt.printf("number change value=%q\n", a.number->value(cx))
+		fmt.printf("number change value=%q\n", gk.value(a.number, cx))
 	}
 }
 
 otp_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Otp_Event) {
-	fmt.printf("otp event=%v value=%q\n", e, a.otp->value(cx))
+	fmt.printf("otp event=%v value=%q\n", e, gk.value(a.otp, cx))
 }
 
 // The handler shape (StepAction) -> () of base::NumberInput::on_step.
 stepped :: proc(a: ^App, cx: ^gk.Cx, e: gk.Step_Action) {
 	a.steps += 1
 	fmt.printf("number step action=%v n=%d\n", e, a.steps)
-	v, _ := strconv.parse_int(string(a.number->value(cx)))
-	a.number->set_value(cx, fmt.tprintf("%d", v + (2 if e == .Increment else -2)))
-	fmt.printf("number value=%q\n", a.number->value(cx)) // a read sends the write first
+	v, _ := strconv.parse_int(string(gk.value(a.number, cx)))
+	gk.set_value(a.number, cx, fmt.tprintf("%d", v + (2 if e == .Increment else -2)))
+	fmt.printf("number value=%q\n", gk.value(a.number, cx)) // a read sends the write first
 }
 
 // The handler shape (ClipboardItem) -> bool of Input::on_paste: false lets the input paste.
@@ -136,10 +136,10 @@ focus_away :: proc(a: ^App, cx: ^gk.Cx, e: gk.Mouse_Event) {
 // The selection is not an event upstream: a frame handler reports it when it changes.
 watch :: proc(a: ^App, cx: ^gk.Cx) {
 	a.frame += 1
-	r := a.input->selected_range(cx)
+	r := gk.selected_range(a.input, cx)
 	if r != a.last {
 		a.last = r
-		fmt.printf("input selection lo=%d hi=%d text=%q reversed=%v\n", r.lo, r.hi, a.input->selected_value(cx), a.input->is_selection_reversed(cx))
+		fmt.printf("input selection lo=%d hi=%d text=%q reversed=%v\n", r.lo, r.hi, gk.selected_value(a.input, cx), gk.is_selection_reversed(a.input, cx))
 	}
 }
 
@@ -148,57 +148,57 @@ watch :: proc(a: ^App, cx: ^gk.Cx) {
 calls :: proc(a: ^App, cx: ^gk.Cx) {
 	a.frame += 1
 	if a.frame == 3 {
-		fmt.printf("calls lease later value=%q\n", a.input->value(cx))
+		fmt.printf("calls lease later value=%q\n", gk.value(a.input, cx))
 	}
 	if a.frame != 2 {
 		return
 	}
 	// Input_State: a write is buffered; a read sends it first, so it sees it.
-	a.input->set_value(cx, "abc def")
-	a.input->set_selected_range(cx, {0, 3})
-	r := a.input->selected_range(cx)
+	gk.set_value(a.input, cx, "abc def")
+	gk.set_selected_range(a.input, cx, {0, 3})
+	r := gk.selected_range(a.input, cx)
 	fmt.printf("calls input value=%q selected=%d..%d text=%q single=%v multi=%v\n",
-		a.input->value(cx), r.lo, r.hi, a.input->selected_value(cx), a.input->is_single_line(cx), a.input->is_multi_line(cx))
-	a.input->insert(cx, "X") // at the cursor, the end of the selection
-	fmt.printf("calls input insert value=%q cursor=%d\n", a.input->value(cx), a.input->cursor(cx))
-	a.input->set_selected_range(cx, {0, 3})
-	a.input->replace(cx, "Y") // the selection
-	fmt.printf("calls input replace value=%q cursor=%d\n", a.input->value(cx), a.input->cursor(cx))
-	a.input->select_all(cx)
-	r = a.input->selected_range(cx)
+		gk.value(a.input, cx), r.lo, r.hi, gk.selected_value(a.input, cx), gk.is_single_line(a.input, cx), gk.is_multi_line(a.input, cx))
+	gk.insert(a.input, cx, "X") // at the cursor, the end of the selection
+	fmt.printf("calls input insert value=%q cursor=%d\n", gk.value(a.input, cx), gk.cursor(a.input, cx))
+	gk.set_selected_range(a.input, cx, {0, 3})
+	gk.replace(a.input, cx, "Y") // the selection
+	fmt.printf("calls input replace value=%q cursor=%d\n", gk.value(a.input, cx), gk.cursor(a.input, cx))
+	gk.select_all(a.input, cx)
+	r = gk.selected_range(a.input, cx)
 	fmt.printf("calls input select_all %d..%d\n", r.lo, r.hi)
-	a.input->set_disabled(cx, true)
-	fmt.printf("calls input editable=%v\n", a.input->is_editable(cx))
-	a.input->set_disabled(cx, false)
+	gk.set_disabled(a.input, cx, true)
+	fmt.printf("calls input editable=%v\n", gk.is_editable(a.input, cx))
+	gk.set_disabled(a.input, cx, false)
 
 	// Textarea_State: multi-line, searchable; search calls return a value at once.
-	a.text->set_value(cx, "one two\none three")
-	fmt.printf("calls textarea multi=%v single=%v value=%q\n", a.text->is_multi_line(cx), a.text->is_single_line(cx), a.text->value(cx))
-	a.text->set_search_query(cx, "one", false)
-	m := a.text->next_search_match(cx)
+	gk.set_value(a.text, cx, "one two\none three")
+	fmt.printf("calls textarea multi=%v single=%v value=%q\n", gk.is_multi_line(a.text, cx), gk.is_single_line(a.text, cx), gk.value(a.text, cx))
+	gk.set_search_query(a.text, cx, "one", false)
+	m := gk.next_search_match(a.text, cx)
 	if mr, ok := m.?; ok {
 		fmt.printf("calls textarea next_match %d..%d\n", mr.lo, mr.hi)
 	} else {
 		fmt.println("calls textarea next_match none")
 	}
-	n := a.text->replace_all_search_matches(cx, "1")
-	fmt.printf("calls textarea replaced=%d value=%q\n", n, a.text->value(cx))
+	n := gk.replace_all_search_matches(a.text, cx, "1")
+	fmt.printf("calls textarea replaced=%d value=%q\n", n, gk.value(a.text, cx))
 
 	// Editor_State: the code editor mode, without grammars.
-	a.editor->set_line_number(cx, true)
-	a.editor->set_value(cx, "fn main() {\n    let x = 1;\n}\n")
+	gk.set_line_number(a.editor, cx, true)
+	gk.set_value(a.editor, cx, "fn main() {\n    let x = 1;\n}\n")
 	fmt.printf("calls editor code=%v multi=%v language=%q value=%q\n",
-		a.editor->is_code_editor(cx), a.editor->is_multi_line(cx), a.editor->language_name(cx), a.editor->value(cx))
+		gk.is_code_editor(a.editor, cx), gk.is_multi_line(a.editor, cx), gk.language_name(a.editor, cx), gk.value(a.editor, cx))
 
 	// A read of a state on lease reports busy through try_; a write from there lands later.
 	inside := gk.handler(proc(a: ^App, cx: ^gk.Cx) -> bool {
-		_, ok := a.input->try_value(cx)
+		_, ok := gk.try_value(a.input, cx)
 		fmt.printf("calls lease busy=%v\n", !ok)
-		a.input->set_value(cx, "after the lease")
+		gk.set_value(a.input, cx, "after the lease")
 		return true
 	})
 	ret := gk.test_fire_in_update(cx, a.input, inside)
-	fmt.printf("calls lease ret=%d value=%q\n", ret, a.input->value(cx))
+	fmt.printf("calls lease ret=%d value=%q\n", ret, gk.value(a.input, cx))
 	fmt.println("calls done")
 }
 
@@ -211,11 +211,11 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.number = gk.input_state(cx)->min(0)->max(10)->step(f64(2))->default_value("4")->build()
 	a.otp = gk.otp_state(cx, 4)->build()
 	a.focus = gk.focus_handle(cx)
-	a.subs[0] = a.input->on_input_event(cx, gk.on(input_event))
-	a.subs[1] = a.text->on_input_event(cx, gk.on(text_event))
-	a.subs[2] = a.editor->on_input_event(cx, gk.on(editor_event))
-	a.subs[3] = a.number->on_input_event(cx, gk.on(number_event))
-	a.otp->on_otp_event(cx, gk.on(otp_event))
+	a.subs[0] = gk.on_input_event(a.input, cx, gk.on(input_event))
+	a.subs[1] = gk.on_input_event(a.text, cx, gk.on(text_event))
+	a.subs[2] = gk.on_input_event(a.editor, cx, gk.on(editor_event))
+	a.subs[3] = gk.on_input_event(a.number, cx, gk.on(number_event))
+	gk.on_otp_event(a.otp, cx, gk.on(otp_event))
 	switch a.mode {
 	case "input", "paste":
 		gk.on_frame(cx, watch)
@@ -236,7 +236,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 
 root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	if a.mode == "call-in-view" {
-		a.text->replace_all_search_matches(cx, "x") // a view may not update kit state
+		gk.replace_all_search_matches(a.text, cx, "x") // a view may not update kit state
 	}
 	input := gk.input(a.input)
 	if a.mode == "paste" {

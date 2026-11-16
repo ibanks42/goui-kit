@@ -44,16 +44,16 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.toggle_theme = gk.shortcut(cx, "ctrl-t", gk.on(toggle_theme))
 
 	a.title = gk.input_state(cx)->placeholder("Title")->build()
-	a.title->on_input_event(cx, gk.on(title_changed))
+	gk.on_input_event(a.title, cx, gk.on(title_changed))
 	a.list = gk.list_state(cx, gk.list_source(cx, a, note_count, note_row))->build()
-	a.list->on_list_event(cx, gk.on(list_event))
+	gk.on_list_event(a.list, cx, gk.on(list_event))
 
 	a.dock = gk.dock_area_skinned(cx, "notes")
 	notes := gk.panel(cx, gk.view(a, nil, notes_view), {name = "notes", title = "Notes"})
 	editor := gk.panel(cx, gk.view(a, nil, editor_view), {name = "editor", title = "Editor"})
 	// panel_view: the kit's PanelHandle over the panel, so the tabs show the titles
-	a.dock->set_dock(cx, .Left, gk.dock_layout_tabs()->panel_view(notes))
-	a.dock->set_center(cx, gk.dock_layout_tabs()->panel_view(editor))
+	gk.set_dock(a.dock, cx, .Left, gk.dock_layout_tabs()->panel_view(notes))
+	gk.set_center(a.dock, cx, gk.dock_layout_tabs()->panel_view(editor))
 	select(a, cx, 0) // the first note
 }
 
@@ -111,7 +111,7 @@ editor_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 select :: proc(a: ^App, cx: ^gk.Cx, row: int) {
 	a.selected = row
 	if row >= 0 {
-		a.title->set_value(cx, a.notes[row].title)
+		gk.set_value(a.title, cx, a.notes[row].title)
 	}
 	gk.select_row(cx, a.list, row)
 	gk.refresh(cx)
@@ -130,7 +130,7 @@ title_changed :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	if _, ok := e.(gk.Input_Event_Change); !ok || a.selected < 0 {
 		return
 	}
-	value := a.title->value(cx)
+	value := gk.value(a.title, cx)
 	n := &a.notes[a.selected]
 	if n.title == string(value) {
 		return

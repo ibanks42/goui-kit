@@ -360,7 +360,7 @@ def states(m, sample, oname):
                 names.add(it["name"])
                 a = sa.args(it)
                 if a is not None:
-                    dst.append((oname(it["name"]), a))
+                    dst.append((it["name"], a))  # the procedure is gk.LOW_NAME, never a keyword
         events = [ev["odin"] for ev in st["events"] if ev.get("odin") and ev["odin"] not in names]
         out.append({"odin": S, "low": S.lower(), "make": ctor + chain, "builders": nb, "reads": reads,
                     "writes": writes, "calls": calls, "events": events})
@@ -433,19 +433,19 @@ def odin_test(m, od, sample, oname, path, skip):
         L = s["low"]
         o.append(f"\ta.st_{L} = {s['make']}")
         for name, args in s["reads"]:
-            o.append(f"\t_ = a.st_{L}->{name}(cx{', ' + args if args else ''})")
+            o.append(f"\t_ = gk.{L}_{name}(a.st_{L}, cx{', ' + args if args else ''})")
         for name, args in s["calls"]:
             if f"{s['odin']}.{name}" in skip_calls:
                 o.append(f"\t// {name}: skipped (api/overrides.toml [tests] calls)")
                 continue
-            o.append(f"\t_ = a.st_{L}->{name}(cx{', ' + args if args else ''})")
+            o.append(f"\t_ = gk.{L}_{name}(a.st_{L}, cx{', ' + args if args else ''})")
         for name, args in s["writes"]:
             if f"{s['odin']}.{name}" in skip_calls:
                 o.append(f"\t// {name}: skipped (api/overrides.toml [tests] calls)")
                 continue
-            o.append(f"\ta.st_{L}->{name}(cx{', ' + args if args else ''})")
+            o.append(f"\tgk.{L}_{name}(a.st_{L}, cx{', ' + args if args else ''})")
         for ev in s["events"]:
-            o.append(f"\tappend(&a.subs, a.st_{L}->{ev}(cx, gk.on(any_event)))")
+            o.append(f"\tappend(&a.subs, gk.{L}_{ev}(a.st_{L}, cx, gk.on(any_event)))")
         o.append(f"\tfmt.printf(\"states made {s['odin']} builders={s['builders']} reads={len(s['reads'])} "
                  f"writes={len(s['writes'])} calls={len(s['calls'])} events={len(s['events'])}\\n\")")
     o += [f'\tfmt.printf("states made all n={made}\\n")', "}", "",
@@ -456,7 +456,7 @@ def odin_test(m, od, sample, oname, path, skip):
         L = s["low"]
         if s["reads"]:
             name, args = s["reads"][0]
-            o.append(f"\t_ = a.st_{L}->{name}(cx{', ' + args if args else ''})")
+            o.append(f"\t_ = gk.{L}_{name}(a.st_{L}, cx{', ' + args if args else ''})")
         o.append(f"\tgk.release(cx, a.st_{L})")
     o += ["\tfor sub in a.subs {", "\t\tgk.release(cx, sub)", "\t}",
           f'\tfmt.printf("states released n={made} subscriptions=%d\\n", len(a.subs))', "}", "",

@@ -218,8 +218,8 @@ elements :: proc(a: ^App, cx: ^gk.Cx) {
 	}
 	// Sequence::with_step: a Transition node in a call op's builder chain (the rule of 9.31)
 	seq := gk.sequence(cx, "seq", 10)->with_step(40, gk.transition(200 * time.Millisecond))->with_step(80, gk.transition(100 * time.Millisecond))->build()
-	steps := seq->steps(cx)
-	fmt.printf("platform sequence steps=%d from=%.0f targets=%.0f,%.0f\n", len(steps), seq->from(cx), steps[0]->target(cx), steps[1]->target(cx))
+	steps := gk.steps(seq, cx)
+	fmt.printf("platform sequence steps=%d from=%.0f targets=%.0f,%.0f\n", len(steps), gk.from(seq, cx), gk.target(steps[0], cx), gk.target(steps[1], cx))
 	gk.release(cx, seq)
 	a.cache = gk.image_cache(cx)
 	a.scroll = gk.scroll_handle(cx)
@@ -408,7 +408,7 @@ menu_fired :: proc(a: ^App, cx: ^gk.Cx, e: gk.Event_114) {
 		}
 	}
 	fmt.printf("platform context-menu fired items=%d copy=%d at=%.0f,%.0f editable=%v disabled=%v cursor=%d\n", len(e.a0.items), actions,
-		e.a2.x, e.a2.y, e.a1->is_editable(cx), e.a1->is_disabled(cx), a.inp->cursor(cx))
+		e.a2.x, e.a2.y, gk.is_editable(e.a1, cx), gk.is_disabled(e.a1, cx), gk.cursor(a.inp, cx))
 }
 
 context_menu_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
@@ -422,7 +422,7 @@ context_menu_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 }
 
 context_menu_check :: proc(a: ^App, cx: ^gk.Cx) {
-	fmt.printf("platform context-menu check mode=%s fired=%d cursor=%d\n", a.mode, a.fired, a.inp->cursor(cx))
+	fmt.printf("platform context-menu check mode=%s fired=%d cursor=%d\n", a.mode, a.fired, gk.cursor(a.inp, cx))
 }
 
 // --- misuse ---------------------------------------------------------------------------------------
@@ -524,7 +524,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 		gk.after(cx, 15000, gk.on(real_guard))
 	case "context-menu", "context-menu-kit":
 		a.inp = gk.input_state(cx)->default_value("menu text")->build()
-		a.inp->on_context_menu(cx, gk.on(menu_fired))
+		gk.on_context_menu(a.inp, cx, gk.on(menu_fired))
 		gk.after(cx, 10, gk.on(context_menu_check))
 	}
 }

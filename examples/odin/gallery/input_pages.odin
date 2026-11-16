@@ -23,10 +23,10 @@ Input_Pages :: struct {
 
 // The input-writes page's click handlers: writes to the state, buffered and applied after the
 // handler, as the Rust page's update closures do them at once.
-w_select :: proc(a: ^App, cx: ^gk.Cx) {a.input.writes->set_selected_range(cx, {0, 5})}
-w_replace :: proc(a: ^App, cx: ^gk.Cx) {a.input.writes->replace(cx, "HELLO")}
-w_insert :: proc(a: ^App, cx: ^gk.Cx) {a.input.writes->insert(cx, "!")}
-w_set :: proc(a: ^App, cx: ^gk.Cx) {a.input.writes->set_value(cx, "reset")}
+w_select :: proc(a: ^App, cx: ^gk.Cx) {gk.set_selected_range(a.input.writes, cx, {0, 5})}
+w_replace :: proc(a: ^App, cx: ^gk.Cx) {gk.replace(a.input.writes, cx, "HELLO")}
+w_insert :: proc(a: ^App, cx: ^gk.Cx) {gk.insert(a.input.writes, cx, "!")}
+w_set :: proc(a: ^App, cx: ^gk.Cx) {gk.set_value(a.input.writes, cx, "reset")}
 
 EDITOR_TEXT :: "fn main() {\n    let x = 40 + 2;\n    println!(\"{x}\");\n}\n"
 
@@ -44,7 +44,7 @@ input_pages_init :: proc(a: ^App, cx: ^gk.Cx) {
 	p.edit = gk.input_state(cx)->placeholder("Type here")->build()
 	p.text = gk.textarea_state(cx)->auto_grow(2, 4)->placeholder("Notes")->build()
 	p.editor = gk.editor_state(cx)->language("rust")->default_value(EDITOR_TEXT)->build()
-	p.editor->set_line_number(cx, true)
+	gk.set_line_number(p.editor, cx, true)
 	p.number = gk.input_state(cx)->min(0)->max(10)->step(f64(2))->default_value("4")->build()
 	p.otp = gk.otp_state(cx, 4)->build()
 	p.masked = gk.input_state(cx)->masked(true)->default_value("secret")->build()

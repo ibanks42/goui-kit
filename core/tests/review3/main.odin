@@ -224,7 +224,7 @@ free_panel_view :: proc(a: ^App, cx: ^gk.Cx) {
 
 relayout :: proc(a: ^App, cx: ^gk.Cx) {
 	gk.release(cx, a.pa) // the panel itself too, while the dock still holds it
-	a.dock->set_center(cx, gk.dock_layout_tabs()->panel_view(a.pb))
+	gk.set_center(a.dock, cx, gk.dock_layout_tabs()->panel_view(a.pb))
 	gk.notify(cx, a.root)
 }
 
@@ -235,7 +235,7 @@ report_dock :: proc(a: ^App, cx: ^gk.Cx) {
 dock_freed_init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.dock = gk.dock_area_skinned(cx, "review3")
 	make_panels(a, cx)
-	a.dock->set_center(cx, gk.dock_layout_tabs()->panel_view(a.pa)->panel_view(a.pb))
+	gk.set_center(a.dock, cx, gk.dock_layout_tabs()->panel_view(a.pa)->panel_view(a.pb))
 	gk.after(cx, 30, gk.on(free_panel_view))
 	gk.after(cx, 90, gk.on(relayout))
 	gk.after(cx, 150, gk.on(report_dock))
@@ -308,11 +308,11 @@ asked :: proc(a: ^App, cx: ^gk.Cx, q: gk.Dock_Render) {
 }
 
 keep_and_drop :: proc(a: ^App, cx: ^gk.Cx) {
-	tree, ok := a.dock->layout(cx, .Left).?
+	tree, ok := gk.layout(a.dock, cx, .Left).?
 	if ok {
 		a.tree = gk.retain(cx, tree)
 	}
-	fmt.printf("review3 owner kept tree=%v ctx=%v panels=%d\n", ok, a.has_ctx, ok ? len(a.tree->panels(cx)) : -1)
+	fmt.printf("review3 owner kept tree=%v ctx=%v panels=%d\n", ok, a.has_ctx, ok ? len(gk.panels(a.tree, cx)) : -1)
 	a.dock_gone = true
 	gk.notify(cx, a.root) // the view stops showing the dock before it is released
 	gk.release(cx, a.dock)
@@ -321,12 +321,12 @@ keep_and_drop :: proc(a: ^App, cx: ^gk.Cx) {
 use_after_owner :: proc(a: ^App, cx: ^gk.Cx) {
 	n := -1
 	if a.tree.h != 0 {
-		n = len(a.tree->panels(cx))
+		n = len(gk.panels(a.tree, cx))
 	}
 	open := false
 	if a.has_ctx {
-		open = a.dock_ctx->is_open(cx)
-		a.dock_ctx->toggle(cx) // the dock it toggles is gone
+		open = gk.is_open(a.dock_ctx, cx)
+		gk.dock_context_toggle(a.dock_ctx, cx) // the dock it toggles is gone
 	}
 	fmt.printf("review3 handle-after-owner panels=%d ctx_open=%v\n", n, open)
 }
@@ -335,8 +335,8 @@ handle_owner_init :: proc(a: ^App, cx: ^gk.Cx) {
 	make_panels(a, cx)
 	a.renderer = gk.dock_renderer(cx, {.Dock}, gk.on(asked))
 	a.dock = gk.dock_area(cx, "review3-owner", nil)->with_renderer(a.renderer)->build()
-	a.dock->set_center(cx, gk.dock_layout_tabs()->panel(a.pb))
-	a.dock->set_dock(cx, .Left, gk.dock_layout_tabs()->panel(a.pa))
+	gk.set_center(a.dock, cx, gk.dock_layout_tabs()->panel(a.pb))
+	gk.set_dock(a.dock, cx, .Left, gk.dock_layout_tabs()->panel(a.pa))
 	gk.after(cx, 40, gk.on(keep_and_drop))
 	gk.after(cx, 100, gk.on(use_after_owner))
 }

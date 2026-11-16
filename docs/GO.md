@@ -184,8 +184,9 @@ func main() {
   `gk.Post` may be called from elsewhere.
 - **GK_DEBUG=1**: every buffered write is sent at once (an error points at its line), each
   node records where it was made, and the dropped-event count is printed at exit.
-- **GK_SCRIPT=file**: `gk.Run` runs the app offscreen under that script of clicks and keys (the
-  diagnostic library), as in Odin.
+- **GK_FRAMES=5,30**: the app draws 30 frames (after 5 to warm up) and exits, for a CI check that
+  it starts. **GK_SCRIPT=file** runs it offscreen under a script of clicks and keys; that needs
+  the diagnostic library, which only this repository's tests build (CONTRIBUTING.md).
 - **Version check**: the package carries `ABI_MAJOR`, `ABI_MINOR` and `API_HASH` from the same
   generated tables as Odin and refuses a library with another hash before `gk_run`.
 

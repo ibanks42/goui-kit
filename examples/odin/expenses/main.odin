@@ -41,15 +41,15 @@ App :: struct {
 init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.what = gk.input_state(cx)->placeholder("Coffee, bus ticket, ...")->build()
 	a.amount = gk.input_state(cx)->placeholder("0.00")->build()
-	a.what->on_input_event(cx, gk.on(field_event))
-	a.amount->on_input_event(cx, gk.on(field_event))
+	gk.on_input_event(a.what, cx, gk.on(field_event))
+	gk.on_input_event(a.amount, cx, gk.on(field_event))
 
 	items: [len(Category)]gk.Search_Item
 	for c in Category {
 		items[c] = gk.search_item(fmt.tprint(c))
 	}
 	a.category = gk.select_state(cx, gk.search_source(cx, a, items[:]), nil)->build()
-	a.category->on_select_event(cx, gk.on(revalidate))
+	gk.on_select_event(a.category, cx, gk.on(revalidate))
 	a.list = gk.list_state(cx, gk.list_source(cx, a, expense_count, expense_row))->build()
 
 	add_expense(a, "Groceries", 42.10, .Food)
@@ -128,8 +128,8 @@ expense_row :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.List_Item {
 
 // validate checks the fields and sets their messages; it returns the values.
 validate :: proc(a: ^App, cx: ^gk.Cx) -> (what: string, amount: f64, category: Category, ok: bool) {
-	what = strings.trim_space(string(a.what->value(cx)))
-	amount_text := strings.trim_space(string(a.amount->value(cx)))
+	what = strings.trim_space(string(gk.value(a.what, cx)))
+	amount_text := strings.trim_space(string(gk.value(a.amount, cx)))
 	a.what_error = "" if what != "" else "Say what it was for"
 	parsed: bool
 	amount, parsed = strconv.parse_f64(amount_text)
@@ -144,7 +144,7 @@ validate :: proc(a: ^App, cx: ^gk.Cx) -> (what: string, amount: f64, category: C
 		a.amount_error = ""
 	}
 	a.category_error = "Choose a category"
-	if at, chosen := a.category->selected_index(cx).?; chosen {
+	if at, chosen := gk.selected_index(a.category, cx).?; chosen {
 		category = Category(at.row)
 		a.category_error = ""
 	}
@@ -157,9 +157,9 @@ add_clicked :: proc(a: ^App, cx: ^gk.Cx) {
 		return
 	}
 	add_expense(a, what, amount, category)
-	a.what->set_value(cx, "")
-	a.amount->set_value(cx, "")
-	a.what->focus(cx)
+	gk.set_value(a.what, cx, "")
+	gk.set_value(a.amount, cx, "")
+	gk.input_state_focus(a.what, cx)
 	gk.select_row(cx, a.list, len(a.expenses) - 1, scroll = true)
 	gk.push_notification(cx, fmt.tprintf("Added %s: %.2f", what, amount))
 	gk.refresh(cx)

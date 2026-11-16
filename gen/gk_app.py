@@ -238,20 +238,10 @@ def odin_emit(od):
     nothing may not run in a view procedure (it changes the app or the window); one that returns
     a value may (a colour of the palette)."""
     import gk_values  # noqa: PLC0415
-    states = gk_values.handed_state_types(od.m)
     unions = gk_values.odin_unions(od)
-    if states or unions:
-        # Kit state a read or an event hands out, read by reflection (PROTOCOLS.md 13.16); the
-        # unions of the kit traits whose implementors are value nodes (13.19).
-        od.open("gen_values.odin", "Kit state types a read or an event hands out: registered so a result "
-                "or a payload of one is read with its method table (docs/PROTOCOLS.md 13.16); unions of the "
-                "value nodes implementing a kit trait (13.19).")
-        if states:
-            od.add("@(init, private)", "reg_handed_states :: proc \"contextless\" () {")
-            for k in states:
-                S = od.m.states[k]["odin"]
-                od.add(f"\tregister_obj(typeid_of({S}), &{S.lower()}_vt)")
-            od.add("}", "")
+    if unions:
+        # The unions of the kit traits whose implementors are value nodes (PROTOCOLS.md 13.19).
+        od.open("gen_values.odin", "Unions of the value nodes implementing a kit trait (docs/PROTOCOLS.md 13.19).")
         for line in unions:
             od.add(line)
         od.close()

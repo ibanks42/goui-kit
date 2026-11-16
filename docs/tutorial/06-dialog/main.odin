@@ -22,10 +22,10 @@ App :: struct {
 
 init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.new_name = gk.input_state(cx)->placeholder("Add an item and press Enter")->build()
-	a.new_name->on_input_event(cx, gk.on(new_name_event))
+	gk.on_input_event(a.new_name, cx, gk.on(new_name_event))
 	a.edit_name = gk.input_state(cx)->build()
 	a.list = gk.list_state(cx, gk.list_source(cx, a, item_count, item_row))->build()
-	a.list->on_list_event(cx, gk.on(list_event))
+	gk.on_list_event(a.list, cx, gk.on(list_event))
 	add_item(a, "Milk", 2)
 	add_item(a, "Bread", 1)
 	add_item(a, "Apples", 6)
@@ -63,12 +63,12 @@ new_name_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	if _, enter := e.(gk.Input_Event_Press_Enter); !enter {
 		return
 	}
-	name := strings.trim_space(string(a.new_name->value(cx))) // lent text: add_item clones it
+	name := strings.trim_space(string(gk.value(a.new_name, cx))) // lent text: add_item clones it
 	if name == "" {
 		return
 	}
 	add_item(a, name, 1)
-	a.new_name->set_value(cx, "")
+	gk.set_value(a.new_name, cx, "")
 	gk.select_row(cx, a.list, len(a.items) - 1, scroll = true)
 	gk.refresh(cx)
 }
@@ -97,9 +97,9 @@ edit_dialog :: proc(a: ^App, cx: ^gk.Cx) -> gk.Dialog {
 open_editor :: proc(a: ^App, cx: ^gk.Cx, row: int) {
 	a.editing = row
 	a.edit_amount = a.items[row].amount
-	a.edit_name->set_value(cx, a.items[row].name)
+	gk.set_value(a.edit_name, cx, a.items[row].name)
 	gk.open_dialog(cx, gk.built(cx, a, edit_dialog))
-	a.edit_name->focus(cx)
+	gk.input_state_focus(a.edit_name, cx)
 }
 
 change_amount :: proc(a: ^App, cx: ^gk.Cx, by: int) {
@@ -107,7 +107,7 @@ change_amount :: proc(a: ^App, cx: ^gk.Cx, by: int) {
 }
 
 save_edit :: proc(a: ^App, cx: ^gk.Cx) -> bool {
-	name := strings.trim_space(string(a.edit_name->value(cx)))
+	name := strings.trim_space(string(gk.value(a.edit_name, cx)))
 	if name == "" {
 		return false // keep the dialog open
 	}

@@ -38,7 +38,7 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	case "sel-ok", "sel-view":
 		a.src = gk.search_source(cx, a, ITEMS[:])
 		a.sel = gk.select_state(cx, a.src, nil)->build()
-		a.sel->set_selected_value(cx, "b")
+		gk.set_selected_value(a.sel, cx, "b")
 	case "sel-foreign":
 		other := gk.row_source(cx, a, 1, proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {return gk.label("x")})
 		gk.search_items(cx, other, ITEMS[:])
@@ -58,7 +58,7 @@ view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	body := gk.v_flex(.Size_Full)
 	switch a.mode {
 	case "sel-ok":
-		v, ok := a.sel->selected_value(cx).?
+		v, ok := gk.selected_value(a.sel, cx).?
 		fmt.printf("gk-neg sel-ok value=%q ok=%v\n", v, ok)
 		body = body->child(gk.select(a.sel))
 	case "sel-view":
@@ -66,7 +66,7 @@ view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	case "nonzero":
 		_ = gk.transition(200 * time.Millisecond)->easing(gk.Easing_Steps{count = 0, position = .Jump_End})
 	case "kept-view":
-		a.inp->set_validator(cx, gk.on(never))
+		gk.set_validator(a.inp, cx, gk.on(never))
 	}
 	return body
 }

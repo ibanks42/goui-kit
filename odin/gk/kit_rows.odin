@@ -177,11 +177,11 @@ list_source_n :: proc(
 // also scrolls so that the row is in view (a keyboard "next item").
 select_row :: proc(cx: ^Cx, list: List_State, row: int, section := 0, scroll := false, loc := #caller_location) {
 	if row < 0 {
-		list->set_selected_index(cx, nil, loc)
+		list_state_set_selected_index(list, cx, nil, loc)
 	} else {
-		list->set_selected_index(cx, Base_Index_Path{section = section, row = row}, loc)
+		list_state_set_selected_index(list, cx, Base_Index_Path{section = section, row = row}, loc)
 		if scroll {
-			list->scroll_to_item(cx, Base_Index_Path{section = section, row = row}, .Nearest, loc)
+			list_state_scroll_to_item(list, cx, Base_Index_Path{section = section, row = row}, .Nearest, loc)
 		}
 	}
 }

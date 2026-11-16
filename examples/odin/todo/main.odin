@@ -113,7 +113,7 @@ changed :: proc(a: ^App, cx: ^gk.Cx) {
 
 refilter :: proc(a: ^App, cx: ^gk.Cx) {
 	clear(&a.visible)
-	needle := strings.to_lower(string(a.search->value(cx)), context.temp_allocator)
+	needle := strings.to_lower(string(gk.value(a.search, cx)), context.temp_allocator)
 	row := -1
 	for t, i in tasks(a)^ {
 		if a.filter == .Active && t.done || a.filter == .Done && !t.done {
@@ -147,17 +147,17 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.toggle_theme = gk.shortcut(cx, "ctrl-t", gk.on(toggle_theme))
 
 	a.search = gk.input_state(cx)->placeholder("Search tasks")->build()
-	a.search->on_input_event(cx, gk.on(search_changed))
+	gk.on_input_event(a.search, cx, gk.on(search_changed))
 	a.new_project = gk.input_state(cx)->placeholder("New project")->build()
-	a.new_project->on_input_event(cx, gk.on(new_project_event))
+	gk.on_input_event(a.new_project, cx, gk.on(new_project_event))
 	a.edit_title = gk.input_state(cx)->placeholder("What needs doing?")->build()
 	a.edit_due = gk.input_state(cx)->placeholder("Due date, e.g. 2026-11-20")->build()
 
 	a.project_list = gk.list_state(cx, gk.list_source(cx, a, project_count, project_row))->build()
-	a.project_list->on_list_event(cx, gk.on(project_event))
+	gk.on_list_event(a.project_list, cx, gk.on(project_event))
 	gk.select_row(cx, a.project_list, a.current)
 	a.task_list = gk.list_state(cx, gk.list_source(cx, a, task_count, task_row))->build()
-	a.task_list->on_list_event(cx, gk.on(task_event))
+	gk.on_list_event(a.task_list, cx, gk.on(task_event))
 
 	a.status = strings.clone("not synced yet")
 	refilter(a, cx)
@@ -286,11 +286,11 @@ edit_dialog :: proc(a: ^App, cx: ^gk.Cx) -> gk.Dialog {
 open_editor :: proc(a: ^App, cx: ^gk.Cx, task: int) {
 	a.editing = task
 	t := tasks(a)[task] if task >= 0 else Task{priority = .Medium}
-	a.edit_title->set_value(cx, t.title)
-	a.edit_due->set_value(cx, t.due)
+	gk.set_value(a.edit_title, cx, t.title)
+	gk.set_value(a.edit_due, cx, t.due)
 	a.edit_prio = t.priority
 	gk.open_dialog(cx, gk.built(cx, a, edit_dialog))
-	a.edit_title->focus(cx)
+	gk.input_state_focus(a.edit_title, cx)
 }
 
 set_prio :: proc(a: ^App, cx: ^gk.Cx, p: Priority) {
@@ -298,11 +298,11 @@ set_prio :: proc(a: ^App, cx: ^gk.Cx, p: Priority) {
 }
 
 save_edit :: proc(a: ^App, cx: ^gk.Cx) -> bool {
-	title := strings.trim_space(string(a.edit_title->value(cx)))
+	title := strings.trim_space(string(gk.value(a.edit_title, cx)))
 	if title == "" {
 		return false // keep the dialog open
 	}
-	due := strings.trim_space(string(a.edit_due->value(cx)))
+	due := strings.trim_space(string(gk.value(a.edit_due, cx)))
 	if a.editing < 0 {
 		append(tasks(a), Task{priority = a.edit_prio})
 		a.editing = len(tasks(a)) - 1
@@ -323,7 +323,7 @@ new_task :: proc(a: ^App, cx: ^gk.Cx) {
 }
 
 find :: proc(a: ^App, cx: ^gk.Cx) {
-	a.search->focus(cx)
+	gk.input_state_focus(a.search, cx)
 }
 
 search_changed :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
@@ -370,12 +370,12 @@ task_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.List_Event) {
 }
 
 new_project_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
-	name := strings.trim_space(string(a.new_project->value(cx)))
+	name := strings.trim_space(string(gk.value(a.new_project, cx)))
 	if _, enter := e.(gk.Input_Event_Press_Enter); !enter || name == "" {
 		return
 	}
 	append(&a.projects, Project{name = strings.clone(name)})
-	a.new_project->set_value(cx, "")
+	gk.set_value(a.new_project, cx, "")
 	a.current = len(a.projects) - 1
 	a.selected = -1
 	gk.select_row(cx, a.project_list, a.current)

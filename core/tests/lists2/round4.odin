@@ -37,8 +37,8 @@ r4_token_row :: proc(a: ^App, cx: ^gk.Cx, at: gk.Row_At) -> gk.Element {
 	a.r4.token_rows += 1
 	t := gk.row_context(cx, a.r4.tokens, at, gk.Inline_Token_Context)
 	fmt.printf("lists2 ctx token row=%d range=%v selected=%v disabled=%v readonly=%v label=%q height_ok=%v\n",
-		at.row, t->range(cx), t->is_selected(cx), t->is_disabled(cx), t->is_readonly(cx), t->token(cx)->label(cx),
-		t->line_height(cx) > 0)
+		at.row, gk.range(t, cx), gk.is_selected(t, cx), gk.is_disabled(t, cx), gk.is_readonly(t, cx), gk.inline_token_read_label(gk.token(t, cx), cx),
+		gk.line_height(t, cx) > 0)
 	return gk.input_token(t)
 }
 
@@ -70,14 +70,14 @@ r4_init :: proc(a: ^App, cx: ^gk.Cx) {
 	switch a.mode {
 	case "ctx-token":
 		a.in1 = gk.input_state(cx)->default_value("Hello world")->build()
-		_ = a.in1->replace_range_with_token(cx, gk.Range{6, 11}, gk.inline_token("t1", "world")->with_label("World"))
+		_ = gk.replace_range_with_token(a.in1, cx, gk.Range{6, 11}, gk.inline_token("t1", "world")->with_label("World"))
 		a.r4.tokens = gk.row_source(cx, a, 0, r4_token_row, initial = 0)
 	case "lend", "bad-lend":
 		a.ed = gk.editor_state(cx)->language("odin")->default_value("main :: proc() {}\n")->build()
 	case "highlight":
 		a.r4.hl = gk.highlighter(cx, a, r4_styles, r4_folds, languages = {"odin"})
 		a.ed = gk.editor_state(cx)->language("odin")->default_value("main :: proc() {\n\n}\n")->build()
-		a.ed->set_highlighter_factory(cx, a.r4.hl.src)
+		gk.set_highlighter_factory(a.ed, cx, a.r4.hl.src)
 	case "languages":
 		aliases := [?]gk.Language_Alias{{"od", "odin"}}
 		a.r4.prov = gk.language_provider(cx, a, aliases[:], r4_syntax)
@@ -111,25 +111,25 @@ r4_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 r4_step :: proc(a: ^App, cx: ^gk.Cx) {
 	switch a.mode {
 	case "ctx-token":
-		a.in1->set_selected_range(cx, gk.Range{0, 11}) // the token is selected now: its row is described again
+		gk.set_selected_range(a.in1, cx, gk.Range{0, 11}) // the token is selected now: its row is described again
 	case "lend", "bad-lend":
 		switch a.step {
 		case 1:
-			d, ok := a.ed->diagnostics_mut(cx).?
-			fmt.printf("lists2 lend got=%v empty=%v\n", ok, ok && d->is_empty(cx))
+			d, ok := gk.diagnostics_mut(a.ed, cx).?
+			fmt.printf("lists2 lend got=%v empty=%v\n", ok, ok && gk.is_empty(d, cx))
 			if ok {
-				d->push(cx, gk.diagnostic({gk.Lsp_Position{0, 0}, gk.Lsp_Position{0, 4}}, "unused"))
-				d->push(cx, gk.diagnostic({gk.Lsp_Position{0, 8}, gk.Lsp_Position{0, 12}}, "twice"))
+				gk.push(d, cx, gk.diagnostic({gk.Lsp_Position{0, 0}, gk.Lsp_Position{0, 4}}, "unused"))
+				gk.push(d, cx, gk.diagnostic({gk.Lsp_Position{0, 8}, gk.Lsp_Position{0, 12}}, "twice"))
 				a.r4.lent = d
 			}
 		case 2:
 			if a.mode == "bad-lend" {
 				fmt.printf("lists2 bad-lend using the lent handle\n")
-				_ = a.r4.lent->len_(cx) // given back at the end of the turn that lent it: stops
+				_ = gk.len_(a.r4.lent, cx) // given back at the end of the turn that lent it: stops
 				return
 			}
-			got, ok := a.ed->diagnostics(cx).?
-			n := ok ? got->len_(cx) : -1
+			got, ok := gk.diagnostics(a.ed, cx).?
+			n := ok ? gk.len_(got, cx) : -1
 			lent, back := gk.test_lends(cx)
 			fmt.printf("lists2 lend after len=%d lent=%d given_back=%d\n", n, lent, back)
 		}
@@ -144,13 +144,13 @@ r4_step :: proc(a: ^App, cx: ^gk.Cx) {
 		case 1:
 			e, ok := gk.diff_file_parse_error(cx, "@@ nonsense\n").?
 			_, none := gk.diff_file_parse_error(cx, DIFF_PATCH).?
-			fmt.printf("lists2 small parse-error ok=%v line=%d message=%q good_has_error=%v\n", ok, ok ? e->line(cx) : -1,
-				ok ? e->message(cx) : "", none)
+			fmt.printf("lists2 small parse-error ok=%v line=%d message=%q good_has_error=%v\n", ok, ok ? gk.line(e, cx) : -1,
+				ok ? gk.diff_parse_error_message(e, cx) : "", none)
 			ranges := gk.base_highlight_prefix(cx, "ma", gk.Completion_Item{label = "main"})
 			fmt.printf("lists2 small highlight_prefix=%v\n", ranges)
-			sh := a.tree->scroll_handle(cx)
-			fmt.printf("lists2 small scroll before y=%v\n", sh->offset(cx).y)
-			sh->set_offset(cx, gk.Gpui_Point{0, -4000})
+			sh := gk.tree_state_scroll_handle(a.tree, cx)
+			fmt.printf("lists2 small scroll before y=%v\n", gk.offset(sh, cx).y)
+			gk.set_offset(sh, cx, gk.Gpui_Point{0, -4000})
 		case 2:
 			far := false
 			for row in 100 ..< 300 {
@@ -158,7 +158,7 @@ r4_step :: proc(a: ^App, cx: ^gk.Cx) {
 					far = true
 				}
 			}
-			fmt.printf("lists2 small scroll after y=%v drawn_far=%v\n", a.tree->scroll_handle(cx)->offset(cx).y, far)
+			fmt.printf("lists2 small scroll after y=%v drawn_far=%v\n", gk.offset(gk.tree_state_scroll_handle(a.tree, cx), cx).y, far)
 		}
 	case "bad-ctx":
 		fmt.printf("lists2 bad-ctx reading a row no closure drew\n")

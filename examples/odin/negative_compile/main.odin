@@ -11,7 +11,7 @@ App :: struct {
 }
 
 store :: proc(a: ^App, cx: ^gk.Cx) {
-	a.kept = a.name->value(cx) // error: cannot assign Temp_String to string
+	a.kept = gk.value(a.name, cx) // error: cannot assign Temp_String to string
 }
 
 main :: proc() {

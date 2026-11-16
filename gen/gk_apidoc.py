@@ -45,6 +45,8 @@ SOURCES = {
     "Select_State": "gk.search_source(cx, a, items)",
     "Table_State": "gk.table_source(cx, a, rows, columns, cell)",
 }
+# A state's or object's procedure, low_NAME(s: T, cx: ^Cx, ..) (gk_odin.state_body).
+SPROC = re.compile(r"^(\w+) :: proc\(s: (\w+), cx: \^Cx(.*?)\)(?: -> (.+?))? \{$", re.M)
 USING = re.compile(r"^\tusing t_\w+: \^(\w+)_Trait\(", re.M)
 TRAIT = re.compile(r"^(\w+)_Trait :: struct\(\$T: typeid\) \{\n((?:\t.*\n)*?)\}", re.M)
 # Trait tables whose builders every element has (styling, events, children, scrolling, focus,
@@ -135,6 +137,10 @@ def short(path):
 
 def index(files):
     structs, procs, groups, decls = collect(files)
+    sprocs = {}
+    for text in files.values():
+        for m in SPROC.finditer(text):
+            sprocs.setdefault(m.group(2), []).append((m.group(1), m.group(4)))
     shared, _ = vt_fields(structs, "Div")
     shared = set(shared)
     for t in SHARED_TRAITS:
@@ -166,14 +172,18 @@ def index(files):
             ctors = procs.get(builder, [])
             fields, _ = vt_fields(structs, typ)
             reads, writes, events = [], [], []
-            for m in FIELD.finditer(structs.get(typ + "_VT", "")):
-                name, ret = m.group(1), m.group(3)
-                if name.startswith("on_") and ret == "Subscription":
-                    events.append(name)
+            low = typ.lower() + "_"
+            for name, ret in sprocs.get(typ, []):
+                if not name.startswith(low):
+                    continue
+                meth = name[len(low):]
+                shown = meth if name in groups.get(meth, []) else name  # gk.value or gk.input_state_value
+                if meth.startswith("on_") and ret == "Subscription":
+                    events.append(shown)
                 elif ret:
-                    reads.append(name)
+                    reads.append(shown)
                 else:
-                    writes.append(name)
+                    writes.append(shown)
             bfields = [f for f in vt_fields(structs, builder)[0] if f != "build"]
             entry.update(ctors=ctors, reads=reads, writes=writes, events=events, builders=bfields)
             if not ctors and not reads and not writes:
@@ -254,11 +264,11 @@ def render(files):
                 if e["builders"]:
                     parts.append("built with " + names_text(e["builders"]))
                 if e["reads"]:
-                    parts.append("reads " + names_text(e["reads"]))
+                    parts.append("reads " + names_text(e["reads"], "gk."))
                 if e["writes"]:
-                    parts.append("writes " + names_text(e["writes"]))
+                    parts.append("writes " + names_text(e["writes"], "gk."))
                 if e["events"]:
-                    parts.append("events " + ", ".join(f"`->{n}(cx, gk.on(p))`" for n in e["events"]))
+                    parts.append("events " + ", ".join(f"`gk.{n}(s, cx, gk.on(p))`" for n in e["events"]))
                 if parts:
                     line += "; " + "; ".join(parts)
             else:

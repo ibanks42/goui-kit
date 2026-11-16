@@ -32,10 +32,9 @@
 #   docs/                    the guides of both languages and the programs their snippets come from
 #   VERSIONS                 what was built from what, what the library needs, the compilers tested
 #   THIRD_PARTY.md, licences/ the crates linked into this platform's library, their licences and texts
-# The build scripts are the same file on every platform (they look at uname). The diagnostic
-# library (offscreen rendering and scripted input, for tests in CI) is a second, optional
-# download: dist/gpuikit-VERSION-PLATFORM-diag/lib/.
-# LIBROOT (default lib) holds ship/, diag/ and licences/ (or GK_LICENCES names the licences
+# The build scripts are the same file on every platform (they look at uname). Only the ship
+# library is shipped; the diagnostic one (lib/diag) is for this repository's own tests.
+# LIBROOT (default lib) holds ship/ and licences/ (or GK_LICENCES names the licences
 # folder), as tools/build-lib.sh leaves them. GK_DIST_OUT is the output folder (default dist).
 # Prints every file with its size.
 set -euo pipefail
@@ -65,22 +64,18 @@ name=gpuikit-$ver-$GK_PLATFORM
 out=$dst/$name
 sha256() { if command -v sha256sum > /dev/null; then sha256sum "$1"; else shasum -a 256 "$1"; fi | cut -c1-64; }
 for f in "${libs[@]}"; do
-  for v in ship diag; do
-    [ -f "$root/$v/$f" ] || { echo "dist.sh: $root/$v/$f is missing (make lib, or tools/build-lib.sh on $GK_PLATFORM)" >&2; exit 1; }
-  done
+  [ -f "$root/ship/$f" ] || { echo "dist.sh: $root/ship/$f is missing (make lib, or tools/build-lib.sh ship on $GK_PLATFORM)" >&2; exit 1; }
 done
-# The macOS download is named universal: both libraries must hold exactly the arm64 and x86_64 slices.
+# The macOS download is named universal: the library must hold exactly the arm64 and x86_64 slices.
 if [ "$GK_PLATFORM" = macos-universal ]; then
-  for v in ship diag; do
-    got=$(lipo -archs "$root/$v/libgpuikit.dylib" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' ')
-    [ "$got" = "arm64 x86_64 " ] || { echo "dist.sh: $root/$v/libgpuikit.dylib has the slices '$got', not arm64 and x86_64 (tools/build-lib.sh builds both)" >&2; exit 1; }
-  done
+  got=$(lipo -archs "$root/ship/libgpuikit_static.a" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' ')
+  [ "$got" = "arm64 x86_64 " ] || { echo "dist.sh: $root/ship/libgpuikit_static.a has the slices '$got', not arm64 and x86_64 (tools/build-lib.sh builds both)" >&2; exit 1; }
 fi
 # The licence texts of every crate linked into the library (tools/build-lib.sh writes them).
 [ -f "$lic/THIRD_PARTY.md" ] || { echo "dist.sh: $lic/THIRD_PARTY.md is missing (make lib writes it)" >&2; exit 1; }
-rm -rf "${dst:?}/$name" "$dst/$name-diag" "$dst/$name".* "$dst/$name-diag".*
-mkdir -p "$out/lib" "$out/odin/gk" "$out/go" "$out/include" "$out/examples/go" "$out/docs" "$dst/$name-diag/lib"
-for f in "${libs[@]}"; do cp "$root/ship/$f" "$out/lib/"; cp "$root/diag/$f" "$dst/$name-diag/lib/"; done
+rm -rf "${dst:?}/$name" "$dst/$name".*
+mkdir -p "$out/lib" "$out/odin/gk" "$out/go" "$out/include" "$out/examples/go" "$out/docs"
+for f in "${libs[@]}"; do cp "$root/ship/$f" "$out/lib/"; done
 if [ "$GK_PLATFORM" = windows-x86_64 ]; then
   mkdir -p "$out/windows"; cp core/windows/gpuikit.manifest core/windows/gpuikit.rc "$out/windows/"
 fi
@@ -292,17 +287,17 @@ source commit: $(git rev-parse --short HEAD 2>/dev/null || echo "${GK_COMMIT:-un
 tested with: Odin ${odin_v:-not found}, Go ${go_v:-not found}
 V
 if [ "$GK_PLATFORM" = windows-x86_64 ]; then
-  ( cd "$dst" && "$py" -m zipfile -c "$name.zip" "$name" && "$py" -m zipfile -c "$name-diag.zip" "$name-diag" )
-  arc=$name.zip; darc=$name-diag.zip
+  ( cd "$dst" && "$py" -m zipfile -c "$name.zip" "$name" )
+  arc=$name.zip
 else
-  ( cd "$dst" && tar -cf - "$name" | zstd -q -T0 -o "$name.tar.zst" && tar -cf - "$name-diag" | zstd -q -T0 -o "$name-diag.tar.zst" )
-  arc=$name.tar.zst; darc=$name-diag.tar.zst
+  ( cd "$dst" && tar -cf - "$name" | zstd -q -T0 -o "$name.tar.zst" )
+  arc=$name.tar.zst
 fi
 echo "dist: $out"
 # Every file with its size (the generated files and the licence texts summed), portably.
-"$py" - "$dst" "$name" "$main" "$arc" "$darc" <<'P'
+"$py" - "$dst" "$name" "$arc" <<'P'
 import os, sys
-dst, name, main, arc, darc = sys.argv[1:]
+dst, name, arc = sys.argv[1:]
 out = os.path.join(dst, name)
 def files(top):
     for d, _, fs in os.walk(top):
@@ -325,6 +320,4 @@ print(f"{gen_odin:10d}  ./odin/gk/gen_*.odin ({n_odin} generated files)")
 print(f"{gen_go:10d}  ./go/gk/gen_*.go, ./go/gk/{{s,theme,palette}}/gen_*.go ({n_go} generated files)")
 total = sum(s for _, s in files(out))
 print(f"unpacked: {mb(total)}; download: {mb(os.path.getsize(os.path.join(dst, arc)))} ({arc})")
-dl = os.path.join(dst, name + "-diag", "lib", main)
-print(f"optional diagnostic library: {mb(os.path.getsize(dl))} unpacked, {mb(os.path.getsize(os.path.join(dst, darc)))} to download ({darc})")
 P

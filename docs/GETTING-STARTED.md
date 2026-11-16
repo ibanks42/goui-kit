@@ -33,7 +33,7 @@ package you download.
 
 ### Download and unpack
 
-The download is one file per system: `gpuikit-0.0.1-linux-x86_64.tar.zst` (23.7 MB),
+The download is one file per system: `gpuikit-0.0.1-linux-x86_64.tar.zst` (about 66 MB),
 `gpuikit-0.0.1-macos-universal.tar.zst` or `gpuikit-0.0.1-windows-x86_64.zip`, from release `v0.0.1`
 of the bindings' GitHub releases
 ([github.com/ibanks42/gpui-kit-bindings/releases](https://github.com/ibanks42/gpui-kit-bindings/releases)).
@@ -291,7 +291,7 @@ App :: struct {
 // ...
 init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.new_name = gk.input_state(cx)->placeholder("Add an item and press Enter")->build()
-	a.new_name->on_input_event(cx, gk.on(new_name_event))
+	gk.on_input_event(a.new_name, cx, gk.on(new_name_event))
 	a.list = gk.list_state(cx, gk.list_source(cx, a, item_count, item_row))->build()
 	add_item(a, "Milk", 2)
 	add_item(a, "Bread", 1)
@@ -307,23 +307,23 @@ new_name_event :: proc(a: ^App, cx: ^gk.Cx, e: gk.Input_Event) {
 	if _, enter := e.(gk.Input_Event_Press_Enter); !enter {
 		return
 	}
-	name := strings.trim_space(string(a.new_name->value(cx))) // lent text: add_item clones it
+	name := strings.trim_space(string(gk.value(a.new_name, cx))) // lent text: add_item clones it
 	if name == "" {
 		return
 	}
 	add_item(a, name, 1)
-	a.new_name->set_value(cx, "")
+	gk.set_value(a.new_name, cx, "")
 	gk.select_row(cx, a.list, len(a.items) - 1, scroll = true)
 	gk.refresh(cx)
 }
 ```
 
 The input's state is kit state like the list's: made in `init`, shown with `gk.input(a.new_name)`
-in the view. `->on_input_event(cx, gk.on(new_name_event))` subscribes to its events; the handler
+in the view. `gk.on_input_event(a.new_name, cx, gk.on(new_name_event))` subscribes to its events; the handler
 gets a `gk.Input_Event`, a union with one variant per event upstream has (`Input_Event_Change`,
 `Input_Event_Press_Enter`, …).
 
-`a.new_name->value(cx)` reads the text. It is a `gk.Temp_String`: text the library lends you until
+`gk.value(a.new_name, cx)` reads the text. It is a `gk.Temp_String`: text the library lends you until
 the handler returns. It does not convert to `string` by itself, so you cannot store it by mistake;
 `string(..)` reads it, and `strings.clone` (or `gk.keep`) copies it to keep. `add_item` clones,
 because `Item.name` outlives the handler. Writes such as `set_value` are applied after the handler
@@ -400,9 +400,9 @@ edit_dialog :: proc(a: ^App, cx: ^gk.Cx) -> gk.Dialog {
 open_editor :: proc(a: ^App, cx: ^gk.Cx, row: int) {
 	a.editing = row
 	a.edit_amount = a.items[row].amount
-	a.edit_name->set_value(cx, a.items[row].name)
+	gk.set_value(a.edit_name, cx, a.items[row].name)
 	gk.open_dialog(cx, gk.built(cx, a, edit_dialog))
-	a.edit_name->focus(cx)
+	gk.input_state_focus(a.edit_name, cx)
 }
 // ...
 change_amount :: proc(a: ^App, cx: ^gk.Cx, by: int) {
@@ -410,7 +410,7 @@ change_amount :: proc(a: ^App, cx: ^gk.Cx, by: int) {
 }
 // ...
 save_edit :: proc(a: ^App, cx: ^gk.Cx) -> bool {
-	name := strings.trim_space(string(a.edit_name->value(cx)))
+	name := strings.trim_space(string(gk.value(a.edit_name, cx)))
 	if name == "" {
 		return false // keep the dialog open
 	}
@@ -438,10 +438,10 @@ save_edit :: proc(a: ^App, cx: ^gk.Cx) -> bool {
 ```odin
 init :: proc(a: ^App, cx: ^gk.Cx) {
 	a.new_name = gk.input_state(cx)->placeholder("Add an item and press Enter")->build()
-	a.new_name->on_input_event(cx, gk.on(new_name_event))
+	gk.on_input_event(a.new_name, cx, gk.on(new_name_event))
 	a.edit_name = gk.input_state(cx)->build()
 	a.list = gk.list_state(cx, gk.list_source(cx, a, item_count, item_row))->build()
-	a.list->on_list_event(cx, gk.on(list_event))
+	gk.on_list_event(a.list, cx, gk.on(list_event))
 
 	a.new_item = gk.shortcut(cx, "ctrl-n", gk.on(focus_new_name))
 	a.clear_bought = gk.shortcut(cx, "ctrl-shift-d", gk.on(clear_bought))
@@ -462,7 +462,7 @@ toolbar :: proc(a: ^App) -> gk.Element {
 }
 // ...
 focus_new_name :: proc(a: ^App, cx: ^gk.Cx) {
-	a.new_name->focus(cx)
+	gk.input_state_focus(a.new_name, cx)
 }
 // ...
 clear_bought :: proc(a: ^App, cx: ^gk.Cx) {
@@ -590,7 +590,7 @@ When in doubt, end the handler with `gk.refresh(cx)`.
 | your `App` and everything in it | as long as you keep it | yes |
 | `gk.Input_State`, `gk.List_State`, `gk.View`, `gk.Action` and other handles | until `gk.release` | yes, in your struct |
 | elements (`gk.label(..)`, `gk.button(..)`) | one call of the view procedure | no: make them on each call |
-| `gk.Temp_String` (`->value(cx)`, event text) | until the handler returns | copy with `strings.clone` or `gk.keep` |
+| `gk.Temp_String` (`gk.value(s, cx)`, event text) | until the handler returns | copy with `strings.clone` or `gk.keep` |
 | `^gk.Cx` | the call it was given to | never |
 | a handler's value (`gk.on(p, value)`), a posted message | copied by the binding | yes: it is yours when it arrives |
 
@@ -629,7 +629,7 @@ chart of the totals per category:
 		items[c] = gk.search_item(fmt.tprint(c))
 	}
 	a.category = gk.select_state(cx, gk.search_source(cx, a, items[:]), nil)->build()
-	a.category->on_select_event(cx, gk.on(revalidate))
+	gk.on_select_event(a.category, cx, gk.on(revalidate))
 // ...
 entry_form :: proc(a: ^App) -> gk.Element {
 	what := gk.field()->label("What")->child(gk.input(a.what))
@@ -655,18 +655,18 @@ chart :: proc(a: ^App) -> gk.Element {
 }
 // ...
 	a.category_error = "Choose a category"
-	if at, chosen := a.category->selected_index(cx).?; chosen {
+	if at, chosen := gk.selected_index(a.category, cx).?; chosen {
 		category = Category(at.row)
 		a.category_error = ""
 	}
 ```
 
 - A select's items are data: `gk.search_source(cx, a, items)` over `gk.Search_Item`s (a value
-  and the title shown), and `gk.select_state` is made over that source. `->selected_index(cx)` is
-  the chosen row (a `Maybe`, `nil` until something is chosen); `->selected_value(cx)` is its
+  and the title shown), and `gk.select_state` is made over that source. `gk.selected_index(a.category, cx)` is
+  the chosen row (a `Maybe`, `nil` until something is chosen); `gk.selected_value(a.category, cx)` is its
   value as text. The last argument of `gk.select_state` preselects a row (`0` for the first),
   or is `nil` for none. Wherever a call takes a row of a list (an "index path"), the row number
-  alone does: `a.list->set_selected_index(cx, 4)`, `->scroll_to_item(cx, 4, .Top)`; the full
+  alone does: `gk.set_selected_index(a.list, cx, 4)`, `gk.scroll_to_item(a.list, cx, 4, .Top)`; the full
   `gk.Base_Index_Path{section = 1, row = 4}` is for a list with sections.
 - A form is fields: `gk.field()->label(..)->child(any element)`, and `->description(..)` (text) or
   `->description_fn(..)` (an element: here a red message) under it. Checking is ordinary code: the
@@ -676,34 +676,13 @@ chart :: proc(a: ^App) -> gk.Element {
   view runs). The rows are copied when the chart is made, so a local array of the view procedure
   is fine. A chart has no size of its own: put it in a sized `div`.
 
-### Testing without a display
+### Checking that it starts, in CI
 
-Any app runs offscreen when the environment names a script: `GK_SCRIPT=session.script ./app`. It
-needs the optional diagnostic library (a second download, `gpuikit-..-diag`): build a test copy of
-the app against its `lib/` folder instead of the normal one (the library is linked into the
-program, so the copy is what changes). A script clicks, types, presses keys and saves screenshots. Screenshots work on Linux and
-macOS; on Windows the engine has no offscreen renderer, so a script still runs every frame but
-`shot` fails:
-
-```
-size 520 560
-frame
-key ctrl-n
-type Eggs
-key enter
-sleep 600
-frame
-advance 500
-shot added.png
-```
-
-`click X Y`, `dblclick X Y`, `rclick X Y`, `move X Y`, `drag X1 Y1 X2 Y2`, `scroll X Y DY`,
-`key NAME`, `type TEXT` and `shot FILE.png` act on the window; `sleep MS` lets your threads run and
-`advance MS` moves the window's clock: animations, toasts and your `gk.after` and `gk.every` timers
-move only with it (a timer due during a `sleep` fires at the next `advance`), while `time.now()` in
-your code is the real clock. Coordinates are the window's logical pixels, as in `size`; the
-offscreen window draws at scale 2, so `shot` writes an image twice that size (a 520 by 560 window
-gives 1040 by 1120 pixels): halve what you measure on it. The tutorial's last step is tested exactly this way.
+`GK_FRAMES=5,30 ./app` draws 30 frames and exits with status 0, so a CI job can check that the
+program starts and draws. On Linux without a display, run it under a virtual one:
+`xvfb-run -a env GK_FRAMES=5,30 ./app` (packages `xvfb`, and Mesa's Vulkan driver
+`mesa-vulkan-drivers` when the machine has no GPU). macOS and Windows CI machines have a desktop,
+so the program runs there as it is.
 
 ### Where next
 

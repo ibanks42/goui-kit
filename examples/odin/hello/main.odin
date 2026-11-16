@@ -24,7 +24,7 @@ view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 			child(gk.button("add")->primary()->label("Add")->on_click(gk.on(add)))->
 			child(gk.label(fmt.tprintf("clicked %d times", a.count))))->
 		child(gk.div()->w(gk.px(240))->child(gk.input(a.name)))->
-		child(gk.label(fmt.tprintf("hello %s", a.name->value(cx)))) // read: redrawn when it changes
+		child(gk.label(fmt.tprintf("hello %s", gk.value(a.name, cx)))) // read: redrawn when it changes
 }
 
 main :: proc() {

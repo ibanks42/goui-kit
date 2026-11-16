@@ -68,7 +68,7 @@ view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 			child(gk.button("add")->primary()->label("Add")->on_click(gk.on(add)))->
 			child(gk.label(fmt.tprintf("clicked %d times", a.count))))->
 		child(gk.div()->w(gk.px(240))->child(gk.input(a.name)))->
-		child(gk.label(fmt.tprintf("hello %s", a.name->value(cx)))) // read: redrawn when it changes
+		child(gk.label(fmt.tprintf("hello %s", gk.value(a.name, cx)))) // read: redrawn when it changes
 }
 
 main :: proc() {
@@ -154,10 +154,6 @@ One archive serves both languages. Inside it:
 | `docs/` | the guides and the tutorial programs |
 | `VERSIONS` | what the library was built from and what it needs |
 | `THIRD_PARTY.md`, `licences/` | the licences of everything compiled into the library |
-
-There is also an optional `-diag` archive per system: a second build of the library that can render
-offscreen and replay a script of clicks and key presses, for testing your app without a display
-(see "Testing without a display" in the getting-started guides).
 
 ## Build and run
 

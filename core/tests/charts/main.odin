@@ -31,7 +31,7 @@ App :: struct {
 pie :: proc(a: ^App, cx: ^gk.Cx) {
 	rows := []Visit{{"jan", 10, 1}, {"feb", 30, nil}, {"mar", 20, 2}}
 	p := gk.pie(cx)->value("visits")->build()
-	arcs := p->arcs(cx, gk.data(rows[:]))
+	arcs := gk.arcs(p, cx, gk.data(rows[:]))
 	total: f32
 	for x in arcs {
 		total += x.end_angle - x.start_angle
@@ -41,7 +41,7 @@ pie :: proc(a: ^App, cx: ^gk.Cx) {
 	fmt.printf("overlay-charts pie sweep=%.4f order=%d,%d,%d\n", total, arcs[0].index, arcs[1].index, arcs[2].index)
 	// a gap (Maybe without a value) is no slice: the pie of the gap column has two arcs
 	g := gk.pie(cx)->value("gap")->start_angle(0)->end_angle(3.14159265)->pad_angle(0)->build()
-	ga := g->arcs(cx, gk.data(rows[:]))
+	ga := gk.arcs(g, cx, gk.data(rows[:]))
 	fmt.printf("overlay-charts pie gap arcs=%d end=%.3f\n", len(ga), ga[len(ga) - 1].end_angle if len(ga) > 0 else 0)
 	gk.release(cx, p)
 	gk.release(cx, g)
@@ -52,13 +52,13 @@ stack :: proc(a: ^App, cx: ^gk.Cx) {
 	rows := []Fruit{{"jan", 1, 2}, {"feb", 3, 4}}
 	keys := []string{"apples", "pears"}
 	s := gk.stack(cx)->data(gk.data(rows[:]))->keys(keys)->value("")->build()
-	series := s->series(cx)
+	series := gk.series(s, cx)
 	fmt.printf("overlay-charts stack series=%d keys=%s,%s\n", len(series), series[0].key, series[1].key)
 	p := series[1].points
 	fmt.printf("overlay-charts stack pears jan=%v..%v feb=%v..%v rows=%d,%d\n", p[0].y0, p[0].y1, p[1].y0, p[1].y1, p[0].row, p[1].row)
 	// a named column: every key reads it
 	t := gk.stack(cx)->data(gk.data(rows[:]))->keys(keys)->value("apples")->build()
-	q := t->series(cx)[1].points
+	q := gk.series(t, cx)[1].points
 	fmt.printf("overlay-charts stack named feb=%v..%v\n", q[1].y0, q[1].y1)
 	fmt.println("overlay-charts done mode=stack")
 }
