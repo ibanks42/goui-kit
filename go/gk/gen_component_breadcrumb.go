@@ -9,6 +9,8 @@ type BreadcrumbEl struct{ n *node }
 
 func (e BreadcrumbEl) node() *node { return e.n }
 
+// Create a new breadcrumb.
+//
 // Breadcrumb is <gpui_kit::component::breadcrumb::Breadcrumb>::new.
 func Breadcrumb(st ...Style) BreadcrumbEl {
 	useComponentBreadcrumb()
@@ -17,6 +19,8 @@ func Breadcrumb(st ...Style) BreadcrumbEl {
 	return BreadcrumbEl{n}
 }
 
+// Add an `BreadcrumbItemEl` to the breadcrumb.
+//
 // Child is <gpui_kit::component::breadcrumb::Breadcrumb>::child.
 func (e BreadcrumbEl) Child(item BreadcrumbItemInto) BreadcrumbEl {
 	o := op(e.n, 256)
@@ -24,6 +28,8 @@ func (e BreadcrumbEl) Child(item BreadcrumbItemInto) BreadcrumbEl {
 	return e
 }
 
+// Add multiple `BreadcrumbItemEl` items to the breadcrumb.
+//
 // Children is <gpui_kit::component::breadcrumb::Breadcrumb>::children.
 func (e BreadcrumbEl) Children(items []BreadcrumbItemInto) BreadcrumbEl {
 	o := op(e.n, 257)
@@ -34,7 +40,19 @@ func (e BreadcrumbEl) Children(items []BreadcrumbItemInto) BreadcrumbEl {
 	return e
 }
 
-func (e BreadcrumbEl) PopoverStyle() BreadcrumbEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e BreadcrumbEl) PopoverStyle() BreadcrumbEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e BreadcrumbEl) RoundedFullStyle() BreadcrumbEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e BreadcrumbEl) CornerRadii(radius Corners) BreadcrumbEl {
@@ -59,7 +77,20 @@ func (e BreadcrumbEl) FontMedium() BreadcrumbEl     { tStyledExtFontMedium(e.n);
 func (e BreadcrumbEl) FontNormal() BreadcrumbEl     { tStyledExtFontNormal(e.n); return e }
 func (e BreadcrumbEl) FontSemibold() BreadcrumbEl   { tStyledExtFontSemibold(e.n); return e }
 func (e BreadcrumbEl) FontThin() BreadcrumbEl       { tStyledExtFontThin(e.n); return e }
-func (e BreadcrumbEl) HFlex() BreadcrumbEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e BreadcrumbEl) HFlex() BreadcrumbEl { tStyledExtHFlex(e.n); return e }
 func (e BreadcrumbEl) Margins(margins EdgesInto) BreadcrumbEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -72,139 +103,353 @@ func (e BreadcrumbEl) RefineStyle(style StyleRefinement) BreadcrumbEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e BreadcrumbEl) VFlex() BreadcrumbEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e BreadcrumbEl) Style(st ...Style) BreadcrumbEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e BreadcrumbEl) AspectRatio(ratio float32) BreadcrumbEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e BreadcrumbEl) Bg(fill Fill) BreadcrumbEl          { tStyledBg(e.n, fill); return e }
-func (e BreadcrumbEl) Border(length Length) BreadcrumbEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e BreadcrumbEl) Bg(fill Fill) BreadcrumbEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e BreadcrumbEl) Border(length Length) BreadcrumbEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BreadcrumbEl) BorderB(length Length) BreadcrumbEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e BreadcrumbEl) BorderColor(borderColor Color) BreadcrumbEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e BreadcrumbEl) BorderL(length Length) BreadcrumbEl     { tStyledBorderL(e.n, length); return e }
-func (e BreadcrumbEl) BorderR(length Length) BreadcrumbEl     { tStyledBorderR(e.n, length); return e }
-func (e BreadcrumbEl) BorderT(length Length) BreadcrumbEl     { tStyledBorderT(e.n, length); return e }
-func (e BreadcrumbEl) BorderX(length Length) BreadcrumbEl     { tStyledBorderX(e.n, length); return e }
-func (e BreadcrumbEl) BorderY(length Length) BreadcrumbEl     { tStyledBorderY(e.n, length); return e }
-func (e BreadcrumbEl) Bottom(length Length) BreadcrumbEl      { tStyledBottom(e.n, length); return e }
-func (e BreadcrumbEl) ColEnd(end int16) BreadcrumbEl          { tStyledColEnd(e.n, end); return e }
-func (e BreadcrumbEl) ColSpan(span uint16) BreadcrumbEl       { tStyledColSpan(e.n, span); return e }
-func (e BreadcrumbEl) ColStart(start int16) BreadcrumbEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BreadcrumbEl) BorderL(length Length) BreadcrumbEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BreadcrumbEl) BorderR(length Length) BreadcrumbEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BreadcrumbEl) BorderT(length Length) BreadcrumbEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e BreadcrumbEl) BorderX(length Length) BreadcrumbEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e BreadcrumbEl) BorderY(length Length) BreadcrumbEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BreadcrumbEl) Bottom(length Length) BreadcrumbEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e BreadcrumbEl) ColEnd(end int16) BreadcrumbEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e BreadcrumbEl) ColSpan(span uint16) BreadcrumbEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e BreadcrumbEl) ColStart(start int16) BreadcrumbEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e BreadcrumbEl) Cursor(cursor CursorStyle) BreadcrumbEl { tStyledCursor(e.n, cursor); return e }
-func (e BreadcrumbEl) FlexBasis(basis Length) BreadcrumbEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e BreadcrumbEl) FlexGrow(grow float32) BreadcrumbEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e BreadcrumbEl) FlexBasis(basis Length) BreadcrumbEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e BreadcrumbEl) FlexGrow(grow float32) BreadcrumbEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BreadcrumbEl) FlexShrink(shrink float32) BreadcrumbEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e BreadcrumbEl) FontFamily(familyName string) BreadcrumbEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e BreadcrumbEl) FontFeatures(features FontFeatures) BreadcrumbEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e BreadcrumbEl) FontWeight(weight FontWeight) BreadcrumbEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e BreadcrumbEl) Gap(length Length) BreadcrumbEl    { tStyledGap(e.n, length); return e }
-func (e BreadcrumbEl) GapX(length Length) BreadcrumbEl   { tStyledGapX(e.n, length); return e }
-func (e BreadcrumbEl) GapY(length Length) BreadcrumbEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e BreadcrumbEl) Gap(length Length) BreadcrumbEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e BreadcrumbEl) GapX(length Length) BreadcrumbEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e BreadcrumbEl) GapY(length Length) BreadcrumbEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e BreadcrumbEl) GridCols(cols uint16) BreadcrumbEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e BreadcrumbEl) GridColsMaxContent(cols uint16) BreadcrumbEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e BreadcrumbEl) GridColsMinContent(cols uint16) BreadcrumbEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e BreadcrumbEl) GridRows(rows uint16) BreadcrumbEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e BreadcrumbEl) GridRowsMaxContent(rows uint16) BreadcrumbEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e BreadcrumbEl) GridRowsMinContent(rows uint16) BreadcrumbEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e BreadcrumbEl) H(length Length) BreadcrumbEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e BreadcrumbEl) H(length Length) BreadcrumbEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BreadcrumbEl) Inset(length Length) BreadcrumbEl { tStyledInset(e.n, length); return e }
-func (e BreadcrumbEl) Left(length Length) BreadcrumbEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BreadcrumbEl) Left(length Length) BreadcrumbEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e BreadcrumbEl) LineClamp(lines int) BreadcrumbEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e BreadcrumbEl) LineHeight(lineHeight Length) BreadcrumbEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e BreadcrumbEl) M(length Length) BreadcrumbEl         { tStyledM(e.n, length); return e }
-func (e BreadcrumbEl) MaxH(length Length) BreadcrumbEl      { tStyledMaxH(e.n, length); return e }
-func (e BreadcrumbEl) MaxSize(length Length) BreadcrumbEl   { tStyledMaxSize(e.n, length); return e }
-func (e BreadcrumbEl) MaxW(length Length) BreadcrumbEl      { tStyledMaxW(e.n, length); return e }
-func (e BreadcrumbEl) Mb(length Length) BreadcrumbEl        { tStyledMb(e.n, length); return e }
-func (e BreadcrumbEl) MinH(length Length) BreadcrumbEl      { tStyledMinH(e.n, length); return e }
-func (e BreadcrumbEl) MinSize(length Length) BreadcrumbEl   { tStyledMinSize(e.n, length); return e }
-func (e BreadcrumbEl) MinW(length Length) BreadcrumbEl      { tStyledMinW(e.n, length); return e }
-func (e BreadcrumbEl) Ml(length Length) BreadcrumbEl        { tStyledMl(e.n, length); return e }
-func (e BreadcrumbEl) Mr(length Length) BreadcrumbEl        { tStyledMr(e.n, length); return e }
-func (e BreadcrumbEl) Mt(length Length) BreadcrumbEl        { tStyledMt(e.n, length); return e }
-func (e BreadcrumbEl) Mx(length Length) BreadcrumbEl        { tStyledMx(e.n, length); return e }
-func (e BreadcrumbEl) My(length Length) BreadcrumbEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e BreadcrumbEl) M(length Length) BreadcrumbEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e BreadcrumbEl) MaxH(length Length) BreadcrumbEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e BreadcrumbEl) MaxSize(length Length) BreadcrumbEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e BreadcrumbEl) MaxW(length Length) BreadcrumbEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BreadcrumbEl) Mb(length Length) BreadcrumbEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e BreadcrumbEl) MinH(length Length) BreadcrumbEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e BreadcrumbEl) MinSize(length Length) BreadcrumbEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e BreadcrumbEl) MinW(length Length) BreadcrumbEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BreadcrumbEl) Ml(length Length) BreadcrumbEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BreadcrumbEl) Mr(length Length) BreadcrumbEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BreadcrumbEl) Mt(length Length) BreadcrumbEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e BreadcrumbEl) Mx(length Length) BreadcrumbEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e BreadcrumbEl) My(length Length) BreadcrumbEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e BreadcrumbEl) Opacity(opacity float32) BreadcrumbEl { tStyledOpacity(e.n, opacity); return e }
-func (e BreadcrumbEl) P(length Length) BreadcrumbEl         { tStyledP(e.n, length); return e }
-func (e BreadcrumbEl) Pb(length Length) BreadcrumbEl        { tStyledPb(e.n, length); return e }
-func (e BreadcrumbEl) Pl(length Length) BreadcrumbEl        { tStyledPl(e.n, length); return e }
-func (e BreadcrumbEl) Pr(length Length) BreadcrumbEl        { tStyledPr(e.n, length); return e }
-func (e BreadcrumbEl) Pt(length Length) BreadcrumbEl        { tStyledPt(e.n, length); return e }
-func (e BreadcrumbEl) Px(length Length) BreadcrumbEl        { tStyledPx(e.n, length); return e }
-func (e BreadcrumbEl) Py(length Length) BreadcrumbEl        { tStyledPy(e.n, length); return e }
-func (e BreadcrumbEl) Right(length Length) BreadcrumbEl     { tStyledRight(e.n, length); return e }
-func (e BreadcrumbEl) Rounded(length Length) BreadcrumbEl   { tStyledRounded(e.n, length); return e }
-func (e BreadcrumbEl) RoundedB(length Length) BreadcrumbEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e BreadcrumbEl) P(length Length) BreadcrumbEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BreadcrumbEl) Pb(length Length) BreadcrumbEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BreadcrumbEl) Pl(length Length) BreadcrumbEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BreadcrumbEl) Pr(length Length) BreadcrumbEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BreadcrumbEl) Pt(length Length) BreadcrumbEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e BreadcrumbEl) Px(length Length) BreadcrumbEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e BreadcrumbEl) Py(length Length) BreadcrumbEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BreadcrumbEl) Right(length Length) BreadcrumbEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e BreadcrumbEl) Rounded(length Length) BreadcrumbEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e BreadcrumbEl) RoundedB(length Length) BreadcrumbEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BreadcrumbEl) RoundedBl(length Length) BreadcrumbEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BreadcrumbEl) RoundedBr(length Length) BreadcrumbEl { tStyledRoundedBr(e.n, length); return e }
-func (e BreadcrumbEl) RoundedL(length Length) BreadcrumbEl  { tStyledRoundedL(e.n, length); return e }
-func (e BreadcrumbEl) RoundedR(length Length) BreadcrumbEl  { tStyledRoundedR(e.n, length); return e }
-func (e BreadcrumbEl) RoundedT(length Length) BreadcrumbEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e BreadcrumbEl) RoundedL(length Length) BreadcrumbEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e BreadcrumbEl) RoundedR(length Length) BreadcrumbEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e BreadcrumbEl) RoundedT(length Length) BreadcrumbEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BreadcrumbEl) RoundedTl(length Length) BreadcrumbEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BreadcrumbEl) RoundedTr(length Length) BreadcrumbEl { tStyledRoundedTr(e.n, length); return e }
-func (e BreadcrumbEl) RowEnd(end int16) BreadcrumbEl        { tStyledRowEnd(e.n, end); return e }
-func (e BreadcrumbEl) RowSpan(span uint16) BreadcrumbEl     { tStyledRowSpan(e.n, span); return e }
-func (e BreadcrumbEl) RowStart(start int16) BreadcrumbEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e BreadcrumbEl) RowEnd(end int16) BreadcrumbEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e BreadcrumbEl) RowSpan(span uint16) BreadcrumbEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e BreadcrumbEl) RowStart(start int16) BreadcrumbEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e BreadcrumbEl) ScrollbarWidth(width Length) BreadcrumbEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e BreadcrumbEl) Shadow(shadows []BoxShadow) BreadcrumbEl { tStyledShadow(e.n, shadows); return e }
-func (e BreadcrumbEl) Size(length Length) BreadcrumbEl         { tStyledSize(e.n, length); return e }
-func (e BreadcrumbEl) TextAlign(align TextAlign) BreadcrumbEl  { tStyledTextAlign(e.n, align); return e }
-func (e BreadcrumbEl) TextBg(bg Color) BreadcrumbEl            { tStyledTextBg(e.n, bg); return e }
-func (e BreadcrumbEl) TextColor(color Color) BreadcrumbEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e BreadcrumbEl) Size(length Length) BreadcrumbEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e BreadcrumbEl) TextAlign(align TextAlign) BreadcrumbEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e BreadcrumbEl) TextBg(bg Color) BreadcrumbEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e BreadcrumbEl) TextColor(color Color) BreadcrumbEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e BreadcrumbEl) TextDecorationColor(color Color) BreadcrumbEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e BreadcrumbEl) TextOverflow(overflow TextOverflow) BreadcrumbEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e BreadcrumbEl) TextSize(size Length) BreadcrumbEl { tStyledTextSize(e.n, size); return e }
-func (e BreadcrumbEl) Top(length Length) BreadcrumbEl    { tStyledTop(e.n, length); return e }
-func (e BreadcrumbEl) W(length Length) BreadcrumbEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BreadcrumbEl) Top(length Length) BreadcrumbEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e BreadcrumbEl) W(length Length) BreadcrumbEl { tStyledW(e.n, length); return e }
 
 // BreadcrumbItemEl is gpui_kit::component::breadcrumb::BreadcrumbItem.
 type BreadcrumbItemEl struct{ n *node }
 
 func (e BreadcrumbItemEl) node() *node { return e.n }
 
+// Create a new BreadcrumbItem with the given id and label.
+//
 // BreadcrumbItem is <gpui_kit::component::breadcrumb::BreadcrumbItem>::new.
 func BreadcrumbItem(label string, st ...Style) BreadcrumbItemEl {
 	useComponentBreadcrumb()
@@ -229,7 +474,19 @@ func (e BreadcrumbItemEl) OnClick(onClick func(cx *Cx, e ClickEvent)) Breadcrumb
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e BreadcrumbItemEl) PopoverStyle() BreadcrumbItemEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e BreadcrumbItemEl) RoundedFullStyle() BreadcrumbItemEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -257,7 +514,20 @@ func (e BreadcrumbItemEl) FontMedium() BreadcrumbItemEl     { tStyledExtFontMedi
 func (e BreadcrumbItemEl) FontNormal() BreadcrumbItemEl     { tStyledExtFontNormal(e.n); return e }
 func (e BreadcrumbItemEl) FontSemibold() BreadcrumbItemEl   { tStyledExtFontSemibold(e.n); return e }
 func (e BreadcrumbItemEl) FontThin() BreadcrumbItemEl       { tStyledExtFontThin(e.n); return e }
-func (e BreadcrumbItemEl) HFlex() BreadcrumbItemEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e BreadcrumbItemEl) HFlex() BreadcrumbItemEl { tStyledExtHFlex(e.n); return e }
 func (e BreadcrumbItemEl) Margins(margins EdgesInto) BreadcrumbItemEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -270,226 +540,438 @@ func (e BreadcrumbItemEl) RefineStyle(style StyleRefinement) BreadcrumbItemEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e BreadcrumbItemEl) VFlex() BreadcrumbItemEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e BreadcrumbItemEl) Style(st ...Style) BreadcrumbItemEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e BreadcrumbItemEl) AspectRatio(ratio float32) BreadcrumbItemEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e BreadcrumbItemEl) Bg(fill Fill) BreadcrumbItemEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e BreadcrumbItemEl) Border(length Length) BreadcrumbItemEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BreadcrumbItemEl) BorderB(length Length) BreadcrumbItemEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e BreadcrumbItemEl) BorderColor(borderColor Color) BreadcrumbItemEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BreadcrumbItemEl) BorderL(length Length) BreadcrumbItemEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BreadcrumbItemEl) BorderR(length Length) BreadcrumbItemEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BreadcrumbItemEl) BorderT(length Length) BreadcrumbItemEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e BreadcrumbItemEl) BorderX(length Length) BreadcrumbItemEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e BreadcrumbItemEl) BorderY(length Length) BreadcrumbItemEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BreadcrumbItemEl) Bottom(length Length) BreadcrumbItemEl {
 	tStyledBottom(e.n, length)
 	return e
 }
-func (e BreadcrumbItemEl) ColEnd(end int16) BreadcrumbItemEl    { tStyledColEnd(e.n, end); return e }
+
+// Sets the column end of this element.
+func (e BreadcrumbItemEl) ColEnd(end int16) BreadcrumbItemEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e BreadcrumbItemEl) ColSpan(span uint16) BreadcrumbItemEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e BreadcrumbItemEl) ColStart(start int16) BreadcrumbItemEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e BreadcrumbItemEl) Cursor(cursor CursorStyle) BreadcrumbItemEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e BreadcrumbItemEl) FlexBasis(basis Length) BreadcrumbItemEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e BreadcrumbItemEl) FlexGrow(grow float32) BreadcrumbItemEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BreadcrumbItemEl) FlexShrink(shrink float32) BreadcrumbItemEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e BreadcrumbItemEl) FontFamily(familyName string) BreadcrumbItemEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e BreadcrumbItemEl) FontFeatures(features FontFeatures) BreadcrumbItemEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e BreadcrumbItemEl) FontWeight(weight FontWeight) BreadcrumbItemEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e BreadcrumbItemEl) Gap(length Length) BreadcrumbItemEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e BreadcrumbItemEl) Gap(length Length) BreadcrumbItemEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e BreadcrumbItemEl) GapX(length Length) BreadcrumbItemEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e BreadcrumbItemEl) GapY(length Length) BreadcrumbItemEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e BreadcrumbItemEl) GridCols(cols uint16) BreadcrumbItemEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e BreadcrumbItemEl) GridColsMaxContent(cols uint16) BreadcrumbItemEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e BreadcrumbItemEl) GridColsMinContent(cols uint16) BreadcrumbItemEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e BreadcrumbItemEl) GridRows(rows uint16) BreadcrumbItemEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e BreadcrumbItemEl) GridRowsMaxContent(rows uint16) BreadcrumbItemEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e BreadcrumbItemEl) GridRowsMinContent(rows uint16) BreadcrumbItemEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e BreadcrumbItemEl) H(length Length) BreadcrumbItemEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e BreadcrumbItemEl) H(length Length) BreadcrumbItemEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BreadcrumbItemEl) Inset(length Length) BreadcrumbItemEl { tStyledInset(e.n, length); return e }
-func (e BreadcrumbItemEl) Left(length Length) BreadcrumbItemEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BreadcrumbItemEl) Left(length Length) BreadcrumbItemEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e BreadcrumbItemEl) LineClamp(lines int) BreadcrumbItemEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e BreadcrumbItemEl) LineHeight(lineHeight Length) BreadcrumbItemEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e BreadcrumbItemEl) M(length Length) BreadcrumbItemEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e BreadcrumbItemEl) M(length Length) BreadcrumbItemEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e BreadcrumbItemEl) MaxH(length Length) BreadcrumbItemEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e BreadcrumbItemEl) MaxSize(length Length) BreadcrumbItemEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e BreadcrumbItemEl) MaxW(length Length) BreadcrumbItemEl { tStyledMaxW(e.n, length); return e }
-func (e BreadcrumbItemEl) Mb(length Length) BreadcrumbItemEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BreadcrumbItemEl) Mb(length Length) BreadcrumbItemEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e BreadcrumbItemEl) MinH(length Length) BreadcrumbItemEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e BreadcrumbItemEl) MinSize(length Length) BreadcrumbItemEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e BreadcrumbItemEl) MinW(length Length) BreadcrumbItemEl { tStyledMinW(e.n, length); return e }
-func (e BreadcrumbItemEl) Ml(length Length) BreadcrumbItemEl   { tStyledMl(e.n, length); return e }
-func (e BreadcrumbItemEl) Mr(length Length) BreadcrumbItemEl   { tStyledMr(e.n, length); return e }
-func (e BreadcrumbItemEl) Mt(length Length) BreadcrumbItemEl   { tStyledMt(e.n, length); return e }
-func (e BreadcrumbItemEl) Mx(length Length) BreadcrumbItemEl   { tStyledMx(e.n, length); return e }
-func (e BreadcrumbItemEl) My(length Length) BreadcrumbItemEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BreadcrumbItemEl) Ml(length Length) BreadcrumbItemEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BreadcrumbItemEl) Mr(length Length) BreadcrumbItemEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BreadcrumbItemEl) Mt(length Length) BreadcrumbItemEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e BreadcrumbItemEl) Mx(length Length) BreadcrumbItemEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e BreadcrumbItemEl) My(length Length) BreadcrumbItemEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e BreadcrumbItemEl) Opacity(opacity float32) BreadcrumbItemEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e BreadcrumbItemEl) P(length Length) BreadcrumbItemEl     { tStyledP(e.n, length); return e }
-func (e BreadcrumbItemEl) Pb(length Length) BreadcrumbItemEl    { tStyledPb(e.n, length); return e }
-func (e BreadcrumbItemEl) Pl(length Length) BreadcrumbItemEl    { tStyledPl(e.n, length); return e }
-func (e BreadcrumbItemEl) Pr(length Length) BreadcrumbItemEl    { tStyledPr(e.n, length); return e }
-func (e BreadcrumbItemEl) Pt(length Length) BreadcrumbItemEl    { tStyledPt(e.n, length); return e }
-func (e BreadcrumbItemEl) Px(length Length) BreadcrumbItemEl    { tStyledPx(e.n, length); return e }
-func (e BreadcrumbItemEl) Py(length Length) BreadcrumbItemEl    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e BreadcrumbItemEl) P(length Length) BreadcrumbItemEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BreadcrumbItemEl) Pb(length Length) BreadcrumbItemEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BreadcrumbItemEl) Pl(length Length) BreadcrumbItemEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BreadcrumbItemEl) Pr(length Length) BreadcrumbItemEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BreadcrumbItemEl) Pt(length Length) BreadcrumbItemEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e BreadcrumbItemEl) Px(length Length) BreadcrumbItemEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e BreadcrumbItemEl) Py(length Length) BreadcrumbItemEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BreadcrumbItemEl) Right(length Length) BreadcrumbItemEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e BreadcrumbItemEl) Rounded(length Length) BreadcrumbItemEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BreadcrumbItemEl) RoundedB(length Length) BreadcrumbItemEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BreadcrumbItemEl) RoundedBl(length Length) BreadcrumbItemEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BreadcrumbItemEl) RoundedBr(length Length) BreadcrumbItemEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BreadcrumbItemEl) RoundedL(length Length) BreadcrumbItemEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BreadcrumbItemEl) RoundedR(length Length) BreadcrumbItemEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BreadcrumbItemEl) RoundedT(length Length) BreadcrumbItemEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BreadcrumbItemEl) RoundedTl(length Length) BreadcrumbItemEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BreadcrumbItemEl) RoundedTr(length Length) BreadcrumbItemEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e BreadcrumbItemEl) RowEnd(end int16) BreadcrumbItemEl    { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row end of this element.
+func (e BreadcrumbItemEl) RowEnd(end int16) BreadcrumbItemEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e BreadcrumbItemEl) RowSpan(span uint16) BreadcrumbItemEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e BreadcrumbItemEl) RowStart(start int16) BreadcrumbItemEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e BreadcrumbItemEl) ScrollbarWidth(width Length) BreadcrumbItemEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e BreadcrumbItemEl) Shadow(shadows []BoxShadow) BreadcrumbItemEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e BreadcrumbItemEl) Size(length Length) BreadcrumbItemEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e BreadcrumbItemEl) TextAlign(align TextAlign) BreadcrumbItemEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e BreadcrumbItemEl) TextBg(bg Color) BreadcrumbItemEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e BreadcrumbItemEl) TextColor(color Color) BreadcrumbItemEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e BreadcrumbItemEl) TextDecorationColor(color Color) BreadcrumbItemEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e BreadcrumbItemEl) TextOverflow(overflow TextOverflow) BreadcrumbItemEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e BreadcrumbItemEl) TextSize(size Length) BreadcrumbItemEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BreadcrumbItemEl) Top(length Length) BreadcrumbItemEl { tStyledTop(e.n, length); return e }
-func (e BreadcrumbItemEl) W(length Length) BreadcrumbItemEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e BreadcrumbItemEl) W(length Length) BreadcrumbItemEl { tStyledW(e.n, length); return e }

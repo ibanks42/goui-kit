@@ -9,6 +9,8 @@ type TreeEl struct{ n *node }
 
 func (e TreeEl) node() *node { return e.n }
 
+// Create a `TreeEl`.
+//
 // KitTree is gpui_kit::component::tree::tree.
 func KitTree(state TreeState, renderItem RowSource, st ...Style) TreeEl {
 	useComponentTree()
@@ -31,6 +33,8 @@ func Tree(state TreeState, renderItem RowSource, st ...Style) TreeEl {
 	return TreeEl{n}
 }
 
+// Add a context menu to the tree.
+//
 // ContextMenu is <gpui_kit::component::tree::Tree>::context_menu.
 func (e TreeEl) ContextMenu(f RowSource) TreeEl {
 	o := op(e.n, 257)
@@ -38,6 +42,9 @@ func (e TreeEl) ContextMenu(f RowSource) TreeEl {
 	return e
 }
 
+// Bounce at the vertical boundaries. On by default on iOS, Android and macOS, off elsewhere;
+// reduced motion disables displacement.
+//
 // ScrollBounce is <gpui_kit::component::tree::Tree>::scroll_bounce.
 func (e TreeEl) ScrollBounce(enabled bool) TreeEl {
 	o := op(e.n, 256)
@@ -45,7 +52,19 @@ func (e TreeEl) ScrollBounce(enabled bool) TreeEl {
 	return e
 }
 
-func (e TreeEl) PopoverStyle() TreeEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TreeEl) PopoverStyle() TreeEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TreeEl) RoundedFullStyle() TreeEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e TreeEl) CornerRadii(radius Corners) TreeEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -54,19 +73,32 @@ func (e TreeEl) DebugFocused(focusHandle FocusHandle) TreeEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e TreeEl) DebugGreen() TreeEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e TreeEl) DebugPink() TreeEl                  { tStyledExtDebugPink(e.n); return e }
-func (e TreeEl) DebugRed() TreeEl                   { tStyledExtDebugRed(e.n); return e }
-func (e TreeEl) DebugYellow() TreeEl                { tStyledExtDebugYellow(e.n); return e }
-func (e TreeEl) FontBlack() TreeEl                  { tStyledExtFontBlack(e.n); return e }
-func (e TreeEl) FontBold() TreeEl                   { tStyledExtFontBold(e.n); return e }
-func (e TreeEl) FontExtrabold() TreeEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e TreeEl) FontExtralight() TreeEl             { tStyledExtFontExtralight(e.n); return e }
-func (e TreeEl) FontLight() TreeEl                  { tStyledExtFontLight(e.n); return e }
-func (e TreeEl) FontMedium() TreeEl                 { tStyledExtFontMedium(e.n); return e }
-func (e TreeEl) FontNormal() TreeEl                 { tStyledExtFontNormal(e.n); return e }
-func (e TreeEl) FontSemibold() TreeEl               { tStyledExtFontSemibold(e.n); return e }
-func (e TreeEl) FontThin() TreeEl                   { tStyledExtFontThin(e.n); return e }
+func (e TreeEl) DebugGreen() TreeEl     { tStyledExtDebugGreen(e.n); return e }
+func (e TreeEl) DebugPink() TreeEl      { tStyledExtDebugPink(e.n); return e }
+func (e TreeEl) DebugRed() TreeEl       { tStyledExtDebugRed(e.n); return e }
+func (e TreeEl) DebugYellow() TreeEl    { tStyledExtDebugYellow(e.n); return e }
+func (e TreeEl) FontBlack() TreeEl      { tStyledExtFontBlack(e.n); return e }
+func (e TreeEl) FontBold() TreeEl       { tStyledExtFontBold(e.n); return e }
+func (e TreeEl) FontExtrabold() TreeEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e TreeEl) FontExtralight() TreeEl { tStyledExtFontExtralight(e.n); return e }
+func (e TreeEl) FontLight() TreeEl      { tStyledExtFontLight(e.n); return e }
+func (e TreeEl) FontMedium() TreeEl     { tStyledExtFontMedium(e.n); return e }
+func (e TreeEl) FontNormal() TreeEl     { tStyledExtFontNormal(e.n); return e }
+func (e TreeEl) FontSemibold() TreeEl   { tStyledExtFontSemibold(e.n); return e }
+func (e TreeEl) FontThin() TreeEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e TreeEl) HFlex() TreeEl                      { tStyledExtHFlex(e.n); return e }
 func (e TreeEl) Margins(margins EdgesInto) TreeEl   { tStyledExtMargins(e.n, margins); return e }
 func (e TreeEl) Paddings(paddings EdgesInto) TreeEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -74,109 +106,321 @@ func (e TreeEl) RefineStyle(style StyleRefinement) TreeEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TreeEl) VFlex() TreeEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TreeEl) Style(st ...Style) TreeEl { tokens(e.n, st); return e }
 
-func (e TreeEl) AspectRatio(ratio float32) TreeEl     { tStyledAspectRatio(e.n, ratio); return e }
-func (e TreeEl) Bg(fill Fill) TreeEl                  { tStyledBg(e.n, fill); return e }
-func (e TreeEl) Border(length Length) TreeEl          { tStyledBorder(e.n, length); return e }
-func (e TreeEl) BorderB(length Length) TreeEl         { tStyledBorderB(e.n, length); return e }
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+func (e TreeEl) AspectRatio(ratio float32) TreeEl { tStyledAspectRatio(e.n, ratio); return e }
+
+// Sets the background color of the element.
+func (e TreeEl) Bg(fill Fill) TreeEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TreeEl) Border(length Length) TreeEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TreeEl) BorderB(length Length) TreeEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TreeEl) BorderColor(borderColor Color) TreeEl { tStyledBorderColor(e.n, borderColor); return e }
-func (e TreeEl) BorderL(length Length) TreeEl         { tStyledBorderL(e.n, length); return e }
-func (e TreeEl) BorderR(length Length) TreeEl         { tStyledBorderR(e.n, length); return e }
-func (e TreeEl) BorderT(length Length) TreeEl         { tStyledBorderT(e.n, length); return e }
-func (e TreeEl) BorderX(length Length) TreeEl         { tStyledBorderX(e.n, length); return e }
-func (e TreeEl) BorderY(length Length) TreeEl         { tStyledBorderY(e.n, length); return e }
-func (e TreeEl) Bottom(length Length) TreeEl          { tStyledBottom(e.n, length); return e }
-func (e TreeEl) ColEnd(end int16) TreeEl              { tStyledColEnd(e.n, end); return e }
-func (e TreeEl) ColSpan(span uint16) TreeEl           { tStyledColSpan(e.n, span); return e }
-func (e TreeEl) ColStart(start int16) TreeEl          { tStyledColStart(e.n, start); return e }
-func (e TreeEl) Cursor(cursor CursorStyle) TreeEl     { tStyledCursor(e.n, cursor); return e }
-func (e TreeEl) FlexBasis(basis Length) TreeEl        { tStyledFlexBasis(e.n, basis); return e }
-func (e TreeEl) FlexGrow(grow float32) TreeEl         { tStyledFlexGrow(e.n, grow); return e }
-func (e TreeEl) FlexShrink(shrink float32) TreeEl     { tStyledFlexShrink(e.n, shrink); return e }
-func (e TreeEl) FontFamily(familyName string) TreeEl  { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TreeEl) BorderL(length Length) TreeEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TreeEl) BorderR(length Length) TreeEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TreeEl) BorderT(length Length) TreeEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TreeEl) BorderX(length Length) TreeEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TreeEl) BorderY(length Length) TreeEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TreeEl) Bottom(length Length) TreeEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TreeEl) ColEnd(end int16) TreeEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TreeEl) ColSpan(span uint16) TreeEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TreeEl) ColStart(start int16) TreeEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e TreeEl) Cursor(cursor CursorStyle) TreeEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TreeEl) FlexBasis(basis Length) TreeEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TreeEl) FlexGrow(grow float32) TreeEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e TreeEl) FlexShrink(shrink float32) TreeEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
+func (e TreeEl) FontFamily(familyName string) TreeEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e TreeEl) FontFeatures(features FontFeatures) TreeEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TreeEl) FontWeight(weight FontWeight) TreeEl { tStyledFontWeight(e.n, weight); return e }
-func (e TreeEl) Gap(length Length) TreeEl            { tStyledGap(e.n, length); return e }
-func (e TreeEl) GapX(length Length) TreeEl           { tStyledGapX(e.n, length); return e }
-func (e TreeEl) GapY(length Length) TreeEl           { tStyledGapY(e.n, length); return e }
-func (e TreeEl) GridCols(cols uint16) TreeEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TreeEl) Gap(length Length) TreeEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TreeEl) GapX(length Length) TreeEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TreeEl) GapY(length Length) TreeEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e TreeEl) GridCols(cols uint16) TreeEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TreeEl) GridColsMaxContent(cols uint16) TreeEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TreeEl) GridColsMinContent(cols uint16) TreeEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TreeEl) GridRows(rows uint16) TreeEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TreeEl) GridRowsMaxContent(rows uint16) TreeEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TreeEl) GridRowsMinContent(rows uint16) TreeEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TreeEl) H(length Length) TreeEl              { tStyledH(e.n, length); return e }
-func (e TreeEl) Inset(length Length) TreeEl          { tStyledInset(e.n, length); return e }
-func (e TreeEl) Left(length Length) TreeEl           { tStyledLeft(e.n, length); return e }
-func (e TreeEl) LineClamp(lines int) TreeEl          { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TreeEl) H(length Length) TreeEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TreeEl) Inset(length Length) TreeEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TreeEl) Left(length Length) TreeEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e TreeEl) LineClamp(lines int) TreeEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TreeEl) LineHeight(lineHeight Length) TreeEl { tStyledLineHeight(e.n, lineHeight); return e }
-func (e TreeEl) M(length Length) TreeEl              { tStyledM(e.n, length); return e }
-func (e TreeEl) MaxH(length Length) TreeEl           { tStyledMaxH(e.n, length); return e }
-func (e TreeEl) MaxSize(length Length) TreeEl        { tStyledMaxSize(e.n, length); return e }
-func (e TreeEl) MaxW(length Length) TreeEl           { tStyledMaxW(e.n, length); return e }
-func (e TreeEl) Mb(length Length) TreeEl             { tStyledMb(e.n, length); return e }
-func (e TreeEl) MinH(length Length) TreeEl           { tStyledMinH(e.n, length); return e }
-func (e TreeEl) MinSize(length Length) TreeEl        { tStyledMinSize(e.n, length); return e }
-func (e TreeEl) MinW(length Length) TreeEl           { tStyledMinW(e.n, length); return e }
-func (e TreeEl) Ml(length Length) TreeEl             { tStyledMl(e.n, length); return e }
-func (e TreeEl) Mr(length Length) TreeEl             { tStyledMr(e.n, length); return e }
-func (e TreeEl) Mt(length Length) TreeEl             { tStyledMt(e.n, length); return e }
-func (e TreeEl) Mx(length Length) TreeEl             { tStyledMx(e.n, length); return e }
-func (e TreeEl) My(length Length) TreeEl             { tStyledMy(e.n, length); return e }
-func (e TreeEl) Opacity(opacity float32) TreeEl      { tStyledOpacity(e.n, opacity); return e }
-func (e TreeEl) P(length Length) TreeEl              { tStyledP(e.n, length); return e }
-func (e TreeEl) Pb(length Length) TreeEl             { tStyledPb(e.n, length); return e }
-func (e TreeEl) Pl(length Length) TreeEl             { tStyledPl(e.n, length); return e }
-func (e TreeEl) Pr(length Length) TreeEl             { tStyledPr(e.n, length); return e }
-func (e TreeEl) Pt(length Length) TreeEl             { tStyledPt(e.n, length); return e }
-func (e TreeEl) Px(length Length) TreeEl             { tStyledPx(e.n, length); return e }
-func (e TreeEl) Py(length Length) TreeEl             { tStyledPy(e.n, length); return e }
-func (e TreeEl) Right(length Length) TreeEl          { tStyledRight(e.n, length); return e }
-func (e TreeEl) Rounded(length Length) TreeEl        { tStyledRounded(e.n, length); return e }
-func (e TreeEl) RoundedB(length Length) TreeEl       { tStyledRoundedB(e.n, length); return e }
-func (e TreeEl) RoundedBl(length Length) TreeEl      { tStyledRoundedBl(e.n, length); return e }
-func (e TreeEl) RoundedBr(length Length) TreeEl      { tStyledRoundedBr(e.n, length); return e }
-func (e TreeEl) RoundedL(length Length) TreeEl       { tStyledRoundedL(e.n, length); return e }
-func (e TreeEl) RoundedR(length Length) TreeEl       { tStyledRoundedR(e.n, length); return e }
-func (e TreeEl) RoundedT(length Length) TreeEl       { tStyledRoundedT(e.n, length); return e }
-func (e TreeEl) RoundedTl(length Length) TreeEl      { tStyledRoundedTl(e.n, length); return e }
-func (e TreeEl) RoundedTr(length Length) TreeEl      { tStyledRoundedTr(e.n, length); return e }
-func (e TreeEl) RowEnd(end int16) TreeEl             { tStyledRowEnd(e.n, end); return e }
-func (e TreeEl) RowSpan(span uint16) TreeEl          { tStyledRowSpan(e.n, span); return e }
-func (e TreeEl) RowStart(start int16) TreeEl         { tStyledRowStart(e.n, start); return e }
-func (e TreeEl) ScrollbarWidth(width Length) TreeEl  { tStyledScrollbarWidth(e.n, width); return e }
-func (e TreeEl) Shadow(shadows []BoxShadow) TreeEl   { tStyledShadow(e.n, shadows); return e }
-func (e TreeEl) Size(length Length) TreeEl           { tStyledSize(e.n, length); return e }
-func (e TreeEl) TextAlign(align TextAlign) TreeEl    { tStyledTextAlign(e.n, align); return e }
-func (e TreeEl) TextBg(bg Color) TreeEl              { tStyledTextBg(e.n, bg); return e }
-func (e TreeEl) TextColor(color Color) TreeEl        { tStyledTextColor(e.n, color); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TreeEl) M(length Length) TreeEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TreeEl) MaxH(length Length) TreeEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TreeEl) MaxSize(length Length) TreeEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TreeEl) MaxW(length Length) TreeEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TreeEl) Mb(length Length) TreeEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TreeEl) MinH(length Length) TreeEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TreeEl) MinSize(length Length) TreeEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TreeEl) MinW(length Length) TreeEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TreeEl) Ml(length Length) TreeEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TreeEl) Mr(length Length) TreeEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TreeEl) Mt(length Length) TreeEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TreeEl) Mx(length Length) TreeEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TreeEl) My(length Length) TreeEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e TreeEl) Opacity(opacity float32) TreeEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TreeEl) P(length Length) TreeEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TreeEl) Pb(length Length) TreeEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TreeEl) Pl(length Length) TreeEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TreeEl) Pr(length Length) TreeEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TreeEl) Pt(length Length) TreeEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TreeEl) Px(length Length) TreeEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TreeEl) Py(length Length) TreeEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TreeEl) Right(length Length) TreeEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TreeEl) Rounded(length Length) TreeEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TreeEl) RoundedB(length Length) TreeEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TreeEl) RoundedBl(length Length) TreeEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TreeEl) RoundedBr(length Length) TreeEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TreeEl) RoundedL(length Length) TreeEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TreeEl) RoundedR(length Length) TreeEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TreeEl) RoundedT(length Length) TreeEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TreeEl) RoundedTl(length Length) TreeEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TreeEl) RoundedTr(length Length) TreeEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e TreeEl) RowEnd(end int16) TreeEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TreeEl) RowSpan(span uint16) TreeEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TreeEl) RowStart(start int16) TreeEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e TreeEl) ScrollbarWidth(width Length) TreeEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e TreeEl) Shadow(shadows []BoxShadow) TreeEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e TreeEl) Size(length Length) TreeEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TreeEl) TextAlign(align TextAlign) TreeEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TreeEl) TextBg(bg Color) TreeEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TreeEl) TextColor(color Color) TreeEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TreeEl) TextDecorationColor(color Color) TreeEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TreeEl) TextOverflow(overflow TextOverflow) TreeEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e TreeEl) TextSize(size Length) TreeEl { tStyledTextSize(e.n, size); return e }
-func (e TreeEl) Top(length Length) TreeEl    { tStyledTop(e.n, length); return e }
-func (e TreeEl) W(length Length) TreeEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TreeEl) Top(length Length) TreeEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TreeEl) W(length Length) TreeEl { tStyledW(e.n, length); return e }

@@ -252,7 +252,8 @@ def odin_emit(od):
             "(docs/PROTOCOLS.md section 11.5). Each runs at once, with the turn's window and app.")
     for it in items:
         ps = ["cx: ^Cx"] + od.params(it) + ["loc := #caller_location"]
-        lines = [f"// {it['odin']} is {it['callee']}."]
+        d = od.doc(it.get("doc"), it["id"])  # GPUI-kit's own doc of it (gen/gk_doc.py)
+        lines = d + ["//"] * bool(d) + [f"// {it['odin']} is {it['callee']}."]
         if it.get("ret") is None:
             lines += [f"{it['odin']} :: proc({', '.join(ps)}) {{"]
         else:

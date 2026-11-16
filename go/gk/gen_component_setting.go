@@ -9,6 +9,11 @@ type SettingFieldBool struct{ n *node }
 
 func (e SettingFieldBool) valueNode() *node { return e.n }
 
+// Set the default value for this setting field, default is None.
+//
+// If set, this value can be used to reset the setting to its default state. If not set, the
+// setting cannot be reset.
+//
 // DefaultValue is <gpui_kit::component::setting::SettingField<bool>>::default_value.
 func (e SettingFieldBool) DefaultValue(defaultValue bool) SettingFieldBool {
 	o := op(e.n, 256)
@@ -16,7 +21,19 @@ func (e SettingFieldBool) DefaultValue(defaultValue bool) SettingFieldBool {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e SettingFieldBool) PopoverStyle() SettingFieldBool { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SettingFieldBool) RoundedFullStyle() SettingFieldBool {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -44,7 +61,20 @@ func (e SettingFieldBool) FontMedium() SettingFieldBool     { tStyledExtFontMedi
 func (e SettingFieldBool) FontNormal() SettingFieldBool     { tStyledExtFontNormal(e.n); return e }
 func (e SettingFieldBool) FontSemibold() SettingFieldBool   { tStyledExtFontSemibold(e.n); return e }
 func (e SettingFieldBool) FontThin() SettingFieldBool       { tStyledExtFontThin(e.n); return e }
-func (e SettingFieldBool) HFlex() SettingFieldBool          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e SettingFieldBool) HFlex() SettingFieldBool { tStyledExtHFlex(e.n); return e }
 func (e SettingFieldBool) Margins(margins EdgesInto) SettingFieldBool {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -57,235 +87,452 @@ func (e SettingFieldBool) RefineStyle(style StyleRefinement) SettingFieldBool {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SettingFieldBool) VFlex() SettingFieldBool { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SettingFieldBool) Style(st ...Style) SettingFieldBool { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SettingFieldBool) AspectRatio(ratio float32) SettingFieldBool {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e SettingFieldBool) Bg(fill Fill) SettingFieldBool { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e SettingFieldBool) Border(length Length) SettingFieldBool {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldBool) BorderB(length Length) SettingFieldBool {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e SettingFieldBool) BorderColor(borderColor Color) SettingFieldBool {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldBool) BorderL(length Length) SettingFieldBool {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldBool) BorderR(length Length) SettingFieldBool {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldBool) BorderT(length Length) SettingFieldBool {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SettingFieldBool) BorderX(length Length) SettingFieldBool {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SettingFieldBool) BorderY(length Length) SettingFieldBool {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldBool) Bottom(length Length) SettingFieldBool {
 	tStyledBottom(e.n, length)
 	return e
 }
-func (e SettingFieldBool) ColEnd(end int16) SettingFieldBool    { tStyledColEnd(e.n, end); return e }
+
+// Sets the column end of this element.
+func (e SettingFieldBool) ColEnd(end int16) SettingFieldBool { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e SettingFieldBool) ColSpan(span uint16) SettingFieldBool { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e SettingFieldBool) ColStart(start int16) SettingFieldBool {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e SettingFieldBool) Cursor(cursor CursorStyle) SettingFieldBool {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e SettingFieldBool) FlexBasis(basis Length) SettingFieldBool {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e SettingFieldBool) FlexGrow(grow float32) SettingFieldBool {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SettingFieldBool) FlexShrink(shrink float32) SettingFieldBool {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e SettingFieldBool) FontFamily(familyName string) SettingFieldBool {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SettingFieldBool) FontFeatures(features FontFeatures) SettingFieldBool {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SettingFieldBool) FontWeight(weight FontWeight) SettingFieldBool {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e SettingFieldBool) Gap(length Length) SettingFieldBool  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SettingFieldBool) Gap(length Length) SettingFieldBool { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e SettingFieldBool) GapX(length Length) SettingFieldBool { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e SettingFieldBool) GapY(length Length) SettingFieldBool { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e SettingFieldBool) GridCols(cols uint16) SettingFieldBool {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SettingFieldBool) GridColsMaxContent(cols uint16) SettingFieldBool {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SettingFieldBool) GridColsMinContent(cols uint16) SettingFieldBool {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SettingFieldBool) GridRows(rows uint16) SettingFieldBool {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SettingFieldBool) GridRowsMaxContent(rows uint16) SettingFieldBool {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SettingFieldBool) GridRowsMinContent(rows uint16) SettingFieldBool {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SettingFieldBool) H(length Length) SettingFieldBool     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SettingFieldBool) H(length Length) SettingFieldBool { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldBool) Inset(length Length) SettingFieldBool { tStyledInset(e.n, length); return e }
-func (e SettingFieldBool) Left(length Length) SettingFieldBool  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SettingFieldBool) Left(length Length) SettingFieldBool { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SettingFieldBool) LineClamp(lines int) SettingFieldBool {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e SettingFieldBool) LineHeight(lineHeight Length) SettingFieldBool {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SettingFieldBool) M(length Length) SettingFieldBool    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SettingFieldBool) M(length Length) SettingFieldBool { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e SettingFieldBool) MaxH(length Length) SettingFieldBool { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e SettingFieldBool) MaxSize(length Length) SettingFieldBool {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e SettingFieldBool) MaxW(length Length) SettingFieldBool { tStyledMaxW(e.n, length); return e }
-func (e SettingFieldBool) Mb(length Length) SettingFieldBool   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingFieldBool) Mb(length Length) SettingFieldBool { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e SettingFieldBool) MinH(length Length) SettingFieldBool { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e SettingFieldBool) MinSize(length Length) SettingFieldBool {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e SettingFieldBool) MinW(length Length) SettingFieldBool { tStyledMinW(e.n, length); return e }
-func (e SettingFieldBool) Ml(length Length) SettingFieldBool   { tStyledMl(e.n, length); return e }
-func (e SettingFieldBool) Mr(length Length) SettingFieldBool   { tStyledMr(e.n, length); return e }
-func (e SettingFieldBool) Mt(length Length) SettingFieldBool   { tStyledMt(e.n, length); return e }
-func (e SettingFieldBool) Mx(length Length) SettingFieldBool   { tStyledMx(e.n, length); return e }
-func (e SettingFieldBool) My(length Length) SettingFieldBool   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingFieldBool) Ml(length Length) SettingFieldBool { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingFieldBool) Mr(length Length) SettingFieldBool { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingFieldBool) Mt(length Length) SettingFieldBool { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SettingFieldBool) Mx(length Length) SettingFieldBool { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SettingFieldBool) My(length Length) SettingFieldBool { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e SettingFieldBool) Opacity(opacity float32) SettingFieldBool {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e SettingFieldBool) P(length Length) SettingFieldBool     { tStyledP(e.n, length); return e }
-func (e SettingFieldBool) Pb(length Length) SettingFieldBool    { tStyledPb(e.n, length); return e }
-func (e SettingFieldBool) Pl(length Length) SettingFieldBool    { tStyledPl(e.n, length); return e }
-func (e SettingFieldBool) Pr(length Length) SettingFieldBool    { tStyledPr(e.n, length); return e }
-func (e SettingFieldBool) Pt(length Length) SettingFieldBool    { tStyledPt(e.n, length); return e }
-func (e SettingFieldBool) Px(length Length) SettingFieldBool    { tStyledPx(e.n, length); return e }
-func (e SettingFieldBool) Py(length Length) SettingFieldBool    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SettingFieldBool) P(length Length) SettingFieldBool { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingFieldBool) Pb(length Length) SettingFieldBool { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingFieldBool) Pl(length Length) SettingFieldBool { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingFieldBool) Pr(length Length) SettingFieldBool { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingFieldBool) Pt(length Length) SettingFieldBool { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SettingFieldBool) Px(length Length) SettingFieldBool { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SettingFieldBool) Py(length Length) SettingFieldBool { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldBool) Right(length Length) SettingFieldBool { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e SettingFieldBool) Rounded(length Length) SettingFieldBool {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldBool) RoundedB(length Length) SettingFieldBool {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldBool) RoundedBl(length Length) SettingFieldBool {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldBool) RoundedBr(length Length) SettingFieldBool {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldBool) RoundedL(length Length) SettingFieldBool {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldBool) RoundedR(length Length) SettingFieldBool {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldBool) RoundedT(length Length) SettingFieldBool {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldBool) RoundedTl(length Length) SettingFieldBool {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldBool) RoundedTr(length Length) SettingFieldBool {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e SettingFieldBool) RowEnd(end int16) SettingFieldBool    { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row end of this element.
+func (e SettingFieldBool) RowEnd(end int16) SettingFieldBool { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e SettingFieldBool) RowSpan(span uint16) SettingFieldBool { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e SettingFieldBool) RowStart(start int16) SettingFieldBool {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SettingFieldBool) ScrollbarWidth(width Length) SettingFieldBool {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SettingFieldBool) Shadow(shadows []BoxShadow) SettingFieldBool {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e SettingFieldBool) Size(length Length) SettingFieldBool { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e SettingFieldBool) TextAlign(align TextAlign) SettingFieldBool {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e SettingFieldBool) TextBg(bg Color) SettingFieldBool { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e SettingFieldBool) TextColor(color Color) SettingFieldBool {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e SettingFieldBool) TextDecorationColor(color Color) SettingFieldBool {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SettingFieldBool) TextOverflow(overflow TextOverflow) SettingFieldBool {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SettingFieldBool) TextSize(size Length) SettingFieldBool {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldBool) Top(length Length) SettingFieldBool { tStyledTop(e.n, length); return e }
-func (e SettingFieldBool) W(length Length) SettingFieldBool   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SettingFieldBool) W(length Length) SettingFieldBool { tStyledW(e.n, length); return e }
 
 // SettingFieldNumber is gpui_kit::component::setting::SettingField<f64>.
 type SettingFieldNumber struct{ n *node }
 
 func (e SettingFieldNumber) valueNode() *node { return e.n }
 
+// Set the default value for this setting field, default is None.
+//
+// If set, this value can be used to reset the setting to its default state. If not set, the
+// setting cannot be reset.
+//
 // DefaultValue is <gpui_kit::component::setting::SettingField<f64>>::default_value.
 func (e SettingFieldNumber) DefaultValue(defaultValue float64) SettingFieldNumber {
 	o := op(e.n, 256)
@@ -293,10 +540,22 @@ func (e SettingFieldNumber) DefaultValue(defaultValue float64) SettingFieldNumbe
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e SettingFieldNumber) PopoverStyle() SettingFieldNumber {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SettingFieldNumber) RoundedFullStyle() SettingFieldNumber {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -330,7 +589,20 @@ func (e SettingFieldNumber) FontMedium() SettingFieldNumber   { tStyledExtFontMe
 func (e SettingFieldNumber) FontNormal() SettingFieldNumber   { tStyledExtFontNormal(e.n); return e }
 func (e SettingFieldNumber) FontSemibold() SettingFieldNumber { tStyledExtFontSemibold(e.n); return e }
 func (e SettingFieldNumber) FontThin() SettingFieldNumber     { tStyledExtFontThin(e.n); return e }
-func (e SettingFieldNumber) HFlex() SettingFieldNumber        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e SettingFieldNumber) HFlex() SettingFieldNumber { tStyledExtHFlex(e.n); return e }
 func (e SettingFieldNumber) Margins(margins EdgesInto) SettingFieldNumber {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -343,271 +615,488 @@ func (e SettingFieldNumber) RefineStyle(style StyleRefinement) SettingFieldNumbe
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SettingFieldNumber) VFlex() SettingFieldNumber { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SettingFieldNumber) Style(st ...Style) SettingFieldNumber { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SettingFieldNumber) AspectRatio(ratio float32) SettingFieldNumber {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e SettingFieldNumber) Bg(fill Fill) SettingFieldNumber { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e SettingFieldNumber) Border(length Length) SettingFieldNumber {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldNumber) BorderB(length Length) SettingFieldNumber {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e SettingFieldNumber) BorderColor(borderColor Color) SettingFieldNumber {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldNumber) BorderL(length Length) SettingFieldNumber {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldNumber) BorderR(length Length) SettingFieldNumber {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldNumber) BorderT(length Length) SettingFieldNumber {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SettingFieldNumber) BorderX(length Length) SettingFieldNumber {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SettingFieldNumber) BorderY(length Length) SettingFieldNumber {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldNumber) Bottom(length Length) SettingFieldNumber {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e SettingFieldNumber) ColEnd(end int16) SettingFieldNumber { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e SettingFieldNumber) ColSpan(span uint16) SettingFieldNumber {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e SettingFieldNumber) ColStart(start int16) SettingFieldNumber {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e SettingFieldNumber) Cursor(cursor CursorStyle) SettingFieldNumber {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e SettingFieldNumber) FlexBasis(basis Length) SettingFieldNumber {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e SettingFieldNumber) FlexGrow(grow float32) SettingFieldNumber {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SettingFieldNumber) FlexShrink(shrink float32) SettingFieldNumber {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e SettingFieldNumber) FontFamily(familyName string) SettingFieldNumber {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SettingFieldNumber) FontFeatures(features FontFeatures) SettingFieldNumber {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SettingFieldNumber) FontWeight(weight FontWeight) SettingFieldNumber {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e SettingFieldNumber) Gap(length Length) SettingFieldNumber { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e SettingFieldNumber) GapX(length Length) SettingFieldNumber {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e SettingFieldNumber) GapY(length Length) SettingFieldNumber {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e SettingFieldNumber) GridCols(cols uint16) SettingFieldNumber {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SettingFieldNumber) GridColsMaxContent(cols uint16) SettingFieldNumber {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SettingFieldNumber) GridColsMinContent(cols uint16) SettingFieldNumber {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SettingFieldNumber) GridRows(rows uint16) SettingFieldNumber {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SettingFieldNumber) GridRowsMaxContent(rows uint16) SettingFieldNumber {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SettingFieldNumber) GridRowsMinContent(rows uint16) SettingFieldNumber {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e SettingFieldNumber) H(length Length) SettingFieldNumber { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldNumber) Inset(length Length) SettingFieldNumber {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldNumber) Left(length Length) SettingFieldNumber {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SettingFieldNumber) LineClamp(lines int) SettingFieldNumber {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e SettingFieldNumber) LineHeight(lineHeight Length) SettingFieldNumber {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e SettingFieldNumber) M(length Length) SettingFieldNumber { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e SettingFieldNumber) MaxH(length Length) SettingFieldNumber {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e SettingFieldNumber) MaxSize(length Length) SettingFieldNumber {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e SettingFieldNumber) MaxW(length Length) SettingFieldNumber {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e SettingFieldNumber) Mb(length Length) SettingFieldNumber { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e SettingFieldNumber) MinH(length Length) SettingFieldNumber {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e SettingFieldNumber) MinSize(length Length) SettingFieldNumber {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e SettingFieldNumber) MinW(length Length) SettingFieldNumber {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e SettingFieldNumber) Ml(length Length) SettingFieldNumber { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e SettingFieldNumber) Mr(length Length) SettingFieldNumber { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e SettingFieldNumber) Mt(length Length) SettingFieldNumber { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e SettingFieldNumber) Mx(length Length) SettingFieldNumber { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e SettingFieldNumber) My(length Length) SettingFieldNumber { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e SettingFieldNumber) Opacity(opacity float32) SettingFieldNumber {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e SettingFieldNumber) P(length Length) SettingFieldNumber  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SettingFieldNumber) P(length Length) SettingFieldNumber { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e SettingFieldNumber) Pb(length Length) SettingFieldNumber { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e SettingFieldNumber) Pl(length Length) SettingFieldNumber { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e SettingFieldNumber) Pr(length Length) SettingFieldNumber { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e SettingFieldNumber) Pt(length Length) SettingFieldNumber { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e SettingFieldNumber) Px(length Length) SettingFieldNumber { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e SettingFieldNumber) Py(length Length) SettingFieldNumber { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldNumber) Right(length Length) SettingFieldNumber {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e SettingFieldNumber) Rounded(length Length) SettingFieldNumber {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldNumber) RoundedB(length Length) SettingFieldNumber {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldNumber) RoundedBl(length Length) SettingFieldNumber {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldNumber) RoundedBr(length Length) SettingFieldNumber {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldNumber) RoundedL(length Length) SettingFieldNumber {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldNumber) RoundedR(length Length) SettingFieldNumber {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldNumber) RoundedT(length Length) SettingFieldNumber {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldNumber) RoundedTl(length Length) SettingFieldNumber {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldNumber) RoundedTr(length Length) SettingFieldNumber {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e SettingFieldNumber) RowEnd(end int16) SettingFieldNumber { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e SettingFieldNumber) RowSpan(span uint16) SettingFieldNumber {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e SettingFieldNumber) RowStart(start int16) SettingFieldNumber {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SettingFieldNumber) ScrollbarWidth(width Length) SettingFieldNumber {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SettingFieldNumber) Shadow(shadows []BoxShadow) SettingFieldNumber {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e SettingFieldNumber) Size(length Length) SettingFieldNumber {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e SettingFieldNumber) TextAlign(align TextAlign) SettingFieldNumber {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e SettingFieldNumber) TextBg(bg Color) SettingFieldNumber { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e SettingFieldNumber) TextColor(color Color) SettingFieldNumber {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e SettingFieldNumber) TextDecorationColor(color Color) SettingFieldNumber {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SettingFieldNumber) TextOverflow(overflow TextOverflow) SettingFieldNumber {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SettingFieldNumber) TextSize(size Length) SettingFieldNumber {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldNumber) Top(length Length) SettingFieldNumber { tStyledTop(e.n, length); return e }
-func (e SettingFieldNumber) W(length Length) SettingFieldNumber   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SettingFieldNumber) W(length Length) SettingFieldNumber { tStyledW(e.n, length); return e }
 
 // SettingFieldText is gpui_kit::component::setting::SettingField<gpui_kit::SharedString>.
 type SettingFieldText struct{ n *node }
 
 func (e SettingFieldText) valueNode() *node { return e.n }
 
+// Create a new setting field with the given custom element that implements `SettingFieldElement`
+// trait.
+//
+// See also `gk.NewSettingFieldTextRender` for simply building with a render closure.
+//
 // NewSettingFieldTextElement is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::element.
 func NewSettingFieldTextElement(element Element, st ...Style) SettingFieldText {
 	useComponentSetting()
@@ -618,6 +1107,11 @@ func NewSettingFieldTextElement(element Element, st ...Style) SettingFieldText {
 	return SettingFieldText{n}
 }
 
+// Create a new setting field with the given element render closure.
+//
+// See also `gk.NewSettingFieldTextElement` for building with a custom field for more complex
+// scenarios.
+//
 // NewSettingFieldTextRender is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::render.
 func NewSettingFieldTextRender(elementRender Element, st ...Style) SettingFieldText {
 	useComponentSetting()
@@ -628,6 +1122,11 @@ func NewSettingFieldTextRender(elementRender Element, st ...Style) SettingFieldT
 	return SettingFieldText{n}
 }
 
+// Set the default value for this setting field, default is None.
+//
+// If set, this value can be used to reset the setting to its default state. If not set, the
+// setting cannot be reset.
+//
 // DefaultValue is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::default_value.
 func (e SettingFieldText) DefaultValue(defaultValue string) SettingFieldText {
 	o := op(e.n, 256)
@@ -635,7 +1134,19 @@ func (e SettingFieldText) DefaultValue(defaultValue string) SettingFieldText {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e SettingFieldText) PopoverStyle() SettingFieldText { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SettingFieldText) RoundedFullStyle() SettingFieldText {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -663,7 +1174,20 @@ func (e SettingFieldText) FontMedium() SettingFieldText     { tStyledExtFontMedi
 func (e SettingFieldText) FontNormal() SettingFieldText     { tStyledExtFontNormal(e.n); return e }
 func (e SettingFieldText) FontSemibold() SettingFieldText   { tStyledExtFontSemibold(e.n); return e }
 func (e SettingFieldText) FontThin() SettingFieldText       { tStyledExtFontThin(e.n); return e }
-func (e SettingFieldText) HFlex() SettingFieldText          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e SettingFieldText) HFlex() SettingFieldText { tStyledExtHFlex(e.n); return e }
 func (e SettingFieldText) Margins(margins EdgesInto) SettingFieldText {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -676,235 +1200,449 @@ func (e SettingFieldText) RefineStyle(style StyleRefinement) SettingFieldText {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SettingFieldText) VFlex() SettingFieldText { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SettingFieldText) Style(st ...Style) SettingFieldText { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SettingFieldText) AspectRatio(ratio float32) SettingFieldText {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e SettingFieldText) Bg(fill Fill) SettingFieldText { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e SettingFieldText) Border(length Length) SettingFieldText {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldText) BorderB(length Length) SettingFieldText {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e SettingFieldText) BorderColor(borderColor Color) SettingFieldText {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldText) BorderL(length Length) SettingFieldText {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldText) BorderR(length Length) SettingFieldText {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingFieldText) BorderT(length Length) SettingFieldText {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SettingFieldText) BorderX(length Length) SettingFieldText {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SettingFieldText) BorderY(length Length) SettingFieldText {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldText) Bottom(length Length) SettingFieldText {
 	tStyledBottom(e.n, length)
 	return e
 }
-func (e SettingFieldText) ColEnd(end int16) SettingFieldText    { tStyledColEnd(e.n, end); return e }
+
+// Sets the column end of this element.
+func (e SettingFieldText) ColEnd(end int16) SettingFieldText { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e SettingFieldText) ColSpan(span uint16) SettingFieldText { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e SettingFieldText) ColStart(start int16) SettingFieldText {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e SettingFieldText) Cursor(cursor CursorStyle) SettingFieldText {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e SettingFieldText) FlexBasis(basis Length) SettingFieldText {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e SettingFieldText) FlexGrow(grow float32) SettingFieldText {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SettingFieldText) FlexShrink(shrink float32) SettingFieldText {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e SettingFieldText) FontFamily(familyName string) SettingFieldText {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SettingFieldText) FontFeatures(features FontFeatures) SettingFieldText {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SettingFieldText) FontWeight(weight FontWeight) SettingFieldText {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e SettingFieldText) Gap(length Length) SettingFieldText  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SettingFieldText) Gap(length Length) SettingFieldText { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e SettingFieldText) GapX(length Length) SettingFieldText { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e SettingFieldText) GapY(length Length) SettingFieldText { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e SettingFieldText) GridCols(cols uint16) SettingFieldText {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SettingFieldText) GridColsMaxContent(cols uint16) SettingFieldText {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SettingFieldText) GridColsMinContent(cols uint16) SettingFieldText {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SettingFieldText) GridRows(rows uint16) SettingFieldText {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SettingFieldText) GridRowsMaxContent(rows uint16) SettingFieldText {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SettingFieldText) GridRowsMinContent(rows uint16) SettingFieldText {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SettingFieldText) H(length Length) SettingFieldText     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SettingFieldText) H(length Length) SettingFieldText { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldText) Inset(length Length) SettingFieldText { tStyledInset(e.n, length); return e }
-func (e SettingFieldText) Left(length Length) SettingFieldText  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SettingFieldText) Left(length Length) SettingFieldText { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SettingFieldText) LineClamp(lines int) SettingFieldText {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e SettingFieldText) LineHeight(lineHeight Length) SettingFieldText {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SettingFieldText) M(length Length) SettingFieldText    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SettingFieldText) M(length Length) SettingFieldText { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e SettingFieldText) MaxH(length Length) SettingFieldText { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e SettingFieldText) MaxSize(length Length) SettingFieldText {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e SettingFieldText) MaxW(length Length) SettingFieldText { tStyledMaxW(e.n, length); return e }
-func (e SettingFieldText) Mb(length Length) SettingFieldText   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingFieldText) Mb(length Length) SettingFieldText { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e SettingFieldText) MinH(length Length) SettingFieldText { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e SettingFieldText) MinSize(length Length) SettingFieldText {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e SettingFieldText) MinW(length Length) SettingFieldText { tStyledMinW(e.n, length); return e }
-func (e SettingFieldText) Ml(length Length) SettingFieldText   { tStyledMl(e.n, length); return e }
-func (e SettingFieldText) Mr(length Length) SettingFieldText   { tStyledMr(e.n, length); return e }
-func (e SettingFieldText) Mt(length Length) SettingFieldText   { tStyledMt(e.n, length); return e }
-func (e SettingFieldText) Mx(length Length) SettingFieldText   { tStyledMx(e.n, length); return e }
-func (e SettingFieldText) My(length Length) SettingFieldText   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingFieldText) Ml(length Length) SettingFieldText { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingFieldText) Mr(length Length) SettingFieldText { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingFieldText) Mt(length Length) SettingFieldText { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SettingFieldText) Mx(length Length) SettingFieldText { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SettingFieldText) My(length Length) SettingFieldText { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e SettingFieldText) Opacity(opacity float32) SettingFieldText {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e SettingFieldText) P(length Length) SettingFieldText     { tStyledP(e.n, length); return e }
-func (e SettingFieldText) Pb(length Length) SettingFieldText    { tStyledPb(e.n, length); return e }
-func (e SettingFieldText) Pl(length Length) SettingFieldText    { tStyledPl(e.n, length); return e }
-func (e SettingFieldText) Pr(length Length) SettingFieldText    { tStyledPr(e.n, length); return e }
-func (e SettingFieldText) Pt(length Length) SettingFieldText    { tStyledPt(e.n, length); return e }
-func (e SettingFieldText) Px(length Length) SettingFieldText    { tStyledPx(e.n, length); return e }
-func (e SettingFieldText) Py(length Length) SettingFieldText    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SettingFieldText) P(length Length) SettingFieldText { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingFieldText) Pb(length Length) SettingFieldText { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingFieldText) Pl(length Length) SettingFieldText { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingFieldText) Pr(length Length) SettingFieldText { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingFieldText) Pt(length Length) SettingFieldText { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SettingFieldText) Px(length Length) SettingFieldText { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SettingFieldText) Py(length Length) SettingFieldText { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldText) Right(length Length) SettingFieldText { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e SettingFieldText) Rounded(length Length) SettingFieldText {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldText) RoundedB(length Length) SettingFieldText {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldText) RoundedBl(length Length) SettingFieldText {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldText) RoundedBr(length Length) SettingFieldText {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldText) RoundedL(length Length) SettingFieldText {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldText) RoundedR(length Length) SettingFieldText {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SettingFieldText) RoundedT(length Length) SettingFieldText {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldText) RoundedTl(length Length) SettingFieldText {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingFieldText) RoundedTr(length Length) SettingFieldText {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e SettingFieldText) RowEnd(end int16) SettingFieldText    { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row end of this element.
+func (e SettingFieldText) RowEnd(end int16) SettingFieldText { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e SettingFieldText) RowSpan(span uint16) SettingFieldText { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e SettingFieldText) RowStart(start int16) SettingFieldText {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SettingFieldText) ScrollbarWidth(width Length) SettingFieldText {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SettingFieldText) Shadow(shadows []BoxShadow) SettingFieldText {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e SettingFieldText) Size(length Length) SettingFieldText { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e SettingFieldText) TextAlign(align TextAlign) SettingFieldText {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e SettingFieldText) TextBg(bg Color) SettingFieldText { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e SettingFieldText) TextColor(color Color) SettingFieldText {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e SettingFieldText) TextDecorationColor(color Color) SettingFieldText {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SettingFieldText) TextOverflow(overflow TextOverflow) SettingFieldText {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SettingFieldText) TextSize(size Length) SettingFieldText {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingFieldText) Top(length Length) SettingFieldText { tStyledTop(e.n, length); return e }
-func (e SettingFieldText) W(length Length) SettingFieldText   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SettingFieldText) W(length Length) SettingFieldText { tStyledW(e.n, length); return e }
 
 // SettingGroup is gpui_kit::component::setting::SettingGroup.
 type SettingGroup struct{ n *node }
 
 func (e SettingGroup) valueNode() *node { return e.n }
 
+// Create a new setting group.
+//
 // NewSettingGroup is <gpui_kit::component::setting::SettingGroup>::new.
 func NewSettingGroup(st ...Style) SettingGroup {
 	n := newValue(746)
@@ -912,6 +1650,8 @@ func NewSettingGroup(st ...Style) SettingGroup {
 	return SettingGroup{n}
 }
 
+// Set the description of the setting group, default is None.
+//
 // Description is <gpui_kit::component::setting::SettingGroup>::description.
 func (e SettingGroup) Description(description string) SettingGroup {
 	o := op(e.n, 256)
@@ -919,6 +1659,12 @@ func (e SettingGroup) Description(description string) SettingGroup {
 	return e
 }
 
+// Render supporting content below, and outside, the group's surface.
+//
+// The footer aligns with the group title and renders as small muted text, like a description. It
+// scrolls with the group and follows its search visibility; it does not add an independently
+// searchable item or a sidebar entry, and a group needs at least one item to be shown.
+//
 // Footer is <gpui_kit::component::setting::SettingGroup>::footer.
 func (e SettingGroup) Footer(footer Element) SettingGroup {
 	o := op(e.n, 259)
@@ -926,6 +1672,8 @@ func (e SettingGroup) Footer(footer Element) SettingGroup {
 	return e
 }
 
+// Add a setting item to the group.
+//
 // Item is <gpui_kit::component::setting::SettingGroup>::item.
 func (e SettingGroup) Item(item SettingItem) SettingGroup {
 	o := op(e.n, 260)
@@ -933,6 +1681,8 @@ func (e SettingGroup) Item(item SettingItem) SettingGroup {
 	return e
 }
 
+// Add multiple setting items to the group.
+//
 // Items is <gpui_kit::component::setting::SettingGroup>::items.
 func (e SettingGroup) Items(items []SettingItem) SettingGroup {
 	o := op(e.n, 261)
@@ -943,6 +1693,8 @@ func (e SettingGroup) Items(items []SettingItem) SettingGroup {
 	return e
 }
 
+// Set the label of the setting group, default is None.
+//
 // Title is <gpui_kit::component::setting::SettingGroup>::title.
 func (e SettingGroup) Title(title string) SettingGroup {
 	o := op(e.n, 257)
@@ -950,6 +1702,12 @@ func (e SettingGroup) Title(title string) SettingGroup {
 	return e
 }
 
+// Set the variant of the group surface, overriding the variant set via
+// `Settings::with_group_variant` for this group, default is None (use the settings-level variant).
+//
+// For example, `GroupBoxVariant::Normal` presents the items directly, without the card surface a
+// global `Outline` or `Fill` default draws around the group.
+//
 // Variant is <gpui_kit::component::setting::SettingGroup>::variant.
 func (e SettingGroup) Variant(variant GroupBoxVariant) SettingGroup {
 	o := op(e.n, 258)
@@ -957,7 +1715,19 @@ func (e SettingGroup) Variant(variant GroupBoxVariant) SettingGroup {
 	return e
 }
 
-func (e SettingGroup) PopoverStyle() SettingGroup     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e SettingGroup) PopoverStyle() SettingGroup { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SettingGroup) RoundedFullStyle() SettingGroup { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e SettingGroup) CornerRadii(radius Corners) SettingGroup {
@@ -982,7 +1752,20 @@ func (e SettingGroup) FontMedium() SettingGroup     { tStyledExtFontMedium(e.n);
 func (e SettingGroup) FontNormal() SettingGroup     { tStyledExtFontNormal(e.n); return e }
 func (e SettingGroup) FontSemibold() SettingGroup   { tStyledExtFontSemibold(e.n); return e }
 func (e SettingGroup) FontThin() SettingGroup       { tStyledExtFontThin(e.n); return e }
-func (e SettingGroup) HFlex() SettingGroup          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e SettingGroup) HFlex() SettingGroup { tStyledExtHFlex(e.n); return e }
 func (e SettingGroup) Margins(margins EdgesInto) SettingGroup {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -995,139 +1778,353 @@ func (e SettingGroup) RefineStyle(style StyleRefinement) SettingGroup {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SettingGroup) VFlex() SettingGroup { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SettingGroup) Style(st ...Style) SettingGroup { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SettingGroup) AspectRatio(ratio float32) SettingGroup {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e SettingGroup) Bg(fill Fill) SettingGroup          { tStyledBg(e.n, fill); return e }
-func (e SettingGroup) Border(length Length) SettingGroup  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e SettingGroup) Bg(fill Fill) SettingGroup { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e SettingGroup) Border(length Length) SettingGroup { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SettingGroup) BorderB(length Length) SettingGroup { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e SettingGroup) BorderColor(borderColor Color) SettingGroup {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e SettingGroup) BorderL(length Length) SettingGroup     { tStyledBorderL(e.n, length); return e }
-func (e SettingGroup) BorderR(length Length) SettingGroup     { tStyledBorderR(e.n, length); return e }
-func (e SettingGroup) BorderT(length Length) SettingGroup     { tStyledBorderT(e.n, length); return e }
-func (e SettingGroup) BorderX(length Length) SettingGroup     { tStyledBorderX(e.n, length); return e }
-func (e SettingGroup) BorderY(length Length) SettingGroup     { tStyledBorderY(e.n, length); return e }
-func (e SettingGroup) Bottom(length Length) SettingGroup      { tStyledBottom(e.n, length); return e }
-func (e SettingGroup) ColEnd(end int16) SettingGroup          { tStyledColEnd(e.n, end); return e }
-func (e SettingGroup) ColSpan(span uint16) SettingGroup       { tStyledColSpan(e.n, span); return e }
-func (e SettingGroup) ColStart(start int16) SettingGroup      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SettingGroup) BorderL(length Length) SettingGroup { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SettingGroup) BorderR(length Length) SettingGroup { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SettingGroup) BorderT(length Length) SettingGroup { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SettingGroup) BorderX(length Length) SettingGroup { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SettingGroup) BorderY(length Length) SettingGroup { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SettingGroup) Bottom(length Length) SettingGroup { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e SettingGroup) ColEnd(end int16) SettingGroup { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e SettingGroup) ColSpan(span uint16) SettingGroup { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e SettingGroup) ColStart(start int16) SettingGroup { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e SettingGroup) Cursor(cursor CursorStyle) SettingGroup { tStyledCursor(e.n, cursor); return e }
-func (e SettingGroup) FlexBasis(basis Length) SettingGroup    { tStyledFlexBasis(e.n, basis); return e }
-func (e SettingGroup) FlexGrow(grow float32) SettingGroup     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e SettingGroup) FlexBasis(basis Length) SettingGroup { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e SettingGroup) FlexGrow(grow float32) SettingGroup { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SettingGroup) FlexShrink(shrink float32) SettingGroup {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e SettingGroup) FontFamily(familyName string) SettingGroup {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SettingGroup) FontFeatures(features FontFeatures) SettingGroup {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SettingGroup) FontWeight(weight FontWeight) SettingGroup {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e SettingGroup) Gap(length Length) SettingGroup    { tStyledGap(e.n, length); return e }
-func (e SettingGroup) GapX(length Length) SettingGroup   { tStyledGapX(e.n, length); return e }
-func (e SettingGroup) GapY(length Length) SettingGroup   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SettingGroup) Gap(length Length) SettingGroup { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SettingGroup) GapX(length Length) SettingGroup { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SettingGroup) GapY(length Length) SettingGroup { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e SettingGroup) GridCols(cols uint16) SettingGroup { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SettingGroup) GridColsMaxContent(cols uint16) SettingGroup {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SettingGroup) GridColsMinContent(cols uint16) SettingGroup {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SettingGroup) GridRows(rows uint16) SettingGroup { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SettingGroup) GridRowsMaxContent(rows uint16) SettingGroup {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SettingGroup) GridRowsMinContent(rows uint16) SettingGroup {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SettingGroup) H(length Length) SettingGroup     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SettingGroup) H(length Length) SettingGroup { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SettingGroup) Inset(length Length) SettingGroup { tStyledInset(e.n, length); return e }
-func (e SettingGroup) Left(length Length) SettingGroup  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SettingGroup) Left(length Length) SettingGroup { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SettingGroup) LineClamp(lines int) SettingGroup { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e SettingGroup) LineHeight(lineHeight Length) SettingGroup {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SettingGroup) M(length Length) SettingGroup         { tStyledM(e.n, length); return e }
-func (e SettingGroup) MaxH(length Length) SettingGroup      { tStyledMaxH(e.n, length); return e }
-func (e SettingGroup) MaxSize(length Length) SettingGroup   { tStyledMaxSize(e.n, length); return e }
-func (e SettingGroup) MaxW(length Length) SettingGroup      { tStyledMaxW(e.n, length); return e }
-func (e SettingGroup) Mb(length Length) SettingGroup        { tStyledMb(e.n, length); return e }
-func (e SettingGroup) MinH(length Length) SettingGroup      { tStyledMinH(e.n, length); return e }
-func (e SettingGroup) MinSize(length Length) SettingGroup   { tStyledMinSize(e.n, length); return e }
-func (e SettingGroup) MinW(length Length) SettingGroup      { tStyledMinW(e.n, length); return e }
-func (e SettingGroup) Ml(length Length) SettingGroup        { tStyledMl(e.n, length); return e }
-func (e SettingGroup) Mr(length Length) SettingGroup        { tStyledMr(e.n, length); return e }
-func (e SettingGroup) Mt(length Length) SettingGroup        { tStyledMt(e.n, length); return e }
-func (e SettingGroup) Mx(length Length) SettingGroup        { tStyledMx(e.n, length); return e }
-func (e SettingGroup) My(length Length) SettingGroup        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SettingGroup) M(length Length) SettingGroup { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e SettingGroup) MaxH(length Length) SettingGroup { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e SettingGroup) MaxSize(length Length) SettingGroup { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e SettingGroup) MaxW(length Length) SettingGroup { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingGroup) Mb(length Length) SettingGroup { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e SettingGroup) MinH(length Length) SettingGroup { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e SettingGroup) MinSize(length Length) SettingGroup { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e SettingGroup) MinW(length Length) SettingGroup { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingGroup) Ml(length Length) SettingGroup { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingGroup) Mr(length Length) SettingGroup { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SettingGroup) Mt(length Length) SettingGroup { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SettingGroup) Mx(length Length) SettingGroup { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SettingGroup) My(length Length) SettingGroup { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e SettingGroup) Opacity(opacity float32) SettingGroup { tStyledOpacity(e.n, opacity); return e }
-func (e SettingGroup) P(length Length) SettingGroup         { tStyledP(e.n, length); return e }
-func (e SettingGroup) Pb(length Length) SettingGroup        { tStyledPb(e.n, length); return e }
-func (e SettingGroup) Pl(length Length) SettingGroup        { tStyledPl(e.n, length); return e }
-func (e SettingGroup) Pr(length Length) SettingGroup        { tStyledPr(e.n, length); return e }
-func (e SettingGroup) Pt(length Length) SettingGroup        { tStyledPt(e.n, length); return e }
-func (e SettingGroup) Px(length Length) SettingGroup        { tStyledPx(e.n, length); return e }
-func (e SettingGroup) Py(length Length) SettingGroup        { tStyledPy(e.n, length); return e }
-func (e SettingGroup) Right(length Length) SettingGroup     { tStyledRight(e.n, length); return e }
-func (e SettingGroup) Rounded(length Length) SettingGroup   { tStyledRounded(e.n, length); return e }
-func (e SettingGroup) RoundedB(length Length) SettingGroup  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SettingGroup) P(length Length) SettingGroup { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingGroup) Pb(length Length) SettingGroup { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingGroup) Pl(length Length) SettingGroup { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingGroup) Pr(length Length) SettingGroup { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SettingGroup) Pt(length Length) SettingGroup { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SettingGroup) Px(length Length) SettingGroup { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SettingGroup) Py(length Length) SettingGroup { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SettingGroup) Right(length Length) SettingGroup { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e SettingGroup) Rounded(length Length) SettingGroup { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SettingGroup) RoundedB(length Length) SettingGroup { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingGroup) RoundedBl(length Length) SettingGroup { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingGroup) RoundedBr(length Length) SettingGroup { tStyledRoundedBr(e.n, length); return e }
-func (e SettingGroup) RoundedL(length Length) SettingGroup  { tStyledRoundedL(e.n, length); return e }
-func (e SettingGroup) RoundedR(length Length) SettingGroup  { tStyledRoundedR(e.n, length); return e }
-func (e SettingGroup) RoundedT(length Length) SettingGroup  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SettingGroup) RoundedL(length Length) SettingGroup { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SettingGroup) RoundedR(length Length) SettingGroup { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SettingGroup) RoundedT(length Length) SettingGroup { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingGroup) RoundedTl(length Length) SettingGroup { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SettingGroup) RoundedTr(length Length) SettingGroup { tStyledRoundedTr(e.n, length); return e }
-func (e SettingGroup) RowEnd(end int16) SettingGroup        { tStyledRowEnd(e.n, end); return e }
-func (e SettingGroup) RowSpan(span uint16) SettingGroup     { tStyledRowSpan(e.n, span); return e }
-func (e SettingGroup) RowStart(start int16) SettingGroup    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e SettingGroup) RowEnd(end int16) SettingGroup { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e SettingGroup) RowSpan(span uint16) SettingGroup { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e SettingGroup) RowStart(start int16) SettingGroup { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SettingGroup) ScrollbarWidth(width Length) SettingGroup {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SettingGroup) Shadow(shadows []BoxShadow) SettingGroup { tStyledShadow(e.n, shadows); return e }
-func (e SettingGroup) Size(length Length) SettingGroup         { tStyledSize(e.n, length); return e }
-func (e SettingGroup) TextAlign(align TextAlign) SettingGroup  { tStyledTextAlign(e.n, align); return e }
-func (e SettingGroup) TextBg(bg Color) SettingGroup            { tStyledTextBg(e.n, bg); return e }
-func (e SettingGroup) TextColor(color Color) SettingGroup      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e SettingGroup) Size(length Length) SettingGroup { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e SettingGroup) TextAlign(align TextAlign) SettingGroup { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e SettingGroup) TextBg(bg Color) SettingGroup { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e SettingGroup) TextColor(color Color) SettingGroup { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e SettingGroup) TextDecorationColor(color Color) SettingGroup {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SettingGroup) TextOverflow(overflow TextOverflow) SettingGroup {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SettingGroup) TextSize(size Length) SettingGroup { tStyledTextSize(e.n, size); return e }
-func (e SettingGroup) Top(length Length) SettingGroup    { tStyledTop(e.n, length); return e }
-func (e SettingGroup) W(length Length) SettingGroup      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SettingGroup) Top(length Length) SettingGroup { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SettingGroup) W(length Length) SettingGroup { tStyledW(e.n, length); return e }
 
 // SettingItem is gpui_kit::component::setting::SettingItem.
 type SettingItem struct{ n *node }
 
 func (e SettingItem) valueNode() *node { return e.n }
 
+// Create a new custom element setting item with a render closure.
+//
 // NewSettingItemRender is <gpui_kit::component::setting::SettingItem>::render.
 func NewSettingItemRender(render Element) SettingItem {
 	n := newValue(859)
@@ -1136,6 +2133,10 @@ func NewSettingItemRender(render Element) SettingItem {
 	return SettingItem{n}
 }
 
+// Set the description of the setting item.
+//
+// Only applies to `Item`.
+//
 // Description is <gpui_kit::component::setting::SettingItem>::description.
 func (e SettingItem) Description(description TextInto) SettingItem {
 	o := op(e.n, 256)
@@ -1143,6 +2144,12 @@ func (e SettingItem) Description(description TextInto) SettingItem {
 	return e
 }
 
+// Set whether the setting item is disabled, default is false.
+//
+// A disabled item is rendered with reduced opacity. For `Item` the underlying field is also
+// rendered in a non-interactive state. For `Element` the `disabled` flag is forwarded via
+// `disabled` so the custom renderer can disable its interactive controls.
+//
 // Disabled is <gpui_kit::component::setting::SettingItem>::disabled.
 func (e SettingItem) Disabled(disabled bool) SettingItem {
 	o := op(e.n, 257)
@@ -1150,6 +2157,12 @@ func (e SettingItem) Disabled(disabled bool) SettingItem {
 	return e
 }
 
+// Set additional keywords used only for search matching (not rendered).
+//
+// For example, an item titled "Enable Two-factor auth" can be made searchable via "MFA". This is
+// also useful for custom elements that have no title/description but should still show up in
+// search results.
+//
 // Keywords is <gpui_kit::component::setting::SettingItem>::keywords.
 func (e SettingItem) Keywords(keywords []string) SettingItem {
 	o := op(e.n, 258)
@@ -1160,6 +2173,10 @@ func (e SettingItem) Keywords(keywords []string) SettingItem {
 	return e
 }
 
+// Set the layout of the setting item.
+//
+// Only applies to `Item`.
+//
 // Layout is <gpui_kit::component::setting::SettingItem>::layout.
 func (e SettingItem) Layout(layout Axis) SettingItem {
 	o := op(e.n, 259)
@@ -1180,6 +2197,8 @@ func NewSettingPage(title string) SettingPage {
 	return SettingPage{n}
 }
 
+// Set the default open state of the setting page, default is false.
+//
 // DefaultOpen is <gpui_kit::component::setting::SettingPage>::default_open.
 func (e SettingPage) DefaultOpen(defaultOpen bool) SettingPage {
 	o := op(e.n, 256)
@@ -1187,6 +2206,8 @@ func (e SettingPage) DefaultOpen(defaultOpen bool) SettingPage {
 	return e
 }
 
+// Set the description of the setting page, default is None.
+//
 // Description is <gpui_kit::component::setting::SettingPage>::description.
 func (e SettingPage) Description(description string) SettingPage {
 	o := op(e.n, 257)
@@ -1194,6 +2215,8 @@ func (e SettingPage) Description(description string) SettingPage {
 	return e
 }
 
+// Add a setting group to the page.
+//
 // Group is <gpui_kit::component::setting::SettingPage>::group.
 func (e SettingPage) Group(group SettingGroup) SettingPage {
 	o := op(e.n, 258)
@@ -1201,6 +2224,8 @@ func (e SettingPage) Group(group SettingGroup) SettingPage {
 	return e
 }
 
+// Add multiple setting groups to the page.
+//
 // Groups is <gpui_kit::component::setting::SettingPage>::groups.
 func (e SettingPage) Groups(groups []SettingGroup) SettingPage {
 	o := op(e.n, 259)
@@ -1211,6 +2236,8 @@ func (e SettingPage) Groups(groups []SettingGroup) SettingPage {
 	return e
 }
 
+// Set the style refinement for the header of the setting page.
+//
 // HeaderStyle is <gpui_kit::component::setting::SettingPage>::header_style.
 func (e SettingPage) HeaderStyle(style StyleRefinement) SettingPage {
 	o := op(e.n, 260)
@@ -1218,6 +2245,8 @@ func (e SettingPage) HeaderStyle(style StyleRefinement) SettingPage {
 	return e
 }
 
+// Set the icon of the setting page.
+//
 // Icon is <gpui_kit::component::setting::SettingPage>::icon.
 func (e SettingPage) Icon(icon IconName) SettingPage {
 	o := op(e.n, 264)
@@ -1225,6 +2254,10 @@ func (e SettingPage) Icon(icon IconName) SettingPage {
 	return e
 }
 
+// Set whether the setting page is resettable, default is true.
+//
+// If true and the items in this page has changed, the reset button will appear.
+//
 // Resettable is <gpui_kit::component::setting::SettingPage>::resettable.
 func (e SettingPage) Resettable(resettable bool) SettingPage {
 	o := op(e.n, 261)
@@ -1232,6 +2265,8 @@ func (e SettingPage) Resettable(resettable bool) SettingPage {
 	return e
 }
 
+// Set the title of the setting page.
+//
 // Title is <gpui_kit::component::setting::SettingPage>::title.
 func (e SettingPage) Title(title string) SettingPage {
 	o := op(e.n, 262)
@@ -1239,6 +2274,10 @@ func (e SettingPage) Title(title string) SettingPage {
 	return e
 }
 
+// Set a custom element to render after the title in the page header.
+//
+// For example, an info icon button that opens the help documentation.
+//
 // TitleSuffix is <gpui_kit::component::setting::SettingPage>::title_suffix.
 func (e SettingPage) TitleSuffix(suffix Element) SettingPage {
 	o := op(e.n, 263)
@@ -1251,6 +2290,8 @@ type SettingsEl struct{ n *node }
 
 func (e SettingsEl) node() *node { return e.n }
 
+// Create a new settings with the given ID.
+//
 // Settings is <gpui_kit::component::setting::Settings>::new.
 func Settings(id ID) SettingsEl {
 	useComponentSetting()
@@ -1260,6 +2301,8 @@ func Settings(id ID) SettingsEl {
 	return SettingsEl{n}
 }
 
+// Set the default index of the page to be selected.
+//
 // DefaultSelectedIndex is <gpui_kit::component::setting::Settings>::default_selected_index.
 func (e SettingsEl) DefaultSelectedIndex(index SelectIndex) SettingsEl {
 	o := op(e.n, 256)
@@ -1267,6 +2310,8 @@ func (e SettingsEl) DefaultSelectedIndex(index SelectIndex) SettingsEl {
 	return e
 }
 
+// Set the style refinement for the header.
+//
 // HeaderStyle is <gpui_kit::component::setting::Settings>::header_style.
 func (e SettingsEl) HeaderStyle(style StyleRefinement) SettingsEl {
 	o := op(e.n, 257)
@@ -1274,6 +2319,8 @@ func (e SettingsEl) HeaderStyle(style StyleRefinement) SettingsEl {
 	return e
 }
 
+// Add a page to the settings.
+//
 // Page is <gpui_kit::component::setting::Settings>::page.
 func (e SettingsEl) Page(page SettingPage) SettingsEl {
 	o := op(e.n, 258)
@@ -1281,6 +2328,8 @@ func (e SettingsEl) Page(page SettingPage) SettingsEl {
 	return e
 }
 
+// Add pages to the settings.
+//
 // Pages is <gpui_kit::component::setting::Settings>::pages.
 func (e SettingsEl) Pages(pages []SettingPage) SettingsEl {
 	o := op(e.n, 259)
@@ -1291,6 +2340,8 @@ func (e SettingsEl) Pages(pages []SettingPage) SettingsEl {
 	return e
 }
 
+// Set the resize range of the sidebar, default is `160px..360px`.
+//
 // SidebarSizeRange is <gpui_kit::component::setting::Settings>::sidebar_size_range.
 func (e SettingsEl) SidebarSizeRange(range_ [2]float32) SettingsEl {
 	o := op(e.n, 263)
@@ -1299,6 +2350,8 @@ func (e SettingsEl) SidebarSizeRange(range_ [2]float32) SettingsEl {
 	return e
 }
 
+// Set the style refinement for the sidebar.
+//
 // SidebarStyle is <gpui_kit::component::setting::Settings>::sidebar_style.
 func (e SettingsEl) SidebarStyle(style StyleRefinement) SettingsEl {
 	o := op(e.n, 260)
@@ -1306,6 +2359,8 @@ func (e SettingsEl) SidebarStyle(style StyleRefinement) SettingsEl {
 	return e
 }
 
+// Set the width of the sidebar, default is `250px`.
+//
 // SidebarWidth is <gpui_kit::component::setting::Settings>::sidebar_width.
 func (e SettingsEl) SidebarWidth(width float32) SettingsEl {
 	o := op(e.n, 261)
@@ -1313,6 +2368,10 @@ func (e SettingsEl) SidebarWidth(width float32) SettingsEl {
 	return e
 }
 
+// Set the default variant for all setting groups.
+//
+// All setting groups will use this variant unless overridden individually.
+//
 // WithGroupVariant is <gpui_kit::component::setting::Settings>::with_group_variant.
 func (e SettingsEl) WithGroupVariant(variant GroupBoxVariant) SettingsEl {
 	o := op(e.n, 262)
@@ -1320,7 +2379,17 @@ func (e SettingsEl) WithGroupVariant(variant GroupBoxVariant) SettingsEl {
 	return e
 }
 
-func (e SettingsEl) Large() SettingsEl                 { tSizableLarge(e.n); return e }
-func (e SettingsEl) Small() SettingsEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e SettingsEl) Large() SettingsEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e SettingsEl) Small() SettingsEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e SettingsEl) WithSize(size SizeInto) SettingsEl { tSizableWithSize(e.n, size); return e }
-func (e SettingsEl) Xsmall() SettingsEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e SettingsEl) Xsmall() SettingsEl { tSizableXsmall(e.n); return e }

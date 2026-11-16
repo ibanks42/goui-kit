@@ -9,6 +9,8 @@ type CaretEl struct{ n *node }
 
 func (e CaretEl) node() *node { return e.n }
 
+// Create a select caret sized for its trigger.
+//
 // Caret is <gpui_kit::component::combobox::Caret>::new.
 func Caret(size Size) CaretEl {
 	useComponentSelect()
@@ -18,6 +20,8 @@ func Caret(size Size) CaretEl {
 	return CaretEl{n}
 }
 
+// Set the caret color.
+//
 // TextColor is <gpui_kit::component::combobox::Caret>::text_color.
 func (e CaretEl) TextColor(color Color) CaretEl {
 	o := op(e.n, 256)
@@ -40,6 +44,8 @@ func Combobox(state ComboboxState, st ...Style) ComboboxEl {
 	return ComboboxEl{n}
 }
 
+// Control whether the trigger shows a border and background.
+//
 // Appearance is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::appearance.
 func (e ComboboxEl) Appearance(appearance bool) ComboboxEl {
 	o := op(e.n, 256)
@@ -47,6 +53,8 @@ func (e ComboboxEl) Appearance(appearance bool) ComboboxEl {
 	return e
 }
 
+// Override the trailing check icon shown next to selected items.
+//
 // CheckIcon is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::check_icon.
 func (e ComboboxEl) CheckIcon(icon IconName) ComboboxEl {
 	o := op(e.n, 264)
@@ -54,6 +62,8 @@ func (e ComboboxEl) CheckIcon(icon IconName) ComboboxEl {
 	return e
 }
 
+// Show a clear button when at least one item is selected.
+//
 // Cleanable is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::cleanable.
 func (e ComboboxEl) Cleanable(cleanable bool) ComboboxEl {
 	o := op(e.n, 257)
@@ -61,6 +71,8 @@ func (e ComboboxEl) Cleanable(cleanable bool) ComboboxEl {
 	return e
 }
 
+// Set the disabled state.
+//
 // Disabled is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::disabled.
 func (e ComboboxEl) Disabled(disabled bool) ComboboxEl {
 	o := op(e.n, 258)
@@ -68,6 +80,8 @@ func (e ComboboxEl) Disabled(disabled bool) ComboboxEl {
 	return e
 }
 
+// Set a custom closure that renders the empty-state element.
+//
 // Empty is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::empty.
 func (e ComboboxEl) Empty(builder View) ComboboxEl {
 	o := op(e.n, 265)
@@ -75,6 +89,8 @@ func (e ComboboxEl) Empty(builder View) ComboboxEl {
 	return e
 }
 
+// Render an element below a separator at the bottom of the dropdown.
+//
 // Footer is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::footer.
 func (e ComboboxEl) Footer(f Element) ComboboxEl {
 	o := op(e.n, 259)
@@ -82,6 +98,8 @@ func (e ComboboxEl) Footer(f Element) ComboboxEl {
 	return e
 }
 
+// Override the trigger chevron icon.
+//
 // Icon is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::icon.
 func (e ComboboxEl) Icon(icon IconName) ComboboxEl {
 	o := op(e.n, 266)
@@ -89,6 +107,8 @@ func (e ComboboxEl) Icon(icon IconName) ComboboxEl {
 	return e
 }
 
+// Set the maximum height of the dropdown menu.
+//
 // MenuMaxH is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::menu_max_h.
 func (e ComboboxEl) MenuMaxH(maxH Length) ComboboxEl {
 	o := op(e.n, 260)
@@ -96,6 +116,8 @@ func (e ComboboxEl) MenuMaxH(maxH Length) ComboboxEl {
 	return e
 }
 
+// Set the width of the dropdown menu.
+//
 // MenuWidth is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::menu_width.
 func (e ComboboxEl) MenuWidth(width Length) ComboboxEl {
 	o := op(e.n, 261)
@@ -103,6 +125,8 @@ func (e ComboboxEl) MenuWidth(width Length) ComboboxEl {
 	return e
 }
 
+// Set the placeholder text shown when no items are selected.
+//
 // Placeholder is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::placeholder.
 func (e ComboboxEl) Placeholder(placeholder string) ComboboxEl {
 	o := op(e.n, 262)
@@ -110,6 +134,8 @@ func (e ComboboxEl) Placeholder(placeholder string) ComboboxEl {
 	return e
 }
 
+// Set the placeholder text for the search input.
+//
 // SearchPlaceholder is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::search_placeholder.
 func (e ComboboxEl) SearchPlaceholder(placeholder string) ComboboxEl {
 	o := op(e.n, 263)
@@ -117,7 +143,19 @@ func (e ComboboxEl) SearchPlaceholder(placeholder string) ComboboxEl {
 	return e
 }
 
-func (e ComboboxEl) PopoverStyle() ComboboxEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e ComboboxEl) PopoverStyle() ComboboxEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e ComboboxEl) RoundedFullStyle() ComboboxEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e ComboboxEl) CornerRadii(radius Corners) ComboboxEl {
@@ -129,19 +167,32 @@ func (e ComboboxEl) DebugFocused(focusHandle FocusHandle) ComboboxEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e ComboboxEl) DebugGreen() ComboboxEl               { tStyledExtDebugGreen(e.n); return e }
-func (e ComboboxEl) DebugPink() ComboboxEl                { tStyledExtDebugPink(e.n); return e }
-func (e ComboboxEl) DebugRed() ComboboxEl                 { tStyledExtDebugRed(e.n); return e }
-func (e ComboboxEl) DebugYellow() ComboboxEl              { tStyledExtDebugYellow(e.n); return e }
-func (e ComboboxEl) FontBlack() ComboboxEl                { tStyledExtFontBlack(e.n); return e }
-func (e ComboboxEl) FontBold() ComboboxEl                 { tStyledExtFontBold(e.n); return e }
-func (e ComboboxEl) FontExtrabold() ComboboxEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e ComboboxEl) FontExtralight() ComboboxEl           { tStyledExtFontExtralight(e.n); return e }
-func (e ComboboxEl) FontLight() ComboboxEl                { tStyledExtFontLight(e.n); return e }
-func (e ComboboxEl) FontMedium() ComboboxEl               { tStyledExtFontMedium(e.n); return e }
-func (e ComboboxEl) FontNormal() ComboboxEl               { tStyledExtFontNormal(e.n); return e }
-func (e ComboboxEl) FontSemibold() ComboboxEl             { tStyledExtFontSemibold(e.n); return e }
-func (e ComboboxEl) FontThin() ComboboxEl                 { tStyledExtFontThin(e.n); return e }
+func (e ComboboxEl) DebugGreen() ComboboxEl     { tStyledExtDebugGreen(e.n); return e }
+func (e ComboboxEl) DebugPink() ComboboxEl      { tStyledExtDebugPink(e.n); return e }
+func (e ComboboxEl) DebugRed() ComboboxEl       { tStyledExtDebugRed(e.n); return e }
+func (e ComboboxEl) DebugYellow() ComboboxEl    { tStyledExtDebugYellow(e.n); return e }
+func (e ComboboxEl) FontBlack() ComboboxEl      { tStyledExtFontBlack(e.n); return e }
+func (e ComboboxEl) FontBold() ComboboxEl       { tStyledExtFontBold(e.n); return e }
+func (e ComboboxEl) FontExtrabold() ComboboxEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e ComboboxEl) FontExtralight() ComboboxEl { tStyledExtFontExtralight(e.n); return e }
+func (e ComboboxEl) FontLight() ComboboxEl      { tStyledExtFontLight(e.n); return e }
+func (e ComboboxEl) FontMedium() ComboboxEl     { tStyledExtFontMedium(e.n); return e }
+func (e ComboboxEl) FontNormal() ComboboxEl     { tStyledExtFontNormal(e.n); return e }
+func (e ComboboxEl) FontSemibold() ComboboxEl   { tStyledExtFontSemibold(e.n); return e }
+func (e ComboboxEl) FontThin() ComboboxEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e ComboboxEl) HFlex() ComboboxEl                    { tStyledExtHFlex(e.n); return e }
 func (e ComboboxEl) Margins(margins EdgesInto) ComboboxEl { tStyledExtMargins(e.n, margins); return e }
 func (e ComboboxEl) Paddings(paddings EdgesInto) ComboboxEl {
@@ -152,12 +203,27 @@ func (e ComboboxEl) RefineStyle(style StyleRefinement) ComboboxEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e ComboboxEl) VFlex() ComboboxEl { tStyledExtVFlex(e.n); return e }
 
-func (e ComboboxEl) Large() ComboboxEl                 { tSizableLarge(e.n); return e }
-func (e ComboboxEl) Small() ComboboxEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e ComboboxEl) Large() ComboboxEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e ComboboxEl) Small() ComboboxEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e ComboboxEl) WithSize(size SizeInto) ComboboxEl { tSizableWithSize(e.n, size); return e }
-func (e ComboboxEl) Xsmall() ComboboxEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e ComboboxEl) Xsmall() ComboboxEl { tSizableXsmall(e.n); return e }
 
 func (e ComboboxEl) FocusRing(enabled bool) ComboboxEl {
 	tFocusableExtFocusRing(e.n, enabled)
@@ -167,119 +233,326 @@ func (e ComboboxEl) FocusRing(enabled bool) ComboboxEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e ComboboxEl) Style(st ...Style) ComboboxEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e ComboboxEl) AspectRatio(ratio float32) ComboboxEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e ComboboxEl) Bg(fill Fill) ComboboxEl              { tStyledBg(e.n, fill); return e }
-func (e ComboboxEl) Border(length Length) ComboboxEl      { tStyledBorder(e.n, length); return e }
-func (e ComboboxEl) BorderB(length Length) ComboboxEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e ComboboxEl) Bg(fill Fill) ComboboxEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e ComboboxEl) Border(length Length) ComboboxEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ComboboxEl) BorderB(length Length) ComboboxEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e ComboboxEl) BorderColor(borderColor Color) ComboboxEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e ComboboxEl) BorderL(length Length) ComboboxEl     { tStyledBorderL(e.n, length); return e }
-func (e ComboboxEl) BorderR(length Length) ComboboxEl     { tStyledBorderR(e.n, length); return e }
-func (e ComboboxEl) BorderT(length Length) ComboboxEl     { tStyledBorderT(e.n, length); return e }
-func (e ComboboxEl) BorderX(length Length) ComboboxEl     { tStyledBorderX(e.n, length); return e }
-func (e ComboboxEl) BorderY(length Length) ComboboxEl     { tStyledBorderY(e.n, length); return e }
-func (e ComboboxEl) Bottom(length Length) ComboboxEl      { tStyledBottom(e.n, length); return e }
-func (e ComboboxEl) ColEnd(end int16) ComboboxEl          { tStyledColEnd(e.n, end); return e }
-func (e ComboboxEl) ColSpan(span uint16) ComboboxEl       { tStyledColSpan(e.n, span); return e }
-func (e ComboboxEl) ColStart(start int16) ComboboxEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ComboboxEl) BorderL(length Length) ComboboxEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ComboboxEl) BorderR(length Length) ComboboxEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ComboboxEl) BorderT(length Length) ComboboxEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e ComboboxEl) BorderX(length Length) ComboboxEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e ComboboxEl) BorderY(length Length) ComboboxEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ComboboxEl) Bottom(length Length) ComboboxEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e ComboboxEl) ColEnd(end int16) ComboboxEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e ComboboxEl) ColSpan(span uint16) ComboboxEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e ComboboxEl) ColStart(start int16) ComboboxEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e ComboboxEl) Cursor(cursor CursorStyle) ComboboxEl { tStyledCursor(e.n, cursor); return e }
-func (e ComboboxEl) FlexBasis(basis Length) ComboboxEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e ComboboxEl) FlexGrow(grow float32) ComboboxEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e ComboboxEl) FlexBasis(basis Length) ComboboxEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e ComboboxEl) FlexGrow(grow float32) ComboboxEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ComboboxEl) FlexShrink(shrink float32) ComboboxEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e ComboboxEl) FontFamily(familyName string) ComboboxEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e ComboboxEl) FontFeatures(features FontFeatures) ComboboxEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e ComboboxEl) FontWeight(weight FontWeight) ComboboxEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e ComboboxEl) Gap(length Length) ComboboxEl    { tStyledGap(e.n, length); return e }
-func (e ComboboxEl) GapX(length Length) ComboboxEl   { tStyledGapX(e.n, length); return e }
-func (e ComboboxEl) GapY(length Length) ComboboxEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e ComboboxEl) Gap(length Length) ComboboxEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ComboboxEl) GapX(length Length) ComboboxEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ComboboxEl) GapY(length Length) ComboboxEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e ComboboxEl) GridCols(cols uint16) ComboboxEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e ComboboxEl) GridColsMaxContent(cols uint16) ComboboxEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e ComboboxEl) GridColsMinContent(cols uint16) ComboboxEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e ComboboxEl) GridRows(rows uint16) ComboboxEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e ComboboxEl) GridRowsMaxContent(rows uint16) ComboboxEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e ComboboxEl) GridRowsMinContent(rows uint16) ComboboxEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e ComboboxEl) H(length Length) ComboboxEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e ComboboxEl) H(length Length) ComboboxEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e ComboboxEl) Inset(length Length) ComboboxEl { tStyledInset(e.n, length); return e }
-func (e ComboboxEl) Left(length Length) ComboboxEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ComboboxEl) Left(length Length) ComboboxEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e ComboboxEl) LineClamp(lines int) ComboboxEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e ComboboxEl) LineHeight(lineHeight Length) ComboboxEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e ComboboxEl) M(length Length) ComboboxEl         { tStyledM(e.n, length); return e }
-func (e ComboboxEl) MaxH(length Length) ComboboxEl      { tStyledMaxH(e.n, length); return e }
-func (e ComboboxEl) MaxSize(length Length) ComboboxEl   { tStyledMaxSize(e.n, length); return e }
-func (e ComboboxEl) MaxW(length Length) ComboboxEl      { tStyledMaxW(e.n, length); return e }
-func (e ComboboxEl) Mb(length Length) ComboboxEl        { tStyledMb(e.n, length); return e }
-func (e ComboboxEl) MinH(length Length) ComboboxEl      { tStyledMinH(e.n, length); return e }
-func (e ComboboxEl) MinSize(length Length) ComboboxEl   { tStyledMinSize(e.n, length); return e }
-func (e ComboboxEl) MinW(length Length) ComboboxEl      { tStyledMinW(e.n, length); return e }
-func (e ComboboxEl) Ml(length Length) ComboboxEl        { tStyledMl(e.n, length); return e }
-func (e ComboboxEl) Mr(length Length) ComboboxEl        { tStyledMr(e.n, length); return e }
-func (e ComboboxEl) Mt(length Length) ComboboxEl        { tStyledMt(e.n, length); return e }
-func (e ComboboxEl) Mx(length Length) ComboboxEl        { tStyledMx(e.n, length); return e }
-func (e ComboboxEl) My(length Length) ComboboxEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e ComboboxEl) M(length Length) ComboboxEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e ComboboxEl) MaxH(length Length) ComboboxEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e ComboboxEl) MaxSize(length Length) ComboboxEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e ComboboxEl) MaxW(length Length) ComboboxEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ComboboxEl) Mb(length Length) ComboboxEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e ComboboxEl) MinH(length Length) ComboboxEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e ComboboxEl) MinSize(length Length) ComboboxEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e ComboboxEl) MinW(length Length) ComboboxEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ComboboxEl) Ml(length Length) ComboboxEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ComboboxEl) Mr(length Length) ComboboxEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ComboboxEl) Mt(length Length) ComboboxEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e ComboboxEl) Mx(length Length) ComboboxEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e ComboboxEl) My(length Length) ComboboxEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e ComboboxEl) Opacity(opacity float32) ComboboxEl { tStyledOpacity(e.n, opacity); return e }
-func (e ComboboxEl) P(length Length) ComboboxEl         { tStyledP(e.n, length); return e }
-func (e ComboboxEl) Pb(length Length) ComboboxEl        { tStyledPb(e.n, length); return e }
-func (e ComboboxEl) Pl(length Length) ComboboxEl        { tStyledPl(e.n, length); return e }
-func (e ComboboxEl) Pr(length Length) ComboboxEl        { tStyledPr(e.n, length); return e }
-func (e ComboboxEl) Pt(length Length) ComboboxEl        { tStyledPt(e.n, length); return e }
-func (e ComboboxEl) Px(length Length) ComboboxEl        { tStyledPx(e.n, length); return e }
-func (e ComboboxEl) Py(length Length) ComboboxEl        { tStyledPy(e.n, length); return e }
-func (e ComboboxEl) Right(length Length) ComboboxEl     { tStyledRight(e.n, length); return e }
-func (e ComboboxEl) Rounded(length Length) ComboboxEl   { tStyledRounded(e.n, length); return e }
-func (e ComboboxEl) RoundedB(length Length) ComboboxEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e ComboboxEl) P(length Length) ComboboxEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ComboboxEl) Pb(length Length) ComboboxEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ComboboxEl) Pl(length Length) ComboboxEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ComboboxEl) Pr(length Length) ComboboxEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ComboboxEl) Pt(length Length) ComboboxEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e ComboboxEl) Px(length Length) ComboboxEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e ComboboxEl) Py(length Length) ComboboxEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ComboboxEl) Right(length Length) ComboboxEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e ComboboxEl) Rounded(length Length) ComboboxEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ComboboxEl) RoundedB(length Length) ComboboxEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ComboboxEl) RoundedBl(length Length) ComboboxEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ComboboxEl) RoundedBr(length Length) ComboboxEl { tStyledRoundedBr(e.n, length); return e }
-func (e ComboboxEl) RoundedL(length Length) ComboboxEl  { tStyledRoundedL(e.n, length); return e }
-func (e ComboboxEl) RoundedR(length Length) ComboboxEl  { tStyledRoundedR(e.n, length); return e }
-func (e ComboboxEl) RoundedT(length Length) ComboboxEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ComboboxEl) RoundedL(length Length) ComboboxEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ComboboxEl) RoundedR(length Length) ComboboxEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ComboboxEl) RoundedT(length Length) ComboboxEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ComboboxEl) RoundedTl(length Length) ComboboxEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ComboboxEl) RoundedTr(length Length) ComboboxEl { tStyledRoundedTr(e.n, length); return e }
-func (e ComboboxEl) RowEnd(end int16) ComboboxEl        { tStyledRowEnd(e.n, end); return e }
-func (e ComboboxEl) RowSpan(span uint16) ComboboxEl     { tStyledRowSpan(e.n, span); return e }
-func (e ComboboxEl) RowStart(start int16) ComboboxEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e ComboboxEl) RowEnd(end int16) ComboboxEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e ComboboxEl) RowSpan(span uint16) ComboboxEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e ComboboxEl) RowStart(start int16) ComboboxEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e ComboboxEl) ScrollbarWidth(width Length) ComboboxEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e ComboboxEl) Shadow(shadows []BoxShadow) ComboboxEl { tStyledShadow(e.n, shadows); return e }
-func (e ComboboxEl) Size(length Length) ComboboxEl         { tStyledSize(e.n, length); return e }
-func (e ComboboxEl) TextAlign(align TextAlign) ComboboxEl  { tStyledTextAlign(e.n, align); return e }
-func (e ComboboxEl) TextBg(bg Color) ComboboxEl            { tStyledTextBg(e.n, bg); return e }
-func (e ComboboxEl) TextColor(color Color) ComboboxEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e ComboboxEl) Size(length Length) ComboboxEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e ComboboxEl) TextAlign(align TextAlign) ComboboxEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e ComboboxEl) TextBg(bg Color) ComboboxEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e ComboboxEl) TextColor(color Color) ComboboxEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e ComboboxEl) TextDecorationColor(color Color) ComboboxEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e ComboboxEl) TextOverflow(overflow TextOverflow) ComboboxEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e ComboboxEl) TextSize(size Length) ComboboxEl { tStyledTextSize(e.n, size); return e }
-func (e ComboboxEl) Top(length Length) ComboboxEl    { tStyledTop(e.n, length); return e }
-func (e ComboboxEl) W(length Length) ComboboxEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ComboboxEl) Top(length Length) ComboboxEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e ComboboxEl) W(length Length) ComboboxEl { tStyledW(e.n, length); return e }

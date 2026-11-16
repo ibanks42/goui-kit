@@ -5,15 +5,25 @@ import "core:time"
 
 // Button_Variants_Trait is gpui_kit::component::button::ButtonVariants.
 Button_Variants_Trait :: struct($T: typeid) {
+	// With the custom style for the Button.
 	custom: proc(e: T, style: Button_Custom_Variant) -> T,
+	// With the danger style for the Button.
 	danger: proc(e: T) -> T,
+	// With the ghost style for the Button.
 	ghost: proc(e: T) -> T,
+	// With the info style for the Button.
 	info: proc(e: T) -> T,
+	// With the link style for the Button.
 	link: proc(e: T) -> T,
+	// With the primary style for the Button.
 	primary: proc(e: T) -> T,
+	// With the secondary style for the Button.
 	secondary: proc(e: T) -> T,
+	// With the success style for the Button.
 	success: proc(e: T) -> T,
+	// With the text style for the Button, it will no padding look like a normal text.
 	text: proc(e: T) -> T,
+	// With the warning style for the Button.
 	warning: proc(e: T) -> T,
 	with_variant: proc(e: T, variant: Button_Variant) -> T,
 }
@@ -140,6 +150,7 @@ disableable_any := Disableable_Trait(Any_El) {
 
 // Element_Ext_Trait is gpui_kit::base::ElementExt.
 Element_Ext_Trait :: struct($T: typeid) {
+	// Invokes `callback` during prepaint with this element's resolved bounds.
 	on_prepaint: proc(e: T, callback: Handler) -> T,
 }
 
@@ -172,9 +183,13 @@ focusable_ext_any := Focusable_Ext_Trait(Any_El) {
 
 // Group_Box_Variants_Trait is gpui_kit::component::group_box::GroupBoxVariants.
 Group_Box_Variants_Trait :: struct($T: typeid) {
+	// Set to use `Fill` to GroupBox.
 	fill: proc(e: T) -> T,
+	// Set to use `Normal` to GroupBox.
 	normal: proc(e: T) -> T,
+	// Set to use `Outline` to GroupBox.
 	outline: proc(e: T) -> T,
+	// Set the variant of the `Group_Box`.
 	with_variant: proc(e: T, variant: Group_Box_Variant) -> T,
 }
 
@@ -209,6 +224,8 @@ group_box_variants_any := Group_Box_Variants_Trait(Any_El) {
 
 // Interactive_Element_Ext_Stateful_Interactive_Element_Trait is gpui_kit::base::InteractiveElementExt.
 Interactive_Element_Ext_Stateful_Interactive_Element_Trait :: struct($T: typeid) {
+	// Locks scrolling to the gesture's dominant axis, where the platform supports it. See
+	// `OngoingScrollExt` for why this is a no-op on wasm32.
 	lock_scroll_axis: proc(e: T) -> T,
 }
 
@@ -224,6 +241,7 @@ interactive_element_ext_stateful_interactive_element_any := Interactive_Element_
 
 // Interactive_Element_Ext_Trait is gpui_kit::base::InteractiveElementExt.
 Interactive_Element_Ext_Trait :: struct($T: typeid) {
+	// Set the listener for a double click event.
 	on_double_click: proc(e: T, listener: Handler) -> T,
 }
 
@@ -240,48 +258,199 @@ interactive_element_ext_any := Interactive_Element_Ext_Trait(Any_El) {
 
 // Interactive_Element_Trait is gpui_kit::InteractiveElement.
 Interactive_Element_Trait :: struct($T: typeid) {
+	// Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
+	// equivalent to `block_mouse_except_scroll`.
+	//
+	// See `is_hovered` for details.
 	block_mouse_except_scroll: proc(e: T) -> T,
+	// Use the given predicate to determine whether or not a drop event should be dispatched to this
+	// element. The fluent API equivalent to `can_drop`.
 	can_drop: proc(e: T, predicate: Drop_Accept) -> T,
+	// Capture the given action, before normal action dispatch can fire. The fluent API equivalent to
+	// `capture_action`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	capture_action: proc(e: T, listener: Action_Handler) -> T,
+	// Bind the given callback to the mouse down event for any button, during the capture phase. The
+	// fluent API equivalent to `capture_any_mouse_down`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	capture_any_mouse_down: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to the mouse up event for any button, during the capture phase. The
+	// fluent API equivalent to `capture_any_mouse_up`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	capture_any_mouse_up: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to key down events during the capture phase. The fluent API equivalent
+	// to `capture_key_down`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	capture_key_down: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to key up events during the capture phase. The fluent API equivalent to
+	// `capture_key_up`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	capture_key_up: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to the mouse pressure event, during the capture phase the fluent API
+	// equivalent to `on_mouse_pressure`
+	//
+	// See `listener` to get access to a view's state from this callback.
 	capture_mouse_pressure: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to pinch gesture events during the capture phase. The fluent API
+	// equivalent to `capture_pinch`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	capture_pinch: proc(e: T, listener: Handler) -> T,
+	// Apply the given style when the given data type is dragged over this element
 	drag_over: proc(e: T, f: Style_Refinement) -> T,
+	// Set the given styles to be applied when this element, specifically, is focused. Requires that
+	// the element is focusable. Elements can be made focusable using `->track_focus`.
 	focus: proc(e: T, f: Style_Refinement) -> T,
+	// Set the given styles to be applied when this element is focused via keyboard navigation. This is
+	// similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
+	// the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
+	// Elements can be made focusable using `->track_focus`.
 	focus_visible: proc(e: T, f: Style_Refinement) -> T,
+	// Assign this element to a group of elements that can be styled together
 	group: proc(e: T, group: string) -> T,
+	// Apply the given style when the given data type is dragged over this element's group
 	group_drag_over: proc(e: T, group_name: string, f: Style_Refinement) -> T,
+	// Apply the given style to this element when the mouse hovers over a group member
 	group_hover: proc(e: T, group_name: string, f: Style_Refinement) -> T,
+	// Apply the given style to this element when the mouse hovers over it
 	hover: proc(e: T, f: Style_Refinement) -> T,
+	// Set the given styles to be applied when this element is inside another element that is focused.
+	// Requires that the element is focusable. Elements can be made focusable using `->track_focus`.
 	in_focus: proc(e: T, f: Style_Refinement) -> T,
+	// Set the keymap context for this element. This will be used to determine which action to dispatch
+	// from the keymap.
 	key_context: proc(e: T, key_context: string) -> T,
+	// Block the mouse from all interactions with elements behind this element's hitbox. Typically
+	// `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
 	occlude: proc(e: T) -> T,
+	// Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
+	// to `on_action`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_action: proc(e: T, listener: Action_Handler) -> T,
+	// Bind the given callback to the mouse down event for any button, during the capture phase. The
+	// fluent API equivalent to `on_any_mouse_down`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_any_mouse_down: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to back-navigation gestures that start over this element, such as the
+	// iOS swipe from the leading screen edge. The innermost element with a back listener claims the
+	// gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_back_gesture: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to an action dispatch, based on a dynamic action parameter instead of a
+	// type parameter. Useful for component libraries that want to expose action bindings to their
+	// users. The fluent API equivalent to `on_boxed_action`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_boxed_action: proc(e: T, action: Action, listener: Handler) -> T,
+	// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+	// for all move events, inside or outside of this element, as long as the drag was started with
+	// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+	// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_drag_move: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to drop events of the given type, whether or not the drag started on
+	// this element. The fluent API equivalent to `on_drop`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_drop: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to `Exited` when a platform file drag leaves this element's window while
+	// the element is hovered.
+	//
+	// This is a window-local exit event, not notification that the platform drag session ended. The
+	// fluent API equivalent to `on_file_drop_exit`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_file_drop_exit: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to key down events during the bubble phase. The fluent API equivalent to
+	// `on_key_down`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_key_down: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to key up events during the bubble phase. The fluent API equivalent to
+	// `on_key_up`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_key_up: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to modifiers changing events. The fluent API equivalent to
+	// `on_modifiers_changed`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_modifiers_changed: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to the mouse down event for the given mouse button. The fluent API
+	// equivalent to `on_mouse_down`.
+	//
+	// See `listener` to get access to the view state from this callback.
 	on_mouse_down: proc(e: T, button: Mouse_Button, listener: Handler) -> T,
+	// Bind the given callback to the mouse down event, on any button, during the capture phase, when
+	// the mouse is outside of the bounds of this element. The fluent API equivalent to
+	// `on_mouse_down_out`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_mouse_down_out: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to the mouse exit event, during the bubble phase. The fluent API
+	// equivalent to `on_mouse_exit`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_mouse_exit: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to the mouse move event, during the bubble phase. The fluent API
+	// equivalent to `on_mouse_move`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_mouse_move: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to the mouse pressure event, during the bubble phase the fluent API
+	// equivalent to `on_mouse_pressure`
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_mouse_pressure: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to the mouse up event for the given button, during the bubble phase. The
+	// fluent API equivalent to `on_mouse_up`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_mouse_up: proc(e: T, button: Mouse_Button, listener: Handler) -> T,
+	// Bind the given callback to the mouse up event, for the given button, during the capture phase,
+	// when the mouse is outside of the bounds of this element. The fluent API equivalent to
+	// `on_mouse_up_out`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_mouse_up_out: proc(e: T, button: Mouse_Button, listener: Handler) -> T,
+	// Bind the given callback to pinch gesture events during the bubble phase. The fluent API
+	// equivalent to `on_pinch`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_pinch: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to scroll events during the bubble phase. The fluent API equivalent to
+	// `on_scroll`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_scroll: proc(e: T, listener: Handler) -> T,
+	// Designate this div as a "tab group". Tab groups have their own location in the tab-index order,
+	// but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
+	// the order of tab stops within the group, without having to renumber all the tab stops in the
+	// whole application.
 	tab_group: proc(e: T) -> T,
+	// Set index of the tab stop order, and set this node as a tab stop. This will default the element
+	// to being a tab stop. See `->tab_stop` for more information. This should only be used in
+	// conjunction with `tab_group` in order to not interfere with the tab index of other elements.
 	tab_index: proc(e: T, index: int) -> T,
+	// Set whether this element is a tab stop.
+	//
+	// When false, the element remains in tab-index order but cannot be reached via keyboard
+	// navigation. Should only be used with `tab_index`.
 	tab_stop: proc(e: T, tab_stop: bool) -> T,
+	// Track the focus state of the given focus handle on this element. If the focus handle is focused
+	// by the application, this element will apply its focused styles.
 	track_focus: proc(e: T, focus_handle: Focus_Handle) -> T,
+	// Set the bounds of this element as a window control area for the platform window. The fluent API
+	// equivalent to `window_control_area`.
 	window_control_area: proc(e: T, area: Window_Control_Area) -> T,
 }
 
@@ -597,7 +766,9 @@ interactive_element_any := Interactive_Element_Trait(Any_El) {
 Parent_Element_Trait :: struct($T: typeid) {
 	text: proc(e: T, s: string) -> T,
 	child_view: proc(e: T, v: View) -> T,
+	// Add a single child element to this element.
 	child: proc(e: T, child: Element) -> T,
+	// Add multiple child elements to this element.
 	children: proc(e: T, children: []Element) -> T,
 }
 
@@ -623,8 +794,11 @@ parent_element_any := Parent_Element_Trait(Any_El) {
 
 // Scrollable_Element_Trait is gpui_kit::component::scroll::ScrollableElement.
 Scrollable_Element_Trait :: struct($T: typeid) {
+	// Adds a horizontal scrollbar to the element.
 	horizontal_scrollbar: proc(e: T, scroll_handle: Scroll_Handle) -> T,
+	// Adds a scrollbar to the element.
 	scrollbar: proc(e: T, scroll_handle: Scroll_Handle, axis: Scrollbar_Axis_Into) -> T,
+	// Adds a vertical scrollbar to the element.
 	vertical_scrollbar: proc(e: T, scroll_handle: Scroll_Handle) -> T,
 }
 
@@ -656,6 +830,10 @@ scrollable_element_any := Scrollable_Element_Trait(Any_El) {
 
 // Selectable_Trait is gpui_kit::base::Selectable.
 Selectable_Trait :: struct($T: typeid) {
+	// Sets the open state a popover, menu or dropdown holds on its trigger while it is open.
+	//
+	// Defaults to `selected`, so a trigger only overrides this when its selected state means something
+	// other than "my popup is open".
 	open: proc(e: T, open: bool) -> T,
 	secondary_selected: proc(e: T, arg0: bool) -> T,
 	selected: proc(e: T, selected: bool) -> T,
@@ -688,9 +866,16 @@ selectable_any := Selectable_Trait(Any_El) {
 
 // Sizable_Trait is gpui_kit::component::Sizable.
 Sizable_Trait :: struct($T: typeid) {
+	// Set to Size::Large
 	large: proc(e: T) -> T,
+	// Set to Size::Small
 	small: proc(e: T) -> T,
+	// Set the ui::Size of this element.
+	//
+	// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+	// `px(30.)`
 	with_size: proc(e: T, size: Size_Into) -> T,
+	// Set to Size::XSmall
 	xsmall: proc(e: T) -> T,
 }
 
@@ -725,45 +910,149 @@ sizable_any := Sizable_Trait(Any_El) {
 
 // Stateful_Interactive_Element_Trait is gpui_kit::StatefulInteractiveElement.
 Stateful_Interactive_Element_Trait :: struct($T: typeid) {
+	// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+	// children of this element's a11y node. For example, text runs describing an editor's text
+	// content.
+	//
+	// The closure is called after this element is prepainted, and only if it contributed a node to the
+	// accessibility tree (i.e. it has an id and a `->role`).
+	//
+	// See `a11y_synthetic_children` for details.
 	a11y_synthetic_children: proc(e: T, f: []A11y_Child) -> T,
+	// Set the author-provided identifier exposed to accessibility clients.
+	//
+	// Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
+	// within its accessibility tree. AccessKit maps it to platform identifiers where supported,
+	// including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
+	// Linux stacks whose deployed adapter exposes it.
 	accessibility_id: proc(e: T, id: string) -> T,
+	// Set the given styles to be applied when this element is active.
 	active: proc(e: T, f: Style_Refinement) -> T,
+	// Track the scroll state of this element with the given handle.
 	anchor_scroll: proc(e: T, scroll_anchor: Maybe(Scroll_Anchor)) -> T,
+	// Report this element as the focused node in the accessibility tree, overriding the element that
+	// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+	//
+	// This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
+	// focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
+	// selected child so assistive technology announces and highlights it as focused.
+	//
+	// The element must also have a `->role` (and an id) so it produces an accessibility node. Unlike
+	// the web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it
+	// only when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
+	// selected child — if the container isn't focused, the claim is ignored.
 	aria_active_descendant: proc(e: T) -> T,
+	// Set the column count for this element.
 	aria_column_count: proc(e: T, count: int) -> T,
+	// Set the column index for this element.
 	aria_column_index: proc(e: T, index: int) -> T,
+	// Set the accessible description for this element. Unlike the label (which names the element), the
+	// description provides supplementary information that assistive technology announces after the
+	// name, role, and value - for example a settings subtitle or a hint.
 	aria_description: proc(e: T, description: string) -> T,
+	// Set the expanded state for this element.
 	aria_expanded: proc(e: T, expanded: bool) -> T,
+	// Set the keyboard shortcut(s) that activate this element, announced by assistive technology (maps
+	// to AccessKit's `keyboard_shortcut`).
+	//
+	// Note that this does not create a keymap. It simply instructs assistive technology what the
+	// keymap is.
 	aria_keyshortcuts: proc(e: T, keyshortcuts: string) -> T,
+	// Set the accessible label for this element.
 	aria_label: proc(e: T, label: string) -> T,
+	// Set the heading level of this element.
 	aria_level: proc(e: T, level: int) -> T,
+	// Set the maximum numeric value for this element.
 	aria_max_numeric_value: proc(e: T, value: f64) -> T,
+	// Set the minimum numeric value for this element.
 	aria_min_numeric_value: proc(e: T, value: f64) -> T,
+	// Set the numeric value for this element.
 	aria_numeric_value: proc(e: T, value: f64) -> T,
+	// Set the step by which assistive technology should expect the numeric value of this element to
+	// change (e.g. when incrementing a spin button).
 	aria_numeric_value_step: proc(e: T, step: f64) -> T,
+	// Set the placeholder text reported to assistive technology for this element, shown when a text
+	// input is empty.
 	aria_placeholder: proc(e: T, placeholder: string) -> T,
+	// Set the position in set of this element.
 	aria_position_in_set: proc(e: T, position: int) -> T,
+	// Set the row count for this element.
 	aria_row_count: proc(e: T, count: int) -> T,
+	// Set the row index for this element.
 	aria_row_index: proc(e: T, index: int) -> T,
+	// Set the selected state for this element.
 	aria_selected: proc(e: T, selected: bool) -> T,
+	// Set the size of set for this element.
 	aria_size_of_set: proc(e: T, size: int) -> T,
+	// Set the string value of this element, e.g. the text content of a simple text input.
 	aria_value: proc(e: T, value: string) -> T,
+	// Registers a callback resolving a payload to offer the platform if a drag started by this element
+	// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+	// viewport. Must be called after `->on_drag`, with the same dragged value type `T`. The fluent API
+	// equivalent to `external_drag_payload`.
 	external_drag_payload: proc(e: T, resolver: External_Drag_Payload) -> T,
+	// Set this element to focusable.
 	focusable: proc(e: T) -> T,
+	// Set the given styles to be applied when this element's group is active.
 	group_active: proc(e: T, group_name: string, f: Style_Refinement) -> T,
+	// Sets how `->on_hover` responds to key presses while the mouse is stationary. This affects only
+	// the hover listener, not hover styles or tooltips. The fluent API equivalent to
+	// `hover_listener_mode`.
 	hover_listener_mode: proc(e: T, mode: Hover_Listener_Mode) -> T,
+	// Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
+	// hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
+	// equivalent to `hoverable_tooltip`.
 	hoverable_tooltip: proc(e: T, build_tooltip: View_Or_Tooltip) -> T,
+	// Bind the given callback to non-primary click events of this element. The fluent API equivalent
+	// to `on_aux_click`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_aux_click: proc(e: T, listener: Handler) -> T,
+	// Bind the given callback to click events of this element. The fluent API equivalent to
+	// `on_click`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_click: proc(e: T, listener: Handler) -> T,
+	// On drag initiation, this callback will be used to create a new view to render the dragged value
+	// for a drag and drop operation. This API should also be used as the equivalent of 'on drag start'
+	// with the `->on_drag_move` API. The callback also has access to the offset of triggering click
+	// from the origin of parent element. The fluent API equivalent to `on_drag`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_drag: proc(e: T, value: Drag_Value, constructor: View) -> T,
+	// Bind the given callback on the hover start and end events of this element. Note that the boolean
+	// passed to the callback is true when the hover starts and false when it ends. Transitions caused
+	// by layout changes under a stationary mouse also invoke the callback.
+	//
+	// By default, keyboard input suppresses hover until the next mouse move, mouse down, or touch. Set
+	// `InputModalityIndependent` with `->hover_listener_mode` to continue hit-testing hover after
+	// keyboard input. The fluent API equivalent to `on_hover`.
+	//
+	// See `listener` to get access to a view's state from this callback.
 	on_hover: proc(e: T, listener: Handler) -> T,
+	// Set the overflow x and y to scroll.
 	overflow_scroll: proc(e: T) -> T,
+	// Set the overflow x to scroll.
 	overflow_x_scroll: proc(e: T) -> T,
+	// Set the overflow y to scroll.
 	overflow_y_scroll: proc(e: T) -> T,
+	// Restrict scrolling of this element to the axis of the input gesture.
+	//
+	// See `restrict_scroll_to_axis` for details.
 	restrict_scroll_to_axis: proc(e: T) -> T,
+	// Set the accessible role for this element.
+	//
+	// See the accessibility guide for an overview.
 	role: proc(e: T, role: Role) -> T,
+	// Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
+	// `tooltip`.
 	tooltip: proc(e: T, build_tooltip: View_Or_Tooltip) -> T,
+	// Sets the delay before this element's tooltip is shown on hover.
+	//
+	// Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
+	// equivalent to `tooltip_show_delay`.
 	tooltip_show_delay: proc(e: T, delay: time.Duration) -> T,
+	// Track the scroll state of this element with the given handle.
 	track_scroll: proc(e: T, scroll_handle: Scroll_Handle) -> T,
 }
 
@@ -1094,7 +1383,9 @@ Style_Sized_Trait :: struct($T: typeid) {
 	list_px: proc(e: T, size: Size) -> T,
 	list_py: proc(e: T, size: Size) -> T,
 	list_size: proc(e: T, size: Size) -> T,
+	// Apply size with the given `Size`.
 	size_with: proc(e: T, size: Size) -> T,
+	// Apply the table cell size (Font size, padding) with the given `Size`.
 	table_cell_size: proc(e: T, size: Size) -> T,
 }
 
@@ -1211,10 +1502,26 @@ Styled_Ext_Trait :: struct($T: typeid) {
 	font_normal: proc(e: T) -> T,
 	font_semibold: proc(e: T) -> T,
 	font_thin: proc(e: T) -> T,
+	// Lays children out in a row, centered on the cross axis.
+	//
+	// The centering is the desktop default for a row of controls — an icon beside its label lines up
+	// without either side asking for it — but it is **not** the mirror image of `->v_flex`, which
+	// leaves the cross axis stretching. A column placed in a row therefore does not take the row's
+	// height: it takes its content's height and is centered inside the row. When its content is taller
+	// than the row, it overflows equally above and below, so the column's header is pushed off the top
+	// edge and clipped.
+	//
+	// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+	// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+	// height.
 	h_flex: proc(e: T) -> T,
 	margins: proc(e: T, margins: Edges_Into) -> T,
 	paddings: proc(e: T, paddings: Edges_Into) -> T,
 	refine_style: proc(e: T, style: Style_Refinement) -> T,
+	// Lays children out in a column, stretching them across the cross axis.
+	//
+	// Unlike `->h_flex` this installs no cross-axis alignment, so a child without a width fills the
+	// column. See `h_flex` for the asymmetry.
 	v_flex: proc(e: T) -> T,
 }
 
@@ -1356,86 +1663,215 @@ styled_ext_any := Styled_Ext_Trait(Any_El) {
 // Styled_Trait is gpui_kit::Styled.
 Styled_Trait :: struct($T: typeid) {
 	style: proc(e: T, flags: ..Style_Flag) -> T,
+	// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 	aspect_ratio: proc(e: T, ratio: f32) -> T,
+	// Sets the background color of the element.
 	bg: proc(e: T, fill: Fill) -> T,
+	// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 	border: proc(e: T, length: Length) -> T,
+	// Sets the border width of the bottom side of the element. Docs
+	// (https://tailwindcss.com/docs/border-width#individual-sides)
 	border_b: proc(e: T, length: Length) -> T,
+	// Sets the border color of the element.
 	border_color: proc(e: T, border_color: Color) -> T,
+	// Sets the border width of the left side of the element. Docs
+	// (https://tailwindcss.com/docs/border-width#individual-sides)
 	border_l: proc(e: T, length: Length) -> T,
+	// Sets the border width of the right side of the element. Docs
+	// (https://tailwindcss.com/docs/border-width#individual-sides)
 	border_r: proc(e: T, length: Length) -> T,
+	// Sets the border width of the top side of the element. Docs
+	// (https://tailwindcss.com/docs/border-width#individual-sides)
 	border_t: proc(e: T, length: Length) -> T,
+	// Sets the border width of the vertical sides of the element. Docs
+	// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 	border_x: proc(e: T, length: Length) -> T,
+	// Sets the border width of the horizontal sides of the element. Docs
+	// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 	border_y: proc(e: T, length: Length) -> T,
+	// Sets the bottom value of a positioned element. Docs
+	// (https://tailwindcss.com/docs/top-right-bottom-left)
 	bottom: proc(e: T, length: Length) -> T,
+	// Sets the column end of this element.
 	col_end: proc(e: T, end: i16) -> T,
+	// Sets the column span of this element.
 	col_span: proc(e: T, span: u16) -> T,
+	// Sets the column start of this element.
 	col_start: proc(e: T, start: i16) -> T,
+	// Set the cursor style when hovering over this element
 	cursor: proc(e: T, cursor: Cursor_Style) -> T,
+	// Sets the initial size of flex items for this element. Docs
+	// (https://tailwindcss.com/docs/flex-basis)
 	flex_basis: proc(e: T, basis: Length) -> T,
+	// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 	flex_grow: proc(e: T, grow: f32) -> T,
+	// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 	flex_shrink: proc(e: T, shrink: f32) -> T,
+	// Sets the font of this element and its children.
 	font: proc(e: T, font: Font) -> T,
+	// Sets the font family of this element and its children.
 	font_family: proc(e: T, family_name: string) -> T,
+	// Sets the font features of this element and its children.
 	font_features: proc(e: T, features: Font_Features) -> T,
+	// Sets the font weight of this element
+	//
+	// This value cascades to its child elements.
 	font_weight: proc(e: T, weight: Font_Weight) -> T,
+	// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 	gap: proc(e: T, length: Length) -> T,
+	// Sets the gap between columns in flex layouts. Docs
+	// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 	gap_x: proc(e: T, length: Length) -> T,
+	// Sets the gap between rows in flex layouts. Docs
+	// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 	gap_y: proc(e: T, length: Length) -> T,
+	// Sets the grid columns of this element.
 	grid_cols: proc(e: T, cols: u16) -> T,
+	// Sets the grid columns with max-content maximum sizing for content-based column widths.
 	grid_cols_max_content: proc(e: T, cols: u16) -> T,
+	// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+	// width 0 in AvailableSpace::MinContent constraints.
 	grid_cols_min_content: proc(e: T, cols: u16) -> T,
+	// Sets the grid rows of this element.
 	grid_rows: proc(e: T, rows: u16) -> T,
+	// Sets the grid rows with max-content maximum sizing for content-based row heights.
 	grid_rows_max_content: proc(e: T, rows: u16) -> T,
+	// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+	// 0 in AvailableSpace::MinContent constraints.
 	grid_rows_min_content: proc(e: T, rows: u16) -> T,
+	// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 	h: proc(e: T, length: Length) -> T,
+	// Sets the top, right, bottom, and left values of a positioned element. Docs
+	// (https://tailwindcss.com/docs/top-right-bottom-left)
 	inset: proc(e: T, length: Length) -> T,
+	// Sets the left value of a positioned element. Docs
+	// (https://tailwindcss.com/docs/top-right-bottom-left)
 	left: proc(e: T, length: Length) -> T,
+	// Sets number of lines to show before truncating the text. Docs
+	// (https://tailwindcss.com/docs/line-clamp)
 	line_clamp: proc(e: T, lines: int) -> T,
+	// Sets the line height of this element and its children.
 	line_height: proc(e: T, line_height: Length) -> T,
+	// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 	m: proc(e: T, length: Length) -> T,
+	// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 	max_h: proc(e: T, length: Length) -> T,
+	// Sets the maximum width and height of the element.
 	max_size: proc(e: T, length: Length) -> T,
+	// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 	max_w: proc(e: T, length: Length) -> T,
+	// Sets the bottom margin of the element. Docs
+	// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 	mb: proc(e: T, length: Length) -> T,
+	// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 	min_h: proc(e: T, length: Length) -> T,
+	// Sets the minimum width and height of the element.
 	min_size: proc(e: T, length: Length) -> T,
+	// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 	min_w: proc(e: T, length: Length) -> T,
+	// Sets the left margin of the element. Docs
+	// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 	ml: proc(e: T, length: Length) -> T,
+	// Sets the right margin of the element. Docs
+	// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 	mr: proc(e: T, length: Length) -> T,
+	// Sets the top margin of the element. Docs
+	// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 	mt: proc(e: T, length: Length) -> T,
+	// Sets the horizontal margin of the element. Docs
+	// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 	mx: proc(e: T, length: Length) -> T,
+	// Sets the vertical margin of the element. Docs
+	// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 	my: proc(e: T, length: Length) -> T,
+	// Sets the opacity of this element and its children.
 	opacity: proc(e: T, opacity: f32) -> T,
+	// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 	p: proc(e: T, length: Length) -> T,
+	// Sets the bottom padding of the element. Docs
+	// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 	pb: proc(e: T, length: Length) -> T,
+	// Sets the left padding of the element. Docs
+	// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 	pl: proc(e: T, length: Length) -> T,
+	// Sets the right padding of the element. Docs
+	// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 	pr: proc(e: T, length: Length) -> T,
+	// Sets the top padding of the element. Docs
+	// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 	pt: proc(e: T, length: Length) -> T,
+	// Sets the horizontal padding of the element. Docs
+	// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 	px: proc(e: T, length: Length) -> T,
+	// Sets the vertical padding of the element. Docs
+	// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 	py: proc(e: T, length: Length) -> T,
+	// Sets the right value of a positioned element. Docs
+	// (https://tailwindcss.com/docs/top-right-bottom-left)
 	right: proc(e: T, length: Length) -> T,
+	// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 	rounded: proc(e: T, length: Length) -> T,
+	// Sets the border radius of the bottom side of the element. Docs
+	// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 	rounded_b: proc(e: T, length: Length) -> T,
+	// Sets the border radius of the bottom left corner of the element. Docs
+	// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 	rounded_bl: proc(e: T, length: Length) -> T,
+	// Sets the border radius of the bottom right corner of the element. Docs
+	// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 	rounded_br: proc(e: T, length: Length) -> T,
+	// Sets the border radius of the left side of the element. Docs
+	// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 	rounded_l: proc(e: T, length: Length) -> T,
+	// Sets the border radius of the right side of the element. Docs
+	// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 	rounded_r: proc(e: T, length: Length) -> T,
+	// Sets the border radius of the top side of the element. Docs
+	// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 	rounded_t: proc(e: T, length: Length) -> T,
+	// Sets the border radius of the top left corner of the element. Docs
+	// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 	rounded_tl: proc(e: T, length: Length) -> T,
+	// Sets the border radius of the top right corner of the element. Docs
+	// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 	rounded_tr: proc(e: T, length: Length) -> T,
+	// Sets the row end of this element.
 	row_end: proc(e: T, end: i16) -> T,
+	// Sets the row span of this element.
 	row_span: proc(e: T, span: u16) -> T,
+	// Sets the row start of this element.
 	row_start: proc(e: T, start: i16) -> T,
+	// Set the space to be reserved for rendering the scrollbar.
+	//
+	// This will only affect the layout of the element when overflow for this element is set to
+	// `Overflow::Scroll`.
 	scrollbar_width: proc(e: T, width: Length) -> T,
+	// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 	shadow: proc(e: T, shadows: []Box_Shadow) -> T,
+	// Sets the width and height of the element.
 	size: proc(e: T, length: Length) -> T,
+	// Set the text alignment of the element.
 	text_align: proc(e: T, align: Text_Align) -> T,
+	// Sets the background color of this element.
+	//
+	// This value cascades to its child elements.
 	text_bg: proc(e: T, bg: Color) -> T,
+	// Sets the text color of this element.
+	//
+	// This value cascades to its child elements.
 	text_color: proc(e: T, color: Color) -> T,
+	// Sets the color for the underline on this element
 	text_decoration_color: proc(e: T, color: Color) -> T,
+	// Sets the text overflow behavior of the element.
 	text_overflow: proc(e: T, overflow: Text_Overflow) -> T,
+	// Sets the text size of this element.
+	//
+	// This value cascades to its child elements.
 	text_size: proc(e: T, size: Length) -> T,
+	// Sets the top value of a positioned element. Docs
+	// (https://tailwindcss.com/docs/top-right-bottom-left)
 	top: proc(e: T, length: Length) -> T,
+	// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 	w: proc(e: T, length: Length) -> T,
 }
 
@@ -2016,6 +2452,19 @@ styled_any := Styled_Trait(Any_El) {
 
 // Theme_Styled_Parent_Element_Trait is gpui_kit::component::ThemeStyled.
 Theme_Styled_Parent_Element_Trait :: struct($T: typeid) {
+	// Give this element the focus appearance the framework's own controls use: its border tinted with
+	// the focus colour, and the ring outside it.
+	//
+	// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+	// layout clips its containers can turn it off rather than finding room for the ring in each of
+	// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+	// still show focus.
+	//
+	// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+	// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+	//
+	// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+	// off — leave it a few pixels of room, or don't clip.
 	focus_ring_style: proc(e: T) -> T,
 }
 
@@ -2031,7 +2480,18 @@ theme_styled_parent_element_any := Theme_Styled_Parent_Element_Trait(Any_El) {
 
 // Theme_Styled_Trait is gpui_kit::component::ThemeStyled.
 Theme_Styled_Trait :: struct($T: typeid) {
+	// Give this element the surface, edge, shadow and radius of a popover.
+	//
+	// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+	// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+	// shadow is modelled on.
 	popover_style: proc(e: T) -> T,
+	// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+	// unless the theme squares its corners.
+	//
+	// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+	// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+	// a UI that is square everywhere else. See `gk.theme_radius_full`.
 	rounded_full_style: proc(e: T) -> T,
 }
 
@@ -2053,8 +2513,11 @@ theme_styled_any := Theme_Styled_Trait(Any_El) {
 
 // Toggle_Variants_Trait is gpui_kit::component::button::ToggleVariants.
 Toggle_Variants_Trait :: struct($T: typeid) {
+	// Set the variant to ghost.
 	ghost: proc(e: T) -> T,
+	// Set the variant to outline.
 	outline: proc(e: T) -> T,
+	// Set the variant of the toggle.
 	with_variant: proc(e: T, variant: Toggle_Variant) -> T,
 }
 

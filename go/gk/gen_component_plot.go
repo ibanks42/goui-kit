@@ -18,6 +18,9 @@ func CrossLine(point GpuiPoint) CrossLineEl {
 	return CrossLineEl{n}
 }
 
+// Render a solid translucent highlight band of `thickness` (centered on `point`) instead of the
+// default dashed hairline. Use the bar/band width to highlight the hovered column or row.
+//
 // Band is <gpui_kit::component::plot::tooltip::CrossLine>::band.
 func (e CrossLineEl) Band(thickness float32) CrossLineEl {
 	o := op(e.n, 256)
@@ -25,12 +28,17 @@ func (e CrossLineEl) Band(thickness float32) CrossLineEl {
 	return e
 }
 
+// Set the cross line axis to both.
+//
 // Both is <gpui_kit::component::plot::tooltip::CrossLine>::both.
 func (e CrossLineEl) Both() CrossLineEl {
 	op(e.n, 257)
 	return e
 }
 
+// Confine the horizontal line to `start, start + length` along the x axis, so it stays within the
+// plot area.
+//
 // HSpan is <gpui_kit::component::plot::tooltip::CrossLine>::h_span.
 func (e CrossLineEl) HSpan(start float32, length float32) CrossLineEl {
 	o := op(e.n, 258)
@@ -39,6 +47,8 @@ func (e CrossLineEl) HSpan(start float32, length float32) CrossLineEl {
 	return e
 }
 
+// Set the vertical line's length along the y axis (from the top edge).
+//
 // Height is <gpui_kit::component::plot::tooltip::CrossLine>::height.
 func (e CrossLineEl) Height(height float32) CrossLineEl {
 	o := op(e.n, 259)
@@ -46,12 +56,17 @@ func (e CrossLineEl) Height(height float32) CrossLineEl {
 	return e
 }
 
+// Set the cross line axis to horizontal.
+//
 // Horizontal is <gpui_kit::component::plot::tooltip::CrossLine>::horizontal.
 func (e CrossLineEl) Horizontal() CrossLineEl {
 	op(e.n, 260)
 	return e
 }
 
+// Confine the vertical line to `start, start + length` along the y axis, so it stays within the
+// plot area.
+//
 // Span is <gpui_kit::component::plot::tooltip::CrossLine>::span.
 func (e CrossLineEl) Span(start float32, length float32) CrossLineEl {
 	o := op(e.n, 261)
@@ -60,6 +75,8 @@ func (e CrossLineEl) Span(start float32, length float32) CrossLineEl {
 	return e
 }
 
+// Set the horizontal line's length along the x axis (from the left edge).
+//
 // Width is <gpui_kit::component::plot::tooltip::CrossLine>::width.
 func (e CrossLineEl) Width(width float32) CrossLineEl {
 	o := op(e.n, 262)
@@ -81,6 +98,8 @@ func Dot(point GpuiPoint) DotEl {
 	return DotEl{n}
 }
 
+// Set the fill of the dot.
+//
 // Fill is <gpui_kit::component::plot::tooltip::Dot>::fill.
 func (e DotEl) Fill(fill Color) DotEl {
 	o := op(e.n, 256)
@@ -88,6 +107,12 @@ func (e DotEl) Fill(fill Color) DotEl {
 	return e
 }
 
+// Draw a translucent ring of the fill color, `size` across, behind the dot, which marks the
+// hovered point the way a chart marks its emphasized symbol.
+//
+// `size` is the ring at full hover progress: in a `TooltipEl` the ring grows out of the dot as the
+// hover fades in.
+//
 // Halo is <gpui_kit::component::plot::tooltip::Dot>::halo.
 func (e DotEl) Halo(size float32) DotEl {
 	o := op(e.n, 257)
@@ -95,6 +120,8 @@ func (e DotEl) Halo(size float32) DotEl {
 	return e
 }
 
+// Set the size of the dot.
+//
 // Size is <gpui_kit::component::plot::tooltip::Dot>::size.
 func (e DotEl) Size(size float32) DotEl {
 	o := op(e.n, 258)
@@ -102,6 +129,8 @@ func (e DotEl) Size(size float32) DotEl {
 	return e
 }
 
+// Set the stroke of the dot.
+//
 // Stroke is <gpui_kit::component::plot::tooltip::Dot>::stroke.
 func (e DotEl) Stroke(stroke Color) DotEl {
 	o := op(e.n, 259)
@@ -114,6 +143,8 @@ type TooltipEl struct{ n *node }
 
 func (e TooltipEl) node() *node { return e.n }
 
+// Create a tooltip whose box follows the cursor at `cursor` within a `within`-sized plot.
+//
 // Tooltip is <gpui_kit::component::plot::tooltip::Tooltip>::new.
 func Tooltip(cursor GpuiPoint, within GpuiSize, st ...Style) TooltipEl {
 	useComponentPlot()
@@ -125,6 +156,8 @@ func Tooltip(cursor GpuiPoint, within GpuiSize, st ...Style) TooltipEl {
 	return TooltipEl{n}
 }
 
+// Set the appearance of the tooltip.
+//
 // Appearance is <gpui_kit::component::plot::tooltip::Tooltip>::appearance.
 func (e TooltipEl) Appearance(appearance bool) TooltipEl {
 	o := op(e.n, 256)
@@ -132,6 +165,8 @@ func (e TooltipEl) Appearance(appearance bool) TooltipEl {
 	return e
 }
 
+// Set the cross line of the tooltip.
+//
 // CrossLine is <gpui_kit::component::plot::tooltip::Tooltip>::cross_line.
 func (e TooltipEl) CrossLine(crossLine CrossLineEl) TooltipEl {
 	o := op(e.n, 257)
@@ -139,6 +174,8 @@ func (e TooltipEl) CrossLine(crossLine CrossLineEl) TooltipEl {
 	return e
 }
 
+// Set the dots of the tooltip.
+//
 // Dots is <gpui_kit::component::plot::tooltip::Tooltip>::dots.
 func (e TooltipEl) Dots(dots []DotEl) TooltipEl {
 	o := op(e.n, 258)
@@ -149,6 +186,8 @@ func (e TooltipEl) Dots(dots []DotEl) TooltipEl {
 	return e
 }
 
+// Set the gap of the tooltip.
+//
 // Gap is <gpui_kit::component::plot::tooltip::Tooltip>::gap.
 func (e TooltipEl) Gap(gap float32) TooltipEl {
 	o := op(e.n, 259)
@@ -156,6 +195,15 @@ func (e TooltipEl) Gap(gap float32) TooltipEl {
 	return e
 }
 
+// Glide the crosshair and dots between data, or snap them to each datum.
+//
+// A tooltip returned from `tooltip` slides them to the hovered datum on the pointer spring,
+// adopting it on the frame the cursor lands instead of travelling from where the last hover ended.
+// A crosshair glides along the axis it marks only, so a line that also follows the cursor keeps up
+// with it. Turn this off for positions the plot already springs itself (`glide`).
+//
+// Default is true.
+//
 // Glide is <gpui_kit::component::plot::tooltip::Tooltip>::glide.
 func (e TooltipEl) Glide(glide bool) TooltipEl {
 	o := op(e.n, 260)
@@ -163,6 +211,11 @@ func (e TooltipEl) Glide(glide bool) TooltipEl {
 	return e
 }
 
+// Append a row without a swatch, for a figure no series on the plot draws, such as a total or a
+// ratio.
+//
+// Among series rows its label lines up with theirs; without any, the labels sit at the start.
+//
 // PlainRow is <gpui_kit::component::plot::tooltip::Tooltip>::plain_row.
 func (e TooltipEl) PlainRow(label string, value string) TooltipEl {
 	o := op(e.n, 261)
@@ -171,6 +224,12 @@ func (e TooltipEl) PlainRow(label string, value string) TooltipEl {
 	return e
 }
 
+// Fade the whole overlay — crosshair, dots and box — to `progress` (`0..=1`).
+//
+// A tooltip returned from `tooltip` already follows the plot's hover, easing in when the cursor
+// lands on a datum and out after it leaves (`progress`); set this to override that, or to fade a
+// tooltip rendered outside a plot.
+//
 // Progress is <gpui_kit::component::plot::tooltip::Tooltip>::progress.
 func (e TooltipEl) Progress(progress float32) TooltipEl {
 	o := op(e.n, 262)
@@ -178,6 +237,8 @@ func (e TooltipEl) Progress(progress float32) TooltipEl {
 	return e
 }
 
+// Append a series row: a colored swatch, a muted `label`, and a right-aligned `value`.
+//
 // Row is <gpui_kit::component::plot::tooltip::Tooltip>::row.
 func (e TooltipEl) Row(color Color, label string, value string) TooltipEl {
 	o := op(e.n, 263)
@@ -187,6 +248,8 @@ func (e TooltipEl) Row(color Color, label string, value string) TooltipEl {
 	return e
 }
 
+// Set a bold title row shown at the top of the tooltip (e.g. the hovered x value).
+//
 // Title is <gpui_kit::component::plot::tooltip::Tooltip>::title.
 func (e TooltipEl) Title(title string) TooltipEl {
 	o := op(e.n, 264)
@@ -194,6 +257,11 @@ func (e TooltipEl) Title(title string) TooltipEl {
 	return e
 }
 
+// Color the value of the row added last — by `Row` or `PlainRow` — such as green or red by its
+// sign. The value reads in the tooltip's text color otherwise.
+//
+// Call it right after the row it colors; before any row it does nothing.
+//
 // ValueColor is <gpui_kit::component::plot::tooltip::Tooltip>::value_color.
 func (e TooltipEl) ValueColor(color Color) TooltipEl {
 	o := op(e.n, 265)
@@ -201,11 +269,37 @@ func (e TooltipEl) ValueColor(color Color) TooltipEl {
 	return e
 }
 
-func (e TooltipEl) PopoverStyle() TooltipEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TooltipEl) PopoverStyle() TooltipEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TooltipEl) RoundedFullStyle() TooltipEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e TooltipEl) FocusRingStyle() TooltipEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e TooltipEl) OnPrepaint(callback func(cx *Cx, e Bounds)) TooltipEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -220,19 +314,32 @@ func (e TooltipEl) DebugFocused(focusHandle FocusHandle) TooltipEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e TooltipEl) DebugGreen() TooltipEl               { tStyledExtDebugGreen(e.n); return e }
-func (e TooltipEl) DebugPink() TooltipEl                { tStyledExtDebugPink(e.n); return e }
-func (e TooltipEl) DebugRed() TooltipEl                 { tStyledExtDebugRed(e.n); return e }
-func (e TooltipEl) DebugYellow() TooltipEl              { tStyledExtDebugYellow(e.n); return e }
-func (e TooltipEl) FontBlack() TooltipEl                { tStyledExtFontBlack(e.n); return e }
-func (e TooltipEl) FontBold() TooltipEl                 { tStyledExtFontBold(e.n); return e }
-func (e TooltipEl) FontExtrabold() TooltipEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e TooltipEl) FontExtralight() TooltipEl           { tStyledExtFontExtralight(e.n); return e }
-func (e TooltipEl) FontLight() TooltipEl                { tStyledExtFontLight(e.n); return e }
-func (e TooltipEl) FontMedium() TooltipEl               { tStyledExtFontMedium(e.n); return e }
-func (e TooltipEl) FontNormal() TooltipEl               { tStyledExtFontNormal(e.n); return e }
-func (e TooltipEl) FontSemibold() TooltipEl             { tStyledExtFontSemibold(e.n); return e }
-func (e TooltipEl) FontThin() TooltipEl                 { tStyledExtFontThin(e.n); return e }
+func (e TooltipEl) DebugGreen() TooltipEl     { tStyledExtDebugGreen(e.n); return e }
+func (e TooltipEl) DebugPink() TooltipEl      { tStyledExtDebugPink(e.n); return e }
+func (e TooltipEl) DebugRed() TooltipEl       { tStyledExtDebugRed(e.n); return e }
+func (e TooltipEl) DebugYellow() TooltipEl    { tStyledExtDebugYellow(e.n); return e }
+func (e TooltipEl) FontBlack() TooltipEl      { tStyledExtFontBlack(e.n); return e }
+func (e TooltipEl) FontBold() TooltipEl       { tStyledExtFontBold(e.n); return e }
+func (e TooltipEl) FontExtrabold() TooltipEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e TooltipEl) FontExtralight() TooltipEl { tStyledExtFontExtralight(e.n); return e }
+func (e TooltipEl) FontLight() TooltipEl      { tStyledExtFontLight(e.n); return e }
+func (e TooltipEl) FontMedium() TooltipEl     { tStyledExtFontMedium(e.n); return e }
+func (e TooltipEl) FontNormal() TooltipEl     { tStyledExtFontNormal(e.n); return e }
+func (e TooltipEl) FontSemibold() TooltipEl   { tStyledExtFontSemibold(e.n); return e }
+func (e TooltipEl) FontThin() TooltipEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e TooltipEl) HFlex() TooltipEl                    { tStyledExtHFlex(e.n); return e }
 func (e TooltipEl) Margins(margins EdgesInto) TooltipEl { tStyledExtMargins(e.n, margins); return e }
 func (e TooltipEl) Paddings(paddings EdgesInto) TooltipEl {
@@ -243,130 +350,343 @@ func (e TooltipEl) RefineStyle(style StyleRefinement) TooltipEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TooltipEl) VFlex() TooltipEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TooltipEl) Style(st ...Style) TooltipEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TooltipEl) AspectRatio(ratio float32) TooltipEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e TooltipEl) Bg(fill Fill) TooltipEl              { tStyledBg(e.n, fill); return e }
-func (e TooltipEl) Border(length Length) TooltipEl      { tStyledBorder(e.n, length); return e }
-func (e TooltipEl) BorderB(length Length) TooltipEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TooltipEl) Bg(fill Fill) TooltipEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TooltipEl) Border(length Length) TooltipEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TooltipEl) BorderB(length Length) TooltipEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TooltipEl) BorderColor(borderColor Color) TooltipEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TooltipEl) BorderL(length Length) TooltipEl     { tStyledBorderL(e.n, length); return e }
-func (e TooltipEl) BorderR(length Length) TooltipEl     { tStyledBorderR(e.n, length); return e }
-func (e TooltipEl) BorderT(length Length) TooltipEl     { tStyledBorderT(e.n, length); return e }
-func (e TooltipEl) BorderX(length Length) TooltipEl     { tStyledBorderX(e.n, length); return e }
-func (e TooltipEl) BorderY(length Length) TooltipEl     { tStyledBorderY(e.n, length); return e }
-func (e TooltipEl) Bottom(length Length) TooltipEl      { tStyledBottom(e.n, length); return e }
-func (e TooltipEl) ColEnd(end int16) TooltipEl          { tStyledColEnd(e.n, end); return e }
-func (e TooltipEl) ColSpan(span uint16) TooltipEl       { tStyledColSpan(e.n, span); return e }
-func (e TooltipEl) ColStart(start int16) TooltipEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TooltipEl) BorderL(length Length) TooltipEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TooltipEl) BorderR(length Length) TooltipEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TooltipEl) BorderT(length Length) TooltipEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TooltipEl) BorderX(length Length) TooltipEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TooltipEl) BorderY(length Length) TooltipEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TooltipEl) Bottom(length Length) TooltipEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TooltipEl) ColEnd(end int16) TooltipEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TooltipEl) ColSpan(span uint16) TooltipEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TooltipEl) ColStart(start int16) TooltipEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TooltipEl) Cursor(cursor CursorStyle) TooltipEl { tStyledCursor(e.n, cursor); return e }
-func (e TooltipEl) FlexBasis(basis Length) TooltipEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e TooltipEl) FlexGrow(grow float32) TooltipEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TooltipEl) FlexBasis(basis Length) TooltipEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TooltipEl) FlexGrow(grow float32) TooltipEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TooltipEl) FlexShrink(shrink float32) TooltipEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e TooltipEl) FontFamily(familyName string) TooltipEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TooltipEl) FontFeatures(features FontFeatures) TooltipEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TooltipEl) FontWeight(weight FontWeight) TooltipEl { tStyledFontWeight(e.n, weight); return e }
-func (e TooltipEl) GapX(length Length) TooltipEl           { tStyledGapX(e.n, length); return e }
-func (e TooltipEl) GapY(length Length) TooltipEl           { tStyledGapY(e.n, length); return e }
-func (e TooltipEl) GridCols(cols uint16) TooltipEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TooltipEl) GapX(length Length) TooltipEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TooltipEl) GapY(length Length) TooltipEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e TooltipEl) GridCols(cols uint16) TooltipEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TooltipEl) GridColsMaxContent(cols uint16) TooltipEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TooltipEl) GridColsMinContent(cols uint16) TooltipEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TooltipEl) GridRows(rows uint16) TooltipEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TooltipEl) GridRowsMaxContent(rows uint16) TooltipEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TooltipEl) GridRowsMinContent(rows uint16) TooltipEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TooltipEl) H(length Length) TooltipEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TooltipEl) H(length Length) TooltipEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TooltipEl) Inset(length Length) TooltipEl { tStyledInset(e.n, length); return e }
-func (e TooltipEl) Left(length Length) TooltipEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TooltipEl) Left(length Length) TooltipEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TooltipEl) LineClamp(lines int) TooltipEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TooltipEl) LineHeight(lineHeight Length) TooltipEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TooltipEl) M(length Length) TooltipEl         { tStyledM(e.n, length); return e }
-func (e TooltipEl) MaxH(length Length) TooltipEl      { tStyledMaxH(e.n, length); return e }
-func (e TooltipEl) MaxSize(length Length) TooltipEl   { tStyledMaxSize(e.n, length); return e }
-func (e TooltipEl) MaxW(length Length) TooltipEl      { tStyledMaxW(e.n, length); return e }
-func (e TooltipEl) Mb(length Length) TooltipEl        { tStyledMb(e.n, length); return e }
-func (e TooltipEl) MinH(length Length) TooltipEl      { tStyledMinH(e.n, length); return e }
-func (e TooltipEl) MinSize(length Length) TooltipEl   { tStyledMinSize(e.n, length); return e }
-func (e TooltipEl) MinW(length Length) TooltipEl      { tStyledMinW(e.n, length); return e }
-func (e TooltipEl) Ml(length Length) TooltipEl        { tStyledMl(e.n, length); return e }
-func (e TooltipEl) Mr(length Length) TooltipEl        { tStyledMr(e.n, length); return e }
-func (e TooltipEl) Mt(length Length) TooltipEl        { tStyledMt(e.n, length); return e }
-func (e TooltipEl) Mx(length Length) TooltipEl        { tStyledMx(e.n, length); return e }
-func (e TooltipEl) My(length Length) TooltipEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TooltipEl) M(length Length) TooltipEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TooltipEl) MaxH(length Length) TooltipEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TooltipEl) MaxSize(length Length) TooltipEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TooltipEl) MaxW(length Length) TooltipEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TooltipEl) Mb(length Length) TooltipEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TooltipEl) MinH(length Length) TooltipEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TooltipEl) MinSize(length Length) TooltipEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TooltipEl) MinW(length Length) TooltipEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TooltipEl) Ml(length Length) TooltipEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TooltipEl) Mr(length Length) TooltipEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TooltipEl) Mt(length Length) TooltipEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TooltipEl) Mx(length Length) TooltipEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TooltipEl) My(length Length) TooltipEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TooltipEl) Opacity(opacity float32) TooltipEl { tStyledOpacity(e.n, opacity); return e }
-func (e TooltipEl) P(length Length) TooltipEl         { tStyledP(e.n, length); return e }
-func (e TooltipEl) Pb(length Length) TooltipEl        { tStyledPb(e.n, length); return e }
-func (e TooltipEl) Pl(length Length) TooltipEl        { tStyledPl(e.n, length); return e }
-func (e TooltipEl) Pr(length Length) TooltipEl        { tStyledPr(e.n, length); return e }
-func (e TooltipEl) Pt(length Length) TooltipEl        { tStyledPt(e.n, length); return e }
-func (e TooltipEl) Px(length Length) TooltipEl        { tStyledPx(e.n, length); return e }
-func (e TooltipEl) Py(length Length) TooltipEl        { tStyledPy(e.n, length); return e }
-func (e TooltipEl) Right(length Length) TooltipEl     { tStyledRight(e.n, length); return e }
-func (e TooltipEl) Rounded(length Length) TooltipEl   { tStyledRounded(e.n, length); return e }
-func (e TooltipEl) RoundedB(length Length) TooltipEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TooltipEl) P(length Length) TooltipEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TooltipEl) Pb(length Length) TooltipEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TooltipEl) Pl(length Length) TooltipEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TooltipEl) Pr(length Length) TooltipEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TooltipEl) Pt(length Length) TooltipEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TooltipEl) Px(length Length) TooltipEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TooltipEl) Py(length Length) TooltipEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TooltipEl) Right(length Length) TooltipEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TooltipEl) Rounded(length Length) TooltipEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TooltipEl) RoundedB(length Length) TooltipEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TooltipEl) RoundedBl(length Length) TooltipEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TooltipEl) RoundedBr(length Length) TooltipEl { tStyledRoundedBr(e.n, length); return e }
-func (e TooltipEl) RoundedL(length Length) TooltipEl  { tStyledRoundedL(e.n, length); return e }
-func (e TooltipEl) RoundedR(length Length) TooltipEl  { tStyledRoundedR(e.n, length); return e }
-func (e TooltipEl) RoundedT(length Length) TooltipEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TooltipEl) RoundedL(length Length) TooltipEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TooltipEl) RoundedR(length Length) TooltipEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TooltipEl) RoundedT(length Length) TooltipEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TooltipEl) RoundedTl(length Length) TooltipEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TooltipEl) RoundedTr(length Length) TooltipEl { tStyledRoundedTr(e.n, length); return e }
-func (e TooltipEl) RowEnd(end int16) TooltipEl        { tStyledRowEnd(e.n, end); return e }
-func (e TooltipEl) RowSpan(span uint16) TooltipEl     { tStyledRowSpan(e.n, span); return e }
-func (e TooltipEl) RowStart(start int16) TooltipEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e TooltipEl) RowEnd(end int16) TooltipEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TooltipEl) RowSpan(span uint16) TooltipEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TooltipEl) RowStart(start int16) TooltipEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TooltipEl) ScrollbarWidth(width Length) TooltipEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TooltipEl) Shadow(shadows []BoxShadow) TooltipEl { tStyledShadow(e.n, shadows); return e }
-func (e TooltipEl) Size(length Length) TooltipEl         { tStyledSize(e.n, length); return e }
-func (e TooltipEl) TextAlign(align TextAlign) TooltipEl  { tStyledTextAlign(e.n, align); return e }
-func (e TooltipEl) TextBg(bg Color) TooltipEl            { tStyledTextBg(e.n, bg); return e }
-func (e TooltipEl) TextColor(color Color) TooltipEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e TooltipEl) Size(length Length) TooltipEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TooltipEl) TextAlign(align TextAlign) TooltipEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TooltipEl) TextBg(bg Color) TooltipEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TooltipEl) TextColor(color Color) TooltipEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TooltipEl) TextDecorationColor(color Color) TooltipEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TooltipEl) TextOverflow(overflow TextOverflow) TooltipEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e TooltipEl) TextSize(size Length) TooltipEl { tStyledTextSize(e.n, size); return e }
-func (e TooltipEl) Top(length Length) TooltipEl    { tStyledTop(e.n, length); return e }
-func (e TooltipEl) W(length Length) TooltipEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TooltipEl) Top(length Length) TooltipEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TooltipEl) W(length Length) TooltipEl { tStyledW(e.n, length); return e }
 
 func (e TooltipEl) Text(s string) TooltipEl { putText(e.n, s); return e }
 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e TooltipEl) ChildView(v View) TooltipEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e TooltipEl) Child(child Element) TooltipEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e TooltipEl) Children(children ...Element) TooltipEl {
 	tParentElementChildren(e.n, children...)
 	return e

@@ -9,6 +9,8 @@ type TagEl struct{ n *node }
 
 func (e TagEl) node() *node { return e.n }
 
+// Create a new Tag.
+//
 // Tag is <gpui_kit::component::tag::Tag>::new.
 func Tag(st ...Style) TagEl {
 	useComponentTag()
@@ -17,6 +19,8 @@ func Tag(st ...Style) TagEl {
 	return TagEl{n}
 }
 
+// Create a new tag with default variant (`Color`).
+//
 // TagColor is <gpui_kit::component::tag::Tag>::color.
 func TagColor(color ColorName, st ...Style) TagEl {
 	useComponentTag()
@@ -27,6 +31,8 @@ func TagColor(color ColorName, st ...Style) TagEl {
 	return TagEl{n}
 }
 
+// Create a new tag with default variant (`Custom`).
+//
 // TagCustom is <gpui_kit::component::tag::Tag>::custom.
 func TagCustom(color Color, foreground Color, border Color, st ...Style) TagEl {
 	useComponentTag()
@@ -39,6 +45,8 @@ func TagCustom(color Color, foreground Color, border Color, st ...Style) TagEl {
 	return TagEl{n}
 }
 
+// Create a new tag with default variant (`Danger`).
+//
 // TagDanger is <gpui_kit::component::tag::Tag>::danger.
 func TagDanger(st ...Style) TagEl {
 	useComponentTag()
@@ -47,6 +55,8 @@ func TagDanger(st ...Style) TagEl {
 	return TagEl{n}
 }
 
+// Create a new tag with default variant (`Info`).
+//
 // TagInfo is <gpui_kit::component::tag::Tag>::info.
 func TagInfo(st ...Style) TagEl {
 	useComponentTag()
@@ -55,6 +65,8 @@ func TagInfo(st ...Style) TagEl {
 	return TagEl{n}
 }
 
+// Create a new tag with default variant (`Primary`).
+//
 // TagPrimary is <gpui_kit::component::tag::Tag>::primary.
 func TagPrimary(st ...Style) TagEl {
 	useComponentTag()
@@ -63,6 +75,8 @@ func TagPrimary(st ...Style) TagEl {
 	return TagEl{n}
 }
 
+// Create a new tag with default variant (`Secondary`).
+//
 // TagSecondary is <gpui_kit::component::tag::Tag>::secondary.
 func TagSecondary(st ...Style) TagEl {
 	useComponentTag()
@@ -71,6 +85,8 @@ func TagSecondary(st ...Style) TagEl {
 	return TagEl{n}
 }
 
+// Create a new tag with default variant (`Success`).
+//
 // TagSuccess is <gpui_kit::component::tag::Tag>::success.
 func TagSuccess(st ...Style) TagEl {
 	useComponentTag()
@@ -79,6 +95,8 @@ func TagSuccess(st ...Style) TagEl {
 	return TagEl{n}
 }
 
+// Create a new tag with default variant (`Warning`).
+//
 // TagWarning is <gpui_kit::component::tag::Tag>::warning.
 func TagWarning(st ...Style) TagEl {
 	useComponentTag()
@@ -87,12 +105,16 @@ func TagWarning(st ...Style) TagEl {
 	return TagEl{n}
 }
 
+// Use outline style
+//
 // Outline is <gpui_kit::component::tag::Tag>::outline.
 func (e TagEl) Outline() TagEl {
 	op(e.n, 256)
 	return e
 }
 
+// Set rounded corners.
+//
 // Rounded is <gpui_kit::component::tag::Tag>::rounded.
 func (e TagEl) Rounded(radius Length) TagEl {
 	o := op(e.n, 257)
@@ -100,12 +122,16 @@ func (e TagEl) Rounded(radius Length) TagEl {
 	return e
 }
 
+// Set rounded full
+//
 // RoundedFull is <gpui_kit::component::tag::Tag>::rounded_full.
 func (e TagEl) RoundedFull() TagEl {
 	op(e.n, 258)
 	return e
 }
 
+// Set the variant of the Tag.
+//
 // WithVariant is <gpui_kit::component::tag::Tag>::with_variant.
 func (e TagEl) WithVariant(variant TagVariant) TagEl {
 	o := op(e.n, 259)
@@ -113,11 +139,37 @@ func (e TagEl) WithVariant(variant TagVariant) TagEl {
 	return e
 }
 
-func (e TagEl) PopoverStyle() TagEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TagEl) PopoverStyle() TagEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TagEl) RoundedFullStyle() TagEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e TagEl) FocusRingStyle() TagEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e TagEl) OnPrepaint(callback func(cx *Cx, e Bounds)) TagEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -129,36 +181,67 @@ func (e TagEl) DebugFocused(focusHandle FocusHandle) TagEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e TagEl) DebugGreen() TagEl                       { tStyledExtDebugGreen(e.n); return e }
-func (e TagEl) DebugPink() TagEl                        { tStyledExtDebugPink(e.n); return e }
-func (e TagEl) DebugRed() TagEl                         { tStyledExtDebugRed(e.n); return e }
-func (e TagEl) DebugYellow() TagEl                      { tStyledExtDebugYellow(e.n); return e }
-func (e TagEl) FontBlack() TagEl                        { tStyledExtFontBlack(e.n); return e }
-func (e TagEl) FontBold() TagEl                         { tStyledExtFontBold(e.n); return e }
-func (e TagEl) FontExtrabold() TagEl                    { tStyledExtFontExtrabold(e.n); return e }
-func (e TagEl) FontExtralight() TagEl                   { tStyledExtFontExtralight(e.n); return e }
-func (e TagEl) FontLight() TagEl                        { tStyledExtFontLight(e.n); return e }
-func (e TagEl) FontMedium() TagEl                       { tStyledExtFontMedium(e.n); return e }
-func (e TagEl) FontNormal() TagEl                       { tStyledExtFontNormal(e.n); return e }
-func (e TagEl) FontSemibold() TagEl                     { tStyledExtFontSemibold(e.n); return e }
-func (e TagEl) FontThin() TagEl                         { tStyledExtFontThin(e.n); return e }
+func (e TagEl) DebugGreen() TagEl     { tStyledExtDebugGreen(e.n); return e }
+func (e TagEl) DebugPink() TagEl      { tStyledExtDebugPink(e.n); return e }
+func (e TagEl) DebugRed() TagEl       { tStyledExtDebugRed(e.n); return e }
+func (e TagEl) DebugYellow() TagEl    { tStyledExtDebugYellow(e.n); return e }
+func (e TagEl) FontBlack() TagEl      { tStyledExtFontBlack(e.n); return e }
+func (e TagEl) FontBold() TagEl       { tStyledExtFontBold(e.n); return e }
+func (e TagEl) FontExtrabold() TagEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e TagEl) FontExtralight() TagEl { tStyledExtFontExtralight(e.n); return e }
+func (e TagEl) FontLight() TagEl      { tStyledExtFontLight(e.n); return e }
+func (e TagEl) FontMedium() TagEl     { tStyledExtFontMedium(e.n); return e }
+func (e TagEl) FontNormal() TagEl     { tStyledExtFontNormal(e.n); return e }
+func (e TagEl) FontSemibold() TagEl   { tStyledExtFontSemibold(e.n); return e }
+func (e TagEl) FontThin() TagEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e TagEl) HFlex() TagEl                            { tStyledExtHFlex(e.n); return e }
 func (e TagEl) Margins(margins EdgesInto) TagEl         { tStyledExtMargins(e.n, margins); return e }
 func (e TagEl) Paddings(paddings EdgesInto) TagEl       { tStyledExtPaddings(e.n, paddings); return e }
 func (e TagEl) RefineStyle(style StyleRefinement) TagEl { tStyledExtRefineStyle(e.n, style); return e }
-func (e TagEl) VFlex() TagEl                            { tStyledExtVFlex(e.n); return e }
 
-func (e TagEl) Large() TagEl                 { tSizableLarge(e.n); return e }
-func (e TagEl) Small() TagEl                 { tSizableSmall(e.n); return e }
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
+func (e TagEl) VFlex() TagEl { tStyledExtVFlex(e.n); return e }
+
+// Set to Size::Large
+func (e TagEl) Large() TagEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TagEl) Small() TagEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TagEl) WithSize(size SizeInto) TagEl { tSizableWithSize(e.n, size); return e }
-func (e TagEl) Xsmall() TagEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TagEl) Xsmall() TagEl { tSizableXsmall(e.n); return e }
 
 func (e TagEl) Text(s string) TagEl { putText(e.n, s); return e }
 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e TagEl) ChildView(v View) TagEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e TagEl) Child(child Element) TagEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e TagEl) Children(children ...Element) TagEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -167,91 +250,296 @@ func (e TagEl) Children(children ...Element) TagEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TagEl) Style(st ...Style) TagEl { tokens(e.n, st); return e }
 
-func (e TagEl) AspectRatio(ratio float32) TagEl     { tStyledAspectRatio(e.n, ratio); return e }
-func (e TagEl) Bg(fill Fill) TagEl                  { tStyledBg(e.n, fill); return e }
-func (e TagEl) Border(length Length) TagEl          { tStyledBorder(e.n, length); return e }
-func (e TagEl) BorderB(length Length) TagEl         { tStyledBorderB(e.n, length); return e }
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+func (e TagEl) AspectRatio(ratio float32) TagEl { tStyledAspectRatio(e.n, ratio); return e }
+
+// Sets the background color of the element.
+func (e TagEl) Bg(fill Fill) TagEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TagEl) Border(length Length) TagEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TagEl) BorderB(length Length) TagEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TagEl) BorderColor(borderColor Color) TagEl { tStyledBorderColor(e.n, borderColor); return e }
-func (e TagEl) BorderL(length Length) TagEl         { tStyledBorderL(e.n, length); return e }
-func (e TagEl) BorderR(length Length) TagEl         { tStyledBorderR(e.n, length); return e }
-func (e TagEl) BorderT(length Length) TagEl         { tStyledBorderT(e.n, length); return e }
-func (e TagEl) BorderX(length Length) TagEl         { tStyledBorderX(e.n, length); return e }
-func (e TagEl) BorderY(length Length) TagEl         { tStyledBorderY(e.n, length); return e }
-func (e TagEl) Bottom(length Length) TagEl          { tStyledBottom(e.n, length); return e }
-func (e TagEl) ColEnd(end int16) TagEl              { tStyledColEnd(e.n, end); return e }
-func (e TagEl) ColSpan(span uint16) TagEl           { tStyledColSpan(e.n, span); return e }
-func (e TagEl) ColStart(start int16) TagEl          { tStyledColStart(e.n, start); return e }
-func (e TagEl) Cursor(cursor CursorStyle) TagEl     { tStyledCursor(e.n, cursor); return e }
-func (e TagEl) FlexBasis(basis Length) TagEl        { tStyledFlexBasis(e.n, basis); return e }
-func (e TagEl) FlexGrow(grow float32) TagEl         { tStyledFlexGrow(e.n, grow); return e }
-func (e TagEl) FlexShrink(shrink float32) TagEl     { tStyledFlexShrink(e.n, shrink); return e }
-func (e TagEl) FontFamily(familyName string) TagEl  { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TagEl) BorderL(length Length) TagEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TagEl) BorderR(length Length) TagEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TagEl) BorderT(length Length) TagEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TagEl) BorderX(length Length) TagEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TagEl) BorderY(length Length) TagEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TagEl) Bottom(length Length) TagEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TagEl) ColEnd(end int16) TagEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TagEl) ColSpan(span uint16) TagEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TagEl) ColStart(start int16) TagEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e TagEl) Cursor(cursor CursorStyle) TagEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TagEl) FlexBasis(basis Length) TagEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TagEl) FlexGrow(grow float32) TagEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e TagEl) FlexShrink(shrink float32) TagEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
+func (e TagEl) FontFamily(familyName string) TagEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e TagEl) FontFeatures(features FontFeatures) TagEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
-func (e TagEl) FontWeight(weight FontWeight) TagEl   { tStyledFontWeight(e.n, weight); return e }
-func (e TagEl) Gap(length Length) TagEl              { tStyledGap(e.n, length); return e }
-func (e TagEl) GapX(length Length) TagEl             { tStyledGapX(e.n, length); return e }
-func (e TagEl) GapY(length Length) TagEl             { tStyledGapY(e.n, length); return e }
-func (e TagEl) GridCols(cols uint16) TagEl           { tStyledGridCols(e.n, cols); return e }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
+func (e TagEl) FontWeight(weight FontWeight) TagEl { tStyledFontWeight(e.n, weight); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TagEl) Gap(length Length) TagEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TagEl) GapX(length Length) TagEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TagEl) GapY(length Length) TagEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e TagEl) GridCols(cols uint16) TagEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TagEl) GridColsMaxContent(cols uint16) TagEl { tStyledGridColsMaxContent(e.n, cols); return e }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TagEl) GridColsMinContent(cols uint16) TagEl { tStyledGridColsMinContent(e.n, cols); return e }
-func (e TagEl) GridRows(rows uint16) TagEl           { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows of this element.
+func (e TagEl) GridRows(rows uint16) TagEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TagEl) GridRowsMaxContent(rows uint16) TagEl { tStyledGridRowsMaxContent(e.n, rows); return e }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TagEl) GridRowsMinContent(rows uint16) TagEl { tStyledGridRowsMinContent(e.n, rows); return e }
-func (e TagEl) H(length Length) TagEl                { tStyledH(e.n, length); return e }
-func (e TagEl) Inset(length Length) TagEl            { tStyledInset(e.n, length); return e }
-func (e TagEl) Left(length Length) TagEl             { tStyledLeft(e.n, length); return e }
-func (e TagEl) LineClamp(lines int) TagEl            { tStyledLineClamp(e.n, lines); return e }
-func (e TagEl) LineHeight(lineHeight Length) TagEl   { tStyledLineHeight(e.n, lineHeight); return e }
-func (e TagEl) M(length Length) TagEl                { tStyledM(e.n, length); return e }
-func (e TagEl) MaxH(length Length) TagEl             { tStyledMaxH(e.n, length); return e }
-func (e TagEl) MaxSize(length Length) TagEl          { tStyledMaxSize(e.n, length); return e }
-func (e TagEl) MaxW(length Length) TagEl             { tStyledMaxW(e.n, length); return e }
-func (e TagEl) Mb(length Length) TagEl               { tStyledMb(e.n, length); return e }
-func (e TagEl) MinH(length Length) TagEl             { tStyledMinH(e.n, length); return e }
-func (e TagEl) MinSize(length Length) TagEl          { tStyledMinSize(e.n, length); return e }
-func (e TagEl) MinW(length Length) TagEl             { tStyledMinW(e.n, length); return e }
-func (e TagEl) Ml(length Length) TagEl               { tStyledMl(e.n, length); return e }
-func (e TagEl) Mr(length Length) TagEl               { tStyledMr(e.n, length); return e }
-func (e TagEl) Mt(length Length) TagEl               { tStyledMt(e.n, length); return e }
-func (e TagEl) Mx(length Length) TagEl               { tStyledMx(e.n, length); return e }
-func (e TagEl) My(length Length) TagEl               { tStyledMy(e.n, length); return e }
-func (e TagEl) Opacity(opacity float32) TagEl        { tStyledOpacity(e.n, opacity); return e }
-func (e TagEl) P(length Length) TagEl                { tStyledP(e.n, length); return e }
-func (e TagEl) Pb(length Length) TagEl               { tStyledPb(e.n, length); return e }
-func (e TagEl) Pl(length Length) TagEl               { tStyledPl(e.n, length); return e }
-func (e TagEl) Pr(length Length) TagEl               { tStyledPr(e.n, length); return e }
-func (e TagEl) Pt(length Length) TagEl               { tStyledPt(e.n, length); return e }
-func (e TagEl) Px(length Length) TagEl               { tStyledPx(e.n, length); return e }
-func (e TagEl) Py(length Length) TagEl               { tStyledPy(e.n, length); return e }
-func (e TagEl) Right(length Length) TagEl            { tStyledRight(e.n, length); return e }
-func (e TagEl) RoundedB(length Length) TagEl         { tStyledRoundedB(e.n, length); return e }
-func (e TagEl) RoundedBl(length Length) TagEl        { tStyledRoundedBl(e.n, length); return e }
-func (e TagEl) RoundedBr(length Length) TagEl        { tStyledRoundedBr(e.n, length); return e }
-func (e TagEl) RoundedL(length Length) TagEl         { tStyledRoundedL(e.n, length); return e }
-func (e TagEl) RoundedR(length Length) TagEl         { tStyledRoundedR(e.n, length); return e }
-func (e TagEl) RoundedT(length Length) TagEl         { tStyledRoundedT(e.n, length); return e }
-func (e TagEl) RoundedTl(length Length) TagEl        { tStyledRoundedTl(e.n, length); return e }
-func (e TagEl) RoundedTr(length Length) TagEl        { tStyledRoundedTr(e.n, length); return e }
-func (e TagEl) RowEnd(end int16) TagEl               { tStyledRowEnd(e.n, end); return e }
-func (e TagEl) RowSpan(span uint16) TagEl            { tStyledRowSpan(e.n, span); return e }
-func (e TagEl) RowStart(start int16) TagEl           { tStyledRowStart(e.n, start); return e }
-func (e TagEl) ScrollbarWidth(width Length) TagEl    { tStyledScrollbarWidth(e.n, width); return e }
-func (e TagEl) Shadow(shadows []BoxShadow) TagEl     { tStyledShadow(e.n, shadows); return e }
-func (e TagEl) Size(length Length) TagEl             { tStyledSize(e.n, length); return e }
-func (e TagEl) TextAlign(align TextAlign) TagEl      { tStyledTextAlign(e.n, align); return e }
-func (e TagEl) TextBg(bg Color) TagEl                { tStyledTextBg(e.n, bg); return e }
-func (e TagEl) TextColor(color Color) TagEl          { tStyledTextColor(e.n, color); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TagEl) H(length Length) TagEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TagEl) Inset(length Length) TagEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TagEl) Left(length Length) TagEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e TagEl) LineClamp(lines int) TagEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
+func (e TagEl) LineHeight(lineHeight Length) TagEl { tStyledLineHeight(e.n, lineHeight); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TagEl) M(length Length) TagEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TagEl) MaxH(length Length) TagEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TagEl) MaxSize(length Length) TagEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TagEl) MaxW(length Length) TagEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TagEl) Mb(length Length) TagEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TagEl) MinH(length Length) TagEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TagEl) MinSize(length Length) TagEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TagEl) MinW(length Length) TagEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TagEl) Ml(length Length) TagEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TagEl) Mr(length Length) TagEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TagEl) Mt(length Length) TagEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TagEl) Mx(length Length) TagEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TagEl) My(length Length) TagEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e TagEl) Opacity(opacity float32) TagEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TagEl) P(length Length) TagEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TagEl) Pb(length Length) TagEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TagEl) Pl(length Length) TagEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TagEl) Pr(length Length) TagEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TagEl) Pt(length Length) TagEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TagEl) Px(length Length) TagEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TagEl) Py(length Length) TagEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TagEl) Right(length Length) TagEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TagEl) RoundedB(length Length) TagEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TagEl) RoundedBl(length Length) TagEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TagEl) RoundedBr(length Length) TagEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TagEl) RoundedL(length Length) TagEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TagEl) RoundedR(length Length) TagEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TagEl) RoundedT(length Length) TagEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TagEl) RoundedTl(length Length) TagEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TagEl) RoundedTr(length Length) TagEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e TagEl) RowEnd(end int16) TagEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TagEl) RowSpan(span uint16) TagEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TagEl) RowStart(start int16) TagEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e TagEl) ScrollbarWidth(width Length) TagEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e TagEl) Shadow(shadows []BoxShadow) TagEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e TagEl) Size(length Length) TagEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TagEl) TextAlign(align TextAlign) TagEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TagEl) TextBg(bg Color) TagEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TagEl) TextColor(color Color) TagEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TagEl) TextDecorationColor(color Color) TagEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TagEl) TextOverflow(overflow TextOverflow) TagEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e TagEl) TextSize(size Length) TagEl { tStyledTextSize(e.n, size); return e }
-func (e TagEl) Top(length Length) TagEl    { tStyledTop(e.n, length); return e }
-func (e TagEl) W(length Length) TagEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TagEl) Top(length Length) TagEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TagEl) W(length Length) TagEl { tStyledW(e.n, length); return e }

@@ -3,6 +3,8 @@ package gk
 
 import "core:time"
 
+// A Switch element that can be toggled on or off.
+//
 // Switch is gpui_kit::component::switch::Switch.
 Switch :: struct {
 	using el: Element,
@@ -16,18 +18,39 @@ Switch_VT :: struct {
 	using t_sizable: ^Sizable_Trait(Switch),
 	using t_disableable: ^Disableable_Trait(Switch),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Switch),
+	// Set the name a screen reader announces, when the visible label is not it.
+	//
+	// A switch's name comes from its `->label` by default. Setting this replaces the announced name
+	// without changing what is displayed. A switch without a label has no accessible name, so set this
+	// whenever the switch is drawn without visible text.
 	accessibility_label: proc(e: Switch, label: string) -> Switch,
+	// Set the checked state of the switch.
 	checked: proc(e: Switch, checked: bool) -> Switch,
+	// Set the background color of the switch when checked. Defaults to the theme's `primary` colour.
 	color: proc(e: Switch, color: Color) -> Switch,
+	// Set the label of the switch.
 	label: proc(e: Switch, label: Text_Into) -> Switch,
+	// Handle a requested checked value from pointer or keyboard activation.
+	//
+	// This is a controlled value: the owner must write the requested value for it to show. Disabled
+	// controls do not call the handler. This and `->on_click` share one callback; chaining them
+	// replaces the previous handler instead of calling both.
 	on_change: proc(e: Switch, handler: Handler) -> Switch,
+	// Alias for `->on_change`. The last callback registered with either name wins.
 	on_click: proc(e: Switch, handler: Handler) -> Switch,
+	// Set the focus traversal index within a GPUI tab group, default is 0.
 	tab_index: proc(e: Switch, tab_index: int) -> Switch,
+	// Set whether the switch participates in keyboard focus traversal, default is true.
 	tab_stop: proc(e: Switch, tab_stop: bool) -> Switch,
+	// Set tooltip text for the switch.
 	tooltip: proc(e: Switch, tooltip: string) -> Switch,
+	// Overrides how long the pointer must rest before the tooltip shows.
+	//
+	// Defaults to `show_delay`.
 	tooltip_show_delay: proc(e: Switch, delay: time.Duration) -> Switch,
 }
 
+// Create a new Switch element.
 switch_ :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Switch {
 	use_component_switch()
 	e := Switch{new_node(768, loc), &switch_vt}

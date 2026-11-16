@@ -21,6 +21,8 @@ func NewEffectTransition(duration time.Duration) EffectTransition {
 	return EffectTransition{n}
 }
 
+// Animate opacity from `from` to `to`.
+//
 // Fade is <gpui_kit::base::animation::EffectTransition>::fade.
 func (e EffectTransition) Fade(from float32, to float32) EffectTransition {
 	o := op(e.n, 256)
@@ -29,6 +31,8 @@ func (e EffectTransition) Fade(from float32, to float32) EffectTransition {
 	return e
 }
 
+// Animate height from `from` to `to`.
+//
 // Height is <gpui_kit::base::animation::EffectTransition>::height.
 func (e EffectTransition) Height(from float32, to float32) EffectTransition {
 	o := op(e.n, 257)
@@ -37,6 +41,8 @@ func (e EffectTransition) Height(from float32, to float32) EffectTransition {
 	return e
 }
 
+// Animate horizontal offset from `from` to `to`.
+//
 // SlideX is <gpui_kit::base::animation::EffectTransition>::slide_x.
 func (e EffectTransition) SlideX(from float32, to float32) EffectTransition {
 	o := op(e.n, 258)
@@ -45,6 +51,8 @@ func (e EffectTransition) SlideX(from float32, to float32) EffectTransition {
 	return e
 }
 
+// Animate vertical offset from `from` to `to`.
+//
 // SlideY is <gpui_kit::base::animation::EffectTransition>::slide_y.
 func (e EffectTransition) SlideY(from float32, to float32) EffectTransition {
 	o := op(e.n, 259)
@@ -53,6 +61,8 @@ func (e EffectTransition) SlideY(from float32, to float32) EffectTransition {
 	return e
 }
 
+// Animate width from `from` to `to`.
+//
 // Width is <gpui_kit::base::animation::EffectTransition>::width.
 func (e EffectTransition) Width(from float32, to float32) EffectTransition {
 	o := op(e.n, 260)

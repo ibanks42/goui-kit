@@ -9,6 +9,8 @@ type CommandEl struct{ n *node }
 
 func (e CommandEl) node() *node { return e.n }
 
+// Render the palette held by `state`.
+//
 // Command is <gpui_kit::component::command::Command>::new.
 func Command(state CommandState, st ...Style) CommandEl {
 	useComponentCommand()
@@ -19,6 +21,10 @@ func Command(state CommandState, st ...Style) CommandEl {
 	return CommandEl{n}
 }
 
+// Set whether to draw the surrounding border and rounding, default: `true`.
+//
+// Turn it off when the palette already sits inside a frame of its own, such as a `Dialog`.
+//
 // Bordered is <gpui_kit::component::command::Command>::bordered.
 func (e CommandEl) Bordered(bordered bool) CommandEl {
 	o := op(e.n, 256)
@@ -26,6 +32,12 @@ func (e CommandEl) Bordered(bordered bool) CommandEl {
 	return e
 }
 
+// Keep the query field but toggle the local filtering, default: `true`.
+//
+// Turn it off when an external source already answers the query, such as an async search: every
+// supplied item stays visible, the query still reports through `OnQuery`, and a query change hands
+// the highlight back to the first item instead of a local textual match.
+//
 // Filterable is <gpui_kit::component::command::Command>::filterable.
 func (e CommandEl) Filterable(filterable bool) CommandEl {
 	o := op(e.n, 257)
@@ -33,6 +45,8 @@ func (e CommandEl) Filterable(filterable bool) CommandEl {
 	return e
 }
 
+// Add a group of command items.
+//
 // Group is <gpui_kit::component::command::Command>::group.
 func (e CommandEl) Group(group CommandGroup) CommandEl {
 	o := op(e.n, 258)
@@ -40,6 +54,8 @@ func (e CommandEl) Group(group CommandGroup) CommandEl {
 	return e
 }
 
+// Add an ungrouped command item.
+//
 // Item is <gpui_kit::component::command::Command>::item.
 func (e CommandEl) Item(item CommandItem) CommandEl {
 	o := op(e.n, 259)
@@ -47,6 +63,8 @@ func (e CommandEl) Item(item CommandItem) CommandEl {
 	return e
 }
 
+// Add multiple ungrouped command items.
+//
 // Items is <gpui_kit::component::command::Command>::items.
 func (e CommandEl) Items(items []CommandItem) CommandEl {
 	o := op(e.n, 260)
@@ -57,6 +75,8 @@ func (e CommandEl) Items(items []CommandItem) CommandEl {
 	return e
 }
 
+// Set the max height of the list, default: 18.75rem (300px).
+//
 // MaxH is <gpui_kit::component::command::Command>::max_h.
 func (e CommandEl) MaxH(height Length) CommandEl {
 	o := op(e.n, 261)
@@ -64,6 +84,9 @@ func (e CommandEl) MaxH(height Length) CommandEl {
 	return e
 }
 
+// Run a callback synchronously before an empty-query Cancel action propagates. A hosting Dialog
+// should perform the dismissal after this callback instead of being closed by the callback itself.
+//
 // OnCancel is <gpui_kit::component::command::Command>::on_cancel.
 func (e CommandEl) OnCancel(callback func(cx *Cx)) CommandEl {
 	o := op(e.n, 262)
@@ -71,6 +94,10 @@ func (e CommandEl) OnCancel(callback func(cx *Cx)) CommandEl {
 	return e
 }
 
+// Run a callback with the confirmed item's original index path after its Action is dispatched,
+// provided the source window remains live. The callback runs after the current `CommandState`
+// update releases its lease. The path follows the same input-model coordinates as `OnSelect`.
+//
 // OnConfirm is <gpui_kit::component::command::Command>::on_confirm.
 func (e CommandEl) OnConfirm(callback func(cx *Cx, e BaseIndexPath)) CommandEl {
 	o := op(e.n, 263)
@@ -78,6 +105,9 @@ func (e CommandEl) OnConfirm(callback func(cx *Cx, e BaseIndexPath)) CommandEl {
 	return e
 }
 
+// Run a callback after a searchable query actually changes and the current `CommandState` update
+// releases its lease.
+//
 // OnQuery is <gpui_kit::component::command::Command>::on_query.
 func (e CommandEl) OnQuery(callback func(cx *Cx, e string)) CommandEl {
 	o := op(e.n, 264)
@@ -85,6 +115,13 @@ func (e CommandEl) OnQuery(callback func(cx *Cx, e string)) CommandEl {
 	return e
 }
 
+// Run a callback after the highlighted item's original index path changes and the current
+// `CommandState` update releases its lease.
+//
+// For `Items`, `section` is 0 and `row` is the item's position in the supplied iterator. Explicit
+// groups use their group and item positions and follow the implicit ungrouped section when both
+// forms are mixed. Local filtering never changes these coordinates.
+//
 // OnSelect is <gpui_kit::component::command::Command>::on_select.
 func (e CommandEl) OnSelect(callback func(cx *Cx, e BaseIndexPath)) CommandEl {
 	o := op(e.n, 265)
@@ -92,6 +129,8 @@ func (e CommandEl) OnSelect(callback func(cx *Cx, e BaseIndexPath)) CommandEl {
 	return e
 }
 
+// Set the placeholder of the search field.
+//
 // Placeholder is <gpui_kit::component::command::Command>::placeholder.
 func (e CommandEl) Placeholder(placeholder string) CommandEl {
 	o := op(e.n, 266)
@@ -99,6 +138,9 @@ func (e CommandEl) Placeholder(placeholder string) CommandEl {
 	return e
 }
 
+// Bounce the command list at its vertical boundaries. On by default on iOS, Android and macOS, off
+// elsewhere; reduced motion disables displacement.
+//
 // ScrollBounce is <gpui_kit::component::command::Command>::scroll_bounce.
 func (e CommandEl) ScrollBounce(enabled bool) CommandEl {
 	o := op(e.n, 267)
@@ -106,6 +148,8 @@ func (e CommandEl) ScrollBounce(enabled bool) CommandEl {
 	return e
 }
 
+// Show or hide the query field and local filtering.
+//
 // Searchable is <gpui_kit::component::command::Command>::searchable.
 func (e CommandEl) Searchable(searchable bool) CommandEl {
 	o := op(e.n, 268)
@@ -113,13 +157,27 @@ func (e CommandEl) Searchable(searchable bool) CommandEl {
 	return e
 }
 
+// Add a separator between the preceding and following entries.
+//
 // Separator is <gpui_kit::component::command::Command>::separator.
 func (e CommandEl) Separator() CommandEl {
 	op(e.n, 269)
 	return e
 }
 
-func (e CommandEl) PopoverStyle() CommandEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e CommandEl) PopoverStyle() CommandEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CommandEl) RoundedFullStyle() CommandEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e CommandEl) CornerRadii(radius Corners) CommandEl {
@@ -131,19 +189,32 @@ func (e CommandEl) DebugFocused(focusHandle FocusHandle) CommandEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e CommandEl) DebugGreen() CommandEl               { tStyledExtDebugGreen(e.n); return e }
-func (e CommandEl) DebugPink() CommandEl                { tStyledExtDebugPink(e.n); return e }
-func (e CommandEl) DebugRed() CommandEl                 { tStyledExtDebugRed(e.n); return e }
-func (e CommandEl) DebugYellow() CommandEl              { tStyledExtDebugYellow(e.n); return e }
-func (e CommandEl) FontBlack() CommandEl                { tStyledExtFontBlack(e.n); return e }
-func (e CommandEl) FontBold() CommandEl                 { tStyledExtFontBold(e.n); return e }
-func (e CommandEl) FontExtrabold() CommandEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e CommandEl) FontExtralight() CommandEl           { tStyledExtFontExtralight(e.n); return e }
-func (e CommandEl) FontLight() CommandEl                { tStyledExtFontLight(e.n); return e }
-func (e CommandEl) FontMedium() CommandEl               { tStyledExtFontMedium(e.n); return e }
-func (e CommandEl) FontNormal() CommandEl               { tStyledExtFontNormal(e.n); return e }
-func (e CommandEl) FontSemibold() CommandEl             { tStyledExtFontSemibold(e.n); return e }
-func (e CommandEl) FontThin() CommandEl                 { tStyledExtFontThin(e.n); return e }
+func (e CommandEl) DebugGreen() CommandEl     { tStyledExtDebugGreen(e.n); return e }
+func (e CommandEl) DebugPink() CommandEl      { tStyledExtDebugPink(e.n); return e }
+func (e CommandEl) DebugRed() CommandEl       { tStyledExtDebugRed(e.n); return e }
+func (e CommandEl) DebugYellow() CommandEl    { tStyledExtDebugYellow(e.n); return e }
+func (e CommandEl) FontBlack() CommandEl      { tStyledExtFontBlack(e.n); return e }
+func (e CommandEl) FontBold() CommandEl       { tStyledExtFontBold(e.n); return e }
+func (e CommandEl) FontExtrabold() CommandEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e CommandEl) FontExtralight() CommandEl { tStyledExtFontExtralight(e.n); return e }
+func (e CommandEl) FontLight() CommandEl      { tStyledExtFontLight(e.n); return e }
+func (e CommandEl) FontMedium() CommandEl     { tStyledExtFontMedium(e.n); return e }
+func (e CommandEl) FontNormal() CommandEl     { tStyledExtFontNormal(e.n); return e }
+func (e CommandEl) FontSemibold() CommandEl   { tStyledExtFontSemibold(e.n); return e }
+func (e CommandEl) FontThin() CommandEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e CommandEl) HFlex() CommandEl                    { tStyledExtHFlex(e.n); return e }
 func (e CommandEl) Margins(margins EdgesInto) CommandEl { tStyledExtMargins(e.n, margins); return e }
 func (e CommandEl) Paddings(paddings EdgesInto) CommandEl {
@@ -154,135 +225,349 @@ func (e CommandEl) RefineStyle(style StyleRefinement) CommandEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CommandEl) VFlex() CommandEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e CommandEl) Style(st ...Style) CommandEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CommandEl) AspectRatio(ratio float32) CommandEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e CommandEl) Bg(fill Fill) CommandEl              { tStyledBg(e.n, fill); return e }
-func (e CommandEl) Border(length Length) CommandEl      { tStyledBorder(e.n, length); return e }
-func (e CommandEl) BorderB(length Length) CommandEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e CommandEl) Bg(fill Fill) CommandEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e CommandEl) Border(length Length) CommandEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CommandEl) BorderB(length Length) CommandEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e CommandEl) BorderColor(borderColor Color) CommandEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e CommandEl) BorderL(length Length) CommandEl     { tStyledBorderL(e.n, length); return e }
-func (e CommandEl) BorderR(length Length) CommandEl     { tStyledBorderR(e.n, length); return e }
-func (e CommandEl) BorderT(length Length) CommandEl     { tStyledBorderT(e.n, length); return e }
-func (e CommandEl) BorderX(length Length) CommandEl     { tStyledBorderX(e.n, length); return e }
-func (e CommandEl) BorderY(length Length) CommandEl     { tStyledBorderY(e.n, length); return e }
-func (e CommandEl) Bottom(length Length) CommandEl      { tStyledBottom(e.n, length); return e }
-func (e CommandEl) ColEnd(end int16) CommandEl          { tStyledColEnd(e.n, end); return e }
-func (e CommandEl) ColSpan(span uint16) CommandEl       { tStyledColSpan(e.n, span); return e }
-func (e CommandEl) ColStart(start int16) CommandEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CommandEl) BorderL(length Length) CommandEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CommandEl) BorderR(length Length) CommandEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CommandEl) BorderT(length Length) CommandEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e CommandEl) BorderX(length Length) CommandEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e CommandEl) BorderY(length Length) CommandEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CommandEl) Bottom(length Length) CommandEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e CommandEl) ColEnd(end int16) CommandEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e CommandEl) ColSpan(span uint16) CommandEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e CommandEl) ColStart(start int16) CommandEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e CommandEl) Cursor(cursor CursorStyle) CommandEl { tStyledCursor(e.n, cursor); return e }
-func (e CommandEl) FlexBasis(basis Length) CommandEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e CommandEl) FlexGrow(grow float32) CommandEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e CommandEl) FlexBasis(basis Length) CommandEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e CommandEl) FlexGrow(grow float32) CommandEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CommandEl) FlexShrink(shrink float32) CommandEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e CommandEl) FontFamily(familyName string) CommandEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CommandEl) FontFeatures(features FontFeatures) CommandEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CommandEl) FontWeight(weight FontWeight) CommandEl { tStyledFontWeight(e.n, weight); return e }
-func (e CommandEl) Gap(length Length) CommandEl            { tStyledGap(e.n, length); return e }
-func (e CommandEl) GapX(length Length) CommandEl           { tStyledGapX(e.n, length); return e }
-func (e CommandEl) GapY(length Length) CommandEl           { tStyledGapY(e.n, length); return e }
-func (e CommandEl) GridCols(cols uint16) CommandEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e CommandEl) Gap(length Length) CommandEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CommandEl) GapX(length Length) CommandEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CommandEl) GapY(length Length) CommandEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e CommandEl) GridCols(cols uint16) CommandEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CommandEl) GridColsMaxContent(cols uint16) CommandEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CommandEl) GridColsMinContent(cols uint16) CommandEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CommandEl) GridRows(rows uint16) CommandEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CommandEl) GridRowsMaxContent(rows uint16) CommandEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CommandEl) GridRowsMinContent(rows uint16) CommandEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e CommandEl) H(length Length) CommandEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e CommandEl) H(length Length) CommandEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CommandEl) Inset(length Length) CommandEl { tStyledInset(e.n, length); return e }
-func (e CommandEl) Left(length Length) CommandEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CommandEl) Left(length Length) CommandEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CommandEl) LineClamp(lines int) CommandEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e CommandEl) LineHeight(lineHeight Length) CommandEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e CommandEl) M(length Length) CommandEl         { tStyledM(e.n, length); return e }
-func (e CommandEl) MaxSize(length Length) CommandEl   { tStyledMaxSize(e.n, length); return e }
-func (e CommandEl) MaxW(length Length) CommandEl      { tStyledMaxW(e.n, length); return e }
-func (e CommandEl) Mb(length Length) CommandEl        { tStyledMb(e.n, length); return e }
-func (e CommandEl) MinH(length Length) CommandEl      { tStyledMinH(e.n, length); return e }
-func (e CommandEl) MinSize(length Length) CommandEl   { tStyledMinSize(e.n, length); return e }
-func (e CommandEl) MinW(length Length) CommandEl      { tStyledMinW(e.n, length); return e }
-func (e CommandEl) Ml(length Length) CommandEl        { tStyledMl(e.n, length); return e }
-func (e CommandEl) Mr(length Length) CommandEl        { tStyledMr(e.n, length); return e }
-func (e CommandEl) Mt(length Length) CommandEl        { tStyledMt(e.n, length); return e }
-func (e CommandEl) Mx(length Length) CommandEl        { tStyledMx(e.n, length); return e }
-func (e CommandEl) My(length Length) CommandEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e CommandEl) M(length Length) CommandEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e CommandEl) MaxSize(length Length) CommandEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e CommandEl) MaxW(length Length) CommandEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CommandEl) Mb(length Length) CommandEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e CommandEl) MinH(length Length) CommandEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e CommandEl) MinSize(length Length) CommandEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e CommandEl) MinW(length Length) CommandEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CommandEl) Ml(length Length) CommandEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CommandEl) Mr(length Length) CommandEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CommandEl) Mt(length Length) CommandEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e CommandEl) Mx(length Length) CommandEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e CommandEl) My(length Length) CommandEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e CommandEl) Opacity(opacity float32) CommandEl { tStyledOpacity(e.n, opacity); return e }
-func (e CommandEl) P(length Length) CommandEl         { tStyledP(e.n, length); return e }
-func (e CommandEl) Pb(length Length) CommandEl        { tStyledPb(e.n, length); return e }
-func (e CommandEl) Pl(length Length) CommandEl        { tStyledPl(e.n, length); return e }
-func (e CommandEl) Pr(length Length) CommandEl        { tStyledPr(e.n, length); return e }
-func (e CommandEl) Pt(length Length) CommandEl        { tStyledPt(e.n, length); return e }
-func (e CommandEl) Px(length Length) CommandEl        { tStyledPx(e.n, length); return e }
-func (e CommandEl) Py(length Length) CommandEl        { tStyledPy(e.n, length); return e }
-func (e CommandEl) Right(length Length) CommandEl     { tStyledRight(e.n, length); return e }
-func (e CommandEl) Rounded(length Length) CommandEl   { tStyledRounded(e.n, length); return e }
-func (e CommandEl) RoundedB(length Length) CommandEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e CommandEl) P(length Length) CommandEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CommandEl) Pb(length Length) CommandEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CommandEl) Pl(length Length) CommandEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CommandEl) Pr(length Length) CommandEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CommandEl) Pt(length Length) CommandEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e CommandEl) Px(length Length) CommandEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e CommandEl) Py(length Length) CommandEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CommandEl) Right(length Length) CommandEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e CommandEl) Rounded(length Length) CommandEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CommandEl) RoundedB(length Length) CommandEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CommandEl) RoundedBl(length Length) CommandEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CommandEl) RoundedBr(length Length) CommandEl { tStyledRoundedBr(e.n, length); return e }
-func (e CommandEl) RoundedL(length Length) CommandEl  { tStyledRoundedL(e.n, length); return e }
-func (e CommandEl) RoundedR(length Length) CommandEl  { tStyledRoundedR(e.n, length); return e }
-func (e CommandEl) RoundedT(length Length) CommandEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CommandEl) RoundedL(length Length) CommandEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CommandEl) RoundedR(length Length) CommandEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CommandEl) RoundedT(length Length) CommandEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CommandEl) RoundedTl(length Length) CommandEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CommandEl) RoundedTr(length Length) CommandEl { tStyledRoundedTr(e.n, length); return e }
-func (e CommandEl) RowEnd(end int16) CommandEl        { tStyledRowEnd(e.n, end); return e }
-func (e CommandEl) RowSpan(span uint16) CommandEl     { tStyledRowSpan(e.n, span); return e }
-func (e CommandEl) RowStart(start int16) CommandEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e CommandEl) RowEnd(end int16) CommandEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e CommandEl) RowSpan(span uint16) CommandEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e CommandEl) RowStart(start int16) CommandEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CommandEl) ScrollbarWidth(width Length) CommandEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CommandEl) Shadow(shadows []BoxShadow) CommandEl { tStyledShadow(e.n, shadows); return e }
-func (e CommandEl) Size(length Length) CommandEl         { tStyledSize(e.n, length); return e }
-func (e CommandEl) TextAlign(align TextAlign) CommandEl  { tStyledTextAlign(e.n, align); return e }
-func (e CommandEl) TextBg(bg Color) CommandEl            { tStyledTextBg(e.n, bg); return e }
-func (e CommandEl) TextColor(color Color) CommandEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e CommandEl) Size(length Length) CommandEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e CommandEl) TextAlign(align TextAlign) CommandEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e CommandEl) TextBg(bg Color) CommandEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e CommandEl) TextColor(color Color) CommandEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e CommandEl) TextDecorationColor(color Color) CommandEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CommandEl) TextOverflow(overflow TextOverflow) CommandEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CommandEl) TextSize(size Length) CommandEl { tStyledTextSize(e.n, size); return e }
-func (e CommandEl) Top(length Length) CommandEl    { tStyledTop(e.n, length); return e }
-func (e CommandEl) W(length Length) CommandEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CommandEl) Top(length Length) CommandEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e CommandEl) W(length Length) CommandEl { tStyledW(e.n, length); return e }
 
 // CommandGroup is gpui_kit::component::command::CommandGroup.
 type CommandGroup struct{ n *node }
 
 func (e CommandGroup) valueNode() *node { return e.n }
 
+// Create a new group without a label.
+//
 // NewCommandGroup is <gpui_kit::component::command::CommandGroup>::new.
 func NewCommandGroup() CommandGroup {
 	n := newValue(627)
 	return CommandGroup{n}
 }
 
+// Add an item to the group.
+//
 // Item is <gpui_kit::component::command::CommandGroup>::item.
 func (e CommandGroup) Item(item CommandItem) CommandGroup {
 	o := op(e.n, 256)
@@ -290,6 +575,8 @@ func (e CommandGroup) Item(item CommandItem) CommandGroup {
 	return e
 }
 
+// Add multiple items to the group.
+//
 // Items is <gpui_kit::component::command::CommandGroup>::items.
 func (e CommandGroup) Items(items []CommandItem) CommandGroup {
 	o := op(e.n, 257)
@@ -300,6 +587,8 @@ func (e CommandGroup) Items(items []CommandItem) CommandGroup {
 	return e
 }
 
+// Set the label displayed above the group's items.
+//
 // Label is <gpui_kit::component::command::CommandGroup>::label.
 func (e CommandGroup) Label(label string) CommandGroup {
 	o := op(e.n, 258)
@@ -312,6 +601,8 @@ type CommandItem struct{ n *node }
 
 func (e CommandItem) valueNode() *node { return e.n }
 
+// Create an empty command item.
+//
 // NewCommandItem is <gpui_kit::component::command::CommandItem>::new.
 func NewCommandItem() CommandItem {
 	n := newValue(629)
@@ -324,6 +615,10 @@ func NewCommandItemDefault() CommandItem {
 	return CommandItem{n}
 }
 
+// Set the Action dispatched when this item is clicked or confirmed.
+//
+// The Action's active keybinding is also shown by the default row.
+//
 // Action is <gpui_kit::component::command::CommandItem>::action.
 func (e CommandItem) Action(action Action) CommandItem {
 	o := op(e.n, 256)
@@ -331,6 +626,10 @@ func (e CommandItem) Action(action Action) CommandItem {
 	return e
 }
 
+// Mark this item as the chosen one, drawing a check at the right end of the row.
+//
+// A resolved Action binding takes that slot, so an item with one shows no check.
+//
 // Checked is <gpui_kit::component::command::CommandItem>::checked.
 func (e CommandItem) Checked(checked bool) CommandItem {
 	o := op(e.n, 257)
@@ -338,6 +637,12 @@ func (e CommandItem) Checked(checked bool) CommandItem {
 	return e
 }
 
+// Replace the row content (icon and label) with a lazily built child.
+//
+// The builder may run more than once for measurement and rendering, so it must be
+// side-effect-free. Custom children own their complete visual presentation, including any
+// keybinding hint.
+//
 // Child is <gpui_kit::component::command::CommandItem>::child.
 func (e CommandItem) Child(builder Element) CommandItem {
 	o := op(e.n, 260)
@@ -345,6 +650,8 @@ func (e CommandItem) Child(builder Element) CommandItem {
 	return e
 }
 
+// Set the leading icon.
+//
 // Icon is <gpui_kit::component::command::CommandItem>::icon.
 func (e CommandItem) Icon(icon IconName) CommandItem {
 	o := op(e.n, 261)
@@ -352,6 +659,8 @@ func (e CommandItem) Icon(icon IconName) CommandItem {
 	return e
 }
 
+// Add extra terms the search matches against, besides the label.
+//
 // Keywords is <gpui_kit::component::command::CommandItem>::keywords.
 func (e CommandItem) Keywords(keywords []string) CommandItem {
 	o := op(e.n, 259)
@@ -362,6 +671,8 @@ func (e CommandItem) Keywords(keywords []string) CommandItem {
 	return e
 }
 
+// Set the label to display and search.
+//
 // Label is <gpui_kit::component::command::CommandItem>::label.
 func (e CommandItem) Label(label string) CommandItem {
 	o := op(e.n, 258)

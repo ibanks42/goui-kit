@@ -60,6 +60,9 @@ add_cursor_below_default :: proc(loc := #caller_location) -> Add_Cursor_Below {
 add_cursor_below_vt := Add_Cursor_Below_VT {
 }
 
+// An automatic closing pair and the syntax contexts in which insertion is disabled. Empty
+// delimiters are ignored. Strings support delimiters such as `/*` and `*/`.
+//
 // Auto_Closing_Pair is gpui_kit::base::input::AutoClosingPair.
 Auto_Closing_Pair :: struct {
 	using nd: Value,
@@ -109,6 +112,8 @@ backspace_default :: proc(loc := #caller_location) -> Backspace {
 backspace_vt := Backspace_VT {
 }
 
+// A structural pair, used for indentation and splitting Enter between delimiters.
+//
 // Bracket_Pair is gpui_kit::base::input::BracketPair.
 Bracket_Pair :: struct {
 	using nd: Value,
@@ -149,6 +154,10 @@ copy_default :: proc(loc := #caller_location) -> Copy {
 copy_vt := Copy_VT {
 }
 
+// Application-wide caret visibility policy.
+//
+// The default blinks every 500 ms without an idle timeout.
+//
 // Cursor_Blink is gpui_kit::base::input::CursorBlink.
 Cursor_Blink :: struct {
 	using nd: Value,
@@ -156,9 +165,12 @@ Cursor_Blink :: struct {
 }
 
 Cursor_Blink_VT :: struct {
+	// Stop blinking, with the caret visible, once `timeout` has passed since the last focus, edit or
+	// cursor movement.
 	with_idle_timeout: proc(e: Cursor_Blink, timeout: time.Duration) -> Cursor_Blink,
 }
 
+// Alternate visible and hidden phases of `interval` each; zero means steady.
 cursor_blink_blinking :: proc(interval: time.Duration, loc := #caller_location) -> Cursor_Blink {
 	e := Cursor_Blink{new_value(467, loc), &cursor_blink_vt}
 	o := node_args()
@@ -171,6 +183,7 @@ cursor_blink_default :: proc(loc := #caller_location) -> Cursor_Blink {
 	return e
 }
 
+// Keep the focused caret visible without a timer.
 cursor_blink_steady :: proc(loc := #caller_location) -> Cursor_Blink {
 	e := Cursor_Blink{new_value(468, loc), &cursor_blink_vt}
 	return e
@@ -382,6 +395,17 @@ go_to_definition_default :: proc(loc := #caller_location) -> Go_To_Definition {
 go_to_definition_vt := Go_To_Definition_VT {
 }
 
+// A mark that the editor draws in a strip of the gutter, before the line numbers.
+//
+// A non-empty range marks every line it touches. This matches Monaco's `linesDecorationsClassName`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IModelDecorationOptions.html#linesDecorationsClassName)
+// with `isWholeLine`. An empty range marks a line boundary, such as where lines were deleted. When
+// the range is at the start of a line, the mark appears above that line. Otherwise it appears
+// below the line.
+//
+// The default is an empty range at the start of the document, a boundary above the first line, in
+// the editor foreground color.
+//
 // Gutter_Decoration is gpui_kit::base::input::GutterDecoration.
 Gutter_Decoration :: struct {
 	using nd: Value,
@@ -389,10 +413,13 @@ Gutter_Decoration :: struct {
 }
 
 Gutter_Decoration_VT :: struct {
+	// Set the color instead of the editor foreground fallback.
 	with_color: proc(e: Gutter_Decoration, color: Color) -> Gutter_Decoration,
+	// Set the color for the bar on a fold's row when the range starts inside that fold.
 	with_folded_color: proc(e: Gutter_Decoration, color: Color) -> Gutter_Decoration,
 }
 
+// Create a mark with the editor foreground color.
 gutter_decoration :: proc(range: Range, loc := #caller_location) -> Gutter_Decoration {
 	e := Gutter_Decoration{new_value(481, loc), &gutter_decoration_vt}
 	o := node_args()
@@ -457,6 +484,11 @@ indent_inline_default :: proc(loc := #caller_location) -> Indent_Inline {
 indent_inline_vt := Indent_Inline_VT {
 }
 
+// Language indentation patterns, using Rust's `regex` syntax. Patterns are compiled by the caller,
+// so invalid expressions are reported at setup. Applied on Enter: increase matches text before the
+// caret; decrease matches text after it. This does not reformat existing lines or indentation on
+// paste.
+//
 // Indentation_Rules is gpui_kit::base::input::IndentationRules.
 Indentation_Rules :: struct {
 	using nd: Value,
@@ -475,6 +507,9 @@ indentation_rules_default :: proc(loc := #caller_location) -> Indentation_Rules 
 indentation_rules_vt := Indentation_Rules_VT {
 }
 
+// An application-defined reference rendered as one inline editing unit. The ID names the
+// referenced resource; the same ID may occur more than once.
+//
 // Inline_Token is gpui_kit::base::input::InlineToken.
 Inline_Token :: struct {
 	using nd: Value,
@@ -502,6 +537,12 @@ inline_token_vt := Inline_Token_VT {
 	},
 }
 
+// Accessibility presentation for the editor's existing keyboard-focus boundary.
+//
+// Frames and their addon controls keep their own identities. This projection does not create a
+// focus handle or register another text Tab stop. The engine supplies the live value and guards
+// accessibility actions against its current disabled, read-only and masked state.
+//
 // Input_Accessibility is gpui_kit::base::input::InputAccessibility.
 Input_Accessibility :: struct {
 	using nd: Value,
@@ -512,6 +553,7 @@ Input_Accessibility_VT :: struct {
 	with_accessibility_id: proc(e: Input_Accessibility, id: Maybe(string)) -> Input_Accessibility,
 	with_label: proc(e: Input_Accessibility, label: Maybe(string)) -> Input_Accessibility,
 	with_placeholder: proc(e: Input_Accessibility, placeholder: Maybe(string)) -> Input_Accessibility,
+	// Suppress values for secret content even when the mask is revealed.
 	with_value_exposed: proc(e: Input_Accessibility, exposed: bool) -> Input_Accessibility,
 }
 
@@ -566,6 +608,10 @@ input_accessibility_vt := Input_Accessibility_VT {
 	},
 }
 
+// LSP ServerCapabilities
+//
+// https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#serverCapabilities
+//
 // Lsp is gpui_kit::base::input::Lsp.
 Lsp :: struct {
 	using nd: Value,
@@ -573,6 +619,7 @@ Lsp :: struct {
 }
 
 Lsp_VT :: struct {
+	// Set the completion label highlighter when constructing the LSP configuration.
 	with_completion_highlighter: proc(e: Lsp, highlighter: Ask(Tuple_Temp_String_Completion_Item, []Range)) -> Lsp,
 }
 
@@ -894,6 +941,15 @@ outdent_inline_default :: proc(loc := #caller_location) -> Outdent_Inline {
 outdent_inline_vt := Outdent_Inline_VT {
 }
 
+// A mark that the editor draws on the vertical scrollbar track for a UTF-8 byte range.
+//
+// This is the counterpart of Monaco's `overviewRuler`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IModelDecorationOverviewRulerOptions.html)
+// decoration option. Like a `Gutter_Decoration`, an empty range marks a line boundary.
+//
+// The default is an empty range at the start of the document in the center lane, in the editor
+// foreground color.
+//
 // Overview_Ruler_Decoration is gpui_kit::base::input::OverviewRulerDecoration.
 Overview_Ruler_Decoration :: struct {
 	using nd: Value,
@@ -901,10 +957,13 @@ Overview_Ruler_Decoration :: struct {
 }
 
 Overview_Ruler_Decoration_VT :: struct {
+	// Set the color instead of the editor foreground fallback.
 	with_color: proc(e: Overview_Ruler_Decoration, color: Color) -> Overview_Ruler_Decoration,
+	// Set the lane that this mark uses.
 	with_lane: proc(e: Overview_Ruler_Decoration, lane: Overview_Ruler_Lane) -> Overview_Ruler_Decoration,
 }
 
+// Create a mark in the center lane with the editor foreground color.
 overview_ruler_decoration :: proc(range: Range, loc := #caller_location) -> Overview_Ruler_Decoration {
 	e := Overview_Ruler_Decoration{new_value(508, loc), &overview_ruler_decoration_vt}
 	o := node_args()
@@ -950,6 +1009,8 @@ paste_default :: proc(loc := #caller_location) -> Paste {
 paste_vt := Paste_VT {
 }
 
+// A geometric decoration over a UTF-8 byte range.
+//
 // Range_Decoration is gpui_kit::base::input::RangeDecoration.
 Range_Decoration :: struct {
 	using nd: Value,
@@ -957,10 +1018,13 @@ Range_Decoration :: struct {
 }
 
 Range_Decoration_VT :: struct {
+	// Override the editor foreground fallback with an application-owned color.
 	with_color: proc(e: Range_Decoration, color: Color) -> Range_Decoration,
+	// Choose a fill or frame without changing text layout.
 	with_style: proc(e: Range_Decoration, style: Range_Decoration_Style) -> Range_Decoration,
 }
 
+// Create a frame using the editor foreground color.
 range_decoration :: proc(range: Range, loc := #caller_location) -> Range_Decoration {
 	e := Range_Decoration{new_value(510, loc), &range_decoration_vt}
 	o := node_args()
@@ -1248,6 +1312,13 @@ undo_default :: proc(loc := #caller_location) -> Undo {
 undo_vt := Undo_VT {
 }
 
+// Declarative language editing rules, independent of editor preferences and parsers.
+//
+// Mirrors the supported subset of Monaco's language configuration. `None` for `auto_closing_pairs`
+// uses `brackets`; `Some(vec![])` disables all automatic pairs. Use the builders to configure a
+// default value; additional language capabilities can be added without breaking callers.
+// Tree-sitter queries are configured in the parser implementation, not in these rules.
+//
 // Language_Config is gpui_kit::base::input::language_config::LanguageConfig.
 Language_Config :: struct {
 	using nd: Value,

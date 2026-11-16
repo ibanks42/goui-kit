@@ -3,6 +3,8 @@ package gk
 
 import "core:time"
 
+// A Checkbox element.
+//
 // Checkbox is gpui_kit::component::checkbox::Checkbox.
 Checkbox :: struct {
 	using el: Element,
@@ -97,18 +99,37 @@ Checkbox_VT :: struct {
 	using t_selectable: ^Selectable_Trait(Checkbox),
 	using t_parent_element: ^Parent_Element_Trait(Checkbox),
 	using t_sizable: ^Sizable_Trait(Checkbox),
+	// Set the name a screen reader announces, overriding the visible label.
+	//
+	// This does not change the label drawn on screen. A checkbox without a `->label` or text children
+	// has no accessible name, so set this whenever the checkbox is drawn without visible text.
 	accessibility_label: proc(e: Checkbox, label: string) -> Checkbox,
+	// Set the checked state for the checkbox.
 	checked: proc(e: Checkbox, checked: bool) -> Checkbox,
+	// Set the label for the checkbox.
 	label: proc(e: Checkbox, label: Text_Into) -> Checkbox,
+	// Handle a requested checked value from pointer or keyboard activation.
+	//
+	// This is a controlled value: the owner must write the requested value for it to show. Disabled
+	// controls do not call the handler. This and `->on_click` share one callback; chaining them
+	// replaces the previous handler instead of calling both.
 	on_change: proc(e: Checkbox, handler: Handler) -> Checkbox,
+	// Alias for `->on_change`. The last callback registered with either name wins.
 	on_click: proc(e: Checkbox, handler: Handler) -> Checkbox,
 	role: proc(e: Checkbox, role: Role_Override) -> Checkbox,
+	// Set the tab index for the checkbox, default is 0.
 	tab_index: proc(e: Checkbox, tab_index: int) -> Checkbox,
+	// Set the tab stop for the checkbox, default is true.
 	tab_stop: proc(e: Checkbox, tab_stop: bool) -> Checkbox,
+	// Set tooltip text for the checkbox.
 	tooltip: proc(e: Checkbox, tooltip: string) -> Checkbox,
+	// Overrides how long the pointer must rest before the tooltip shows.
+	//
+	// Defaults to `show_delay`.
 	tooltip_show_delay: proc(e: Checkbox, delay: time.Duration) -> Checkbox,
 }
 
+// Create a new Checkbox with the given id.
 checkbox :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Checkbox {
 	use_component_checkbox()
 	e := Checkbox{new_node(620, loc), &checkbox_vt}

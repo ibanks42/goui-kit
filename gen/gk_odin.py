@@ -335,6 +335,7 @@ def pname(name):
 class Odin:
     def __init__(self, m, outdir):
         self.m, self.out = m, outdir
+        self.docs = self.doc_names = None  # gk_doc.Docs and its link resolver (gkgen.py sets them)
         self.names = {}       # Odin identifier -> what owns it
         self.files, self.spans = {}, {}
         self.file, self.lines = None, []
@@ -629,6 +630,11 @@ class Odin:
     def add(self, *lines):
         self.lines += lines
 
+    def doc(self, ref, owner, indent=""):
+        """GPUI-kit's doc comment of ref = (crate, id), translated (gen/gk_doc.py), as comment lines."""
+        body = self.docs.comment(ref, "odin", self.doc_names, owner) if self.docs and ref else []
+        return [(f"{indent}// " + x).rstrip() for x in body]
+
     def item(self, key, lines):
         """Lines that belong to one item: a compiler error inside them is charged to it."""
         a = len(self.lines) + 1
@@ -734,7 +740,7 @@ class Odin:
                 self.add(f"\t{name}: {sig},")
             for it in ops:
                 ps = self.params(it, ["e: T"])
-                self.item(["item", it["id"]], [f"\t{oname(it['name'])}: proc({', '.join(ps)}) -> T,"])
+                self.item(["item", it["id"]], self.doc(it.get("doc"), it["id"], "\t") + [f"\t{oname(it['name'])}: proc({', '.join(ps)}) -> T,"])
             self.add("}", "")
             for it in ops:
                 ps = self.params(it, ["e: Any_El"])
@@ -896,6 +902,8 @@ class Odin:
         # A handle and plain procedures, low_NAME(s, cx, ..), not a method table: a table holds
         # every method, so a program that could get a handle would link the component family of
         # each of its methods. A procedure is linked only when called (docs/DESIGN.md section 16).
+        sdoc = self.doc(st.get("doc"), st["path"])
+        self.add(*sdoc, *(["//"] if sdoc else []))
         self.add(f"// {S} is a handle to {st['path']}, {what}. Its procedures are named {low}_*.",
                  f"{S} :: struct {{", "\tusing state: State,", "}", "")
         sig = lambda it, nm, ret: f"{nm} :: proc({', '.join(self.params(it, ['s: ' + S, 'cx: ^Cx']) + ['loc := #caller_location'])}){ret} {{"  # noqa: E731
@@ -904,7 +912,7 @@ class Odin:
             R = self.otype(it["ret"], True)
             nm = f"{low}_{it['name']}"
             group(it["name"], nm)
-            lines = [sig(it, nm, f" -> (v: {R})"), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
+            lines = self.doc(it.get("doc"), it["id"]) + [sig(it, nm, f" -> (v: {R})"), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
             lines += ["\t" + x for x in self.body(it)]
             lines += [f"\tr := {get}(s.h, cx, req[:], loc)", "\trd_into(&r, &v)", "\treturn", "}", ""]
             self.item(["item", it["id"]], lines)
@@ -912,7 +920,7 @@ class Odin:
             R = self.otype(it["ret"], True)
             nm = f"{low}_try_{it['name']}"
             group("try_" + it["name"], nm)
-            lines = [sig(it, nm, f" -> (v: {R}, ok: bool)"), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
+            lines = self.doc(it.get("doc"), it["id"]) + [sig(it, nm, f" -> (v: {R}, ok: bool)"), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
             lines += ["\t" + x for x in self.body(it)]
             lines += ["\tr := state_try(s.h, cx, req[:], loc) or_return", "\trd_into(&r, &v)", "\treturn v, true", "}", ""]
             self.item(["item", it["id"]], lines)
@@ -920,14 +928,14 @@ class Odin:
             R = self.otype(it["ret"], True)
             nm = f"{low}_{it['name']}"
             group(it["name"], nm)
-            lines = [sig(it, nm, f" -> (v: {R})"), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
+            lines = self.doc(it.get("doc"), it["id"]) + [sig(it, nm, f" -> (v: {R})"), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
             lines += ["\t" + x for x in self.body(it)]
             lines += ["\tr := state_call(s.h, cx, req[:], loc)", "\trd_into(&r, &v)", "\treturn", "}", ""]
             self.item(["item", it["id"]], lines)
         for it in writes:
             nm = f"{low}_{it['name']}"
             group(it["name"], nm)
-            lines = [sig(it, nm, ""), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
+            lines = self.doc(it.get("doc"), it["id"]) + [sig(it, nm, ""), req, "\to := &req", f"\tput_op(o, {it['op']})", "\tput_u64(o, s.h)"]
             lines += ["\t" + x for x in self.body(it)] + ["\tstate_set(cx, req[:], loc)", "}", ""]
             self.item(["item", it["id"]], lines)
         for ev in st["events"]:
@@ -948,8 +956,8 @@ class Odin:
                      f"{B} :: struct {{", f"\tusing vt: ^{B}_VT,", "\tcx:       ^Cx,", "\treq:      ^Tape,", "\tcount_at: int,", "}", "",
                      f"{B}_VT :: struct {{")
             for it in builders:
-                self.item(["item", it["id"]], [f"\t{oname(it['name'])}: proc({', '.join(self.params(it, ['b: ' + B]))}) -> {B},"
-                                               + gk_items.vt_note(self, it)])
+                self.item(["item", it["id"]], self.doc(it.get("doc"), it["id"], "\t") + [
+                    f"\t{oname(it['name'])}: proc({', '.join(self.params(it, ['b: ' + B]))}) -> {B}," + gk_items.vt_note(self, it)])
             self.add(f"\tbuild: proc(b: {B}) -> {S},", "}", "", "@(private)", f"{low}_builder_vt := {B}_VT {{")
             for it in builders:
                 lines = [f"\t{oname(it['name'])} = proc({', '.join(self.params(it, ['b: ' + B]))}) -> {B} {{", "\t\to := b.req",
@@ -959,7 +967,7 @@ class Odin:
             self.add(f"\tbuild = proc(b: {B}) -> {S} {{", f"\t\treturn {{state = {{h = state_make(b.cx, b.req[:])}}}}", "\t},", "}", "")
         for it in sorted([i for i in st["ctors"] if ok(i)], key=lambda i: i["odin"]):
             ps = ["cx: ^Cx"] + self.params(it) + ["loc := #caller_location"]
-            lines = [f"{it['odin']} :: proc({', '.join(ps)}) -> {B} {{", "\treq := new(Tape, context.temp_allocator)",
+            lines = self.doc(it.get("doc"), it["id"]) + [f"{it['odin']} :: proc({', '.join(ps)}) -> {B} {{", "\treq := new(Tape, context.temp_allocator)",
                      "\treq^ = make(Tape, 0, 64, context.temp_allocator)", "\to := req", f"\tput_op(o, {it['op']})"]
             lines += ["\t" + x for x in self.body(it)] + ["\tput_u16(o, 0) // how many builder ops follow (at most 255 are counted here)"]
             if builders:
@@ -978,14 +986,14 @@ class Odin:
             head = ["\treq := make(Tape, 0, 32, context.temp_allocator)", "\to := &req", f"\tput_op(o, {it['op']})"]
             head += ["\t" + x for x in self.body(it)]
             if it["kind"] == "obj-global":
-                lines = [f"{it['odin']} :: proc({', '.join(ps)}) -> {S} {{"] + head + [
+                lines = self.doc(it.get("doc"), it["id"]) + [f"{it['odin']} :: proc({', '.join(ps)}) -> {S} {{"] + head + [
                     "\tr := obj_get(0, cx, req[:], loc)", "\treturn {state = {h = rd_u64(&r)}}", "}", ""]
             elif it["kind"] == "obj-scall":
                 R = self.otype(it["ret"], True)
-                lines = [f"{it['odin']} :: proc({', '.join(ps)}) -> (v: {R}) {{"] + head + [
+                lines = self.doc(it.get("doc"), it["id"]) + [f"{it['odin']} :: proc({', '.join(ps)}) -> (v: {R}) {{"] + head + [
                     "\tr := state_call(0, cx, req[:], loc)", "\trd_into(&r, &v)", "\treturn", "}", ""]
             else:
-                lines = [f"{it['odin']} :: proc({', '.join(ps)}) {{"] + head + ["\tstate_set(cx, req[:], loc)", "}", ""]
+                lines = self.doc(it.get("doc"), it["id"]) + [f"{it['odin']} :: proc({', '.join(ps)}) {{"] + head + ["\tstate_set(cx, req[:], loc)", "}", ""]
             self.item(["item", it["id"]], lines)
 
     def denum(self, rt, e):
@@ -1097,7 +1105,8 @@ class Odin:
         T = node["odin"]
         low = T.lower()
         base = "using el: Element" if node["element"] else "using nd: Value"
-        self.add(f"// {T} is {node['path']}.", f"{T} :: struct {{", f"\t{base},", f"\tusing vt: ^{T}_VT,", "}", "")
+        tdoc = self.doc([node["crate"], str(node["id"])], node["path"])
+        self.add(*tdoc, *(["//"] if tdoc else []), f"// {T} is {node['path']}.", f"{T} :: struct {{", f"\t{base},", f"\tusing vt: ^{T}_VT,", "}", "")
         ops = sorted([i for i in node["ops"] if bound(i)], key=lambda i: i["name"])
         opnames = {i["name"] for i in ops}
         convs, cseen = [], set()
@@ -1144,8 +1153,8 @@ class Odin:
                 init.append(f"\tstyle = transmute({sig})rt_style,")
         self.add(*vt)
         for it in ops:
-            self.item(["item", it["id"]], [f"\t{oname(it['name'])}: proc({', '.join(self.params(it, ['e: ' + T]))}) -> {T},"
-                                           + gk_items.vt_note(self, it)])
+            self.item(["item", it["id"]], self.doc(it.get("doc"), it["id"], "\t") + [
+                f"\t{oname(it['name'])}: proc({', '.join(self.params(it, ['e: ' + T]))}) -> {T}," + gk_items.vt_note(self, it)])
         for it in convs:
             it["emitted"] = True
             U = m.nodes[it["node"]]["odin"]
@@ -1161,6 +1170,7 @@ class Odin:
                 ps.append("flags: ..Style_Flag")
             ps.append("loc := #caller_location")
             lines = ["@(private)"] * bool(it.get("handed"))  # an item procedure's handed element (PROTOCOLS.md 9.41)
+            lines += [] if it.get("handed") else self.doc(it.get("doc"), it["id"])
             lines += [f"{it['odin']} :: proc({', '.join(ps)}) -> {T} {{", f"\te := {T}{{{'new_node' if node['element'] else 'new_value'}({it['op']}, loc), &{low}_vt}}"]
             body = self.body(it)
             if body:

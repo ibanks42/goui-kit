@@ -19,6 +19,8 @@ func SearchableListItemElement(ix int, st ...Style) SearchableListItemElementEl 
 	return SearchableListItemElementEl{n}
 }
 
+// Override the default check icon.
+//
 // CheckIcon is <gpui_kit::component::searchable_list::SearchableListItemElement>::check_icon.
 func (e SearchableListItemElementEl) CheckIcon(icon IconName) SearchableListItemElementEl {
 	o := op(e.n, 257)
@@ -26,6 +28,8 @@ func (e SearchableListItemElementEl) CheckIcon(icon IconName) SearchableListItem
 	return e
 }
 
+// Set whether the trailing check icon is visible.
+//
 // Checked is <gpui_kit::component::searchable_list::SearchableListItemElement>::checked.
 func (e SearchableListItemElementEl) Checked(checked bool) SearchableListItemElementEl {
 	o := op(e.n, 256)
@@ -33,20 +37,46 @@ func (e SearchableListItemElementEl) Checked(checked bool) SearchableListItemEle
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e SearchableListItemElementEl) PopoverStyle() SearchableListItemElementEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SearchableListItemElementEl) RoundedFullStyle() SearchableListItemElementEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e SearchableListItemElementEl) FocusRingStyle() SearchableListItemElementEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e SearchableListItemElementEl) OnPrepaint(callback func(cx *Cx, e Bounds)) SearchableListItemElementEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -116,6 +146,19 @@ func (e SearchableListItemElementEl) FontThin() SearchableListItemElementEl {
 	tStyledExtFontThin(e.n)
 	return e
 }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e SearchableListItemElementEl) HFlex() SearchableListItemElementEl {
 	tStyledExtHFlex(e.n)
 	return e
@@ -132,6 +175,11 @@ func (e SearchableListItemElementEl) RefineStyle(style StyleRefinement) Searchab
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SearchableListItemElementEl) VFlex() SearchableListItemElementEl {
 	tStyledExtVFlex(e.n)
 	return e
@@ -148,10 +196,13 @@ func (e SearchableListItemElementEl) ChildView(v View) SearchableListItemElement
 	return e
 }
 
+// Add a single child element to this element.
 func (e SearchableListItemElementEl) Child(child Element) SearchableListItemElementEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e SearchableListItemElementEl) Children(children ...Element) SearchableListItemElementEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -162,6 +213,10 @@ func (e SearchableListItemElementEl) Disabled(disabled bool) SearchableListItemE
 	return e
 }
 
+// Sets the open state a popover, menu or dropdown holds on its trigger while it is open.
+//
+// Defaults to `selected`, so a trigger only overrides this when its selected state means something
+// other than "my popup is open".
 func (e SearchableListItemElementEl) Open(open bool) SearchableListItemElementEl {
 	tSelectableOpen(e.n, open)
 	return e
@@ -175,18 +230,28 @@ func (e SearchableListItemElementEl) Selected(selected bool) SearchableListItemE
 	return e
 }
 
+// Set to Size::Large
 func (e SearchableListItemElementEl) Large() SearchableListItemElementEl {
 	tSizableLarge(e.n)
 	return e
 }
+
+// Set to Size::Small
 func (e SearchableListItemElementEl) Small() SearchableListItemElementEl {
 	tSizableSmall(e.n)
 	return e
 }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e SearchableListItemElementEl) WithSize(size SizeInto) SearchableListItemElementEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e SearchableListItemElementEl) Xsmall() SearchableListItemElementEl {
 	tSizableXsmall(e.n)
 	return e
@@ -198,322 +263,529 @@ func (e SearchableListItemElementEl) Style(st ...Style) SearchableListItemElemen
 	return e
 }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SearchableListItemElementEl) AspectRatio(ratio float32) SearchableListItemElementEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e SearchableListItemElementEl) Bg(fill Fill) SearchableListItemElementEl {
 	tStyledBg(e.n, fill)
 	return e
 }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e SearchableListItemElementEl) Border(length Length) SearchableListItemElementEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SearchableListItemElementEl) BorderB(length Length) SearchableListItemElementEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e SearchableListItemElementEl) BorderColor(borderColor Color) SearchableListItemElementEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SearchableListItemElementEl) BorderL(length Length) SearchableListItemElementEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SearchableListItemElementEl) BorderR(length Length) SearchableListItemElementEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SearchableListItemElementEl) BorderT(length Length) SearchableListItemElementEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SearchableListItemElementEl) BorderX(length Length) SearchableListItemElementEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SearchableListItemElementEl) BorderY(length Length) SearchableListItemElementEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SearchableListItemElementEl) Bottom(length Length) SearchableListItemElementEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e SearchableListItemElementEl) ColEnd(end int16) SearchableListItemElementEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e SearchableListItemElementEl) ColSpan(span uint16) SearchableListItemElementEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e SearchableListItemElementEl) ColStart(start int16) SearchableListItemElementEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e SearchableListItemElementEl) Cursor(cursor CursorStyle) SearchableListItemElementEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e SearchableListItemElementEl) FlexBasis(basis Length) SearchableListItemElementEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e SearchableListItemElementEl) FlexGrow(grow float32) SearchableListItemElementEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SearchableListItemElementEl) FlexShrink(shrink float32) SearchableListItemElementEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e SearchableListItemElementEl) FontFamily(familyName string) SearchableListItemElementEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SearchableListItemElementEl) FontFeatures(features FontFeatures) SearchableListItemElementEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SearchableListItemElementEl) FontWeight(weight FontWeight) SearchableListItemElementEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e SearchableListItemElementEl) Gap(length Length) SearchableListItemElementEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e SearchableListItemElementEl) GapX(length Length) SearchableListItemElementEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e SearchableListItemElementEl) GapY(length Length) SearchableListItemElementEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e SearchableListItemElementEl) GridCols(cols uint16) SearchableListItemElementEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SearchableListItemElementEl) GridColsMaxContent(cols uint16) SearchableListItemElementEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SearchableListItemElementEl) GridColsMinContent(cols uint16) SearchableListItemElementEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SearchableListItemElementEl) GridRows(rows uint16) SearchableListItemElementEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SearchableListItemElementEl) GridRowsMaxContent(rows uint16) SearchableListItemElementEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SearchableListItemElementEl) GridRowsMinContent(rows uint16) SearchableListItemElementEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e SearchableListItemElementEl) H(length Length) SearchableListItemElementEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SearchableListItemElementEl) Inset(length Length) SearchableListItemElementEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SearchableListItemElementEl) Left(length Length) SearchableListItemElementEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SearchableListItemElementEl) LineClamp(lines int) SearchableListItemElementEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e SearchableListItemElementEl) LineHeight(lineHeight Length) SearchableListItemElementEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e SearchableListItemElementEl) M(length Length) SearchableListItemElementEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e SearchableListItemElementEl) MaxH(length Length) SearchableListItemElementEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e SearchableListItemElementEl) MaxSize(length Length) SearchableListItemElementEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e SearchableListItemElementEl) MaxW(length Length) SearchableListItemElementEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e SearchableListItemElementEl) Mb(length Length) SearchableListItemElementEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e SearchableListItemElementEl) MinH(length Length) SearchableListItemElementEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e SearchableListItemElementEl) MinSize(length Length) SearchableListItemElementEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e SearchableListItemElementEl) MinW(length Length) SearchableListItemElementEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e SearchableListItemElementEl) Ml(length Length) SearchableListItemElementEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e SearchableListItemElementEl) Mr(length Length) SearchableListItemElementEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e SearchableListItemElementEl) Mt(length Length) SearchableListItemElementEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e SearchableListItemElementEl) Mx(length Length) SearchableListItemElementEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e SearchableListItemElementEl) My(length Length) SearchableListItemElementEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e SearchableListItemElementEl) Opacity(opacity float32) SearchableListItemElementEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e SearchableListItemElementEl) P(length Length) SearchableListItemElementEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e SearchableListItemElementEl) Pb(length Length) SearchableListItemElementEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e SearchableListItemElementEl) Pl(length Length) SearchableListItemElementEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e SearchableListItemElementEl) Pr(length Length) SearchableListItemElementEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e SearchableListItemElementEl) Pt(length Length) SearchableListItemElementEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e SearchableListItemElementEl) Px(length Length) SearchableListItemElementEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e SearchableListItemElementEl) Py(length Length) SearchableListItemElementEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SearchableListItemElementEl) Right(length Length) SearchableListItemElementEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e SearchableListItemElementEl) Rounded(length Length) SearchableListItemElementEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SearchableListItemElementEl) RoundedB(length Length) SearchableListItemElementEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SearchableListItemElementEl) RoundedBl(length Length) SearchableListItemElementEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SearchableListItemElementEl) RoundedBr(length Length) SearchableListItemElementEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SearchableListItemElementEl) RoundedL(length Length) SearchableListItemElementEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SearchableListItemElementEl) RoundedR(length Length) SearchableListItemElementEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SearchableListItemElementEl) RoundedT(length Length) SearchableListItemElementEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SearchableListItemElementEl) RoundedTl(length Length) SearchableListItemElementEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SearchableListItemElementEl) RoundedTr(length Length) SearchableListItemElementEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e SearchableListItemElementEl) RowEnd(end int16) SearchableListItemElementEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e SearchableListItemElementEl) RowSpan(span uint16) SearchableListItemElementEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e SearchableListItemElementEl) RowStart(start int16) SearchableListItemElementEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SearchableListItemElementEl) ScrollbarWidth(width Length) SearchableListItemElementEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SearchableListItemElementEl) Shadow(shadows []BoxShadow) SearchableListItemElementEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e SearchableListItemElementEl) Size(length Length) SearchableListItemElementEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e SearchableListItemElementEl) TextAlign(align TextAlign) SearchableListItemElementEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e SearchableListItemElementEl) TextBg(bg Color) SearchableListItemElementEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e SearchableListItemElementEl) TextColor(color Color) SearchableListItemElementEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e SearchableListItemElementEl) TextDecorationColor(color Color) SearchableListItemElementEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SearchableListItemElementEl) TextOverflow(overflow TextOverflow) SearchableListItemElementEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SearchableListItemElementEl) TextSize(size Length) SearchableListItemElementEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SearchableListItemElementEl) Top(length Length) SearchableListItemElementEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e SearchableListItemElementEl) W(length Length) SearchableListItemElementEl {
 	tStyledW(e.n, length)
 	return e

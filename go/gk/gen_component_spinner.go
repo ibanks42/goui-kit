@@ -9,6 +9,8 @@ type SpinnerEl struct{ n *node }
 
 func (e SpinnerEl) node() *node { return e.n }
 
+// Create a new loading spinner.
+//
 // Spinner is <gpui_kit::component::spinner::Spinner>::new.
 func Spinner() SpinnerEl {
 	useComponentSpinner()
@@ -16,6 +18,8 @@ func Spinner() SpinnerEl {
 	return SpinnerEl{n}
 }
 
+// Set the icon color.
+//
 // Color is <gpui_kit::component::spinner::Spinner>::color.
 func (e SpinnerEl) Color(color Color) SpinnerEl {
 	o := op(e.n, 256)
@@ -23,6 +27,12 @@ func (e SpinnerEl) Color(color Color) SpinnerEl {
 	return e
 }
 
+// Set specified icon for the spinner.
+//
+// Default is `Loader`.
+//
+// Please ensure the icon used is suitable for a loading spinner.
+//
 // Icon is <gpui_kit::component::spinner::Spinner>::icon.
 func (e SpinnerEl) Icon(icon IconName) SpinnerEl {
 	o := op(e.n, 257)
@@ -30,7 +40,17 @@ func (e SpinnerEl) Icon(icon IconName) SpinnerEl {
 	return e
 }
 
-func (e SpinnerEl) Large() SpinnerEl                 { tSizableLarge(e.n); return e }
-func (e SpinnerEl) Small() SpinnerEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e SpinnerEl) Large() SpinnerEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e SpinnerEl) Small() SpinnerEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e SpinnerEl) WithSize(size SizeInto) SpinnerEl { tSizableWithSize(e.n, size); return e }
-func (e SpinnerEl) Xsmall() SpinnerEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e SpinnerEl) Xsmall() SpinnerEl { tSizableXsmall(e.n); return e }

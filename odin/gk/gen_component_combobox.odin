@@ -8,9 +8,11 @@ Caret :: struct {
 }
 
 Caret_VT :: struct {
+	// Set the caret color.
 	text_color: proc(e: Caret, color: Color) -> Caret,
 }
 
+// Create a select caret sized for its trigger.
 caret :: proc(size: Size, loc := #caller_location) -> Caret {
 	use_component_select()
 	e := Caret{new_node(625, loc), &caret_vt}
@@ -28,6 +30,11 @@ caret_vt := Caret_VT {
 	},
 }
 
+// A combo box with support for single and multi-select.
+//
+// Clicking an item toggles it in the selection; the dropdown stays open until the user presses
+// Escape or clicks outside.
+//
 // Combobox is gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>.
 Combobox :: struct {
 	using el: Element,
@@ -40,17 +47,29 @@ Combobox_VT :: struct {
 	using t_sizable: ^Sizable_Trait(Combobox),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Combobox),
 	using t_styled: ^Styled_Trait(Combobox),
+	// Control whether the trigger shows a border and background.
 	appearance: proc(e: Combobox, appearance: bool) -> Combobox,
+	// Override the trailing check icon shown next to selected items.
 	check_icon: proc(e: Combobox, icon: Icon_Name) -> Combobox,
+	// Show a clear button when at least one item is selected.
 	cleanable: proc(e: Combobox, cleanable: bool) -> Combobox,
+	// Set the disabled state.
 	disabled: proc(e: Combobox, disabled: bool) -> Combobox,
+	// Set a custom closure that renders the empty-state element.
 	empty: proc(e: Combobox, builder: View) -> Combobox,
+	// Render an element below a separator at the bottom of the dropdown.
 	footer: proc(e: Combobox, f: Element) -> Combobox,
+	// Override the trigger chevron icon.
 	icon: proc(e: Combobox, icon: Icon_Name) -> Combobox,
+	// Set the maximum height of the dropdown menu.
 	menu_max_h: proc(e: Combobox, max_h: Length) -> Combobox,
+	// Set the width of the dropdown menu.
 	menu_width: proc(e: Combobox, width: Length) -> Combobox,
+	// Set the placeholder text shown when no items are selected.
 	placeholder: proc(e: Combobox, placeholder: string) -> Combobox,
+	// Override the entire trigger element.
 	render_trigger: proc(e: Combobox, f: Row_Source) -> Combobox, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, combobox_trigger_context: Combobox_Trigger_Context) -> Element)
+	// Set the placeholder text for the search input.
 	search_placeholder: proc(e: Combobox, placeholder: string) -> Combobox,
 }
 

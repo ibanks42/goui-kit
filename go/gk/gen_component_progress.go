@@ -9,6 +9,8 @@ type ProgressEl struct{ n *node }
 
 func (e ProgressEl) node() *node { return e.n }
 
+// Create a new Progress bar.
+//
 // Progress is <gpui_kit::component::progress::Progress>::new.
 func Progress(id ID, st ...Style) ProgressEl {
 	useComponentProgress()
@@ -19,6 +21,8 @@ func Progress(id ID, st ...Style) ProgressEl {
 	return ProgressEl{n}
 }
 
+// Set the accessible name exposed by the progress indicator.
+//
 // AccessibilityLabel is <gpui_kit::component::progress::Progress>::accessibility_label.
 func (e ProgressEl) AccessibilityLabel(label string) ProgressEl {
 	o := op(e.n, 256)
@@ -26,6 +30,8 @@ func (e ProgressEl) AccessibilityLabel(label string) ProgressEl {
 	return e
 }
 
+// Set the color of the progress bar.
+//
 // Color is <gpui_kit::component::progress::Progress>::color.
 func (e ProgressEl) Color(color Color) ProgressEl {
 	o := op(e.n, 257)
@@ -33,6 +39,11 @@ func (e ProgressEl) Color(color Color) ProgressEl {
 	return e
 }
 
+// Enable indeterminate loading animation.
+//
+// When `loading` is `true`, the `value` is ignored and an infinite sliding animation is shown
+// instead.
+//
 // Loading is <gpui_kit::component::progress::Progress>::loading.
 func (e ProgressEl) Loading(loading bool) ProgressEl {
 	o := op(e.n, 258)
@@ -40,6 +51,10 @@ func (e ProgressEl) Loading(loading bool) ProgressEl {
 	return e
 }
 
+// Set the percentage value of the progress bar.
+//
+// The value should be between 0.0 and 100.0.
+//
 // Value is <gpui_kit::component::progress::Progress>::value.
 func (e ProgressEl) Value(value float32) ProgressEl {
 	o := op(e.n, 259)
@@ -47,7 +62,19 @@ func (e ProgressEl) Value(value float32) ProgressEl {
 	return e
 }
 
-func (e ProgressEl) PopoverStyle() ProgressEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e ProgressEl) PopoverStyle() ProgressEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e ProgressEl) RoundedFullStyle() ProgressEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e ProgressEl) CornerRadii(radius Corners) ProgressEl {
@@ -59,19 +86,32 @@ func (e ProgressEl) DebugFocused(focusHandle FocusHandle) ProgressEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e ProgressEl) DebugGreen() ProgressEl               { tStyledExtDebugGreen(e.n); return e }
-func (e ProgressEl) DebugPink() ProgressEl                { tStyledExtDebugPink(e.n); return e }
-func (e ProgressEl) DebugRed() ProgressEl                 { tStyledExtDebugRed(e.n); return e }
-func (e ProgressEl) DebugYellow() ProgressEl              { tStyledExtDebugYellow(e.n); return e }
-func (e ProgressEl) FontBlack() ProgressEl                { tStyledExtFontBlack(e.n); return e }
-func (e ProgressEl) FontBold() ProgressEl                 { tStyledExtFontBold(e.n); return e }
-func (e ProgressEl) FontExtrabold() ProgressEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e ProgressEl) FontExtralight() ProgressEl           { tStyledExtFontExtralight(e.n); return e }
-func (e ProgressEl) FontLight() ProgressEl                { tStyledExtFontLight(e.n); return e }
-func (e ProgressEl) FontMedium() ProgressEl               { tStyledExtFontMedium(e.n); return e }
-func (e ProgressEl) FontNormal() ProgressEl               { tStyledExtFontNormal(e.n); return e }
-func (e ProgressEl) FontSemibold() ProgressEl             { tStyledExtFontSemibold(e.n); return e }
-func (e ProgressEl) FontThin() ProgressEl                 { tStyledExtFontThin(e.n); return e }
+func (e ProgressEl) DebugGreen() ProgressEl     { tStyledExtDebugGreen(e.n); return e }
+func (e ProgressEl) DebugPink() ProgressEl      { tStyledExtDebugPink(e.n); return e }
+func (e ProgressEl) DebugRed() ProgressEl       { tStyledExtDebugRed(e.n); return e }
+func (e ProgressEl) DebugYellow() ProgressEl    { tStyledExtDebugYellow(e.n); return e }
+func (e ProgressEl) FontBlack() ProgressEl      { tStyledExtFontBlack(e.n); return e }
+func (e ProgressEl) FontBold() ProgressEl       { tStyledExtFontBold(e.n); return e }
+func (e ProgressEl) FontExtrabold() ProgressEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e ProgressEl) FontExtralight() ProgressEl { tStyledExtFontExtralight(e.n); return e }
+func (e ProgressEl) FontLight() ProgressEl      { tStyledExtFontLight(e.n); return e }
+func (e ProgressEl) FontMedium() ProgressEl     { tStyledExtFontMedium(e.n); return e }
+func (e ProgressEl) FontNormal() ProgressEl     { tStyledExtFontNormal(e.n); return e }
+func (e ProgressEl) FontSemibold() ProgressEl   { tStyledExtFontSemibold(e.n); return e }
+func (e ProgressEl) FontThin() ProgressEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e ProgressEl) HFlex() ProgressEl                    { tStyledExtHFlex(e.n); return e }
 func (e ProgressEl) Margins(margins EdgesInto) ProgressEl { tStyledExtMargins(e.n, margins); return e }
 func (e ProgressEl) Paddings(paddings EdgesInto) ProgressEl {
@@ -82,138 +122,362 @@ func (e ProgressEl) RefineStyle(style StyleRefinement) ProgressEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e ProgressEl) VFlex() ProgressEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e ProgressEl) Style(st ...Style) ProgressEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e ProgressEl) AspectRatio(ratio float32) ProgressEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e ProgressEl) Bg(fill Fill) ProgressEl              { tStyledBg(e.n, fill); return e }
-func (e ProgressEl) Border(length Length) ProgressEl      { tStyledBorder(e.n, length); return e }
-func (e ProgressEl) BorderB(length Length) ProgressEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e ProgressEl) Bg(fill Fill) ProgressEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e ProgressEl) Border(length Length) ProgressEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ProgressEl) BorderB(length Length) ProgressEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e ProgressEl) BorderColor(borderColor Color) ProgressEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e ProgressEl) BorderL(length Length) ProgressEl     { tStyledBorderL(e.n, length); return e }
-func (e ProgressEl) BorderR(length Length) ProgressEl     { tStyledBorderR(e.n, length); return e }
-func (e ProgressEl) BorderT(length Length) ProgressEl     { tStyledBorderT(e.n, length); return e }
-func (e ProgressEl) BorderX(length Length) ProgressEl     { tStyledBorderX(e.n, length); return e }
-func (e ProgressEl) BorderY(length Length) ProgressEl     { tStyledBorderY(e.n, length); return e }
-func (e ProgressEl) Bottom(length Length) ProgressEl      { tStyledBottom(e.n, length); return e }
-func (e ProgressEl) ColEnd(end int16) ProgressEl          { tStyledColEnd(e.n, end); return e }
-func (e ProgressEl) ColSpan(span uint16) ProgressEl       { tStyledColSpan(e.n, span); return e }
-func (e ProgressEl) ColStart(start int16) ProgressEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ProgressEl) BorderL(length Length) ProgressEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ProgressEl) BorderR(length Length) ProgressEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ProgressEl) BorderT(length Length) ProgressEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e ProgressEl) BorderX(length Length) ProgressEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e ProgressEl) BorderY(length Length) ProgressEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ProgressEl) Bottom(length Length) ProgressEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e ProgressEl) ColEnd(end int16) ProgressEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e ProgressEl) ColSpan(span uint16) ProgressEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e ProgressEl) ColStart(start int16) ProgressEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e ProgressEl) Cursor(cursor CursorStyle) ProgressEl { tStyledCursor(e.n, cursor); return e }
-func (e ProgressEl) FlexBasis(basis Length) ProgressEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e ProgressEl) FlexGrow(grow float32) ProgressEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e ProgressEl) FlexBasis(basis Length) ProgressEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e ProgressEl) FlexGrow(grow float32) ProgressEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ProgressEl) FlexShrink(shrink float32) ProgressEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e ProgressEl) FontFamily(familyName string) ProgressEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e ProgressEl) FontFeatures(features FontFeatures) ProgressEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e ProgressEl) FontWeight(weight FontWeight) ProgressEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e ProgressEl) Gap(length Length) ProgressEl    { tStyledGap(e.n, length); return e }
-func (e ProgressEl) GapX(length Length) ProgressEl   { tStyledGapX(e.n, length); return e }
-func (e ProgressEl) GapY(length Length) ProgressEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e ProgressEl) Gap(length Length) ProgressEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ProgressEl) GapX(length Length) ProgressEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ProgressEl) GapY(length Length) ProgressEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e ProgressEl) GridCols(cols uint16) ProgressEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e ProgressEl) GridColsMaxContent(cols uint16) ProgressEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e ProgressEl) GridColsMinContent(cols uint16) ProgressEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e ProgressEl) GridRows(rows uint16) ProgressEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e ProgressEl) GridRowsMaxContent(rows uint16) ProgressEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e ProgressEl) GridRowsMinContent(rows uint16) ProgressEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e ProgressEl) H(length Length) ProgressEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e ProgressEl) H(length Length) ProgressEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e ProgressEl) Inset(length Length) ProgressEl { tStyledInset(e.n, length); return e }
-func (e ProgressEl) Left(length Length) ProgressEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ProgressEl) Left(length Length) ProgressEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e ProgressEl) LineClamp(lines int) ProgressEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e ProgressEl) LineHeight(lineHeight Length) ProgressEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e ProgressEl) M(length Length) ProgressEl         { tStyledM(e.n, length); return e }
-func (e ProgressEl) MaxH(length Length) ProgressEl      { tStyledMaxH(e.n, length); return e }
-func (e ProgressEl) MaxSize(length Length) ProgressEl   { tStyledMaxSize(e.n, length); return e }
-func (e ProgressEl) MaxW(length Length) ProgressEl      { tStyledMaxW(e.n, length); return e }
-func (e ProgressEl) Mb(length Length) ProgressEl        { tStyledMb(e.n, length); return e }
-func (e ProgressEl) MinH(length Length) ProgressEl      { tStyledMinH(e.n, length); return e }
-func (e ProgressEl) MinSize(length Length) ProgressEl   { tStyledMinSize(e.n, length); return e }
-func (e ProgressEl) MinW(length Length) ProgressEl      { tStyledMinW(e.n, length); return e }
-func (e ProgressEl) Ml(length Length) ProgressEl        { tStyledMl(e.n, length); return e }
-func (e ProgressEl) Mr(length Length) ProgressEl        { tStyledMr(e.n, length); return e }
-func (e ProgressEl) Mt(length Length) ProgressEl        { tStyledMt(e.n, length); return e }
-func (e ProgressEl) Mx(length Length) ProgressEl        { tStyledMx(e.n, length); return e }
-func (e ProgressEl) My(length Length) ProgressEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e ProgressEl) M(length Length) ProgressEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e ProgressEl) MaxH(length Length) ProgressEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e ProgressEl) MaxSize(length Length) ProgressEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e ProgressEl) MaxW(length Length) ProgressEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ProgressEl) Mb(length Length) ProgressEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e ProgressEl) MinH(length Length) ProgressEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e ProgressEl) MinSize(length Length) ProgressEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e ProgressEl) MinW(length Length) ProgressEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ProgressEl) Ml(length Length) ProgressEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ProgressEl) Mr(length Length) ProgressEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ProgressEl) Mt(length Length) ProgressEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e ProgressEl) Mx(length Length) ProgressEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e ProgressEl) My(length Length) ProgressEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e ProgressEl) Opacity(opacity float32) ProgressEl { tStyledOpacity(e.n, opacity); return e }
-func (e ProgressEl) P(length Length) ProgressEl         { tStyledP(e.n, length); return e }
-func (e ProgressEl) Pb(length Length) ProgressEl        { tStyledPb(e.n, length); return e }
-func (e ProgressEl) Pl(length Length) ProgressEl        { tStyledPl(e.n, length); return e }
-func (e ProgressEl) Pr(length Length) ProgressEl        { tStyledPr(e.n, length); return e }
-func (e ProgressEl) Pt(length Length) ProgressEl        { tStyledPt(e.n, length); return e }
-func (e ProgressEl) Px(length Length) ProgressEl        { tStyledPx(e.n, length); return e }
-func (e ProgressEl) Py(length Length) ProgressEl        { tStyledPy(e.n, length); return e }
-func (e ProgressEl) Right(length Length) ProgressEl     { tStyledRight(e.n, length); return e }
-func (e ProgressEl) Rounded(length Length) ProgressEl   { tStyledRounded(e.n, length); return e }
-func (e ProgressEl) RoundedB(length Length) ProgressEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e ProgressEl) P(length Length) ProgressEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ProgressEl) Pb(length Length) ProgressEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ProgressEl) Pl(length Length) ProgressEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ProgressEl) Pr(length Length) ProgressEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ProgressEl) Pt(length Length) ProgressEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e ProgressEl) Px(length Length) ProgressEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e ProgressEl) Py(length Length) ProgressEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ProgressEl) Right(length Length) ProgressEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e ProgressEl) Rounded(length Length) ProgressEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ProgressEl) RoundedB(length Length) ProgressEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ProgressEl) RoundedBl(length Length) ProgressEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ProgressEl) RoundedBr(length Length) ProgressEl { tStyledRoundedBr(e.n, length); return e }
-func (e ProgressEl) RoundedL(length Length) ProgressEl  { tStyledRoundedL(e.n, length); return e }
-func (e ProgressEl) RoundedR(length Length) ProgressEl  { tStyledRoundedR(e.n, length); return e }
-func (e ProgressEl) RoundedT(length Length) ProgressEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ProgressEl) RoundedL(length Length) ProgressEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ProgressEl) RoundedR(length Length) ProgressEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ProgressEl) RoundedT(length Length) ProgressEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ProgressEl) RoundedTl(length Length) ProgressEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ProgressEl) RoundedTr(length Length) ProgressEl { tStyledRoundedTr(e.n, length); return e }
-func (e ProgressEl) RowEnd(end int16) ProgressEl        { tStyledRowEnd(e.n, end); return e }
-func (e ProgressEl) RowSpan(span uint16) ProgressEl     { tStyledRowSpan(e.n, span); return e }
-func (e ProgressEl) RowStart(start int16) ProgressEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e ProgressEl) RowEnd(end int16) ProgressEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e ProgressEl) RowSpan(span uint16) ProgressEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e ProgressEl) RowStart(start int16) ProgressEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e ProgressEl) ScrollbarWidth(width Length) ProgressEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e ProgressEl) Shadow(shadows []BoxShadow) ProgressEl { tStyledShadow(e.n, shadows); return e }
-func (e ProgressEl) Size(length Length) ProgressEl         { tStyledSize(e.n, length); return e }
-func (e ProgressEl) TextAlign(align TextAlign) ProgressEl  { tStyledTextAlign(e.n, align); return e }
-func (e ProgressEl) TextBg(bg Color) ProgressEl            { tStyledTextBg(e.n, bg); return e }
-func (e ProgressEl) TextColor(color Color) ProgressEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e ProgressEl) Size(length Length) ProgressEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e ProgressEl) TextAlign(align TextAlign) ProgressEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e ProgressEl) TextBg(bg Color) ProgressEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e ProgressEl) TextColor(color Color) ProgressEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e ProgressEl) TextDecorationColor(color Color) ProgressEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e ProgressEl) TextOverflow(overflow TextOverflow) ProgressEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e ProgressEl) TextSize(size Length) ProgressEl { tStyledTextSize(e.n, size); return e }
-func (e ProgressEl) Top(length Length) ProgressEl    { tStyledTop(e.n, length); return e }
-func (e ProgressEl) W(length Length) ProgressEl      { tStyledW(e.n, length); return e }
 
-func (e ProgressEl) Large() ProgressEl                 { tSizableLarge(e.n); return e }
-func (e ProgressEl) Small() ProgressEl                 { tSizableSmall(e.n); return e }
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e ProgressEl) TextSize(size Length) ProgressEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ProgressEl) Top(length Length) ProgressEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e ProgressEl) W(length Length) ProgressEl { tStyledW(e.n, length); return e }
+
+// Set to Size::Large
+func (e ProgressEl) Large() ProgressEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e ProgressEl) Small() ProgressEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e ProgressEl) WithSize(size SizeInto) ProgressEl { tSizableWithSize(e.n, size); return e }
-func (e ProgressEl) Xsmall() ProgressEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e ProgressEl) Xsmall() ProgressEl { tSizableXsmall(e.n); return e }
 
 // ProgressCircleEl is gpui_kit::component::progress::ProgressCircle.
 type ProgressCircleEl struct{ n *node }
 
 func (e ProgressCircleEl) node() *node { return e.n }
 
+// Create a new circular progress indicator.
+//
 // ProgressCircle is <gpui_kit::component::progress::ProgressCircle>::new.
 func ProgressCircle(id ID, st ...Style) ProgressCircleEl {
 	useComponentProgress()
@@ -224,6 +488,8 @@ func ProgressCircle(id ID, st ...Style) ProgressCircleEl {
 	return ProgressCircleEl{n}
 }
 
+// Set the accessible name exposed by the progress indicator.
+//
 // AccessibilityLabel is <gpui_kit::component::progress::ProgressCircle>::accessibility_label.
 func (e ProgressCircleEl) AccessibilityLabel(label string) ProgressCircleEl {
 	o := op(e.n, 256)
@@ -231,6 +497,8 @@ func (e ProgressCircleEl) AccessibilityLabel(label string) ProgressCircleEl {
 	return e
 }
 
+// Set the color of the progress circle.
+//
 // Color is <gpui_kit::component::progress::ProgressCircle>::color.
 func (e ProgressCircleEl) Color(color Color) ProgressCircleEl {
 	o := op(e.n, 257)
@@ -238,6 +506,11 @@ func (e ProgressCircleEl) Color(color Color) ProgressCircleEl {
 	return e
 }
 
+// Enable indeterminate loading animation.
+//
+// When `loading` is `true`, the `value` is ignored and an infinite rotating arc animation is shown
+// instead.
+//
 // Loading is <gpui_kit::component::progress::ProgressCircle>::loading.
 func (e ProgressCircleEl) Loading(loading bool) ProgressCircleEl {
 	o := op(e.n, 258)
@@ -245,6 +518,10 @@ func (e ProgressCircleEl) Loading(loading bool) ProgressCircleEl {
 	return e
 }
 
+// Set the percentage value of the progress circle.
+//
+// The value should be between 0.0 and 100.0.
+//
 // Value is <gpui_kit::component::progress::ProgressCircle>::value.
 func (e ProgressCircleEl) Value(value float32) ProgressCircleEl {
 	o := op(e.n, 259)
@@ -252,17 +529,43 @@ func (e ProgressCircleEl) Value(value float32) ProgressCircleEl {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e ProgressCircleEl) PopoverStyle() ProgressCircleEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e ProgressCircleEl) RoundedFullStyle() ProgressCircleEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e ProgressCircleEl) FocusRingStyle() ProgressCircleEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e ProgressCircleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) ProgressCircleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -290,7 +593,20 @@ func (e ProgressCircleEl) FontMedium() ProgressCircleEl     { tStyledExtFontMedi
 func (e ProgressCircleEl) FontNormal() ProgressCircleEl     { tStyledExtFontNormal(e.n); return e }
 func (e ProgressCircleEl) FontSemibold() ProgressCircleEl   { tStyledExtFontSemibold(e.n); return e }
 func (e ProgressCircleEl) FontThin() ProgressCircleEl       { tStyledExtFontThin(e.n); return e }
-func (e ProgressCircleEl) HFlex() ProgressCircleEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e ProgressCircleEl) HFlex() ProgressCircleEl { tStyledExtHFlex(e.n); return e }
 func (e ProgressCircleEl) Margins(margins EdgesInto) ProgressCircleEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -303,236 +619,458 @@ func (e ProgressCircleEl) RefineStyle(style StyleRefinement) ProgressCircleEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e ProgressCircleEl) VFlex() ProgressCircleEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e ProgressCircleEl) Style(st ...Style) ProgressCircleEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e ProgressCircleEl) AspectRatio(ratio float32) ProgressCircleEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e ProgressCircleEl) Bg(fill Fill) ProgressCircleEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e ProgressCircleEl) Border(length Length) ProgressCircleEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e ProgressCircleEl) BorderB(length Length) ProgressCircleEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e ProgressCircleEl) BorderColor(borderColor Color) ProgressCircleEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e ProgressCircleEl) BorderL(length Length) ProgressCircleEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e ProgressCircleEl) BorderR(length Length) ProgressCircleEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e ProgressCircleEl) BorderT(length Length) ProgressCircleEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e ProgressCircleEl) BorderX(length Length) ProgressCircleEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e ProgressCircleEl) BorderY(length Length) ProgressCircleEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e ProgressCircleEl) Bottom(length Length) ProgressCircleEl {
 	tStyledBottom(e.n, length)
 	return e
 }
-func (e ProgressCircleEl) ColEnd(end int16) ProgressCircleEl    { tStyledColEnd(e.n, end); return e }
+
+// Sets the column end of this element.
+func (e ProgressCircleEl) ColEnd(end int16) ProgressCircleEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e ProgressCircleEl) ColSpan(span uint16) ProgressCircleEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e ProgressCircleEl) ColStart(start int16) ProgressCircleEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e ProgressCircleEl) Cursor(cursor CursorStyle) ProgressCircleEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e ProgressCircleEl) FlexBasis(basis Length) ProgressCircleEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e ProgressCircleEl) FlexGrow(grow float32) ProgressCircleEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ProgressCircleEl) FlexShrink(shrink float32) ProgressCircleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e ProgressCircleEl) FontFamily(familyName string) ProgressCircleEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e ProgressCircleEl) FontFeatures(features FontFeatures) ProgressCircleEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e ProgressCircleEl) FontWeight(weight FontWeight) ProgressCircleEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e ProgressCircleEl) Gap(length Length) ProgressCircleEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e ProgressCircleEl) Gap(length Length) ProgressCircleEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e ProgressCircleEl) GapX(length Length) ProgressCircleEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e ProgressCircleEl) GapY(length Length) ProgressCircleEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e ProgressCircleEl) GridCols(cols uint16) ProgressCircleEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e ProgressCircleEl) GridColsMaxContent(cols uint16) ProgressCircleEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e ProgressCircleEl) GridColsMinContent(cols uint16) ProgressCircleEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e ProgressCircleEl) GridRows(rows uint16) ProgressCircleEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e ProgressCircleEl) GridRowsMaxContent(rows uint16) ProgressCircleEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e ProgressCircleEl) GridRowsMinContent(rows uint16) ProgressCircleEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e ProgressCircleEl) H(length Length) ProgressCircleEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e ProgressCircleEl) H(length Length) ProgressCircleEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e ProgressCircleEl) Inset(length Length) ProgressCircleEl { tStyledInset(e.n, length); return e }
-func (e ProgressCircleEl) Left(length Length) ProgressCircleEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ProgressCircleEl) Left(length Length) ProgressCircleEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e ProgressCircleEl) LineClamp(lines int) ProgressCircleEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e ProgressCircleEl) LineHeight(lineHeight Length) ProgressCircleEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e ProgressCircleEl) M(length Length) ProgressCircleEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e ProgressCircleEl) M(length Length) ProgressCircleEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e ProgressCircleEl) MaxH(length Length) ProgressCircleEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e ProgressCircleEl) MaxSize(length Length) ProgressCircleEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e ProgressCircleEl) MaxW(length Length) ProgressCircleEl { tStyledMaxW(e.n, length); return e }
-func (e ProgressCircleEl) Mb(length Length) ProgressCircleEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ProgressCircleEl) Mb(length Length) ProgressCircleEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e ProgressCircleEl) MinH(length Length) ProgressCircleEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e ProgressCircleEl) MinSize(length Length) ProgressCircleEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e ProgressCircleEl) MinW(length Length) ProgressCircleEl { tStyledMinW(e.n, length); return e }
-func (e ProgressCircleEl) Ml(length Length) ProgressCircleEl   { tStyledMl(e.n, length); return e }
-func (e ProgressCircleEl) Mr(length Length) ProgressCircleEl   { tStyledMr(e.n, length); return e }
-func (e ProgressCircleEl) Mt(length Length) ProgressCircleEl   { tStyledMt(e.n, length); return e }
-func (e ProgressCircleEl) Mx(length Length) ProgressCircleEl   { tStyledMx(e.n, length); return e }
-func (e ProgressCircleEl) My(length Length) ProgressCircleEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ProgressCircleEl) Ml(length Length) ProgressCircleEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ProgressCircleEl) Mr(length Length) ProgressCircleEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ProgressCircleEl) Mt(length Length) ProgressCircleEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e ProgressCircleEl) Mx(length Length) ProgressCircleEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e ProgressCircleEl) My(length Length) ProgressCircleEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e ProgressCircleEl) Opacity(opacity float32) ProgressCircleEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e ProgressCircleEl) P(length Length) ProgressCircleEl     { tStyledP(e.n, length); return e }
-func (e ProgressCircleEl) Pb(length Length) ProgressCircleEl    { tStyledPb(e.n, length); return e }
-func (e ProgressCircleEl) Pl(length Length) ProgressCircleEl    { tStyledPl(e.n, length); return e }
-func (e ProgressCircleEl) Pr(length Length) ProgressCircleEl    { tStyledPr(e.n, length); return e }
-func (e ProgressCircleEl) Pt(length Length) ProgressCircleEl    { tStyledPt(e.n, length); return e }
-func (e ProgressCircleEl) Px(length Length) ProgressCircleEl    { tStyledPx(e.n, length); return e }
-func (e ProgressCircleEl) Py(length Length) ProgressCircleEl    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e ProgressCircleEl) P(length Length) ProgressCircleEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ProgressCircleEl) Pb(length Length) ProgressCircleEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ProgressCircleEl) Pl(length Length) ProgressCircleEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ProgressCircleEl) Pr(length Length) ProgressCircleEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ProgressCircleEl) Pt(length Length) ProgressCircleEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e ProgressCircleEl) Px(length Length) ProgressCircleEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e ProgressCircleEl) Py(length Length) ProgressCircleEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e ProgressCircleEl) Right(length Length) ProgressCircleEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e ProgressCircleEl) Rounded(length Length) ProgressCircleEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e ProgressCircleEl) RoundedB(length Length) ProgressCircleEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ProgressCircleEl) RoundedBl(length Length) ProgressCircleEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ProgressCircleEl) RoundedBr(length Length) ProgressCircleEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e ProgressCircleEl) RoundedL(length Length) ProgressCircleEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e ProgressCircleEl) RoundedR(length Length) ProgressCircleEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e ProgressCircleEl) RoundedT(length Length) ProgressCircleEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ProgressCircleEl) RoundedTl(length Length) ProgressCircleEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ProgressCircleEl) RoundedTr(length Length) ProgressCircleEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e ProgressCircleEl) RowEnd(end int16) ProgressCircleEl    { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row end of this element.
+func (e ProgressCircleEl) RowEnd(end int16) ProgressCircleEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e ProgressCircleEl) RowSpan(span uint16) ProgressCircleEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e ProgressCircleEl) RowStart(start int16) ProgressCircleEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e ProgressCircleEl) ScrollbarWidth(width Length) ProgressCircleEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e ProgressCircleEl) Shadow(shadows []BoxShadow) ProgressCircleEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e ProgressCircleEl) Size(length Length) ProgressCircleEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e ProgressCircleEl) TextAlign(align TextAlign) ProgressCircleEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e ProgressCircleEl) TextBg(bg Color) ProgressCircleEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e ProgressCircleEl) TextColor(color Color) ProgressCircleEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e ProgressCircleEl) TextDecorationColor(color Color) ProgressCircleEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e ProgressCircleEl) TextOverflow(overflow TextOverflow) ProgressCircleEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e ProgressCircleEl) TextSize(size Length) ProgressCircleEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
-func (e ProgressCircleEl) Top(length Length) ProgressCircleEl { tStyledTop(e.n, length); return e }
-func (e ProgressCircleEl) W(length Length) ProgressCircleEl   { tStyledW(e.n, length); return e }
 
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ProgressCircleEl) Top(length Length) ProgressCircleEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e ProgressCircleEl) W(length Length) ProgressCircleEl { tStyledW(e.n, length); return e }
+
+// Set to Size::Large
 func (e ProgressCircleEl) Large() ProgressCircleEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e ProgressCircleEl) Small() ProgressCircleEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e ProgressCircleEl) WithSize(size SizeInto) ProgressCircleEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e ProgressCircleEl) Xsmall() ProgressCircleEl { tSizableXsmall(e.n); return e }
 
 func (e ProgressCircleEl) Text(s string) ProgressCircleEl { putText(e.n, s); return e }
@@ -540,10 +1078,13 @@ func (e ProgressCircleEl) Text(s string) ProgressCircleEl { putText(e.n, s); ret
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e ProgressCircleEl) ChildView(v View) ProgressCircleEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e ProgressCircleEl) Child(child Element) ProgressCircleEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e ProgressCircleEl) Children(children ...Element) ProgressCircleEl {
 	tParentElementChildren(e.n, children...)
 	return e

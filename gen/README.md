@@ -14,7 +14,7 @@ section 13. What generated code calls: [../docs/PROTOCOLS.md](../docs/PROTOCOLS.
 | `gen/round.sh [N]` | Rust | the quarantine loop: `cargo check --release -p gk-capi`, errors charged to items by line, regenerate, up to N rounds |
 | `make gates-quick` | the library | the Odin compiler as judge (every example and the 26,000-call sample build), and the gallery compares every page with Rust |
 | `python3 gen/gkgen.py quarantine odin LOG` | Python only | charge the errors of an Odin log to items and regenerate |
-| `gen/extract.sh`, then `python3 gen/gkgen.py strip DIR` | Rust, then Python | a new upstream pin: rustdoc JSON (about a minute and 1.5 GB of `target/`), reduced to `api/rustdoc/*.json.gz` (3.3 MB, committed) |
+| `gen/extract.sh`, then `python3 gen/gkgen.py strip DIR` | Rust, then Python | a new upstream pin: rustdoc JSON (about a minute and 1.5 GB of `target/`), reduced to `api/rustdoc/*.json.gz` (3.3 MB, committed), and the doc comments to `api/rustdoc/docs.json.gz` |
 
 ## Files
 

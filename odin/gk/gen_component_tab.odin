@@ -3,6 +3,8 @@ package gk
 
 import "core:time"
 
+// A Tab element for the `Tab_Bar`.
+//
 // Tab is gpui_kit::component::tab::Tab.
 Tab :: struct {
 	using el: Element,
@@ -57,21 +59,35 @@ Tab_VT :: struct {
 	track_scroll: proc(e: Tab, scroll_handle: Scroll_Handle) -> Tab,
 	using t_styled: ^Styled_Trait(Tab),
 	using t_sizable: ^Sizable_Trait(Tab),
+	// Set the accessible label for the tab.
 	aria_label: proc(e: Tab, label: string) -> Tab,
+	// Set disabled state to the tab, default false.
 	disabled: proc(e: Tab, disabled: bool) -> Tab,
+	// Use Folder variant.
 	folder: proc(e: Tab) -> Tab,
+	// Set icon for the tab.
 	icon: proc(e: Tab, icon: Icon_Name) -> Tab,
+	// Set label for the tab.
 	label: proc(e: Tab, label: string) -> Tab,
+	// Set the click handler for the tab.
 	on_click: proc(e: Tab, on_click: Handler) -> Tab,
+	// Use outline variant.
 	outline: proc(e: Tab) -> Tab,
+	// Use Pill variant.
 	pill: proc(e: Tab) -> Tab,
+	// Set the left side of the tab
 	prefix: proc(e: Tab, prefix: Element) -> Tab,
+	// Use Segmented variant.
 	segmented: proc(e: Tab) -> Tab,
+	// Set the right side of the tab
 	suffix: proc(e: Tab, suffix: Element) -> Tab,
+	// Use Underline variant.
 	underline: proc(e: Tab) -> Tab,
+	// Set Tab Variant.
 	with_variant: proc(e: Tab, variant: Tab_Variant) -> Tab,
 }
 
+// Create a new tab with a label.
 tab :: proc(flags: ..Style_Flag, loc := #caller_location) -> Tab {
 	use_component_tab()
 	e := Tab{new_node(770, loc), &tab_vt}
@@ -197,6 +213,8 @@ tab_vt := Tab_VT {
 	},
 }
 
+// A TabBar element that contains multiple `Tab` items.
+//
 // Tab_Bar is gpui_kit::component::tab::TabBar.
 Tab_Bar :: struct {
 	using el: Element,
@@ -208,24 +226,48 @@ Tab_Bar_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Tab_Bar),
 	using t_styled: ^Styled_Trait(Tab_Bar),
 	using t_sizable: ^Sizable_Trait(Tab_Bar),
+	// Add child of the TabBar, tab will inherit the variant.
 	child: proc(e: Tab_Bar, child: Tab_Into) -> Tab_Bar,
+	// Add children of the TabBar, all children will inherit the variant.
 	children: proc(e: Tab_Bar, children: []Tab_Into) -> Tab_Bar,
+	// Set the Tab variant to Folder, all children will inherit the variant.
 	folder: proc(e: Tab_Bar) -> Tab_Bar,
+	// Set the last empty space element of the TabBar.
 	last_empty_space: proc(e: Tab_Bar, last_empty_space: Element) -> Tab_Bar,
+	// Set the maximum width of each tab. Labels longer than this width are truncated with an ellipsis.
+	// Does not apply to icon-only tabs. The overflow menu still shows the full label.
 	max_width: proc(e: Tab_Bar, width: f32) -> Tab_Bar,
+	// Set whether to show the menu button when tabs overflow, default is false.
 	menu: proc(e: Tab_Bar, menu: bool) -> Tab_Bar,
+	// Set the on_click callback of the TabBar, the first parameter is the index of the clicked tab.
+	//
+	// When this is set, the children's on_click will be ignored.
 	on_click: proc(e: Tab_Bar, on_click: Handler) -> Tab_Bar,
+	// Set the Tab variant to Outline, all children will inherit the variant.
 	outline: proc(e: Tab_Bar) -> Tab_Bar,
+	// Set the Tab variant to Pill, all children will inherit the variant.
 	pill: proc(e: Tab_Bar) -> Tab_Bar,
+	// Set the prefix element of the TabBar
 	prefix: proc(e: Tab_Bar, prefix: Element) -> Tab_Bar,
+	// Set the Tab variant to Segmented, all children will inherit the variant.
 	segmented: proc(e: Tab_Bar) -> Tab_Bar,
+	// Set the selected index of the TabBar.
 	selected_index: proc(e: Tab_Bar, index: int) -> Tab_Bar,
+	// Set the suffix element of the TabBar
 	suffix: proc(e: Tab_Bar, suffix: Element) -> Tab_Bar,
+	// Track the scroll of the TabBar.
+	//
+	// Clicking a tab scrolls it into view along with part of the next tab, but changing the selection,
+	// the tabs or the layout does not. Use the tracked `ScrollHandle` to request an explicit reveal
+	// when needed.
 	track_scroll: proc(e: Tab_Bar, scroll_handle: Scroll_Handle) -> Tab_Bar,
+	// Set the Tab variant to Underline, all children will inherit the variant.
 	underline: proc(e: Tab_Bar) -> Tab_Bar,
+	// Set the Tab variant, all children will inherit the variant.
 	with_variant: proc(e: Tab_Bar, variant: Tab_Variant) -> Tab_Bar,
 }
 
+// Create a new TabBar.
 tab_bar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Tab_Bar {
 	use_component_tab()
 	e := Tab_Bar{new_node(771, loc), &tab_bar_vt}

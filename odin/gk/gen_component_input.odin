@@ -3,6 +3,8 @@ package gk
 
 import "core:time"
 
+// A text input element bind to an `InputState`.
+//
 // Input is gpui_kit::component::input::Input.
 Input :: struct {
 	using el: Element,
@@ -97,29 +99,72 @@ Input_VT :: struct {
 	w: proc(e: Input, length: Length) -> Input,
 	style: proc(e: Input, flags: ..Style_Flag) -> Input,
 	accessibility_id: proc(e: Input, id: string) -> Input,
+	// Set the appearance of the input field, if false the input field will no border, background.
 	appearance: proc(e: Input, appearance: bool) -> Input,
 	aria_label: proc(e: Input, label: string) -> Input,
+	// Set the bordered for the input, default: true
 	bordered: proc(e: Input, bordered: bool) -> Input,
+	// Set whether to show the clear button when the input field is not empty, default is false.
 	cleanable: proc(e: Input, cleanable: bool) -> Input,
+	// Set the semantic content type for password managers and autofill.
+	//
+	// This is a component-level semantic hint. It does not change the text value or masked rendering
+	// state.
 	content_type: proc(e: Input, content_type: Input_Content_Type) -> Input,
+	// Sets a custom context menu builder for the input, shown as a native OS menu.
+	//
+	// If set, this overrides the built-in right-click context menu. It shows only while the state's
+	// context menu is enabled, which is the default.
 	context_menu: proc(e: Input, f: Native_Menu) -> Input,
+	// Set to disable the input field.
 	disabled: proc(e: Input, disabled: bool) -> Input,
+	// Set focus border for the input, default is true.
 	focus_bordered: proc(e: Input, bordered: bool) -> Input,
+	// Set height of the input (Multi-line only).
 	h: proc(e: Input, height: Length) -> Input,
+	// Set full height of the input (Multi-line only).
 	h_full: proc(e: Input) -> Input,
+	// Sets the GPUI identity of the input frame. By default it uses the state entity ID.
 	id: proc(e: Input, id: Id) -> Input,
+	// Set to enable toggle button for password mask state.
 	mask_toggle: proc(e: Input) -> Input,
+	// Intercept paste payloads (images, files) before the default text insertion.
+	//
+	// The handler receives the clipboard item and returns whether it took the paste: `true` stops the
+	// `input::Paste` action so the input inserts nothing, `false` lets it reach the engine, which
+	// inserts `clipboard.text()` as today. Text stays in the `Rope`; images and copied files
+	// (`ClipboardEntry::Image`, `ClipboardEntry::ExternalPaths`) belong in app-owned state beside the
+	// input (e.g. `Attachment`s), never inside it.
+	//
+	// Known limit: on web `read_from_clipboard()` is `None`, so the handler is skipped there and the
+	// input inserts the plain text itself (a keyboard paste arrives through the platform input
+	// handler, a menu paste through the asynchronous clipboard read); image paste there needs
+	// `read_from_clipboard_async` and permission, out of scope here.
 	on_paste: proc(e: Input, handler: Handler) -> Input,
+	// Open a reference after a completed, unconsumed token click.
 	on_token_click: proc(e: Input, listener: Handler) -> Input,
+	// Report pointer presence over a token so the application can show a tooltip or run custom logic.
+	// Hover never selects or edits.
 	on_token_hover: proc(e: Input, listener: Handler) -> Input,
 	prefix: proc(e: Input, prefix: Element) -> Input,
+	// Set the input field to read-only, default is `false`.
+	//
+	// Unlike `->disabled`, a read-only input keeps the normal appearance and still can be focused,
+	// selected and copied, it only rejects the changes made by the user.
 	readonly: proc(e: Input, readonly: bool) -> Input,
+	// Override the accessible role for the input.
+	//
+	// If unset, the role is inferred from multi-line mode and content type.
 	role: proc(e: Input, role: Role_Override) -> Input,
 	suffix: proc(e: Input, suffix: Element) -> Input,
+	// Set the tab index for the input, default is 0.
 	tab_index: proc(e: Input, index: int) -> Input,
+	// The element each atomic inline token renders as, in place of the default `Input_Token`; editing
+	// and history stay with the input.
 	token: proc(e: Input, render: Row_Source) -> Input, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, inline_token_context: Inline_Token_Context) -> Element)
 }
 
+// Create a new `Input` element bind to the `InputState`.
 input :: proc(state: Input_State, flags: ..Style_Flag, loc := #caller_location) -> Input {
 	use_component_input()
 	e := Input{new_node(675, loc), &input_vt}
@@ -327,6 +372,12 @@ input_vt := Input_VT {
 	},
 }
 
+// A shared frame around one text control and any number of explicitly aligned addons.
+//
+// The caller retains the `InputState` or `TextareaState`. The group owns only composition and
+// presentation; the control keeps every `Input` capability and renders without its own frame.
+// `input` replaces the slot.
+//
 // Input_Group is gpui_kit::component::input::InputGroup.
 Input_Group :: struct {
 	using el: Element,
@@ -339,11 +390,17 @@ Input_Group_VT :: struct {
 	using t_sizable: ^Sizable_Trait(Input_Group),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Input_Group),
 	using t_styled: ^Styled_Trait(Input_Group),
+	// Append an addon. Addons on the same side retain their insertion order.
 	addon: proc(e: Input_Group, addon: Input_Group_Addon) -> Input_Group,
+	// Set a name for the group. Name its text control separately with `aria_label`.
 	aria_label: proc(e: Input_Group, label: string) -> Input_Group,
+	// Prevent editing and interaction throughout this group.
 	disabled: proc(e: Input_Group, disabled: bool) -> Input_Group,
+	// Set the single-line input or textarea, replacing the previous control.
 	input: proc(e: Input_Group, input: Input_Group_Control_Into) -> Input_Group,
+	// Display the caller's validation result. This does not reject text edits.
 	invalid: proc(e: Input_Group, invalid: bool) -> Input_Group,
+	// Prevent editing while preserving selection, copying, and addon actions.
 	readonly: proc(e: Input_Group, readonly: bool) -> Input_Group,
 }
 
@@ -395,6 +452,11 @@ input_group_vt := Input_Group_VT {
 	},
 }
 
+// Text, icons, buttons, or custom content on one side of an input group.
+//
+// Children retain their insertion order. Direct `InputGroupButton` children inherit the group's
+// disabled state. Custom children retain their own semantics.
+//
 // Input_Group_Addon is gpui_kit::component::input::InputGroupAddon.
 Input_Group_Addon :: struct {
 	using el: Element,
@@ -435,6 +497,11 @@ input_group_addon_vt := Input_Group_Addon_VT {
 	},
 }
 
+// A `Button` with compact input-group presentation and disabled inheritance.
+//
+// Ghost and extra-small by default, as in shadcn; `xsmall` and `small` are the two compact sizes,
+// and a button with only an icon is square at either.
+//
 // Input_Group_Button is gpui_kit::component::input::InputGroupButton.
 Input_Group_Button :: struct {
 	using el: Element,
@@ -628,6 +695,8 @@ input_group_button_vt := Input_Group_Button_VT {
 	},
 }
 
+// Muted helper text, optionally combined with icons, inside an input group.
+//
 // Input_Group_Text is gpui_kit::component::input::InputGroupText.
 Input_Group_Text :: struct {
 	using el: Element,
@@ -667,6 +736,8 @@ input_group_text_vt := Input_Group_Text_VT {
 	t_styled = cast(^Styled_Trait(Input_Group_Text))&styled_any,
 }
 
+// The element an `InlineToken` renders as by default. Editing and activation belong to the input.
+//
 // Input_Token is gpui_kit::component::input::InputToken.
 Input_Token :: struct {
 	using el: Element,
@@ -701,6 +772,8 @@ input_token_vt := Input_Token_VT {
 	},
 }
 
+// A number input element with increment and decrement buttons.
+//
 // Number_Input is gpui_kit::component::input::NumberInput.
 Number_Input :: struct {
 	using el: Element,
@@ -714,13 +787,22 @@ Number_Input_VT :: struct {
 	using t_focusable_ext: ^Focusable_Ext_Trait(Number_Input),
 	using t_sizable: ^Sizable_Trait(Number_Input),
 	using t_styled: ^Styled_Trait(Number_Input),
+	// Set the name a screen reader announces.
+	//
+	// A number input has no visible text of its own to be named by, so set this whenever it is shown
+	// without one, for example next to a separate label. This does not change what is displayed.
 	accessibility_label: proc(e: Number_Input, label: string) -> Number_Input,
+	// Set the appearance of the number input, if false will no border and background.
 	appearance: proc(e: Number_Input, appearance: bool) -> Number_Input,
+	// Set the placeholder text of the number input.
 	placeholder: proc(e: Number_Input, placeholder: string) -> Number_Input,
+	// Set the prefix element of the number input.
 	prefix: proc(e: Number_Input, prefix: Element) -> Number_Input,
+	// Set the suffix element of the number input.
 	suffix: proc(e: Number_Input, suffix: Element) -> Number_Input,
 }
 
+// Create a new `Number_Input` element bind to the `InputState`.
 number_input :: proc(state: Input_State, flags: ..Style_Flag, loc := #caller_location) -> Number_Input {
 	use_component_input()
 	e := Number_Input{new_node(681, loc), &number_input_vt}
@@ -765,6 +847,14 @@ number_input_vt := Number_Input_VT {
 	},
 }
 
+// A One Time Password (OTP) input element.
+//
+// This can accept a fixed length number and can be masked.
+//
+// Use case example:
+// - SMS OTP
+// - Authenticator OTP
+//
 // Otp_Input is gpui_kit::component::input::OtpInput.
 Otp_Input :: struct {
 	using el: Element,
@@ -775,9 +865,11 @@ Otp_Input_VT :: struct {
 	using t_disableable: ^Disableable_Trait(Otp_Input),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Otp_Input),
 	using t_sizable: ^Sizable_Trait(Otp_Input),
+	// Set number of groups in the OTP Input.
 	groups: proc(e: Otp_Input, n_: int) -> Otp_Input,
 }
 
+// Create a new `Otp_Input` element bind to the `OtpState`.
 otp_input :: proc(state: Otp_State, loc := #caller_location) -> Otp_Input {
 	use_component_input()
 	e := Otp_Input{new_node(682, loc), &otp_input_vt}
@@ -798,6 +890,8 @@ otp_input_vt := Otp_Input_VT {
 	},
 }
 
+// A styled ordinary multi-line text field.
+//
 // Textarea is gpui_kit::component::input::Textarea.
 Textarea :: struct {
 	using el: Element,
@@ -889,19 +983,39 @@ Textarea_VT :: struct {
 	top: proc(e: Textarea, length: Length) -> Textarea,
 	w: proc(e: Textarea, length: Length) -> Textarea,
 	style: proc(e: Textarea, flags: ..Style_Flag) -> Textarea,
+	// Set the developer-assigned accessibility identifier.
 	accessibility_id: proc(e: Textarea, id: string) -> Textarea,
 	appearance: proc(e: Textarea, appearance: bool) -> Textarea,
 	aria_label: proc(e: Textarea, label: string) -> Textarea,
 	bordered: proc(e: Textarea, bordered: bool) -> Textarea,
+	// Replace the built-in context menu shown on right-click.
+	//
+	// The closure receives an empty menu and returns the one to show, so it decides entirely what
+	// appears — the default items are not added. It shows only while the state's context menu is
+	// enabled, which is the default.
 	context_menu: proc(e: Textarea, f: Native_Menu) -> Textarea,
 	disabled: proc(e: Textarea, disabled: bool) -> Textarea,
 	h: proc(e: Textarea, height: Length) -> Textarea,
+	// Intercept paste payloads (images, files) before the default text insertion.
+	//
+	// `true` consumes the paste so nothing is inserted, `false` falls through to `clipboard.text()`.
+	// Copied files arrive as `ExternalPaths` through the same hook. On web the clipboard reads `None`;
+	// image paste needs async clipboard access and is out of scope.
 	on_paste: proc(e: Textarea, handler: Handler) -> Textarea,
+	// Open a reference after a completed, unconsumed token click.
 	on_token_click: proc(e: Textarea, listener: Handler) -> Textarea,
+	// Report pointer presence over a token so the application can show a tooltip or run custom logic.
+	// Hover never selects or edits.
 	on_token_hover: proc(e: Textarea, listener: Handler) -> Textarea,
+	// Set the textarea to read-only, default is `false`.
+	//
+	// Unlike `->disabled`, a read-only textarea keeps the normal appearance and still can be focused,
+	// selected and copied, it only rejects the changes made by the user.
 	readonly: proc(e: Textarea, readonly: bool) -> Textarea,
 	role: proc(e: Textarea, role: Role_Override) -> Textarea,
 	tab_index: proc(e: Textarea, index: int) -> Textarea,
+	// The element each atomic inline token renders as, in place of the default `Input_Token`; editing
+	// and history stay with the input.
 	token: proc(e: Textarea, render: Row_Source) -> Textarea, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, inline_token_context: Inline_Token_Context) -> Element)
 }
 

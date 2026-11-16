@@ -111,6 +111,8 @@ type CursorBlink struct{ n *node }
 
 func (e CursorBlink) valueNode() *node { return e.n }
 
+// Alternate visible and hidden phases of `interval` each; zero means steady.
+//
 // NewCursorBlinkBlinking is <gpui_kit::base::input::CursorBlink>::blinking.
 func NewCursorBlinkBlinking(interval time.Duration) CursorBlink {
 	n := newValue(467)
@@ -125,12 +127,17 @@ func NewCursorBlinkDefault() CursorBlink {
 	return CursorBlink{n}
 }
 
+// Keep the focused caret visible without a timer.
+//
 // NewCursorBlinkSteady is <gpui_kit::base::input::CursorBlink>::steady.
 func NewCursorBlinkSteady() CursorBlink {
 	n := newValue(468)
 	return CursorBlink{n}
 }
 
+// Stop blinking, with the caret visible, once `timeout` has passed since the last focus, edit or
+// cursor movement.
+//
 // WithIdleTimeout is <gpui_kit::base::input::CursorBlink>::with_idle_timeout.
 func (e CursorBlink) WithIdleTimeout(timeout time.Duration) CursorBlink {
 	o := op(e.n, 256)
@@ -271,6 +278,8 @@ type GutterDecoration struct{ n *node }
 
 func (e GutterDecoration) valueNode() *node { return e.n }
 
+// Create a mark with the editor foreground color.
+//
 // NewGutterDecoration is <gpui_kit::base::input::GutterDecoration>::new.
 func NewGutterDecoration(range_ Range) GutterDecoration {
 	n := newValue(481)
@@ -285,6 +294,8 @@ func NewGutterDecorationDefault() GutterDecoration {
 	return GutterDecoration{n}
 }
 
+// Set the color instead of the editor foreground fallback.
+//
 // WithColor is <gpui_kit::base::input::GutterDecoration>::with_color.
 func (e GutterDecoration) WithColor(color Color) GutterDecoration {
 	o := op(e.n, 256)
@@ -292,6 +303,8 @@ func (e GutterDecoration) WithColor(color Color) GutterDecoration {
 	return e
 }
 
+// Set the color for the bar on a fold's row when the range starts inside that fold.
+//
 // WithFoldedColor is <gpui_kit::base::input::GutterDecoration>::with_folded_color.
 func (e GutterDecoration) WithFoldedColor(color Color) GutterDecoration {
 	o := op(e.n, 257)
@@ -409,6 +422,8 @@ func (e InputAccessibility) WithPlaceholder(placeholder Option[string]) InputAcc
 	return e
 }
 
+// Suppress values for secret content even when the mask is revealed.
+//
 // WithValueExposed is <gpui_kit::base::input::InputAccessibility>::with_value_exposed.
 func (e InputAccessibility) WithValueExposed(exposed bool) InputAccessibility {
 	o := op(e.n, 256)
@@ -624,6 +639,8 @@ type OverviewRulerDecoration struct{ n *node }
 
 func (e OverviewRulerDecoration) valueNode() *node { return e.n }
 
+// Create a mark in the center lane with the editor foreground color.
+//
 // NewOverviewRulerDecoration is <gpui_kit::base::input::OverviewRulerDecoration>::new.
 func NewOverviewRulerDecoration(range_ Range) OverviewRulerDecoration {
 	n := newValue(508)
@@ -638,6 +655,8 @@ func NewOverviewRulerDecorationDefault() OverviewRulerDecoration {
 	return OverviewRulerDecoration{n}
 }
 
+// Set the color instead of the editor foreground fallback.
+//
 // WithColor is <gpui_kit::base::input::OverviewRulerDecoration>::with_color.
 func (e OverviewRulerDecoration) WithColor(color Color) OverviewRulerDecoration {
 	o := op(e.n, 256)
@@ -645,6 +664,8 @@ func (e OverviewRulerDecoration) WithColor(color Color) OverviewRulerDecoration 
 	return e
 }
 
+// Set the lane that this mark uses.
+//
 // WithLane is <gpui_kit::base::input::OverviewRulerDecoration>::with_lane.
 func (e OverviewRulerDecoration) WithLane(lane OverviewRulerLane) OverviewRulerDecoration {
 	o := op(e.n, 257)
@@ -669,6 +690,8 @@ type RangeDecoration struct{ n *node }
 
 func (e RangeDecoration) valueNode() *node { return e.n }
 
+// Create a frame using the editor foreground color.
+//
 // NewRangeDecoration is <gpui_kit::base::input::RangeDecoration>::new.
 func NewRangeDecoration(range_ Range) RangeDecoration {
 	n := newValue(510)
@@ -677,6 +700,8 @@ func NewRangeDecoration(range_ Range) RangeDecoration {
 	return RangeDecoration{n}
 }
 
+// Override the editor foreground fallback with an application-owned color.
+//
 // WithColor is <gpui_kit::base::input::RangeDecoration>::with_color.
 func (e RangeDecoration) WithColor(color Color) RangeDecoration {
 	o := op(e.n, 256)
@@ -684,6 +709,8 @@ func (e RangeDecoration) WithColor(color Color) RangeDecoration {
 	return e
 }
 
+// Choose a fill or frame without changing text layout.
+//
 // WithStyle is <gpui_kit::base::input::RangeDecoration>::with_style.
 func (e RangeDecoration) WithStyle(style RangeDecorationStyle) RangeDecoration {
 	o := op(e.n, 257)

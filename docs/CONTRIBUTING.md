@@ -102,9 +102,14 @@ When the pinned GPUI-kit version changes, extract its API again first:
 
 ```sh
 gen/extract.sh                          # rustdoc JSON into gen-json/, a few minutes
-python3 gen/gkgen.py strip gen-json/public
+python3 gen/gkgen.py strip gen-json/public   # also writes api/rustdoc/docs.json.gz, the doc comments
 make gen
 ```
+
+`make gen` copies GPUI-kit's doc comments into the Go and Odin packages (`gen/gk_doc.py`). Read
+`gen/out/doc-rust-only.md` after an upgrade: it lists the sentences left out because they
+describe Rust-only mechanics. A new one there that has a plain equivalent belongs in
+`gk_doc.REWRITES`.
 
 ## Running the tests
 

@@ -8,12 +8,22 @@ Cross_Line :: struct {
 }
 
 Cross_Line_VT :: struct {
+	// Render a solid translucent highlight band of `thickness` (centered on `point`) instead of the
+	// default dashed hairline. Use the bar/band width to highlight the hovered column or row.
 	band: proc(e: Cross_Line, thickness: f32) -> Cross_Line,
+	// Set the cross line axis to both.
 	both: proc(e: Cross_Line) -> Cross_Line,
+	// Confine the horizontal line to `start, start + length` along the x axis, so it stays within the
+	// plot area.
 	h_span: proc(e: Cross_Line, start: f32, length: f32) -> Cross_Line,
+	// Set the vertical line's length along the y axis (from the top edge).
 	height: proc(e: Cross_Line, height: f32) -> Cross_Line,
+	// Set the cross line axis to horizontal.
 	horizontal: proc(e: Cross_Line) -> Cross_Line,
+	// Confine the vertical line to `start, start + length` along the y axis, so it stays within the
+	// plot area.
 	span: proc(e: Cross_Line, start: f32, length: f32) -> Cross_Line,
+	// Set the horizontal line's length along the x axis (from the left edge).
 	width: proc(e: Cross_Line, width: f32) -> Cross_Line,
 }
 
@@ -71,9 +81,17 @@ Dot :: struct {
 }
 
 Dot_VT :: struct {
+	// Set the fill of the dot.
 	fill: proc(e: Dot, fill: Color) -> Dot,
+	// Draw a translucent ring of the fill color, `size` across, behind the dot, which marks the
+	// hovered point the way a chart marks its emphasized symbol.
+	//
+	// `size` is the ring at full hover progress: in a `Tooltip` the ring grows out of the dot as the
+	// hover fades in.
 	halo: proc(e: Dot, size: f32) -> Dot,
+	// Set the size of the dot.
 	size: proc(e: Dot, size: f32) -> Dot,
+	// Set the stroke of the dot.
 	stroke: proc(e: Dot, stroke: Color) -> Dot,
 }
 
@@ -202,18 +220,46 @@ Tooltip_VT :: struct {
 	w: proc(e: Tooltip, length: Length) -> Tooltip,
 	style: proc(e: Tooltip, flags: ..Style_Flag) -> Tooltip,
 	using t_parent_element: ^Parent_Element_Trait(Tooltip),
+	// Set the appearance of the tooltip.
 	appearance: proc(e: Tooltip, appearance: bool) -> Tooltip,
+	// Set the cross line of the tooltip.
 	cross_line: proc(e: Tooltip, cross_line: Cross_Line) -> Tooltip,
+	// Set the dots of the tooltip.
 	dots: proc(e: Tooltip, dots: []Dot) -> Tooltip,
+	// Set the gap of the tooltip.
 	gap: proc(e: Tooltip, gap: f32) -> Tooltip,
+	// Glide the crosshair and dots between data, or snap them to each datum.
+	//
+	// A tooltip returned from `tooltip` slides them to the hovered datum on the pointer spring,
+	// adopting it on the frame the cursor lands instead of travelling from where the last hover ended.
+	// A crosshair glides along the axis it marks only, so a line that also follows the cursor keeps up
+	// with it. Turn this off for positions the plot already springs itself (`glide`).
+	//
+	// Default is true.
 	glide: proc(e: Tooltip, glide: bool) -> Tooltip,
+	// Append a row without a swatch, for a figure no series on the plot draws, such as a total or a
+	// ratio.
+	//
+	// Among series rows its label lines up with theirs; without any, the labels sit at the start.
 	plain_row: proc(e: Tooltip, label: string, value: string) -> Tooltip,
+	// Fade the whole overlay — crosshair, dots and box — to `progress` (`0..=1`).
+	//
+	// A tooltip returned from `tooltip` already follows the plot's hover, easing in when the cursor
+	// lands on a datum and out after it leaves (`progress`); set this to override that, or to fade a
+	// tooltip rendered outside a plot.
 	progress: proc(e: Tooltip, progress: f32) -> Tooltip,
+	// Append a series row: a colored swatch, a muted `label`, and a right-aligned `value`.
 	row: proc(e: Tooltip, color: Color, label: string, value: string) -> Tooltip,
+	// Set a bold title row shown at the top of the tooltip (e.g. the hovered x value).
 	title: proc(e: Tooltip, title: string) -> Tooltip,
+	// Color the value of the row added last — by `->row` or `->plain_row` — such as green or red by
+	// its sign. The value reads in the tooltip's text color otherwise.
+	//
+	// Call it right after the row it colors; before any row it does nothing.
 	value_color: proc(e: Tooltip, color: Color) -> Tooltip,
 }
 
+// Create a tooltip whose box follows the cursor at `cursor` within a `within`-sized plot.
 tooltip :: proc(cursor: Gpui_Point, within: Gpui_Size, flags: ..Style_Flag, loc := #caller_location) -> Tooltip {
 	use_component_plot()
 	e := Tooltip{new_node(714, loc), &tooltip_vt}

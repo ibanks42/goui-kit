@@ -26,7 +26,19 @@ func (e CalendarEl) NumberOfMonths(count int) CalendarEl {
 	return e
 }
 
-func (e CalendarEl) PopoverStyle() CalendarEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e CalendarEl) PopoverStyle() CalendarEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CalendarEl) RoundedFullStyle() CalendarEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e CalendarEl) CornerRadii(radius Corners) CalendarEl {
@@ -38,19 +50,32 @@ func (e CalendarEl) DebugFocused(focusHandle FocusHandle) CalendarEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e CalendarEl) DebugGreen() CalendarEl               { tStyledExtDebugGreen(e.n); return e }
-func (e CalendarEl) DebugPink() CalendarEl                { tStyledExtDebugPink(e.n); return e }
-func (e CalendarEl) DebugRed() CalendarEl                 { tStyledExtDebugRed(e.n); return e }
-func (e CalendarEl) DebugYellow() CalendarEl              { tStyledExtDebugYellow(e.n); return e }
-func (e CalendarEl) FontBlack() CalendarEl                { tStyledExtFontBlack(e.n); return e }
-func (e CalendarEl) FontBold() CalendarEl                 { tStyledExtFontBold(e.n); return e }
-func (e CalendarEl) FontExtrabold() CalendarEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e CalendarEl) FontExtralight() CalendarEl           { tStyledExtFontExtralight(e.n); return e }
-func (e CalendarEl) FontLight() CalendarEl                { tStyledExtFontLight(e.n); return e }
-func (e CalendarEl) FontMedium() CalendarEl               { tStyledExtFontMedium(e.n); return e }
-func (e CalendarEl) FontNormal() CalendarEl               { tStyledExtFontNormal(e.n); return e }
-func (e CalendarEl) FontSemibold() CalendarEl             { tStyledExtFontSemibold(e.n); return e }
-func (e CalendarEl) FontThin() CalendarEl                 { tStyledExtFontThin(e.n); return e }
+func (e CalendarEl) DebugGreen() CalendarEl     { tStyledExtDebugGreen(e.n); return e }
+func (e CalendarEl) DebugPink() CalendarEl      { tStyledExtDebugPink(e.n); return e }
+func (e CalendarEl) DebugRed() CalendarEl       { tStyledExtDebugRed(e.n); return e }
+func (e CalendarEl) DebugYellow() CalendarEl    { tStyledExtDebugYellow(e.n); return e }
+func (e CalendarEl) FontBlack() CalendarEl      { tStyledExtFontBlack(e.n); return e }
+func (e CalendarEl) FontBold() CalendarEl       { tStyledExtFontBold(e.n); return e }
+func (e CalendarEl) FontExtrabold() CalendarEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e CalendarEl) FontExtralight() CalendarEl { tStyledExtFontExtralight(e.n); return e }
+func (e CalendarEl) FontLight() CalendarEl      { tStyledExtFontLight(e.n); return e }
+func (e CalendarEl) FontMedium() CalendarEl     { tStyledExtFontMedium(e.n); return e }
+func (e CalendarEl) FontNormal() CalendarEl     { tStyledExtFontNormal(e.n); return e }
+func (e CalendarEl) FontSemibold() CalendarEl   { tStyledExtFontSemibold(e.n); return e }
+func (e CalendarEl) FontThin() CalendarEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e CalendarEl) HFlex() CalendarEl                    { tStyledExtHFlex(e.n); return e }
 func (e CalendarEl) Margins(margins EdgesInto) CalendarEl { tStyledExtMargins(e.n, margins); return e }
 func (e CalendarEl) Paddings(paddings EdgesInto) CalendarEl {
@@ -61,129 +86,351 @@ func (e CalendarEl) RefineStyle(style StyleRefinement) CalendarEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CalendarEl) VFlex() CalendarEl { tStyledExtVFlex(e.n); return e }
 
-func (e CalendarEl) Large() CalendarEl                 { tSizableLarge(e.n); return e }
-func (e CalendarEl) Small() CalendarEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e CalendarEl) Large() CalendarEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e CalendarEl) Small() CalendarEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e CalendarEl) WithSize(size SizeInto) CalendarEl { tSizableWithSize(e.n, size); return e }
-func (e CalendarEl) Xsmall() CalendarEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e CalendarEl) Xsmall() CalendarEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e CalendarEl) Style(st ...Style) CalendarEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CalendarEl) AspectRatio(ratio float32) CalendarEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e CalendarEl) Bg(fill Fill) CalendarEl              { tStyledBg(e.n, fill); return e }
-func (e CalendarEl) Border(length Length) CalendarEl      { tStyledBorder(e.n, length); return e }
-func (e CalendarEl) BorderB(length Length) CalendarEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e CalendarEl) Bg(fill Fill) CalendarEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e CalendarEl) Border(length Length) CalendarEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CalendarEl) BorderB(length Length) CalendarEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e CalendarEl) BorderColor(borderColor Color) CalendarEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e CalendarEl) BorderL(length Length) CalendarEl     { tStyledBorderL(e.n, length); return e }
-func (e CalendarEl) BorderR(length Length) CalendarEl     { tStyledBorderR(e.n, length); return e }
-func (e CalendarEl) BorderT(length Length) CalendarEl     { tStyledBorderT(e.n, length); return e }
-func (e CalendarEl) BorderX(length Length) CalendarEl     { tStyledBorderX(e.n, length); return e }
-func (e CalendarEl) BorderY(length Length) CalendarEl     { tStyledBorderY(e.n, length); return e }
-func (e CalendarEl) Bottom(length Length) CalendarEl      { tStyledBottom(e.n, length); return e }
-func (e CalendarEl) ColEnd(end int16) CalendarEl          { tStyledColEnd(e.n, end); return e }
-func (e CalendarEl) ColSpan(span uint16) CalendarEl       { tStyledColSpan(e.n, span); return e }
-func (e CalendarEl) ColStart(start int16) CalendarEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CalendarEl) BorderL(length Length) CalendarEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CalendarEl) BorderR(length Length) CalendarEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CalendarEl) BorderT(length Length) CalendarEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e CalendarEl) BorderX(length Length) CalendarEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e CalendarEl) BorderY(length Length) CalendarEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CalendarEl) Bottom(length Length) CalendarEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e CalendarEl) ColEnd(end int16) CalendarEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e CalendarEl) ColSpan(span uint16) CalendarEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e CalendarEl) ColStart(start int16) CalendarEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e CalendarEl) Cursor(cursor CursorStyle) CalendarEl { tStyledCursor(e.n, cursor); return e }
-func (e CalendarEl) FlexBasis(basis Length) CalendarEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e CalendarEl) FlexGrow(grow float32) CalendarEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e CalendarEl) FlexBasis(basis Length) CalendarEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e CalendarEl) FlexGrow(grow float32) CalendarEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CalendarEl) FlexShrink(shrink float32) CalendarEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e CalendarEl) FontFamily(familyName string) CalendarEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CalendarEl) FontFeatures(features FontFeatures) CalendarEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CalendarEl) FontWeight(weight FontWeight) CalendarEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e CalendarEl) Gap(length Length) CalendarEl    { tStyledGap(e.n, length); return e }
-func (e CalendarEl) GapX(length Length) CalendarEl   { tStyledGapX(e.n, length); return e }
-func (e CalendarEl) GapY(length Length) CalendarEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e CalendarEl) Gap(length Length) CalendarEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CalendarEl) GapX(length Length) CalendarEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CalendarEl) GapY(length Length) CalendarEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e CalendarEl) GridCols(cols uint16) CalendarEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CalendarEl) GridColsMaxContent(cols uint16) CalendarEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CalendarEl) GridColsMinContent(cols uint16) CalendarEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CalendarEl) GridRows(rows uint16) CalendarEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CalendarEl) GridRowsMaxContent(rows uint16) CalendarEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CalendarEl) GridRowsMinContent(rows uint16) CalendarEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e CalendarEl) H(length Length) CalendarEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e CalendarEl) H(length Length) CalendarEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CalendarEl) Inset(length Length) CalendarEl { tStyledInset(e.n, length); return e }
-func (e CalendarEl) Left(length Length) CalendarEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CalendarEl) Left(length Length) CalendarEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CalendarEl) LineClamp(lines int) CalendarEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e CalendarEl) LineHeight(lineHeight Length) CalendarEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e CalendarEl) M(length Length) CalendarEl         { tStyledM(e.n, length); return e }
-func (e CalendarEl) MaxH(length Length) CalendarEl      { tStyledMaxH(e.n, length); return e }
-func (e CalendarEl) MaxSize(length Length) CalendarEl   { tStyledMaxSize(e.n, length); return e }
-func (e CalendarEl) MaxW(length Length) CalendarEl      { tStyledMaxW(e.n, length); return e }
-func (e CalendarEl) Mb(length Length) CalendarEl        { tStyledMb(e.n, length); return e }
-func (e CalendarEl) MinH(length Length) CalendarEl      { tStyledMinH(e.n, length); return e }
-func (e CalendarEl) MinSize(length Length) CalendarEl   { tStyledMinSize(e.n, length); return e }
-func (e CalendarEl) MinW(length Length) CalendarEl      { tStyledMinW(e.n, length); return e }
-func (e CalendarEl) Ml(length Length) CalendarEl        { tStyledMl(e.n, length); return e }
-func (e CalendarEl) Mr(length Length) CalendarEl        { tStyledMr(e.n, length); return e }
-func (e CalendarEl) Mt(length Length) CalendarEl        { tStyledMt(e.n, length); return e }
-func (e CalendarEl) Mx(length Length) CalendarEl        { tStyledMx(e.n, length); return e }
-func (e CalendarEl) My(length Length) CalendarEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e CalendarEl) M(length Length) CalendarEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e CalendarEl) MaxH(length Length) CalendarEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e CalendarEl) MaxSize(length Length) CalendarEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e CalendarEl) MaxW(length Length) CalendarEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CalendarEl) Mb(length Length) CalendarEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e CalendarEl) MinH(length Length) CalendarEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e CalendarEl) MinSize(length Length) CalendarEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e CalendarEl) MinW(length Length) CalendarEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CalendarEl) Ml(length Length) CalendarEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CalendarEl) Mr(length Length) CalendarEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CalendarEl) Mt(length Length) CalendarEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e CalendarEl) Mx(length Length) CalendarEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e CalendarEl) My(length Length) CalendarEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e CalendarEl) Opacity(opacity float32) CalendarEl { tStyledOpacity(e.n, opacity); return e }
-func (e CalendarEl) P(length Length) CalendarEl         { tStyledP(e.n, length); return e }
-func (e CalendarEl) Pb(length Length) CalendarEl        { tStyledPb(e.n, length); return e }
-func (e CalendarEl) Pl(length Length) CalendarEl        { tStyledPl(e.n, length); return e }
-func (e CalendarEl) Pr(length Length) CalendarEl        { tStyledPr(e.n, length); return e }
-func (e CalendarEl) Pt(length Length) CalendarEl        { tStyledPt(e.n, length); return e }
-func (e CalendarEl) Px(length Length) CalendarEl        { tStyledPx(e.n, length); return e }
-func (e CalendarEl) Py(length Length) CalendarEl        { tStyledPy(e.n, length); return e }
-func (e CalendarEl) Right(length Length) CalendarEl     { tStyledRight(e.n, length); return e }
-func (e CalendarEl) Rounded(length Length) CalendarEl   { tStyledRounded(e.n, length); return e }
-func (e CalendarEl) RoundedB(length Length) CalendarEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e CalendarEl) P(length Length) CalendarEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CalendarEl) Pb(length Length) CalendarEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CalendarEl) Pl(length Length) CalendarEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CalendarEl) Pr(length Length) CalendarEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CalendarEl) Pt(length Length) CalendarEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e CalendarEl) Px(length Length) CalendarEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e CalendarEl) Py(length Length) CalendarEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CalendarEl) Right(length Length) CalendarEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e CalendarEl) Rounded(length Length) CalendarEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CalendarEl) RoundedB(length Length) CalendarEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CalendarEl) RoundedBl(length Length) CalendarEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CalendarEl) RoundedBr(length Length) CalendarEl { tStyledRoundedBr(e.n, length); return e }
-func (e CalendarEl) RoundedL(length Length) CalendarEl  { tStyledRoundedL(e.n, length); return e }
-func (e CalendarEl) RoundedR(length Length) CalendarEl  { tStyledRoundedR(e.n, length); return e }
-func (e CalendarEl) RoundedT(length Length) CalendarEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CalendarEl) RoundedL(length Length) CalendarEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CalendarEl) RoundedR(length Length) CalendarEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CalendarEl) RoundedT(length Length) CalendarEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CalendarEl) RoundedTl(length Length) CalendarEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CalendarEl) RoundedTr(length Length) CalendarEl { tStyledRoundedTr(e.n, length); return e }
-func (e CalendarEl) RowEnd(end int16) CalendarEl        { tStyledRowEnd(e.n, end); return e }
-func (e CalendarEl) RowSpan(span uint16) CalendarEl     { tStyledRowSpan(e.n, span); return e }
-func (e CalendarEl) RowStart(start int16) CalendarEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e CalendarEl) RowEnd(end int16) CalendarEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e CalendarEl) RowSpan(span uint16) CalendarEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e CalendarEl) RowStart(start int16) CalendarEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CalendarEl) ScrollbarWidth(width Length) CalendarEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CalendarEl) Shadow(shadows []BoxShadow) CalendarEl { tStyledShadow(e.n, shadows); return e }
-func (e CalendarEl) Size(length Length) CalendarEl         { tStyledSize(e.n, length); return e }
-func (e CalendarEl) TextAlign(align TextAlign) CalendarEl  { tStyledTextAlign(e.n, align); return e }
-func (e CalendarEl) TextBg(bg Color) CalendarEl            { tStyledTextBg(e.n, bg); return e }
-func (e CalendarEl) TextColor(color Color) CalendarEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e CalendarEl) Size(length Length) CalendarEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e CalendarEl) TextAlign(align TextAlign) CalendarEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e CalendarEl) TextBg(bg Color) CalendarEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e CalendarEl) TextColor(color Color) CalendarEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e CalendarEl) TextDecorationColor(color Color) CalendarEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CalendarEl) TextOverflow(overflow TextOverflow) CalendarEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CalendarEl) TextSize(size Length) CalendarEl { tStyledTextSize(e.n, size); return e }
-func (e CalendarEl) Top(length Length) CalendarEl    { tStyledTop(e.n, length); return e }
-func (e CalendarEl) W(length Length) CalendarEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CalendarEl) Top(length Length) CalendarEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e CalendarEl) W(length Length) CalendarEl { tStyledW(e.n, length); return e }

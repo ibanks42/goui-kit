@@ -9,6 +9,8 @@ type NativeMenu struct{ n *node }
 
 func (e NativeMenu) valueNode() *node { return e.n }
 
+// Create an empty native menu.
+//
 // NewNativeMenu is <gpui_kit::component::native_menu::NativeMenu>::new.
 func NewNativeMenu() NativeMenu {
 	n := newValue(709)
@@ -21,6 +23,8 @@ func NewNativeMenuDefault() NativeMenu {
 	return NativeMenu{n}
 }
 
+// Append a clickable item that dispatches `action` when selected.
+//
 // Menu is <gpui_kit::component::native_menu::NativeMenu>::menu.
 func (e NativeMenu) Menu(label string, action Action) NativeMenu {
 	o := op(e.n, 256)
@@ -29,6 +33,8 @@ func (e NativeMenu) Menu(label string, action Action) NativeMenu {
 	return e
 }
 
+// Append an item, controlling its `checked` state (a check mark is shown).
+//
 // MenuWithCheck is <gpui_kit::component::native_menu::NativeMenu>::menu_with_check.
 func (e NativeMenu) MenuWithCheck(label string, checked bool, action Action) NativeMenu {
 	o := op(e.n, 257)
@@ -38,6 +44,8 @@ func (e NativeMenu) MenuWithCheck(label string, checked bool, action Action) Nat
 	return e
 }
 
+// Append an item, controlling its `disabled` state.
+//
 // MenuWithDisabled is <gpui_kit::component::native_menu::NativeMenu>::menu_with_disabled.
 func (e NativeMenu) MenuWithDisabled(label string, disabled bool, action Action) NativeMenu {
 	o := op(e.n, 258)
@@ -47,6 +55,19 @@ func (e NativeMenu) MenuWithDisabled(label string, disabled bool, action Action)
 	return e
 }
 
+// Append an item showing `icon` next to its label.
+//
+// Native platform menus load absolute paths (`is_absolute`) from the filesystem, and every other
+// path through the application `AssetSource`. Icons created with `Data` use their SVG bytes
+// directly, without an asset lookup. `IconName` resolves as an asset and works across all
+// backends. - **macOS**: loaded into an `NSImage` as a template image, so it tints with the item
+// text and assigned to the item (`image`). - **Windows**: loaded into an `HBITMAP` and set as the
+// item's content bitmap (`MENUITEMINFOW::hbmpItem`), shown beside the label. SVG files are
+// rasterized, with `resvg`; other formats (PNG, JPEG, BMP, ...) are decoded by GDI+. **Other
+// platforms** (fallback): rendered as the menu item's `IconEl`.
+//
+// Note: this is the menu item's *content* icon, not its state/check-mark indicator.
+//
 // MenuWithIcon is <gpui_kit::component::native_menu::NativeMenu>::menu_with_icon.
 func (e NativeMenu) MenuWithIcon(label string, icon IconName, action Action) NativeMenu {
 	o := op(e.n, 261)
@@ -56,6 +77,10 @@ func (e NativeMenu) MenuWithIcon(label string, icon IconName, action Action) Nat
 	return e
 }
 
+// Add Menu Item with Icon and disabled state.
+//
+// Alias for `MenuWithIconDisabled`, matching `PopupMenu`.
+//
 // MenuWithIconAndDisabled is <gpui_kit::component::native_menu::NativeMenu>::menu_with_icon_and_disabled.
 func (e NativeMenu) MenuWithIconAndDisabled(label string, icon IconName, action Action, disabled bool) NativeMenu {
 	o := op(e.n, 262)
@@ -66,6 +91,11 @@ func (e NativeMenu) MenuWithIconAndDisabled(label string, icon IconName, action 
 	return e
 }
 
+// Append an item showing `icon` next to its label, controlling its `disabled` state.
+//
+// Same icon behavior as `MenuWithIcon`. Use this when an item carries an icon but should be greyed
+// out.
+//
 // MenuWithIconDisabled is <gpui_kit::component::native_menu::NativeMenu>::menu_with_icon_disabled.
 func (e NativeMenu) MenuWithIconDisabled(label string, icon IconName, disabled bool, action Action) NativeMenu {
 	o := op(e.n, 263)
@@ -76,12 +106,16 @@ func (e NativeMenu) MenuWithIconDisabled(label string, icon IconName, disabled b
 	return e
 }
 
+// Append a separator line.
+//
 // Separator is <gpui_kit::component::native_menu::NativeMenu>::separator.
 func (e NativeMenu) Separator() NativeMenu {
 	op(e.n, 259)
 	return e
 }
 
+// Append a submenu built from another `NativeMenu`.
+//
 // Submenu is <gpui_kit::component::native_menu::NativeMenu>::submenu.
 func (e NativeMenu) Submenu(label string, submenu NativeMenu) NativeMenu {
 	o := op(e.n, 260)

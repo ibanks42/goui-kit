@@ -19,6 +19,11 @@ func Select(state SelectState, st ...Style) SelectEl {
 	return SelectEl{n}
 }
 
+// Set the name a screen reader announces for the select.
+//
+// The placeholder and selected value are not used as the accessible name, because they describe
+// the current value rather than the control itself.
+//
 // AccessibilityLabel is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::accessibility_label.
 func (e SelectEl) AccessibilityLabel(label string) SelectEl {
 	o := op(e.n, 256)
@@ -26,6 +31,8 @@ func (e SelectEl) AccessibilityLabel(label string) SelectEl {
 	return e
 }
 
+// Control whether the trigger shows a border and background (`true` by default).
+//
 // Appearance is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::appearance.
 func (e SelectEl) Appearance(appearance bool) SelectEl {
 	o := op(e.n, 257)
@@ -33,6 +40,8 @@ func (e SelectEl) Appearance(appearance bool) SelectEl {
 	return e
 }
 
+// Show a clear button when a value is selected.
+//
 // Cleanable is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::cleanable.
 func (e SelectEl) Cleanable(cleanable bool) SelectEl {
 	o := op(e.n, 258)
@@ -40,6 +49,8 @@ func (e SelectEl) Cleanable(cleanable bool) SelectEl {
 	return e
 }
 
+// Set the disabled state.
+//
 // Disabled is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::disabled.
 func (e SelectEl) Disabled(disabled bool) SelectEl {
 	o := op(e.n, 259)
@@ -47,6 +58,8 @@ func (e SelectEl) Disabled(disabled bool) SelectEl {
 	return e
 }
 
+// Set a custom closure that renders the empty-state element.
+//
 // Empty is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::empty.
 func (e SelectEl) Empty(builder View) SelectEl {
 	o := op(e.n, 267)
@@ -54,6 +67,8 @@ func (e SelectEl) Empty(builder View) SelectEl {
 	return e
 }
 
+// Override the trailing icon, replacing the default chevron.
+//
 // Icon is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::icon.
 func (e SelectEl) Icon(icon IconName) SelectEl {
 	o := op(e.n, 268)
@@ -61,6 +76,8 @@ func (e SelectEl) Icon(icon IconName) SelectEl {
 	return e
 }
 
+// Sets an explicit identity for the select root.
+//
 // ID is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::id.
 func (e SelectEl) ID(id ID) SelectEl {
 	o := op(e.n, 260)
@@ -68,6 +85,8 @@ func (e SelectEl) ID(id ID) SelectEl {
 	return e
 }
 
+// Set the max height of the dropdown menu, default: 20rem.
+//
 // MenuMaxH is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::menu_max_h.
 func (e SelectEl) MenuMaxH(maxH Length) SelectEl {
 	o := op(e.n, 261)
@@ -75,6 +94,8 @@ func (e SelectEl) MenuMaxH(maxH Length) SelectEl {
 	return e
 }
 
+// Set the width of the dropdown menu, default: `Length::Auto`.
+//
 // MenuWidth is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::menu_width.
 func (e SelectEl) MenuWidth(width Length) SelectEl {
 	o := op(e.n, 262)
@@ -82,6 +103,8 @@ func (e SelectEl) MenuWidth(width Length) SelectEl {
 	return e
 }
 
+// Set the placeholder shown when no value is selected.
+//
 // Placeholder is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::placeholder.
 func (e SelectEl) Placeholder(placeholder string) SelectEl {
 	o := op(e.n, 263)
@@ -89,6 +112,9 @@ func (e SelectEl) Placeholder(placeholder string) SelectEl {
 	return e
 }
 
+// Bounce the dropdown list at its vertical boundaries. On by default on iOS, Android and macOS,
+// off elsewhere; reduced motion disables displacement.
+//
 // ScrollBounce is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::scroll_bounce.
 func (e SelectEl) ScrollBounce(enabled bool) SelectEl {
 	o := op(e.n, 264)
@@ -96,6 +122,8 @@ func (e SelectEl) ScrollBounce(enabled bool) SelectEl {
 	return e
 }
 
+// Set the placeholder text for the search input.
+//
 // SearchPlaceholder is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::search_placeholder.
 func (e SelectEl) SearchPlaceholder(placeholder string) SelectEl {
 	o := op(e.n, 265)
@@ -103,6 +131,10 @@ func (e SelectEl) SearchPlaceholder(placeholder string) SelectEl {
 	return e
 }
 
+// Set a label prefix shown before the selected title in the trigger.
+//
+// e.g. `title_prefix("Country: ")` → "Country: United States"
+//
 // TitlePrefix is <gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>>::title_prefix.
 func (e SelectEl) TitlePrefix(prefix string) SelectEl {
 	o := op(e.n, 266)
@@ -110,7 +142,19 @@ func (e SelectEl) TitlePrefix(prefix string) SelectEl {
 	return e
 }
 
-func (e SelectEl) PopoverStyle() SelectEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e SelectEl) PopoverStyle() SelectEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SelectEl) RoundedFullStyle() SelectEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e SelectEl) CornerRadii(radius Corners) SelectEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -119,19 +163,32 @@ func (e SelectEl) DebugFocused(focusHandle FocusHandle) SelectEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e SelectEl) DebugGreen() SelectEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e SelectEl) DebugPink() SelectEl                  { tStyledExtDebugPink(e.n); return e }
-func (e SelectEl) DebugRed() SelectEl                   { tStyledExtDebugRed(e.n); return e }
-func (e SelectEl) DebugYellow() SelectEl                { tStyledExtDebugYellow(e.n); return e }
-func (e SelectEl) FontBlack() SelectEl                  { tStyledExtFontBlack(e.n); return e }
-func (e SelectEl) FontBold() SelectEl                   { tStyledExtFontBold(e.n); return e }
-func (e SelectEl) FontExtrabold() SelectEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e SelectEl) FontExtralight() SelectEl             { tStyledExtFontExtralight(e.n); return e }
-func (e SelectEl) FontLight() SelectEl                  { tStyledExtFontLight(e.n); return e }
-func (e SelectEl) FontMedium() SelectEl                 { tStyledExtFontMedium(e.n); return e }
-func (e SelectEl) FontNormal() SelectEl                 { tStyledExtFontNormal(e.n); return e }
-func (e SelectEl) FontSemibold() SelectEl               { tStyledExtFontSemibold(e.n); return e }
-func (e SelectEl) FontThin() SelectEl                   { tStyledExtFontThin(e.n); return e }
+func (e SelectEl) DebugGreen() SelectEl     { tStyledExtDebugGreen(e.n); return e }
+func (e SelectEl) DebugPink() SelectEl      { tStyledExtDebugPink(e.n); return e }
+func (e SelectEl) DebugRed() SelectEl       { tStyledExtDebugRed(e.n); return e }
+func (e SelectEl) DebugYellow() SelectEl    { tStyledExtDebugYellow(e.n); return e }
+func (e SelectEl) FontBlack() SelectEl      { tStyledExtFontBlack(e.n); return e }
+func (e SelectEl) FontBold() SelectEl       { tStyledExtFontBold(e.n); return e }
+func (e SelectEl) FontExtrabold() SelectEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e SelectEl) FontExtralight() SelectEl { tStyledExtFontExtralight(e.n); return e }
+func (e SelectEl) FontLight() SelectEl      { tStyledExtFontLight(e.n); return e }
+func (e SelectEl) FontMedium() SelectEl     { tStyledExtFontMedium(e.n); return e }
+func (e SelectEl) FontNormal() SelectEl     { tStyledExtFontNormal(e.n); return e }
+func (e SelectEl) FontSemibold() SelectEl   { tStyledExtFontSemibold(e.n); return e }
+func (e SelectEl) FontThin() SelectEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e SelectEl) HFlex() SelectEl                      { tStyledExtHFlex(e.n); return e }
 func (e SelectEl) Margins(margins EdgesInto) SelectEl   { tStyledExtMargins(e.n, margins); return e }
 func (e SelectEl) Paddings(paddings EdgesInto) SelectEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -139,125 +196,347 @@ func (e SelectEl) RefineStyle(style StyleRefinement) SelectEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SelectEl) VFlex() SelectEl { tStyledExtVFlex(e.n); return e }
 
-func (e SelectEl) Large() SelectEl                 { tSizableLarge(e.n); return e }
-func (e SelectEl) Small() SelectEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e SelectEl) Large() SelectEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e SelectEl) Small() SelectEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e SelectEl) WithSize(size SizeInto) SelectEl { tSizableWithSize(e.n, size); return e }
-func (e SelectEl) Xsmall() SelectEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e SelectEl) Xsmall() SelectEl { tSizableXsmall(e.n); return e }
 
 func (e SelectEl) FocusRing(enabled bool) SelectEl { tFocusableExtFocusRing(e.n, enabled); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SelectEl) Style(st ...Style) SelectEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SelectEl) AspectRatio(ratio float32) SelectEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e SelectEl) Bg(fill Fill) SelectEl              { tStyledBg(e.n, fill); return e }
-func (e SelectEl) Border(length Length) SelectEl      { tStyledBorder(e.n, length); return e }
-func (e SelectEl) BorderB(length Length) SelectEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e SelectEl) Bg(fill Fill) SelectEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e SelectEl) Border(length Length) SelectEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SelectEl) BorderB(length Length) SelectEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e SelectEl) BorderColor(borderColor Color) SelectEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e SelectEl) BorderL(length Length) SelectEl     { tStyledBorderL(e.n, length); return e }
-func (e SelectEl) BorderR(length Length) SelectEl     { tStyledBorderR(e.n, length); return e }
-func (e SelectEl) BorderT(length Length) SelectEl     { tStyledBorderT(e.n, length); return e }
-func (e SelectEl) BorderX(length Length) SelectEl     { tStyledBorderX(e.n, length); return e }
-func (e SelectEl) BorderY(length Length) SelectEl     { tStyledBorderY(e.n, length); return e }
-func (e SelectEl) Bottom(length Length) SelectEl      { tStyledBottom(e.n, length); return e }
-func (e SelectEl) ColEnd(end int16) SelectEl          { tStyledColEnd(e.n, end); return e }
-func (e SelectEl) ColSpan(span uint16) SelectEl       { tStyledColSpan(e.n, span); return e }
-func (e SelectEl) ColStart(start int16) SelectEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SelectEl) BorderL(length Length) SelectEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SelectEl) BorderR(length Length) SelectEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SelectEl) BorderT(length Length) SelectEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SelectEl) BorderX(length Length) SelectEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SelectEl) BorderY(length Length) SelectEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SelectEl) Bottom(length Length) SelectEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e SelectEl) ColEnd(end int16) SelectEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e SelectEl) ColSpan(span uint16) SelectEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e SelectEl) ColStart(start int16) SelectEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e SelectEl) Cursor(cursor CursorStyle) SelectEl { tStyledCursor(e.n, cursor); return e }
-func (e SelectEl) FlexBasis(basis Length) SelectEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e SelectEl) FlexGrow(grow float32) SelectEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e SelectEl) FlexBasis(basis Length) SelectEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e SelectEl) FlexGrow(grow float32) SelectEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SelectEl) FlexShrink(shrink float32) SelectEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e SelectEl) FontFamily(familyName string) SelectEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SelectEl) FontFeatures(features FontFeatures) SelectEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SelectEl) FontWeight(weight FontWeight) SelectEl { tStyledFontWeight(e.n, weight); return e }
-func (e SelectEl) Gap(length Length) SelectEl            { tStyledGap(e.n, length); return e }
-func (e SelectEl) GapX(length Length) SelectEl           { tStyledGapX(e.n, length); return e }
-func (e SelectEl) GapY(length Length) SelectEl           { tStyledGapY(e.n, length); return e }
-func (e SelectEl) GridCols(cols uint16) SelectEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SelectEl) Gap(length Length) SelectEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SelectEl) GapX(length Length) SelectEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SelectEl) GapY(length Length) SelectEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e SelectEl) GridCols(cols uint16) SelectEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SelectEl) GridColsMaxContent(cols uint16) SelectEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SelectEl) GridColsMinContent(cols uint16) SelectEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SelectEl) GridRows(rows uint16) SelectEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SelectEl) GridRowsMaxContent(rows uint16) SelectEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SelectEl) GridRowsMinContent(rows uint16) SelectEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SelectEl) H(length Length) SelectEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SelectEl) H(length Length) SelectEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SelectEl) Inset(length Length) SelectEl { tStyledInset(e.n, length); return e }
-func (e SelectEl) Left(length Length) SelectEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SelectEl) Left(length Length) SelectEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SelectEl) LineClamp(lines int) SelectEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e SelectEl) LineHeight(lineHeight Length) SelectEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SelectEl) M(length Length) SelectEl             { tStyledM(e.n, length); return e }
-func (e SelectEl) MaxH(length Length) SelectEl          { tStyledMaxH(e.n, length); return e }
-func (e SelectEl) MaxSize(length Length) SelectEl       { tStyledMaxSize(e.n, length); return e }
-func (e SelectEl) MaxW(length Length) SelectEl          { tStyledMaxW(e.n, length); return e }
-func (e SelectEl) Mb(length Length) SelectEl            { tStyledMb(e.n, length); return e }
-func (e SelectEl) MinH(length Length) SelectEl          { tStyledMinH(e.n, length); return e }
-func (e SelectEl) MinSize(length Length) SelectEl       { tStyledMinSize(e.n, length); return e }
-func (e SelectEl) MinW(length Length) SelectEl          { tStyledMinW(e.n, length); return e }
-func (e SelectEl) Ml(length Length) SelectEl            { tStyledMl(e.n, length); return e }
-func (e SelectEl) Mr(length Length) SelectEl            { tStyledMr(e.n, length); return e }
-func (e SelectEl) Mt(length Length) SelectEl            { tStyledMt(e.n, length); return e }
-func (e SelectEl) Mx(length Length) SelectEl            { tStyledMx(e.n, length); return e }
-func (e SelectEl) My(length Length) SelectEl            { tStyledMy(e.n, length); return e }
-func (e SelectEl) Opacity(opacity float32) SelectEl     { tStyledOpacity(e.n, opacity); return e }
-func (e SelectEl) P(length Length) SelectEl             { tStyledP(e.n, length); return e }
-func (e SelectEl) Pb(length Length) SelectEl            { tStyledPb(e.n, length); return e }
-func (e SelectEl) Pl(length Length) SelectEl            { tStyledPl(e.n, length); return e }
-func (e SelectEl) Pr(length Length) SelectEl            { tStyledPr(e.n, length); return e }
-func (e SelectEl) Pt(length Length) SelectEl            { tStyledPt(e.n, length); return e }
-func (e SelectEl) Px(length Length) SelectEl            { tStyledPx(e.n, length); return e }
-func (e SelectEl) Py(length Length) SelectEl            { tStyledPy(e.n, length); return e }
-func (e SelectEl) Right(length Length) SelectEl         { tStyledRight(e.n, length); return e }
-func (e SelectEl) Rounded(length Length) SelectEl       { tStyledRounded(e.n, length); return e }
-func (e SelectEl) RoundedB(length Length) SelectEl      { tStyledRoundedB(e.n, length); return e }
-func (e SelectEl) RoundedBl(length Length) SelectEl     { tStyledRoundedBl(e.n, length); return e }
-func (e SelectEl) RoundedBr(length Length) SelectEl     { tStyledRoundedBr(e.n, length); return e }
-func (e SelectEl) RoundedL(length Length) SelectEl      { tStyledRoundedL(e.n, length); return e }
-func (e SelectEl) RoundedR(length Length) SelectEl      { tStyledRoundedR(e.n, length); return e }
-func (e SelectEl) RoundedT(length Length) SelectEl      { tStyledRoundedT(e.n, length); return e }
-func (e SelectEl) RoundedTl(length Length) SelectEl     { tStyledRoundedTl(e.n, length); return e }
-func (e SelectEl) RoundedTr(length Length) SelectEl     { tStyledRoundedTr(e.n, length); return e }
-func (e SelectEl) RowEnd(end int16) SelectEl            { tStyledRowEnd(e.n, end); return e }
-func (e SelectEl) RowSpan(span uint16) SelectEl         { tStyledRowSpan(e.n, span); return e }
-func (e SelectEl) RowStart(start int16) SelectEl        { tStyledRowStart(e.n, start); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SelectEl) M(length Length) SelectEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e SelectEl) MaxH(length Length) SelectEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e SelectEl) MaxSize(length Length) SelectEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e SelectEl) MaxW(length Length) SelectEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SelectEl) Mb(length Length) SelectEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e SelectEl) MinH(length Length) SelectEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e SelectEl) MinSize(length Length) SelectEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e SelectEl) MinW(length Length) SelectEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SelectEl) Ml(length Length) SelectEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SelectEl) Mr(length Length) SelectEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SelectEl) Mt(length Length) SelectEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SelectEl) Mx(length Length) SelectEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SelectEl) My(length Length) SelectEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e SelectEl) Opacity(opacity float32) SelectEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SelectEl) P(length Length) SelectEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SelectEl) Pb(length Length) SelectEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SelectEl) Pl(length Length) SelectEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SelectEl) Pr(length Length) SelectEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SelectEl) Pt(length Length) SelectEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SelectEl) Px(length Length) SelectEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SelectEl) Py(length Length) SelectEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SelectEl) Right(length Length) SelectEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e SelectEl) Rounded(length Length) SelectEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SelectEl) RoundedB(length Length) SelectEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SelectEl) RoundedBl(length Length) SelectEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SelectEl) RoundedBr(length Length) SelectEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SelectEl) RoundedL(length Length) SelectEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SelectEl) RoundedR(length Length) SelectEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SelectEl) RoundedT(length Length) SelectEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SelectEl) RoundedTl(length Length) SelectEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SelectEl) RoundedTr(length Length) SelectEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e SelectEl) RowEnd(end int16) SelectEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e SelectEl) RowSpan(span uint16) SelectEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e SelectEl) RowStart(start int16) SelectEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SelectEl) ScrollbarWidth(width Length) SelectEl { tStyledScrollbarWidth(e.n, width); return e }
-func (e SelectEl) Shadow(shadows []BoxShadow) SelectEl  { tStyledShadow(e.n, shadows); return e }
-func (e SelectEl) Size(length Length) SelectEl          { tStyledSize(e.n, length); return e }
-func (e SelectEl) TextAlign(align TextAlign) SelectEl   { tStyledTextAlign(e.n, align); return e }
-func (e SelectEl) TextBg(bg Color) SelectEl             { tStyledTextBg(e.n, bg); return e }
-func (e SelectEl) TextColor(color Color) SelectEl       { tStyledTextColor(e.n, color); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e SelectEl) Shadow(shadows []BoxShadow) SelectEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e SelectEl) Size(length Length) SelectEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e SelectEl) TextAlign(align TextAlign) SelectEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e SelectEl) TextBg(bg Color) SelectEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e SelectEl) TextColor(color Color) SelectEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e SelectEl) TextDecorationColor(color Color) SelectEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SelectEl) TextOverflow(overflow TextOverflow) SelectEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SelectEl) TextSize(size Length) SelectEl { tStyledTextSize(e.n, size); return e }
-func (e SelectEl) Top(length Length) SelectEl    { tStyledTop(e.n, length); return e }
-func (e SelectEl) W(length Length) SelectEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SelectEl) Top(length Length) SelectEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SelectEl) W(length Length) SelectEl { tStyledW(e.n, length); return e }

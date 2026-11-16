@@ -18,6 +18,12 @@ func AreaChart(data Data) AreaChartEl {
 	return AreaChartEl{n}
 }
 
+// Draw the data in the first time this chart is painted. On by default.
+//
+// The theme sets how long it takes, and the system's reduced-motion setting skips it. Turn it off
+// for a chart that is painted again and again as it scrolls in and out of view, such as one in
+// each row of a long list, where it would draw in every time.
+//
 // Appear is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear.
 func (e AreaChartEl) Appear(appear bool) AreaChartEl {
 	o := op(e.n, 256)
@@ -25,6 +31,10 @@ func (e AreaChartEl) Appear(appear bool) AreaChartEl {
 	return e
 }
 
+// Draw the data in again whenever `key` changes, such as the symbol or period a chart shows.
+//
+// Without one the data draws in once, and later data paints in place.
+//
 // AppearKey is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear_key.
 func (e AreaChartEl) AppearKey(key string) AreaChartEl {
 	o := op(e.n, 257)
@@ -46,6 +56,10 @@ func (e AreaChartEl) Grid(grid bool) AreaChartEl {
 	return e
 }
 
+// Divide the plot into `count` columns with vertical grid lines, the first on its left edge.
+//
+// Default is 0, no vertical lines.
+//
 // GridColumns is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::grid_columns.
 func (e AreaChartEl) GridColumns(count int) AreaChartEl {
 	o := op(e.n, 260)
@@ -53,6 +67,10 @@ func (e AreaChartEl) GridColumns(count int) AreaChartEl {
 	return e
 }
 
+// Draw the grid dashed or solid.
+//
+// Default is true.
+//
 // GridDashed is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::grid_dashed.
 func (e AreaChartEl) GridDashed(dashed bool) AreaChartEl {
 	o := op(e.n, 261)
@@ -60,6 +78,12 @@ func (e AreaChartEl) GridDashed(dashed bool) AreaChartEl {
 	return e
 }
 
+// Name this chart's `ElementId`, replacing the default taken from the construction site.
+//
+// Pass one where a single construction site renders several of these charts as siblings: they
+// share the default id, and with it one hover state and one path cache. The id must be unique
+// among those siblings.
+//
 // ID is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::id.
 func (e AreaChartEl) ID(id ID) AreaChartEl {
 	o := op(e.n, 262)
@@ -67,6 +91,13 @@ func (e AreaChartEl) ID(id ID) AreaChartEl {
 	return e
 }
 
+// Turn this chart's interactive layer on or off. On by default.
+//
+// The layer is the hitbox under the cursor and what it drives: a crosshair and a dot per series
+// mark the hovered point, and a tooltip shows a row each. Turn it off for a chart that only
+// decorates, or one an element above it wants the cursor for: without a hitbox it neither answers
+// the mouse nor takes the hover from what sits over it.
+//
 // Interactive is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::interactive.
 func (e AreaChartEl) Interactive(interactive bool) AreaChartEl {
 	o := op(e.n, 263)
@@ -80,6 +111,10 @@ func (e AreaChartEl) Linear() AreaChartEl {
 	return e
 }
 
+// Set the name of the most recently added series, shown in its tooltip row.
+//
+// Call after the matching `Y` (e.g. `.y(..).stroke(..).name("Desktop")`).
+//
 // Name is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::name.
 func (e AreaChartEl) Name(name string) AreaChartEl {
 	o := op(e.n, 265)
@@ -93,6 +128,13 @@ func (e AreaChartEl) Natural() AreaChartEl {
 	return e
 }
 
+// Lay the x axis out for `count` evenly spaced points instead of the data's own length.
+//
+// The data takes the leading points in order, the i-th item on the i-th point, and the rest stay
+// empty, as an intraday chart does before the close. The data has to be contiguous from the first
+// point: a missing item shifts every later one a point to the left. A `count` below the data's
+// length has no effect.
+//
 // PointCount is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::point_count.
 func (e AreaChartEl) PointCount(count int) AreaChartEl {
 	o := op(e.n, 267)
@@ -100,6 +142,10 @@ func (e AreaChartEl) PointCount(count int) AreaChartEl {
 	return e
 }
 
+// Draw a dashed line across the plot at `value`, such as a previous close.
+//
+// Call again for more lines. A value outside the y axis is not drawn.
+//
 // ReferenceLine is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::reference_line.
 func (e AreaChartEl) ReferenceLine(value float64) AreaChartEl {
 	o := op(e.n, 268)
@@ -127,6 +173,12 @@ func (e AreaChartEl) TickMargin(tickMargin int) AreaChartEl {
 	return e
 }
 
+// Draw the tooltip box's content for a datum yourself, in place of the title and rows, for a
+// layout they cannot express such as a table.
+//
+// The crosshair, the dots and where the box sits stay the chart's, and `TooltipTitle`,
+// `TooltipValue` and `TooltipValueColor` no longer apply.
+//
 // TooltipContent is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_content.
 func (e AreaChartEl) TooltipContent(content RowSource) AreaChartEl {
 	o := op(e.n, 272)
@@ -134,6 +186,8 @@ func (e AreaChartEl) TooltipContent(content RowSource) AreaChartEl {
 	return e
 }
 
+// Set the hover tooltip's title for a datum, instead of its x value.
+//
 // TooltipTitle is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_title.
 func (e AreaChartEl) TooltipTitle(title string) AreaChartEl {
 	o := op(e.n, 273)
@@ -141,6 +195,11 @@ func (e AreaChartEl) TooltipTitle(title string) AreaChartEl {
 	return e
 }
 
+// Set the text of each tooltip row's value; the raw number by default.
+//
+// The closure receives the datum, the row's index (the series' index in the order `y` added them)
+// and the value the row reads.
+//
 // TooltipValue is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_value.
 func (e AreaChartEl) TooltipValue(value string) AreaChartEl {
 	o := op(e.n, 274)
@@ -148,6 +207,11 @@ func (e AreaChartEl) TooltipValue(value string) AreaChartEl {
 	return e
 }
 
+// Color each tooltip row's value, such as green or red by its sign; the tooltip's text color by
+// default.
+//
+// The closure receives the same arguments as `TooltipValue`.
+//
 // TooltipValueColor is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_value_color.
 func (e AreaChartEl) TooltipValueColor(color string) AreaChartEl {
 	o := op(e.n, 275)
@@ -162,6 +226,10 @@ func (e AreaChartEl) X(x string) AreaChartEl {
 	return e
 }
 
+// Show or hide the x-axis line and labels.
+//
+// Default is true.
+//
 // XAxis is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::x_axis.
 func (e AreaChartEl) XAxis(xAxis bool) AreaChartEl {
 	o := op(e.n, 277)
@@ -169,6 +237,12 @@ func (e AreaChartEl) XAxis(xAxis bool) AreaChartEl {
 	return e
 }
 
+// Label `count` of the x values, spread evenly from the first to the last, instead of every
+// `tick_margin`-th.
+//
+// With `PointCount` set, the labels spread over all the points the axis is laid out for, so they
+// keep their places as the data grows; one that falls past the data is not drawn yet.
+//
 // XTickCount is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::x_tick_count.
 func (e AreaChartEl) XTickCount(count int) AreaChartEl {
 	o := op(e.n, 278)
@@ -183,6 +257,10 @@ func (e AreaChartEl) Y(y string) AreaChartEl {
 	return e
 }
 
+// Show the y axis's tick labels, one at each of the `y_tick_count` ticks.
+//
+// Default is false.
+//
 // YAxis is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis.
 func (e AreaChartEl) YAxis(yAxis bool) AreaChartEl {
 	o := op(e.n, 280)
@@ -190,6 +268,11 @@ func (e AreaChartEl) YAxis(yAxis bool) AreaChartEl {
 	return e
 }
 
+// Set where the y-axis tick labels sit: in a gutter left of the plot, or inside it beside their
+// grid lines.
+//
+// Default is `Outside`.
+//
 // YAxisLabelPlacement is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis_label_placement.
 func (e AreaChartEl) YAxisLabelPlacement(placement AxisLabelPlacement) AreaChartEl {
 	o := op(e.n, 281)
@@ -197,6 +280,13 @@ func (e AreaChartEl) YAxisLabelPlacement(placement AxisLabelPlacement) AreaChart
 	return e
 }
 
+// Pin the y axis to `min..=max` instead of fitting every series from zero.
+//
+// Pin it where zero is not a meaningful baseline, such as a price line that would otherwise be
+// pressed flat against the top. The range keeps the `y_padding` headroom above `max`, 10px by
+// default, and the series are clipped to the plot, so a value outside the range stops at its edge.
+// Nothing is drawn when `min` equals `max`.
+//
 // YDomain is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_domain.
 func (e AreaChartEl) YDomain(min_ float64, max_ float64) AreaChartEl {
 	o := op(e.n, 282)
@@ -205,6 +295,10 @@ func (e AreaChartEl) YDomain(min_ float64, max_ float64) AreaChartEl {
 	return e
 }
 
+// Set the space kept clear above the highest value and below the lowest, in pixels.
+//
+// Default is 10px above and none below.
+//
 // YPadding is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_padding.
 func (e AreaChartEl) YPadding(top float32, bottom float32) AreaChartEl {
 	o := op(e.n, 283)
@@ -213,6 +307,14 @@ func (e AreaChartEl) YPadding(top float32, bottom float32) AreaChartEl {
 	return e
 }
 
+// Set how many ticks the y axis carries, evenly spaced from the baseline to the top edge with both
+// ends included.
+//
+// The ticks place the horizontal grid lines and the tick labels, and each label reads the value
+// the scale puts at its height. Values below 2 are raised to 2.
+//
+// Default is 5.
+//
 // YTickCount is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_tick_count.
 func (e AreaChartEl) YTickCount(count int) AreaChartEl {
 	o := op(e.n, 284)
@@ -220,6 +322,8 @@ func (e AreaChartEl) YTickCount(count int) AreaChartEl {
 	return e
 }
 
+// Set the text of each y-axis tick label from the value at its tick.
+//
 // YTickFormat is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_tick_format.
 func (e AreaChartEl) YTickFormat(format string) AreaChartEl {
 	o := op(e.n, 285)
@@ -241,6 +345,10 @@ func BarChart(data Data) BarChartEl {
 	return BarChartEl{n}
 }
 
+// Set the bar alignment.
+//
+// Default is `Bottom`.
+//
 // Alignment is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::alignment.
 func (e BarChartEl) Alignment(alignment BarAlignment) BarChartEl {
 	o := op(e.n, 256)
@@ -248,6 +356,12 @@ func (e BarChartEl) Alignment(alignment BarAlignment) BarChartEl {
 	return e
 }
 
+// Draw the data in the first time this chart is painted. On by default.
+//
+// The theme sets how long it takes, and the system's reduced-motion setting skips it. Turn it off
+// for a chart that is painted again and again as it scrolls in and out of view, such as one in
+// each row of a long list, where it would draw in every time.
+//
 // Appear is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear.
 func (e BarChartEl) Appear(appear bool) BarChartEl {
 	o := op(e.n, 257)
@@ -255,6 +369,10 @@ func (e BarChartEl) Appear(appear bool) BarChartEl {
 	return e
 }
 
+// Draw the data in again whenever `key` changes, such as the symbol or period a chart shows.
+//
+// Without one the data draws in once, and later data paints in place.
+//
 // AppearKey is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear_key.
 func (e BarChartEl) AppearKey(key string) BarChartEl {
 	o := op(e.n, 258)
@@ -262,6 +380,8 @@ func (e BarChartEl) AppearKey(key string) BarChartEl {
 	return e
 }
 
+// Map each datum to its band-axis value (the categorical/ordinal axis).
+//
 // Band is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::band.
 func (e BarChartEl) Band(band string) BarChartEl {
 	o := op(e.n, 259)
@@ -269,6 +389,11 @@ func (e BarChartEl) Band(band string) BarChartEl {
 	return e
 }
 
+// Lay the band axis out for `count` bands instead of the data's own length.
+//
+// The data takes the leading bands in order and the rest stay empty, so each bar keeps its width
+// and place as the data grows. A `count` below the data's length has no effect.
+//
 // BandCount is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::band_count.
 func (e BarChartEl) BandCount(count int) BarChartEl {
 	o := op(e.n, 260)
@@ -276,6 +401,12 @@ func (e BarChartEl) BandCount(count int) BarChartEl {
 	return e
 }
 
+// Label `count` of the bands, spread evenly from the first to the last, instead of every
+// `tick_margin`-th.
+//
+// With `BandCount` set, the labels spread over all the bands, so they keep their places as the
+// data grows; one that falls on an empty band is not drawn yet.
+//
 // BandTickCount is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::band_tick_count.
 func (e BarChartEl) BandTickCount(count int) BarChartEl {
 	o := op(e.n, 261)
@@ -283,6 +414,11 @@ func (e BarChartEl) BandTickCount(count int) BarChartEl {
 	return e
 }
 
+// Set the corner radii applied to every bar rectangle.
+//
+// Use `all` for uniform rounding, or construct `Corners` manually to round only specific corners
+// (e.g. just the tip end of each bar).
+//
 // CornerRadii is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::corner_radii.
 func (e BarChartEl) CornerRadii(cornerRadii CornersInto) BarChartEl {
 	o := op(e.n, 262)
@@ -290,6 +426,24 @@ func (e BarChartEl) CornerRadii(cornerRadii CornersInto) BarChartEl {
 	return e
 }
 
+// Set a per-datum verbatim fill.
+//
+// The closure receives:
+//  1. the datum,
+//  2. the **bar's bounds** in pixel space, expressed relative to the chart's origin (i.e. the
+//     bar's painted rectangle within the chart),
+//  3. the **chart's bounds** in pixel space with origin `(0, 0)` and size equal to the full chart
+//     extent, and
+//  4. the bar's `BarAlignment` (so callers can branch on orientation, e.g. flip a gradient
+//     angle).
+//
+// Both rectangles share the same coordinate system, so callers can implement arbitrary chart-aware
+// backgrounds — bar-local gradients, chart-wide gradients, patterns, sampled colormaps, etc. —
+// without any help from the library.
+//
+// Accepts any type convertible to `Background`. Setting this clears any previously set
+// `FillGradient`.
+//
 // Fill is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::fill.
 func (e BarChartEl) Fill(fill string) BarChartEl {
 	o := op(e.n, 263)
@@ -304,6 +458,10 @@ func (e BarChartEl) Grid(grid bool) BarChartEl {
 	return e
 }
 
+// Draw the grid dashed or solid.
+//
+// Default is true.
+//
 // GridDashed is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::grid_dashed.
 func (e BarChartEl) GridDashed(dashed bool) BarChartEl {
 	o := op(e.n, 265)
@@ -311,6 +469,12 @@ func (e BarChartEl) GridDashed(dashed bool) BarChartEl {
 	return e
 }
 
+// Name this chart's `ElementId`, replacing the default taken from the construction site.
+//
+// Pass one where a single construction site renders several of these charts as siblings: they
+// share the default id, and with it one hover state and one path cache. The id must be unique
+// among those siblings.
+//
 // ID is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::id.
 func (e BarChartEl) ID(id ID) BarChartEl {
 	o := op(e.n, 266)
@@ -318,6 +482,13 @@ func (e BarChartEl) ID(id ID) BarChartEl {
 	return e
 }
 
+// Turn this chart's interactive layer on or off. On by default.
+//
+// The layer is the hitbox under the cursor and what it drives: a crosshair marks the hovered band,
+// and a tooltip shows its category and value. Turn it off for a chart that only decorates, or one
+// an element above it wants the cursor for: without a hitbox it neither answers the mouse nor
+// takes the hover from what sits over it.
+//
 // Interactive is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::interactive.
 func (e BarChartEl) Interactive(interactive bool) BarChartEl {
 	o := op(e.n, 267)
@@ -332,6 +503,10 @@ func (e BarChartEl) Label(label string) BarChartEl {
 	return e
 }
 
+// Show or hide the band-axis line and labels.
+//
+// Default is true.
+//
 // LabelAxis is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::label_axis.
 func (e BarChartEl) LabelAxis(labelAxis bool) BarChartEl {
 	o := op(e.n, 269)
@@ -339,6 +514,10 @@ func (e BarChartEl) LabelAxis(labelAxis bool) BarChartEl {
 	return e
 }
 
+// Color each bar's `Label` text, instead of the theme's foreground for all of them.
+//
+// Takes a closure per bar, as `Fill` does, so a label can follow its bar's color.
+//
 // LabelColor is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::label_color.
 func (e BarChartEl) LabelColor(color string) BarChartEl {
 	o := op(e.n, 270)
@@ -346,6 +525,11 @@ func (e BarChartEl) LabelColor(color string) BarChartEl {
 	return e
 }
 
+// Keep every bar at most `width` wide, so a few bars across a wide chart stay narrow instead of
+// filling their bands.
+//
+// Default is 30px.
+//
 // MaxBandWidth is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::max_band_width.
 func (e BarChartEl) MaxBandWidth(width float32) BarChartEl {
 	o := op(e.n, 271)
@@ -353,6 +537,14 @@ func (e BarChartEl) MaxBandWidth(width float32) BarChartEl {
 	return e
 }
 
+// Draw every bar at least `length` pixels long, so a zero or tiny value still shows a stub instead
+// of disappearing into the baseline.
+//
+// The stub grows the way the bar's value would: away from the zero line, to the negative side for
+// a negative value and to the positive side for zero. A bar already that long is left alone.
+//
+// Default is 0.
+//
 // MinLength is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::min_length.
 func (e BarChartEl) MinLength(length float32) BarChartEl {
 	o := op(e.n, 272)
@@ -360,6 +552,8 @@ func (e BarChartEl) MinLength(length float32) BarChartEl {
 	return e
 }
 
+// Set the series name shown in the hover tooltip row (e.g. "Desktop").
+//
 // Name is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::name.
 func (e BarChartEl) Name(name string) BarChartEl {
 	o := op(e.n, 273)
@@ -367,6 +561,10 @@ func (e BarChartEl) Name(name string) BarChartEl {
 	return e
 }
 
+// Set the gap between neighbouring bars, as a share of each band.
+//
+// Default is 0.4.
+//
 // PaddingInner is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::padding_inner.
 func (e BarChartEl) PaddingInner(padding float32) BarChartEl {
 	o := op(e.n, 274)
@@ -374,6 +572,10 @@ func (e BarChartEl) PaddingInner(padding float32) BarChartEl {
 	return e
 }
 
+// Set the gap before the first bar and after the last, as a share of a band.
+//
+// Default is 0.2.
+//
 // PaddingOuter is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::padding_outer.
 func (e BarChartEl) PaddingOuter(padding float32) BarChartEl {
 	o := op(e.n, 275)
@@ -388,6 +590,12 @@ func (e BarChartEl) TickMargin(tickMargin int) BarChartEl {
 	return e
 }
 
+// Draw the tooltip box's content for a datum yourself, in place of the title and rows, for a
+// layout they cannot express such as a table.
+//
+// The highlight band and where the box sits stay the chart's, and `TooltipTitle`, `TooltipValue`
+// and `TooltipValueColor` no longer apply.
+//
 // TooltipContent is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_content.
 func (e BarChartEl) TooltipContent(content RowSource) BarChartEl {
 	o := op(e.n, 277)
@@ -395,6 +603,8 @@ func (e BarChartEl) TooltipContent(content RowSource) BarChartEl {
 	return e
 }
 
+// Set the hover tooltip's title for a datum, instead of its band value.
+//
 // TooltipTitle is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_title.
 func (e BarChartEl) TooltipTitle(title string) BarChartEl {
 	o := op(e.n, 278)
@@ -402,6 +612,10 @@ func (e BarChartEl) TooltipTitle(title string) BarChartEl {
 	return e
 }
 
+// Set the text of the tooltip row's value; the raw number by default.
+//
+// The closure receives the datum and the value the row reads.
+//
 // TooltipValue is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_value.
 func (e BarChartEl) TooltipValue(value string) BarChartEl {
 	o := op(e.n, 279)
@@ -409,6 +623,11 @@ func (e BarChartEl) TooltipValue(value string) BarChartEl {
 	return e
 }
 
+// Color the tooltip row's value, such as green or red by its sign; the tooltip's text color by
+// default.
+//
+// The closure receives the same arguments as `TooltipValue`.
+//
 // TooltipValueColor is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_value_color.
 func (e BarChartEl) TooltipValueColor(color string) BarChartEl {
 	o := op(e.n, 280)
@@ -416,6 +635,8 @@ func (e BarChartEl) TooltipValueColor(color string) BarChartEl {
 	return e
 }
 
+// Map each datum to its numeric value along the value axis.
+//
 // Value is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value.
 func (e BarChartEl) Value(value string) BarChartEl {
 	o := op(e.n, 281)
@@ -423,6 +644,13 @@ func (e BarChartEl) Value(value string) BarChartEl {
 	return e
 }
 
+// Show or hide the value-axis tick labels.
+//
+// Placed `Outside`, the default, the labels take a gutter along the band axis, left of vertical
+// bars and below horizontal ones.
+//
+// Default is false.
+//
 // ValueAxis is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value_axis.
 func (e BarChartEl) ValueAxis(valueAxis bool) BarChartEl {
 	o := op(e.n, 282)
@@ -430,6 +658,11 @@ func (e BarChartEl) ValueAxis(valueAxis bool) BarChartEl {
 	return e
 }
 
+// Set where the value-axis tick labels sit: in a gutter beside the bars, or inside the plot beside
+// their grid lines, which keeps the bars' room.
+//
+// Default is `Outside`.
+//
 // ValueAxisLabelPlacement is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value_axis_label_placement.
 func (e BarChartEl) ValueAxisLabelPlacement(placement AxisLabelPlacement) BarChartEl {
 	o := op(e.n, 283)
@@ -437,6 +670,14 @@ func (e BarChartEl) ValueAxisLabelPlacement(placement AxisLabelPlacement) BarCha
 	return e
 }
 
+// Set how many ticks the value axis carries, evenly spaced from the baseline to the far edge with
+// both ends included, which drives both the grid lines and the value-axis tick labels.
+//
+// Unlike `TickMargin`, a stride over the band axis categories, this counts the ticks themselves.
+// Values below 2 are raised to 2.
+//
+// Default is 5.
+//
 // ValueTickCount is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value_tick_count.
 func (e BarChartEl) ValueTickCount(count int) BarChartEl {
 	o := op(e.n, 284)
@@ -444,6 +685,10 @@ func (e BarChartEl) ValueTickCount(count int) BarChartEl {
 	return e
 }
 
+// Set the text of each value-axis tick label from the value at its tick.
+//
+// Default is whole numbers bare and the rest to one decimal.
+//
 // ValueTickFormat is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value_tick_format.
 func (e BarChartEl) ValueTickFormat(format string) BarChartEl {
 	o := op(e.n, 285)
@@ -465,6 +710,12 @@ func CandlestickChart(data Data) CandlestickChartEl {
 	return CandlestickChartEl{n}
 }
 
+// Draw the data in the first time this chart is painted. On by default.
+//
+// The theme sets how long it takes, and the system's reduced-motion setting skips it. Turn it off
+// for a chart that is painted again and again as it scrolls in and out of view, such as one in
+// each row of a long list, where it would draw in every time.
+//
 // Appear is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear.
 func (e CandlestickChartEl) Appear(appear bool) CandlestickChartEl {
 	o := op(e.n, 256)
@@ -472,6 +723,10 @@ func (e CandlestickChartEl) Appear(appear bool) CandlestickChartEl {
 	return e
 }
 
+// Draw the data in again whenever `key` changes, such as the symbol or period a chart shows.
+//
+// Without one the data draws in once, and later data paints in place.
+//
 // AppearKey is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear_key.
 func (e CandlestickChartEl) AppearKey(key string) CandlestickChartEl {
 	o := op(e.n, 257)
@@ -479,6 +734,10 @@ func (e CandlestickChartEl) AppearKey(key string) CandlestickChartEl {
 	return e
 }
 
+// Set the color of a candle that closed at or below its open.
+//
+// Defaults to the theme's `chart.bearish` color.
+//
 // Bearish is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::bearish.
 func (e CandlestickChartEl) Bearish(color Color) CandlestickChartEl {
 	o := op(e.n, 258)
@@ -493,6 +752,11 @@ func (e CandlestickChartEl) BodyWidthRatio(ratio float32) CandlestickChartEl {
 	return e
 }
 
+// Set the color of a candle that closed above its open.
+//
+// Defaults to the theme's `chart.bullish` color. Markets that read a rise as red set this and
+// `Bearish` the other way round.
+//
 // Bullish is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::bullish.
 func (e CandlestickChartEl) Bullish(color Color) CandlestickChartEl {
 	o := op(e.n, 260)
@@ -521,6 +785,12 @@ func (e CandlestickChartEl) High(high string) CandlestickChartEl {
 	return e
 }
 
+// Name this chart's `ElementId`, replacing the default taken from the construction site.
+//
+// Pass one where a single construction site renders several of these charts as siblings: they
+// share the default id, and with it one hover state and one path cache. The id must be unique
+// among those siblings.
+//
 // ID is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::id.
 func (e CandlestickChartEl) ID(id ID) CandlestickChartEl {
 	o := op(e.n, 264)
@@ -528,6 +798,13 @@ func (e CandlestickChartEl) ID(id ID) CandlestickChartEl {
 	return e
 }
 
+// Turn this chart's interactive layer on or off. On by default.
+//
+// The layer is the hitbox under the cursor and what it drives: a highlight band marks the hovered
+// candle, and a tooltip shows its open, high, low and close. Turn it off for a chart that only
+// decorates, or one an element above it wants the cursor for: without a hitbox it neither answers
+// the mouse nor takes the hover from what sits over it.
+//
 // Interactive is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::interactive.
 func (e CandlestickChartEl) Interactive(interactive bool) CandlestickChartEl {
 	o := op(e.n, 265)
@@ -542,6 +819,10 @@ func (e CandlestickChartEl) Low(low string) CandlestickChartEl {
 	return e
 }
 
+// Keep every candle's band at most `width` wide, so a few candles across a wide chart stay narrow.
+//
+// Default is 30px.
+//
 // MaxBandWidth is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::max_band_width.
 func (e CandlestickChartEl) MaxBandWidth(width float32) CandlestickChartEl {
 	o := op(e.n, 267)
@@ -563,6 +844,12 @@ func (e CandlestickChartEl) TickMargin(tickMargin int) CandlestickChartEl {
 	return e
 }
 
+// Draw the tooltip box's content for a datum yourself, in place of the title and rows, for a
+// layout they cannot express such as a table.
+//
+// The highlight band and where the box sits stay the chart's, and `TooltipTitle`, `TooltipValue`
+// and `TooltipValueColor` no longer apply.
+//
 // TooltipContent is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_content.
 func (e CandlestickChartEl) TooltipContent(content RowSource) CandlestickChartEl {
 	o := op(e.n, 270)
@@ -570,6 +857,8 @@ func (e CandlestickChartEl) TooltipContent(content RowSource) CandlestickChartEl
 	return e
 }
 
+// Set the hover tooltip's title for a datum, instead of its x value.
+//
 // TooltipTitle is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_title.
 func (e CandlestickChartEl) TooltipTitle(title string) CandlestickChartEl {
 	o := op(e.n, 271)
@@ -577,6 +866,11 @@ func (e CandlestickChartEl) TooltipTitle(title string) CandlestickChartEl {
 	return e
 }
 
+// Set the text of each tooltip row's value; the raw number by default.
+//
+// The closure receives the datum, the row's index (0 to 3 for open, high, low and close) and the
+// value the row reads.
+//
 // TooltipValue is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_value.
 func (e CandlestickChartEl) TooltipValue(value string) CandlestickChartEl {
 	o := op(e.n, 272)
@@ -584,6 +878,11 @@ func (e CandlestickChartEl) TooltipValue(value string) CandlestickChartEl {
 	return e
 }
 
+// Color each tooltip row's value, such as green or red by its sign; the tooltip's text color by
+// default.
+//
+// The closure receives the same arguments as `TooltipValue`.
+//
 // TooltipValueColor is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_value_color.
 func (e CandlestickChartEl) TooltipValueColor(color string) CandlestickChartEl {
 	o := op(e.n, 273)
@@ -598,6 +897,10 @@ func (e CandlestickChartEl) X(x string) CandlestickChartEl {
 	return e
 }
 
+// Show or hide the x-axis line and labels.
+//
+// Default is true.
+//
 // XAxis is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::x_axis.
 func (e CandlestickChartEl) XAxis(xAxis bool) CandlestickChartEl {
 	o := op(e.n, 275)
@@ -619,6 +922,12 @@ func LineChart(data Data) LineChartEl {
 	return LineChartEl{n}
 }
 
+// Draw the data in the first time this chart is painted. On by default.
+//
+// The theme sets how long it takes, and the system's reduced-motion setting skips it. Turn it off
+// for a chart that is painted again and again as it scrolls in and out of view, such as one in
+// each row of a long list, where it would draw in every time.
+//
 // Appear is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear.
 func (e LineChartEl) Appear(appear bool) LineChartEl {
 	o := op(e.n, 256)
@@ -626,6 +935,10 @@ func (e LineChartEl) Appear(appear bool) LineChartEl {
 	return e
 }
 
+// Draw the data in again whenever `key` changes, such as the symbol or period a chart shows.
+//
+// Without one the data draws in once, and later data paints in place.
+//
 // AppearKey is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear_key.
 func (e LineChartEl) AppearKey(key string) LineChartEl {
 	o := op(e.n, 257)
@@ -646,6 +959,10 @@ func (e LineChartEl) Grid(grid bool) LineChartEl {
 	return e
 }
 
+// Divide the plot into `count` columns with vertical grid lines, the first on its left edge.
+//
+// Default is 0, no vertical lines.
+//
 // GridColumns is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::grid_columns.
 func (e LineChartEl) GridColumns(count int) LineChartEl {
 	o := op(e.n, 260)
@@ -653,6 +970,10 @@ func (e LineChartEl) GridColumns(count int) LineChartEl {
 	return e
 }
 
+// Draw the grid dashed or solid.
+//
+// Default is true.
+//
 // GridDashed is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::grid_dashed.
 func (e LineChartEl) GridDashed(dashed bool) LineChartEl {
 	o := op(e.n, 261)
@@ -660,6 +981,12 @@ func (e LineChartEl) GridDashed(dashed bool) LineChartEl {
 	return e
 }
 
+// Name this chart's `ElementId`, replacing the default taken from the construction site.
+//
+// Pass one where a single construction site renders several of these charts as siblings: they
+// share the default id, and with it one hover state and one path cache. The id must be unique
+// among those siblings.
+//
 // ID is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::id.
 func (e LineChartEl) ID(id ID) LineChartEl {
 	o := op(e.n, 262)
@@ -667,6 +994,13 @@ func (e LineChartEl) ID(id ID) LineChartEl {
 	return e
 }
 
+// Turn this chart's interactive layer on or off. On by default.
+//
+// The layer is the hitbox under the cursor and what it drives: a crosshair and a dot mark the
+// hovered point, and a tooltip shows its value. Turn it off for a chart that only decorates, or
+// one an element above it wants the cursor for: without a hitbox it neither answers the mouse nor
+// takes the hover from what sits over it.
+//
 // Interactive is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::interactive.
 func (e LineChartEl) Interactive(interactive bool) LineChartEl {
 	o := op(e.n, 263)
@@ -680,6 +1014,8 @@ func (e LineChartEl) Linear() LineChartEl {
 	return e
 }
 
+// Set the series name shown in the hover tooltip row (e.g. "Desktop").
+//
 // Name is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::name.
 func (e LineChartEl) Name(name string) LineChartEl {
 	o := op(e.n, 265)
@@ -693,6 +1029,13 @@ func (e LineChartEl) Natural() LineChartEl {
 	return e
 }
 
+// Lay the x axis out for `count` evenly spaced points instead of the data's own length.
+//
+// The data takes the leading points in order, the i-th item on the i-th point, and the rest stay
+// empty, as an intraday chart does before the close. The data has to be contiguous from the first
+// point: a missing item shifts every later one a point to the left. A `count` below the data's
+// length has no effect.
+//
 // PointCount is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::point_count.
 func (e LineChartEl) PointCount(count int) LineChartEl {
 	o := op(e.n, 267)
@@ -700,6 +1043,10 @@ func (e LineChartEl) PointCount(count int) LineChartEl {
 	return e
 }
 
+// Draw a dashed line across the plot at `value`, such as a previous close.
+//
+// Call again for more lines. A value outside the y axis is not drawn.
+//
 // ReferenceLine is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::reference_line.
 func (e LineChartEl) ReferenceLine(value float64) LineChartEl {
 	o := op(e.n, 268)
@@ -727,6 +1074,12 @@ func (e LineChartEl) TickMargin(tickMargin int) LineChartEl {
 	return e
 }
 
+// Draw the tooltip box's content for a datum yourself, in place of the title and rows, for a
+// layout they cannot express such as a table.
+//
+// The crosshair, the dots and where the box sits stay the chart's, and `TooltipTitle`,
+// `TooltipValue` and `TooltipValueColor` no longer apply.
+//
 // TooltipContent is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_content.
 func (e LineChartEl) TooltipContent(content RowSource) LineChartEl {
 	o := op(e.n, 272)
@@ -734,6 +1087,8 @@ func (e LineChartEl) TooltipContent(content RowSource) LineChartEl {
 	return e
 }
 
+// Set the hover tooltip's title for a datum, instead of its x value.
+//
 // TooltipTitle is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_title.
 func (e LineChartEl) TooltipTitle(title string) LineChartEl {
 	o := op(e.n, 273)
@@ -741,6 +1096,10 @@ func (e LineChartEl) TooltipTitle(title string) LineChartEl {
 	return e
 }
 
+// Set the text of the tooltip row's value; the raw number by default.
+//
+// The closure receives the datum and the value the row reads.
+//
 // TooltipValue is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_value.
 func (e LineChartEl) TooltipValue(value string) LineChartEl {
 	o := op(e.n, 274)
@@ -748,6 +1107,11 @@ func (e LineChartEl) TooltipValue(value string) LineChartEl {
 	return e
 }
 
+// Color the tooltip row's value, such as green or red by its sign; the tooltip's text color by
+// default.
+//
+// The closure receives the same arguments as `TooltipValue`.
+//
 // TooltipValueColor is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_value_color.
 func (e LineChartEl) TooltipValueColor(color string) LineChartEl {
 	o := op(e.n, 275)
@@ -762,6 +1126,10 @@ func (e LineChartEl) X(x string) LineChartEl {
 	return e
 }
 
+// Show or hide the x-axis line and labels.
+//
+// Default is true.
+//
 // XAxis is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::x_axis.
 func (e LineChartEl) XAxis(xAxis bool) LineChartEl {
 	o := op(e.n, 277)
@@ -769,6 +1137,12 @@ func (e LineChartEl) XAxis(xAxis bool) LineChartEl {
 	return e
 }
 
+// Label `count` of the x values, spread evenly from the first to the last, instead of every
+// `tick_margin`-th.
+//
+// With `PointCount` set, the labels spread over all the points the axis is laid out for, so they
+// keep their places as the data grows; one that falls past the data is not drawn yet.
+//
 // XTickCount is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::x_tick_count.
 func (e LineChartEl) XTickCount(count int) LineChartEl {
 	o := op(e.n, 278)
@@ -783,6 +1157,10 @@ func (e LineChartEl) Y(y string) LineChartEl {
 	return e
 }
 
+// Show the y axis's tick labels, one at each of the `y_tick_count` ticks.
+//
+// Default is false.
+//
 // YAxis is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis.
 func (e LineChartEl) YAxis(yAxis bool) LineChartEl {
 	o := op(e.n, 280)
@@ -790,6 +1168,11 @@ func (e LineChartEl) YAxis(yAxis bool) LineChartEl {
 	return e
 }
 
+// Set where the y-axis tick labels sit: in a gutter left of the plot, or inside it beside their
+// grid lines.
+//
+// Default is `Outside`.
+//
 // YAxisLabelPlacement is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis_label_placement.
 func (e LineChartEl) YAxisLabelPlacement(placement AxisLabelPlacement) LineChartEl {
 	o := op(e.n, 281)
@@ -797,6 +1180,13 @@ func (e LineChartEl) YAxisLabelPlacement(placement AxisLabelPlacement) LineChart
 	return e
 }
 
+// Pin the y axis to `min..=max` instead of fitting the line from zero.
+//
+// Pin it where zero is not a meaningful baseline, such as a price line that would otherwise be
+// pressed flat against the top. The range keeps the `y_padding` headroom above `max`, 10px by
+// default, and the line is clipped to the plot, so a value outside the range stops at its edge.
+// Nothing is drawn when `min` equals `max`.
+//
 // YDomain is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_domain.
 func (e LineChartEl) YDomain(min_ float64, max_ float64) LineChartEl {
 	o := op(e.n, 282)
@@ -805,6 +1195,10 @@ func (e LineChartEl) YDomain(min_ float64, max_ float64) LineChartEl {
 	return e
 }
 
+// Set the space kept clear above the highest value and below the lowest, in pixels.
+//
+// Default is 10px above and none below.
+//
 // YPadding is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_padding.
 func (e LineChartEl) YPadding(top float32, bottom float32) LineChartEl {
 	o := op(e.n, 283)
@@ -813,6 +1207,14 @@ func (e LineChartEl) YPadding(top float32, bottom float32) LineChartEl {
 	return e
 }
 
+// Set how many ticks the y axis carries, evenly spaced from the baseline to the top edge with both
+// ends included.
+//
+// The ticks place the horizontal grid lines and the tick labels, and each label reads the value
+// the scale puts at its height. Values below 2 are raised to 2.
+//
+// Default is 5.
+//
 // YTickCount is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_tick_count.
 func (e LineChartEl) YTickCount(count int) LineChartEl {
 	o := op(e.n, 284)
@@ -820,6 +1222,8 @@ func (e LineChartEl) YTickCount(count int) LineChartEl {
 	return e
 }
 
+// Set the text of each y-axis tick label from the value at its tick.
+//
 // YTickFormat is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_tick_format.
 func (e LineChartEl) YTickFormat(format string) LineChartEl {
 	o := op(e.n, 285)
@@ -841,6 +1245,12 @@ func PieChart(data Data) PieChartEl {
 	return PieChartEl{n}
 }
 
+// Draw the data in the first time this chart is painted. On by default.
+//
+// The theme sets how long it takes, and the system's reduced-motion setting skips it. Turn it off
+// for a chart that is painted again and again as it scrolls in and out of view, such as one in
+// each row of a long list, where it would draw in every time.
+//
 // Appear is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::appear.
 func (e PieChartEl) Appear(appear bool) PieChartEl {
 	o := op(e.n, 256)
@@ -848,6 +1258,10 @@ func (e PieChartEl) Appear(appear bool) PieChartEl {
 	return e
 }
 
+// Draw the data in again whenever `key` changes, such as the symbol or period a chart shows.
+//
+// Without one the data draws in once, and later data paints in place.
+//
 // AppearKey is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::appear_key.
 func (e PieChartEl) AppearKey(key string) PieChartEl {
 	o := op(e.n, 257)
@@ -855,6 +1269,8 @@ func (e PieChartEl) AppearKey(key string) PieChartEl {
 	return e
 }
 
+// Set the color of the pie chart.
+//
 // Color is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::color.
 func (e PieChartEl) Color(color string) PieChartEl {
 	o := op(e.n, 258)
@@ -862,6 +1278,12 @@ func (e PieChartEl) Color(color string) PieChartEl {
 	return e
 }
 
+// Name this chart's `ElementId`, replacing the default taken from the construction site.
+//
+// Pass one where a single construction site renders several of these charts as siblings: they
+// share the default id, and with it one hover state and one path cache. The id must be unique
+// among those siblings.
+//
 // ID is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::id.
 func (e PieChartEl) ID(id ID) PieChartEl {
 	o := op(e.n, 259)
@@ -869,6 +1291,10 @@ func (e PieChartEl) ID(id ID) PieChartEl {
 	return e
 }
 
+// Set the inner radius of the pie chart, in pixels.
+//
+// This and `InnerRadiusRatio` replace each other; the last one set applies.
+//
 // InnerRadius is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::inner_radius.
 func (e PieChartEl) InnerRadius(innerRadius float32) PieChartEl {
 	o := op(e.n, 260)
@@ -876,6 +1302,8 @@ func (e PieChartEl) InnerRadius(innerRadius float32) PieChartEl {
 	return e
 }
 
+// Set the inner radius of the pie chart based on the arc data.
+//
 // InnerRadiusFn is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::inner_radius_fn.
 func (e PieChartEl) InnerRadiusFn(innerRadiusFn string) PieChartEl {
 	o := op(e.n, 261)
@@ -883,6 +1311,13 @@ func (e PieChartEl) InnerRadiusFn(innerRadiusFn string) PieChartEl {
 	return e
 }
 
+// Set the inner radius as a fraction of the ring's outer radius, from `0.` (a pie) to `1.`: `0.6`
+// cuts a donut whose hole is 60% of the ring's radius, whatever size the chart is given.
+//
+// The outer radius is the one set with `OuterRadius`, or 40% of the chart's height when none is
+// set, so a donut keeps its proportions in a panel of unknown or changing size. This and
+// `InnerRadius` replace each other; the last one set applies, and `InnerRadiusFn` overrides both.
+//
 // InnerRadiusRatio is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::inner_radius_ratio.
 func (e PieChartEl) InnerRadiusRatio(ratio float32) PieChartEl {
 	o := op(e.n, 262)
@@ -890,6 +1325,13 @@ func (e PieChartEl) InnerRadiusRatio(ratio float32) PieChartEl {
 	return e
 }
 
+// Turn this chart's interactive layer on or off. On by default.
+//
+// The layer is the hitbox under the cursor and what it drives: the hovered slice lifts out of the
+// ring, and a tooltip shows its value and share. Turn it off for a chart that only decorates, or
+// one an element above it wants the cursor for: without a hitbox it neither answers the mouse nor
+// takes the hover from what sits over it.
+//
 // Interactive is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::interactive.
 func (e PieChartEl) Interactive(interactive bool) PieChartEl {
 	o := op(e.n, 263)
@@ -897,6 +1339,10 @@ func (e PieChartEl) Interactive(interactive bool) PieChartEl {
 	return e
 }
 
+// Set the label text for each slice.
+//
+// Once set, a "leader line + text" is drawn outside the ring for every slice.
+//
 // Label is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::label.
 func (e PieChartEl) Label(label string) PieChartEl {
 	o := op(e.n, 264)
@@ -904,6 +1350,8 @@ func (e PieChartEl) Label(label string) PieChartEl {
 	return e
 }
 
+// Set the label text color (defaults to the theme's `foreground` colour).
+//
 // LabelColor is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::label_color.
 func (e PieChartEl) LabelColor(color Color) PieChartEl {
 	o := op(e.n, 265)
@@ -911,6 +1359,8 @@ func (e PieChartEl) LabelColor(color Color) PieChartEl {
 	return e
 }
 
+// Set the extra gap between `outer_radius` and the label radius (defaults to 15px).
+//
 // LabelGap is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::label_gap.
 func (e PieChartEl) LabelGap(gap float32) PieChartEl {
 	o := op(e.n, 266)
@@ -918,6 +1368,8 @@ func (e PieChartEl) LabelGap(gap float32) PieChartEl {
 	return e
 }
 
+// Set the leader line color per slice (defaults to the theme's `border` colour).
+//
 // LabelLineColor is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::label_line_color.
 func (e PieChartEl) LabelLineColor(color string) PieChartEl {
 	o := op(e.n, 267)
@@ -925,6 +1377,8 @@ func (e PieChartEl) LabelLineColor(color string) PieChartEl {
 	return e
 }
 
+// Set the series name shown in the hover tooltip row (e.g. "Desktop").
+//
 // Name is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::name.
 func (e PieChartEl) Name(name string) PieChartEl {
 	o := op(e.n, 268)
@@ -932,6 +1386,8 @@ func (e PieChartEl) Name(name string) PieChartEl {
 	return e
 }
 
+// Set the outer radius of the pie chart.
+//
 // OuterRadius is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::outer_radius.
 func (e PieChartEl) OuterRadius(outerRadius float32) PieChartEl {
 	o := op(e.n, 269)
@@ -939,6 +1395,8 @@ func (e PieChartEl) OuterRadius(outerRadius float32) PieChartEl {
 	return e
 }
 
+// Set the outer radius of the pie chart based on the arc data.
+//
 // OuterRadiusFn is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::outer_radius_fn.
 func (e PieChartEl) OuterRadiusFn(outerRadiusFn string) PieChartEl {
 	o := op(e.n, 270)
@@ -946,6 +1404,8 @@ func (e PieChartEl) OuterRadiusFn(outerRadiusFn string) PieChartEl {
 	return e
 }
 
+// Set the pad angle of the pie chart.
+//
 // PadAngle is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::pad_angle.
 func (e PieChartEl) PadAngle(padAngle float32) PieChartEl {
 	o := op(e.n, 271)
@@ -953,6 +1413,13 @@ func (e PieChartEl) PadAngle(padAngle float32) PieChartEl {
 	return e
 }
 
+// Name the slice under the cursor in the hover tooltip's row, beside its value. Falls back to
+// `name`, the one name the whole series carries.
+//
+// A pie shows one number per slice, so the slice's own name is what the row wants; a single series
+// name leaves the row reading as a swatch and a number with a gap between them. The alternative
+// was to title the tooltip from `label`, but that also draws the leader lines around the ring.
+//
 // TooltipName is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::tooltip_name.
 func (e PieChartEl) TooltipName(name string) PieChartEl {
 	o := op(e.n, 272)
@@ -960,6 +1427,15 @@ func (e PieChartEl) TooltipName(name string) PieChartEl {
 	return e
 }
 
+// Set the text of the hover tooltip's row, the value the slice is worth. Defaults to the raw value
+// followed by its share in parentheses.
+//
+// The closure receives the datum, the value `value` returned for it, and that value's share of the
+// total as a percentage. Set it wherever the raw number is not what a reader should see: a value
+// that is already a ratio reads as `0.35 (35.0%)` by default, and a chart drawn from adjusted
+// values — a floor that keeps a hairline slice visible, say — would report the adjustment as
+// though it were the datum.
+//
 // TooltipValue is <gpui_kit::component::chart::PieChart<crate::data::Datum>>::tooltip_value.
 func (e PieChartEl) TooltipValue(value string) PieChartEl {
 	o := op(e.n, 273)
@@ -988,6 +1464,12 @@ func RadarChart(data Data) RadarChartEl {
 	return RadarChartEl{n}
 }
 
+// Draw the data in the first time this chart is painted. On by default.
+//
+// The theme sets how long it takes, and the system's reduced-motion setting skips it. Turn it off
+// for a chart that is painted again and again as it scrolls in and out of view, such as one in
+// each row of a long list, where it would draw in every time.
+//
 // Appear is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::appear.
 func (e RadarChartEl) Appear(appear bool) RadarChartEl {
 	o := op(e.n, 256)
@@ -995,6 +1477,10 @@ func (e RadarChartEl) Appear(appear bool) RadarChartEl {
 	return e
 }
 
+// Draw the data in again whenever `key` changes, such as the symbol or period a chart shows.
+//
+// Without one the data draws in once, and later data paints in place.
+//
 // AppearKey is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::appear_key.
 func (e RadarChartEl) AppearKey(key string) RadarChartEl {
 	o := op(e.n, 257)
@@ -1002,12 +1488,18 @@ func (e RadarChartEl) AppearKey(key string) RadarChartEl {
 	return e
 }
 
+// Show dots on the vertices of each series.
+//
 // Dot is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::dot.
 func (e RadarChartEl) Dot() RadarChartEl {
 	op(e.n, 258)
 	return e
 }
 
+// Set the fill color of the most recently added series.
+//
+// Defaults to the series stroke color with 0.3 opacity.
+//
 // Fill is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::fill.
 func (e RadarChartEl) Fill(fill Color) RadarChartEl {
 	o := op(e.n, 259)
@@ -1015,6 +1507,10 @@ func (e RadarChartEl) Fill(fill Color) RadarChartEl {
 	return e
 }
 
+// Show or hide the grid rings and spokes.
+//
+// Default is true.
+//
 // Grid is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::grid.
 func (e RadarChartEl) Grid(grid bool) RadarChartEl {
 	o := op(e.n, 260)
@@ -1022,6 +1518,8 @@ func (e RadarChartEl) Grid(grid bool) RadarChartEl {
 	return e
 }
 
+// Set the number of concentric grid rings (defaults to 4).
+//
 // GridLevels is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::grid_levels.
 func (e RadarChartEl) GridLevels(gridLevels int) RadarChartEl {
 	o := op(e.n, 261)
@@ -1029,6 +1527,12 @@ func (e RadarChartEl) GridLevels(gridLevels int) RadarChartEl {
 	return e
 }
 
+// Name this chart's `ElementId`, replacing the default taken from the construction site.
+//
+// Pass one where a single construction site renders several of these charts as siblings: they
+// share the default id, and with it one hover state and one path cache. The id must be unique
+// among those siblings.
+//
 // ID is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::id.
 func (e RadarChartEl) ID(id ID) RadarChartEl {
 	o := op(e.n, 262)
@@ -1036,6 +1540,13 @@ func (e RadarChartEl) ID(id ID) RadarChartEl {
 	return e
 }
 
+// Turn this chart's interactive layer on or off. On by default.
+//
+// The layer is the hitbox under the cursor and what it drives: a dot per series marks the hovered
+// dimension, and a tooltip shows a row each. Turn it off for a chart that only decorates, or one
+// an element above it wants the cursor for: without a hitbox it neither answers the mouse nor
+// takes the hover from what sits over it.
+//
 // Interactive is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::interactive.
 func (e RadarChartEl) Interactive(interactive bool) RadarChartEl {
 	o := op(e.n, 263)
@@ -1043,6 +1554,11 @@ func (e RadarChartEl) Interactive(interactive bool) RadarChartEl {
 	return e
 }
 
+// Set the label for each dimension, shown outside the outer ring.
+//
+// Return a string for a plain text label, or `element.into_any_element()` for a custom one; see
+// `RadarLabel` for how the two differ.
+//
 // Label is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::label.
 func (e RadarChartEl) Label(label string) RadarChartEl {
 	o := op(e.n, 264)
@@ -1050,6 +1566,10 @@ func (e RadarChartEl) Label(label string) RadarChartEl {
 	return e
 }
 
+// Set the text label color (defaults to the theme's `muted_foreground` colour).
+//
+// Element labels style themselves; this does not apply to them.
+//
 // LabelColor is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::label_color.
 func (e RadarChartEl) LabelColor(color Color) RadarChartEl {
 	o := op(e.n, 265)
@@ -1057,6 +1577,8 @@ func (e RadarChartEl) LabelColor(color Color) RadarChartEl {
 	return e
 }
 
+// Set the extra gap between the outer ring and the labels (defaults to 10px).
+//
 // LabelGap is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::label_gap.
 func (e RadarChartEl) LabelGap(gap float32) RadarChartEl {
 	o := op(e.n, 266)
@@ -1064,6 +1586,10 @@ func (e RadarChartEl) LabelGap(gap float32) RadarChartEl {
 	return e
 }
 
+// Set the value at the outer ring.
+//
+// Defaults to the maximum value across all series.
+//
 // MaxValue is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::max_value.
 func (e RadarChartEl) MaxValue(maxValue float64) RadarChartEl {
 	o := op(e.n, 267)
@@ -1071,6 +1597,10 @@ func (e RadarChartEl) MaxValue(maxValue float64) RadarChartEl {
 	return e
 }
 
+// Set the name of the most recently added series, shown in its tooltip row.
+//
+// Call after the matching `Value` (e.g. `.value(..).stroke(..).name("Desktop")`).
+//
 // Name is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::name.
 func (e RadarChartEl) Name(name string) RadarChartEl {
 	o := op(e.n, 268)
@@ -1078,6 +1608,10 @@ func (e RadarChartEl) Name(name string) RadarChartEl {
 	return e
 }
 
+// Set the outer radius of the radar chart.
+//
+// Defaults to 40% of the bounds height.
+//
 // OuterRadius is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::outer_radius.
 func (e RadarChartEl) OuterRadius(outerRadius float32) RadarChartEl {
 	o := op(e.n, 269)
@@ -1085,6 +1619,10 @@ func (e RadarChartEl) OuterRadius(outerRadius float32) RadarChartEl {
 	return e
 }
 
+// Set the stroke color of the most recently added series.
+//
+// Defaults to the theme chart colors, cycled per series.
+//
 // Stroke is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::stroke.
 func (e RadarChartEl) Stroke(stroke Color) RadarChartEl {
 	o := op(e.n, 270)
@@ -1092,6 +1630,12 @@ func (e RadarChartEl) Stroke(stroke Color) RadarChartEl {
 	return e
 }
 
+// Draw the tooltip box's content for a datum yourself, in place of the title and rows, for a
+// layout they cannot express such as a table.
+//
+// The dots and where the box sits stay the chart's, and `TooltipTitle`, `TooltipValue` and
+// `TooltipValueColor` no longer apply.
+//
 // TooltipContent is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::tooltip_content.
 func (e RadarChartEl) TooltipContent(content RowSource) RadarChartEl {
 	o := op(e.n, 271)
@@ -1099,6 +1643,8 @@ func (e RadarChartEl) TooltipContent(content RowSource) RadarChartEl {
 	return e
 }
 
+// Set the hover tooltip's title for a datum, instead of its dimension label.
+//
 // TooltipTitle is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::tooltip_title.
 func (e RadarChartEl) TooltipTitle(title string) RadarChartEl {
 	o := op(e.n, 272)
@@ -1106,6 +1652,11 @@ func (e RadarChartEl) TooltipTitle(title string) RadarChartEl {
 	return e
 }
 
+// Set the text of each tooltip row's value; the raw number by default.
+//
+// The closure receives the datum, the row's index (the series' index in the order `value` added
+// them) and the value the row reads.
+//
 // TooltipValue is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::tooltip_value.
 func (e RadarChartEl) TooltipValue(value string) RadarChartEl {
 	o := op(e.n, 273)
@@ -1113,6 +1664,11 @@ func (e RadarChartEl) TooltipValue(value string) RadarChartEl {
 	return e
 }
 
+// Color each tooltip row's value, such as green or red by its sign; the tooltip's text color by
+// default.
+//
+// The closure receives the same arguments as `TooltipValue`.
+//
 // TooltipValueColor is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::tooltip_value_color.
 func (e RadarChartEl) TooltipValueColor(color string) RadarChartEl {
 	o := op(e.n, 274)
@@ -1120,6 +1676,11 @@ func (e RadarChartEl) TooltipValueColor(color string) RadarChartEl {
 	return e
 }
 
+// Add a series to the radar chart.
+//
+// Call multiple times to overlay multiple series, each paired with the matching `Stroke` and
+// `Fill` calls.
+//
 // Value is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::value.
 func (e RadarChartEl) Value(value string) RadarChartEl {
 	o := op(e.n, 275)
@@ -1132,6 +1693,9 @@ type SankeyChartEl struct{ n *node }
 
 func (e SankeyChartEl) node() *node { return e.n }
 
+// Create a chart from nodes and links; links reference nodes by their index in `nodes` (map string
+// ids to indices before constructing).
+//
 // SankeyChart is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::new.
 func SankeyChart(nodes Data, links []SankeyLink) SankeyChartEl {
 	useComponentChart()
@@ -1145,6 +1709,12 @@ func SankeyChart(nodes Data, links []SankeyLink) SankeyChartEl {
 	return SankeyChartEl{n}
 }
 
+// Draw the data in the first time this chart is painted. On by default.
+//
+// The theme sets how long it takes, and the system's reduced-motion setting skips it. Turn it off
+// for a chart that is painted again and again as it scrolls in and out of view, such as one in
+// each row of a long list, where it would draw in every time.
+//
 // Appear is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::appear.
 func (e SankeyChartEl) Appear(appear bool) SankeyChartEl {
 	o := op(e.n, 256)
@@ -1152,6 +1722,10 @@ func (e SankeyChartEl) Appear(appear bool) SankeyChartEl {
 	return e
 }
 
+// Draw the data in again whenever `key` changes, such as the symbol or period a chart shows.
+//
+// Without one the data draws in once, and later data paints in place.
+//
 // AppearKey is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::appear_key.
 func (e SankeyChartEl) AppearKey(key string) SankeyChartEl {
 	o := op(e.n, 257)
@@ -1159,6 +1733,12 @@ func (e SankeyChartEl) AppearKey(key string) SankeyChartEl {
 	return e
 }
 
+// Name this chart's `ElementId`, replacing the default taken from the construction site.
+//
+// Pass one where a single construction site renders several of these charts as siblings: they
+// share the default id, and with it one hover state and one path cache. The id must be unique
+// among those siblings.
+//
 // ID is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::id.
 func (e SankeyChartEl) ID(id ID) SankeyChartEl {
 	o := op(e.n, 258)
@@ -1166,6 +1746,13 @@ func (e SankeyChartEl) ID(id ID) SankeyChartEl {
 	return e
 }
 
+// Turn this chart's interactive layer on or off. On by default.
+//
+// The layer is the hitbox under the cursor and what it drives: the hovered node's links stand out
+// from the rest, and a tooltip shows its label and throughput. Turn it off for a chart that only
+// decorates, or one an element above it wants the cursor for: without a hitbox it neither answers
+// the mouse nor takes the hover from what sits over it.
+//
 // Interactive is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::interactive.
 func (e SankeyChartEl) Interactive(interactive bool) SankeyChartEl {
 	o := op(e.n, 259)
@@ -1173,6 +1760,8 @@ func (e SankeyChartEl) Interactive(interactive bool) SankeyChartEl {
 	return e
 }
 
+// Set the number of relaxation passes. Defaults to 6.
+//
 // Iterations is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::iterations.
 func (e SankeyChartEl) Iterations(iterations int) SankeyChartEl {
 	o := op(e.n, 260)
@@ -1180,6 +1769,8 @@ func (e SankeyChartEl) Iterations(iterations int) SankeyChartEl {
 	return e
 }
 
+// Set the gap between a node and its labels. Defaults to 6.
+//
 // LabelGap is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::label_gap.
 func (e SankeyChartEl) LabelGap(gap float32) SankeyChartEl {
 	o := op(e.n, 261)
@@ -1187,6 +1778,8 @@ func (e SankeyChartEl) LabelGap(gap float32) SankeyChartEl {
 	return e
 }
 
+// Set the opacity of the link ribbons. Defaults to 0.3.
+//
 // LinkOpacity is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::link_opacity.
 func (e SankeyChartEl) LinkOpacity(opacity float32) SankeyChartEl {
 	o := op(e.n, 262)
@@ -1194,6 +1787,8 @@ func (e SankeyChartEl) LinkOpacity(opacity float32) SankeyChartEl {
 	return e
 }
 
+// Set the minimum ribbon thickness, so tiny flows stay visible. Defaults to 1.
+//
 // MinLinkWidth is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::min_link_width.
 func (e SankeyChartEl) MinLinkWidth(width float32) SankeyChartEl {
 	o := op(e.n, 263)
@@ -1201,6 +1796,8 @@ func (e SankeyChartEl) MinLinkWidth(width float32) SankeyChartEl {
 	return e
 }
 
+// Set the node alignment. Defaults to `Justify`.
+//
 // NodeAlign is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_align.
 func (e SankeyChartEl) NodeAlign(align SankeyAlign) SankeyChartEl {
 	o := op(e.n, 264)
@@ -1208,6 +1805,10 @@ func (e SankeyChartEl) NodeAlign(align SankeyAlign) SankeyChartEl {
 	return e
 }
 
+// Set the color of each node.
+//
+// Defaults to cycling the theme chart palette by node index.
+//
 // NodeColor is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_color.
 func (e SankeyChartEl) NodeColor(color string) SankeyChartEl {
 	o := op(e.n, 265)
@@ -1215,6 +1816,8 @@ func (e SankeyChartEl) NodeColor(color string) SankeyChartEl {
 	return e
 }
 
+// Set the corner radius of the node rectangles. Defaults to 0.
+//
 // NodeCornerRadius is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_corner_radius.
 func (e SankeyChartEl) NodeCornerRadius(radius float32) SankeyChartEl {
 	o := op(e.n, 266)
@@ -1222,6 +1825,8 @@ func (e SankeyChartEl) NodeCornerRadius(radius float32) SankeyChartEl {
 	return e
 }
 
+// Set the name label of each node, drawn in muted foreground. No name label is drawn unless set.
+//
 // NodeLabel is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_label.
 func (e SankeyChartEl) NodeLabel(label string) SankeyChartEl {
 	o := op(e.n, 267)
@@ -1229,6 +1834,8 @@ func (e SankeyChartEl) NodeLabel(label string) SankeyChartEl {
 	return e
 }
 
+// Set the vertical gap between nodes in a column. Defaults to 16.
+//
 // NodePadding is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_padding.
 func (e SankeyChartEl) NodePadding(nodePadding float32) SankeyChartEl {
 	o := op(e.n, 268)
@@ -1236,6 +1843,8 @@ func (e SankeyChartEl) NodePadding(nodePadding float32) SankeyChartEl {
 	return e
 }
 
+// Set the node rectangle width. Defaults to 10.
+//
 // NodeWidth is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_width.
 func (e SankeyChartEl) NodeWidth(nodeWidth float32) SankeyChartEl {
 	o := op(e.n, 269)
@@ -1243,6 +1852,14 @@ func (e SankeyChartEl) NodeWidth(nodeWidth float32) SankeyChartEl {
 	return e
 }
 
+// Name the node under the cursor in the hover tooltip's row, beside its throughput. Unset, the row
+// carries no name at all.
+//
+// A sankey shows one number per node, so the node's own name is what the row wants; without it the
+// row reads as a swatch and a number with a gap between them. The alternative was to title the
+// tooltip from `node_label`, but that also draws the name beside the node — and a chart drawing
+// its text through `labels` sets neither.
+//
 // TooltipName is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::tooltip_name.
 func (e SankeyChartEl) TooltipName(name string) SankeyChartEl {
 	o := op(e.n, 270)
@@ -1250,6 +1867,12 @@ func (e SankeyChartEl) TooltipName(name string) SankeyChartEl {
 	return e
 }
 
+// Set the text of the hover tooltip's row, the node's throughput.
+//
+// `value_label` supplies it when this is unset, and the raw number when neither is set — which is
+// what a chart drawing its text through `labels` gets, however carefully it formats the value it
+// draws.
+//
 // TooltipValue is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::tooltip_value.
 func (e SankeyChartEl) TooltipValue(value string) SankeyChartEl {
 	o := op(e.n, 271)
@@ -1257,6 +1880,12 @@ func (e SankeyChartEl) TooltipValue(value string) SankeyChartEl {
 	return e
 }
 
+// Set the value label of each node, drawn above the name label. No value label is drawn unless
+// set.
+//
+// The closure receives the datum and the node's raw computed throughput (max of incoming and
+// outgoing flow, in unscaled units).
+//
 // ValueLabel is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::value_label.
 func (e SankeyChartEl) ValueLabel(label string) SankeyChartEl {
 	o := op(e.n, 272)
@@ -1264,6 +1893,11 @@ func (e SankeyChartEl) ValueLabel(label string) SankeyChartEl {
 	return e
 }
 
+// Set how flow values map to node heights.
+//
+// Defaults to `Linear`. Use `Sqrt` to keep a dominant flow from dwarfing the small ones without
+// pre-transforming the data; labels still receive the raw values.
+//
 // ValueScale is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::value_scale.
 func (e SankeyChartEl) ValueScale(valueScale SankeyValueScale) SankeyChartEl {
 	o := op(e.n, 273)
@@ -1276,6 +1910,8 @@ type SankeyLabel struct{ n *node }
 
 func (e SankeyLabel) valueNode() *node { return e.n }
 
+// Create a label line with the default color and font size.
+//
 // NewSankeyLabel is <gpui_kit::component::chart::SankeyLabel>::new.
 func NewSankeyLabel(text string) SankeyLabel {
 	n := newValue(619)
@@ -1284,6 +1920,8 @@ func NewSankeyLabel(text string) SankeyLabel {
 	return SankeyLabel{n}
 }
 
+// Set the text color. Defaults to the theme foreground.
+//
 // Color is <gpui_kit::component::chart::SankeyLabel>::color.
 func (e SankeyLabel) Color(color Color) SankeyLabel {
 	o := op(e.n, 256)
@@ -1291,6 +1929,8 @@ func (e SankeyLabel) Color(color Color) SankeyLabel {
 	return e
 }
 
+// Set the font size. Defaults to 10.
+//
 // FontSize is <gpui_kit::component::chart::SankeyLabel>::font_size.
 func (e SankeyLabel) FontSize(fontSize float32) SankeyLabel {
 	o := op(e.n, 257)

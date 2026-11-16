@@ -37,6 +37,8 @@ type TextViewEl struct{ n *node }
 
 func (e TextViewEl) node() *node { return e.n }
 
+// Creates an HTML text view identified by the caller's code location.
+//
 // HTML is gpui_kit::component::text::html.
 func HTML(source string, st ...Style) TextViewEl {
 	useBaseText()
@@ -47,6 +49,8 @@ func HTML(source string, st ...Style) TextViewEl {
 	return TextViewEl{n}
 }
 
+// Creates a Markdown text view identified by the caller's code location.
+//
 // Markdown is gpui_kit::component::text::markdown.
 func Markdown(source string, st ...Style) TextViewEl {
 	useBaseText()
@@ -57,6 +61,8 @@ func Markdown(source string, st ...Style) TextViewEl {
 	return TextViewEl{n}
 }
 
+// Creates a text view rendering an existing `TextViewState`.
+//
 // TextView is <gpui_kit::component::text::TextView>::new.
 func TextView(state TextViewState, st ...Style) TextViewEl {
 	useBaseText()
@@ -67,6 +73,8 @@ func TextView(state TextViewState, st ...Style) TextViewEl {
 	return TextViewEl{n}
 }
 
+// Creates a text view that parses `text` as HTML.
+//
 // TextViewHTML is <gpui_kit::component::text::TextView>::html.
 func TextViewHTML(id ID, text string, st ...Style) TextViewEl {
 	useBaseText()
@@ -78,6 +86,8 @@ func TextViewHTML(id ID, text string, st ...Style) TextViewEl {
 	return TextViewEl{n}
 }
 
+// Creates a text view that parses `text` as Markdown.
+//
 // TextViewMarkdown is <gpui_kit::component::text::TextView>::markdown.
 func TextViewMarkdown(id ID, text string, st ...Style) TextViewEl {
 	useBaseText()
@@ -89,6 +99,9 @@ func TextViewMarkdown(id ID, text string, st ...Style) TextViewEl {
 	return TextViewEl{n}
 }
 
+// Refines the blockquote container, including its left border, over the resolved theme or explicit
+// style. Unspecified properties are inherited.
+//
 // BlockquoteStyle is <gpui_kit::component::text::TextView>::blockquote_style.
 func (e TextViewEl) BlockquoteStyle(style StyleRefinement) TextViewEl {
 	o := op(e.n, 256)
@@ -96,6 +109,9 @@ func (e TextViewEl) BlockquoteStyle(style StyleRefinement) TextViewEl {
 	return e
 }
 
+// Refines inline code typography, background, border, radius, and padding over the resolved theme
+// or explicit style. Other layout properties are ignored. Unspecified properties are inherited.
+//
 // InlineCodeStyle is <gpui_kit::component::text::TextView>::inline_code_style.
 func (e TextViewEl) InlineCodeStyle(style StyleRefinement) TextViewEl {
 	o := op(e.n, 257)
@@ -103,6 +119,9 @@ func (e TextViewEl) InlineCodeStyle(style StyleRefinement) TextViewEl {
 	return e
 }
 
+// Refines bullet and number list markers over the resolved theme or explicit style. The text color
+// also outlines unchecked task-list checkboxes. Unspecified properties are inherited.
+//
 // ListStyle is <gpui_kit::component::text::TextView>::list_style.
 func (e TextViewEl) ListStyle(style StyleRefinement) TextViewEl {
 	o := op(e.n, 258)
@@ -110,6 +129,8 @@ func (e TextViewEl) ListStyle(style StyleRefinement) TextViewEl {
 	return e
 }
 
+// Sets which Markdown extensions the parser accepts.
+//
 // MarkdownExtensions is <gpui_kit::component::text::TextView>::markdown_extensions.
 func (e TextViewEl) MarkdownExtensions(value MarkdownExtensions) TextViewEl {
 	o := op(e.n, 259)
@@ -117,12 +138,16 @@ func (e TextViewEl) MarkdownExtensions(value MarkdownExtensions) TextViewEl {
 	return e
 }
 
+// Enables the MDX Markdown extensions.
+//
 // MarkdownMdx is <gpui_kit::component::text::TextView>::markdown_mdx.
 func (e TextViewEl) MarkdownMdx() TextViewEl {
 	op(e.n, 260)
 	return e
 }
 
+// Clamps the rendered content to `value` lines.
+//
 // MaxLines is <gpui_kit::component::text::TextView>::max_lines.
 func (e TextViewEl) MaxLines(value int) TextViewEl {
 	o := op(e.n, 261)
@@ -130,6 +155,8 @@ func (e TextViewEl) MaxLines(value int) TextViewEl {
 	return e
 }
 
+// Sets the motion policy explicitly, overriding `StreamFade`'s theme timing.
+//
 // Motion is <gpui_kit::component::text::TextView>::motion.
 func (e TextViewEl) Motion(motion TextViewMotion) TextViewEl {
 	o := op(e.n, 262)
@@ -137,6 +164,8 @@ func (e TextViewEl) Motion(motion TextViewMotion) TextViewEl {
 	return e
 }
 
+// Handles link clicks instead of opening the URL.
+//
 // OnLinkClick is <gpui_kit::component::text::TextView>::on_link_click.
 func (e TextViewEl) OnLinkClick(f func(cx *Cx, e Event83)) TextViewEl {
 	o := op(e.n, 269)
@@ -144,6 +173,9 @@ func (e TextViewEl) OnLinkClick(f func(cx *Cx, e Event83)) TextViewEl {
 	return e
 }
 
+// Scrolls a container that ignores scroll requests to the line of `TextViewState::reveal_range`,
+// with the line's window bounds.
+//
 // OnReveal is <gpui_kit::component::text::TextView>::on_reveal.
 func (e TextViewEl) OnReveal(f func(cx *Cx, e Bounds)) TextViewEl {
 	o := op(e.n, 263)
@@ -151,6 +183,9 @@ func (e TextViewEl) OnReveal(f func(cx *Cx, e Bounds)) TextViewEl {
 	return e
 }
 
+// Makes Markdown task list checkboxes clickable, reporting the clicked item's new checked state
+// and where it and its marker are in the source.
+//
 // OnTaskToggle is <gpui_kit::component::text::TextView>::on_task_toggle.
 func (e TextViewEl) OnTaskToggle(f func(cx *Cx, e TaskToggleEvent)) TextViewEl {
 	o := op(e.n, 270)
@@ -158,6 +193,8 @@ func (e TextViewEl) OnTaskToggle(f func(cx *Cx, e TaskToggleEvent)) TextViewEl {
 	return e
 }
 
+// Sets whether the view scrolls its own content.
+//
 // Scrollable is <gpui_kit::component::text::TextView>::scrollable.
 func (e TextViewEl) Scrollable(value bool) TextViewEl {
 	o := op(e.n, 264)
@@ -165,6 +202,8 @@ func (e TextViewEl) Scrollable(value bool) TextViewEl {
 	return e
 }
 
+// Sets whether the text can be selected with the mouse.
+//
 // Selectable is <gpui_kit::component::text::TextView>::selectable.
 func (e TextViewEl) Selectable(value bool) TextViewEl {
 	o := op(e.n, 265)
@@ -172,6 +211,8 @@ func (e TextViewEl) Selectable(value bool) TextViewEl {
 	return e
 }
 
+// Sets whether a copied selection carries Markdown source or plain text.
+//
 // SelectionFormat is <gpui_kit::component::text::TextView>::selection_format.
 func (e TextViewEl) SelectionFormat(value SelectionFormat) TextViewEl {
 	o := op(e.n, 266)
@@ -179,6 +220,12 @@ func (e TextViewEl) SelectionFormat(value SelectionFormat) TextViewEl {
 	return e
 }
 
+// Fades streamed text in the way Claude reveals a reply: the words a `set_text` or `push_str` adds
+// start transparent and light up one after another, each reaching full color over 280 ms. A chunk
+// far larger than one keystroke burst -- a backfill, a replay -- fades as a whole instead, since
+// nobody typed it. Text that replaces rather than extends the current content shows at once, and
+// reduced motion disables the fade. Use `Motion` for other timing.
+//
 // StreamFade is <gpui_kit::component::text::TextView>::stream_fade.
 func (e TextViewEl) StreamFade(value bool) TextViewEl {
 	o := op(e.n, 267)
@@ -186,6 +233,8 @@ func (e TextViewEl) StreamFade(value bool) TextViewEl {
 	return e
 }
 
+// Sets the style, folded onto the one derived from the active theme.
+//
 // Style is <gpui_kit::component::text::TextView>::style.
 func (e TextViewEl) Style(style TextViewStyle) TextViewEl {
 	o := op(e.n, 268)
@@ -193,7 +242,19 @@ func (e TextViewEl) Style(style TextViewStyle) TextViewEl {
 	return e
 }
 
-func (e TextViewEl) PopoverStyle() TextViewEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TextViewEl) PopoverStyle() TextViewEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TextViewEl) RoundedFullStyle() TextViewEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e TextViewEl) CornerRadii(radius Corners) TextViewEl {
@@ -205,19 +266,32 @@ func (e TextViewEl) DebugFocused(focusHandle FocusHandle) TextViewEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e TextViewEl) DebugGreen() TextViewEl               { tStyledExtDebugGreen(e.n); return e }
-func (e TextViewEl) DebugPink() TextViewEl                { tStyledExtDebugPink(e.n); return e }
-func (e TextViewEl) DebugRed() TextViewEl                 { tStyledExtDebugRed(e.n); return e }
-func (e TextViewEl) DebugYellow() TextViewEl              { tStyledExtDebugYellow(e.n); return e }
-func (e TextViewEl) FontBlack() TextViewEl                { tStyledExtFontBlack(e.n); return e }
-func (e TextViewEl) FontBold() TextViewEl                 { tStyledExtFontBold(e.n); return e }
-func (e TextViewEl) FontExtrabold() TextViewEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e TextViewEl) FontExtralight() TextViewEl           { tStyledExtFontExtralight(e.n); return e }
-func (e TextViewEl) FontLight() TextViewEl                { tStyledExtFontLight(e.n); return e }
-func (e TextViewEl) FontMedium() TextViewEl               { tStyledExtFontMedium(e.n); return e }
-func (e TextViewEl) FontNormal() TextViewEl               { tStyledExtFontNormal(e.n); return e }
-func (e TextViewEl) FontSemibold() TextViewEl             { tStyledExtFontSemibold(e.n); return e }
-func (e TextViewEl) FontThin() TextViewEl                 { tStyledExtFontThin(e.n); return e }
+func (e TextViewEl) DebugGreen() TextViewEl     { tStyledExtDebugGreen(e.n); return e }
+func (e TextViewEl) DebugPink() TextViewEl      { tStyledExtDebugPink(e.n); return e }
+func (e TextViewEl) DebugRed() TextViewEl       { tStyledExtDebugRed(e.n); return e }
+func (e TextViewEl) DebugYellow() TextViewEl    { tStyledExtDebugYellow(e.n); return e }
+func (e TextViewEl) FontBlack() TextViewEl      { tStyledExtFontBlack(e.n); return e }
+func (e TextViewEl) FontBold() TextViewEl       { tStyledExtFontBold(e.n); return e }
+func (e TextViewEl) FontExtrabold() TextViewEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e TextViewEl) FontExtralight() TextViewEl { tStyledExtFontExtralight(e.n); return e }
+func (e TextViewEl) FontLight() TextViewEl      { tStyledExtFontLight(e.n); return e }
+func (e TextViewEl) FontMedium() TextViewEl     { tStyledExtFontMedium(e.n); return e }
+func (e TextViewEl) FontNormal() TextViewEl     { tStyledExtFontNormal(e.n); return e }
+func (e TextViewEl) FontSemibold() TextViewEl   { tStyledExtFontSemibold(e.n); return e }
+func (e TextViewEl) FontThin() TextViewEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e TextViewEl) HFlex() TextViewEl                    { tStyledExtHFlex(e.n); return e }
 func (e TextViewEl) Margins(margins EdgesInto) TextViewEl { tStyledExtMargins(e.n, margins); return e }
 func (e TextViewEl) Paddings(paddings EdgesInto) TextViewEl {
@@ -228,124 +302,336 @@ func (e TextViewEl) RefineStyle(style StyleRefinement) TextViewEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TextViewEl) VFlex() TextViewEl { tStyledExtVFlex(e.n); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TextViewEl) AspectRatio(ratio float32) TextViewEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e TextViewEl) Bg(fill Fill) TextViewEl              { tStyledBg(e.n, fill); return e }
-func (e TextViewEl) Border(length Length) TextViewEl      { tStyledBorder(e.n, length); return e }
-func (e TextViewEl) BorderB(length Length) TextViewEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TextViewEl) Bg(fill Fill) TextViewEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TextViewEl) Border(length Length) TextViewEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TextViewEl) BorderB(length Length) TextViewEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TextViewEl) BorderColor(borderColor Color) TextViewEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TextViewEl) BorderL(length Length) TextViewEl     { tStyledBorderL(e.n, length); return e }
-func (e TextViewEl) BorderR(length Length) TextViewEl     { tStyledBorderR(e.n, length); return e }
-func (e TextViewEl) BorderT(length Length) TextViewEl     { tStyledBorderT(e.n, length); return e }
-func (e TextViewEl) BorderX(length Length) TextViewEl     { tStyledBorderX(e.n, length); return e }
-func (e TextViewEl) BorderY(length Length) TextViewEl     { tStyledBorderY(e.n, length); return e }
-func (e TextViewEl) Bottom(length Length) TextViewEl      { tStyledBottom(e.n, length); return e }
-func (e TextViewEl) ColEnd(end int16) TextViewEl          { tStyledColEnd(e.n, end); return e }
-func (e TextViewEl) ColSpan(span uint16) TextViewEl       { tStyledColSpan(e.n, span); return e }
-func (e TextViewEl) ColStart(start int16) TextViewEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TextViewEl) BorderL(length Length) TextViewEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TextViewEl) BorderR(length Length) TextViewEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TextViewEl) BorderT(length Length) TextViewEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TextViewEl) BorderX(length Length) TextViewEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TextViewEl) BorderY(length Length) TextViewEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TextViewEl) Bottom(length Length) TextViewEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TextViewEl) ColEnd(end int16) TextViewEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TextViewEl) ColSpan(span uint16) TextViewEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TextViewEl) ColStart(start int16) TextViewEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TextViewEl) Cursor(cursor CursorStyle) TextViewEl { tStyledCursor(e.n, cursor); return e }
-func (e TextViewEl) FlexBasis(basis Length) TextViewEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e TextViewEl) FlexGrow(grow float32) TextViewEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TextViewEl) FlexBasis(basis Length) TextViewEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TextViewEl) FlexGrow(grow float32) TextViewEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TextViewEl) FlexShrink(shrink float32) TextViewEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e TextViewEl) FontFamily(familyName string) TextViewEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TextViewEl) FontFeatures(features FontFeatures) TextViewEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TextViewEl) FontWeight(weight FontWeight) TextViewEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e TextViewEl) Gap(length Length) TextViewEl    { tStyledGap(e.n, length); return e }
-func (e TextViewEl) GapX(length Length) TextViewEl   { tStyledGapX(e.n, length); return e }
-func (e TextViewEl) GapY(length Length) TextViewEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TextViewEl) Gap(length Length) TextViewEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TextViewEl) GapX(length Length) TextViewEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TextViewEl) GapY(length Length) TextViewEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e TextViewEl) GridCols(cols uint16) TextViewEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TextViewEl) GridColsMaxContent(cols uint16) TextViewEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TextViewEl) GridColsMinContent(cols uint16) TextViewEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TextViewEl) GridRows(rows uint16) TextViewEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TextViewEl) GridRowsMaxContent(rows uint16) TextViewEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TextViewEl) GridRowsMinContent(rows uint16) TextViewEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TextViewEl) H(length Length) TextViewEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TextViewEl) H(length Length) TextViewEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TextViewEl) Inset(length Length) TextViewEl { tStyledInset(e.n, length); return e }
-func (e TextViewEl) Left(length Length) TextViewEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TextViewEl) Left(length Length) TextViewEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TextViewEl) LineClamp(lines int) TextViewEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TextViewEl) LineHeight(lineHeight Length) TextViewEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TextViewEl) M(length Length) TextViewEl         { tStyledM(e.n, length); return e }
-func (e TextViewEl) MaxH(length Length) TextViewEl      { tStyledMaxH(e.n, length); return e }
-func (e TextViewEl) MaxSize(length Length) TextViewEl   { tStyledMaxSize(e.n, length); return e }
-func (e TextViewEl) MaxW(length Length) TextViewEl      { tStyledMaxW(e.n, length); return e }
-func (e TextViewEl) Mb(length Length) TextViewEl        { tStyledMb(e.n, length); return e }
-func (e TextViewEl) MinH(length Length) TextViewEl      { tStyledMinH(e.n, length); return e }
-func (e TextViewEl) MinSize(length Length) TextViewEl   { tStyledMinSize(e.n, length); return e }
-func (e TextViewEl) MinW(length Length) TextViewEl      { tStyledMinW(e.n, length); return e }
-func (e TextViewEl) Ml(length Length) TextViewEl        { tStyledMl(e.n, length); return e }
-func (e TextViewEl) Mr(length Length) TextViewEl        { tStyledMr(e.n, length); return e }
-func (e TextViewEl) Mt(length Length) TextViewEl        { tStyledMt(e.n, length); return e }
-func (e TextViewEl) Mx(length Length) TextViewEl        { tStyledMx(e.n, length); return e }
-func (e TextViewEl) My(length Length) TextViewEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TextViewEl) M(length Length) TextViewEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TextViewEl) MaxH(length Length) TextViewEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TextViewEl) MaxSize(length Length) TextViewEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TextViewEl) MaxW(length Length) TextViewEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TextViewEl) Mb(length Length) TextViewEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TextViewEl) MinH(length Length) TextViewEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TextViewEl) MinSize(length Length) TextViewEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TextViewEl) MinW(length Length) TextViewEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TextViewEl) Ml(length Length) TextViewEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TextViewEl) Mr(length Length) TextViewEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TextViewEl) Mt(length Length) TextViewEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TextViewEl) Mx(length Length) TextViewEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TextViewEl) My(length Length) TextViewEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TextViewEl) Opacity(opacity float32) TextViewEl { tStyledOpacity(e.n, opacity); return e }
-func (e TextViewEl) P(length Length) TextViewEl         { tStyledP(e.n, length); return e }
-func (e TextViewEl) Pb(length Length) TextViewEl        { tStyledPb(e.n, length); return e }
-func (e TextViewEl) Pl(length Length) TextViewEl        { tStyledPl(e.n, length); return e }
-func (e TextViewEl) Pr(length Length) TextViewEl        { tStyledPr(e.n, length); return e }
-func (e TextViewEl) Pt(length Length) TextViewEl        { tStyledPt(e.n, length); return e }
-func (e TextViewEl) Px(length Length) TextViewEl        { tStyledPx(e.n, length); return e }
-func (e TextViewEl) Py(length Length) TextViewEl        { tStyledPy(e.n, length); return e }
-func (e TextViewEl) Right(length Length) TextViewEl     { tStyledRight(e.n, length); return e }
-func (e TextViewEl) Rounded(length Length) TextViewEl   { tStyledRounded(e.n, length); return e }
-func (e TextViewEl) RoundedB(length Length) TextViewEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TextViewEl) P(length Length) TextViewEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TextViewEl) Pb(length Length) TextViewEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TextViewEl) Pl(length Length) TextViewEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TextViewEl) Pr(length Length) TextViewEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TextViewEl) Pt(length Length) TextViewEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TextViewEl) Px(length Length) TextViewEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TextViewEl) Py(length Length) TextViewEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TextViewEl) Right(length Length) TextViewEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TextViewEl) Rounded(length Length) TextViewEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TextViewEl) RoundedB(length Length) TextViewEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TextViewEl) RoundedBl(length Length) TextViewEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TextViewEl) RoundedBr(length Length) TextViewEl { tStyledRoundedBr(e.n, length); return e }
-func (e TextViewEl) RoundedL(length Length) TextViewEl  { tStyledRoundedL(e.n, length); return e }
-func (e TextViewEl) RoundedR(length Length) TextViewEl  { tStyledRoundedR(e.n, length); return e }
-func (e TextViewEl) RoundedT(length Length) TextViewEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TextViewEl) RoundedL(length Length) TextViewEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TextViewEl) RoundedR(length Length) TextViewEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TextViewEl) RoundedT(length Length) TextViewEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TextViewEl) RoundedTl(length Length) TextViewEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TextViewEl) RoundedTr(length Length) TextViewEl { tStyledRoundedTr(e.n, length); return e }
-func (e TextViewEl) RowEnd(end int16) TextViewEl        { tStyledRowEnd(e.n, end); return e }
-func (e TextViewEl) RowSpan(span uint16) TextViewEl     { tStyledRowSpan(e.n, span); return e }
-func (e TextViewEl) RowStart(start int16) TextViewEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e TextViewEl) RowEnd(end int16) TextViewEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TextViewEl) RowSpan(span uint16) TextViewEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TextViewEl) RowStart(start int16) TextViewEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TextViewEl) ScrollbarWidth(width Length) TextViewEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TextViewEl) Shadow(shadows []BoxShadow) TextViewEl { tStyledShadow(e.n, shadows); return e }
-func (e TextViewEl) Size(length Length) TextViewEl         { tStyledSize(e.n, length); return e }
-func (e TextViewEl) TextAlign(align TextAlign) TextViewEl  { tStyledTextAlign(e.n, align); return e }
-func (e TextViewEl) TextBg(bg Color) TextViewEl            { tStyledTextBg(e.n, bg); return e }
-func (e TextViewEl) TextColor(color Color) TextViewEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e TextViewEl) Size(length Length) TextViewEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TextViewEl) TextAlign(align TextAlign) TextViewEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TextViewEl) TextBg(bg Color) TextViewEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TextViewEl) TextColor(color Color) TextViewEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TextViewEl) TextDecorationColor(color Color) TextViewEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TextViewEl) TextOverflow(overflow TextOverflow) TextViewEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e TextViewEl) TextSize(size Length) TextViewEl { tStyledTextSize(e.n, size); return e }
-func (e TextViewEl) Top(length Length) TextViewEl    { tStyledTop(e.n, length); return e }
-func (e TextViewEl) W(length Length) TextViewEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TextViewEl) Top(length Length) TextViewEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TextViewEl) W(length Length) TextViewEl { tStyledW(e.n, length); return e }
 
 // TextViewStyle is gpui_kit::component::text::TextViewStyle.
 type TextViewStyle struct{ n *node }
@@ -358,6 +644,11 @@ func NewTextViewStyleDefault() TextViewStyle {
 	return TextViewStyle{n}
 }
 
+// Set style for code blocks.
+//
+// Set `overflow.y` to `Overflow::Scroll` with a max height on the refinement to scroll long code
+// inside the block instead of growing it.
+//
 // CodeBlock is <gpui_kit::component::text::TextViewStyle>::code_block.
 func (e TextViewStyle) CodeBlock(style StyleRefinement) TextViewStyle {
 	o := op(e.n, 256)
@@ -365,6 +656,8 @@ func (e TextViewStyle) CodeBlock(style StyleRefinement) TextViewStyle {
 	return e
 }
 
+// Set style for inline code spans.
+//
 // InlineCode is <gpui_kit::component::text::TextViewStyle>::inline_code.
 func (e TextViewStyle) InlineCode(style HighlightStyle) TextViewStyle {
 	o := op(e.n, 257)
@@ -372,6 +665,8 @@ func (e TextViewStyle) InlineCode(style HighlightStyle) TextViewStyle {
 	return e
 }
 
+// Set paragraph gap, default is 0.75 rem.
+//
 // ParagraphGap is <gpui_kit::component::text::TextViewStyle>::paragraph_gap.
 func (e TextViewStyle) ParagraphGap(gap float32) TextViewStyle {
 	o := op(e.n, 258)
@@ -379,6 +674,12 @@ func (e TextViewStyle) ParagraphGap(gap float32) TextViewStyle {
 	return e
 }
 
+// Set extra style for the table container.
+//
+// Set `overflow_x: scroll` on the refinement for adaptive layout: cells wrap as the frame narrows,
+// and once columns reach their minimum width the table scrolls horizontally instead of shrinking
+// further.
+//
 // Table is <gpui_kit::component::text::TextViewStyle>::table.
 func (e TextViewStyle) Table(style StyleRefinement) TextViewStyle {
 	o := op(e.n, 259)
@@ -386,6 +687,11 @@ func (e TextViewStyle) Table(style StyleRefinement) TextViewStyle {
 	return e
 }
 
+// Set extra style for each table cell.
+//
+// With the scroll table layout, `white_space: nowrap` here keeps cells on a single line and the
+// table scrolls whenever the content is wider than the frame.
+//
 // TableCell is <gpui_kit::component::text::TextViewStyle>::table_cell.
 func (e TextViewStyle) TableCell(style StyleRefinement) TextViewStyle {
 	o := op(e.n, 260)
@@ -393,6 +699,8 @@ func (e TextViewStyle) TableCell(style StyleRefinement) TextViewStyle {
 	return e
 }
 
+// Set extra style for the table header row.
+//
 // TableHead is <gpui_kit::component::text::TextViewStyle>::table_head.
 func (e TextViewStyle) TableHead(style StyleRefinement) TextViewStyle {
 	o := op(e.n, 261)

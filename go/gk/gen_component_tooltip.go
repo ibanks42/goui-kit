@@ -9,6 +9,8 @@ type KitTooltip struct{ n *node }
 
 func (e KitTooltip) valueNode() *node { return e.n }
 
+// Create a Tooltip with a text content.
+//
 // NewKitTooltip is <gpui_kit::component::tooltip::Tooltip>::new.
 func NewKitTooltip(text TextInto, st ...Style) KitTooltip {
 	n := newValue(881)
@@ -18,6 +20,8 @@ func NewKitTooltip(text TextInto, st ...Style) KitTooltip {
 	return KitTooltip{n}
 }
 
+// Create a Tooltip with a custom element.
+//
 // NewKitTooltipElement is <gpui_kit::component::tooltip::Tooltip>::element.
 func NewKitTooltipElement(builder Element, st ...Style) KitTooltip {
 	n := newValue(880)
@@ -27,6 +31,8 @@ func NewKitTooltipElement(builder Element, st ...Style) KitTooltip {
 	return KitTooltip{n}
 }
 
+// Set Action to display key binding information for the tooltip if it exists.
+//
 // Action is <gpui_kit::component::tooltip::Tooltip>::action.
 func (e KitTooltip) Action(action Action, context Option[string]) KitTooltip {
 	o := op(e.n, 256)
@@ -40,6 +46,8 @@ func (e KitTooltip) Action(action Action, context Option[string]) KitTooltip {
 	return e
 }
 
+// Set KeyBinding information for the tooltip.
+//
 // KeyBinding is <gpui_kit::component::tooltip::Tooltip>::key_binding.
 func (e KitTooltip) KeyBinding(keyBinding Option[KbdEl]) KitTooltip {
 	o := op(e.n, 257)
@@ -52,7 +60,19 @@ func (e KitTooltip) KeyBinding(keyBinding Option[KbdEl]) KitTooltip {
 	return e
 }
 
-func (e KitTooltip) PopoverStyle() KitTooltip     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e KitTooltip) PopoverStyle() KitTooltip { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e KitTooltip) RoundedFullStyle() KitTooltip { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e KitTooltip) CornerRadii(radius Corners) KitTooltip {
@@ -64,19 +84,32 @@ func (e KitTooltip) DebugFocused(focusHandle FocusHandle) KitTooltip {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e KitTooltip) DebugGreen() KitTooltip               { tStyledExtDebugGreen(e.n); return e }
-func (e KitTooltip) DebugPink() KitTooltip                { tStyledExtDebugPink(e.n); return e }
-func (e KitTooltip) DebugRed() KitTooltip                 { tStyledExtDebugRed(e.n); return e }
-func (e KitTooltip) DebugYellow() KitTooltip              { tStyledExtDebugYellow(e.n); return e }
-func (e KitTooltip) FontBlack() KitTooltip                { tStyledExtFontBlack(e.n); return e }
-func (e KitTooltip) FontBold() KitTooltip                 { tStyledExtFontBold(e.n); return e }
-func (e KitTooltip) FontExtrabold() KitTooltip            { tStyledExtFontExtrabold(e.n); return e }
-func (e KitTooltip) FontExtralight() KitTooltip           { tStyledExtFontExtralight(e.n); return e }
-func (e KitTooltip) FontLight() KitTooltip                { tStyledExtFontLight(e.n); return e }
-func (e KitTooltip) FontMedium() KitTooltip               { tStyledExtFontMedium(e.n); return e }
-func (e KitTooltip) FontNormal() KitTooltip               { tStyledExtFontNormal(e.n); return e }
-func (e KitTooltip) FontSemibold() KitTooltip             { tStyledExtFontSemibold(e.n); return e }
-func (e KitTooltip) FontThin() KitTooltip                 { tStyledExtFontThin(e.n); return e }
+func (e KitTooltip) DebugGreen() KitTooltip     { tStyledExtDebugGreen(e.n); return e }
+func (e KitTooltip) DebugPink() KitTooltip      { tStyledExtDebugPink(e.n); return e }
+func (e KitTooltip) DebugRed() KitTooltip       { tStyledExtDebugRed(e.n); return e }
+func (e KitTooltip) DebugYellow() KitTooltip    { tStyledExtDebugYellow(e.n); return e }
+func (e KitTooltip) FontBlack() KitTooltip      { tStyledExtFontBlack(e.n); return e }
+func (e KitTooltip) FontBold() KitTooltip       { tStyledExtFontBold(e.n); return e }
+func (e KitTooltip) FontExtrabold() KitTooltip  { tStyledExtFontExtrabold(e.n); return e }
+func (e KitTooltip) FontExtralight() KitTooltip { tStyledExtFontExtralight(e.n); return e }
+func (e KitTooltip) FontLight() KitTooltip      { tStyledExtFontLight(e.n); return e }
+func (e KitTooltip) FontMedium() KitTooltip     { tStyledExtFontMedium(e.n); return e }
+func (e KitTooltip) FontNormal() KitTooltip     { tStyledExtFontNormal(e.n); return e }
+func (e KitTooltip) FontSemibold() KitTooltip   { tStyledExtFontSemibold(e.n); return e }
+func (e KitTooltip) FontThin() KitTooltip       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e KitTooltip) HFlex() KitTooltip                    { tStyledExtHFlex(e.n); return e }
 func (e KitTooltip) Margins(margins EdgesInto) KitTooltip { tStyledExtMargins(e.n, margins); return e }
 func (e KitTooltip) Paddings(paddings EdgesInto) KitTooltip {
@@ -87,124 +120,336 @@ func (e KitTooltip) RefineStyle(style StyleRefinement) KitTooltip {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e KitTooltip) VFlex() KitTooltip { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e KitTooltip) Style(st ...Style) KitTooltip { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e KitTooltip) AspectRatio(ratio float32) KitTooltip { tStyledAspectRatio(e.n, ratio); return e }
-func (e KitTooltip) Bg(fill Fill) KitTooltip              { tStyledBg(e.n, fill); return e }
-func (e KitTooltip) Border(length Length) KitTooltip      { tStyledBorder(e.n, length); return e }
-func (e KitTooltip) BorderB(length Length) KitTooltip     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e KitTooltip) Bg(fill Fill) KitTooltip { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e KitTooltip) Border(length Length) KitTooltip { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e KitTooltip) BorderB(length Length) KitTooltip { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e KitTooltip) BorderColor(borderColor Color) KitTooltip {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e KitTooltip) BorderL(length Length) KitTooltip     { tStyledBorderL(e.n, length); return e }
-func (e KitTooltip) BorderR(length Length) KitTooltip     { tStyledBorderR(e.n, length); return e }
-func (e KitTooltip) BorderT(length Length) KitTooltip     { tStyledBorderT(e.n, length); return e }
-func (e KitTooltip) BorderX(length Length) KitTooltip     { tStyledBorderX(e.n, length); return e }
-func (e KitTooltip) BorderY(length Length) KitTooltip     { tStyledBorderY(e.n, length); return e }
-func (e KitTooltip) Bottom(length Length) KitTooltip      { tStyledBottom(e.n, length); return e }
-func (e KitTooltip) ColEnd(end int16) KitTooltip          { tStyledColEnd(e.n, end); return e }
-func (e KitTooltip) ColSpan(span uint16) KitTooltip       { tStyledColSpan(e.n, span); return e }
-func (e KitTooltip) ColStart(start int16) KitTooltip      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e KitTooltip) BorderL(length Length) KitTooltip { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e KitTooltip) BorderR(length Length) KitTooltip { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e KitTooltip) BorderT(length Length) KitTooltip { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e KitTooltip) BorderX(length Length) KitTooltip { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e KitTooltip) BorderY(length Length) KitTooltip { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e KitTooltip) Bottom(length Length) KitTooltip { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e KitTooltip) ColEnd(end int16) KitTooltip { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e KitTooltip) ColSpan(span uint16) KitTooltip { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e KitTooltip) ColStart(start int16) KitTooltip { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e KitTooltip) Cursor(cursor CursorStyle) KitTooltip { tStyledCursor(e.n, cursor); return e }
-func (e KitTooltip) FlexBasis(basis Length) KitTooltip    { tStyledFlexBasis(e.n, basis); return e }
-func (e KitTooltip) FlexGrow(grow float32) KitTooltip     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e KitTooltip) FlexBasis(basis Length) KitTooltip { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e KitTooltip) FlexGrow(grow float32) KitTooltip { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e KitTooltip) FlexShrink(shrink float32) KitTooltip { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e KitTooltip) FontFamily(familyName string) KitTooltip {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e KitTooltip) FontFeatures(features FontFeatures) KitTooltip {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e KitTooltip) FontWeight(weight FontWeight) KitTooltip {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e KitTooltip) Gap(length Length) KitTooltip    { tStyledGap(e.n, length); return e }
-func (e KitTooltip) GapX(length Length) KitTooltip   { tStyledGapX(e.n, length); return e }
-func (e KitTooltip) GapY(length Length) KitTooltip   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e KitTooltip) Gap(length Length) KitTooltip { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e KitTooltip) GapX(length Length) KitTooltip { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e KitTooltip) GapY(length Length) KitTooltip { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e KitTooltip) GridCols(cols uint16) KitTooltip { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e KitTooltip) GridColsMaxContent(cols uint16) KitTooltip {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e KitTooltip) GridColsMinContent(cols uint16) KitTooltip {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e KitTooltip) GridRows(rows uint16) KitTooltip { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e KitTooltip) GridRowsMaxContent(rows uint16) KitTooltip {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e KitTooltip) GridRowsMinContent(rows uint16) KitTooltip {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e KitTooltip) H(length Length) KitTooltip     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e KitTooltip) H(length Length) KitTooltip { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e KitTooltip) Inset(length Length) KitTooltip { tStyledInset(e.n, length); return e }
-func (e KitTooltip) Left(length Length) KitTooltip  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e KitTooltip) Left(length Length) KitTooltip { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e KitTooltip) LineClamp(lines int) KitTooltip { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e KitTooltip) LineHeight(lineHeight Length) KitTooltip {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e KitTooltip) M(length Length) KitTooltip         { tStyledM(e.n, length); return e }
-func (e KitTooltip) MaxH(length Length) KitTooltip      { tStyledMaxH(e.n, length); return e }
-func (e KitTooltip) MaxSize(length Length) KitTooltip   { tStyledMaxSize(e.n, length); return e }
-func (e KitTooltip) MaxW(length Length) KitTooltip      { tStyledMaxW(e.n, length); return e }
-func (e KitTooltip) Mb(length Length) KitTooltip        { tStyledMb(e.n, length); return e }
-func (e KitTooltip) MinH(length Length) KitTooltip      { tStyledMinH(e.n, length); return e }
-func (e KitTooltip) MinSize(length Length) KitTooltip   { tStyledMinSize(e.n, length); return e }
-func (e KitTooltip) MinW(length Length) KitTooltip      { tStyledMinW(e.n, length); return e }
-func (e KitTooltip) Ml(length Length) KitTooltip        { tStyledMl(e.n, length); return e }
-func (e KitTooltip) Mr(length Length) KitTooltip        { tStyledMr(e.n, length); return e }
-func (e KitTooltip) Mt(length Length) KitTooltip        { tStyledMt(e.n, length); return e }
-func (e KitTooltip) Mx(length Length) KitTooltip        { tStyledMx(e.n, length); return e }
-func (e KitTooltip) My(length Length) KitTooltip        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e KitTooltip) M(length Length) KitTooltip { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e KitTooltip) MaxH(length Length) KitTooltip { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e KitTooltip) MaxSize(length Length) KitTooltip { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e KitTooltip) MaxW(length Length) KitTooltip { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e KitTooltip) Mb(length Length) KitTooltip { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e KitTooltip) MinH(length Length) KitTooltip { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e KitTooltip) MinSize(length Length) KitTooltip { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e KitTooltip) MinW(length Length) KitTooltip { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e KitTooltip) Ml(length Length) KitTooltip { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e KitTooltip) Mr(length Length) KitTooltip { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e KitTooltip) Mt(length Length) KitTooltip { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e KitTooltip) Mx(length Length) KitTooltip { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e KitTooltip) My(length Length) KitTooltip { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e KitTooltip) Opacity(opacity float32) KitTooltip { tStyledOpacity(e.n, opacity); return e }
-func (e KitTooltip) P(length Length) KitTooltip         { tStyledP(e.n, length); return e }
-func (e KitTooltip) Pb(length Length) KitTooltip        { tStyledPb(e.n, length); return e }
-func (e KitTooltip) Pl(length Length) KitTooltip        { tStyledPl(e.n, length); return e }
-func (e KitTooltip) Pr(length Length) KitTooltip        { tStyledPr(e.n, length); return e }
-func (e KitTooltip) Pt(length Length) KitTooltip        { tStyledPt(e.n, length); return e }
-func (e KitTooltip) Px(length Length) KitTooltip        { tStyledPx(e.n, length); return e }
-func (e KitTooltip) Py(length Length) KitTooltip        { tStyledPy(e.n, length); return e }
-func (e KitTooltip) Right(length Length) KitTooltip     { tStyledRight(e.n, length); return e }
-func (e KitTooltip) Rounded(length Length) KitTooltip   { tStyledRounded(e.n, length); return e }
-func (e KitTooltip) RoundedB(length Length) KitTooltip  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e KitTooltip) P(length Length) KitTooltip { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e KitTooltip) Pb(length Length) KitTooltip { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e KitTooltip) Pl(length Length) KitTooltip { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e KitTooltip) Pr(length Length) KitTooltip { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e KitTooltip) Pt(length Length) KitTooltip { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e KitTooltip) Px(length Length) KitTooltip { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e KitTooltip) Py(length Length) KitTooltip { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e KitTooltip) Right(length Length) KitTooltip { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e KitTooltip) Rounded(length Length) KitTooltip { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e KitTooltip) RoundedB(length Length) KitTooltip { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e KitTooltip) RoundedBl(length Length) KitTooltip { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e KitTooltip) RoundedBr(length Length) KitTooltip { tStyledRoundedBr(e.n, length); return e }
-func (e KitTooltip) RoundedL(length Length) KitTooltip  { tStyledRoundedL(e.n, length); return e }
-func (e KitTooltip) RoundedR(length Length) KitTooltip  { tStyledRoundedR(e.n, length); return e }
-func (e KitTooltip) RoundedT(length Length) KitTooltip  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e KitTooltip) RoundedL(length Length) KitTooltip { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e KitTooltip) RoundedR(length Length) KitTooltip { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e KitTooltip) RoundedT(length Length) KitTooltip { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e KitTooltip) RoundedTl(length Length) KitTooltip { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e KitTooltip) RoundedTr(length Length) KitTooltip { tStyledRoundedTr(e.n, length); return e }
-func (e KitTooltip) RowEnd(end int16) KitTooltip        { tStyledRowEnd(e.n, end); return e }
-func (e KitTooltip) RowSpan(span uint16) KitTooltip     { tStyledRowSpan(e.n, span); return e }
-func (e KitTooltip) RowStart(start int16) KitTooltip    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e KitTooltip) RowEnd(end int16) KitTooltip { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e KitTooltip) RowSpan(span uint16) KitTooltip { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e KitTooltip) RowStart(start int16) KitTooltip { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e KitTooltip) ScrollbarWidth(width Length) KitTooltip {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e KitTooltip) Shadow(shadows []BoxShadow) KitTooltip { tStyledShadow(e.n, shadows); return e }
-func (e KitTooltip) Size(length Length) KitTooltip         { tStyledSize(e.n, length); return e }
-func (e KitTooltip) TextAlign(align TextAlign) KitTooltip  { tStyledTextAlign(e.n, align); return e }
-func (e KitTooltip) TextBg(bg Color) KitTooltip            { tStyledTextBg(e.n, bg); return e }
-func (e KitTooltip) TextColor(color Color) KitTooltip      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e KitTooltip) Size(length Length) KitTooltip { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e KitTooltip) TextAlign(align TextAlign) KitTooltip { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e KitTooltip) TextBg(bg Color) KitTooltip { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e KitTooltip) TextColor(color Color) KitTooltip { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e KitTooltip) TextDecorationColor(color Color) KitTooltip {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e KitTooltip) TextOverflow(overflow TextOverflow) KitTooltip {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e KitTooltip) TextSize(size Length) KitTooltip { tStyledTextSize(e.n, size); return e }
-func (e KitTooltip) Top(length Length) KitTooltip    { tStyledTop(e.n, length); return e }
-func (e KitTooltip) W(length Length) KitTooltip      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e KitTooltip) Top(length Length) KitTooltip { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e KitTooltip) W(length Length) KitTooltip { tStyledW(e.n, length); return e }

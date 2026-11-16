@@ -3,6 +3,12 @@ package gk
 
 import "core:time"
 
+// A hover card element that displays content when hovering over a trigger element.
+//
+// Similar to Popover but triggered by mouse hover instead of click, with configurable delays for
+// showing and hiding the content. On iOS and Android, tapping the trigger toggles the card and
+// tapping outside dismisses it; hover delays are ignored.
+//
 // Hover_Card is gpui_kit::component::hover_card::HoverCard.
 Hover_Card :: struct {
 	using el: Element,
@@ -16,16 +22,28 @@ Hover_Card_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Hover_Card),
 	using t_styled: ^Styled_Trait(Hover_Card),
 	using t_parent_element: ^Parent_Element_Trait(Hover_Card),
+	// Set the anchor corner of the hover card, default is `TopCenter`.
 	anchor: proc(e: Hover_Card, anchor: Anchor) -> Hover_Card,
+	// Set whether to apply default appearance styles, default is `true`.
 	appearance: proc(e: Hover_Card, appearance: bool) -> Hover_Card,
+	// Set the delay before hiding the hover card, default is 300ms.
 	close_delay: proc(e: Hover_Card, duration: time.Duration) -> Hover_Card,
+	// Set the content builder of the hover card.
 	content: proc(e: Hover_Card, content: Row_Source) -> Hover_Card, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, hover_card_state_reads: Hover_Card_State_Reads) -> Element)
+	// Set a callback to be called when the open state changes.
 	on_open_change: proc(e: Hover_Card, callback: Handler) -> Hover_Card,
+	// Set the delay before showing the hover card, default is 600ms.
 	open_delay: proc(e: Hover_Card, duration: time.Duration) -> Hover_Card,
+	// Set the trigger element of the hover card.
 	trigger: proc(e: Hover_Card, trigger: Element) -> Hover_Card,
+	// Set the style for the trigger container.
+	//
+	// The container is the element laid out in the parent and measured to anchor the card, so this is
+	// where `w_full` or `flex_1` must go for the trigger to fill its slot.
 	trigger_style: proc(e: Hover_Card, style: Style_Refinement) -> Hover_Card,
 }
 
+// Create a new HoverCard.
 hover_card :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Hover_Card {
 	use_component_hover_card()
 	e := Hover_Card{new_node(674, loc), &hover_card_vt}

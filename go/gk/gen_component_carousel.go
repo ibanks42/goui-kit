@@ -9,6 +9,8 @@ type CarouselEl struct{ n *node }
 
 func (e CarouselEl) node() *node { return e.n }
 
+// Creates a Carousel bound to `state`.
+//
 // Carousel is <gpui_kit::component::carousel::Carousel>::new.
 func Carousel(id ID, state CarouselState, st ...Style) CarouselEl {
 	useComponentCarousel()
@@ -20,6 +22,8 @@ func Carousel(id ID, state CarouselState, st ...Style) CarouselEl {
 	return CarouselEl{n}
 }
 
+// Sets the name announced for the carousel region.
+//
 // AccessibilityLabel is <gpui_kit::component::carousel::Carousel>::accessibility_label.
 func (e CarouselEl) AccessibilityLabel(label string) CarouselEl {
 	o := op(e.n, 256)
@@ -27,14 +31,40 @@ func (e CarouselEl) AccessibilityLabel(label string) CarouselEl {
 	return e
 }
 
-func (e CarouselEl) PopoverStyle() CarouselEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e CarouselEl) PopoverStyle() CarouselEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CarouselEl) RoundedFullStyle() CarouselEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e CarouselEl) FocusRingStyle() CarouselEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -49,19 +79,32 @@ func (e CarouselEl) DebugFocused(focusHandle FocusHandle) CarouselEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e CarouselEl) DebugGreen() CarouselEl               { tStyledExtDebugGreen(e.n); return e }
-func (e CarouselEl) DebugPink() CarouselEl                { tStyledExtDebugPink(e.n); return e }
-func (e CarouselEl) DebugRed() CarouselEl                 { tStyledExtDebugRed(e.n); return e }
-func (e CarouselEl) DebugYellow() CarouselEl              { tStyledExtDebugYellow(e.n); return e }
-func (e CarouselEl) FontBlack() CarouselEl                { tStyledExtFontBlack(e.n); return e }
-func (e CarouselEl) FontBold() CarouselEl                 { tStyledExtFontBold(e.n); return e }
-func (e CarouselEl) FontExtrabold() CarouselEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e CarouselEl) FontExtralight() CarouselEl           { tStyledExtFontExtralight(e.n); return e }
-func (e CarouselEl) FontLight() CarouselEl                { tStyledExtFontLight(e.n); return e }
-func (e CarouselEl) FontMedium() CarouselEl               { tStyledExtFontMedium(e.n); return e }
-func (e CarouselEl) FontNormal() CarouselEl               { tStyledExtFontNormal(e.n); return e }
-func (e CarouselEl) FontSemibold() CarouselEl             { tStyledExtFontSemibold(e.n); return e }
-func (e CarouselEl) FontThin() CarouselEl                 { tStyledExtFontThin(e.n); return e }
+func (e CarouselEl) DebugGreen() CarouselEl     { tStyledExtDebugGreen(e.n); return e }
+func (e CarouselEl) DebugPink() CarouselEl      { tStyledExtDebugPink(e.n); return e }
+func (e CarouselEl) DebugRed() CarouselEl       { tStyledExtDebugRed(e.n); return e }
+func (e CarouselEl) DebugYellow() CarouselEl    { tStyledExtDebugYellow(e.n); return e }
+func (e CarouselEl) FontBlack() CarouselEl      { tStyledExtFontBlack(e.n); return e }
+func (e CarouselEl) FontBold() CarouselEl       { tStyledExtFontBold(e.n); return e }
+func (e CarouselEl) FontExtrabold() CarouselEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e CarouselEl) FontExtralight() CarouselEl { tStyledExtFontExtralight(e.n); return e }
+func (e CarouselEl) FontLight() CarouselEl      { tStyledExtFontLight(e.n); return e }
+func (e CarouselEl) FontMedium() CarouselEl     { tStyledExtFontMedium(e.n); return e }
+func (e CarouselEl) FontNormal() CarouselEl     { tStyledExtFontNormal(e.n); return e }
+func (e CarouselEl) FontSemibold() CarouselEl   { tStyledExtFontSemibold(e.n); return e }
+func (e CarouselEl) FontThin() CarouselEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e CarouselEl) HFlex() CarouselEl                    { tStyledExtHFlex(e.n); return e }
 func (e CarouselEl) Margins(margins EdgesInto) CarouselEl { tStyledExtMargins(e.n, margins); return e }
 func (e CarouselEl) Paddings(paddings EdgesInto) CarouselEl {
@@ -72,6 +115,11 @@ func (e CarouselEl) RefineStyle(style StyleRefinement) CarouselEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CarouselEl) VFlex() CarouselEl { tStyledExtVFlex(e.n); return e }
 
 func (e CarouselEl) Text(s string) CarouselEl { putText(e.n, s); return e }
@@ -79,7 +127,10 @@ func (e CarouselEl) Text(s string) CarouselEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e CarouselEl) ChildView(v View) CarouselEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e CarouselEl) Child(child Element) CarouselEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e CarouselEl) Children(children ...Element) CarouselEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -88,122 +139,329 @@ func (e CarouselEl) Children(children ...Element) CarouselEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e CarouselEl) Style(st ...Style) CarouselEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CarouselEl) AspectRatio(ratio float32) CarouselEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e CarouselEl) Bg(fill Fill) CarouselEl              { tStyledBg(e.n, fill); return e }
-func (e CarouselEl) Border(length Length) CarouselEl      { tStyledBorder(e.n, length); return e }
-func (e CarouselEl) BorderB(length Length) CarouselEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e CarouselEl) Bg(fill Fill) CarouselEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e CarouselEl) Border(length Length) CarouselEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CarouselEl) BorderB(length Length) CarouselEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e CarouselEl) BorderColor(borderColor Color) CarouselEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e CarouselEl) BorderL(length Length) CarouselEl     { tStyledBorderL(e.n, length); return e }
-func (e CarouselEl) BorderR(length Length) CarouselEl     { tStyledBorderR(e.n, length); return e }
-func (e CarouselEl) BorderT(length Length) CarouselEl     { tStyledBorderT(e.n, length); return e }
-func (e CarouselEl) BorderX(length Length) CarouselEl     { tStyledBorderX(e.n, length); return e }
-func (e CarouselEl) BorderY(length Length) CarouselEl     { tStyledBorderY(e.n, length); return e }
-func (e CarouselEl) Bottom(length Length) CarouselEl      { tStyledBottom(e.n, length); return e }
-func (e CarouselEl) ColEnd(end int16) CarouselEl          { tStyledColEnd(e.n, end); return e }
-func (e CarouselEl) ColSpan(span uint16) CarouselEl       { tStyledColSpan(e.n, span); return e }
-func (e CarouselEl) ColStart(start int16) CarouselEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CarouselEl) BorderL(length Length) CarouselEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CarouselEl) BorderR(length Length) CarouselEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CarouselEl) BorderT(length Length) CarouselEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e CarouselEl) BorderX(length Length) CarouselEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e CarouselEl) BorderY(length Length) CarouselEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselEl) Bottom(length Length) CarouselEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e CarouselEl) ColEnd(end int16) CarouselEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e CarouselEl) ColSpan(span uint16) CarouselEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e CarouselEl) ColStart(start int16) CarouselEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e CarouselEl) Cursor(cursor CursorStyle) CarouselEl { tStyledCursor(e.n, cursor); return e }
-func (e CarouselEl) FlexBasis(basis Length) CarouselEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e CarouselEl) FlexGrow(grow float32) CarouselEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e CarouselEl) FlexBasis(basis Length) CarouselEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e CarouselEl) FlexGrow(grow float32) CarouselEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CarouselEl) FlexShrink(shrink float32) CarouselEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e CarouselEl) FontFamily(familyName string) CarouselEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CarouselEl) FontFeatures(features FontFeatures) CarouselEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CarouselEl) FontWeight(weight FontWeight) CarouselEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e CarouselEl) Gap(length Length) CarouselEl    { tStyledGap(e.n, length); return e }
-func (e CarouselEl) GapX(length Length) CarouselEl   { tStyledGapX(e.n, length); return e }
-func (e CarouselEl) GapY(length Length) CarouselEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e CarouselEl) Gap(length Length) CarouselEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CarouselEl) GapX(length Length) CarouselEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CarouselEl) GapY(length Length) CarouselEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e CarouselEl) GridCols(cols uint16) CarouselEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CarouselEl) GridColsMaxContent(cols uint16) CarouselEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CarouselEl) GridColsMinContent(cols uint16) CarouselEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CarouselEl) GridRows(rows uint16) CarouselEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CarouselEl) GridRowsMaxContent(rows uint16) CarouselEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CarouselEl) GridRowsMinContent(rows uint16) CarouselEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e CarouselEl) H(length Length) CarouselEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e CarouselEl) H(length Length) CarouselEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselEl) Inset(length Length) CarouselEl { tStyledInset(e.n, length); return e }
-func (e CarouselEl) Left(length Length) CarouselEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselEl) Left(length Length) CarouselEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CarouselEl) LineClamp(lines int) CarouselEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e CarouselEl) LineHeight(lineHeight Length) CarouselEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e CarouselEl) M(length Length) CarouselEl         { tStyledM(e.n, length); return e }
-func (e CarouselEl) MaxH(length Length) CarouselEl      { tStyledMaxH(e.n, length); return e }
-func (e CarouselEl) MaxSize(length Length) CarouselEl   { tStyledMaxSize(e.n, length); return e }
-func (e CarouselEl) MaxW(length Length) CarouselEl      { tStyledMaxW(e.n, length); return e }
-func (e CarouselEl) Mb(length Length) CarouselEl        { tStyledMb(e.n, length); return e }
-func (e CarouselEl) MinH(length Length) CarouselEl      { tStyledMinH(e.n, length); return e }
-func (e CarouselEl) MinSize(length Length) CarouselEl   { tStyledMinSize(e.n, length); return e }
-func (e CarouselEl) MinW(length Length) CarouselEl      { tStyledMinW(e.n, length); return e }
-func (e CarouselEl) Ml(length Length) CarouselEl        { tStyledMl(e.n, length); return e }
-func (e CarouselEl) Mr(length Length) CarouselEl        { tStyledMr(e.n, length); return e }
-func (e CarouselEl) Mt(length Length) CarouselEl        { tStyledMt(e.n, length); return e }
-func (e CarouselEl) Mx(length Length) CarouselEl        { tStyledMx(e.n, length); return e }
-func (e CarouselEl) My(length Length) CarouselEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e CarouselEl) M(length Length) CarouselEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e CarouselEl) MaxH(length Length) CarouselEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e CarouselEl) MaxSize(length Length) CarouselEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e CarouselEl) MaxW(length Length) CarouselEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselEl) Mb(length Length) CarouselEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e CarouselEl) MinH(length Length) CarouselEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e CarouselEl) MinSize(length Length) CarouselEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e CarouselEl) MinW(length Length) CarouselEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselEl) Ml(length Length) CarouselEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselEl) Mr(length Length) CarouselEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselEl) Mt(length Length) CarouselEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e CarouselEl) Mx(length Length) CarouselEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e CarouselEl) My(length Length) CarouselEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e CarouselEl) Opacity(opacity float32) CarouselEl { tStyledOpacity(e.n, opacity); return e }
-func (e CarouselEl) P(length Length) CarouselEl         { tStyledP(e.n, length); return e }
-func (e CarouselEl) Pb(length Length) CarouselEl        { tStyledPb(e.n, length); return e }
-func (e CarouselEl) Pl(length Length) CarouselEl        { tStyledPl(e.n, length); return e }
-func (e CarouselEl) Pr(length Length) CarouselEl        { tStyledPr(e.n, length); return e }
-func (e CarouselEl) Pt(length Length) CarouselEl        { tStyledPt(e.n, length); return e }
-func (e CarouselEl) Px(length Length) CarouselEl        { tStyledPx(e.n, length); return e }
-func (e CarouselEl) Py(length Length) CarouselEl        { tStyledPy(e.n, length); return e }
-func (e CarouselEl) Right(length Length) CarouselEl     { tStyledRight(e.n, length); return e }
-func (e CarouselEl) Rounded(length Length) CarouselEl   { tStyledRounded(e.n, length); return e }
-func (e CarouselEl) RoundedB(length Length) CarouselEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e CarouselEl) P(length Length) CarouselEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselEl) Pb(length Length) CarouselEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselEl) Pl(length Length) CarouselEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselEl) Pr(length Length) CarouselEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselEl) Pt(length Length) CarouselEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e CarouselEl) Px(length Length) CarouselEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e CarouselEl) Py(length Length) CarouselEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselEl) Right(length Length) CarouselEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e CarouselEl) Rounded(length Length) CarouselEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CarouselEl) RoundedB(length Length) CarouselEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselEl) RoundedBl(length Length) CarouselEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselEl) RoundedBr(length Length) CarouselEl { tStyledRoundedBr(e.n, length); return e }
-func (e CarouselEl) RoundedL(length Length) CarouselEl  { tStyledRoundedL(e.n, length); return e }
-func (e CarouselEl) RoundedR(length Length) CarouselEl  { tStyledRoundedR(e.n, length); return e }
-func (e CarouselEl) RoundedT(length Length) CarouselEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CarouselEl) RoundedL(length Length) CarouselEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CarouselEl) RoundedR(length Length) CarouselEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CarouselEl) RoundedT(length Length) CarouselEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselEl) RoundedTl(length Length) CarouselEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselEl) RoundedTr(length Length) CarouselEl { tStyledRoundedTr(e.n, length); return e }
-func (e CarouselEl) RowEnd(end int16) CarouselEl        { tStyledRowEnd(e.n, end); return e }
-func (e CarouselEl) RowSpan(span uint16) CarouselEl     { tStyledRowSpan(e.n, span); return e }
-func (e CarouselEl) RowStart(start int16) CarouselEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e CarouselEl) RowEnd(end int16) CarouselEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e CarouselEl) RowSpan(span uint16) CarouselEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e CarouselEl) RowStart(start int16) CarouselEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CarouselEl) ScrollbarWidth(width Length) CarouselEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CarouselEl) Shadow(shadows []BoxShadow) CarouselEl { tStyledShadow(e.n, shadows); return e }
-func (e CarouselEl) Size(length Length) CarouselEl         { tStyledSize(e.n, length); return e }
-func (e CarouselEl) TextAlign(align TextAlign) CarouselEl  { tStyledTextAlign(e.n, align); return e }
-func (e CarouselEl) TextBg(bg Color) CarouselEl            { tStyledTextBg(e.n, bg); return e }
-func (e CarouselEl) TextColor(color Color) CarouselEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e CarouselEl) Size(length Length) CarouselEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e CarouselEl) TextAlign(align TextAlign) CarouselEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e CarouselEl) TextBg(bg Color) CarouselEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e CarouselEl) TextColor(color Color) CarouselEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e CarouselEl) TextDecorationColor(color Color) CarouselEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CarouselEl) TextOverflow(overflow TextOverflow) CarouselEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselEl) TextSize(size Length) CarouselEl { tStyledTextSize(e.n, size); return e }
-func (e CarouselEl) Top(length Length) CarouselEl    { tStyledTop(e.n, length); return e }
-func (e CarouselEl) W(length Length) CarouselEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselEl) Top(length Length) CarouselEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e CarouselEl) W(length Length) CarouselEl { tStyledW(e.n, length); return e }
 
 func (e CarouselEl) FocusRing(enabled bool) CarouselEl {
 	tFocusableExtFocusRing(e.n, enabled)
@@ -215,6 +473,8 @@ type CarouselContentEl struct{ n *node }
 
 func (e CarouselContentEl) node() *node { return e.n }
 
+// Creates content bound to `state`.
+//
 // CarouselContent is <gpui_kit::component::carousel::CarouselContent>::new.
 func CarouselContent(state CarouselState, st ...Style) CarouselContentEl {
 	useComponentCarousel()
@@ -225,6 +485,11 @@ func CarouselContent(state CarouselState, st ...Style) CarouselContentEl {
 	return CarouselContentEl{n}
 }
 
+// Sets style overrides for the inner flex track.
+//
+// Use this for paired Carousel spacing such as a negative leading margin. The `Styled`
+// implementation applies to the clipped viewport itself.
+//
 // TrackStyle is <gpui_kit::component::carousel::CarouselContent>::track_style.
 func (e CarouselContentEl) TrackStyle(style StyleRefinement) CarouselContentEl {
 	o := op(e.n, 256)
@@ -232,17 +497,43 @@ func (e CarouselContentEl) TrackStyle(style StyleRefinement) CarouselContentEl {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e CarouselContentEl) PopoverStyle() CarouselContentEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CarouselContentEl) RoundedFullStyle() CarouselContentEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e CarouselContentEl) FocusRingStyle() CarouselContentEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselContentEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -273,7 +564,20 @@ func (e CarouselContentEl) FontMedium() CarouselContentEl   { tStyledExtFontMedi
 func (e CarouselContentEl) FontNormal() CarouselContentEl   { tStyledExtFontNormal(e.n); return e }
 func (e CarouselContentEl) FontSemibold() CarouselContentEl { tStyledExtFontSemibold(e.n); return e }
 func (e CarouselContentEl) FontThin() CarouselContentEl     { tStyledExtFontThin(e.n); return e }
-func (e CarouselContentEl) HFlex() CarouselContentEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e CarouselContentEl) HFlex() CarouselContentEl { tStyledExtHFlex(e.n); return e }
 func (e CarouselContentEl) Margins(margins EdgesInto) CarouselContentEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -286,6 +590,11 @@ func (e CarouselContentEl) RefineStyle(style StyleRefinement) CarouselContentEl 
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CarouselContentEl) VFlex() CarouselContentEl { tStyledExtVFlex(e.n); return e }
 
 func (e CarouselContentEl) Text(s string) CarouselContentEl { putText(e.n, s); return e }
@@ -293,10 +602,13 @@ func (e CarouselContentEl) Text(s string) CarouselContentEl { putText(e.n, s); r
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e CarouselContentEl) ChildView(v View) CarouselContentEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e CarouselContentEl) Child(child Element) CarouselContentEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e CarouselContentEl) Children(children ...Element) CarouselContentEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -305,242 +617,451 @@ func (e CarouselContentEl) Children(children ...Element) CarouselContentEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e CarouselContentEl) Style(st ...Style) CarouselContentEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CarouselContentEl) AspectRatio(ratio float32) CarouselContentEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e CarouselContentEl) Bg(fill Fill) CarouselContentEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e CarouselContentEl) Border(length Length) CarouselContentEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselContentEl) BorderB(length Length) CarouselContentEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e CarouselContentEl) BorderColor(borderColor Color) CarouselContentEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselContentEl) BorderL(length Length) CarouselContentEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselContentEl) BorderR(length Length) CarouselContentEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselContentEl) BorderT(length Length) CarouselContentEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselContentEl) BorderX(length Length) CarouselContentEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselContentEl) BorderY(length Length) CarouselContentEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselContentEl) Bottom(length Length) CarouselContentEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e CarouselContentEl) ColEnd(end int16) CarouselContentEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e CarouselContentEl) ColSpan(span uint16) CarouselContentEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e CarouselContentEl) ColStart(start int16) CarouselContentEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e CarouselContentEl) Cursor(cursor CursorStyle) CarouselContentEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e CarouselContentEl) FlexBasis(basis Length) CarouselContentEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e CarouselContentEl) FlexGrow(grow float32) CarouselContentEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CarouselContentEl) FlexShrink(shrink float32) CarouselContentEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e CarouselContentEl) FontFamily(familyName string) CarouselContentEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CarouselContentEl) FontFeatures(features FontFeatures) CarouselContentEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CarouselContentEl) FontWeight(weight FontWeight) CarouselContentEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e CarouselContentEl) Gap(length Length) CarouselContentEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e CarouselContentEl) Gap(length Length) CarouselContentEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e CarouselContentEl) GapX(length Length) CarouselContentEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e CarouselContentEl) GapY(length Length) CarouselContentEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e CarouselContentEl) GridCols(cols uint16) CarouselContentEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CarouselContentEl) GridColsMaxContent(cols uint16) CarouselContentEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CarouselContentEl) GridColsMinContent(cols uint16) CarouselContentEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CarouselContentEl) GridRows(rows uint16) CarouselContentEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CarouselContentEl) GridRowsMaxContent(rows uint16) CarouselContentEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CarouselContentEl) GridRowsMinContent(rows uint16) CarouselContentEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e CarouselContentEl) H(length Length) CarouselContentEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselContentEl) Inset(length Length) CarouselContentEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselContentEl) Left(length Length) CarouselContentEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CarouselContentEl) LineClamp(lines int) CarouselContentEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e CarouselContentEl) LineHeight(lineHeight Length) CarouselContentEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e CarouselContentEl) M(length Length) CarouselContentEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e CarouselContentEl) M(length Length) CarouselContentEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e CarouselContentEl) MaxH(length Length) CarouselContentEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e CarouselContentEl) MaxSize(length Length) CarouselContentEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e CarouselContentEl) MaxW(length Length) CarouselContentEl { tStyledMaxW(e.n, length); return e }
-func (e CarouselContentEl) Mb(length Length) CarouselContentEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselContentEl) Mb(length Length) CarouselContentEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e CarouselContentEl) MinH(length Length) CarouselContentEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e CarouselContentEl) MinSize(length Length) CarouselContentEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e CarouselContentEl) MinW(length Length) CarouselContentEl { tStyledMinW(e.n, length); return e }
-func (e CarouselContentEl) Ml(length Length) CarouselContentEl   { tStyledMl(e.n, length); return e }
-func (e CarouselContentEl) Mr(length Length) CarouselContentEl   { tStyledMr(e.n, length); return e }
-func (e CarouselContentEl) Mt(length Length) CarouselContentEl   { tStyledMt(e.n, length); return e }
-func (e CarouselContentEl) Mx(length Length) CarouselContentEl   { tStyledMx(e.n, length); return e }
-func (e CarouselContentEl) My(length Length) CarouselContentEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselContentEl) Ml(length Length) CarouselContentEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselContentEl) Mr(length Length) CarouselContentEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselContentEl) Mt(length Length) CarouselContentEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e CarouselContentEl) Mx(length Length) CarouselContentEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e CarouselContentEl) My(length Length) CarouselContentEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e CarouselContentEl) Opacity(opacity float32) CarouselContentEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e CarouselContentEl) P(length Length) CarouselContentEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e CarouselContentEl) P(length Length) CarouselContentEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselContentEl) Pb(length Length) CarouselContentEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselContentEl) Pl(length Length) CarouselContentEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselContentEl) Pr(length Length) CarouselContentEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselContentEl) Pt(length Length) CarouselContentEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e CarouselContentEl) Px(length Length) CarouselContentEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e CarouselContentEl) Py(length Length) CarouselContentEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselContentEl) Right(length Length) CarouselContentEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e CarouselContentEl) Rounded(length Length) CarouselContentEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselContentEl) RoundedB(length Length) CarouselContentEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselContentEl) RoundedBl(length Length) CarouselContentEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselContentEl) RoundedBr(length Length) CarouselContentEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselContentEl) RoundedL(length Length) CarouselContentEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselContentEl) RoundedR(length Length) CarouselContentEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselContentEl) RoundedT(length Length) CarouselContentEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselContentEl) RoundedTl(length Length) CarouselContentEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselContentEl) RoundedTr(length Length) CarouselContentEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e CarouselContentEl) RowEnd(end int16) CarouselContentEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e CarouselContentEl) RowSpan(span uint16) CarouselContentEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e CarouselContentEl) RowStart(start int16) CarouselContentEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CarouselContentEl) ScrollbarWidth(width Length) CarouselContentEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CarouselContentEl) Shadow(shadows []BoxShadow) CarouselContentEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e CarouselContentEl) Size(length Length) CarouselContentEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e CarouselContentEl) TextAlign(align TextAlign) CarouselContentEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselContentEl) TextBg(bg Color) CarouselContentEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselContentEl) TextColor(color Color) CarouselContentEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e CarouselContentEl) TextDecorationColor(color Color) CarouselContentEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CarouselContentEl) TextOverflow(overflow TextOverflow) CarouselContentEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselContentEl) TextSize(size Length) CarouselContentEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselContentEl) Top(length Length) CarouselContentEl { tStyledTop(e.n, length); return e }
-func (e CarouselContentEl) W(length Length) CarouselContentEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e CarouselContentEl) W(length Length) CarouselContentEl { tStyledW(e.n, length); return e }
 
 // CarouselItemEl is gpui_kit::component::carousel::CarouselItem.
 type CarouselItemEl struct{ n *node }
 
 func (e CarouselItemEl) node() *node { return e.n }
 
+// Creates the item at the zero-based `index` used by `state`.
+//
 // CarouselItem is <gpui_kit::component::carousel::CarouselItem>::new.
 func CarouselItem(id ID, index int, state CarouselState, st ...Style) CarouselItemEl {
 	useComponentCarousel()
@@ -553,6 +1074,8 @@ func CarouselItem(id ID, index int, state CarouselState, st ...Style) CarouselIt
 	return CarouselItemEl{n}
 }
 
+// Replaces the generated "Slide N of M" accessibility label.
+//
 // AccessibilityLabel is <gpui_kit::component::carousel::CarouselItem>::accessibility_label.
 func (e CarouselItemEl) AccessibilityLabel(label string) CarouselItemEl {
 	o := op(e.n, 256)
@@ -560,17 +1083,43 @@ func (e CarouselItemEl) AccessibilityLabel(label string) CarouselItemEl {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e CarouselItemEl) PopoverStyle() CarouselItemEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CarouselItemEl) RoundedFullStyle() CarouselItemEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e CarouselItemEl) FocusRingStyle() CarouselItemEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselItemEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselItemEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -598,7 +1147,20 @@ func (e CarouselItemEl) FontMedium() CarouselItemEl     { tStyledExtFontMedium(e
 func (e CarouselItemEl) FontNormal() CarouselItemEl     { tStyledExtFontNormal(e.n); return e }
 func (e CarouselItemEl) FontSemibold() CarouselItemEl   { tStyledExtFontSemibold(e.n); return e }
 func (e CarouselItemEl) FontThin() CarouselItemEl       { tStyledExtFontThin(e.n); return e }
-func (e CarouselItemEl) HFlex() CarouselItemEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e CarouselItemEl) HFlex() CarouselItemEl { tStyledExtHFlex(e.n); return e }
 func (e CarouselItemEl) Margins(margins EdgesInto) CarouselItemEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -611,6 +1173,11 @@ func (e CarouselItemEl) RefineStyle(style StyleRefinement) CarouselItemEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CarouselItemEl) VFlex() CarouselItemEl { tStyledExtVFlex(e.n); return e }
 
 func (e CarouselItemEl) Text(s string) CarouselItemEl { putText(e.n, s); return e }
@@ -618,10 +1185,13 @@ func (e CarouselItemEl) Text(s string) CarouselItemEl { putText(e.n, s); return 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e CarouselItemEl) ChildView(v View) CarouselItemEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e CarouselItemEl) Child(child Element) CarouselItemEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e CarouselItemEl) Children(children ...Element) CarouselItemEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -630,173 +1200,382 @@ func (e CarouselItemEl) Children(children ...Element) CarouselItemEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e CarouselItemEl) Style(st ...Style) CarouselItemEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CarouselItemEl) AspectRatio(ratio float32) CarouselItemEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e CarouselItemEl) Bg(fill Fill) CarouselItemEl          { tStyledBg(e.n, fill); return e }
-func (e CarouselItemEl) Border(length Length) CarouselItemEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e CarouselItemEl) Bg(fill Fill) CarouselItemEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e CarouselItemEl) Border(length Length) CarouselItemEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselItemEl) BorderB(length Length) CarouselItemEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e CarouselItemEl) BorderColor(borderColor Color) CarouselItemEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselItemEl) BorderL(length Length) CarouselItemEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselItemEl) BorderR(length Length) CarouselItemEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselItemEl) BorderT(length Length) CarouselItemEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselItemEl) BorderX(length Length) CarouselItemEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselItemEl) BorderY(length Length) CarouselItemEl { tStyledBorderY(e.n, length); return e }
-func (e CarouselItemEl) Bottom(length Length) CarouselItemEl  { tStyledBottom(e.n, length); return e }
-func (e CarouselItemEl) ColEnd(end int16) CarouselItemEl      { tStyledColEnd(e.n, end); return e }
-func (e CarouselItemEl) ColSpan(span uint16) CarouselItemEl   { tStyledColSpan(e.n, span); return e }
-func (e CarouselItemEl) ColStart(start int16) CarouselItemEl  { tStyledColStart(e.n, start); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselItemEl) Bottom(length Length) CarouselItemEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e CarouselItemEl) ColEnd(end int16) CarouselItemEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e CarouselItemEl) ColSpan(span uint16) CarouselItemEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e CarouselItemEl) ColStart(start int16) CarouselItemEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e CarouselItemEl) Cursor(cursor CursorStyle) CarouselItemEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e CarouselItemEl) FlexBasis(basis Length) CarouselItemEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e CarouselItemEl) FlexGrow(grow float32) CarouselItemEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CarouselItemEl) FlexShrink(shrink float32) CarouselItemEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e CarouselItemEl) FontFamily(familyName string) CarouselItemEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CarouselItemEl) FontFeatures(features FontFeatures) CarouselItemEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CarouselItemEl) FontWeight(weight FontWeight) CarouselItemEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e CarouselItemEl) Gap(length Length) CarouselItemEl    { tStyledGap(e.n, length); return e }
-func (e CarouselItemEl) GapX(length Length) CarouselItemEl   { tStyledGapX(e.n, length); return e }
-func (e CarouselItemEl) GapY(length Length) CarouselItemEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e CarouselItemEl) Gap(length Length) CarouselItemEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CarouselItemEl) GapX(length Length) CarouselItemEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CarouselItemEl) GapY(length Length) CarouselItemEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e CarouselItemEl) GridCols(cols uint16) CarouselItemEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CarouselItemEl) GridColsMaxContent(cols uint16) CarouselItemEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CarouselItemEl) GridColsMinContent(cols uint16) CarouselItemEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CarouselItemEl) GridRows(rows uint16) CarouselItemEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CarouselItemEl) GridRowsMaxContent(rows uint16) CarouselItemEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CarouselItemEl) GridRowsMinContent(rows uint16) CarouselItemEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e CarouselItemEl) H(length Length) CarouselItemEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e CarouselItemEl) H(length Length) CarouselItemEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselItemEl) Inset(length Length) CarouselItemEl { tStyledInset(e.n, length); return e }
-func (e CarouselItemEl) Left(length Length) CarouselItemEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselItemEl) Left(length Length) CarouselItemEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CarouselItemEl) LineClamp(lines int) CarouselItemEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e CarouselItemEl) LineHeight(lineHeight Length) CarouselItemEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e CarouselItemEl) M(length Length) CarouselItemEl       { tStyledM(e.n, length); return e }
-func (e CarouselItemEl) MaxH(length Length) CarouselItemEl    { tStyledMaxH(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e CarouselItemEl) M(length Length) CarouselItemEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e CarouselItemEl) MaxH(length Length) CarouselItemEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e CarouselItemEl) MaxSize(length Length) CarouselItemEl { tStyledMaxSize(e.n, length); return e }
-func (e CarouselItemEl) MaxW(length Length) CarouselItemEl    { tStyledMaxW(e.n, length); return e }
-func (e CarouselItemEl) Mb(length Length) CarouselItemEl      { tStyledMb(e.n, length); return e }
-func (e CarouselItemEl) MinH(length Length) CarouselItemEl    { tStyledMinH(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e CarouselItemEl) MaxW(length Length) CarouselItemEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselItemEl) Mb(length Length) CarouselItemEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e CarouselItemEl) MinH(length Length) CarouselItemEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e CarouselItemEl) MinSize(length Length) CarouselItemEl { tStyledMinSize(e.n, length); return e }
-func (e CarouselItemEl) MinW(length Length) CarouselItemEl    { tStyledMinW(e.n, length); return e }
-func (e CarouselItemEl) Ml(length Length) CarouselItemEl      { tStyledMl(e.n, length); return e }
-func (e CarouselItemEl) Mr(length Length) CarouselItemEl      { tStyledMr(e.n, length); return e }
-func (e CarouselItemEl) Mt(length Length) CarouselItemEl      { tStyledMt(e.n, length); return e }
-func (e CarouselItemEl) Mx(length Length) CarouselItemEl      { tStyledMx(e.n, length); return e }
-func (e CarouselItemEl) My(length Length) CarouselItemEl      { tStyledMy(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e CarouselItemEl) MinW(length Length) CarouselItemEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselItemEl) Ml(length Length) CarouselItemEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselItemEl) Mr(length Length) CarouselItemEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselItemEl) Mt(length Length) CarouselItemEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e CarouselItemEl) Mx(length Length) CarouselItemEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e CarouselItemEl) My(length Length) CarouselItemEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e CarouselItemEl) Opacity(opacity float32) CarouselItemEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e CarouselItemEl) P(length Length) CarouselItemEl       { tStyledP(e.n, length); return e }
-func (e CarouselItemEl) Pb(length Length) CarouselItemEl      { tStyledPb(e.n, length); return e }
-func (e CarouselItemEl) Pl(length Length) CarouselItemEl      { tStyledPl(e.n, length); return e }
-func (e CarouselItemEl) Pr(length Length) CarouselItemEl      { tStyledPr(e.n, length); return e }
-func (e CarouselItemEl) Pt(length Length) CarouselItemEl      { tStyledPt(e.n, length); return e }
-func (e CarouselItemEl) Px(length Length) CarouselItemEl      { tStyledPx(e.n, length); return e }
-func (e CarouselItemEl) Py(length Length) CarouselItemEl      { tStyledPy(e.n, length); return e }
-func (e CarouselItemEl) Right(length Length) CarouselItemEl   { tStyledRight(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e CarouselItemEl) P(length Length) CarouselItemEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselItemEl) Pb(length Length) CarouselItemEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselItemEl) Pl(length Length) CarouselItemEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselItemEl) Pr(length Length) CarouselItemEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselItemEl) Pt(length Length) CarouselItemEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e CarouselItemEl) Px(length Length) CarouselItemEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e CarouselItemEl) Py(length Length) CarouselItemEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselItemEl) Right(length Length) CarouselItemEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e CarouselItemEl) Rounded(length Length) CarouselItemEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselItemEl) RoundedB(length Length) CarouselItemEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselItemEl) RoundedBl(length Length) CarouselItemEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselItemEl) RoundedBr(length Length) CarouselItemEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselItemEl) RoundedL(length Length) CarouselItemEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselItemEl) RoundedR(length Length) CarouselItemEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselItemEl) RoundedT(length Length) CarouselItemEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselItemEl) RoundedTl(length Length) CarouselItemEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselItemEl) RoundedTr(length Length) CarouselItemEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e CarouselItemEl) RowEnd(end int16) CarouselItemEl     { tStyledRowEnd(e.n, end); return e }
-func (e CarouselItemEl) RowSpan(span uint16) CarouselItemEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e CarouselItemEl) RowEnd(end int16) CarouselItemEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e CarouselItemEl) RowSpan(span uint16) CarouselItemEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e CarouselItemEl) RowStart(start int16) CarouselItemEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CarouselItemEl) ScrollbarWidth(width Length) CarouselItemEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CarouselItemEl) Shadow(shadows []BoxShadow) CarouselItemEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e CarouselItemEl) Size(length Length) CarouselItemEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e CarouselItemEl) TextAlign(align TextAlign) CarouselItemEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e CarouselItemEl) TextBg(bg Color) CarouselItemEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e CarouselItemEl) TextBg(bg Color) CarouselItemEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselItemEl) TextColor(color Color) CarouselItemEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e CarouselItemEl) TextDecorationColor(color Color) CarouselItemEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CarouselItemEl) TextOverflow(overflow TextOverflow) CarouselItemEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselItemEl) TextSize(size Length) CarouselItemEl { tStyledTextSize(e.n, size); return e }
-func (e CarouselItemEl) Top(length Length) CarouselItemEl    { tStyledTop(e.n, length); return e }
-func (e CarouselItemEl) W(length Length) CarouselItemEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselItemEl) Top(length Length) CarouselItemEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e CarouselItemEl) W(length Length) CarouselItemEl { tStyledW(e.n, length); return e }
 
 // CarouselNextEl is gpui_kit::component::carousel::CarouselNext.
 type CarouselNextEl struct{ n *node }
 
 func (e CarouselNextEl) node() *node { return e.n }
 
+// Creates a next-slide control bound to `state`.
+//
 // CarouselNext is <gpui_kit::component::carousel::CarouselNext>::new.
 func CarouselNext(state CarouselState, st ...Style) CarouselNextEl {
 	useComponentCarousel()
@@ -807,6 +1586,8 @@ func CarouselNext(state CarouselState, st ...Style) CarouselNextEl {
 	return CarouselNextEl{n}
 }
 
+// Replaces the generated next-slide accessibility label and tooltip.
+//
 // AccessibilityLabel is <gpui_kit::component::carousel::CarouselNext>::accessibility_label.
 func (e CarouselNextEl) AccessibilityLabel(label string) CarouselNextEl {
 	o := op(e.n, 256)
@@ -814,17 +1595,43 @@ func (e CarouselNextEl) AccessibilityLabel(label string) CarouselNextEl {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e CarouselNextEl) PopoverStyle() CarouselNextEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CarouselNextEl) RoundedFullStyle() CarouselNextEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e CarouselNextEl) FocusRingStyle() CarouselNextEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselNextEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselNextEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -852,7 +1659,20 @@ func (e CarouselNextEl) FontMedium() CarouselNextEl     { tStyledExtFontMedium(e
 func (e CarouselNextEl) FontNormal() CarouselNextEl     { tStyledExtFontNormal(e.n); return e }
 func (e CarouselNextEl) FontSemibold() CarouselNextEl   { tStyledExtFontSemibold(e.n); return e }
 func (e CarouselNextEl) FontThin() CarouselNextEl       { tStyledExtFontThin(e.n); return e }
-func (e CarouselNextEl) HFlex() CarouselNextEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e CarouselNextEl) HFlex() CarouselNextEl { tStyledExtHFlex(e.n); return e }
 func (e CarouselNextEl) Margins(margins EdgesInto) CarouselNextEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -865,187 +1685,412 @@ func (e CarouselNextEl) RefineStyle(style StyleRefinement) CarouselNextEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CarouselNextEl) VFlex() CarouselNextEl { tStyledExtVFlex(e.n); return e }
 
-func (e CarouselNextEl) Large() CarouselNextEl                 { tSizableLarge(e.n); return e }
-func (e CarouselNextEl) Small() CarouselNextEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e CarouselNextEl) Large() CarouselNextEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e CarouselNextEl) Small() CarouselNextEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e CarouselNextEl) WithSize(size SizeInto) CarouselNextEl { tSizableWithSize(e.n, size); return e }
-func (e CarouselNextEl) Xsmall() CarouselNextEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e CarouselNextEl) Xsmall() CarouselNextEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e CarouselNextEl) Style(st ...Style) CarouselNextEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CarouselNextEl) AspectRatio(ratio float32) CarouselNextEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e CarouselNextEl) Bg(fill Fill) CarouselNextEl          { tStyledBg(e.n, fill); return e }
-func (e CarouselNextEl) Border(length Length) CarouselNextEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e CarouselNextEl) Bg(fill Fill) CarouselNextEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e CarouselNextEl) Border(length Length) CarouselNextEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselNextEl) BorderB(length Length) CarouselNextEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e CarouselNextEl) BorderColor(borderColor Color) CarouselNextEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselNextEl) BorderL(length Length) CarouselNextEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselNextEl) BorderR(length Length) CarouselNextEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselNextEl) BorderT(length Length) CarouselNextEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselNextEl) BorderX(length Length) CarouselNextEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselNextEl) BorderY(length Length) CarouselNextEl { tStyledBorderY(e.n, length); return e }
-func (e CarouselNextEl) Bottom(length Length) CarouselNextEl  { tStyledBottom(e.n, length); return e }
-func (e CarouselNextEl) ColEnd(end int16) CarouselNextEl      { tStyledColEnd(e.n, end); return e }
-func (e CarouselNextEl) ColSpan(span uint16) CarouselNextEl   { tStyledColSpan(e.n, span); return e }
-func (e CarouselNextEl) ColStart(start int16) CarouselNextEl  { tStyledColStart(e.n, start); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselNextEl) Bottom(length Length) CarouselNextEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e CarouselNextEl) ColEnd(end int16) CarouselNextEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e CarouselNextEl) ColSpan(span uint16) CarouselNextEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e CarouselNextEl) ColStart(start int16) CarouselNextEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e CarouselNextEl) Cursor(cursor CursorStyle) CarouselNextEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e CarouselNextEl) FlexBasis(basis Length) CarouselNextEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e CarouselNextEl) FlexGrow(grow float32) CarouselNextEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CarouselNextEl) FlexShrink(shrink float32) CarouselNextEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e CarouselNextEl) FontFamily(familyName string) CarouselNextEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CarouselNextEl) FontFeatures(features FontFeatures) CarouselNextEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CarouselNextEl) FontWeight(weight FontWeight) CarouselNextEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e CarouselNextEl) Gap(length Length) CarouselNextEl    { tStyledGap(e.n, length); return e }
-func (e CarouselNextEl) GapX(length Length) CarouselNextEl   { tStyledGapX(e.n, length); return e }
-func (e CarouselNextEl) GapY(length Length) CarouselNextEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e CarouselNextEl) Gap(length Length) CarouselNextEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CarouselNextEl) GapX(length Length) CarouselNextEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CarouselNextEl) GapY(length Length) CarouselNextEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e CarouselNextEl) GridCols(cols uint16) CarouselNextEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CarouselNextEl) GridColsMaxContent(cols uint16) CarouselNextEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CarouselNextEl) GridColsMinContent(cols uint16) CarouselNextEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CarouselNextEl) GridRows(rows uint16) CarouselNextEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CarouselNextEl) GridRowsMaxContent(rows uint16) CarouselNextEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CarouselNextEl) GridRowsMinContent(rows uint16) CarouselNextEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e CarouselNextEl) H(length Length) CarouselNextEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e CarouselNextEl) H(length Length) CarouselNextEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselNextEl) Inset(length Length) CarouselNextEl { tStyledInset(e.n, length); return e }
-func (e CarouselNextEl) Left(length Length) CarouselNextEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselNextEl) Left(length Length) CarouselNextEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CarouselNextEl) LineClamp(lines int) CarouselNextEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e CarouselNextEl) LineHeight(lineHeight Length) CarouselNextEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e CarouselNextEl) M(length Length) CarouselNextEl       { tStyledM(e.n, length); return e }
-func (e CarouselNextEl) MaxH(length Length) CarouselNextEl    { tStyledMaxH(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e CarouselNextEl) M(length Length) CarouselNextEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e CarouselNextEl) MaxH(length Length) CarouselNextEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e CarouselNextEl) MaxSize(length Length) CarouselNextEl { tStyledMaxSize(e.n, length); return e }
-func (e CarouselNextEl) MaxW(length Length) CarouselNextEl    { tStyledMaxW(e.n, length); return e }
-func (e CarouselNextEl) Mb(length Length) CarouselNextEl      { tStyledMb(e.n, length); return e }
-func (e CarouselNextEl) MinH(length Length) CarouselNextEl    { tStyledMinH(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e CarouselNextEl) MaxW(length Length) CarouselNextEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselNextEl) Mb(length Length) CarouselNextEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e CarouselNextEl) MinH(length Length) CarouselNextEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e CarouselNextEl) MinSize(length Length) CarouselNextEl { tStyledMinSize(e.n, length); return e }
-func (e CarouselNextEl) MinW(length Length) CarouselNextEl    { tStyledMinW(e.n, length); return e }
-func (e CarouselNextEl) Ml(length Length) CarouselNextEl      { tStyledMl(e.n, length); return e }
-func (e CarouselNextEl) Mr(length Length) CarouselNextEl      { tStyledMr(e.n, length); return e }
-func (e CarouselNextEl) Mt(length Length) CarouselNextEl      { tStyledMt(e.n, length); return e }
-func (e CarouselNextEl) Mx(length Length) CarouselNextEl      { tStyledMx(e.n, length); return e }
-func (e CarouselNextEl) My(length Length) CarouselNextEl      { tStyledMy(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e CarouselNextEl) MinW(length Length) CarouselNextEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselNextEl) Ml(length Length) CarouselNextEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselNextEl) Mr(length Length) CarouselNextEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CarouselNextEl) Mt(length Length) CarouselNextEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e CarouselNextEl) Mx(length Length) CarouselNextEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e CarouselNextEl) My(length Length) CarouselNextEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e CarouselNextEl) Opacity(opacity float32) CarouselNextEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e CarouselNextEl) P(length Length) CarouselNextEl       { tStyledP(e.n, length); return e }
-func (e CarouselNextEl) Pb(length Length) CarouselNextEl      { tStyledPb(e.n, length); return e }
-func (e CarouselNextEl) Pl(length Length) CarouselNextEl      { tStyledPl(e.n, length); return e }
-func (e CarouselNextEl) Pr(length Length) CarouselNextEl      { tStyledPr(e.n, length); return e }
-func (e CarouselNextEl) Pt(length Length) CarouselNextEl      { tStyledPt(e.n, length); return e }
-func (e CarouselNextEl) Px(length Length) CarouselNextEl      { tStyledPx(e.n, length); return e }
-func (e CarouselNextEl) Py(length Length) CarouselNextEl      { tStyledPy(e.n, length); return e }
-func (e CarouselNextEl) Right(length Length) CarouselNextEl   { tStyledRight(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e CarouselNextEl) P(length Length) CarouselNextEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselNextEl) Pb(length Length) CarouselNextEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselNextEl) Pl(length Length) CarouselNextEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselNextEl) Pr(length Length) CarouselNextEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CarouselNextEl) Pt(length Length) CarouselNextEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e CarouselNextEl) Px(length Length) CarouselNextEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e CarouselNextEl) Py(length Length) CarouselNextEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselNextEl) Right(length Length) CarouselNextEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e CarouselNextEl) Rounded(length Length) CarouselNextEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselNextEl) RoundedB(length Length) CarouselNextEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselNextEl) RoundedBl(length Length) CarouselNextEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselNextEl) RoundedBr(length Length) CarouselNextEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselNextEl) RoundedL(length Length) CarouselNextEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselNextEl) RoundedR(length Length) CarouselNextEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselNextEl) RoundedT(length Length) CarouselNextEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselNextEl) RoundedTl(length Length) CarouselNextEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselNextEl) RoundedTr(length Length) CarouselNextEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e CarouselNextEl) RowEnd(end int16) CarouselNextEl     { tStyledRowEnd(e.n, end); return e }
-func (e CarouselNextEl) RowSpan(span uint16) CarouselNextEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e CarouselNextEl) RowEnd(end int16) CarouselNextEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e CarouselNextEl) RowSpan(span uint16) CarouselNextEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e CarouselNextEl) RowStart(start int16) CarouselNextEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CarouselNextEl) ScrollbarWidth(width Length) CarouselNextEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CarouselNextEl) Shadow(shadows []BoxShadow) CarouselNextEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e CarouselNextEl) Size(length Length) CarouselNextEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e CarouselNextEl) TextAlign(align TextAlign) CarouselNextEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e CarouselNextEl) TextBg(bg Color) CarouselNextEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e CarouselNextEl) TextBg(bg Color) CarouselNextEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselNextEl) TextColor(color Color) CarouselNextEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e CarouselNextEl) TextDecorationColor(color Color) CarouselNextEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CarouselNextEl) TextOverflow(overflow TextOverflow) CarouselNextEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselNextEl) TextSize(size Length) CarouselNextEl { tStyledTextSize(e.n, size); return e }
-func (e CarouselNextEl) Top(length Length) CarouselNextEl    { tStyledTop(e.n, length); return e }
-func (e CarouselNextEl) W(length Length) CarouselNextEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CarouselNextEl) Top(length Length) CarouselNextEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e CarouselNextEl) W(length Length) CarouselNextEl { tStyledW(e.n, length); return e }
 
 func (e CarouselNextEl) Text(s string) CarouselNextEl { putText(e.n, s); return e }
 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e CarouselNextEl) ChildView(v View) CarouselNextEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e CarouselNextEl) Child(child Element) CarouselNextEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e CarouselNextEl) Children(children ...Element) CarouselNextEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1056,6 +2101,8 @@ type CarouselPaginationEl struct{ n *node }
 
 func (e CarouselPaginationEl) node() *node { return e.n }
 
+// Creates an empty pagination container.
+//
 // CarouselPagination is <gpui_kit::component::carousel::CarouselPagination>::new.
 func CarouselPagination(st ...Style) CarouselPaginationEl {
 	useComponentCarousel()
@@ -1064,6 +2111,8 @@ func CarouselPagination(st ...Style) CarouselPaginationEl {
 	return CarouselPaginationEl{n}
 }
 
+// Sets the name announced for the pagination group.
+//
 // AccessibilityLabel is <gpui_kit::component::carousel::CarouselPagination>::accessibility_label.
 func (e CarouselPaginationEl) AccessibilityLabel(label string) CarouselPaginationEl {
 	o := op(e.n, 256)
@@ -1071,20 +2120,46 @@ func (e CarouselPaginationEl) AccessibilityLabel(label string) CarouselPaginatio
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e CarouselPaginationEl) PopoverStyle() CarouselPaginationEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CarouselPaginationEl) RoundedFullStyle() CarouselPaginationEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e CarouselPaginationEl) FocusRingStyle() CarouselPaginationEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselPaginationEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselPaginationEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1124,7 +2199,20 @@ func (e CarouselPaginationEl) FontSemibold() CarouselPaginationEl {
 	return e
 }
 func (e CarouselPaginationEl) FontThin() CarouselPaginationEl { tStyledExtFontThin(e.n); return e }
-func (e CarouselPaginationEl) HFlex() CarouselPaginationEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e CarouselPaginationEl) HFlex() CarouselPaginationEl { tStyledExtHFlex(e.n); return e }
 func (e CarouselPaginationEl) Margins(margins EdgesInto) CarouselPaginationEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1137,6 +2225,11 @@ func (e CarouselPaginationEl) RefineStyle(style StyleRefinement) CarouselPaginat
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CarouselPaginationEl) VFlex() CarouselPaginationEl { tStyledExtVFlex(e.n); return e }
 
 func (e CarouselPaginationEl) Text(s string) CarouselPaginationEl { putText(e.n, s); return e }
@@ -1144,10 +2237,13 @@ func (e CarouselPaginationEl) Text(s string) CarouselPaginationEl { putText(e.n,
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e CarouselPaginationEl) ChildView(v View) CarouselPaginationEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e CarouselPaginationEl) Child(child Element) CarouselPaginationEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e CarouselPaginationEl) Children(children ...Element) CarouselPaginationEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1156,307 +2252,514 @@ func (e CarouselPaginationEl) Children(children ...Element) CarouselPaginationEl
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e CarouselPaginationEl) Style(st ...Style) CarouselPaginationEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CarouselPaginationEl) AspectRatio(ratio float32) CarouselPaginationEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e CarouselPaginationEl) Bg(fill Fill) CarouselPaginationEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e CarouselPaginationEl) Border(length Length) CarouselPaginationEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPaginationEl) BorderB(length Length) CarouselPaginationEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e CarouselPaginationEl) BorderColor(borderColor Color) CarouselPaginationEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPaginationEl) BorderL(length Length) CarouselPaginationEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPaginationEl) BorderR(length Length) CarouselPaginationEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPaginationEl) BorderT(length Length) CarouselPaginationEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselPaginationEl) BorderX(length Length) CarouselPaginationEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselPaginationEl) BorderY(length Length) CarouselPaginationEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationEl) Bottom(length Length) CarouselPaginationEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e CarouselPaginationEl) ColEnd(end int16) CarouselPaginationEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e CarouselPaginationEl) ColSpan(span uint16) CarouselPaginationEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e CarouselPaginationEl) ColStart(start int16) CarouselPaginationEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e CarouselPaginationEl) Cursor(cursor CursorStyle) CarouselPaginationEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e CarouselPaginationEl) FlexBasis(basis Length) CarouselPaginationEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e CarouselPaginationEl) FlexGrow(grow float32) CarouselPaginationEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CarouselPaginationEl) FlexShrink(shrink float32) CarouselPaginationEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e CarouselPaginationEl) FontFamily(familyName string) CarouselPaginationEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CarouselPaginationEl) FontFeatures(features FontFeatures) CarouselPaginationEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CarouselPaginationEl) FontWeight(weight FontWeight) CarouselPaginationEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e CarouselPaginationEl) Gap(length Length) CarouselPaginationEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e CarouselPaginationEl) GapX(length Length) CarouselPaginationEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e CarouselPaginationEl) GapY(length Length) CarouselPaginationEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e CarouselPaginationEl) GridCols(cols uint16) CarouselPaginationEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CarouselPaginationEl) GridColsMaxContent(cols uint16) CarouselPaginationEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CarouselPaginationEl) GridColsMinContent(cols uint16) CarouselPaginationEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CarouselPaginationEl) GridRows(rows uint16) CarouselPaginationEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CarouselPaginationEl) GridRowsMaxContent(rows uint16) CarouselPaginationEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CarouselPaginationEl) GridRowsMinContent(rows uint16) CarouselPaginationEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e CarouselPaginationEl) H(length Length) CarouselPaginationEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationEl) Inset(length Length) CarouselPaginationEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationEl) Left(length Length) CarouselPaginationEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CarouselPaginationEl) LineClamp(lines int) CarouselPaginationEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e CarouselPaginationEl) LineHeight(lineHeight Length) CarouselPaginationEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e CarouselPaginationEl) M(length Length) CarouselPaginationEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e CarouselPaginationEl) MaxH(length Length) CarouselPaginationEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e CarouselPaginationEl) MaxSize(length Length) CarouselPaginationEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e CarouselPaginationEl) MaxW(length Length) CarouselPaginationEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPaginationEl) Mb(length Length) CarouselPaginationEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e CarouselPaginationEl) MinH(length Length) CarouselPaginationEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e CarouselPaginationEl) MinSize(length Length) CarouselPaginationEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e CarouselPaginationEl) MinW(length Length) CarouselPaginationEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPaginationEl) Ml(length Length) CarouselPaginationEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPaginationEl) Mr(length Length) CarouselPaginationEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPaginationEl) Mt(length Length) CarouselPaginationEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e CarouselPaginationEl) Mx(length Length) CarouselPaginationEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e CarouselPaginationEl) My(length Length) CarouselPaginationEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e CarouselPaginationEl) Opacity(opacity float32) CarouselPaginationEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e CarouselPaginationEl) P(length Length) CarouselPaginationEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPaginationEl) Pb(length Length) CarouselPaginationEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPaginationEl) Pl(length Length) CarouselPaginationEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPaginationEl) Pr(length Length) CarouselPaginationEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPaginationEl) Pt(length Length) CarouselPaginationEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e CarouselPaginationEl) Px(length Length) CarouselPaginationEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e CarouselPaginationEl) Py(length Length) CarouselPaginationEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationEl) Right(length Length) CarouselPaginationEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e CarouselPaginationEl) Rounded(length Length) CarouselPaginationEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPaginationEl) RoundedB(length Length) CarouselPaginationEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPaginationEl) RoundedBl(length Length) CarouselPaginationEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPaginationEl) RoundedBr(length Length) CarouselPaginationEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPaginationEl) RoundedL(length Length) CarouselPaginationEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPaginationEl) RoundedR(length Length) CarouselPaginationEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPaginationEl) RoundedT(length Length) CarouselPaginationEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPaginationEl) RoundedTl(length Length) CarouselPaginationEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPaginationEl) RoundedTr(length Length) CarouselPaginationEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e CarouselPaginationEl) RowEnd(end int16) CarouselPaginationEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e CarouselPaginationEl) RowSpan(span uint16) CarouselPaginationEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e CarouselPaginationEl) RowStart(start int16) CarouselPaginationEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CarouselPaginationEl) ScrollbarWidth(width Length) CarouselPaginationEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CarouselPaginationEl) Shadow(shadows []BoxShadow) CarouselPaginationEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e CarouselPaginationEl) Size(length Length) CarouselPaginationEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e CarouselPaginationEl) TextAlign(align TextAlign) CarouselPaginationEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselPaginationEl) TextBg(bg Color) CarouselPaginationEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselPaginationEl) TextColor(color Color) CarouselPaginationEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e CarouselPaginationEl) TextDecorationColor(color Color) CarouselPaginationEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CarouselPaginationEl) TextOverflow(overflow TextOverflow) CarouselPaginationEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselPaginationEl) TextSize(size Length) CarouselPaginationEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationEl) Top(length Length) CarouselPaginationEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e CarouselPaginationEl) W(length Length) CarouselPaginationEl { tStyledW(e.n, length); return e }
 
 // CarouselPaginationItemEl is gpui_kit::component::carousel::CarouselPaginationItem.
@@ -1464,6 +2767,8 @@ type CarouselPaginationItemEl struct{ n *node }
 
 func (e CarouselPaginationItemEl) node() *node { return e.n }
 
+// Creates a pagination item for the zero-based `index`.
+//
 // CarouselPaginationItem is <gpui_kit::component::carousel::CarouselPaginationItem>::new.
 func CarouselPaginationItem(id ID, index int, state CarouselState, st ...Style) CarouselPaginationItemEl {
 	useComponentCarousel()
@@ -1476,6 +2781,8 @@ func CarouselPaginationItem(id ID, index int, state CarouselState, st ...Style) 
 	return CarouselPaginationItemEl{n}
 }
 
+// Replaces the generated "Go to slide N" accessibility label.
+//
 // AccessibilityLabel is <gpui_kit::component::carousel::CarouselPaginationItem>::accessibility_label.
 func (e CarouselPaginationItemEl) AccessibilityLabel(label string) CarouselPaginationItemEl {
 	o := op(e.n, 256)
@@ -1483,20 +2790,46 @@ func (e CarouselPaginationItemEl) AccessibilityLabel(label string) CarouselPagin
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e CarouselPaginationItemEl) PopoverStyle() CarouselPaginationItemEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CarouselPaginationItemEl) RoundedFullStyle() CarouselPaginationItemEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e CarouselPaginationItemEl) FocusRingStyle() CarouselPaginationItemEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselPaginationItemEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselPaginationItemEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1566,6 +2899,19 @@ func (e CarouselPaginationItemEl) FontThin() CarouselPaginationItemEl {
 	tStyledExtFontThin(e.n)
 	return e
 }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e CarouselPaginationItemEl) HFlex() CarouselPaginationItemEl { tStyledExtHFlex(e.n); return e }
 func (e CarouselPaginationItemEl) Margins(margins EdgesInto) CarouselPaginationItemEl {
 	tStyledExtMargins(e.n, margins)
@@ -1579,14 +2925,29 @@ func (e CarouselPaginationItemEl) RefineStyle(style StyleRefinement) CarouselPag
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CarouselPaginationItemEl) VFlex() CarouselPaginationItemEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e CarouselPaginationItemEl) Large() CarouselPaginationItemEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e CarouselPaginationItemEl) Small() CarouselPaginationItemEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e CarouselPaginationItemEl) WithSize(size SizeInto) CarouselPaginationItemEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e CarouselPaginationItemEl) Xsmall() CarouselPaginationItemEl { tSizableXsmall(e.n); return e }
 
 func (e CarouselPaginationItemEl) Text(s string) CarouselPaginationItemEl { putText(e.n, s); return e }
@@ -1597,10 +2958,13 @@ func (e CarouselPaginationItemEl) ChildView(v View) CarouselPaginationItemEl {
 	return e
 }
 
+// Add a single child element to this element.
 func (e CarouselPaginationItemEl) Child(child Element) CarouselPaginationItemEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e CarouselPaginationItemEl) Children(children ...Element) CarouselPaginationItemEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1612,322 +2976,529 @@ func (e CarouselPaginationItemEl) Style(st ...Style) CarouselPaginationItemEl {
 	return e
 }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CarouselPaginationItemEl) AspectRatio(ratio float32) CarouselPaginationItemEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e CarouselPaginationItemEl) Bg(fill Fill) CarouselPaginationItemEl {
 	tStyledBg(e.n, fill)
 	return e
 }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e CarouselPaginationItemEl) Border(length Length) CarouselPaginationItemEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPaginationItemEl) BorderB(length Length) CarouselPaginationItemEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e CarouselPaginationItemEl) BorderColor(borderColor Color) CarouselPaginationItemEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPaginationItemEl) BorderL(length Length) CarouselPaginationItemEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPaginationItemEl) BorderR(length Length) CarouselPaginationItemEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPaginationItemEl) BorderT(length Length) CarouselPaginationItemEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselPaginationItemEl) BorderX(length Length) CarouselPaginationItemEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselPaginationItemEl) BorderY(length Length) CarouselPaginationItemEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationItemEl) Bottom(length Length) CarouselPaginationItemEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e CarouselPaginationItemEl) ColEnd(end int16) CarouselPaginationItemEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e CarouselPaginationItemEl) ColSpan(span uint16) CarouselPaginationItemEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e CarouselPaginationItemEl) ColStart(start int16) CarouselPaginationItemEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e CarouselPaginationItemEl) Cursor(cursor CursorStyle) CarouselPaginationItemEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e CarouselPaginationItemEl) FlexBasis(basis Length) CarouselPaginationItemEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e CarouselPaginationItemEl) FlexGrow(grow float32) CarouselPaginationItemEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CarouselPaginationItemEl) FlexShrink(shrink float32) CarouselPaginationItemEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e CarouselPaginationItemEl) FontFamily(familyName string) CarouselPaginationItemEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CarouselPaginationItemEl) FontFeatures(features FontFeatures) CarouselPaginationItemEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CarouselPaginationItemEl) FontWeight(weight FontWeight) CarouselPaginationItemEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e CarouselPaginationItemEl) Gap(length Length) CarouselPaginationItemEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e CarouselPaginationItemEl) GapX(length Length) CarouselPaginationItemEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e CarouselPaginationItemEl) GapY(length Length) CarouselPaginationItemEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e CarouselPaginationItemEl) GridCols(cols uint16) CarouselPaginationItemEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CarouselPaginationItemEl) GridColsMaxContent(cols uint16) CarouselPaginationItemEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CarouselPaginationItemEl) GridColsMinContent(cols uint16) CarouselPaginationItemEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CarouselPaginationItemEl) GridRows(rows uint16) CarouselPaginationItemEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CarouselPaginationItemEl) GridRowsMaxContent(rows uint16) CarouselPaginationItemEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CarouselPaginationItemEl) GridRowsMinContent(rows uint16) CarouselPaginationItemEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e CarouselPaginationItemEl) H(length Length) CarouselPaginationItemEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationItemEl) Inset(length Length) CarouselPaginationItemEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationItemEl) Left(length Length) CarouselPaginationItemEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CarouselPaginationItemEl) LineClamp(lines int) CarouselPaginationItemEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e CarouselPaginationItemEl) LineHeight(lineHeight Length) CarouselPaginationItemEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e CarouselPaginationItemEl) M(length Length) CarouselPaginationItemEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e CarouselPaginationItemEl) MaxH(length Length) CarouselPaginationItemEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e CarouselPaginationItemEl) MaxSize(length Length) CarouselPaginationItemEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e CarouselPaginationItemEl) MaxW(length Length) CarouselPaginationItemEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPaginationItemEl) Mb(length Length) CarouselPaginationItemEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e CarouselPaginationItemEl) MinH(length Length) CarouselPaginationItemEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e CarouselPaginationItemEl) MinSize(length Length) CarouselPaginationItemEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e CarouselPaginationItemEl) MinW(length Length) CarouselPaginationItemEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPaginationItemEl) Ml(length Length) CarouselPaginationItemEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPaginationItemEl) Mr(length Length) CarouselPaginationItemEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPaginationItemEl) Mt(length Length) CarouselPaginationItemEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e CarouselPaginationItemEl) Mx(length Length) CarouselPaginationItemEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e CarouselPaginationItemEl) My(length Length) CarouselPaginationItemEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e CarouselPaginationItemEl) Opacity(opacity float32) CarouselPaginationItemEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e CarouselPaginationItemEl) P(length Length) CarouselPaginationItemEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPaginationItemEl) Pb(length Length) CarouselPaginationItemEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPaginationItemEl) Pl(length Length) CarouselPaginationItemEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPaginationItemEl) Pr(length Length) CarouselPaginationItemEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPaginationItemEl) Pt(length Length) CarouselPaginationItemEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e CarouselPaginationItemEl) Px(length Length) CarouselPaginationItemEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e CarouselPaginationItemEl) Py(length Length) CarouselPaginationItemEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationItemEl) Right(length Length) CarouselPaginationItemEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e CarouselPaginationItemEl) Rounded(length Length) CarouselPaginationItemEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPaginationItemEl) RoundedB(length Length) CarouselPaginationItemEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPaginationItemEl) RoundedBl(length Length) CarouselPaginationItemEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPaginationItemEl) RoundedBr(length Length) CarouselPaginationItemEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPaginationItemEl) RoundedL(length Length) CarouselPaginationItemEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPaginationItemEl) RoundedR(length Length) CarouselPaginationItemEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPaginationItemEl) RoundedT(length Length) CarouselPaginationItemEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPaginationItemEl) RoundedTl(length Length) CarouselPaginationItemEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPaginationItemEl) RoundedTr(length Length) CarouselPaginationItemEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e CarouselPaginationItemEl) RowEnd(end int16) CarouselPaginationItemEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e CarouselPaginationItemEl) RowSpan(span uint16) CarouselPaginationItemEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e CarouselPaginationItemEl) RowStart(start int16) CarouselPaginationItemEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CarouselPaginationItemEl) ScrollbarWidth(width Length) CarouselPaginationItemEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CarouselPaginationItemEl) Shadow(shadows []BoxShadow) CarouselPaginationItemEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e CarouselPaginationItemEl) Size(length Length) CarouselPaginationItemEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e CarouselPaginationItemEl) TextAlign(align TextAlign) CarouselPaginationItemEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselPaginationItemEl) TextBg(bg Color) CarouselPaginationItemEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselPaginationItemEl) TextColor(color Color) CarouselPaginationItemEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e CarouselPaginationItemEl) TextDecorationColor(color Color) CarouselPaginationItemEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CarouselPaginationItemEl) TextOverflow(overflow TextOverflow) CarouselPaginationItemEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselPaginationItemEl) TextSize(size Length) CarouselPaginationItemEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPaginationItemEl) Top(length Length) CarouselPaginationItemEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e CarouselPaginationItemEl) W(length Length) CarouselPaginationItemEl {
 	tStyledW(e.n, length)
 	return e
@@ -1938,6 +3509,8 @@ type CarouselPreviousEl struct{ n *node }
 
 func (e CarouselPreviousEl) node() *node { return e.n }
 
+// Creates a previous-slide control bound to `state`.
+//
 // CarouselPrevious is <gpui_kit::component::carousel::CarouselPrevious>::new.
 func CarouselPrevious(state CarouselState, st ...Style) CarouselPreviousEl {
 	useComponentCarousel()
@@ -1948,6 +3521,8 @@ func CarouselPrevious(state CarouselState, st ...Style) CarouselPreviousEl {
 	return CarouselPreviousEl{n}
 }
 
+// Replaces the generated previous-slide accessibility label and tooltip.
+//
 // AccessibilityLabel is <gpui_kit::component::carousel::CarouselPrevious>::accessibility_label.
 func (e CarouselPreviousEl) AccessibilityLabel(label string) CarouselPreviousEl {
 	o := op(e.n, 256)
@@ -1955,20 +3530,46 @@ func (e CarouselPreviousEl) AccessibilityLabel(label string) CarouselPreviousEl 
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e CarouselPreviousEl) PopoverStyle() CarouselPreviousEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CarouselPreviousEl) RoundedFullStyle() CarouselPreviousEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e CarouselPreviousEl) FocusRingStyle() CarouselPreviousEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselPreviousEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselPreviousEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -2002,7 +3603,20 @@ func (e CarouselPreviousEl) FontMedium() CarouselPreviousEl   { tStyledExtFontMe
 func (e CarouselPreviousEl) FontNormal() CarouselPreviousEl   { tStyledExtFontNormal(e.n); return e }
 func (e CarouselPreviousEl) FontSemibold() CarouselPreviousEl { tStyledExtFontSemibold(e.n); return e }
 func (e CarouselPreviousEl) FontThin() CarouselPreviousEl     { tStyledExtFontThin(e.n); return e }
-func (e CarouselPreviousEl) HFlex() CarouselPreviousEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e CarouselPreviousEl) HFlex() CarouselPreviousEl { tStyledExtHFlex(e.n); return e }
 func (e CarouselPreviousEl) Margins(margins EdgesInto) CarouselPreviousEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -2015,283 +3629,508 @@ func (e CarouselPreviousEl) RefineStyle(style StyleRefinement) CarouselPreviousE
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CarouselPreviousEl) VFlex() CarouselPreviousEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e CarouselPreviousEl) Large() CarouselPreviousEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e CarouselPreviousEl) Small() CarouselPreviousEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e CarouselPreviousEl) WithSize(size SizeInto) CarouselPreviousEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e CarouselPreviousEl) Xsmall() CarouselPreviousEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e CarouselPreviousEl) Style(st ...Style) CarouselPreviousEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CarouselPreviousEl) AspectRatio(ratio float32) CarouselPreviousEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e CarouselPreviousEl) Bg(fill Fill) CarouselPreviousEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e CarouselPreviousEl) Border(length Length) CarouselPreviousEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPreviousEl) BorderB(length Length) CarouselPreviousEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e CarouselPreviousEl) BorderColor(borderColor Color) CarouselPreviousEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPreviousEl) BorderL(length Length) CarouselPreviousEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPreviousEl) BorderR(length Length) CarouselPreviousEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CarouselPreviousEl) BorderT(length Length) CarouselPreviousEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselPreviousEl) BorderX(length Length) CarouselPreviousEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e CarouselPreviousEl) BorderY(length Length) CarouselPreviousEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPreviousEl) Bottom(length Length) CarouselPreviousEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e CarouselPreviousEl) ColEnd(end int16) CarouselPreviousEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e CarouselPreviousEl) ColSpan(span uint16) CarouselPreviousEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e CarouselPreviousEl) ColStart(start int16) CarouselPreviousEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e CarouselPreviousEl) Cursor(cursor CursorStyle) CarouselPreviousEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e CarouselPreviousEl) FlexBasis(basis Length) CarouselPreviousEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e CarouselPreviousEl) FlexGrow(grow float32) CarouselPreviousEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CarouselPreviousEl) FlexShrink(shrink float32) CarouselPreviousEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e CarouselPreviousEl) FontFamily(familyName string) CarouselPreviousEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CarouselPreviousEl) FontFeatures(features FontFeatures) CarouselPreviousEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CarouselPreviousEl) FontWeight(weight FontWeight) CarouselPreviousEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e CarouselPreviousEl) Gap(length Length) CarouselPreviousEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e CarouselPreviousEl) GapX(length Length) CarouselPreviousEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e CarouselPreviousEl) GapY(length Length) CarouselPreviousEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e CarouselPreviousEl) GridCols(cols uint16) CarouselPreviousEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CarouselPreviousEl) GridColsMaxContent(cols uint16) CarouselPreviousEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CarouselPreviousEl) GridColsMinContent(cols uint16) CarouselPreviousEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CarouselPreviousEl) GridRows(rows uint16) CarouselPreviousEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CarouselPreviousEl) GridRowsMaxContent(rows uint16) CarouselPreviousEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CarouselPreviousEl) GridRowsMinContent(rows uint16) CarouselPreviousEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e CarouselPreviousEl) H(length Length) CarouselPreviousEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPreviousEl) Inset(length Length) CarouselPreviousEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPreviousEl) Left(length Length) CarouselPreviousEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CarouselPreviousEl) LineClamp(lines int) CarouselPreviousEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e CarouselPreviousEl) LineHeight(lineHeight Length) CarouselPreviousEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e CarouselPreviousEl) M(length Length) CarouselPreviousEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e CarouselPreviousEl) MaxH(length Length) CarouselPreviousEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e CarouselPreviousEl) MaxSize(length Length) CarouselPreviousEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e CarouselPreviousEl) MaxW(length Length) CarouselPreviousEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPreviousEl) Mb(length Length) CarouselPreviousEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e CarouselPreviousEl) MinH(length Length) CarouselPreviousEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e CarouselPreviousEl) MinSize(length Length) CarouselPreviousEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e CarouselPreviousEl) MinW(length Length) CarouselPreviousEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPreviousEl) Ml(length Length) CarouselPreviousEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPreviousEl) Mr(length Length) CarouselPreviousEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e CarouselPreviousEl) Mt(length Length) CarouselPreviousEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e CarouselPreviousEl) Mx(length Length) CarouselPreviousEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e CarouselPreviousEl) My(length Length) CarouselPreviousEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e CarouselPreviousEl) Opacity(opacity float32) CarouselPreviousEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e CarouselPreviousEl) P(length Length) CarouselPreviousEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e CarouselPreviousEl) P(length Length) CarouselPreviousEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPreviousEl) Pb(length Length) CarouselPreviousEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPreviousEl) Pl(length Length) CarouselPreviousEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPreviousEl) Pr(length Length) CarouselPreviousEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e CarouselPreviousEl) Pt(length Length) CarouselPreviousEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e CarouselPreviousEl) Px(length Length) CarouselPreviousEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e CarouselPreviousEl) Py(length Length) CarouselPreviousEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPreviousEl) Right(length Length) CarouselPreviousEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e CarouselPreviousEl) Rounded(length Length) CarouselPreviousEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPreviousEl) RoundedB(length Length) CarouselPreviousEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPreviousEl) RoundedBl(length Length) CarouselPreviousEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPreviousEl) RoundedBr(length Length) CarouselPreviousEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPreviousEl) RoundedL(length Length) CarouselPreviousEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPreviousEl) RoundedR(length Length) CarouselPreviousEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CarouselPreviousEl) RoundedT(length Length) CarouselPreviousEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPreviousEl) RoundedTl(length Length) CarouselPreviousEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CarouselPreviousEl) RoundedTr(length Length) CarouselPreviousEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e CarouselPreviousEl) RowEnd(end int16) CarouselPreviousEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e CarouselPreviousEl) RowSpan(span uint16) CarouselPreviousEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e CarouselPreviousEl) RowStart(start int16) CarouselPreviousEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CarouselPreviousEl) ScrollbarWidth(width Length) CarouselPreviousEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CarouselPreviousEl) Shadow(shadows []BoxShadow) CarouselPreviousEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e CarouselPreviousEl) Size(length Length) CarouselPreviousEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e CarouselPreviousEl) TextAlign(align TextAlign) CarouselPreviousEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselPreviousEl) TextBg(bg Color) CarouselPreviousEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselPreviousEl) TextColor(color Color) CarouselPreviousEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e CarouselPreviousEl) TextDecorationColor(color Color) CarouselPreviousEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CarouselPreviousEl) TextOverflow(overflow TextOverflow) CarouselPreviousEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CarouselPreviousEl) TextSize(size Length) CarouselPreviousEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CarouselPreviousEl) Top(length Length) CarouselPreviousEl { tStyledTop(e.n, length); return e }
-func (e CarouselPreviousEl) W(length Length) CarouselPreviousEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e CarouselPreviousEl) W(length Length) CarouselPreviousEl { tStyledW(e.n, length); return e }
 
 func (e CarouselPreviousEl) Text(s string) CarouselPreviousEl { putText(e.n, s); return e }
 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e CarouselPreviousEl) ChildView(v View) CarouselPreviousEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e CarouselPreviousEl) Child(child Element) CarouselPreviousEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e CarouselPreviousEl) Children(children ...Element) CarouselPreviousEl {
 	tParentElementChildren(e.n, children...)
 	return e

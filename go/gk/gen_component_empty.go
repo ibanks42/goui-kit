@@ -9,6 +9,8 @@ type EmptyEl struct{ n *node }
 
 func (e EmptyEl) node() *node { return e.n }
 
+// Create an empty state without a background or visible border.
+//
 // Empty is <gpui_kit::component::empty::Empty>::new.
 func Empty(st ...Style) EmptyEl {
 	useComponentEmpty()
@@ -25,6 +27,8 @@ func EmptyDefault(st ...Style) EmptyEl {
 	return EmptyEl{n}
 }
 
+// Set the content, replacing any previously configured content.
+//
 // Content is <gpui_kit::component::empty::Empty>::content.
 func (e EmptyEl) Content(content EmptyContentEl) EmptyEl {
 	o := op(e.n, 256)
@@ -32,6 +36,8 @@ func (e EmptyEl) Content(content EmptyContentEl) EmptyEl {
 	return e
 }
 
+// Set the header, replacing any previously configured header.
+//
 // Header is <gpui_kit::component::empty::Empty>::header.
 func (e EmptyEl) Header(header EmptyHeaderEl) EmptyEl {
 	o := op(e.n, 257)
@@ -39,11 +45,37 @@ func (e EmptyEl) Header(header EmptyHeaderEl) EmptyEl {
 	return e
 }
 
-func (e EmptyEl) PopoverStyle() EmptyEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e EmptyEl) PopoverStyle() EmptyEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e EmptyEl) RoundedFullStyle() EmptyEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e EmptyEl) FocusRingStyle() EmptyEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e EmptyEl) OnPrepaint(callback func(cx *Cx, e Bounds)) EmptyEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -55,19 +87,32 @@ func (e EmptyEl) DebugFocused(focusHandle FocusHandle) EmptyEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e EmptyEl) DebugGreen() EmptyEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e EmptyEl) DebugPink() EmptyEl                  { tStyledExtDebugPink(e.n); return e }
-func (e EmptyEl) DebugRed() EmptyEl                   { tStyledExtDebugRed(e.n); return e }
-func (e EmptyEl) DebugYellow() EmptyEl                { tStyledExtDebugYellow(e.n); return e }
-func (e EmptyEl) FontBlack() EmptyEl                  { tStyledExtFontBlack(e.n); return e }
-func (e EmptyEl) FontBold() EmptyEl                   { tStyledExtFontBold(e.n); return e }
-func (e EmptyEl) FontExtrabold() EmptyEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e EmptyEl) FontExtralight() EmptyEl             { tStyledExtFontExtralight(e.n); return e }
-func (e EmptyEl) FontLight() EmptyEl                  { tStyledExtFontLight(e.n); return e }
-func (e EmptyEl) FontMedium() EmptyEl                 { tStyledExtFontMedium(e.n); return e }
-func (e EmptyEl) FontNormal() EmptyEl                 { tStyledExtFontNormal(e.n); return e }
-func (e EmptyEl) FontSemibold() EmptyEl               { tStyledExtFontSemibold(e.n); return e }
-func (e EmptyEl) FontThin() EmptyEl                   { tStyledExtFontThin(e.n); return e }
+func (e EmptyEl) DebugGreen() EmptyEl     { tStyledExtDebugGreen(e.n); return e }
+func (e EmptyEl) DebugPink() EmptyEl      { tStyledExtDebugPink(e.n); return e }
+func (e EmptyEl) DebugRed() EmptyEl       { tStyledExtDebugRed(e.n); return e }
+func (e EmptyEl) DebugYellow() EmptyEl    { tStyledExtDebugYellow(e.n); return e }
+func (e EmptyEl) FontBlack() EmptyEl      { tStyledExtFontBlack(e.n); return e }
+func (e EmptyEl) FontBold() EmptyEl       { tStyledExtFontBold(e.n); return e }
+func (e EmptyEl) FontExtrabold() EmptyEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e EmptyEl) FontExtralight() EmptyEl { tStyledExtFontExtralight(e.n); return e }
+func (e EmptyEl) FontLight() EmptyEl      { tStyledExtFontLight(e.n); return e }
+func (e EmptyEl) FontMedium() EmptyEl     { tStyledExtFontMedium(e.n); return e }
+func (e EmptyEl) FontNormal() EmptyEl     { tStyledExtFontNormal(e.n); return e }
+func (e EmptyEl) FontSemibold() EmptyEl   { tStyledExtFontSemibold(e.n); return e }
+func (e EmptyEl) FontThin() EmptyEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e EmptyEl) HFlex() EmptyEl                      { tStyledExtHFlex(e.n); return e }
 func (e EmptyEl) Margins(margins EdgesInto) EmptyEl   { tStyledExtMargins(e.n, margins); return e }
 func (e EmptyEl) Paddings(paddings EdgesInto) EmptyEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -75,6 +120,11 @@ func (e EmptyEl) RefineStyle(style StyleRefinement) EmptyEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e EmptyEl) VFlex() EmptyEl { tStyledExtVFlex(e.n); return e }
 
 func (e EmptyEl) Text(s string) EmptyEl { putText(e.n, s); return e }
@@ -82,7 +132,10 @@ func (e EmptyEl) Text(s string) EmptyEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e EmptyEl) ChildView(v View) EmptyEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e EmptyEl) Child(child Element) EmptyEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e EmptyEl) Children(children ...Element) EmptyEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -91,116 +144,325 @@ func (e EmptyEl) Children(children ...Element) EmptyEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e EmptyEl) Style(st ...Style) EmptyEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e EmptyEl) AspectRatio(ratio float32) EmptyEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e EmptyEl) Bg(fill Fill) EmptyEl              { tStyledBg(e.n, fill); return e }
-func (e EmptyEl) Border(length Length) EmptyEl      { tStyledBorder(e.n, length); return e }
-func (e EmptyEl) BorderB(length Length) EmptyEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e EmptyEl) Bg(fill Fill) EmptyEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e EmptyEl) Border(length Length) EmptyEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyEl) BorderB(length Length) EmptyEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e EmptyEl) BorderColor(borderColor Color) EmptyEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e EmptyEl) BorderL(length Length) EmptyEl        { tStyledBorderL(e.n, length); return e }
-func (e EmptyEl) BorderR(length Length) EmptyEl        { tStyledBorderR(e.n, length); return e }
-func (e EmptyEl) BorderT(length Length) EmptyEl        { tStyledBorderT(e.n, length); return e }
-func (e EmptyEl) BorderX(length Length) EmptyEl        { tStyledBorderX(e.n, length); return e }
-func (e EmptyEl) BorderY(length Length) EmptyEl        { tStyledBorderY(e.n, length); return e }
-func (e EmptyEl) Bottom(length Length) EmptyEl         { tStyledBottom(e.n, length); return e }
-func (e EmptyEl) ColEnd(end int16) EmptyEl             { tStyledColEnd(e.n, end); return e }
-func (e EmptyEl) ColSpan(span uint16) EmptyEl          { tStyledColSpan(e.n, span); return e }
-func (e EmptyEl) ColStart(start int16) EmptyEl         { tStyledColStart(e.n, start); return e }
-func (e EmptyEl) Cursor(cursor CursorStyle) EmptyEl    { tStyledCursor(e.n, cursor); return e }
-func (e EmptyEl) FlexBasis(basis Length) EmptyEl       { tStyledFlexBasis(e.n, basis); return e }
-func (e EmptyEl) FlexGrow(grow float32) EmptyEl        { tStyledFlexGrow(e.n, grow); return e }
-func (e EmptyEl) FlexShrink(shrink float32) EmptyEl    { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyEl) BorderL(length Length) EmptyEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyEl) BorderR(length Length) EmptyEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyEl) BorderT(length Length) EmptyEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EmptyEl) BorderX(length Length) EmptyEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EmptyEl) BorderY(length Length) EmptyEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyEl) Bottom(length Length) EmptyEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e EmptyEl) ColEnd(end int16) EmptyEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e EmptyEl) ColSpan(span uint16) EmptyEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e EmptyEl) ColStart(start int16) EmptyEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e EmptyEl) Cursor(cursor CursorStyle) EmptyEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e EmptyEl) FlexBasis(basis Length) EmptyEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e EmptyEl) FlexGrow(grow float32) EmptyEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e EmptyEl) FlexShrink(shrink float32) EmptyEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e EmptyEl) FontFamily(familyName string) EmptyEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e EmptyEl) FontFeatures(features FontFeatures) EmptyEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e EmptyEl) FontWeight(weight FontWeight) EmptyEl { tStyledFontWeight(e.n, weight); return e }
-func (e EmptyEl) Gap(length Length) EmptyEl            { tStyledGap(e.n, length); return e }
-func (e EmptyEl) GapX(length Length) EmptyEl           { tStyledGapX(e.n, length); return e }
-func (e EmptyEl) GapY(length Length) EmptyEl           { tStyledGapY(e.n, length); return e }
-func (e EmptyEl) GridCols(cols uint16) EmptyEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e EmptyEl) Gap(length Length) EmptyEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyEl) GapX(length Length) EmptyEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyEl) GapY(length Length) EmptyEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e EmptyEl) GridCols(cols uint16) EmptyEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e EmptyEl) GridColsMaxContent(cols uint16) EmptyEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e EmptyEl) GridColsMinContent(cols uint16) EmptyEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e EmptyEl) GridRows(rows uint16) EmptyEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e EmptyEl) GridRowsMaxContent(rows uint16) EmptyEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e EmptyEl) GridRowsMinContent(rows uint16) EmptyEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e EmptyEl) H(length Length) EmptyEl              { tStyledH(e.n, length); return e }
-func (e EmptyEl) Inset(length Length) EmptyEl          { tStyledInset(e.n, length); return e }
-func (e EmptyEl) Left(length Length) EmptyEl           { tStyledLeft(e.n, length); return e }
-func (e EmptyEl) LineClamp(lines int) EmptyEl          { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e EmptyEl) H(length Length) EmptyEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyEl) Inset(length Length) EmptyEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyEl) Left(length Length) EmptyEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e EmptyEl) LineClamp(lines int) EmptyEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e EmptyEl) LineHeight(lineHeight Length) EmptyEl { tStyledLineHeight(e.n, lineHeight); return e }
-func (e EmptyEl) M(length Length) EmptyEl              { tStyledM(e.n, length); return e }
-func (e EmptyEl) MaxH(length Length) EmptyEl           { tStyledMaxH(e.n, length); return e }
-func (e EmptyEl) MaxSize(length Length) EmptyEl        { tStyledMaxSize(e.n, length); return e }
-func (e EmptyEl) MaxW(length Length) EmptyEl           { tStyledMaxW(e.n, length); return e }
-func (e EmptyEl) Mb(length Length) EmptyEl             { tStyledMb(e.n, length); return e }
-func (e EmptyEl) MinH(length Length) EmptyEl           { tStyledMinH(e.n, length); return e }
-func (e EmptyEl) MinSize(length Length) EmptyEl        { tStyledMinSize(e.n, length); return e }
-func (e EmptyEl) MinW(length Length) EmptyEl           { tStyledMinW(e.n, length); return e }
-func (e EmptyEl) Ml(length Length) EmptyEl             { tStyledMl(e.n, length); return e }
-func (e EmptyEl) Mr(length Length) EmptyEl             { tStyledMr(e.n, length); return e }
-func (e EmptyEl) Mt(length Length) EmptyEl             { tStyledMt(e.n, length); return e }
-func (e EmptyEl) Mx(length Length) EmptyEl             { tStyledMx(e.n, length); return e }
-func (e EmptyEl) My(length Length) EmptyEl             { tStyledMy(e.n, length); return e }
-func (e EmptyEl) Opacity(opacity float32) EmptyEl      { tStyledOpacity(e.n, opacity); return e }
-func (e EmptyEl) P(length Length) EmptyEl              { tStyledP(e.n, length); return e }
-func (e EmptyEl) Pb(length Length) EmptyEl             { tStyledPb(e.n, length); return e }
-func (e EmptyEl) Pl(length Length) EmptyEl             { tStyledPl(e.n, length); return e }
-func (e EmptyEl) Pr(length Length) EmptyEl             { tStyledPr(e.n, length); return e }
-func (e EmptyEl) Pt(length Length) EmptyEl             { tStyledPt(e.n, length); return e }
-func (e EmptyEl) Px(length Length) EmptyEl             { tStyledPx(e.n, length); return e }
-func (e EmptyEl) Py(length Length) EmptyEl             { tStyledPy(e.n, length); return e }
-func (e EmptyEl) Right(length Length) EmptyEl          { tStyledRight(e.n, length); return e }
-func (e EmptyEl) Rounded(length Length) EmptyEl        { tStyledRounded(e.n, length); return e }
-func (e EmptyEl) RoundedB(length Length) EmptyEl       { tStyledRoundedB(e.n, length); return e }
-func (e EmptyEl) RoundedBl(length Length) EmptyEl      { tStyledRoundedBl(e.n, length); return e }
-func (e EmptyEl) RoundedBr(length Length) EmptyEl      { tStyledRoundedBr(e.n, length); return e }
-func (e EmptyEl) RoundedL(length Length) EmptyEl       { tStyledRoundedL(e.n, length); return e }
-func (e EmptyEl) RoundedR(length Length) EmptyEl       { tStyledRoundedR(e.n, length); return e }
-func (e EmptyEl) RoundedT(length Length) EmptyEl       { tStyledRoundedT(e.n, length); return e }
-func (e EmptyEl) RoundedTl(length Length) EmptyEl      { tStyledRoundedTl(e.n, length); return e }
-func (e EmptyEl) RoundedTr(length Length) EmptyEl      { tStyledRoundedTr(e.n, length); return e }
-func (e EmptyEl) RowEnd(end int16) EmptyEl             { tStyledRowEnd(e.n, end); return e }
-func (e EmptyEl) RowSpan(span uint16) EmptyEl          { tStyledRowSpan(e.n, span); return e }
-func (e EmptyEl) RowStart(start int16) EmptyEl         { tStyledRowStart(e.n, start); return e }
-func (e EmptyEl) ScrollbarWidth(width Length) EmptyEl  { tStyledScrollbarWidth(e.n, width); return e }
-func (e EmptyEl) Shadow(shadows []BoxShadow) EmptyEl   { tStyledShadow(e.n, shadows); return e }
-func (e EmptyEl) Size(length Length) EmptyEl           { tStyledSize(e.n, length); return e }
-func (e EmptyEl) TextAlign(align TextAlign) EmptyEl    { tStyledTextAlign(e.n, align); return e }
-func (e EmptyEl) TextBg(bg Color) EmptyEl              { tStyledTextBg(e.n, bg); return e }
-func (e EmptyEl) TextColor(color Color) EmptyEl        { tStyledTextColor(e.n, color); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e EmptyEl) M(length Length) EmptyEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e EmptyEl) MaxH(length Length) EmptyEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e EmptyEl) MaxSize(length Length) EmptyEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e EmptyEl) MaxW(length Length) EmptyEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyEl) Mb(length Length) EmptyEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e EmptyEl) MinH(length Length) EmptyEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e EmptyEl) MinSize(length Length) EmptyEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e EmptyEl) MinW(length Length) EmptyEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyEl) Ml(length Length) EmptyEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyEl) Mr(length Length) EmptyEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyEl) Mt(length Length) EmptyEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e EmptyEl) Mx(length Length) EmptyEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e EmptyEl) My(length Length) EmptyEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e EmptyEl) Opacity(opacity float32) EmptyEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e EmptyEl) P(length Length) EmptyEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyEl) Pb(length Length) EmptyEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyEl) Pl(length Length) EmptyEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyEl) Pr(length Length) EmptyEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyEl) Pt(length Length) EmptyEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e EmptyEl) Px(length Length) EmptyEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e EmptyEl) Py(length Length) EmptyEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyEl) Right(length Length) EmptyEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e EmptyEl) Rounded(length Length) EmptyEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyEl) RoundedB(length Length) EmptyEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e EmptyEl) RoundedBl(length Length) EmptyEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e EmptyEl) RoundedBr(length Length) EmptyEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyEl) RoundedL(length Length) EmptyEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyEl) RoundedR(length Length) EmptyEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyEl) RoundedT(length Length) EmptyEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e EmptyEl) RoundedTl(length Length) EmptyEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e EmptyEl) RoundedTr(length Length) EmptyEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e EmptyEl) RowEnd(end int16) EmptyEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e EmptyEl) RowSpan(span uint16) EmptyEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e EmptyEl) RowStart(start int16) EmptyEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e EmptyEl) ScrollbarWidth(width Length) EmptyEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e EmptyEl) Shadow(shadows []BoxShadow) EmptyEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e EmptyEl) Size(length Length) EmptyEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e EmptyEl) TextAlign(align TextAlign) EmptyEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e EmptyEl) TextBg(bg Color) EmptyEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e EmptyEl) TextColor(color Color) EmptyEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e EmptyEl) TextDecorationColor(color Color) EmptyEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e EmptyEl) TextOverflow(overflow TextOverflow) EmptyEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyEl) TextSize(size Length) EmptyEl { tStyledTextSize(e.n, size); return e }
-func (e EmptyEl) Top(length Length) EmptyEl    { tStyledTop(e.n, length); return e }
-func (e EmptyEl) W(length Length) EmptyEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyEl) Top(length Length) EmptyEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e EmptyEl) W(length Length) EmptyEl { tStyledW(e.n, length); return e }
 
 // EmptyContentEl is gpui_kit::component::empty::EmptyContent.
 type EmptyContentEl struct{ n *node }
 
 func (e EmptyContentEl) node() *node { return e.n }
 
+// Create a centered content column with a maximum width of 24 rem.
+//
 // EmptyContent is <gpui_kit::component::empty::EmptyContent>::new.
 func EmptyContent(st ...Style) EmptyContentEl {
 	useComponentEmpty()
@@ -217,17 +479,43 @@ func EmptyContentDefault(st ...Style) EmptyContentEl {
 	return EmptyContentEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e EmptyContentEl) PopoverStyle() EmptyContentEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e EmptyContentEl) RoundedFullStyle() EmptyContentEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e EmptyContentEl) FocusRingStyle() EmptyContentEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e EmptyContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) EmptyContentEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -255,7 +543,20 @@ func (e EmptyContentEl) FontMedium() EmptyContentEl     { tStyledExtFontMedium(e
 func (e EmptyContentEl) FontNormal() EmptyContentEl     { tStyledExtFontNormal(e.n); return e }
 func (e EmptyContentEl) FontSemibold() EmptyContentEl   { tStyledExtFontSemibold(e.n); return e }
 func (e EmptyContentEl) FontThin() EmptyContentEl       { tStyledExtFontThin(e.n); return e }
-func (e EmptyContentEl) HFlex() EmptyContentEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e EmptyContentEl) HFlex() EmptyContentEl { tStyledExtHFlex(e.n); return e }
 func (e EmptyContentEl) Margins(margins EdgesInto) EmptyContentEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -268,6 +569,11 @@ func (e EmptyContentEl) RefineStyle(style StyleRefinement) EmptyContentEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e EmptyContentEl) VFlex() EmptyContentEl { tStyledExtVFlex(e.n); return e }
 
 func (e EmptyContentEl) Text(s string) EmptyContentEl { putText(e.n, s); return e }
@@ -275,10 +581,13 @@ func (e EmptyContentEl) Text(s string) EmptyContentEl { putText(e.n, s); return 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e EmptyContentEl) ChildView(v View) EmptyContentEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e EmptyContentEl) Child(child Element) EmptyContentEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e EmptyContentEl) Children(children ...Element) EmptyContentEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -287,173 +596,382 @@ func (e EmptyContentEl) Children(children ...Element) EmptyContentEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e EmptyContentEl) Style(st ...Style) EmptyContentEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e EmptyContentEl) AspectRatio(ratio float32) EmptyContentEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e EmptyContentEl) Bg(fill Fill) EmptyContentEl          { tStyledBg(e.n, fill); return e }
-func (e EmptyContentEl) Border(length Length) EmptyContentEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e EmptyContentEl) Bg(fill Fill) EmptyContentEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e EmptyContentEl) Border(length Length) EmptyContentEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyContentEl) BorderB(length Length) EmptyContentEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e EmptyContentEl) BorderColor(borderColor Color) EmptyContentEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyContentEl) BorderL(length Length) EmptyContentEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyContentEl) BorderR(length Length) EmptyContentEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyContentEl) BorderT(length Length) EmptyContentEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e EmptyContentEl) BorderX(length Length) EmptyContentEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e EmptyContentEl) BorderY(length Length) EmptyContentEl { tStyledBorderY(e.n, length); return e }
-func (e EmptyContentEl) Bottom(length Length) EmptyContentEl  { tStyledBottom(e.n, length); return e }
-func (e EmptyContentEl) ColEnd(end int16) EmptyContentEl      { tStyledColEnd(e.n, end); return e }
-func (e EmptyContentEl) ColSpan(span uint16) EmptyContentEl   { tStyledColSpan(e.n, span); return e }
-func (e EmptyContentEl) ColStart(start int16) EmptyContentEl  { tStyledColStart(e.n, start); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyContentEl) Bottom(length Length) EmptyContentEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e EmptyContentEl) ColEnd(end int16) EmptyContentEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e EmptyContentEl) ColSpan(span uint16) EmptyContentEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e EmptyContentEl) ColStart(start int16) EmptyContentEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e EmptyContentEl) Cursor(cursor CursorStyle) EmptyContentEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e EmptyContentEl) FlexBasis(basis Length) EmptyContentEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e EmptyContentEl) FlexGrow(grow float32) EmptyContentEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e EmptyContentEl) FlexShrink(shrink float32) EmptyContentEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e EmptyContentEl) FontFamily(familyName string) EmptyContentEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e EmptyContentEl) FontFeatures(features FontFeatures) EmptyContentEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e EmptyContentEl) FontWeight(weight FontWeight) EmptyContentEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e EmptyContentEl) Gap(length Length) EmptyContentEl    { tStyledGap(e.n, length); return e }
-func (e EmptyContentEl) GapX(length Length) EmptyContentEl   { tStyledGapX(e.n, length); return e }
-func (e EmptyContentEl) GapY(length Length) EmptyContentEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e EmptyContentEl) Gap(length Length) EmptyContentEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyContentEl) GapX(length Length) EmptyContentEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyContentEl) GapY(length Length) EmptyContentEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e EmptyContentEl) GridCols(cols uint16) EmptyContentEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e EmptyContentEl) GridColsMaxContent(cols uint16) EmptyContentEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e EmptyContentEl) GridColsMinContent(cols uint16) EmptyContentEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e EmptyContentEl) GridRows(rows uint16) EmptyContentEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e EmptyContentEl) GridRowsMaxContent(rows uint16) EmptyContentEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e EmptyContentEl) GridRowsMinContent(rows uint16) EmptyContentEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e EmptyContentEl) H(length Length) EmptyContentEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e EmptyContentEl) H(length Length) EmptyContentEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e EmptyContentEl) Inset(length Length) EmptyContentEl { tStyledInset(e.n, length); return e }
-func (e EmptyContentEl) Left(length Length) EmptyContentEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyContentEl) Left(length Length) EmptyContentEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e EmptyContentEl) LineClamp(lines int) EmptyContentEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e EmptyContentEl) LineHeight(lineHeight Length) EmptyContentEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e EmptyContentEl) M(length Length) EmptyContentEl       { tStyledM(e.n, length); return e }
-func (e EmptyContentEl) MaxH(length Length) EmptyContentEl    { tStyledMaxH(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e EmptyContentEl) M(length Length) EmptyContentEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e EmptyContentEl) MaxH(length Length) EmptyContentEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e EmptyContentEl) MaxSize(length Length) EmptyContentEl { tStyledMaxSize(e.n, length); return e }
-func (e EmptyContentEl) MaxW(length Length) EmptyContentEl    { tStyledMaxW(e.n, length); return e }
-func (e EmptyContentEl) Mb(length Length) EmptyContentEl      { tStyledMb(e.n, length); return e }
-func (e EmptyContentEl) MinH(length Length) EmptyContentEl    { tStyledMinH(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e EmptyContentEl) MaxW(length Length) EmptyContentEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyContentEl) Mb(length Length) EmptyContentEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e EmptyContentEl) MinH(length Length) EmptyContentEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e EmptyContentEl) MinSize(length Length) EmptyContentEl { tStyledMinSize(e.n, length); return e }
-func (e EmptyContentEl) MinW(length Length) EmptyContentEl    { tStyledMinW(e.n, length); return e }
-func (e EmptyContentEl) Ml(length Length) EmptyContentEl      { tStyledMl(e.n, length); return e }
-func (e EmptyContentEl) Mr(length Length) EmptyContentEl      { tStyledMr(e.n, length); return e }
-func (e EmptyContentEl) Mt(length Length) EmptyContentEl      { tStyledMt(e.n, length); return e }
-func (e EmptyContentEl) Mx(length Length) EmptyContentEl      { tStyledMx(e.n, length); return e }
-func (e EmptyContentEl) My(length Length) EmptyContentEl      { tStyledMy(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e EmptyContentEl) MinW(length Length) EmptyContentEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyContentEl) Ml(length Length) EmptyContentEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyContentEl) Mr(length Length) EmptyContentEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyContentEl) Mt(length Length) EmptyContentEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e EmptyContentEl) Mx(length Length) EmptyContentEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e EmptyContentEl) My(length Length) EmptyContentEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e EmptyContentEl) Opacity(opacity float32) EmptyContentEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e EmptyContentEl) P(length Length) EmptyContentEl       { tStyledP(e.n, length); return e }
-func (e EmptyContentEl) Pb(length Length) EmptyContentEl      { tStyledPb(e.n, length); return e }
-func (e EmptyContentEl) Pl(length Length) EmptyContentEl      { tStyledPl(e.n, length); return e }
-func (e EmptyContentEl) Pr(length Length) EmptyContentEl      { tStyledPr(e.n, length); return e }
-func (e EmptyContentEl) Pt(length Length) EmptyContentEl      { tStyledPt(e.n, length); return e }
-func (e EmptyContentEl) Px(length Length) EmptyContentEl      { tStyledPx(e.n, length); return e }
-func (e EmptyContentEl) Py(length Length) EmptyContentEl      { tStyledPy(e.n, length); return e }
-func (e EmptyContentEl) Right(length Length) EmptyContentEl   { tStyledRight(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e EmptyContentEl) P(length Length) EmptyContentEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyContentEl) Pb(length Length) EmptyContentEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyContentEl) Pl(length Length) EmptyContentEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyContentEl) Pr(length Length) EmptyContentEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyContentEl) Pt(length Length) EmptyContentEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e EmptyContentEl) Px(length Length) EmptyContentEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e EmptyContentEl) Py(length Length) EmptyContentEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyContentEl) Right(length Length) EmptyContentEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e EmptyContentEl) Rounded(length Length) EmptyContentEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyContentEl) RoundedB(length Length) EmptyContentEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyContentEl) RoundedBl(length Length) EmptyContentEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyContentEl) RoundedBr(length Length) EmptyContentEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyContentEl) RoundedL(length Length) EmptyContentEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyContentEl) RoundedR(length Length) EmptyContentEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyContentEl) RoundedT(length Length) EmptyContentEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyContentEl) RoundedTl(length Length) EmptyContentEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyContentEl) RoundedTr(length Length) EmptyContentEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e EmptyContentEl) RowEnd(end int16) EmptyContentEl     { tStyledRowEnd(e.n, end); return e }
-func (e EmptyContentEl) RowSpan(span uint16) EmptyContentEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e EmptyContentEl) RowEnd(end int16) EmptyContentEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e EmptyContentEl) RowSpan(span uint16) EmptyContentEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e EmptyContentEl) RowStart(start int16) EmptyContentEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e EmptyContentEl) ScrollbarWidth(width Length) EmptyContentEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e EmptyContentEl) Shadow(shadows []BoxShadow) EmptyContentEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e EmptyContentEl) Size(length Length) EmptyContentEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e EmptyContentEl) TextAlign(align TextAlign) EmptyContentEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e EmptyContentEl) TextBg(bg Color) EmptyContentEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e EmptyContentEl) TextBg(bg Color) EmptyContentEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyContentEl) TextColor(color Color) EmptyContentEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e EmptyContentEl) TextDecorationColor(color Color) EmptyContentEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e EmptyContentEl) TextOverflow(overflow TextOverflow) EmptyContentEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyContentEl) TextSize(size Length) EmptyContentEl { tStyledTextSize(e.n, size); return e }
-func (e EmptyContentEl) Top(length Length) EmptyContentEl    { tStyledTop(e.n, length); return e }
-func (e EmptyContentEl) W(length Length) EmptyContentEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyContentEl) Top(length Length) EmptyContentEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e EmptyContentEl) W(length Length) EmptyContentEl { tStyledW(e.n, length); return e }
 
 // EmptyDescriptionEl is gpui_kit::component::empty::EmptyDescription.
 type EmptyDescriptionEl struct{ n *node }
 
 func (e EmptyDescriptionEl) node() *node { return e.n }
 
+// Create a muted description that wraps to the available width.
+//
 // EmptyDescription is <gpui_kit::component::empty::EmptyDescription>::new.
 func EmptyDescription(st ...Style) EmptyDescriptionEl {
 	useComponentEmpty()
@@ -470,20 +988,46 @@ func EmptyDescriptionDefault(st ...Style) EmptyDescriptionEl {
 	return EmptyDescriptionEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e EmptyDescriptionEl) PopoverStyle() EmptyDescriptionEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e EmptyDescriptionEl) RoundedFullStyle() EmptyDescriptionEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e EmptyDescriptionEl) FocusRingStyle() EmptyDescriptionEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e EmptyDescriptionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) EmptyDescriptionEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -517,7 +1061,20 @@ func (e EmptyDescriptionEl) FontMedium() EmptyDescriptionEl   { tStyledExtFontMe
 func (e EmptyDescriptionEl) FontNormal() EmptyDescriptionEl   { tStyledExtFontNormal(e.n); return e }
 func (e EmptyDescriptionEl) FontSemibold() EmptyDescriptionEl { tStyledExtFontSemibold(e.n); return e }
 func (e EmptyDescriptionEl) FontThin() EmptyDescriptionEl     { tStyledExtFontThin(e.n); return e }
-func (e EmptyDescriptionEl) HFlex() EmptyDescriptionEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e EmptyDescriptionEl) HFlex() EmptyDescriptionEl { tStyledExtHFlex(e.n); return e }
 func (e EmptyDescriptionEl) Margins(margins EdgesInto) EmptyDescriptionEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -530,6 +1087,11 @@ func (e EmptyDescriptionEl) RefineStyle(style StyleRefinement) EmptyDescriptionE
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e EmptyDescriptionEl) VFlex() EmptyDescriptionEl { tStyledExtVFlex(e.n); return e }
 
 func (e EmptyDescriptionEl) Text(s string) EmptyDescriptionEl { putText(e.n, s); return e }
@@ -537,10 +1099,13 @@ func (e EmptyDescriptionEl) Text(s string) EmptyDescriptionEl { putText(e.n, s);
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e EmptyDescriptionEl) ChildView(v View) EmptyDescriptionEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e EmptyDescriptionEl) Child(child Element) EmptyDescriptionEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e EmptyDescriptionEl) Children(children ...Element) EmptyDescriptionEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -549,266 +1114,475 @@ func (e EmptyDescriptionEl) Children(children ...Element) EmptyDescriptionEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e EmptyDescriptionEl) Style(st ...Style) EmptyDescriptionEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e EmptyDescriptionEl) AspectRatio(ratio float32) EmptyDescriptionEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e EmptyDescriptionEl) Bg(fill Fill) EmptyDescriptionEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e EmptyDescriptionEl) Border(length Length) EmptyDescriptionEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyDescriptionEl) BorderB(length Length) EmptyDescriptionEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e EmptyDescriptionEl) BorderColor(borderColor Color) EmptyDescriptionEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyDescriptionEl) BorderL(length Length) EmptyDescriptionEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyDescriptionEl) BorderR(length Length) EmptyDescriptionEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyDescriptionEl) BorderT(length Length) EmptyDescriptionEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e EmptyDescriptionEl) BorderX(length Length) EmptyDescriptionEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e EmptyDescriptionEl) BorderY(length Length) EmptyDescriptionEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e EmptyDescriptionEl) Bottom(length Length) EmptyDescriptionEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e EmptyDescriptionEl) ColEnd(end int16) EmptyDescriptionEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e EmptyDescriptionEl) ColSpan(span uint16) EmptyDescriptionEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e EmptyDescriptionEl) ColStart(start int16) EmptyDescriptionEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e EmptyDescriptionEl) Cursor(cursor CursorStyle) EmptyDescriptionEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e EmptyDescriptionEl) FlexBasis(basis Length) EmptyDescriptionEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e EmptyDescriptionEl) FlexGrow(grow float32) EmptyDescriptionEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e EmptyDescriptionEl) FlexShrink(shrink float32) EmptyDescriptionEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e EmptyDescriptionEl) FontFamily(familyName string) EmptyDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e EmptyDescriptionEl) FontFeatures(features FontFeatures) EmptyDescriptionEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e EmptyDescriptionEl) FontWeight(weight FontWeight) EmptyDescriptionEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e EmptyDescriptionEl) Gap(length Length) EmptyDescriptionEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e EmptyDescriptionEl) GapX(length Length) EmptyDescriptionEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e EmptyDescriptionEl) GapY(length Length) EmptyDescriptionEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e EmptyDescriptionEl) GridCols(cols uint16) EmptyDescriptionEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e EmptyDescriptionEl) GridColsMaxContent(cols uint16) EmptyDescriptionEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e EmptyDescriptionEl) GridColsMinContent(cols uint16) EmptyDescriptionEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e EmptyDescriptionEl) GridRows(rows uint16) EmptyDescriptionEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e EmptyDescriptionEl) GridRowsMaxContent(rows uint16) EmptyDescriptionEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e EmptyDescriptionEl) GridRowsMinContent(rows uint16) EmptyDescriptionEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e EmptyDescriptionEl) H(length Length) EmptyDescriptionEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e EmptyDescriptionEl) Inset(length Length) EmptyDescriptionEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e EmptyDescriptionEl) Left(length Length) EmptyDescriptionEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e EmptyDescriptionEl) LineClamp(lines int) EmptyDescriptionEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e EmptyDescriptionEl) LineHeight(lineHeight Length) EmptyDescriptionEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e EmptyDescriptionEl) M(length Length) EmptyDescriptionEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e EmptyDescriptionEl) MaxH(length Length) EmptyDescriptionEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e EmptyDescriptionEl) MaxSize(length Length) EmptyDescriptionEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e EmptyDescriptionEl) MaxW(length Length) EmptyDescriptionEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e EmptyDescriptionEl) Mb(length Length) EmptyDescriptionEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e EmptyDescriptionEl) MinH(length Length) EmptyDescriptionEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e EmptyDescriptionEl) MinSize(length Length) EmptyDescriptionEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e EmptyDescriptionEl) MinW(length Length) EmptyDescriptionEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e EmptyDescriptionEl) Ml(length Length) EmptyDescriptionEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e EmptyDescriptionEl) Mr(length Length) EmptyDescriptionEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e EmptyDescriptionEl) Mt(length Length) EmptyDescriptionEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e EmptyDescriptionEl) Mx(length Length) EmptyDescriptionEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e EmptyDescriptionEl) My(length Length) EmptyDescriptionEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e EmptyDescriptionEl) Opacity(opacity float32) EmptyDescriptionEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e EmptyDescriptionEl) P(length Length) EmptyDescriptionEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e EmptyDescriptionEl) P(length Length) EmptyDescriptionEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e EmptyDescriptionEl) Pb(length Length) EmptyDescriptionEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e EmptyDescriptionEl) Pl(length Length) EmptyDescriptionEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e EmptyDescriptionEl) Pr(length Length) EmptyDescriptionEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e EmptyDescriptionEl) Pt(length Length) EmptyDescriptionEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e EmptyDescriptionEl) Px(length Length) EmptyDescriptionEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e EmptyDescriptionEl) Py(length Length) EmptyDescriptionEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e EmptyDescriptionEl) Right(length Length) EmptyDescriptionEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e EmptyDescriptionEl) Rounded(length Length) EmptyDescriptionEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyDescriptionEl) RoundedB(length Length) EmptyDescriptionEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyDescriptionEl) RoundedBl(length Length) EmptyDescriptionEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyDescriptionEl) RoundedBr(length Length) EmptyDescriptionEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyDescriptionEl) RoundedL(length Length) EmptyDescriptionEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyDescriptionEl) RoundedR(length Length) EmptyDescriptionEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyDescriptionEl) RoundedT(length Length) EmptyDescriptionEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyDescriptionEl) RoundedTl(length Length) EmptyDescriptionEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyDescriptionEl) RoundedTr(length Length) EmptyDescriptionEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e EmptyDescriptionEl) RowEnd(end int16) EmptyDescriptionEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e EmptyDescriptionEl) RowSpan(span uint16) EmptyDescriptionEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e EmptyDescriptionEl) RowStart(start int16) EmptyDescriptionEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e EmptyDescriptionEl) ScrollbarWidth(width Length) EmptyDescriptionEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e EmptyDescriptionEl) Shadow(shadows []BoxShadow) EmptyDescriptionEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e EmptyDescriptionEl) Size(length Length) EmptyDescriptionEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e EmptyDescriptionEl) TextAlign(align TextAlign) EmptyDescriptionEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyDescriptionEl) TextBg(bg Color) EmptyDescriptionEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyDescriptionEl) TextColor(color Color) EmptyDescriptionEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e EmptyDescriptionEl) TextDecorationColor(color Color) EmptyDescriptionEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e EmptyDescriptionEl) TextOverflow(overflow TextOverflow) EmptyDescriptionEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyDescriptionEl) TextSize(size Length) EmptyDescriptionEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e EmptyDescriptionEl) Top(length Length) EmptyDescriptionEl { tStyledTop(e.n, length); return e }
-func (e EmptyDescriptionEl) W(length Length) EmptyDescriptionEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e EmptyDescriptionEl) W(length Length) EmptyDescriptionEl { tStyledW(e.n, length); return e }
 
 // EmptyHeaderEl is gpui_kit::component::empty::EmptyHeader.
 type EmptyHeaderEl struct{ n *node }
 
 func (e EmptyHeaderEl) node() *node { return e.n }
 
+// Create a centered header with a maximum width of 24 rem.
+//
 // EmptyHeader is <gpui_kit::component::empty::EmptyHeader>::new.
 func EmptyHeader(st ...Style) EmptyHeaderEl {
 	useComponentEmpty()
@@ -825,6 +1599,8 @@ func EmptyHeaderDefault(st ...Style) EmptyHeaderEl {
 	return EmptyHeaderEl{n}
 }
 
+// Set the description, replacing any previously configured description.
+//
 // Description is <gpui_kit::component::empty::EmptyHeader>::description.
 func (e EmptyHeaderEl) Description(description EmptyDescriptionEl) EmptyHeaderEl {
 	o := op(e.n, 256)
@@ -832,6 +1608,8 @@ func (e EmptyHeaderEl) Description(description EmptyDescriptionEl) EmptyHeaderEl
 	return e
 }
 
+// Set the media, replacing any previously configured media.
+//
 // Media is <gpui_kit::component::empty::EmptyHeader>::media.
 func (e EmptyHeaderEl) Media(media EmptyMediaEl) EmptyHeaderEl {
 	o := op(e.n, 257)
@@ -839,6 +1617,8 @@ func (e EmptyHeaderEl) Media(media EmptyMediaEl) EmptyHeaderEl {
 	return e
 }
 
+// Set the title, replacing any previously configured title.
+//
 // Title is <gpui_kit::component::empty::EmptyHeader>::title.
 func (e EmptyHeaderEl) Title(title EmptyTitleEl) EmptyHeaderEl {
 	o := op(e.n, 258)
@@ -846,7 +1626,19 @@ func (e EmptyHeaderEl) Title(title EmptyTitleEl) EmptyHeaderEl {
 	return e
 }
 
-func (e EmptyHeaderEl) PopoverStyle() EmptyHeaderEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e EmptyHeaderEl) PopoverStyle() EmptyHeaderEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e EmptyHeaderEl) RoundedFullStyle() EmptyHeaderEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e EmptyHeaderEl) CornerRadii(radius Corners) EmptyHeaderEl {
@@ -871,7 +1663,20 @@ func (e EmptyHeaderEl) FontMedium() EmptyHeaderEl     { tStyledExtFontMedium(e.n
 func (e EmptyHeaderEl) FontNormal() EmptyHeaderEl     { tStyledExtFontNormal(e.n); return e }
 func (e EmptyHeaderEl) FontSemibold() EmptyHeaderEl   { tStyledExtFontSemibold(e.n); return e }
 func (e EmptyHeaderEl) FontThin() EmptyHeaderEl       { tStyledExtFontThin(e.n); return e }
-func (e EmptyHeaderEl) HFlex() EmptyHeaderEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e EmptyHeaderEl) HFlex() EmptyHeaderEl { tStyledExtHFlex(e.n); return e }
 func (e EmptyHeaderEl) Margins(margins EdgesInto) EmptyHeaderEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -884,157 +1689,371 @@ func (e EmptyHeaderEl) RefineStyle(style StyleRefinement) EmptyHeaderEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e EmptyHeaderEl) VFlex() EmptyHeaderEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e EmptyHeaderEl) Style(st ...Style) EmptyHeaderEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e EmptyHeaderEl) AspectRatio(ratio float32) EmptyHeaderEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e EmptyHeaderEl) Bg(fill Fill) EmptyHeaderEl          { tStyledBg(e.n, fill); return e }
-func (e EmptyHeaderEl) Border(length Length) EmptyHeaderEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e EmptyHeaderEl) Bg(fill Fill) EmptyHeaderEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e EmptyHeaderEl) Border(length Length) EmptyHeaderEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyHeaderEl) BorderB(length Length) EmptyHeaderEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e EmptyHeaderEl) BorderColor(borderColor Color) EmptyHeaderEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e EmptyHeaderEl) BorderL(length Length) EmptyHeaderEl     { tStyledBorderL(e.n, length); return e }
-func (e EmptyHeaderEl) BorderR(length Length) EmptyHeaderEl     { tStyledBorderR(e.n, length); return e }
-func (e EmptyHeaderEl) BorderT(length Length) EmptyHeaderEl     { tStyledBorderT(e.n, length); return e }
-func (e EmptyHeaderEl) BorderX(length Length) EmptyHeaderEl     { tStyledBorderX(e.n, length); return e }
-func (e EmptyHeaderEl) BorderY(length Length) EmptyHeaderEl     { tStyledBorderY(e.n, length); return e }
-func (e EmptyHeaderEl) Bottom(length Length) EmptyHeaderEl      { tStyledBottom(e.n, length); return e }
-func (e EmptyHeaderEl) ColEnd(end int16) EmptyHeaderEl          { tStyledColEnd(e.n, end); return e }
-func (e EmptyHeaderEl) ColSpan(span uint16) EmptyHeaderEl       { tStyledColSpan(e.n, span); return e }
-func (e EmptyHeaderEl) ColStart(start int16) EmptyHeaderEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyHeaderEl) BorderL(length Length) EmptyHeaderEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyHeaderEl) BorderR(length Length) EmptyHeaderEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyHeaderEl) BorderT(length Length) EmptyHeaderEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EmptyHeaderEl) BorderX(length Length) EmptyHeaderEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EmptyHeaderEl) BorderY(length Length) EmptyHeaderEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyHeaderEl) Bottom(length Length) EmptyHeaderEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e EmptyHeaderEl) ColEnd(end int16) EmptyHeaderEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e EmptyHeaderEl) ColSpan(span uint16) EmptyHeaderEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e EmptyHeaderEl) ColStart(start int16) EmptyHeaderEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e EmptyHeaderEl) Cursor(cursor CursorStyle) EmptyHeaderEl { tStyledCursor(e.n, cursor); return e }
-func (e EmptyHeaderEl) FlexBasis(basis Length) EmptyHeaderEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e EmptyHeaderEl) FlexGrow(grow float32) EmptyHeaderEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e EmptyHeaderEl) FlexBasis(basis Length) EmptyHeaderEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e EmptyHeaderEl) FlexGrow(grow float32) EmptyHeaderEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e EmptyHeaderEl) FlexShrink(shrink float32) EmptyHeaderEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e EmptyHeaderEl) FontFamily(familyName string) EmptyHeaderEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e EmptyHeaderEl) FontFeatures(features FontFeatures) EmptyHeaderEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e EmptyHeaderEl) FontWeight(weight FontWeight) EmptyHeaderEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e EmptyHeaderEl) Gap(length Length) EmptyHeaderEl    { tStyledGap(e.n, length); return e }
-func (e EmptyHeaderEl) GapX(length Length) EmptyHeaderEl   { tStyledGapX(e.n, length); return e }
-func (e EmptyHeaderEl) GapY(length Length) EmptyHeaderEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e EmptyHeaderEl) Gap(length Length) EmptyHeaderEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyHeaderEl) GapX(length Length) EmptyHeaderEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyHeaderEl) GapY(length Length) EmptyHeaderEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e EmptyHeaderEl) GridCols(cols uint16) EmptyHeaderEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e EmptyHeaderEl) GridColsMaxContent(cols uint16) EmptyHeaderEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e EmptyHeaderEl) GridColsMinContent(cols uint16) EmptyHeaderEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e EmptyHeaderEl) GridRows(rows uint16) EmptyHeaderEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e EmptyHeaderEl) GridRowsMaxContent(rows uint16) EmptyHeaderEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e EmptyHeaderEl) GridRowsMinContent(rows uint16) EmptyHeaderEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e EmptyHeaderEl) H(length Length) EmptyHeaderEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e EmptyHeaderEl) H(length Length) EmptyHeaderEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e EmptyHeaderEl) Inset(length Length) EmptyHeaderEl { tStyledInset(e.n, length); return e }
-func (e EmptyHeaderEl) Left(length Length) EmptyHeaderEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyHeaderEl) Left(length Length) EmptyHeaderEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e EmptyHeaderEl) LineClamp(lines int) EmptyHeaderEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e EmptyHeaderEl) LineHeight(lineHeight Length) EmptyHeaderEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e EmptyHeaderEl) M(length Length) EmptyHeaderEl         { tStyledM(e.n, length); return e }
-func (e EmptyHeaderEl) MaxH(length Length) EmptyHeaderEl      { tStyledMaxH(e.n, length); return e }
-func (e EmptyHeaderEl) MaxSize(length Length) EmptyHeaderEl   { tStyledMaxSize(e.n, length); return e }
-func (e EmptyHeaderEl) MaxW(length Length) EmptyHeaderEl      { tStyledMaxW(e.n, length); return e }
-func (e EmptyHeaderEl) Mb(length Length) EmptyHeaderEl        { tStyledMb(e.n, length); return e }
-func (e EmptyHeaderEl) MinH(length Length) EmptyHeaderEl      { tStyledMinH(e.n, length); return e }
-func (e EmptyHeaderEl) MinSize(length Length) EmptyHeaderEl   { tStyledMinSize(e.n, length); return e }
-func (e EmptyHeaderEl) MinW(length Length) EmptyHeaderEl      { tStyledMinW(e.n, length); return e }
-func (e EmptyHeaderEl) Ml(length Length) EmptyHeaderEl        { tStyledMl(e.n, length); return e }
-func (e EmptyHeaderEl) Mr(length Length) EmptyHeaderEl        { tStyledMr(e.n, length); return e }
-func (e EmptyHeaderEl) Mt(length Length) EmptyHeaderEl        { tStyledMt(e.n, length); return e }
-func (e EmptyHeaderEl) Mx(length Length) EmptyHeaderEl        { tStyledMx(e.n, length); return e }
-func (e EmptyHeaderEl) My(length Length) EmptyHeaderEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e EmptyHeaderEl) M(length Length) EmptyHeaderEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e EmptyHeaderEl) MaxH(length Length) EmptyHeaderEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e EmptyHeaderEl) MaxSize(length Length) EmptyHeaderEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e EmptyHeaderEl) MaxW(length Length) EmptyHeaderEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyHeaderEl) Mb(length Length) EmptyHeaderEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e EmptyHeaderEl) MinH(length Length) EmptyHeaderEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e EmptyHeaderEl) MinSize(length Length) EmptyHeaderEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e EmptyHeaderEl) MinW(length Length) EmptyHeaderEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyHeaderEl) Ml(length Length) EmptyHeaderEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyHeaderEl) Mr(length Length) EmptyHeaderEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyHeaderEl) Mt(length Length) EmptyHeaderEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e EmptyHeaderEl) Mx(length Length) EmptyHeaderEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e EmptyHeaderEl) My(length Length) EmptyHeaderEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e EmptyHeaderEl) Opacity(opacity float32) EmptyHeaderEl { tStyledOpacity(e.n, opacity); return e }
-func (e EmptyHeaderEl) P(length Length) EmptyHeaderEl         { tStyledP(e.n, length); return e }
-func (e EmptyHeaderEl) Pb(length Length) EmptyHeaderEl        { tStyledPb(e.n, length); return e }
-func (e EmptyHeaderEl) Pl(length Length) EmptyHeaderEl        { tStyledPl(e.n, length); return e }
-func (e EmptyHeaderEl) Pr(length Length) EmptyHeaderEl        { tStyledPr(e.n, length); return e }
-func (e EmptyHeaderEl) Pt(length Length) EmptyHeaderEl        { tStyledPt(e.n, length); return e }
-func (e EmptyHeaderEl) Px(length Length) EmptyHeaderEl        { tStyledPx(e.n, length); return e }
-func (e EmptyHeaderEl) Py(length Length) EmptyHeaderEl        { tStyledPy(e.n, length); return e }
-func (e EmptyHeaderEl) Right(length Length) EmptyHeaderEl     { tStyledRight(e.n, length); return e }
-func (e EmptyHeaderEl) Rounded(length Length) EmptyHeaderEl   { tStyledRounded(e.n, length); return e }
-func (e EmptyHeaderEl) RoundedB(length Length) EmptyHeaderEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e EmptyHeaderEl) P(length Length) EmptyHeaderEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyHeaderEl) Pb(length Length) EmptyHeaderEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyHeaderEl) Pl(length Length) EmptyHeaderEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyHeaderEl) Pr(length Length) EmptyHeaderEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyHeaderEl) Pt(length Length) EmptyHeaderEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e EmptyHeaderEl) Px(length Length) EmptyHeaderEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e EmptyHeaderEl) Py(length Length) EmptyHeaderEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyHeaderEl) Right(length Length) EmptyHeaderEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e EmptyHeaderEl) Rounded(length Length) EmptyHeaderEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyHeaderEl) RoundedB(length Length) EmptyHeaderEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyHeaderEl) RoundedBl(length Length) EmptyHeaderEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyHeaderEl) RoundedBr(length Length) EmptyHeaderEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyHeaderEl) RoundedL(length Length) EmptyHeaderEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyHeaderEl) RoundedR(length Length) EmptyHeaderEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e EmptyHeaderEl) RoundedT(length Length) EmptyHeaderEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyHeaderEl) RoundedTl(length Length) EmptyHeaderEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyHeaderEl) RoundedTr(length Length) EmptyHeaderEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e EmptyHeaderEl) RowEnd(end int16) EmptyHeaderEl     { tStyledRowEnd(e.n, end); return e }
-func (e EmptyHeaderEl) RowSpan(span uint16) EmptyHeaderEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e EmptyHeaderEl) RowEnd(end int16) EmptyHeaderEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e EmptyHeaderEl) RowSpan(span uint16) EmptyHeaderEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e EmptyHeaderEl) RowStart(start int16) EmptyHeaderEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e EmptyHeaderEl) ScrollbarWidth(width Length) EmptyHeaderEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e EmptyHeaderEl) Shadow(shadows []BoxShadow) EmptyHeaderEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e EmptyHeaderEl) Size(length Length) EmptyHeaderEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e EmptyHeaderEl) TextAlign(align TextAlign) EmptyHeaderEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e EmptyHeaderEl) TextBg(bg Color) EmptyHeaderEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e EmptyHeaderEl) TextBg(bg Color) EmptyHeaderEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyHeaderEl) TextColor(color Color) EmptyHeaderEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e EmptyHeaderEl) TextDecorationColor(color Color) EmptyHeaderEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e EmptyHeaderEl) TextOverflow(overflow TextOverflow) EmptyHeaderEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyHeaderEl) TextSize(size Length) EmptyHeaderEl { tStyledTextSize(e.n, size); return e }
-func (e EmptyHeaderEl) Top(length Length) EmptyHeaderEl    { tStyledTop(e.n, length); return e }
-func (e EmptyHeaderEl) W(length Length) EmptyHeaderEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyHeaderEl) Top(length Length) EmptyHeaderEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e EmptyHeaderEl) W(length Length) EmptyHeaderEl { tStyledW(e.n, length); return e }
 
 // EmptyMediaEl is gpui_kit::component::empty::EmptyMedia.
 type EmptyMediaEl struct{ n *node }
 
 func (e EmptyMediaEl) node() *node { return e.n }
 
+// Create an unframed media slot.
+//
 // EmptyMedia is <gpui_kit::component::empty::EmptyMedia>::new.
 func EmptyMedia(st ...Style) EmptyMediaEl {
 	useComponentEmpty()
@@ -1051,6 +2070,8 @@ func EmptyMediaDefault(st ...Style) EmptyMediaEl {
 	return EmptyMediaEl{n}
 }
 
+// Set the visual treatment without changing the supplied children.
+//
 // WithVariant is <gpui_kit::component::empty::EmptyMedia>::with_variant.
 func (e EmptyMediaEl) WithVariant(variant EmptyMediaVariant) EmptyMediaEl {
 	o := op(e.n, 256)
@@ -1058,14 +2079,40 @@ func (e EmptyMediaEl) WithVariant(variant EmptyMediaVariant) EmptyMediaEl {
 	return e
 }
 
-func (e EmptyMediaEl) PopoverStyle() EmptyMediaEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e EmptyMediaEl) PopoverStyle() EmptyMediaEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e EmptyMediaEl) RoundedFullStyle() EmptyMediaEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e EmptyMediaEl) FocusRingStyle() EmptyMediaEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e EmptyMediaEl) OnPrepaint(callback func(cx *Cx, e Bounds)) EmptyMediaEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1093,7 +2140,20 @@ func (e EmptyMediaEl) FontMedium() EmptyMediaEl     { tStyledExtFontMedium(e.n);
 func (e EmptyMediaEl) FontNormal() EmptyMediaEl     { tStyledExtFontNormal(e.n); return e }
 func (e EmptyMediaEl) FontSemibold() EmptyMediaEl   { tStyledExtFontSemibold(e.n); return e }
 func (e EmptyMediaEl) FontThin() EmptyMediaEl       { tStyledExtFontThin(e.n); return e }
-func (e EmptyMediaEl) HFlex() EmptyMediaEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e EmptyMediaEl) HFlex() EmptyMediaEl { tStyledExtHFlex(e.n); return e }
 func (e EmptyMediaEl) Margins(margins EdgesInto) EmptyMediaEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1106,6 +2166,11 @@ func (e EmptyMediaEl) RefineStyle(style StyleRefinement) EmptyMediaEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e EmptyMediaEl) VFlex() EmptyMediaEl { tStyledExtVFlex(e.n); return e }
 
 func (e EmptyMediaEl) Text(s string) EmptyMediaEl { putText(e.n, s); return e }
@@ -1113,7 +2178,10 @@ func (e EmptyMediaEl) Text(s string) EmptyMediaEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e EmptyMediaEl) ChildView(v View) EmptyMediaEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e EmptyMediaEl) Child(child Element) EmptyMediaEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e EmptyMediaEl) Children(children ...Element) EmptyMediaEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1122,134 +2190,343 @@ func (e EmptyMediaEl) Children(children ...Element) EmptyMediaEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e EmptyMediaEl) Style(st ...Style) EmptyMediaEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e EmptyMediaEl) AspectRatio(ratio float32) EmptyMediaEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e EmptyMediaEl) Bg(fill Fill) EmptyMediaEl          { tStyledBg(e.n, fill); return e }
-func (e EmptyMediaEl) Border(length Length) EmptyMediaEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e EmptyMediaEl) Bg(fill Fill) EmptyMediaEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e EmptyMediaEl) Border(length Length) EmptyMediaEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyMediaEl) BorderB(length Length) EmptyMediaEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e EmptyMediaEl) BorderColor(borderColor Color) EmptyMediaEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e EmptyMediaEl) BorderL(length Length) EmptyMediaEl     { tStyledBorderL(e.n, length); return e }
-func (e EmptyMediaEl) BorderR(length Length) EmptyMediaEl     { tStyledBorderR(e.n, length); return e }
-func (e EmptyMediaEl) BorderT(length Length) EmptyMediaEl     { tStyledBorderT(e.n, length); return e }
-func (e EmptyMediaEl) BorderX(length Length) EmptyMediaEl     { tStyledBorderX(e.n, length); return e }
-func (e EmptyMediaEl) BorderY(length Length) EmptyMediaEl     { tStyledBorderY(e.n, length); return e }
-func (e EmptyMediaEl) Bottom(length Length) EmptyMediaEl      { tStyledBottom(e.n, length); return e }
-func (e EmptyMediaEl) ColEnd(end int16) EmptyMediaEl          { tStyledColEnd(e.n, end); return e }
-func (e EmptyMediaEl) ColSpan(span uint16) EmptyMediaEl       { tStyledColSpan(e.n, span); return e }
-func (e EmptyMediaEl) ColStart(start int16) EmptyMediaEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyMediaEl) BorderL(length Length) EmptyMediaEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyMediaEl) BorderR(length Length) EmptyMediaEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyMediaEl) BorderT(length Length) EmptyMediaEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EmptyMediaEl) BorderX(length Length) EmptyMediaEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EmptyMediaEl) BorderY(length Length) EmptyMediaEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyMediaEl) Bottom(length Length) EmptyMediaEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e EmptyMediaEl) ColEnd(end int16) EmptyMediaEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e EmptyMediaEl) ColSpan(span uint16) EmptyMediaEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e EmptyMediaEl) ColStart(start int16) EmptyMediaEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e EmptyMediaEl) Cursor(cursor CursorStyle) EmptyMediaEl { tStyledCursor(e.n, cursor); return e }
-func (e EmptyMediaEl) FlexBasis(basis Length) EmptyMediaEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e EmptyMediaEl) FlexGrow(grow float32) EmptyMediaEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e EmptyMediaEl) FlexBasis(basis Length) EmptyMediaEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e EmptyMediaEl) FlexGrow(grow float32) EmptyMediaEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e EmptyMediaEl) FlexShrink(shrink float32) EmptyMediaEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e EmptyMediaEl) FontFamily(familyName string) EmptyMediaEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e EmptyMediaEl) FontFeatures(features FontFeatures) EmptyMediaEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e EmptyMediaEl) FontWeight(weight FontWeight) EmptyMediaEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e EmptyMediaEl) Gap(length Length) EmptyMediaEl    { tStyledGap(e.n, length); return e }
-func (e EmptyMediaEl) GapX(length Length) EmptyMediaEl   { tStyledGapX(e.n, length); return e }
-func (e EmptyMediaEl) GapY(length Length) EmptyMediaEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e EmptyMediaEl) Gap(length Length) EmptyMediaEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyMediaEl) GapX(length Length) EmptyMediaEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyMediaEl) GapY(length Length) EmptyMediaEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e EmptyMediaEl) GridCols(cols uint16) EmptyMediaEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e EmptyMediaEl) GridColsMaxContent(cols uint16) EmptyMediaEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e EmptyMediaEl) GridColsMinContent(cols uint16) EmptyMediaEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e EmptyMediaEl) GridRows(rows uint16) EmptyMediaEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e EmptyMediaEl) GridRowsMaxContent(rows uint16) EmptyMediaEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e EmptyMediaEl) GridRowsMinContent(rows uint16) EmptyMediaEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e EmptyMediaEl) H(length Length) EmptyMediaEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e EmptyMediaEl) H(length Length) EmptyMediaEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e EmptyMediaEl) Inset(length Length) EmptyMediaEl { tStyledInset(e.n, length); return e }
-func (e EmptyMediaEl) Left(length Length) EmptyMediaEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyMediaEl) Left(length Length) EmptyMediaEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e EmptyMediaEl) LineClamp(lines int) EmptyMediaEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e EmptyMediaEl) LineHeight(lineHeight Length) EmptyMediaEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e EmptyMediaEl) M(length Length) EmptyMediaEl         { tStyledM(e.n, length); return e }
-func (e EmptyMediaEl) MaxH(length Length) EmptyMediaEl      { tStyledMaxH(e.n, length); return e }
-func (e EmptyMediaEl) MaxSize(length Length) EmptyMediaEl   { tStyledMaxSize(e.n, length); return e }
-func (e EmptyMediaEl) MaxW(length Length) EmptyMediaEl      { tStyledMaxW(e.n, length); return e }
-func (e EmptyMediaEl) Mb(length Length) EmptyMediaEl        { tStyledMb(e.n, length); return e }
-func (e EmptyMediaEl) MinH(length Length) EmptyMediaEl      { tStyledMinH(e.n, length); return e }
-func (e EmptyMediaEl) MinSize(length Length) EmptyMediaEl   { tStyledMinSize(e.n, length); return e }
-func (e EmptyMediaEl) MinW(length Length) EmptyMediaEl      { tStyledMinW(e.n, length); return e }
-func (e EmptyMediaEl) Ml(length Length) EmptyMediaEl        { tStyledMl(e.n, length); return e }
-func (e EmptyMediaEl) Mr(length Length) EmptyMediaEl        { tStyledMr(e.n, length); return e }
-func (e EmptyMediaEl) Mt(length Length) EmptyMediaEl        { tStyledMt(e.n, length); return e }
-func (e EmptyMediaEl) Mx(length Length) EmptyMediaEl        { tStyledMx(e.n, length); return e }
-func (e EmptyMediaEl) My(length Length) EmptyMediaEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e EmptyMediaEl) M(length Length) EmptyMediaEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e EmptyMediaEl) MaxH(length Length) EmptyMediaEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e EmptyMediaEl) MaxSize(length Length) EmptyMediaEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e EmptyMediaEl) MaxW(length Length) EmptyMediaEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyMediaEl) Mb(length Length) EmptyMediaEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e EmptyMediaEl) MinH(length Length) EmptyMediaEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e EmptyMediaEl) MinSize(length Length) EmptyMediaEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e EmptyMediaEl) MinW(length Length) EmptyMediaEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyMediaEl) Ml(length Length) EmptyMediaEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyMediaEl) Mr(length Length) EmptyMediaEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyMediaEl) Mt(length Length) EmptyMediaEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e EmptyMediaEl) Mx(length Length) EmptyMediaEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e EmptyMediaEl) My(length Length) EmptyMediaEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e EmptyMediaEl) Opacity(opacity float32) EmptyMediaEl { tStyledOpacity(e.n, opacity); return e }
-func (e EmptyMediaEl) P(length Length) EmptyMediaEl         { tStyledP(e.n, length); return e }
-func (e EmptyMediaEl) Pb(length Length) EmptyMediaEl        { tStyledPb(e.n, length); return e }
-func (e EmptyMediaEl) Pl(length Length) EmptyMediaEl        { tStyledPl(e.n, length); return e }
-func (e EmptyMediaEl) Pr(length Length) EmptyMediaEl        { tStyledPr(e.n, length); return e }
-func (e EmptyMediaEl) Pt(length Length) EmptyMediaEl        { tStyledPt(e.n, length); return e }
-func (e EmptyMediaEl) Px(length Length) EmptyMediaEl        { tStyledPx(e.n, length); return e }
-func (e EmptyMediaEl) Py(length Length) EmptyMediaEl        { tStyledPy(e.n, length); return e }
-func (e EmptyMediaEl) Right(length Length) EmptyMediaEl     { tStyledRight(e.n, length); return e }
-func (e EmptyMediaEl) Rounded(length Length) EmptyMediaEl   { tStyledRounded(e.n, length); return e }
-func (e EmptyMediaEl) RoundedB(length Length) EmptyMediaEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e EmptyMediaEl) P(length Length) EmptyMediaEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyMediaEl) Pb(length Length) EmptyMediaEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyMediaEl) Pl(length Length) EmptyMediaEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyMediaEl) Pr(length Length) EmptyMediaEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyMediaEl) Pt(length Length) EmptyMediaEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e EmptyMediaEl) Px(length Length) EmptyMediaEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e EmptyMediaEl) Py(length Length) EmptyMediaEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyMediaEl) Right(length Length) EmptyMediaEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e EmptyMediaEl) Rounded(length Length) EmptyMediaEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyMediaEl) RoundedB(length Length) EmptyMediaEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyMediaEl) RoundedBl(length Length) EmptyMediaEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyMediaEl) RoundedBr(length Length) EmptyMediaEl { tStyledRoundedBr(e.n, length); return e }
-func (e EmptyMediaEl) RoundedL(length Length) EmptyMediaEl  { tStyledRoundedL(e.n, length); return e }
-func (e EmptyMediaEl) RoundedR(length Length) EmptyMediaEl  { tStyledRoundedR(e.n, length); return e }
-func (e EmptyMediaEl) RoundedT(length Length) EmptyMediaEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyMediaEl) RoundedL(length Length) EmptyMediaEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyMediaEl) RoundedR(length Length) EmptyMediaEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyMediaEl) RoundedT(length Length) EmptyMediaEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyMediaEl) RoundedTl(length Length) EmptyMediaEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyMediaEl) RoundedTr(length Length) EmptyMediaEl { tStyledRoundedTr(e.n, length); return e }
-func (e EmptyMediaEl) RowEnd(end int16) EmptyMediaEl        { tStyledRowEnd(e.n, end); return e }
-func (e EmptyMediaEl) RowSpan(span uint16) EmptyMediaEl     { tStyledRowSpan(e.n, span); return e }
-func (e EmptyMediaEl) RowStart(start int16) EmptyMediaEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e EmptyMediaEl) RowEnd(end int16) EmptyMediaEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e EmptyMediaEl) RowSpan(span uint16) EmptyMediaEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e EmptyMediaEl) RowStart(start int16) EmptyMediaEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e EmptyMediaEl) ScrollbarWidth(width Length) EmptyMediaEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e EmptyMediaEl) Shadow(shadows []BoxShadow) EmptyMediaEl { tStyledShadow(e.n, shadows); return e }
-func (e EmptyMediaEl) Size(length Length) EmptyMediaEl         { tStyledSize(e.n, length); return e }
-func (e EmptyMediaEl) TextAlign(align TextAlign) EmptyMediaEl  { tStyledTextAlign(e.n, align); return e }
-func (e EmptyMediaEl) TextBg(bg Color) EmptyMediaEl            { tStyledTextBg(e.n, bg); return e }
-func (e EmptyMediaEl) TextColor(color Color) EmptyMediaEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e EmptyMediaEl) Size(length Length) EmptyMediaEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e EmptyMediaEl) TextAlign(align TextAlign) EmptyMediaEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e EmptyMediaEl) TextBg(bg Color) EmptyMediaEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e EmptyMediaEl) TextColor(color Color) EmptyMediaEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e EmptyMediaEl) TextDecorationColor(color Color) EmptyMediaEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e EmptyMediaEl) TextOverflow(overflow TextOverflow) EmptyMediaEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyMediaEl) TextSize(size Length) EmptyMediaEl { tStyledTextSize(e.n, size); return e }
-func (e EmptyMediaEl) Top(length Length) EmptyMediaEl    { tStyledTop(e.n, length); return e }
-func (e EmptyMediaEl) W(length Length) EmptyMediaEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyMediaEl) Top(length Length) EmptyMediaEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e EmptyMediaEl) W(length Length) EmptyMediaEl { tStyledW(e.n, length); return e }
 
 // EmptyTitleEl is gpui_kit::component::empty::EmptyTitle.
 type EmptyTitleEl struct{ n *node }
 
 func (e EmptyTitleEl) node() *node { return e.n }
 
+// Create an empty title.
+//
 // EmptyTitle is <gpui_kit::component::empty::EmptyTitle>::new.
 func EmptyTitle(st ...Style) EmptyTitleEl {
 	useComponentEmpty()
@@ -1266,14 +2543,40 @@ func EmptyTitleDefault(st ...Style) EmptyTitleEl {
 	return EmptyTitleEl{n}
 }
 
-func (e EmptyTitleEl) PopoverStyle() EmptyTitleEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e EmptyTitleEl) PopoverStyle() EmptyTitleEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e EmptyTitleEl) RoundedFullStyle() EmptyTitleEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e EmptyTitleEl) FocusRingStyle() EmptyTitleEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e EmptyTitleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) EmptyTitleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1301,7 +2604,20 @@ func (e EmptyTitleEl) FontMedium() EmptyTitleEl     { tStyledExtFontMedium(e.n);
 func (e EmptyTitleEl) FontNormal() EmptyTitleEl     { tStyledExtFontNormal(e.n); return e }
 func (e EmptyTitleEl) FontSemibold() EmptyTitleEl   { tStyledExtFontSemibold(e.n); return e }
 func (e EmptyTitleEl) FontThin() EmptyTitleEl       { tStyledExtFontThin(e.n); return e }
-func (e EmptyTitleEl) HFlex() EmptyTitleEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e EmptyTitleEl) HFlex() EmptyTitleEl { tStyledExtHFlex(e.n); return e }
 func (e EmptyTitleEl) Margins(margins EdgesInto) EmptyTitleEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1314,6 +2630,11 @@ func (e EmptyTitleEl) RefineStyle(style StyleRefinement) EmptyTitleEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e EmptyTitleEl) VFlex() EmptyTitleEl { tStyledExtVFlex(e.n); return e }
 
 func (e EmptyTitleEl) Text(s string) EmptyTitleEl { putText(e.n, s); return e }
@@ -1321,7 +2642,10 @@ func (e EmptyTitleEl) Text(s string) EmptyTitleEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e EmptyTitleEl) ChildView(v View) EmptyTitleEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e EmptyTitleEl) Child(child Element) EmptyTitleEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e EmptyTitleEl) Children(children ...Element) EmptyTitleEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1330,125 +2654,332 @@ func (e EmptyTitleEl) Children(children ...Element) EmptyTitleEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e EmptyTitleEl) Style(st ...Style) EmptyTitleEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e EmptyTitleEl) AspectRatio(ratio float32) EmptyTitleEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e EmptyTitleEl) Bg(fill Fill) EmptyTitleEl          { tStyledBg(e.n, fill); return e }
-func (e EmptyTitleEl) Border(length Length) EmptyTitleEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e EmptyTitleEl) Bg(fill Fill) EmptyTitleEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e EmptyTitleEl) Border(length Length) EmptyTitleEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e EmptyTitleEl) BorderB(length Length) EmptyTitleEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e EmptyTitleEl) BorderColor(borderColor Color) EmptyTitleEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e EmptyTitleEl) BorderL(length Length) EmptyTitleEl     { tStyledBorderL(e.n, length); return e }
-func (e EmptyTitleEl) BorderR(length Length) EmptyTitleEl     { tStyledBorderR(e.n, length); return e }
-func (e EmptyTitleEl) BorderT(length Length) EmptyTitleEl     { tStyledBorderT(e.n, length); return e }
-func (e EmptyTitleEl) BorderX(length Length) EmptyTitleEl     { tStyledBorderX(e.n, length); return e }
-func (e EmptyTitleEl) BorderY(length Length) EmptyTitleEl     { tStyledBorderY(e.n, length); return e }
-func (e EmptyTitleEl) Bottom(length Length) EmptyTitleEl      { tStyledBottom(e.n, length); return e }
-func (e EmptyTitleEl) ColEnd(end int16) EmptyTitleEl          { tStyledColEnd(e.n, end); return e }
-func (e EmptyTitleEl) ColSpan(span uint16) EmptyTitleEl       { tStyledColSpan(e.n, span); return e }
-func (e EmptyTitleEl) ColStart(start int16) EmptyTitleEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyTitleEl) BorderL(length Length) EmptyTitleEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyTitleEl) BorderR(length Length) EmptyTitleEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e EmptyTitleEl) BorderT(length Length) EmptyTitleEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EmptyTitleEl) BorderX(length Length) EmptyTitleEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e EmptyTitleEl) BorderY(length Length) EmptyTitleEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyTitleEl) Bottom(length Length) EmptyTitleEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e EmptyTitleEl) ColEnd(end int16) EmptyTitleEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e EmptyTitleEl) ColSpan(span uint16) EmptyTitleEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e EmptyTitleEl) ColStart(start int16) EmptyTitleEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e EmptyTitleEl) Cursor(cursor CursorStyle) EmptyTitleEl { tStyledCursor(e.n, cursor); return e }
-func (e EmptyTitleEl) FlexBasis(basis Length) EmptyTitleEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e EmptyTitleEl) FlexGrow(grow float32) EmptyTitleEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e EmptyTitleEl) FlexBasis(basis Length) EmptyTitleEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e EmptyTitleEl) FlexGrow(grow float32) EmptyTitleEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e EmptyTitleEl) FlexShrink(shrink float32) EmptyTitleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e EmptyTitleEl) FontFamily(familyName string) EmptyTitleEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e EmptyTitleEl) FontFeatures(features FontFeatures) EmptyTitleEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e EmptyTitleEl) FontWeight(weight FontWeight) EmptyTitleEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e EmptyTitleEl) Gap(length Length) EmptyTitleEl    { tStyledGap(e.n, length); return e }
-func (e EmptyTitleEl) GapX(length Length) EmptyTitleEl   { tStyledGapX(e.n, length); return e }
-func (e EmptyTitleEl) GapY(length Length) EmptyTitleEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e EmptyTitleEl) Gap(length Length) EmptyTitleEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyTitleEl) GapX(length Length) EmptyTitleEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e EmptyTitleEl) GapY(length Length) EmptyTitleEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e EmptyTitleEl) GridCols(cols uint16) EmptyTitleEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e EmptyTitleEl) GridColsMaxContent(cols uint16) EmptyTitleEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e EmptyTitleEl) GridColsMinContent(cols uint16) EmptyTitleEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e EmptyTitleEl) GridRows(rows uint16) EmptyTitleEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e EmptyTitleEl) GridRowsMaxContent(rows uint16) EmptyTitleEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e EmptyTitleEl) GridRowsMinContent(rows uint16) EmptyTitleEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e EmptyTitleEl) H(length Length) EmptyTitleEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e EmptyTitleEl) H(length Length) EmptyTitleEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e EmptyTitleEl) Inset(length Length) EmptyTitleEl { tStyledInset(e.n, length); return e }
-func (e EmptyTitleEl) Left(length Length) EmptyTitleEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyTitleEl) Left(length Length) EmptyTitleEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e EmptyTitleEl) LineClamp(lines int) EmptyTitleEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e EmptyTitleEl) LineHeight(lineHeight Length) EmptyTitleEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e EmptyTitleEl) M(length Length) EmptyTitleEl         { tStyledM(e.n, length); return e }
-func (e EmptyTitleEl) MaxH(length Length) EmptyTitleEl      { tStyledMaxH(e.n, length); return e }
-func (e EmptyTitleEl) MaxSize(length Length) EmptyTitleEl   { tStyledMaxSize(e.n, length); return e }
-func (e EmptyTitleEl) MaxW(length Length) EmptyTitleEl      { tStyledMaxW(e.n, length); return e }
-func (e EmptyTitleEl) Mb(length Length) EmptyTitleEl        { tStyledMb(e.n, length); return e }
-func (e EmptyTitleEl) MinH(length Length) EmptyTitleEl      { tStyledMinH(e.n, length); return e }
-func (e EmptyTitleEl) MinSize(length Length) EmptyTitleEl   { tStyledMinSize(e.n, length); return e }
-func (e EmptyTitleEl) MinW(length Length) EmptyTitleEl      { tStyledMinW(e.n, length); return e }
-func (e EmptyTitleEl) Ml(length Length) EmptyTitleEl        { tStyledMl(e.n, length); return e }
-func (e EmptyTitleEl) Mr(length Length) EmptyTitleEl        { tStyledMr(e.n, length); return e }
-func (e EmptyTitleEl) Mt(length Length) EmptyTitleEl        { tStyledMt(e.n, length); return e }
-func (e EmptyTitleEl) Mx(length Length) EmptyTitleEl        { tStyledMx(e.n, length); return e }
-func (e EmptyTitleEl) My(length Length) EmptyTitleEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e EmptyTitleEl) M(length Length) EmptyTitleEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e EmptyTitleEl) MaxH(length Length) EmptyTitleEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e EmptyTitleEl) MaxSize(length Length) EmptyTitleEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e EmptyTitleEl) MaxW(length Length) EmptyTitleEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyTitleEl) Mb(length Length) EmptyTitleEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e EmptyTitleEl) MinH(length Length) EmptyTitleEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e EmptyTitleEl) MinSize(length Length) EmptyTitleEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e EmptyTitleEl) MinW(length Length) EmptyTitleEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyTitleEl) Ml(length Length) EmptyTitleEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyTitleEl) Mr(length Length) EmptyTitleEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e EmptyTitleEl) Mt(length Length) EmptyTitleEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e EmptyTitleEl) Mx(length Length) EmptyTitleEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e EmptyTitleEl) My(length Length) EmptyTitleEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e EmptyTitleEl) Opacity(opacity float32) EmptyTitleEl { tStyledOpacity(e.n, opacity); return e }
-func (e EmptyTitleEl) P(length Length) EmptyTitleEl         { tStyledP(e.n, length); return e }
-func (e EmptyTitleEl) Pb(length Length) EmptyTitleEl        { tStyledPb(e.n, length); return e }
-func (e EmptyTitleEl) Pl(length Length) EmptyTitleEl        { tStyledPl(e.n, length); return e }
-func (e EmptyTitleEl) Pr(length Length) EmptyTitleEl        { tStyledPr(e.n, length); return e }
-func (e EmptyTitleEl) Pt(length Length) EmptyTitleEl        { tStyledPt(e.n, length); return e }
-func (e EmptyTitleEl) Px(length Length) EmptyTitleEl        { tStyledPx(e.n, length); return e }
-func (e EmptyTitleEl) Py(length Length) EmptyTitleEl        { tStyledPy(e.n, length); return e }
-func (e EmptyTitleEl) Right(length Length) EmptyTitleEl     { tStyledRight(e.n, length); return e }
-func (e EmptyTitleEl) Rounded(length Length) EmptyTitleEl   { tStyledRounded(e.n, length); return e }
-func (e EmptyTitleEl) RoundedB(length Length) EmptyTitleEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e EmptyTitleEl) P(length Length) EmptyTitleEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyTitleEl) Pb(length Length) EmptyTitleEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyTitleEl) Pl(length Length) EmptyTitleEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyTitleEl) Pr(length Length) EmptyTitleEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e EmptyTitleEl) Pt(length Length) EmptyTitleEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e EmptyTitleEl) Px(length Length) EmptyTitleEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e EmptyTitleEl) Py(length Length) EmptyTitleEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyTitleEl) Right(length Length) EmptyTitleEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e EmptyTitleEl) Rounded(length Length) EmptyTitleEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyTitleEl) RoundedB(length Length) EmptyTitleEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyTitleEl) RoundedBl(length Length) EmptyTitleEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyTitleEl) RoundedBr(length Length) EmptyTitleEl { tStyledRoundedBr(e.n, length); return e }
-func (e EmptyTitleEl) RoundedL(length Length) EmptyTitleEl  { tStyledRoundedL(e.n, length); return e }
-func (e EmptyTitleEl) RoundedR(length Length) EmptyTitleEl  { tStyledRoundedR(e.n, length); return e }
-func (e EmptyTitleEl) RoundedT(length Length) EmptyTitleEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyTitleEl) RoundedL(length Length) EmptyTitleEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyTitleEl) RoundedR(length Length) EmptyTitleEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e EmptyTitleEl) RoundedT(length Length) EmptyTitleEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyTitleEl) RoundedTl(length Length) EmptyTitleEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e EmptyTitleEl) RoundedTr(length Length) EmptyTitleEl { tStyledRoundedTr(e.n, length); return e }
-func (e EmptyTitleEl) RowEnd(end int16) EmptyTitleEl        { tStyledRowEnd(e.n, end); return e }
-func (e EmptyTitleEl) RowSpan(span uint16) EmptyTitleEl     { tStyledRowSpan(e.n, span); return e }
-func (e EmptyTitleEl) RowStart(start int16) EmptyTitleEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e EmptyTitleEl) RowEnd(end int16) EmptyTitleEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e EmptyTitleEl) RowSpan(span uint16) EmptyTitleEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e EmptyTitleEl) RowStart(start int16) EmptyTitleEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e EmptyTitleEl) ScrollbarWidth(width Length) EmptyTitleEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e EmptyTitleEl) Shadow(shadows []BoxShadow) EmptyTitleEl { tStyledShadow(e.n, shadows); return e }
-func (e EmptyTitleEl) Size(length Length) EmptyTitleEl         { tStyledSize(e.n, length); return e }
-func (e EmptyTitleEl) TextAlign(align TextAlign) EmptyTitleEl  { tStyledTextAlign(e.n, align); return e }
-func (e EmptyTitleEl) TextBg(bg Color) EmptyTitleEl            { tStyledTextBg(e.n, bg); return e }
-func (e EmptyTitleEl) TextColor(color Color) EmptyTitleEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e EmptyTitleEl) Size(length Length) EmptyTitleEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e EmptyTitleEl) TextAlign(align TextAlign) EmptyTitleEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e EmptyTitleEl) TextBg(bg Color) EmptyTitleEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e EmptyTitleEl) TextColor(color Color) EmptyTitleEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e EmptyTitleEl) TextDecorationColor(color Color) EmptyTitleEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e EmptyTitleEl) TextOverflow(overflow TextOverflow) EmptyTitleEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e EmptyTitleEl) TextSize(size Length) EmptyTitleEl { tStyledTextSize(e.n, size); return e }
-func (e EmptyTitleEl) Top(length Length) EmptyTitleEl    { tStyledTop(e.n, length); return e }
-func (e EmptyTitleEl) W(length Length) EmptyTitleEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e EmptyTitleEl) Top(length Length) EmptyTitleEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e EmptyTitleEl) W(length Length) EmptyTitleEl { tStyledW(e.n, length); return e }

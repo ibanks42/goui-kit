@@ -9,24 +9,33 @@ type DockLayout struct{ n *node }
 
 func (e DockLayout) valueNode() *node { return e.n }
 
+// A split whose children sit side by side.
+//
 // NewDockLayoutHSplit is <gpui_kit::base::dock::DockLayout>::h_split.
 func NewDockLayoutHSplit() DockLayout {
 	n := newValue(442)
 	return DockLayout{n}
 }
 
+// A tab group: panels stacked one at a time, selected from a tab bar.
+//
 // NewDockLayoutTabs is <gpui_kit::base::dock::DockLayout>::tabs.
 func NewDockLayoutTabs() DockLayout {
 	n := newValue(443)
 	return DockLayout{n}
 }
 
+// A split whose children stack.
+//
 // NewDockLayoutVSplit is <gpui_kit::base::dock::DockLayout>::v_split.
 func NewDockLayoutVSplit() DockLayout {
 	n := newValue(444)
 	return DockLayout{n}
 }
 
+// Which tab is displayed. Out-of-range values are clamped by `normalize` once the layout is
+// installed.
+//
 // ActiveIndex is <gpui_kit::base::dock::DockLayout>::active_index.
 func (e DockLayout) ActiveIndex(ix int) DockLayout {
 	o := op(e.n, 256)
@@ -34,6 +43,9 @@ func (e DockLayout) ActiveIndex(ix int) DockLayout {
 	return e
 }
 
+// Add a child container to a split. `size` is the child's slot along the split's axis; `None`
+// leaves it unconstrained.
+//
 // Child is <gpui_kit::base::dock::DockLayout>::child.
 func (e DockLayout) Child(child DockLayout, size Option[float32]) DockLayout {
 	o := op(e.n, 257)
@@ -47,6 +59,8 @@ func (e DockLayout) Child(child DockLayout, size Option[float32]) DockLayout {
 	return e
 }
 
+// Add a panel to a tab group.
+//
 // Panel is <gpui_kit::base::dock::DockLayout>::panel.
 func (e DockLayout) Panel(panel DockPanel) DockLayout {
 	o := op(e.n, 258)
@@ -54,6 +68,12 @@ func (e DockLayout) Panel(panel DockPanel) DockLayout {
 	return e
 }
 
+// Add an already-wrapped panel handle to a tab group.
+//
+// The companion to `Panel`, for a layer that hands base its own concrete handle — see `AsAny` —
+// rather than a bare entity. `cx` is here because the id has to come from `PanelID`: unlike
+// `Panel`, there is no entity in hand to take it from.
+//
 // PanelView is <gpui_kit::base::dock::DockLayout>::panel_view.
 func (e DockLayout) PanelView(panel DockPanel) DockLayout {
 	o := op(e.n, 259)
@@ -74,6 +94,9 @@ func NewDockSizing(placement DockPlacement) DockSizing {
 	return DockSizing{n}
 }
 
+// Set the full area bounds (origin and size). Needed whenever the dock's placement depends on the
+// area's origin, e.g. a bottom dock measuring from the area's bottom edge.
+//
 // WithAreaBounds is <gpui_kit::base::dock::DockSizing>::with_area_bounds.
 func (e DockSizing) WithAreaBounds(area Bounds) DockSizing {
 	o := op(e.n, 256)
@@ -81,6 +104,9 @@ func (e DockSizing) WithAreaBounds(area Bounds) DockSizing {
 	return e
 }
 
+// Set only the area's height, leaving its origin and width untouched. Convenient for bottom dock
+// clamping, which only reads `area.size.height`.
+//
 // WithAreaHeight is <gpui_kit::base::dock::DockSizing>::with_area_height.
 func (e DockSizing) WithAreaHeight(height float32) DockSizing {
 	o := op(e.n, 257)
@@ -88,6 +114,9 @@ func (e DockSizing) WithAreaHeight(height float32) DockSizing {
 	return e
 }
 
+// Set only the area's width, leaving its origin and height untouched. Convenient for left/right
+// dock clamping, which only reads `area.size.width`.
+//
 // WithAreaWidth is <gpui_kit::base::dock::DockSizing>::with_area_width.
 func (e DockSizing) WithAreaWidth(width float32) DockSizing {
 	o := op(e.n, 258)
@@ -95,6 +124,9 @@ func (e DockSizing) WithAreaWidth(width float32) DockSizing {
 	return e
 }
 
+// Set the size of the dock on the opposite side (right, for a left dock; left, for a right dock).
+// Bottom docks have no opposite side.
+//
 // WithOppositeDockSize is <gpui_kit::base::dock::DockSizing>::with_opposite_dock_size.
 func (e DockSizing) WithOppositeDockSize(size float32) DockSizing {
 	o := op(e.n, 259)

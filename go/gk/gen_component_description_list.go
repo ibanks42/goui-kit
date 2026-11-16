@@ -9,6 +9,8 @@ type DescriptionListEl struct{ n *node }
 
 func (e DescriptionListEl) node() *node { return e.n }
 
+// Create a new description list with the default layout (Horizontal).
+//
 // DescriptionList is <gpui_kit::component::description_list::DescriptionList>::new.
 func DescriptionList() DescriptionListEl {
 	useComponentDescriptionList()
@@ -16,6 +18,8 @@ func DescriptionList() DescriptionListEl {
 	return DescriptionListEl{n}
 }
 
+// Create a horizontal description list, the default.
+//
 // DescriptionListHorizontal is <gpui_kit::component::description_list::DescriptionList>::horizontal.
 func DescriptionListHorizontal() DescriptionListEl {
 	useComponentDescriptionList()
@@ -23,6 +27,8 @@ func DescriptionListHorizontal() DescriptionListEl {
 	return DescriptionListEl{n}
 }
 
+// Create a vertical description list.
+//
 // DescriptionListVertical is <gpui_kit::component::description_list::DescriptionList>::vertical.
 func DescriptionListVertical() DescriptionListEl {
 	useComponentDescriptionList()
@@ -30,6 +36,10 @@ func DescriptionListVertical() DescriptionListEl {
 	return DescriptionListEl{n}
 }
 
+// Set the border of the description list, default is `true`.
+//
+// `Horizontal` layout only.
+//
 // Bordered is <gpui_kit::component::description_list::DescriptionList>::bordered.
 func (e DescriptionListEl) Bordered(bordered bool) DescriptionListEl {
 	o := op(e.n, 256)
@@ -37,6 +47,8 @@ func (e DescriptionListEl) Bordered(bordered bool) DescriptionListEl {
 	return e
 }
 
+// Add a child to the list.
+//
 // Child is <gpui_kit::component::description_list::DescriptionList>::child.
 func (e DescriptionListEl) Child(child DescriptionItem) DescriptionListEl {
 	o := op(e.n, 257)
@@ -44,6 +56,8 @@ func (e DescriptionListEl) Child(child DescriptionItem) DescriptionListEl {
 	return e
 }
 
+// Add children to the list.
+//
 // Children is <gpui_kit::component::description_list::DescriptionList>::children.
 func (e DescriptionListEl) Children(children []DescriptionItem) DescriptionListEl {
 	o := op(e.n, 258)
@@ -54,6 +68,10 @@ func (e DescriptionListEl) Children(children []DescriptionItem) DescriptionListE
 	return e
 }
 
+// Set the number of columns in the description list, default is `3`.
+//
+// A value between `1` and `10` is allowed.
+//
 // Columns is <gpui_kit::component::description_list::DescriptionList>::columns.
 func (e DescriptionListEl) Columns(columns int) DescriptionListEl {
 	o := op(e.n, 259)
@@ -61,6 +79,8 @@ func (e DescriptionListEl) Columns(columns int) DescriptionListEl {
 	return e
 }
 
+// Add a `Item` to the list.
+//
 // Item is <gpui_kit::component::description_list::DescriptionList>::item.
 func (e DescriptionListEl) Item(label DescriptionTextInto, value DescriptionTextInto, span int) DescriptionListEl {
 	o := op(e.n, 260)
@@ -70,6 +90,10 @@ func (e DescriptionListEl) Item(label DescriptionTextInto, value DescriptionText
 	return e
 }
 
+// Set the width of the label, only works for horizontal layout.
+//
+// Default is `120px`.
+//
 // LabelWidth is <gpui_kit::component::description_list::DescriptionList>::label_width.
 func (e DescriptionListEl) LabelWidth(labelWidth Length) DescriptionListEl {
 	o := op(e.n, 261)
@@ -77,6 +101,8 @@ func (e DescriptionListEl) LabelWidth(labelWidth Length) DescriptionListEl {
 	return e
 }
 
+// Set the layout of the description list.
+//
 // Layout is <gpui_kit::component::description_list::DescriptionList>::layout.
 func (e DescriptionListEl) Layout(layout Axis) DescriptionListEl {
 	o := op(e.n, 262)
@@ -84,16 +110,28 @@ func (e DescriptionListEl) Layout(layout Axis) DescriptionListEl {
 	return e
 }
 
+// Add a separator to the list.
+//
 // Separator is <gpui_kit::component::description_list::DescriptionList>::separator.
 func (e DescriptionListEl) Separator() DescriptionListEl {
 	op(e.n, 263)
 	return e
 }
 
+// Set to Size::Large
 func (e DescriptionListEl) Large() DescriptionListEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e DescriptionListEl) Small() DescriptionListEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e DescriptionListEl) WithSize(size SizeInto) DescriptionListEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e DescriptionListEl) Xsmall() DescriptionListEl { tSizableXsmall(e.n); return e }

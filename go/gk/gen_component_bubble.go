@@ -9,6 +9,8 @@ type BubbleEl struct{ n *node }
 
 func (e BubbleEl) node() *node { return e.n }
 
+// Create a filled bubble that can inherit alignment from its parent.
+//
 // Bubble is <gpui_kit::component::bubble::Bubble>::new.
 func Bubble(st ...Style) BubbleEl {
 	useComponentBubble()
@@ -25,6 +27,8 @@ func BubbleDefault(st ...Style) BubbleEl {
 	return BubbleEl{n}
 }
 
+// Set the bubble alignment.
+//
 // Alignment is <gpui_kit::component::bubble::Bubble>::alignment.
 func (e BubbleEl) Alignment(alignment MessageAlignment) BubbleEl {
 	o := op(e.n, 256)
@@ -32,6 +36,11 @@ func (e BubbleEl) Alignment(alignment MessageAlignment) BubbleEl {
 	return e
 }
 
+// Replace the visible content surface.
+//
+// Children already added directly to the bubble move into the new surface, in front of its own
+// children, so `.child(...)` composes the same way on either side of this call.
+//
 // Content is <gpui_kit::component::bubble::Bubble>::content.
 func (e BubbleEl) Content(content BubbleContentEl) BubbleEl {
 	o := op(e.n, 257)
@@ -39,6 +48,8 @@ func (e BubbleEl) Content(content BubbleContentEl) BubbleEl {
 	return e
 }
 
+// Set an optional reaction region anchored to the bubble edge.
+//
 // Reactions is <gpui_kit::component::bubble::Bubble>::reactions.
 func (e BubbleEl) Reactions(reactions BubbleReactionsEl) BubbleEl {
 	o := op(e.n, 258)
@@ -46,6 +57,8 @@ func (e BubbleEl) Reactions(reactions BubbleReactionsEl) BubbleEl {
 	return e
 }
 
+// Set the visual treatment.
+//
 // WithVariant is <gpui_kit::component::bubble::Bubble>::with_variant.
 func (e BubbleEl) WithVariant(variant BubbleVariant) BubbleEl {
 	o := op(e.n, 259)
@@ -53,11 +66,37 @@ func (e BubbleEl) WithVariant(variant BubbleVariant) BubbleEl {
 	return e
 }
 
-func (e BubbleEl) PopoverStyle() BubbleEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e BubbleEl) PopoverStyle() BubbleEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e BubbleEl) RoundedFullStyle() BubbleEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e BubbleEl) FocusRingStyle() BubbleEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BubbleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BubbleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -69,19 +108,32 @@ func (e BubbleEl) DebugFocused(focusHandle FocusHandle) BubbleEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e BubbleEl) DebugGreen() BubbleEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e BubbleEl) DebugPink() BubbleEl                  { tStyledExtDebugPink(e.n); return e }
-func (e BubbleEl) DebugRed() BubbleEl                   { tStyledExtDebugRed(e.n); return e }
-func (e BubbleEl) DebugYellow() BubbleEl                { tStyledExtDebugYellow(e.n); return e }
-func (e BubbleEl) FontBlack() BubbleEl                  { tStyledExtFontBlack(e.n); return e }
-func (e BubbleEl) FontBold() BubbleEl                   { tStyledExtFontBold(e.n); return e }
-func (e BubbleEl) FontExtrabold() BubbleEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e BubbleEl) FontExtralight() BubbleEl             { tStyledExtFontExtralight(e.n); return e }
-func (e BubbleEl) FontLight() BubbleEl                  { tStyledExtFontLight(e.n); return e }
-func (e BubbleEl) FontMedium() BubbleEl                 { tStyledExtFontMedium(e.n); return e }
-func (e BubbleEl) FontNormal() BubbleEl                 { tStyledExtFontNormal(e.n); return e }
-func (e BubbleEl) FontSemibold() BubbleEl               { tStyledExtFontSemibold(e.n); return e }
-func (e BubbleEl) FontThin() BubbleEl                   { tStyledExtFontThin(e.n); return e }
+func (e BubbleEl) DebugGreen() BubbleEl     { tStyledExtDebugGreen(e.n); return e }
+func (e BubbleEl) DebugPink() BubbleEl      { tStyledExtDebugPink(e.n); return e }
+func (e BubbleEl) DebugRed() BubbleEl       { tStyledExtDebugRed(e.n); return e }
+func (e BubbleEl) DebugYellow() BubbleEl    { tStyledExtDebugYellow(e.n); return e }
+func (e BubbleEl) FontBlack() BubbleEl      { tStyledExtFontBlack(e.n); return e }
+func (e BubbleEl) FontBold() BubbleEl       { tStyledExtFontBold(e.n); return e }
+func (e BubbleEl) FontExtrabold() BubbleEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e BubbleEl) FontExtralight() BubbleEl { tStyledExtFontExtralight(e.n); return e }
+func (e BubbleEl) FontLight() BubbleEl      { tStyledExtFontLight(e.n); return e }
+func (e BubbleEl) FontMedium() BubbleEl     { tStyledExtFontMedium(e.n); return e }
+func (e BubbleEl) FontNormal() BubbleEl     { tStyledExtFontNormal(e.n); return e }
+func (e BubbleEl) FontSemibold() BubbleEl   { tStyledExtFontSemibold(e.n); return e }
+func (e BubbleEl) FontThin() BubbleEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e BubbleEl) HFlex() BubbleEl                      { tStyledExtHFlex(e.n); return e }
 func (e BubbleEl) Margins(margins EdgesInto) BubbleEl   { tStyledExtMargins(e.n, margins); return e }
 func (e BubbleEl) Paddings(paddings EdgesInto) BubbleEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -89,6 +141,11 @@ func (e BubbleEl) RefineStyle(style StyleRefinement) BubbleEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e BubbleEl) VFlex() BubbleEl { tStyledExtVFlex(e.n); return e }
 
 func (e BubbleEl) Text(s string) BubbleEl { putText(e.n, s); return e }
@@ -96,7 +153,10 @@ func (e BubbleEl) Text(s string) BubbleEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e BubbleEl) ChildView(v View) BubbleEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e BubbleEl) Child(child Element) BubbleEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e BubbleEl) Children(children ...Element) BubbleEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -105,122 +165,331 @@ func (e BubbleEl) Children(children ...Element) BubbleEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e BubbleEl) Style(st ...Style) BubbleEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e BubbleEl) AspectRatio(ratio float32) BubbleEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e BubbleEl) Bg(fill Fill) BubbleEl              { tStyledBg(e.n, fill); return e }
-func (e BubbleEl) Border(length Length) BubbleEl      { tStyledBorder(e.n, length); return e }
-func (e BubbleEl) BorderB(length Length) BubbleEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e BubbleEl) Bg(fill Fill) BubbleEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e BubbleEl) Border(length Length) BubbleEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BubbleEl) BorderB(length Length) BubbleEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e BubbleEl) BorderColor(borderColor Color) BubbleEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e BubbleEl) BorderL(length Length) BubbleEl     { tStyledBorderL(e.n, length); return e }
-func (e BubbleEl) BorderR(length Length) BubbleEl     { tStyledBorderR(e.n, length); return e }
-func (e BubbleEl) BorderT(length Length) BubbleEl     { tStyledBorderT(e.n, length); return e }
-func (e BubbleEl) BorderX(length Length) BubbleEl     { tStyledBorderX(e.n, length); return e }
-func (e BubbleEl) BorderY(length Length) BubbleEl     { tStyledBorderY(e.n, length); return e }
-func (e BubbleEl) Bottom(length Length) BubbleEl      { tStyledBottom(e.n, length); return e }
-func (e BubbleEl) ColEnd(end int16) BubbleEl          { tStyledColEnd(e.n, end); return e }
-func (e BubbleEl) ColSpan(span uint16) BubbleEl       { tStyledColSpan(e.n, span); return e }
-func (e BubbleEl) ColStart(start int16) BubbleEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BubbleEl) BorderL(length Length) BubbleEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BubbleEl) BorderR(length Length) BubbleEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BubbleEl) BorderT(length Length) BubbleEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e BubbleEl) BorderX(length Length) BubbleEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e BubbleEl) BorderY(length Length) BubbleEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleEl) Bottom(length Length) BubbleEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e BubbleEl) ColEnd(end int16) BubbleEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e BubbleEl) ColSpan(span uint16) BubbleEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e BubbleEl) ColStart(start int16) BubbleEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e BubbleEl) Cursor(cursor CursorStyle) BubbleEl { tStyledCursor(e.n, cursor); return e }
-func (e BubbleEl) FlexBasis(basis Length) BubbleEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e BubbleEl) FlexGrow(grow float32) BubbleEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e BubbleEl) FlexBasis(basis Length) BubbleEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e BubbleEl) FlexGrow(grow float32) BubbleEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BubbleEl) FlexShrink(shrink float32) BubbleEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e BubbleEl) FontFamily(familyName string) BubbleEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e BubbleEl) FontFeatures(features FontFeatures) BubbleEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e BubbleEl) FontWeight(weight FontWeight) BubbleEl { tStyledFontWeight(e.n, weight); return e }
-func (e BubbleEl) Gap(length Length) BubbleEl            { tStyledGap(e.n, length); return e }
-func (e BubbleEl) GapX(length Length) BubbleEl           { tStyledGapX(e.n, length); return e }
-func (e BubbleEl) GapY(length Length) BubbleEl           { tStyledGapY(e.n, length); return e }
-func (e BubbleEl) GridCols(cols uint16) BubbleEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e BubbleEl) Gap(length Length) BubbleEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e BubbleEl) GapX(length Length) BubbleEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e BubbleEl) GapY(length Length) BubbleEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e BubbleEl) GridCols(cols uint16) BubbleEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e BubbleEl) GridColsMaxContent(cols uint16) BubbleEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e BubbleEl) GridColsMinContent(cols uint16) BubbleEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e BubbleEl) GridRows(rows uint16) BubbleEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e BubbleEl) GridRowsMaxContent(rows uint16) BubbleEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e BubbleEl) GridRowsMinContent(rows uint16) BubbleEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e BubbleEl) H(length Length) BubbleEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e BubbleEl) H(length Length) BubbleEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleEl) Inset(length Length) BubbleEl { tStyledInset(e.n, length); return e }
-func (e BubbleEl) Left(length Length) BubbleEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleEl) Left(length Length) BubbleEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e BubbleEl) LineClamp(lines int) BubbleEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e BubbleEl) LineHeight(lineHeight Length) BubbleEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e BubbleEl) M(length Length) BubbleEl             { tStyledM(e.n, length); return e }
-func (e BubbleEl) MaxH(length Length) BubbleEl          { tStyledMaxH(e.n, length); return e }
-func (e BubbleEl) MaxSize(length Length) BubbleEl       { tStyledMaxSize(e.n, length); return e }
-func (e BubbleEl) MaxW(length Length) BubbleEl          { tStyledMaxW(e.n, length); return e }
-func (e BubbleEl) Mb(length Length) BubbleEl            { tStyledMb(e.n, length); return e }
-func (e BubbleEl) MinH(length Length) BubbleEl          { tStyledMinH(e.n, length); return e }
-func (e BubbleEl) MinSize(length Length) BubbleEl       { tStyledMinSize(e.n, length); return e }
-func (e BubbleEl) MinW(length Length) BubbleEl          { tStyledMinW(e.n, length); return e }
-func (e BubbleEl) Ml(length Length) BubbleEl            { tStyledMl(e.n, length); return e }
-func (e BubbleEl) Mr(length Length) BubbleEl            { tStyledMr(e.n, length); return e }
-func (e BubbleEl) Mt(length Length) BubbleEl            { tStyledMt(e.n, length); return e }
-func (e BubbleEl) Mx(length Length) BubbleEl            { tStyledMx(e.n, length); return e }
-func (e BubbleEl) My(length Length) BubbleEl            { tStyledMy(e.n, length); return e }
-func (e BubbleEl) Opacity(opacity float32) BubbleEl     { tStyledOpacity(e.n, opacity); return e }
-func (e BubbleEl) P(length Length) BubbleEl             { tStyledP(e.n, length); return e }
-func (e BubbleEl) Pb(length Length) BubbleEl            { tStyledPb(e.n, length); return e }
-func (e BubbleEl) Pl(length Length) BubbleEl            { tStyledPl(e.n, length); return e }
-func (e BubbleEl) Pr(length Length) BubbleEl            { tStyledPr(e.n, length); return e }
-func (e BubbleEl) Pt(length Length) BubbleEl            { tStyledPt(e.n, length); return e }
-func (e BubbleEl) Px(length Length) BubbleEl            { tStyledPx(e.n, length); return e }
-func (e BubbleEl) Py(length Length) BubbleEl            { tStyledPy(e.n, length); return e }
-func (e BubbleEl) Right(length Length) BubbleEl         { tStyledRight(e.n, length); return e }
-func (e BubbleEl) Rounded(length Length) BubbleEl       { tStyledRounded(e.n, length); return e }
-func (e BubbleEl) RoundedB(length Length) BubbleEl      { tStyledRoundedB(e.n, length); return e }
-func (e BubbleEl) RoundedBl(length Length) BubbleEl     { tStyledRoundedBl(e.n, length); return e }
-func (e BubbleEl) RoundedBr(length Length) BubbleEl     { tStyledRoundedBr(e.n, length); return e }
-func (e BubbleEl) RoundedL(length Length) BubbleEl      { tStyledRoundedL(e.n, length); return e }
-func (e BubbleEl) RoundedR(length Length) BubbleEl      { tStyledRoundedR(e.n, length); return e }
-func (e BubbleEl) RoundedT(length Length) BubbleEl      { tStyledRoundedT(e.n, length); return e }
-func (e BubbleEl) RoundedTl(length Length) BubbleEl     { tStyledRoundedTl(e.n, length); return e }
-func (e BubbleEl) RoundedTr(length Length) BubbleEl     { tStyledRoundedTr(e.n, length); return e }
-func (e BubbleEl) RowEnd(end int16) BubbleEl            { tStyledRowEnd(e.n, end); return e }
-func (e BubbleEl) RowSpan(span uint16) BubbleEl         { tStyledRowSpan(e.n, span); return e }
-func (e BubbleEl) RowStart(start int16) BubbleEl        { tStyledRowStart(e.n, start); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e BubbleEl) M(length Length) BubbleEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e BubbleEl) MaxH(length Length) BubbleEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e BubbleEl) MaxSize(length Length) BubbleEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e BubbleEl) MaxW(length Length) BubbleEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleEl) Mb(length Length) BubbleEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e BubbleEl) MinH(length Length) BubbleEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e BubbleEl) MinSize(length Length) BubbleEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e BubbleEl) MinW(length Length) BubbleEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleEl) Ml(length Length) BubbleEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleEl) Mr(length Length) BubbleEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleEl) Mt(length Length) BubbleEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e BubbleEl) Mx(length Length) BubbleEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e BubbleEl) My(length Length) BubbleEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e BubbleEl) Opacity(opacity float32) BubbleEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e BubbleEl) P(length Length) BubbleEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleEl) Pb(length Length) BubbleEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleEl) Pl(length Length) BubbleEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleEl) Pr(length Length) BubbleEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleEl) Pt(length Length) BubbleEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e BubbleEl) Px(length Length) BubbleEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e BubbleEl) Py(length Length) BubbleEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleEl) Right(length Length) BubbleEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e BubbleEl) Rounded(length Length) BubbleEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e BubbleEl) RoundedB(length Length) BubbleEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e BubbleEl) RoundedBl(length Length) BubbleEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e BubbleEl) RoundedBr(length Length) BubbleEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e BubbleEl) RoundedL(length Length) BubbleEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e BubbleEl) RoundedR(length Length) BubbleEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e BubbleEl) RoundedT(length Length) BubbleEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e BubbleEl) RoundedTl(length Length) BubbleEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e BubbleEl) RoundedTr(length Length) BubbleEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e BubbleEl) RowEnd(end int16) BubbleEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e BubbleEl) RowSpan(span uint16) BubbleEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e BubbleEl) RowStart(start int16) BubbleEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e BubbleEl) ScrollbarWidth(width Length) BubbleEl { tStyledScrollbarWidth(e.n, width); return e }
-func (e BubbleEl) Shadow(shadows []BoxShadow) BubbleEl  { tStyledShadow(e.n, shadows); return e }
-func (e BubbleEl) Size(length Length) BubbleEl          { tStyledSize(e.n, length); return e }
-func (e BubbleEl) TextAlign(align TextAlign) BubbleEl   { tStyledTextAlign(e.n, align); return e }
-func (e BubbleEl) TextBg(bg Color) BubbleEl             { tStyledTextBg(e.n, bg); return e }
-func (e BubbleEl) TextColor(color Color) BubbleEl       { tStyledTextColor(e.n, color); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e BubbleEl) Shadow(shadows []BoxShadow) BubbleEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e BubbleEl) Size(length Length) BubbleEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e BubbleEl) TextAlign(align TextAlign) BubbleEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e BubbleEl) TextBg(bg Color) BubbleEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e BubbleEl) TextColor(color Color) BubbleEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e BubbleEl) TextDecorationColor(color Color) BubbleEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e BubbleEl) TextOverflow(overflow TextOverflow) BubbleEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e BubbleEl) TextSize(size Length) BubbleEl { tStyledTextSize(e.n, size); return e }
-func (e BubbleEl) Top(length Length) BubbleEl    { tStyledTop(e.n, length); return e }
-func (e BubbleEl) W(length Length) BubbleEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleEl) Top(length Length) BubbleEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e BubbleEl) W(length Length) BubbleEl { tStyledW(e.n, length); return e }
 
 // BubbleContentEl is gpui_kit::component::bubble::BubbleContent.
 type BubbleContentEl struct{ n *node }
 
 func (e BubbleContentEl) node() *node { return e.n }
 
+// Create an empty bubble content surface.
+//
 // BubbleContent is <gpui_kit::component::bubble::BubbleContent>::new.
 func BubbleContent(st ...Style) BubbleContentEl {
 	useComponentBubble()
@@ -237,17 +506,43 @@ func BubbleContentDefault(st ...Style) BubbleContentEl {
 	return BubbleContentEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e BubbleContentEl) PopoverStyle() BubbleContentEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e BubbleContentEl) RoundedFullStyle() BubbleContentEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e BubbleContentEl) FocusRingStyle() BubbleContentEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BubbleContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BubbleContentEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -275,7 +570,20 @@ func (e BubbleContentEl) FontMedium() BubbleContentEl     { tStyledExtFontMedium
 func (e BubbleContentEl) FontNormal() BubbleContentEl     { tStyledExtFontNormal(e.n); return e }
 func (e BubbleContentEl) FontSemibold() BubbleContentEl   { tStyledExtFontSemibold(e.n); return e }
 func (e BubbleContentEl) FontThin() BubbleContentEl       { tStyledExtFontThin(e.n); return e }
-func (e BubbleContentEl) HFlex() BubbleContentEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e BubbleContentEl) HFlex() BubbleContentEl { tStyledExtHFlex(e.n); return e }
 func (e BubbleContentEl) Margins(margins EdgesInto) BubbleContentEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -288,6 +596,11 @@ func (e BubbleContentEl) RefineStyle(style StyleRefinement) BubbleContentEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e BubbleContentEl) VFlex() BubbleContentEl { tStyledExtVFlex(e.n); return e }
 
 func (e BubbleContentEl) Text(s string) BubbleContentEl { putText(e.n, s); return e }
@@ -295,10 +608,13 @@ func (e BubbleContentEl) Text(s string) BubbleContentEl { putText(e.n, s); retur
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e BubbleContentEl) ChildView(v View) BubbleContentEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e BubbleContentEl) Child(child Element) BubbleContentEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e BubbleContentEl) Children(children ...Element) BubbleContentEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -307,203 +623,412 @@ func (e BubbleContentEl) Children(children ...Element) BubbleContentEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e BubbleContentEl) Style(st ...Style) BubbleContentEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e BubbleContentEl) AspectRatio(ratio float32) BubbleContentEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e BubbleContentEl) Bg(fill Fill) BubbleContentEl         { tStyledBg(e.n, fill); return e }
+
+// Sets the background color of the element.
+func (e BubbleContentEl) Bg(fill Fill) BubbleContentEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e BubbleContentEl) Border(length Length) BubbleContentEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BubbleContentEl) BorderB(length Length) BubbleContentEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e BubbleContentEl) BorderColor(borderColor Color) BubbleContentEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BubbleContentEl) BorderL(length Length) BubbleContentEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BubbleContentEl) BorderR(length Length) BubbleContentEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BubbleContentEl) BorderT(length Length) BubbleContentEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e BubbleContentEl) BorderX(length Length) BubbleContentEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e BubbleContentEl) BorderY(length Length) BubbleContentEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleContentEl) Bottom(length Length) BubbleContentEl { tStyledBottom(e.n, length); return e }
-func (e BubbleContentEl) ColEnd(end int16) BubbleContentEl     { tStyledColEnd(e.n, end); return e }
-func (e BubbleContentEl) ColSpan(span uint16) BubbleContentEl  { tStyledColSpan(e.n, span); return e }
+
+// Sets the column end of this element.
+func (e BubbleContentEl) ColEnd(end int16) BubbleContentEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e BubbleContentEl) ColSpan(span uint16) BubbleContentEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e BubbleContentEl) ColStart(start int16) BubbleContentEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e BubbleContentEl) Cursor(cursor CursorStyle) BubbleContentEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e BubbleContentEl) FlexBasis(basis Length) BubbleContentEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e BubbleContentEl) FlexGrow(grow float32) BubbleContentEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BubbleContentEl) FlexShrink(shrink float32) BubbleContentEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e BubbleContentEl) FontFamily(familyName string) BubbleContentEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e BubbleContentEl) FontFeatures(features FontFeatures) BubbleContentEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e BubbleContentEl) FontWeight(weight FontWeight) BubbleContentEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e BubbleContentEl) Gap(length Length) BubbleContentEl    { tStyledGap(e.n, length); return e }
-func (e BubbleContentEl) GapX(length Length) BubbleContentEl   { tStyledGapX(e.n, length); return e }
-func (e BubbleContentEl) GapY(length Length) BubbleContentEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e BubbleContentEl) Gap(length Length) BubbleContentEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e BubbleContentEl) GapX(length Length) BubbleContentEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e BubbleContentEl) GapY(length Length) BubbleContentEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e BubbleContentEl) GridCols(cols uint16) BubbleContentEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e BubbleContentEl) GridColsMaxContent(cols uint16) BubbleContentEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e BubbleContentEl) GridColsMinContent(cols uint16) BubbleContentEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e BubbleContentEl) GridRows(rows uint16) BubbleContentEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e BubbleContentEl) GridRowsMaxContent(rows uint16) BubbleContentEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e BubbleContentEl) GridRowsMinContent(rows uint16) BubbleContentEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e BubbleContentEl) H(length Length) BubbleContentEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e BubbleContentEl) H(length Length) BubbleContentEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleContentEl) Inset(length Length) BubbleContentEl { tStyledInset(e.n, length); return e }
-func (e BubbleContentEl) Left(length Length) BubbleContentEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleContentEl) Left(length Length) BubbleContentEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e BubbleContentEl) LineClamp(lines int) BubbleContentEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e BubbleContentEl) LineHeight(lineHeight Length) BubbleContentEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e BubbleContentEl) M(length Length) BubbleContentEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e BubbleContentEl) M(length Length) BubbleContentEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e BubbleContentEl) MaxH(length Length) BubbleContentEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e BubbleContentEl) MaxSize(length Length) BubbleContentEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e BubbleContentEl) MaxW(length Length) BubbleContentEl { tStyledMaxW(e.n, length); return e }
-func (e BubbleContentEl) Mb(length Length) BubbleContentEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleContentEl) Mb(length Length) BubbleContentEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e BubbleContentEl) MinH(length Length) BubbleContentEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e BubbleContentEl) MinSize(length Length) BubbleContentEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e BubbleContentEl) MinW(length Length) BubbleContentEl { tStyledMinW(e.n, length); return e }
-func (e BubbleContentEl) Ml(length Length) BubbleContentEl   { tStyledMl(e.n, length); return e }
-func (e BubbleContentEl) Mr(length Length) BubbleContentEl   { tStyledMr(e.n, length); return e }
-func (e BubbleContentEl) Mt(length Length) BubbleContentEl   { tStyledMt(e.n, length); return e }
-func (e BubbleContentEl) Mx(length Length) BubbleContentEl   { tStyledMx(e.n, length); return e }
-func (e BubbleContentEl) My(length Length) BubbleContentEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleContentEl) Ml(length Length) BubbleContentEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleContentEl) Mr(length Length) BubbleContentEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleContentEl) Mt(length Length) BubbleContentEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e BubbleContentEl) Mx(length Length) BubbleContentEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e BubbleContentEl) My(length Length) BubbleContentEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e BubbleContentEl) Opacity(opacity float32) BubbleContentEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e BubbleContentEl) P(length Length) BubbleContentEl     { tStyledP(e.n, length); return e }
-func (e BubbleContentEl) Pb(length Length) BubbleContentEl    { tStyledPb(e.n, length); return e }
-func (e BubbleContentEl) Pl(length Length) BubbleContentEl    { tStyledPl(e.n, length); return e }
-func (e BubbleContentEl) Pr(length Length) BubbleContentEl    { tStyledPr(e.n, length); return e }
-func (e BubbleContentEl) Pt(length Length) BubbleContentEl    { tStyledPt(e.n, length); return e }
-func (e BubbleContentEl) Px(length Length) BubbleContentEl    { tStyledPx(e.n, length); return e }
-func (e BubbleContentEl) Py(length Length) BubbleContentEl    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e BubbleContentEl) P(length Length) BubbleContentEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleContentEl) Pb(length Length) BubbleContentEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleContentEl) Pl(length Length) BubbleContentEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleContentEl) Pr(length Length) BubbleContentEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleContentEl) Pt(length Length) BubbleContentEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e BubbleContentEl) Px(length Length) BubbleContentEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e BubbleContentEl) Py(length Length) BubbleContentEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleContentEl) Right(length Length) BubbleContentEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e BubbleContentEl) Rounded(length Length) BubbleContentEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleContentEl) RoundedB(length Length) BubbleContentEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleContentEl) RoundedBl(length Length) BubbleContentEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleContentEl) RoundedBr(length Length) BubbleContentEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleContentEl) RoundedL(length Length) BubbleContentEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleContentEl) RoundedR(length Length) BubbleContentEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleContentEl) RoundedT(length Length) BubbleContentEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleContentEl) RoundedTl(length Length) BubbleContentEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleContentEl) RoundedTr(length Length) BubbleContentEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e BubbleContentEl) RowEnd(end int16) BubbleContentEl     { tStyledRowEnd(e.n, end); return e }
-func (e BubbleContentEl) RowSpan(span uint16) BubbleContentEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e BubbleContentEl) RowEnd(end int16) BubbleContentEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e BubbleContentEl) RowSpan(span uint16) BubbleContentEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e BubbleContentEl) RowStart(start int16) BubbleContentEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e BubbleContentEl) ScrollbarWidth(width Length) BubbleContentEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e BubbleContentEl) Shadow(shadows []BoxShadow) BubbleContentEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e BubbleContentEl) Size(length Length) BubbleContentEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e BubbleContentEl) TextAlign(align TextAlign) BubbleContentEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e BubbleContentEl) TextBg(bg Color) BubbleContentEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e BubbleContentEl) TextColor(color Color) BubbleContentEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e BubbleContentEl) TextDecorationColor(color Color) BubbleContentEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e BubbleContentEl) TextOverflow(overflow TextOverflow) BubbleContentEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e BubbleContentEl) TextSize(size Length) BubbleContentEl { tStyledTextSize(e.n, size); return e }
-func (e BubbleContentEl) Top(length Length) BubbleContentEl    { tStyledTop(e.n, length); return e }
-func (e BubbleContentEl) W(length Length) BubbleContentEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleContentEl) Top(length Length) BubbleContentEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e BubbleContentEl) W(length Length) BubbleContentEl { tStyledW(e.n, length); return e }
 
 // BubbleGroupEl is gpui_kit::component::bubble::BubbleGroup.
 type BubbleGroupEl struct{ n *node }
 
 func (e BubbleGroupEl) node() *node { return e.n }
 
+// Create an empty bubble group.
+//
 // BubbleGroup is <gpui_kit::component::bubble::BubbleGroup>::new.
 func BubbleGroup(st ...Style) BubbleGroupEl {
 	useComponentBubble()
@@ -520,14 +1045,40 @@ func BubbleGroupDefault(st ...Style) BubbleGroupEl {
 	return BubbleGroupEl{n}
 }
 
-func (e BubbleGroupEl) PopoverStyle() BubbleGroupEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e BubbleGroupEl) PopoverStyle() BubbleGroupEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e BubbleGroupEl) RoundedFullStyle() BubbleGroupEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e BubbleGroupEl) FocusRingStyle() BubbleGroupEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BubbleGroupEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BubbleGroupEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -555,7 +1106,20 @@ func (e BubbleGroupEl) FontMedium() BubbleGroupEl     { tStyledExtFontMedium(e.n
 func (e BubbleGroupEl) FontNormal() BubbleGroupEl     { tStyledExtFontNormal(e.n); return e }
 func (e BubbleGroupEl) FontSemibold() BubbleGroupEl   { tStyledExtFontSemibold(e.n); return e }
 func (e BubbleGroupEl) FontThin() BubbleGroupEl       { tStyledExtFontThin(e.n); return e }
-func (e BubbleGroupEl) HFlex() BubbleGroupEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e BubbleGroupEl) HFlex() BubbleGroupEl { tStyledExtHFlex(e.n); return e }
 func (e BubbleGroupEl) Margins(margins EdgesInto) BubbleGroupEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -568,6 +1132,11 @@ func (e BubbleGroupEl) RefineStyle(style StyleRefinement) BubbleGroupEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e BubbleGroupEl) VFlex() BubbleGroupEl { tStyledExtVFlex(e.n); return e }
 
 func (e BubbleGroupEl) Text(s string) BubbleGroupEl { putText(e.n, s); return e }
@@ -575,7 +1144,10 @@ func (e BubbleGroupEl) Text(s string) BubbleGroupEl { putText(e.n, s); return e 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e BubbleGroupEl) ChildView(v View) BubbleGroupEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e BubbleGroupEl) Child(child Element) BubbleGroupEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e BubbleGroupEl) Children(children ...Element) BubbleGroupEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -584,152 +1156,361 @@ func (e BubbleGroupEl) Children(children ...Element) BubbleGroupEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e BubbleGroupEl) Style(st ...Style) BubbleGroupEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e BubbleGroupEl) AspectRatio(ratio float32) BubbleGroupEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e BubbleGroupEl) Bg(fill Fill) BubbleGroupEl          { tStyledBg(e.n, fill); return e }
-func (e BubbleGroupEl) Border(length Length) BubbleGroupEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e BubbleGroupEl) Bg(fill Fill) BubbleGroupEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e BubbleGroupEl) Border(length Length) BubbleGroupEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BubbleGroupEl) BorderB(length Length) BubbleGroupEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e BubbleGroupEl) BorderColor(borderColor Color) BubbleGroupEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e BubbleGroupEl) BorderL(length Length) BubbleGroupEl     { tStyledBorderL(e.n, length); return e }
-func (e BubbleGroupEl) BorderR(length Length) BubbleGroupEl     { tStyledBorderR(e.n, length); return e }
-func (e BubbleGroupEl) BorderT(length Length) BubbleGroupEl     { tStyledBorderT(e.n, length); return e }
-func (e BubbleGroupEl) BorderX(length Length) BubbleGroupEl     { tStyledBorderX(e.n, length); return e }
-func (e BubbleGroupEl) BorderY(length Length) BubbleGroupEl     { tStyledBorderY(e.n, length); return e }
-func (e BubbleGroupEl) Bottom(length Length) BubbleGroupEl      { tStyledBottom(e.n, length); return e }
-func (e BubbleGroupEl) ColEnd(end int16) BubbleGroupEl          { tStyledColEnd(e.n, end); return e }
-func (e BubbleGroupEl) ColSpan(span uint16) BubbleGroupEl       { tStyledColSpan(e.n, span); return e }
-func (e BubbleGroupEl) ColStart(start int16) BubbleGroupEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BubbleGroupEl) BorderL(length Length) BubbleGroupEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BubbleGroupEl) BorderR(length Length) BubbleGroupEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e BubbleGroupEl) BorderT(length Length) BubbleGroupEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e BubbleGroupEl) BorderX(length Length) BubbleGroupEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e BubbleGroupEl) BorderY(length Length) BubbleGroupEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleGroupEl) Bottom(length Length) BubbleGroupEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e BubbleGroupEl) ColEnd(end int16) BubbleGroupEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e BubbleGroupEl) ColSpan(span uint16) BubbleGroupEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e BubbleGroupEl) ColStart(start int16) BubbleGroupEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e BubbleGroupEl) Cursor(cursor CursorStyle) BubbleGroupEl { tStyledCursor(e.n, cursor); return e }
-func (e BubbleGroupEl) FlexBasis(basis Length) BubbleGroupEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e BubbleGroupEl) FlexGrow(grow float32) BubbleGroupEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e BubbleGroupEl) FlexBasis(basis Length) BubbleGroupEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e BubbleGroupEl) FlexGrow(grow float32) BubbleGroupEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BubbleGroupEl) FlexShrink(shrink float32) BubbleGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e BubbleGroupEl) FontFamily(familyName string) BubbleGroupEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e BubbleGroupEl) FontFeatures(features FontFeatures) BubbleGroupEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e BubbleGroupEl) FontWeight(weight FontWeight) BubbleGroupEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e BubbleGroupEl) Gap(length Length) BubbleGroupEl    { tStyledGap(e.n, length); return e }
-func (e BubbleGroupEl) GapX(length Length) BubbleGroupEl   { tStyledGapX(e.n, length); return e }
-func (e BubbleGroupEl) GapY(length Length) BubbleGroupEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e BubbleGroupEl) Gap(length Length) BubbleGroupEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e BubbleGroupEl) GapX(length Length) BubbleGroupEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e BubbleGroupEl) GapY(length Length) BubbleGroupEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e BubbleGroupEl) GridCols(cols uint16) BubbleGroupEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e BubbleGroupEl) GridColsMaxContent(cols uint16) BubbleGroupEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e BubbleGroupEl) GridColsMinContent(cols uint16) BubbleGroupEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e BubbleGroupEl) GridRows(rows uint16) BubbleGroupEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e BubbleGroupEl) GridRowsMaxContent(rows uint16) BubbleGroupEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e BubbleGroupEl) GridRowsMinContent(rows uint16) BubbleGroupEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e BubbleGroupEl) H(length Length) BubbleGroupEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e BubbleGroupEl) H(length Length) BubbleGroupEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleGroupEl) Inset(length Length) BubbleGroupEl { tStyledInset(e.n, length); return e }
-func (e BubbleGroupEl) Left(length Length) BubbleGroupEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleGroupEl) Left(length Length) BubbleGroupEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e BubbleGroupEl) LineClamp(lines int) BubbleGroupEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e BubbleGroupEl) LineHeight(lineHeight Length) BubbleGroupEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e BubbleGroupEl) M(length Length) BubbleGroupEl         { tStyledM(e.n, length); return e }
-func (e BubbleGroupEl) MaxH(length Length) BubbleGroupEl      { tStyledMaxH(e.n, length); return e }
-func (e BubbleGroupEl) MaxSize(length Length) BubbleGroupEl   { tStyledMaxSize(e.n, length); return e }
-func (e BubbleGroupEl) MaxW(length Length) BubbleGroupEl      { tStyledMaxW(e.n, length); return e }
-func (e BubbleGroupEl) Mb(length Length) BubbleGroupEl        { tStyledMb(e.n, length); return e }
-func (e BubbleGroupEl) MinH(length Length) BubbleGroupEl      { tStyledMinH(e.n, length); return e }
-func (e BubbleGroupEl) MinSize(length Length) BubbleGroupEl   { tStyledMinSize(e.n, length); return e }
-func (e BubbleGroupEl) MinW(length Length) BubbleGroupEl      { tStyledMinW(e.n, length); return e }
-func (e BubbleGroupEl) Ml(length Length) BubbleGroupEl        { tStyledMl(e.n, length); return e }
-func (e BubbleGroupEl) Mr(length Length) BubbleGroupEl        { tStyledMr(e.n, length); return e }
-func (e BubbleGroupEl) Mt(length Length) BubbleGroupEl        { tStyledMt(e.n, length); return e }
-func (e BubbleGroupEl) Mx(length Length) BubbleGroupEl        { tStyledMx(e.n, length); return e }
-func (e BubbleGroupEl) My(length Length) BubbleGroupEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e BubbleGroupEl) M(length Length) BubbleGroupEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e BubbleGroupEl) MaxH(length Length) BubbleGroupEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e BubbleGroupEl) MaxSize(length Length) BubbleGroupEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e BubbleGroupEl) MaxW(length Length) BubbleGroupEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleGroupEl) Mb(length Length) BubbleGroupEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e BubbleGroupEl) MinH(length Length) BubbleGroupEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e BubbleGroupEl) MinSize(length Length) BubbleGroupEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e BubbleGroupEl) MinW(length Length) BubbleGroupEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleGroupEl) Ml(length Length) BubbleGroupEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleGroupEl) Mr(length Length) BubbleGroupEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleGroupEl) Mt(length Length) BubbleGroupEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e BubbleGroupEl) Mx(length Length) BubbleGroupEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e BubbleGroupEl) My(length Length) BubbleGroupEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e BubbleGroupEl) Opacity(opacity float32) BubbleGroupEl { tStyledOpacity(e.n, opacity); return e }
-func (e BubbleGroupEl) P(length Length) BubbleGroupEl         { tStyledP(e.n, length); return e }
-func (e BubbleGroupEl) Pb(length Length) BubbleGroupEl        { tStyledPb(e.n, length); return e }
-func (e BubbleGroupEl) Pl(length Length) BubbleGroupEl        { tStyledPl(e.n, length); return e }
-func (e BubbleGroupEl) Pr(length Length) BubbleGroupEl        { tStyledPr(e.n, length); return e }
-func (e BubbleGroupEl) Pt(length Length) BubbleGroupEl        { tStyledPt(e.n, length); return e }
-func (e BubbleGroupEl) Px(length Length) BubbleGroupEl        { tStyledPx(e.n, length); return e }
-func (e BubbleGroupEl) Py(length Length) BubbleGroupEl        { tStyledPy(e.n, length); return e }
-func (e BubbleGroupEl) Right(length Length) BubbleGroupEl     { tStyledRight(e.n, length); return e }
-func (e BubbleGroupEl) Rounded(length Length) BubbleGroupEl   { tStyledRounded(e.n, length); return e }
-func (e BubbleGroupEl) RoundedB(length Length) BubbleGroupEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e BubbleGroupEl) P(length Length) BubbleGroupEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleGroupEl) Pb(length Length) BubbleGroupEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleGroupEl) Pl(length Length) BubbleGroupEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleGroupEl) Pr(length Length) BubbleGroupEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e BubbleGroupEl) Pt(length Length) BubbleGroupEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e BubbleGroupEl) Px(length Length) BubbleGroupEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e BubbleGroupEl) Py(length Length) BubbleGroupEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleGroupEl) Right(length Length) BubbleGroupEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e BubbleGroupEl) Rounded(length Length) BubbleGroupEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e BubbleGroupEl) RoundedB(length Length) BubbleGroupEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleGroupEl) RoundedBl(length Length) BubbleGroupEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleGroupEl) RoundedBr(length Length) BubbleGroupEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleGroupEl) RoundedL(length Length) BubbleGroupEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleGroupEl) RoundedR(length Length) BubbleGroupEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleGroupEl) RoundedT(length Length) BubbleGroupEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleGroupEl) RoundedTl(length Length) BubbleGroupEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleGroupEl) RoundedTr(length Length) BubbleGroupEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e BubbleGroupEl) RowEnd(end int16) BubbleGroupEl     { tStyledRowEnd(e.n, end); return e }
-func (e BubbleGroupEl) RowSpan(span uint16) BubbleGroupEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e BubbleGroupEl) RowEnd(end int16) BubbleGroupEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e BubbleGroupEl) RowSpan(span uint16) BubbleGroupEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e BubbleGroupEl) RowStart(start int16) BubbleGroupEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e BubbleGroupEl) ScrollbarWidth(width Length) BubbleGroupEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e BubbleGroupEl) Shadow(shadows []BoxShadow) BubbleGroupEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e BubbleGroupEl) Size(length Length) BubbleGroupEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e BubbleGroupEl) TextAlign(align TextAlign) BubbleGroupEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e BubbleGroupEl) TextBg(bg Color) BubbleGroupEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e BubbleGroupEl) TextBg(bg Color) BubbleGroupEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e BubbleGroupEl) TextColor(color Color) BubbleGroupEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e BubbleGroupEl) TextDecorationColor(color Color) BubbleGroupEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e BubbleGroupEl) TextOverflow(overflow TextOverflow) BubbleGroupEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e BubbleGroupEl) TextSize(size Length) BubbleGroupEl { tStyledTextSize(e.n, size); return e }
-func (e BubbleGroupEl) Top(length Length) BubbleGroupEl    { tStyledTop(e.n, length); return e }
-func (e BubbleGroupEl) W(length Length) BubbleGroupEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e BubbleGroupEl) Top(length Length) BubbleGroupEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e BubbleGroupEl) W(length Length) BubbleGroupEl { tStyledW(e.n, length); return e }
 
 // BubbleReactionsEl is gpui_kit::component::bubble::BubbleReactions.
 type BubbleReactionsEl struct{ n *node }
 
 func (e BubbleReactionsEl) node() *node { return e.n }
 
+// Create a trailing-aligned reaction region on the lower edge.
+//
 // BubbleReactions is <gpui_kit::component::bubble::BubbleReactions>::new.
 func BubbleReactions(st ...Style) BubbleReactionsEl {
 	useComponentBubble()
@@ -746,6 +1527,13 @@ func BubbleReactionsDefault(st ...Style) BubbleReactionsEl {
 	return BubbleReactionsEl{n}
 }
 
+// Add an interactive action that shares the reaction surface.
+//
+// Typed actions remove the reaction region's decorative content padding and use the theme's full
+// radius so the button reads as part of one surface. The typed action owns that pill geometry; use
+// `.child(...)` for emoji, labels, and arbitrary elements when the child should retain its own
+// styling, including a custom button radius.
+//
 // Action is <gpui_kit::component::bubble::BubbleReactions>::action.
 func (e BubbleReactionsEl) Action(action ButtonEl) BubbleReactionsEl {
 	o := op(e.n, 256)
@@ -753,6 +1541,8 @@ func (e BubbleReactionsEl) Action(action ButtonEl) BubbleReactionsEl {
 	return e
 }
 
+// Set the reaction region alignment along the bubble edge.
+//
 // Alignment is <gpui_kit::component::bubble::BubbleReactions>::alignment.
 func (e BubbleReactionsEl) Alignment(alignment MessageAlignment) BubbleReactionsEl {
 	o := op(e.n, 257)
@@ -760,6 +1550,8 @@ func (e BubbleReactionsEl) Alignment(alignment MessageAlignment) BubbleReactions
 	return e
 }
 
+// Set the edge on which reactions are positioned.
+//
 // Side is <gpui_kit::component::bubble::BubbleReactions>::side.
 func (e BubbleReactionsEl) Side(side BubbleReactionSide) BubbleReactionsEl {
 	o := op(e.n, 258)
@@ -767,17 +1559,43 @@ func (e BubbleReactionsEl) Side(side BubbleReactionSide) BubbleReactionsEl {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e BubbleReactionsEl) PopoverStyle() BubbleReactionsEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e BubbleReactionsEl) RoundedFullStyle() BubbleReactionsEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e BubbleReactionsEl) FocusRingStyle() BubbleReactionsEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BubbleReactionsEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BubbleReactionsEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -808,7 +1626,20 @@ func (e BubbleReactionsEl) FontMedium() BubbleReactionsEl   { tStyledExtFontMedi
 func (e BubbleReactionsEl) FontNormal() BubbleReactionsEl   { tStyledExtFontNormal(e.n); return e }
 func (e BubbleReactionsEl) FontSemibold() BubbleReactionsEl { tStyledExtFontSemibold(e.n); return e }
 func (e BubbleReactionsEl) FontThin() BubbleReactionsEl     { tStyledExtFontThin(e.n); return e }
-func (e BubbleReactionsEl) HFlex() BubbleReactionsEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e BubbleReactionsEl) HFlex() BubbleReactionsEl { tStyledExtHFlex(e.n); return e }
 func (e BubbleReactionsEl) Margins(margins EdgesInto) BubbleReactionsEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -821,6 +1652,11 @@ func (e BubbleReactionsEl) RefineStyle(style StyleRefinement) BubbleReactionsEl 
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e BubbleReactionsEl) VFlex() BubbleReactionsEl { tStyledExtVFlex(e.n); return e }
 
 func (e BubbleReactionsEl) Text(s string) BubbleReactionsEl { putText(e.n, s); return e }
@@ -828,10 +1664,13 @@ func (e BubbleReactionsEl) Text(s string) BubbleReactionsEl { putText(e.n, s); r
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e BubbleReactionsEl) ChildView(v View) BubbleReactionsEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e BubbleReactionsEl) Child(child Element) BubbleReactionsEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e BubbleReactionsEl) Children(children ...Element) BubbleReactionsEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -840,233 +1679,440 @@ func (e BubbleReactionsEl) Children(children ...Element) BubbleReactionsEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e BubbleReactionsEl) Style(st ...Style) BubbleReactionsEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e BubbleReactionsEl) AspectRatio(ratio float32) BubbleReactionsEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e BubbleReactionsEl) Bg(fill Fill) BubbleReactionsEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e BubbleReactionsEl) Border(length Length) BubbleReactionsEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BubbleReactionsEl) BorderB(length Length) BubbleReactionsEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e BubbleReactionsEl) BorderColor(borderColor Color) BubbleReactionsEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BubbleReactionsEl) BorderL(length Length) BubbleReactionsEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BubbleReactionsEl) BorderR(length Length) BubbleReactionsEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e BubbleReactionsEl) BorderT(length Length) BubbleReactionsEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e BubbleReactionsEl) BorderX(length Length) BubbleReactionsEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e BubbleReactionsEl) BorderY(length Length) BubbleReactionsEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleReactionsEl) Bottom(length Length) BubbleReactionsEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e BubbleReactionsEl) ColEnd(end int16) BubbleReactionsEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e BubbleReactionsEl) ColSpan(span uint16) BubbleReactionsEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e BubbleReactionsEl) ColStart(start int16) BubbleReactionsEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e BubbleReactionsEl) Cursor(cursor CursorStyle) BubbleReactionsEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e BubbleReactionsEl) FlexBasis(basis Length) BubbleReactionsEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e BubbleReactionsEl) FlexGrow(grow float32) BubbleReactionsEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BubbleReactionsEl) FlexShrink(shrink float32) BubbleReactionsEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e BubbleReactionsEl) FontFamily(familyName string) BubbleReactionsEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e BubbleReactionsEl) FontFeatures(features FontFeatures) BubbleReactionsEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e BubbleReactionsEl) FontWeight(weight FontWeight) BubbleReactionsEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e BubbleReactionsEl) Gap(length Length) BubbleReactionsEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e BubbleReactionsEl) Gap(length Length) BubbleReactionsEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e BubbleReactionsEl) GapX(length Length) BubbleReactionsEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e BubbleReactionsEl) GapY(length Length) BubbleReactionsEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e BubbleReactionsEl) GridCols(cols uint16) BubbleReactionsEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e BubbleReactionsEl) GridColsMaxContent(cols uint16) BubbleReactionsEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e BubbleReactionsEl) GridColsMinContent(cols uint16) BubbleReactionsEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e BubbleReactionsEl) GridRows(rows uint16) BubbleReactionsEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e BubbleReactionsEl) GridRowsMaxContent(rows uint16) BubbleReactionsEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e BubbleReactionsEl) GridRowsMinContent(rows uint16) BubbleReactionsEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e BubbleReactionsEl) H(length Length) BubbleReactionsEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleReactionsEl) Inset(length Length) BubbleReactionsEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleReactionsEl) Left(length Length) BubbleReactionsEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e BubbleReactionsEl) LineClamp(lines int) BubbleReactionsEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e BubbleReactionsEl) LineHeight(lineHeight Length) BubbleReactionsEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e BubbleReactionsEl) M(length Length) BubbleReactionsEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e BubbleReactionsEl) M(length Length) BubbleReactionsEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e BubbleReactionsEl) MaxH(length Length) BubbleReactionsEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e BubbleReactionsEl) MaxSize(length Length) BubbleReactionsEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e BubbleReactionsEl) MaxW(length Length) BubbleReactionsEl { tStyledMaxW(e.n, length); return e }
-func (e BubbleReactionsEl) Mb(length Length) BubbleReactionsEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleReactionsEl) Mb(length Length) BubbleReactionsEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e BubbleReactionsEl) MinH(length Length) BubbleReactionsEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e BubbleReactionsEl) MinSize(length Length) BubbleReactionsEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e BubbleReactionsEl) MinW(length Length) BubbleReactionsEl { tStyledMinW(e.n, length); return e }
-func (e BubbleReactionsEl) Ml(length Length) BubbleReactionsEl   { tStyledMl(e.n, length); return e }
-func (e BubbleReactionsEl) Mr(length Length) BubbleReactionsEl   { tStyledMr(e.n, length); return e }
-func (e BubbleReactionsEl) Mt(length Length) BubbleReactionsEl   { tStyledMt(e.n, length); return e }
-func (e BubbleReactionsEl) Mx(length Length) BubbleReactionsEl   { tStyledMx(e.n, length); return e }
-func (e BubbleReactionsEl) My(length Length) BubbleReactionsEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleReactionsEl) Ml(length Length) BubbleReactionsEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleReactionsEl) Mr(length Length) BubbleReactionsEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e BubbleReactionsEl) Mt(length Length) BubbleReactionsEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e BubbleReactionsEl) Mx(length Length) BubbleReactionsEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e BubbleReactionsEl) My(length Length) BubbleReactionsEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e BubbleReactionsEl) Opacity(opacity float32) BubbleReactionsEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e BubbleReactionsEl) P(length Length) BubbleReactionsEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e BubbleReactionsEl) P(length Length) BubbleReactionsEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e BubbleReactionsEl) Pb(length Length) BubbleReactionsEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e BubbleReactionsEl) Pl(length Length) BubbleReactionsEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e BubbleReactionsEl) Pr(length Length) BubbleReactionsEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e BubbleReactionsEl) Pt(length Length) BubbleReactionsEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e BubbleReactionsEl) Px(length Length) BubbleReactionsEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e BubbleReactionsEl) Py(length Length) BubbleReactionsEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleReactionsEl) Right(length Length) BubbleReactionsEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e BubbleReactionsEl) Rounded(length Length) BubbleReactionsEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleReactionsEl) RoundedB(length Length) BubbleReactionsEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleReactionsEl) RoundedBl(length Length) BubbleReactionsEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleReactionsEl) RoundedBr(length Length) BubbleReactionsEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleReactionsEl) RoundedL(length Length) BubbleReactionsEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleReactionsEl) RoundedR(length Length) BubbleReactionsEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e BubbleReactionsEl) RoundedT(length Length) BubbleReactionsEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleReactionsEl) RoundedTl(length Length) BubbleReactionsEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e BubbleReactionsEl) RoundedTr(length Length) BubbleReactionsEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e BubbleReactionsEl) RowEnd(end int16) BubbleReactionsEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e BubbleReactionsEl) RowSpan(span uint16) BubbleReactionsEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e BubbleReactionsEl) RowStart(start int16) BubbleReactionsEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e BubbleReactionsEl) ScrollbarWidth(width Length) BubbleReactionsEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e BubbleReactionsEl) Shadow(shadows []BoxShadow) BubbleReactionsEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e BubbleReactionsEl) Size(length Length) BubbleReactionsEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e BubbleReactionsEl) TextAlign(align TextAlign) BubbleReactionsEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e BubbleReactionsEl) TextBg(bg Color) BubbleReactionsEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e BubbleReactionsEl) TextColor(color Color) BubbleReactionsEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e BubbleReactionsEl) TextDecorationColor(color Color) BubbleReactionsEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e BubbleReactionsEl) TextOverflow(overflow TextOverflow) BubbleReactionsEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e BubbleReactionsEl) TextSize(size Length) BubbleReactionsEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e BubbleReactionsEl) Top(length Length) BubbleReactionsEl { tStyledTop(e.n, length); return e }
-func (e BubbleReactionsEl) W(length Length) BubbleReactionsEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e BubbleReactionsEl) W(length Length) BubbleReactionsEl { tStyledW(e.n, length); return e }

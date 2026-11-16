@@ -9,6 +9,8 @@ type KbdEl struct{ n *node }
 
 func (e KbdEl) node() *node { return e.n }
 
+// Create a new Kbd element with the given `Keystroke`.
+//
 // Kbd is <gpui_kit::component::kbd::Kbd>::new.
 func Kbd(stroke Keystroke, st ...Style) KbdEl {
 	useComponentKbd()
@@ -19,6 +21,8 @@ func Kbd(stroke Keystroke, st ...Style) KbdEl {
 	return KbdEl{n}
 }
 
+// Set the appearance of the keybinding, default is `true`.
+//
 // Appearance is <gpui_kit::component::kbd::Kbd>::appearance.
 func (e KbdEl) Appearance(appearance bool) KbdEl {
 	o := op(e.n, 256)
@@ -26,13 +30,27 @@ func (e KbdEl) Appearance(appearance bool) KbdEl {
 	return e
 }
 
+// Use outline style for the keybinding, default is `false`.
+//
 // Outline is <gpui_kit::component::kbd::Kbd>::outline.
 func (e KbdEl) Outline() KbdEl {
 	op(e.n, 257)
 	return e
 }
 
-func (e KbdEl) PopoverStyle() KbdEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e KbdEl) PopoverStyle() KbdEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e KbdEl) RoundedFullStyle() KbdEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e KbdEl) CornerRadii(radius Corners) KbdEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -41,114 +59,339 @@ func (e KbdEl) DebugFocused(focusHandle FocusHandle) KbdEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e KbdEl) DebugGreen() KbdEl                       { tStyledExtDebugGreen(e.n); return e }
-func (e KbdEl) DebugPink() KbdEl                        { tStyledExtDebugPink(e.n); return e }
-func (e KbdEl) DebugRed() KbdEl                         { tStyledExtDebugRed(e.n); return e }
-func (e KbdEl) DebugYellow() KbdEl                      { tStyledExtDebugYellow(e.n); return e }
-func (e KbdEl) FontBlack() KbdEl                        { tStyledExtFontBlack(e.n); return e }
-func (e KbdEl) FontBold() KbdEl                         { tStyledExtFontBold(e.n); return e }
-func (e KbdEl) FontExtrabold() KbdEl                    { tStyledExtFontExtrabold(e.n); return e }
-func (e KbdEl) FontExtralight() KbdEl                   { tStyledExtFontExtralight(e.n); return e }
-func (e KbdEl) FontLight() KbdEl                        { tStyledExtFontLight(e.n); return e }
-func (e KbdEl) FontMedium() KbdEl                       { tStyledExtFontMedium(e.n); return e }
-func (e KbdEl) FontNormal() KbdEl                       { tStyledExtFontNormal(e.n); return e }
-func (e KbdEl) FontSemibold() KbdEl                     { tStyledExtFontSemibold(e.n); return e }
-func (e KbdEl) FontThin() KbdEl                         { tStyledExtFontThin(e.n); return e }
+func (e KbdEl) DebugGreen() KbdEl     { tStyledExtDebugGreen(e.n); return e }
+func (e KbdEl) DebugPink() KbdEl      { tStyledExtDebugPink(e.n); return e }
+func (e KbdEl) DebugRed() KbdEl       { tStyledExtDebugRed(e.n); return e }
+func (e KbdEl) DebugYellow() KbdEl    { tStyledExtDebugYellow(e.n); return e }
+func (e KbdEl) FontBlack() KbdEl      { tStyledExtFontBlack(e.n); return e }
+func (e KbdEl) FontBold() KbdEl       { tStyledExtFontBold(e.n); return e }
+func (e KbdEl) FontExtrabold() KbdEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e KbdEl) FontExtralight() KbdEl { tStyledExtFontExtralight(e.n); return e }
+func (e KbdEl) FontLight() KbdEl      { tStyledExtFontLight(e.n); return e }
+func (e KbdEl) FontMedium() KbdEl     { tStyledExtFontMedium(e.n); return e }
+func (e KbdEl) FontNormal() KbdEl     { tStyledExtFontNormal(e.n); return e }
+func (e KbdEl) FontSemibold() KbdEl   { tStyledExtFontSemibold(e.n); return e }
+func (e KbdEl) FontThin() KbdEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e KbdEl) HFlex() KbdEl                            { tStyledExtHFlex(e.n); return e }
 func (e KbdEl) Margins(margins EdgesInto) KbdEl         { tStyledExtMargins(e.n, margins); return e }
 func (e KbdEl) Paddings(paddings EdgesInto) KbdEl       { tStyledExtPaddings(e.n, paddings); return e }
 func (e KbdEl) RefineStyle(style StyleRefinement) KbdEl { tStyledExtRefineStyle(e.n, style); return e }
-func (e KbdEl) VFlex() KbdEl                            { tStyledExtVFlex(e.n); return e }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
+func (e KbdEl) VFlex() KbdEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e KbdEl) Style(st ...Style) KbdEl { tokens(e.n, st); return e }
 
-func (e KbdEl) AspectRatio(ratio float32) KbdEl     { tStyledAspectRatio(e.n, ratio); return e }
-func (e KbdEl) Bg(fill Fill) KbdEl                  { tStyledBg(e.n, fill); return e }
-func (e KbdEl) Border(length Length) KbdEl          { tStyledBorder(e.n, length); return e }
-func (e KbdEl) BorderB(length Length) KbdEl         { tStyledBorderB(e.n, length); return e }
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+func (e KbdEl) AspectRatio(ratio float32) KbdEl { tStyledAspectRatio(e.n, ratio); return e }
+
+// Sets the background color of the element.
+func (e KbdEl) Bg(fill Fill) KbdEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e KbdEl) Border(length Length) KbdEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e KbdEl) BorderB(length Length) KbdEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e KbdEl) BorderColor(borderColor Color) KbdEl { tStyledBorderColor(e.n, borderColor); return e }
-func (e KbdEl) BorderL(length Length) KbdEl         { tStyledBorderL(e.n, length); return e }
-func (e KbdEl) BorderR(length Length) KbdEl         { tStyledBorderR(e.n, length); return e }
-func (e KbdEl) BorderT(length Length) KbdEl         { tStyledBorderT(e.n, length); return e }
-func (e KbdEl) BorderX(length Length) KbdEl         { tStyledBorderX(e.n, length); return e }
-func (e KbdEl) BorderY(length Length) KbdEl         { tStyledBorderY(e.n, length); return e }
-func (e KbdEl) Bottom(length Length) KbdEl          { tStyledBottom(e.n, length); return e }
-func (e KbdEl) ColEnd(end int16) KbdEl              { tStyledColEnd(e.n, end); return e }
-func (e KbdEl) ColSpan(span uint16) KbdEl           { tStyledColSpan(e.n, span); return e }
-func (e KbdEl) ColStart(start int16) KbdEl          { tStyledColStart(e.n, start); return e }
-func (e KbdEl) Cursor(cursor CursorStyle) KbdEl     { tStyledCursor(e.n, cursor); return e }
-func (e KbdEl) FlexBasis(basis Length) KbdEl        { tStyledFlexBasis(e.n, basis); return e }
-func (e KbdEl) FlexGrow(grow float32) KbdEl         { tStyledFlexGrow(e.n, grow); return e }
-func (e KbdEl) FlexShrink(shrink float32) KbdEl     { tStyledFlexShrink(e.n, shrink); return e }
-func (e KbdEl) FontFamily(familyName string) KbdEl  { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e KbdEl) BorderL(length Length) KbdEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e KbdEl) BorderR(length Length) KbdEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e KbdEl) BorderT(length Length) KbdEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e KbdEl) BorderX(length Length) KbdEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e KbdEl) BorderY(length Length) KbdEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e KbdEl) Bottom(length Length) KbdEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e KbdEl) ColEnd(end int16) KbdEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e KbdEl) ColSpan(span uint16) KbdEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e KbdEl) ColStart(start int16) KbdEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e KbdEl) Cursor(cursor CursorStyle) KbdEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e KbdEl) FlexBasis(basis Length) KbdEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e KbdEl) FlexGrow(grow float32) KbdEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e KbdEl) FlexShrink(shrink float32) KbdEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
+func (e KbdEl) FontFamily(familyName string) KbdEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e KbdEl) FontFeatures(features FontFeatures) KbdEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
-func (e KbdEl) FontWeight(weight FontWeight) KbdEl   { tStyledFontWeight(e.n, weight); return e }
-func (e KbdEl) Gap(length Length) KbdEl              { tStyledGap(e.n, length); return e }
-func (e KbdEl) GapX(length Length) KbdEl             { tStyledGapX(e.n, length); return e }
-func (e KbdEl) GapY(length Length) KbdEl             { tStyledGapY(e.n, length); return e }
-func (e KbdEl) GridCols(cols uint16) KbdEl           { tStyledGridCols(e.n, cols); return e }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
+func (e KbdEl) FontWeight(weight FontWeight) KbdEl { tStyledFontWeight(e.n, weight); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e KbdEl) Gap(length Length) KbdEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e KbdEl) GapX(length Length) KbdEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e KbdEl) GapY(length Length) KbdEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e KbdEl) GridCols(cols uint16) KbdEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e KbdEl) GridColsMaxContent(cols uint16) KbdEl { tStyledGridColsMaxContent(e.n, cols); return e }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e KbdEl) GridColsMinContent(cols uint16) KbdEl { tStyledGridColsMinContent(e.n, cols); return e }
-func (e KbdEl) GridRows(rows uint16) KbdEl           { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows of this element.
+func (e KbdEl) GridRows(rows uint16) KbdEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e KbdEl) GridRowsMaxContent(rows uint16) KbdEl { tStyledGridRowsMaxContent(e.n, rows); return e }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e KbdEl) GridRowsMinContent(rows uint16) KbdEl { tStyledGridRowsMinContent(e.n, rows); return e }
-func (e KbdEl) H(length Length) KbdEl                { tStyledH(e.n, length); return e }
-func (e KbdEl) Inset(length Length) KbdEl            { tStyledInset(e.n, length); return e }
-func (e KbdEl) Left(length Length) KbdEl             { tStyledLeft(e.n, length); return e }
-func (e KbdEl) LineClamp(lines int) KbdEl            { tStyledLineClamp(e.n, lines); return e }
-func (e KbdEl) LineHeight(lineHeight Length) KbdEl   { tStyledLineHeight(e.n, lineHeight); return e }
-func (e KbdEl) M(length Length) KbdEl                { tStyledM(e.n, length); return e }
-func (e KbdEl) MaxH(length Length) KbdEl             { tStyledMaxH(e.n, length); return e }
-func (e KbdEl) MaxSize(length Length) KbdEl          { tStyledMaxSize(e.n, length); return e }
-func (e KbdEl) MaxW(length Length) KbdEl             { tStyledMaxW(e.n, length); return e }
-func (e KbdEl) Mb(length Length) KbdEl               { tStyledMb(e.n, length); return e }
-func (e KbdEl) MinH(length Length) KbdEl             { tStyledMinH(e.n, length); return e }
-func (e KbdEl) MinSize(length Length) KbdEl          { tStyledMinSize(e.n, length); return e }
-func (e KbdEl) MinW(length Length) KbdEl             { tStyledMinW(e.n, length); return e }
-func (e KbdEl) Ml(length Length) KbdEl               { tStyledMl(e.n, length); return e }
-func (e KbdEl) Mr(length Length) KbdEl               { tStyledMr(e.n, length); return e }
-func (e KbdEl) Mt(length Length) KbdEl               { tStyledMt(e.n, length); return e }
-func (e KbdEl) Mx(length Length) KbdEl               { tStyledMx(e.n, length); return e }
-func (e KbdEl) My(length Length) KbdEl               { tStyledMy(e.n, length); return e }
-func (e KbdEl) Opacity(opacity float32) KbdEl        { tStyledOpacity(e.n, opacity); return e }
-func (e KbdEl) P(length Length) KbdEl                { tStyledP(e.n, length); return e }
-func (e KbdEl) Pb(length Length) KbdEl               { tStyledPb(e.n, length); return e }
-func (e KbdEl) Pl(length Length) KbdEl               { tStyledPl(e.n, length); return e }
-func (e KbdEl) Pr(length Length) KbdEl               { tStyledPr(e.n, length); return e }
-func (e KbdEl) Pt(length Length) KbdEl               { tStyledPt(e.n, length); return e }
-func (e KbdEl) Px(length Length) KbdEl               { tStyledPx(e.n, length); return e }
-func (e KbdEl) Py(length Length) KbdEl               { tStyledPy(e.n, length); return e }
-func (e KbdEl) Right(length Length) KbdEl            { tStyledRight(e.n, length); return e }
-func (e KbdEl) Rounded(length Length) KbdEl          { tStyledRounded(e.n, length); return e }
-func (e KbdEl) RoundedB(length Length) KbdEl         { tStyledRoundedB(e.n, length); return e }
-func (e KbdEl) RoundedBl(length Length) KbdEl        { tStyledRoundedBl(e.n, length); return e }
-func (e KbdEl) RoundedBr(length Length) KbdEl        { tStyledRoundedBr(e.n, length); return e }
-func (e KbdEl) RoundedL(length Length) KbdEl         { tStyledRoundedL(e.n, length); return e }
-func (e KbdEl) RoundedR(length Length) KbdEl         { tStyledRoundedR(e.n, length); return e }
-func (e KbdEl) RoundedT(length Length) KbdEl         { tStyledRoundedT(e.n, length); return e }
-func (e KbdEl) RoundedTl(length Length) KbdEl        { tStyledRoundedTl(e.n, length); return e }
-func (e KbdEl) RoundedTr(length Length) KbdEl        { tStyledRoundedTr(e.n, length); return e }
-func (e KbdEl) RowEnd(end int16) KbdEl               { tStyledRowEnd(e.n, end); return e }
-func (e KbdEl) RowSpan(span uint16) KbdEl            { tStyledRowSpan(e.n, span); return e }
-func (e KbdEl) RowStart(start int16) KbdEl           { tStyledRowStart(e.n, start); return e }
-func (e KbdEl) ScrollbarWidth(width Length) KbdEl    { tStyledScrollbarWidth(e.n, width); return e }
-func (e KbdEl) Shadow(shadows []BoxShadow) KbdEl     { tStyledShadow(e.n, shadows); return e }
-func (e KbdEl) Size(length Length) KbdEl             { tStyledSize(e.n, length); return e }
-func (e KbdEl) TextAlign(align TextAlign) KbdEl      { tStyledTextAlign(e.n, align); return e }
-func (e KbdEl) TextBg(bg Color) KbdEl                { tStyledTextBg(e.n, bg); return e }
-func (e KbdEl) TextColor(color Color) KbdEl          { tStyledTextColor(e.n, color); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e KbdEl) H(length Length) KbdEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e KbdEl) Inset(length Length) KbdEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e KbdEl) Left(length Length) KbdEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e KbdEl) LineClamp(lines int) KbdEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
+func (e KbdEl) LineHeight(lineHeight Length) KbdEl { tStyledLineHeight(e.n, lineHeight); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e KbdEl) M(length Length) KbdEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e KbdEl) MaxH(length Length) KbdEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e KbdEl) MaxSize(length Length) KbdEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e KbdEl) MaxW(length Length) KbdEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e KbdEl) Mb(length Length) KbdEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e KbdEl) MinH(length Length) KbdEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e KbdEl) MinSize(length Length) KbdEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e KbdEl) MinW(length Length) KbdEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e KbdEl) Ml(length Length) KbdEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e KbdEl) Mr(length Length) KbdEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e KbdEl) Mt(length Length) KbdEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e KbdEl) Mx(length Length) KbdEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e KbdEl) My(length Length) KbdEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e KbdEl) Opacity(opacity float32) KbdEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e KbdEl) P(length Length) KbdEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e KbdEl) Pb(length Length) KbdEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e KbdEl) Pl(length Length) KbdEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e KbdEl) Pr(length Length) KbdEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e KbdEl) Pt(length Length) KbdEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e KbdEl) Px(length Length) KbdEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e KbdEl) Py(length Length) KbdEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e KbdEl) Right(length Length) KbdEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e KbdEl) Rounded(length Length) KbdEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e KbdEl) RoundedB(length Length) KbdEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e KbdEl) RoundedBl(length Length) KbdEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e KbdEl) RoundedBr(length Length) KbdEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e KbdEl) RoundedL(length Length) KbdEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e KbdEl) RoundedR(length Length) KbdEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e KbdEl) RoundedT(length Length) KbdEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e KbdEl) RoundedTl(length Length) KbdEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e KbdEl) RoundedTr(length Length) KbdEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e KbdEl) RowEnd(end int16) KbdEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e KbdEl) RowSpan(span uint16) KbdEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e KbdEl) RowStart(start int16) KbdEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e KbdEl) ScrollbarWidth(width Length) KbdEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e KbdEl) Shadow(shadows []BoxShadow) KbdEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e KbdEl) Size(length Length) KbdEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e KbdEl) TextAlign(align TextAlign) KbdEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e KbdEl) TextBg(bg Color) KbdEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e KbdEl) TextColor(color Color) KbdEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e KbdEl) TextDecorationColor(color Color) KbdEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e KbdEl) TextOverflow(overflow TextOverflow) KbdEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e KbdEl) TextSize(size Length) KbdEl { tStyledTextSize(e.n, size); return e }
-func (e KbdEl) Top(length Length) KbdEl    { tStyledTop(e.n, length); return e }
-func (e KbdEl) W(length Length) KbdEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e KbdEl) Top(length Length) KbdEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e KbdEl) W(length Length) KbdEl { tStyledW(e.n, length); return e }

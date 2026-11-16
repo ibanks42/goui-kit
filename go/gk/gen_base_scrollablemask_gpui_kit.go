@@ -9,6 +9,8 @@ type ScrollableMaskEl struct{ n *node }
 
 func (e ScrollableMaskEl) node() *node { return e.n }
 
+// Create a new scrollable mask element.
+//
 // ScrollableMask is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::new.
 func ScrollableMask(axis Axis, scrollHandle ScrollHandle) ScrollableMaskEl {
 	useBaseScrollableMask()
@@ -19,6 +21,14 @@ func ScrollableMask(axis Axis, scrollHandle ScrollHandle) ScrollableMaskEl {
 	return ScrollableMaskEl{n}
 }
 
+// Create a mask over a native horizontal scroller — one with `overflow_x_scroll` and a locked
+// scroll axis, such as a strip of tabs — that scrolls it sideways with a plain mouse wheel's
+// vertical lines, the only axis such a wheel has.
+//
+// Once the scroller cannot move that way, the wheel goes on to the parent, so a page still scrolls
+// past the strip. Trackpad gestures and horizontal wheels are left to the scroller, with its own
+// axis lock and bounce.
+//
 // ScrollableMaskVerticalWheel is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::vertical_wheel.
 func ScrollableMaskVerticalWheel(scrollHandle ScrollHandle) ScrollableMaskEl {
 	useBaseScrollableMask()
@@ -28,12 +38,19 @@ func ScrollableMaskVerticalWheel(scrollHandle ScrollHandle) ScrollableMaskEl {
 	return ScrollableMaskEl{n}
 }
 
+// Enable the debug border, to show the mask bounds.
+//
 // Debug is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::debug.
 func (e ScrollableMaskEl) Debug() ScrollableMaskEl {
 	op(e.n, 256)
 	return e
 }
 
+// Set a specific element id, default is the `caller`.
+//
+// Only needed when one call site creates several masks of the same axis, which would otherwise
+// share their gesture axis lock.
+//
 // ID is <gpui_kit::base::ScrollableMask<gpui_kit::ScrollHandle>>::id.
 func (e ScrollableMaskEl) ID(id ID) ScrollableMaskEl {
 	o := op(e.n, 257)

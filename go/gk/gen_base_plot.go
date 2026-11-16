@@ -52,6 +52,8 @@ func NewGridDefault() Grid {
 	return Grid{n}
 }
 
+// Set the dash array of the grid lines.
+//
 // DashArray is <gpui_kit::base::plot::Grid>::dash_array.
 func (e Grid) DashArray(dashArray []float32) Grid {
 	o := op(e.n, 256)
@@ -62,6 +64,8 @@ func (e Grid) DashArray(dashArray []float32) Grid {
 	return e
 }
 
+// Set the stroke of the grid lines.
+//
 // Stroke is <gpui_kit::base::plot::Grid>::stroke.
 func (e Grid) Stroke(stroke Color) Grid {
 	o := op(e.n, 257)
@@ -69,6 +73,8 @@ func (e Grid) Stroke(stroke Color) Grid {
 	return e
 }
 
+// Set the positions of the vertical lines, from the left of the plot.
+//
 // X is <gpui_kit::base::plot::Grid>::x.
 func (e Grid) X(x []float32) Grid {
 	o := op(e.n, 258)
@@ -79,6 +85,8 @@ func (e Grid) X(x []float32) Grid {
 	return e
 }
 
+// Set the positions of the horizontal lines, from the top of the plot.
+//
 // Y is <gpui_kit::base::plot::Grid>::y.
 func (e Grid) Y(y []float32) Grid {
 	o := op(e.n, 259)
@@ -94,6 +102,8 @@ type PlotAppearScopeEl struct{ n *node }
 
 func (e PlotAppearScopeEl) node() *node { return e.n }
 
+// Remember the appears of the plots in `child` under `id`, unique among its siblings.
+//
 // PlotAppearScope is <gpui_kit::base::plot::PlotAppearScope>::new.
 func PlotAppearScope(id ID, child Element) PlotAppearScopeEl {
 	useBasePlot()
@@ -123,6 +133,8 @@ func NewPlotAxisDefault() PlotAxis {
 	return PlotAxis{n}
 }
 
+// Set the stroke of the axis lines.
+//
 // Stroke is <gpui_kit::base::plot::PlotAxis>::stroke.
 func (e PlotAxis) Stroke(stroke Color) PlotAxis {
 	o := op(e.n, 256)
@@ -130,6 +142,9 @@ func (e PlotAxis) Stroke(stroke Color) PlotAxis {
 	return e
 }
 
+// Place the x-axis line at `position` from the top of the plot. Without it the x-axis draws
+// neither its line nor its labels.
+//
 // X is <gpui_kit::base::plot::PlotAxis>::x.
 func (e PlotAxis) X(position float32) PlotAxis {
 	o := op(e.n, 257)
@@ -137,6 +152,10 @@ func (e PlotAxis) X(position float32) PlotAxis {
 	return e
 }
 
+// Show or hide the x-axis line; its labels are drawn either way.
+//
+// Default is true.
+//
 // XAxis is <gpui_kit::base::plot::PlotAxis>::x_axis.
 func (e PlotAxis) XAxis(xAxis bool) PlotAxis {
 	o := op(e.n, 258)
@@ -144,6 +163,8 @@ func (e PlotAxis) XAxis(xAxis bool) PlotAxis {
 	return e
 }
 
+// Set the tick labels of the x-axis.
+//
 // XLabel is <gpui_kit::base::plot::PlotAxis>::x_label.
 func (e PlotAxis) XLabel(labels []AxisText) PlotAxis {
 	o := op(e.n, 259)
@@ -154,6 +175,8 @@ func (e PlotAxis) XLabel(labels []AxisText) PlotAxis {
 	return e
 }
 
+// Set which side of the x-axis line tick labels render on.
+//
 // XLabelSide is <gpui_kit::base::plot::PlotAxis>::x_label_side.
 func (e PlotAxis) XLabelSide(side AxisLabelSide) PlotAxis {
 	o := op(e.n, 260)
@@ -161,6 +184,9 @@ func (e PlotAxis) XLabelSide(side AxisLabelSide) PlotAxis {
 	return e
 }
 
+// Place the y-axis line at `position` from the left of the plot. Without it the y-axis draws
+// neither its line nor its labels.
+//
 // Y is <gpui_kit::base::plot::PlotAxis>::y.
 func (e PlotAxis) Y(position float32) PlotAxis {
 	o := op(e.n, 261)
@@ -168,6 +194,10 @@ func (e PlotAxis) Y(position float32) PlotAxis {
 	return e
 }
 
+// Show or hide the y-axis line; its labels are drawn either way.
+//
+// Default is false.
+//
 // YAxis is <gpui_kit::base::plot::PlotAxis>::y_axis.
 func (e PlotAxis) YAxis(yAxis bool) PlotAxis {
 	o := op(e.n, 262)
@@ -175,6 +205,8 @@ func (e PlotAxis) YAxis(yAxis bool) PlotAxis {
 	return e
 }
 
+// Set the tick labels of the y-axis.
+//
 // YLabel is <gpui_kit::base::plot::PlotAxis>::y_label.
 func (e PlotAxis) YLabel(labels []AxisText) PlotAxis {
 	o := op(e.n, 263)
@@ -185,6 +217,8 @@ func (e PlotAxis) YLabel(labels []AxisText) PlotAxis {
 	return e
 }
 
+// Set which side of the y-axis line tick labels render on.
+//
 // YLabelSide is <gpui_kit::base::plot::PlotAxis>::y_label_side.
 func (e PlotAxis) YLabelSide(side AxisLabelSide) PlotAxis {
 	o := op(e.n, 264)
@@ -207,6 +241,8 @@ func NewBaseText(text string, origin GpuiPoint, color Color) BaseText {
 	return BaseText{n}
 }
 
+// Set the alignment of the Text.
+//
 // Align is <gpui_kit::base::plot::label::Text>::align.
 func (e BaseText) Align(align TextAlign) BaseText {
 	o := op(e.n, 256)
@@ -214,6 +250,8 @@ func (e BaseText) Align(align TextAlign) BaseText {
 	return e
 }
 
+// Set the font size of the Text.
+//
 // FontSize is <gpui_kit::base::plot::label::Text>::font_size.
 func (e BaseText) FontSize(fontSize float32) BaseText {
 	o := op(e.n, 257)
@@ -221,6 +259,8 @@ func (e BaseText) FontSize(fontSize float32) BaseText {
 	return e
 }
 
+// Set the font weight of the Text.
+//
 // FontWeight is <gpui_kit::base::plot::label::Text>::font_weight.
 func (e BaseText) FontWeight(fontWeight FontWeight) BaseText {
 	o := op(e.n, 258)
@@ -247,6 +287,8 @@ func NewAreaShapeDefault() AreaShape {
 	return AreaShape{n}
 }
 
+// Set how the Area's top line connects its points. Defaults to `Natural`.
+//
 // Curve is <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::curve.
 func (e AreaShape) Curve(curve Curve) AreaShape {
 	o := op(e.n, 256)
@@ -254,6 +296,8 @@ func (e AreaShape) Curve(curve Curve) AreaShape {
 	return e
 }
 
+// Set the data of the Area.
+//
 // Data is <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::data.
 func (e AreaShape) Data(data Data) AreaShape {
 	o := op(e.n, 257)
@@ -261,6 +305,8 @@ func (e AreaShape) Data(data Data) AreaShape {
 	return e
 }
 
+// Set the fill color of the Area.
+//
 // Fill is <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::fill.
 func (e AreaShape) Fill(fill Color) AreaShape {
 	o := op(e.n, 258)
@@ -268,6 +314,8 @@ func (e AreaShape) Fill(fill Color) AreaShape {
 	return e
 }
 
+// Set the stroke color of the Area.
+//
 // Stroke is <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::stroke.
 func (e AreaShape) Stroke(stroke Color) AreaShape {
 	o := op(e.n, 259)
@@ -275,6 +323,8 @@ func (e AreaShape) Stroke(stroke Color) AreaShape {
 	return e
 }
 
+// Set the x of the Area.
+//
 // X is <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::x.
 func (e AreaShape) X(x string) AreaShape {
 	o := op(e.n, 260)
@@ -282,6 +332,8 @@ func (e AreaShape) X(x string) AreaShape {
 	return e
 }
 
+// Set the y0 of the Area.
+//
 // Y0 is <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::y0.
 func (e AreaShape) Y0(y0 float32) AreaShape {
 	o := op(e.n, 261)
@@ -289,6 +341,8 @@ func (e AreaShape) Y0(y0 float32) AreaShape {
 	return e
 }
 
+// Set the y1 of the Area.
+//
 // Y1 is <gpui_kit::base::plot::shape::Area<crate::data::Datum>>::y1.
 func (e AreaShape) Y1(y1 string) AreaShape {
 	o := op(e.n, 262)
@@ -315,6 +369,10 @@ func NewBarShapeDefault() BarShape {
 	return BarShape{n}
 }
 
+// Set the alignment of the Bar.
+//
+// Default is `Bottom`.
+//
 // Alignment is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::alignment.
 func (e BarShape) Alignment(alignment BarAlignment) BarShape {
 	o := op(e.n, 256)
@@ -322,6 +380,8 @@ func (e BarShape) Alignment(alignment BarAlignment) BarShape {
 	return e
 }
 
+// Set the band width of the Bar (the bar thickness along the cross axis).
+//
 // BandWidth is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::band_width.
 func (e BarShape) BandWidth(bandWidth float32) BarShape {
 	o := op(e.n, 257)
@@ -329,6 +389,8 @@ func (e BarShape) BandWidth(bandWidth float32) BarShape {
 	return e
 }
 
+// Set the baseline position of each bar (in pixels along the value axis).
+//
 // Base is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::base.
 func (e BarShape) Base(base string) BarShape {
 	o := op(e.n, 258)
@@ -336,6 +398,11 @@ func (e BarShape) Base(base string) BarShape {
 	return e
 }
 
+// Set the corner radii applied to every bar rectangle.
+//
+// Use `all` for uniform rounding, or construct `Corners` manually to round only specific corners
+// (e.g. just the tip end of each bar).
+//
 // CornerRadii is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::corner_radii.
 func (e BarShape) CornerRadii(cornerRadii CornersInto) BarShape {
 	o := op(e.n, 259)
@@ -343,6 +410,11 @@ func (e BarShape) CornerRadii(cornerRadii CornersInto) BarShape {
 	return e
 }
 
+// Set the cross-axis position of each bar (in pixels).
+//
+// For vertical alignments this is the X coordinate; for horizontal alignments this is the Y
+// coordinate.
+//
 // Cross is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::cross.
 func (e BarShape) Cross(cross string) BarShape {
 	o := op(e.n, 260)
@@ -350,6 +422,8 @@ func (e BarShape) Cross(cross string) BarShape {
 	return e
 }
 
+// Set the data of the Bar.
+//
 // Data is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::data.
 func (e BarShape) Data(data Data) BarShape {
 	o := op(e.n, 261)
@@ -357,6 +431,17 @@ func (e BarShape) Data(data Data) BarShape {
 	return e
 }
 
+// Set the fill of each bar.
+//
+// The closure receives the datum, the bar's painted frame (`Bounds<f32>`) in raw pixel coordinates
+// relative to the plot bounds origin, and the bar's `BarAlignment` (so callers can branch on
+// orientation, e.g. flip a gradient angle). Callers wishing to derive normalized or chart-relative
+// coordinates from this frame should do so themselves.
+//
+// Accepts any type convertible to `Background`, including solid colors and fully-specified
+// `linear_gradient` values. The background is used verbatim — the gradient angle is not adjusted
+// for bar orientation.
+//
 // Fill is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::fill.
 func (e BarShape) Fill(fill string) BarShape {
 	o := op(e.n, 262)
@@ -364,6 +449,8 @@ func (e BarShape) Fill(fill string) BarShape {
 	return e
 }
 
+// Set the value-end position of each bar (in pixels along the value axis).
+//
 // Value is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::value.
 func (e BarShape) Value(value string) BarShape {
 	o := op(e.n, 263)
@@ -390,6 +477,8 @@ func NewLineShapeDefault() LineShape {
 	return LineShape{n}
 }
 
+// Set how the Line connects its points. Defaults to `Natural`.
+//
 // Curve is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::curve.
 func (e LineShape) Curve(curve Curve) LineShape {
 	o := op(e.n, 256)
@@ -397,6 +486,8 @@ func (e LineShape) Curve(curve Curve) LineShape {
 	return e
 }
 
+// Set the data of the Line.
+//
 // Data is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::data.
 func (e LineShape) Data(data Data) LineShape {
 	o := op(e.n, 257)
@@ -404,12 +495,16 @@ func (e LineShape) Data(data Data) LineShape {
 	return e
 }
 
+// Draw a dot on every point.
+//
 // Dot is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::dot.
 func (e LineShape) Dot() LineShape {
 	op(e.n, 258)
 	return e
 }
 
+// Set the fill of the dots on the Line.
+//
 // DotFill is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::dot_fill.
 func (e LineShape) DotFill(fill Color) LineShape {
 	o := op(e.n, 259)
@@ -417,6 +512,8 @@ func (e LineShape) DotFill(fill Color) LineShape {
 	return e
 }
 
+// Set the size of the dots on the Line.
+//
 // DotSize is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::dot_size.
 func (e LineShape) DotSize(dotSize float32) LineShape {
 	o := op(e.n, 260)
@@ -424,6 +521,9 @@ func (e LineShape) DotSize(dotSize float32) LineShape {
 	return e
 }
 
+// Set the 1px border color of the dots on the Line. Defaults to the dot fill when it is a solid
+// color.
+//
 // DotStroke is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::dot_stroke.
 func (e LineShape) DotStroke(stroke Color) LineShape {
 	o := op(e.n, 261)
@@ -431,6 +531,8 @@ func (e LineShape) DotStroke(stroke Color) LineShape {
 	return e
 }
 
+// Set the stroke color of the Line.
+//
 // Stroke is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::stroke.
 func (e LineShape) Stroke(stroke Color) LineShape {
 	o := op(e.n, 262)
@@ -438,6 +540,8 @@ func (e LineShape) Stroke(stroke Color) LineShape {
 	return e
 }
 
+// Set the stroke width of the Line.
+//
 // StrokeWidth is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::stroke_width.
 func (e LineShape) StrokeWidth(strokeWidth float32) LineShape {
 	o := op(e.n, 263)
@@ -445,6 +549,8 @@ func (e LineShape) StrokeWidth(strokeWidth float32) LineShape {
 	return e
 }
 
+// Set the x of the Line.
+//
 // X is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::x.
 func (e LineShape) X(x string) LineShape {
 	o := op(e.n, 264)
@@ -452,6 +558,8 @@ func (e LineShape) X(x string) LineShape {
 	return e
 }
 
+// Set the y of the Line.
+//
 // Y is <gpui_kit::base::plot::shape::Line<crate::data::Datum>>::y.
 func (e LineShape) Y(y string) LineShape {
 	o := op(e.n, 265)
@@ -478,6 +586,11 @@ func NewRadialLineShapeDefault() RadialLineShape {
 	return RadialLineShape{n}
 }
 
+// Set the angle accessor of the RadialLine.
+//
+// The accessor is called with the datum and its index, and returns the angle in radians, with 0 at
+// 12 o'clock and positive angles proceeding clockwise.
+//
 // Angle is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::angle.
 func (e RadialLineShape) Angle(angle string) RadialLineShape {
 	o := op(e.n, 256)
@@ -485,12 +598,16 @@ func (e RadialLineShape) Angle(angle string) RadialLineShape {
 	return e
 }
 
+// Connect the last point back to the first, like `d3.curveLinearClosed`.
+//
 // Closed is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::closed.
 func (e RadialLineShape) Closed() RadialLineShape {
 	op(e.n, 257)
 	return e
 }
 
+// Set the data of the RadialLine.
+//
 // Data is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::data.
 func (e RadialLineShape) Data(data Data) RadialLineShape {
 	o := op(e.n, 258)
@@ -498,12 +615,16 @@ func (e RadialLineShape) Data(data Data) RadialLineShape {
 	return e
 }
 
+// Draw a dot on every point.
+//
 // Dot is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::dot.
 func (e RadialLineShape) Dot() RadialLineShape {
 	op(e.n, 259)
 	return e
 }
 
+// Set the fill of the dots on the RadialLine.
+//
 // DotFill is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::dot_fill.
 func (e RadialLineShape) DotFill(fill Color) RadialLineShape {
 	o := op(e.n, 260)
@@ -511,6 +632,8 @@ func (e RadialLineShape) DotFill(fill Color) RadialLineShape {
 	return e
 }
 
+// Set the size of the dots on the RadialLine.
+//
 // DotSize is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::dot_size.
 func (e RadialLineShape) DotSize(dotSize float32) RadialLineShape {
 	o := op(e.n, 261)
@@ -518,6 +641,9 @@ func (e RadialLineShape) DotSize(dotSize float32) RadialLineShape {
 	return e
 }
 
+// Set the 1px border color of the dots on the RadialLine. Defaults to the dot fill when it is a
+// solid color.
+//
 // DotStroke is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::dot_stroke.
 func (e RadialLineShape) DotStroke(stroke Color) RadialLineShape {
 	o := op(e.n, 262)
@@ -525,6 +651,10 @@ func (e RadialLineShape) DotStroke(stroke Color) RadialLineShape {
 	return e
 }
 
+// Set the fill color of the polygon enclosed by the RadialLine.
+//
+// The fill path is always closed, regardless of `Closed`.
+//
 // Fill is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::fill.
 func (e RadialLineShape) Fill(fill Color) RadialLineShape {
 	o := op(e.n, 263)
@@ -532,6 +662,11 @@ func (e RadialLineShape) Fill(fill Color) RadialLineShape {
 	return e
 }
 
+// Set the radius accessor of the RadialLine.
+//
+// The accessor is called with the datum and its index, and returns the distance (in pixels) from
+// the center.
+//
 // Radius is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::radius.
 func (e RadialLineShape) Radius(radius string) RadialLineShape {
 	o := op(e.n, 264)
@@ -539,6 +674,8 @@ func (e RadialLineShape) Radius(radius string) RadialLineShape {
 	return e
 }
 
+// Set the stroke color of the RadialLine.
+//
 // Stroke is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::stroke.
 func (e RadialLineShape) Stroke(stroke Color) RadialLineShape {
 	o := op(e.n, 265)
@@ -546,6 +683,8 @@ func (e RadialLineShape) Stroke(stroke Color) RadialLineShape {
 	return e
 }
 
+// Set the stroke width of the RadialLine.
+//
 // StrokeWidth is <gpui_kit::base::plot::shape::RadialLine<crate::data::Datum>>::stroke_width.
 func (e RadialLineShape) StrokeWidth(strokeWidth float32) RadialLineShape {
 	o := op(e.n, 266)
@@ -558,6 +697,8 @@ type Sankey struct{ n *node }
 
 func (e Sankey) valueNode() *node { return e.n }
 
+// Create a generator with the d3-sankey defaults (see `default`).
+//
 // NewSankey is <gpui_kit::base::plot::shape::Sankey>::new.
 func NewSankey() Sankey {
 	n := newValue(536)
@@ -570,6 +711,8 @@ func NewSankeyDefault() Sankey {
 	return Sankey{n}
 }
 
+// Set the layout bounds as `[x0, y0, x1, y1]`. Defaults to `[0, 0, 1, 1]`.
+//
 // Extent is <gpui_kit::base::plot::shape::Sankey>::extent.
 func (e Sankey) Extent(x0 float32, y0 float32, x1 float32, y1 float32) Sankey {
 	o := op(e.n, 256)
@@ -580,6 +723,8 @@ func (e Sankey) Extent(x0 float32, y0 float32, x1 float32, y1 float32) Sankey {
 	return e
 }
 
+// Set the number of relaxation passes. Defaults to 6.
+//
 // Iterations is <gpui_kit::base::plot::shape::Sankey>::iterations.
 func (e Sankey) Iterations(iterations int) Sankey {
 	o := op(e.n, 257)
@@ -587,6 +732,8 @@ func (e Sankey) Iterations(iterations int) Sankey {
 	return e
 }
 
+// Set the node alignment. Defaults to `Justify`.
+//
 // NodeAlign is <gpui_kit::base::plot::shape::Sankey>::node_align.
 func (e Sankey) NodeAlign(align SankeyAlign) Sankey {
 	o := op(e.n, 258)
@@ -594,6 +741,8 @@ func (e Sankey) NodeAlign(align SankeyAlign) Sankey {
 	return e
 }
 
+// Set the vertical gap between nodes in a column. Defaults to 8.
+//
 // NodePadding is <gpui_kit::base::plot::shape::Sankey>::node_padding.
 func (e Sankey) NodePadding(nodePadding float32) Sankey {
 	o := op(e.n, 259)
@@ -601,6 +750,8 @@ func (e Sankey) NodePadding(nodePadding float32) Sankey {
 	return e
 }
 
+// Set the node rectangle width. Defaults to 24.
+//
 // NodeWidth is <gpui_kit::base::plot::shape::Sankey>::node_width.
 func (e Sankey) NodeWidth(nodeWidth float32) Sankey {
 	o := op(e.n, 260)
@@ -608,6 +759,8 @@ func (e Sankey) NodeWidth(nodeWidth float32) Sankey {
 	return e
 }
 
+// Equivalent to `extent(0., 0., width, height)`.
+//
 // Size is <gpui_kit::base::plot::shape::Sankey>::size.
 func (e Sankey) Size(width float32, height float32) Sankey {
 	o := op(e.n, 261)
@@ -616,6 +769,8 @@ func (e Sankey) Size(width float32, height float32) Sankey {
 	return e
 }
 
+// Set how values map to heights. Defaults to `Linear`.
+//
 // ValueScale is <gpui_kit::base::plot::shape::Sankey>::value_scale.
 func (e Sankey) ValueScale(valueScale SankeyValueScale) Sankey {
 	o := op(e.n, 262)
@@ -628,6 +783,8 @@ type SankeyLink struct{ n *node }
 
 func (e SankeyLink) valueNode() *node { return e.n }
 
+// Create a link from the `source` node index to the `target` node index carrying `value`.
+//
 // NewSankeyLink is <gpui_kit::base::plot::shape::SankeyLink>::new.
 func NewSankeyLink(source int, target int, value float64) SankeyLink {
 	n := newValue(537)

@@ -3,6 +3,12 @@ package gk
 
 import "core:time"
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // amber is gpui_kit::component::amber.
 amber :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -15,6 +21,17 @@ amber :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Reads the operating system's reduced-motion preference into `set_reduce_motion`.
+//
+// `gpui_base::init` calls this once. Call it again to re-read the preference on a platform Base
+// does not follow live — macOS and Windows post no notification Base can subscribe to without a
+// window, so a change made while the application runs reaches it only through this call.
+//
+// The application wins over the system: when the flag no longer holds what Base last wrote, the
+// application set it, and this call leaves it alone. Where the platform cannot say (wasm, an
+// unsupported desktop, a Linux session without the portal) the flag is left as it is, and under
+// GPUI's test scheduler the platform is not asked at all.
+//
 // base_apply_system_reduce_motion is gpui_kit::base::apply_system_reduce_motion.
 base_apply_system_reduce_motion :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -24,6 +41,12 @@ base_apply_system_reduce_motion :: proc(cx: ^Cx, loc := #caller_location) {
 	ambient_call(cx, req[:], false, loc)
 }
 
+// The space below (or above) an x-axis line that tick labels of `font_size` need: the gap
+// `Plot_Axis` leaves between the line and the labels, the labels themselves, and a trailing gap.
+//
+// A chart reserves this much of its height for the axis. With the default `TEXT_SIZE` it is 18px;
+// a styled layer drawing larger labels passes its own size so the plot shrinks to fit them.
+//
 // base_axis_gutter is gpui_kit::base::plot::axis_gutter.
 base_axis_gutter :: proc(cx: ^Cx, font_size: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -52,6 +75,14 @@ base_box_shadow :: proc(cx: ^Cx, x_: f32, y: f32, blur: f32, spread: f32, color:
 	return
 }
 
+// Clamp a size into the range this dock may occupy: never below `PANEL_MIN_SIZE`, and never so
+// large it would squeeze the opposite dock (if any) below `PANEL_MIN_SIZE` either. The
+// `.max(PANEL_MIN_SIZE)` on the computed maximum matters when the area itself is narrower than
+// both minimums combined — it keeps the clamp range non-empty.
+//
+// `DockPlacement::Center` constrains nothing, so it hands the size back unchanged. See
+// `gk.base_dock_sizing_size_from_pointer` for why that variant is answered rather than rejected.
+//
 // base_dock_sizing_clamp is (|value: gpui_kit::base::dock::DockSizing, size| <gpui_kit::base::dock::DockSizing>::clamp(&value, size)).
 base_dock_sizing_clamp :: proc(cx: ^Cx, value: Dock_Sizing, size: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -65,6 +96,14 @@ base_dock_sizing_clamp :: proc(cx: ^Cx, value: Dock_Sizing, size: f32, loc := #c
 	return
 }
 
+// The dock size the pointer implies, before clamping.
+//
+// `DockPlacement::Center` names the canvas, which has no edge to measure from and no dock size, so
+// it answers zero. Both this and `gk.base_dock_sizing_clamp` are public and take a `pub` enum, so
+// a caller can name that variant; a base-layer arithmetic helper must not panic a desktop
+// application over it. `axis` resolves the same variant the same way, silently rather than by
+// panicking.
+//
 // base_dock_sizing_size_from_pointer is (|value: gpui_kit::base::dock::DockSizing, pointer| <gpui_kit::base::dock::DockSizing>::size_from_pointer(&value, pointer)).
 base_dock_sizing_size_from_pointer :: proc(cx: ^Cx, value: Dock_Sizing, pointer: Gpui_Point, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -78,6 +117,8 @@ base_dock_sizing_size_from_pointer :: proc(cx: ^Cx, value: Dock_Sizing, pointer:
 	return
 }
 
+// Cubic ease-in — slow start, fast end. Good for exit animations.
+//
 // base_ease_in_cubic is gpui_kit::base::animation::ease_in_cubic.
 base_ease_in_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -90,6 +131,8 @@ base_ease_in_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32)
 	return
 }
 
+// Cubic ease-in-out — slow start and end. Good for position transitions.
+//
 // base_ease_in_out_cubic is gpui_kit::base::animation::ease_in_out_cubic.
 base_ease_in_out_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -102,6 +145,8 @@ base_ease_in_out_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: 
 	return
 }
 
+// Cubic ease-out — fast start, slow end. Good for enter animations.
+//
 // base_ease_out_cubic is gpui_kit::base::animation::ease_out_cubic.
 base_ease_out_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -114,6 +159,9 @@ base_ease_out_cubic :: proc(cx: ^Cx, t: f32, loc := #caller_location) -> (v: f32
 	return
 }
 
+// Whether scroll areas bounce on this platform unless told otherwise: on iOS, Android and macOS,
+// whose own scroll views do.
+//
 // base_enabled_by_default is gpui_kit::base::ScrollBounce::enabled_by_default.
 base_enabled_by_default :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -125,6 +173,8 @@ base_enabled_by_default :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	return
 }
 
+// A list of all format extensions currently supported by this img element
+//
 // base_extensions is gpui_kit::Img::extensions.
 base_extensions :: proc(cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -135,6 +185,11 @@ base_extensions :: proc(cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) 
 	return
 }
 
+// Routes a key press to the questionnaire's behavior and reports whether it was consumed. The skin
+// installs it on the root; the contract — arrows move between answers and items, Enter confirms a
+// filled answer, a bare letter or digit activates a shortcut — lives here so a different skin
+// keeps it.
+//
 // base_handle_key_down is gpui_kit::base::questionnaire::handle_key_down.
 base_handle_key_down :: proc(cx: ^Cx, state: Questionnaire_State, event: Key_Down_Event, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -146,6 +201,11 @@ base_handle_key_down :: proc(cx: ^Cx, state: Questionnaire_State, event: Key_Dow
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Highlight each character of `query` in order, skipping characters in between.
+//
+// Matching is case-insensitive. Adjacent hits merge into one range, so a contiguous match still
+// paints as a single span. A query that cannot be matched in full paints nothing.
+//
 // base_highlight_characters is gpui_kit::base::input::highlight_characters.
 base_highlight_characters :: proc(cx: ^Cx, query: string, item: Completion_Item, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -159,6 +219,10 @@ base_highlight_characters :: proc(cx: ^Cx, query: string, item: Completion_Item,
 	return
 }
 
+// Highlight the first case-insensitive occurrence of `query` in the label.
+//
+// An empty query, or a query that does not occur as a contiguous span, paints nothing.
+//
 // base_highlight_contains is gpui_kit::base::input::highlight_contains.
 base_highlight_contains :: proc(cx: ^Cx, query: string, item: Completion_Item, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -172,6 +236,11 @@ base_highlight_contains :: proc(cx: ^Cx, query: string, item: Completion_Item, l
 	return
 }
 
+// Highlight a prefix of the completion label, matching today's menu.
+//
+// The painted length is `filter_text` when the item sets one, otherwise the query. It is shortened
+// so the range never splits a character. An empty length paints nothing.
+//
 // base_highlight_prefix is gpui_kit::base::input::highlight_prefix.
 base_highlight_prefix :: proc(cx: ^Cx, query: string, item: Completion_Item, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -185,6 +254,10 @@ base_highlight_prefix :: proc(cx: ^Cx, query: string, item: Completion_Item, loc
 	return
 }
 
+// Returns whether the application is compiled for iOS or Android.
+//
+// This is a compile-time platform check, not a screen-size or input-device check.
+//
 // base_is_mobile is gpui_kit::base::is_mobile.
 base_is_mobile :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -196,6 +269,14 @@ base_is_mobile :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	return
 }
 
+// The last scroll step a horizontal `Scrollable_Mask` used to move its content, i.e. one that
+// changed the clamped offset rather than pushing against an edge.
+//
+// Hosts that put their own pan gesture over GPUI content (e.g. a swipe that opens a side drawer on
+// mobile) use it to let a horizontal strip such as a markdown table scroll first: while the strip
+// still has room in the swipe's direction it claims the swipe; once it reaches that edge the
+// claims stop and the host may take over. Read on the thread that dispatches input.
+//
 // base_last_horizontal_scroll_claim is gpui_kit::base::last_horizontal_scroll_claim.
 base_last_horizontal_scroll_claim :: proc(cx: ^Cx, loc := #caller_location) -> (v: Maybe(Horizontal_Scroll_Claim)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -207,6 +288,9 @@ base_last_horizontal_scroll_claim :: proc(cx: ^Cx, loc := #caller_location) -> (
 	return
 }
 
+// Returns the rendered width of `text` at `font_size` using the window's current text style. Used
+// for layout calculations that need to reserve space for labels before the scale ranges are fixed.
+//
 // base_measure_text_width is gpui_kit::base::plot::label::measure_text_width.
 base_measure_text_width :: proc(cx: ^Cx, text: string, font_size: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -220,6 +304,9 @@ base_measure_text_width :: proc(cx: ^Cx, text: string, font_size: f32, loc := #c
 	return
 }
 
+// Parses Markdown with the parser `Base_Text_View` uses, including the given extensions, into the
+// block tree.
+//
 // base_parse_markdown is gpui_kit::base::text::editor_host::parse_markdown.
 base_parse_markdown :: proc(cx: ^Cx, source: string, extensions: Markdown_Extensions_Arc, loc := #caller_location) -> (v: Fallible([]Block_Node_Held)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -246,6 +333,9 @@ base_resolved_corner :: proc(cx: ^Cx, anchor: Anchor, trigger_bounds: Bounds, lo
 	return
 }
 
+// Compute the full layout: `gk.base_sankey_topology` plus the vertical node placement and link
+// breadths.
+//
 // base_sankey_layout is (|value: gpui_kit::base::plot::shape::Sankey, node_count, links| <gpui_kit::base::plot::shape::Sankey>::layout(&value, node_count, links)).
 base_sankey_layout :: proc(cx: ^Cx, value: Sankey, node_count: int, links: []Sankey_Link, loc := #caller_location) -> (v: Fallible(Sankey_Graph)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -263,6 +353,13 @@ base_sankey_layout :: proc(cx: ^Cx, value: Sankey, node_count: int, links: []San
 	return
 }
 
+// Complete the layout for a graph produced by `gk.base_sankey_topology`, avoiding a second
+// topology pass when the extent only becomes known after measuring against the column structure
+// (e.g. label margins).
+//
+// The topological fields are extent-independent; the horizontal and vertical positions are
+// recomputed for this generator's extent.
+//
 // base_sankey_layout_from is (|value: gpui_kit::base::plot::shape::Sankey, graph| <gpui_kit::base::plot::shape::Sankey>::layout_from(&value, graph)).
 base_sankey_layout_from :: proc(cx: ^Cx, value: Sankey, graph: Sankey_Graph, loc := #caller_location) -> (v: Sankey_Graph) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -276,6 +373,14 @@ base_sankey_layout_from :: proc(cx: ^Cx, value: Sankey, graph: Sankey_Graph, loc
 	return
 }
 
+// Compute the topology only: node `value`, `depth`, `height`, `layer` and horizontal positions,
+// without the vertical placement. Much cheaper than `gk.base_sankey_layout` when only the column
+// structure is needed (e.g. to measure labels before fixing the extent).
+//
+// `node_count` is the number of nodes; links reference nodes by index (d3-sankey's default
+// `nodeId`). Returns an error if a link references a node out of range or the graph contains a
+// cycle.
+//
 // base_sankey_topology is (|value: gpui_kit::base::plot::shape::Sankey, node_count, links| <gpui_kit::base::plot::shape::Sankey>::topology(&value, node_count, links)).
 base_sankey_topology :: proc(cx: ^Cx, value: Sankey, node_count: int, links: []Sankey_Link, loc := #caller_location) -> (v: Fallible(Sankey_Graph)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -293,6 +398,11 @@ base_sankey_topology :: proc(cx: ^Cx, value: Sankey, node_count: int, links: []S
 	return
 }
 
+// Replace a language's editing configuration for this application. Existing editors read the
+// replacement on their next edit. Aliases follow the installed language provider; Base alone
+// treats names case-insensitively. This does not change `auto_close` or `smart_indent`
+// preferences.
+//
 // base_set_language_config is gpui_kit::base::input::set_language_config.
 base_set_language_config :: proc(cx: ^Cx, language: string, config: Language_Config, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -304,6 +414,10 @@ base_set_language_config :: proc(cx: ^Cx, language: string, config: Language_Con
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Install the application's language service. Existing editors use the new service on their next
+// editing operation, without waiting for a render. Registered configurations are retained and
+// resolved through the new service.
+//
 // base_set_language_provider is gpui_kit::base::input::set_language_provider.
 base_set_language_provider :: proc(cx: ^Cx, provider: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -314,6 +428,8 @@ base_set_language_provider :: proc(cx: ^Cx, provider: Row_Source, loc := #caller
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Step a numeric string while preserving decimal precision and range direction.
+//
 // base_step_value is gpui_kit::base::step_value.
 base_step_value :: proc(cx: ^Cx, value: string, action: Step_Action, step: f64, min: Maybe(f64), max: Maybe(f64), loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -353,6 +469,11 @@ base_timing_sample :: proc(cx: ^Cx, value: Timing, elapsed: time.Duration, loc :
 	return
 }
 
+// Truncate `text` with a trailing ellipsis so it fits within `max_width` at `font_size`. Returns
+// `text` unchanged when it already fits; returns just the ellipsis when not even one character
+// fits. `max_width <= 0` is treated as "no budget" and returns `text` unchanged (the caller has no
+// room to reason about).
+//
 // base_truncate_text_to_width is gpui_kit::base::plot::label::truncate_text_to_width.
 base_truncate_text_to_width :: proc(cx: ^Cx, text: string, font_size: f32, max_width: f32, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -367,6 +488,12 @@ base_truncate_text_to_width :: proc(cx: ^Cx, text: string, font_size: f32, max_w
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // blue is gpui_kit::component::blue.
 blue :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -379,6 +506,8 @@ blue :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Clears all notifications.
+//
 // clear_notifications is <gpui_kit::Window as gpui_kit::component::WindowExt>::clear_notifications.
 clear_notifications :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -388,6 +517,8 @@ clear_notifications :: proc(cx: ^Cx, loc := #caller_location) {
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Closes all active Dialogs.
+//
 // close_all_dialogs is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_all_dialogs.
 close_all_dialogs :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -397,6 +528,8 @@ close_all_dialogs :: proc(cx: ^Cx, loc := #caller_location) {
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Closes the last active Dialog.
+//
 // close_dialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_dialog.
 close_dialog :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -406,6 +539,8 @@ close_dialog :: proc(cx: ^Cx, loc := #caller_location) {
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Closes the active Sheet.
+//
 // close_sheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_sheet.
 close_sheet :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -415,6 +550,12 @@ close_sheet :: proc(cx: ^Cx, loc := #caller_location) {
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // cyan is gpui_kit::component::cyan.
 cyan :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -427,6 +568,8 @@ cyan :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Get the default dark theme colors.
+//
 // dark is gpui_kit::component::ThemeColor::dark.
 dark :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme_Color_Arc) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -488,6 +631,12 @@ diff_file_parse_with_error :: proc(cx: ^Cx, patch: string, options: Diff_Parse_O
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // emerald is gpui_kit::component::emerald.
 emerald :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -500,6 +649,12 @@ emerald :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Return the currently focused input state.
+//
+// Covers `Input`, `Textarea`, `Editor` and `OtpInput`, use `as_input` and friends to get the
+// concrete state. A registration whose focus handle is no longer focused (e.g. the input was
+// removed from the tree while focused) is treated as `None`.
+//
 // focused_input is <gpui_kit::Window as gpui_kit::component::WindowExt>::focused_input.
 focused_input :: proc(cx: ^Cx, loc := #caller_location) -> (v: Maybe(Any_Input_State)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -511,6 +666,11 @@ focused_input :: proc(cx: ^Cx, loc := #caller_location) -> (v: Maybe(Any_Input_S
 	return
 }
 
+// Return the Platform specific keybinding string by KeyStroke
+//
+// macOS: https://support.apple.com/en-us/HT201236 Windows:
+// https://support.microsoft.com/en-us/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec
+//
 // format is gpui_kit::component::kbd::Kbd::format.
 format :: proc(cx: ^Cx, key: Keystroke, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -523,6 +683,12 @@ format :: proc(cx: ^Cx, key: Keystroke, loc := #caller_location) -> (v: Temp_Str
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // fuchsia is gpui_kit::component::fuchsia.
 fuchsia :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -535,6 +701,12 @@ fuchsia :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // gray is gpui_kit::component::gray.
 gray :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -547,6 +719,12 @@ gray :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // green is gpui_kit::component::green.
 green :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -559,6 +737,11 @@ green :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Return true, if there is an active Dialog.
+//
+// A dialog that is playing its exit transition is no longer active: it accepts no input and will
+// unmount when the transition finishes.
+//
 // has_active_dialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_dialog.
 has_active_dialog :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -570,6 +753,8 @@ has_active_dialog :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	return
 }
 
+// Return true, if there is an active Sheet.
+//
 // has_active_sheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_sheet.
 has_active_sheet :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -581,6 +766,8 @@ has_active_sheet :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	return
 }
 
+// Returns true if there is a focused Input entity.
+//
 // has_focused_input is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_focused_input.
 has_focused_input :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -592,6 +779,12 @@ has_focused_input :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	return
 }
 
+// Create a `Hsla` color.
+//
+// - h: 0..360.0
+// - s: 0.0..100.0
+// - l: 0.0..100.0
+//
 // hsl is gpui_kit::component::hsl.
 hsl :: proc(cx: ^Cx, h: f32, s: f32, l: f32, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -606,6 +799,12 @@ hsl :: proc(cx: ^Cx, h: f32, s: f32, l: f32, loc := #caller_location) -> (v: Hsl
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // indigo is gpui_kit::component::indigo.
 indigo :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -618,6 +817,18 @@ indigo :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Wrap `panel` so base carries its presentation across the renderer seam.
+//
+// This is what every entry point into the dock wants:
+// `DockLayout::tabs().panel_view(panel_handle(story), cx)`,
+// `DockArea::add_panel_view(panel_handle(story), ..)`, and the closure a `register_panel` builder
+// returns.
+//
+// Base's own `DockLayout::panel` and `DockArea::add_panel` also accept a panel — a
+// `gpui_component::dock::Panel` is a `gpui_base::dock::Panel` — but they store the bare entity,
+// and a skin cannot recover presentation from one. Such a panel still docks, drags and persists;
+// it just draws its `panel_name` where its title would be.
+//
 // kit_panel_handle is gpui_kit::component::dock::panel_handle.
 kit_panel_handle :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_location) -> (v: Dock_Panel) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -641,6 +852,8 @@ kit_theme :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme) {
 	return
 }
 
+// Get the default light theme colors.
+//
 // light is gpui_kit::component::ThemeColor::light.
 light :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme_Color_Arc) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -652,6 +865,12 @@ light :: proc(cx: ^Cx, loc := #caller_location) -> (v: Theme_Color_Arc) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // lime is gpui_kit::component::lime.
 lime :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -675,6 +894,12 @@ locale :: proc(cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // neutral is gpui_kit::component::neutral.
 neutral :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -687,6 +912,8 @@ neutral :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Returns number of notifications.
+//
 // notifications is <gpui_kit::Window as gpui_kit::component::WindowExt>::notifications.
 notifications :: proc(cx: ^Cx, loc := #caller_location) -> (v: []Notification) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -698,6 +925,16 @@ notifications :: proc(cx: ^Cx, loc := #caller_location) -> (v: []Notification) {
 	return
 }
 
+// Builds a color from OkLCH, the cylindrical form of the perceptually uniform Oklab color space.
+//
+// Unlike HSL, rotating `hue` while holding `lightness` and `chroma` keeps the perceived brightness
+// and vividness of every hue equal, so a generated color ring reads as one family instead of a raw
+// rainbow.
+//
+// `lightness` is `0.0 .. 1.0`, `chroma` is an absolute Oklab distance (roughly `0.0 .. 0.37`), and
+// `hue` is in degrees. A request outside the sRGB gamut is clipped per channel, which costs a
+// little chroma but not the hue.
+//
 // oklch is gpui_kit::component::oklch.
 oklch :: proc(cx: ^Cx, lightness: f32, chroma: f32, hue: f32, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -712,6 +949,15 @@ oklch :: proc(cx: ^Cx, lightness: f32, chroma: f32, hue: f32, loc := #caller_loc
 	return
 }
 
+// Opens an AlertDialog.
+//
+// This is a convenience method for opening an alert dialog with opinionated defaults. The footer
+// buttons are center-aligned and include an icon based on the variant.
+//
+// The builder follows the same rendering contract as `gk.open_dialog`: it may run again when the
+// dialog layer is rebuilt. Keep it cheap and create persistent entities before opening, not inside
+// the builder.
+//
 // open_alert_dialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_alert_dialog.
 open_alert_dialog :: proc(cx: ^Cx, build: Built(Alert_Dialog), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -722,6 +968,20 @@ open_alert_dialog :: proc(cx: ^Cx, build: Built(Alert_Dialog), loc := #caller_lo
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Opens a Dialog.
+//
+// The builder is a render closure, not a one-shot constructor. It may run again when the dialog
+// layer is rebuilt while the dialog is open. View caching means a displayed frame need not rebuild
+// the layer; the builder is not a periodic update callback. Keep it cheap and idempotent.
+//
+// Create persistent entities, such as an `InputState` or a child view, before opening and capture
+// their handles in the builder.
+//
+// `open_dialog` initially focuses the dialog shell, replacing any focus set before the call. To
+// choose initial content focus, set it only on the builder's first invocation, with a guard
+// captured separately for each opening. Never focus unconditionally on subsequent rebuilds: that
+// would steal focus from another control or a nested dialog.
+//
 // open_dialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_dialog.
 open_dialog :: proc(cx: ^Cx, build: Built(Dialog), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -732,6 +992,12 @@ open_dialog :: proc(cx: ^Cx, build: Built(Dialog), loc := #caller_location) {
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Opens a Sheet at right placement.
+//
+// The builder follows the same rendering contract as `gk.open_dialog`: it may run again when the
+// sheet layer is rebuilt. Keep it cheap and create persistent entities before opening, not inside
+// the builder.
+//
 // open_sheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet.
 open_sheet :: proc(cx: ^Cx, build: Built(Sheet), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -742,6 +1008,12 @@ open_sheet :: proc(cx: ^Cx, build: Built(Sheet), loc := #caller_location) {
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Opens a Sheet at the given placement.
+//
+// The builder follows the same rendering contract as `gk.open_dialog`: it may run again when the
+// sheet layer is rebuilt. Keep it cheap and create persistent entities before opening, not inside
+// the builder.
+//
 // open_sheet_at is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet_at.
 open_sheet_at :: proc(cx: ^Cx, placement: Placement, build: Built(Sheet), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -753,6 +1025,12 @@ open_sheet_at :: proc(cx: ^Cx, placement: Placement, build: Built(Sheet), loc :=
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // orange is gpui_kit::component::orange.
 orange :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -765,6 +1043,9 @@ orange :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Parses every file in a unified or Git diff, in patch order, without computing differences.
+// Syntax emphasis is prepared later by `Diff_State` on a background thread.
+//
 // parse is gpui_kit::component::diff::DiffFile::parse.
 parse :: proc(cx: ^Cx, patch: string, loc := #caller_location) -> (v: Fallible([]Diff_File_Read)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -777,6 +1058,10 @@ parse :: proc(cx: ^Cx, patch: string, loc := #caller_location) -> (v: Fallible([
 	return
 }
 
+// Parses a working file containing Git conflict markers, including the `|||||||` base section of
+// `diff3` style. Lines keep their numbers in the working file; marker lines are shown as conflict
+// headings instead.
+//
 // parse_conflicts is gpui_kit::component::diff::DiffFile::parse_conflicts.
 parse_conflicts :: proc(cx: ^Cx, path: string, text: string, loc := #caller_location) -> (v: Fallible(Diff_File_Read)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -790,6 +1075,9 @@ parse_conflicts :: proc(cx: ^Cx, path: string, text: string, loc := #caller_loca
 	return
 }
 
+// Parses like `gk.parse`, applying the relaxations `options` enables. Malformed headers, invalid
+// paths and unordered hunks are still errors.
+//
 // parse_with is gpui_kit::component::diff::DiffFile::parse_with.
 parse_with :: proc(cx: ^Cx, patch: string, options: Diff_Parse_Options, loc := #caller_location) -> (v: Fallible([]Diff_File_Read)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -803,6 +1091,12 @@ parse_with :: proc(cx: ^Cx, patch: string, options: Diff_Parse_Options, loc := #
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // pink is gpui_kit::component::pink.
 pink :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -815,6 +1109,12 @@ pink :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // purple is gpui_kit::component::purple.
 purple :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -827,6 +1127,8 @@ purple :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Pushes a notification to the notification list.
+//
 // push_notification is <gpui_kit::Window as gpui_kit::component::WindowExt>::push_notification.
 push_notification :: proc(cx: ^Cx, note: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -837,6 +1139,12 @@ push_notification :: proc(cx: ^Cx, note: string, loc := #caller_location) {
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // red is gpui_kit::component::red.
 red :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -849,6 +1157,9 @@ red :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Return the path to draw for the icon at `path`: the answer of the resolver set with
+// `gk.set_icon_resolver`, or `path` itself.
+//
 // resolve_icon_path is gpui_kit::component::resolve_icon_path.
 resolve_icon_path :: proc(cx: ^Cx, path: string, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -861,6 +1172,12 @@ resolve_icon_path :: proc(cx: ^Cx, path: string, loc := #caller_location) -> (v:
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // rose is gpui_kit::component::rose.
 rose :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -873,6 +1190,17 @@ rose :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Set the hook every `Icon` drawn from an asset path asks for the path to draw, including the
+// icons components draw inside their own controls.
+//
+// The resolver receives the icon's path (for example `icons/check.svg`) and returns the path to
+// draw in its place, or `None` to keep it. GPUI caches a rendered SVG by its path, so returning a
+// new path is how an application switches icon styles at runtime; the application's `AssetSource`
+// must load the returned path. Icons created with `->data` are not resolved.
+//
+// The resolver runs every time an icon is drawn and should be cheap. Call `refresh_windows` after
+// changing what it returns.
+//
 // set_icon_resolver is gpui_kit::component::set_icon_resolver.
 set_icon_resolver :: proc(cx: ^Cx, resolver: Ask(Temp_String, Maybe(string)), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -893,6 +1221,14 @@ set_locale :: proc(cx: ^Cx, locale: string, loc := #caller_location) {
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Let the platform draw the touch selection UI of a focused `Input`: the selection handles and the
+// edit menu a long press leaves behind.
+//
+// Use it on a host that already shows its own text UI over the window, such as Android's floating
+// toolbar and drag handles. The long press still selects a word; the platform follows that
+// selection and drives it back through the window's input handler. Selections in plain text,
+// outside an input, keep the handles and menu drawn here.
+//
 // set_native_touch_selection is gpui_kit::component::input::set_native_touch_selection.
 set_native_touch_selection :: proc(cx: ^Cx, enabled: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -903,6 +1239,12 @@ set_native_touch_selection :: proc(cx: ^Cx, enabled: bool, loc := #caller_locati
 	ambient_call(cx, req[:], false, loc)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // sky is gpui_kit::component::sky.
 sky :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -915,6 +1257,12 @@ sky :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // slate is gpui_kit::component::slate.
 slate :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -927,6 +1275,12 @@ slate :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // stone is gpui_kit::component::stone.
 stone :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -939,6 +1293,12 @@ stone :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // teal is gpui_kit::component::teal.
 teal :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -951,6 +1311,8 @@ teal :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Returns the default title bar options for compatible with the `Title_Bar`.
+//
 // title_bar_options is gpui_kit::component::TitleBar::title_bar_options.
 title_bar_options :: proc(cx: ^Cx, loc := #caller_location) -> (v: Titlebar_Options) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -962,6 +1324,11 @@ title_bar_options :: proc(cx: ^Cx, loc := #caller_location) -> (v: Titlebar_Opti
 	return
 }
 
+// Try to parse a theme background value.
+//
+// Supports all values accepted by `gk.try_parse_color` and CSS-style two-stop
+// `linear-gradient(...)` values.
+//
 // try_parse_background is gpui_kit::component::try_parse_background.
 try_parse_background :: proc(cx: ^Cx, background: string, loc := #caller_location) -> (v: Fallible(Background_Value)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -974,6 +1341,18 @@ try_parse_background :: proc(cx: ^Cx, background: string, loc := #caller_locatio
 	return
 }
 
+// Try to parse the color, HEX or Tailwind Color (https://tailwindcss.com/docs/colors) expression.
+//
+// Parameter `color` should be one string value listed below::
+// - `#RRGGBB` - The HEX color string.
+// - `#RRGGBBAA` - The HEX color string with alpha.
+//
+// Or the Tailwind Color format:
+// - `name-scale` - The color name with scale.
+// - `name/opacity` - The color name with opacity, `opacity` should be an integer between 0 and
+//   100.
+// - `name-scale/opacity` - The color name with scale and opacity.
+//
 // try_parse_color is gpui_kit::component::try_parse_color.
 try_parse_color :: proc(cx: ^Cx, color: string, loc := #caller_location) -> (v: Fallible(Hsla)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -986,6 +1365,12 @@ try_parse_color :: proc(cx: ^Cx, color: string, loc := #caller_location) -> (v: 
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // violet is gpui_kit::component::violet.
 violet :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -998,6 +1383,14 @@ violet :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// The window's current corner radii: the theme's `window.radius` (`window_radius`) for every
+// corner of a client-decorated window that isn't next to a tiled edge, zero otherwise.
+//
+// GPUI clips overflowing children to a rectangular content mask, so a non-zero radius only rounds
+// the frame itself. Elements with a background that touch a window corner (the root surface,
+// `Title_Bar`, an application's bottom bar) must round that corner too, for example
+// `div().rounded_bl(radii.bottom_left)`. The default stays square.
+//
 // window_corner_radii is gpui_kit::component::window_corner_radii.
 window_corner_radii :: proc(cx: ^Cx, loc := #caller_location) -> (v: Corners) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -1009,6 +1402,8 @@ window_corner_radii :: proc(cx: ^Cx, loc := #caller_location) -> (v: Corners) {
 	return
 }
 
+// Get the window paddings.
+//
 // window_paddings is gpui_kit::component::window_paddings.
 window_paddings :: proc(cx: ^Cx, loc := #caller_location) -> (v: Gpui_Edges) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -1020,6 +1415,12 @@ window_paddings :: proc(cx: ^Cx, loc := #caller_location) -> (v: Gpui_Edges) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // yellow is gpui_kit::component::yellow.
 yellow :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -1032,6 +1433,12 @@ yellow :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	return
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // zinc is gpui_kit::component::zinc.
 zinc :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)

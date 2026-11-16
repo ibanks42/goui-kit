@@ -9,6 +9,8 @@ type AttachmentEl struct{ n *node }
 
 func (e AttachmentEl) node() *node { return e.n }
 
+// Create an attachment in the `Complete` state.
+//
 // Attachment is <gpui_kit::component::attachment::Attachment>::new.
 func Attachment(st ...Style) AttachmentEl {
 	useComponentAttachment()
@@ -25,6 +27,8 @@ func AttachmentDefault(st ...Style) AttachmentEl {
 	return AttachmentEl{n}
 }
 
+// Set the actions slot.
+//
 // Actions is <gpui_kit::component::attachment::Attachment>::actions.
 func (e AttachmentEl) Actions(actions AttachmentActionsEl) AttachmentEl {
 	o := op(e.n, 256)
@@ -32,6 +36,8 @@ func (e AttachmentEl) Actions(actions AttachmentActionsEl) AttachmentEl {
 	return e
 }
 
+// Set the attachment layout axis.
+//
 // Axis is <gpui_kit::component::attachment::Attachment>::axis.
 func (e AttachmentEl) Axis(axis Axis) AttachmentEl {
 	o := op(e.n, 257)
@@ -39,6 +45,8 @@ func (e AttachmentEl) Axis(axis Axis) AttachmentEl {
 	return e
 }
 
+// Set the metadata content slot.
+//
 // Content is <gpui_kit::component::attachment::Attachment>::content.
 func (e AttachmentEl) Content(content AttachmentContentEl) AttachmentEl {
 	o := op(e.n, 258)
@@ -46,6 +54,9 @@ func (e AttachmentEl) Content(content AttachmentContentEl) AttachmentEl {
 	return e
 }
 
+// Set a stable identity for the built-in controls: the whole-card click layer, the remove control,
+// and the retry control.
+//
 // ID is <gpui_kit::component::attachment::Attachment>::id.
 func (e AttachmentEl) ID(id ID) AttachmentEl {
 	o := op(e.n, 259)
@@ -53,6 +64,8 @@ func (e AttachmentEl) ID(id ID) AttachmentEl {
 	return e
 }
 
+// Set the media slot.
+//
 // Media is <gpui_kit::component::attachment::Attachment>::media.
 func (e AttachmentEl) Media(media AttachmentMediaEl) AttachmentEl {
 	o := op(e.n, 260)
@@ -60,6 +73,12 @@ func (e AttachmentEl) Media(media AttachmentMediaEl) AttachmentEl {
 	return e
 }
 
+// Make the whole card clickable, e.g. to open a preview.
+//
+// The click layer is painted below the actions slot, so action buttons stay independently
+// clickable. Click state needs a stable identity, so the handler takes effect only together with
+// `ID`.
+//
 // OnClick is <gpui_kit::component::attachment::Attachment>::on_click.
 func (e AttachmentEl) OnClick(handler func(cx *Cx, e ClickEvent)) AttachmentEl {
 	o := op(e.n, 261)
@@ -67,6 +86,11 @@ func (e AttachmentEl) OnClick(handler func(cx *Cx, e ClickEvent)) AttachmentEl {
 	return e
 }
 
+// Show a remove control riding the card's upper trailing corner.
+//
+// The control appears on hover on desktop and stays visible on touch platforms. It needs a stable
+// identity, so it takes effect only together with `ID`.
+//
 // OnRemove is <gpui_kit::component::attachment::Attachment>::on_remove.
 func (e AttachmentEl) OnRemove(handler func(cx *Cx, e ClickEvent)) AttachmentEl {
 	o := op(e.n, 262)
@@ -74,6 +98,9 @@ func (e AttachmentEl) OnRemove(handler func(cx *Cx, e ClickEvent)) AttachmentEl 
 	return e
 }
 
+// Offer a retry control while the attachment is `Failed`: a round button over an image preview, or
+// a link after the typed description. It takes effect only together with `ID`.
+//
 // OnRetry is <gpui_kit::component::attachment::Attachment>::on_retry.
 func (e AttachmentEl) OnRetry(handler func(cx *Cx, e ClickEvent)) AttachmentEl {
 	o := op(e.n, 263)
@@ -81,6 +108,11 @@ func (e AttachmentEl) OnRetry(handler func(cx *Cx, e ClickEvent)) AttachmentEl {
 	return e
 }
 
+// Report upload progress as a percentage from 0 to 100.
+//
+// While `Uploading`, the media shows a progress ring instead of the spinner, a horizontal card
+// draws a thin bar along its bottom edge, and a typed description gains the percentage.
+//
 // Progress is <gpui_kit::component::attachment::Attachment>::progress.
 func (e AttachmentEl) Progress(percent float32) AttachmentEl {
 	o := op(e.n, 264)
@@ -88,6 +120,8 @@ func (e AttachmentEl) Progress(percent float32) AttachmentEl {
 	return e
 }
 
+// Set the attachment lifecycle status.
+//
 // Status is <gpui_kit::component::attachment::Attachment>::status.
 func (e AttachmentEl) Status(status AttachmentStatus) AttachmentEl {
 	o := op(e.n, 265)
@@ -95,6 +129,9 @@ func (e AttachmentEl) Status(status AttachmentStatus) AttachmentEl {
 	return e
 }
 
+// Show a tooltip while the card is hovered, e.g. the reason an upload failed. It takes effect only
+// together with `ID`.
+//
 // Tooltip is <gpui_kit::component::attachment::Attachment>::tooltip.
 func (e AttachmentEl) Tooltip(text string) AttachmentEl {
 	o := op(e.n, 266)
@@ -102,7 +139,19 @@ func (e AttachmentEl) Tooltip(text string) AttachmentEl {
 	return e
 }
 
-func (e AttachmentEl) PopoverStyle() AttachmentEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e AttachmentEl) PopoverStyle() AttachmentEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e AttachmentEl) RoundedFullStyle() AttachmentEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e AttachmentEl) CornerRadii(radius Corners) AttachmentEl {
@@ -127,7 +176,20 @@ func (e AttachmentEl) FontMedium() AttachmentEl     { tStyledExtFontMedium(e.n);
 func (e AttachmentEl) FontNormal() AttachmentEl     { tStyledExtFontNormal(e.n); return e }
 func (e AttachmentEl) FontSemibold() AttachmentEl   { tStyledExtFontSemibold(e.n); return e }
 func (e AttachmentEl) FontThin() AttachmentEl       { tStyledExtFontThin(e.n); return e }
-func (e AttachmentEl) HFlex() AttachmentEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e AttachmentEl) HFlex() AttachmentEl { tStyledExtHFlex(e.n); return e }
 func (e AttachmentEl) Margins(margins EdgesInto) AttachmentEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -140,144 +202,368 @@ func (e AttachmentEl) RefineStyle(style StyleRefinement) AttachmentEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e AttachmentEl) VFlex() AttachmentEl { tStyledExtVFlex(e.n); return e }
 
-func (e AttachmentEl) Large() AttachmentEl                 { tSizableLarge(e.n); return e }
-func (e AttachmentEl) Small() AttachmentEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e AttachmentEl) Large() AttachmentEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e AttachmentEl) Small() AttachmentEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e AttachmentEl) WithSize(size SizeInto) AttachmentEl { tSizableWithSize(e.n, size); return e }
-func (e AttachmentEl) Xsmall() AttachmentEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e AttachmentEl) Xsmall() AttachmentEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e AttachmentEl) Style(st ...Style) AttachmentEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e AttachmentEl) AspectRatio(ratio float32) AttachmentEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e AttachmentEl) Bg(fill Fill) AttachmentEl          { tStyledBg(e.n, fill); return e }
-func (e AttachmentEl) Border(length Length) AttachmentEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e AttachmentEl) Bg(fill Fill) AttachmentEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e AttachmentEl) Border(length Length) AttachmentEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentEl) BorderB(length Length) AttachmentEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e AttachmentEl) BorderColor(borderColor Color) AttachmentEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e AttachmentEl) BorderL(length Length) AttachmentEl     { tStyledBorderL(e.n, length); return e }
-func (e AttachmentEl) BorderR(length Length) AttachmentEl     { tStyledBorderR(e.n, length); return e }
-func (e AttachmentEl) BorderT(length Length) AttachmentEl     { tStyledBorderT(e.n, length); return e }
-func (e AttachmentEl) BorderX(length Length) AttachmentEl     { tStyledBorderX(e.n, length); return e }
-func (e AttachmentEl) BorderY(length Length) AttachmentEl     { tStyledBorderY(e.n, length); return e }
-func (e AttachmentEl) Bottom(length Length) AttachmentEl      { tStyledBottom(e.n, length); return e }
-func (e AttachmentEl) ColEnd(end int16) AttachmentEl          { tStyledColEnd(e.n, end); return e }
-func (e AttachmentEl) ColSpan(span uint16) AttachmentEl       { tStyledColSpan(e.n, span); return e }
-func (e AttachmentEl) ColStart(start int16) AttachmentEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AttachmentEl) BorderL(length Length) AttachmentEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AttachmentEl) BorderR(length Length) AttachmentEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AttachmentEl) BorderT(length Length) AttachmentEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e AttachmentEl) BorderX(length Length) AttachmentEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e AttachmentEl) BorderY(length Length) AttachmentEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AttachmentEl) Bottom(length Length) AttachmentEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e AttachmentEl) ColEnd(end int16) AttachmentEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e AttachmentEl) ColSpan(span uint16) AttachmentEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e AttachmentEl) ColStart(start int16) AttachmentEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e AttachmentEl) Cursor(cursor CursorStyle) AttachmentEl { tStyledCursor(e.n, cursor); return e }
-func (e AttachmentEl) FlexBasis(basis Length) AttachmentEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e AttachmentEl) FlexGrow(grow float32) AttachmentEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e AttachmentEl) FlexBasis(basis Length) AttachmentEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e AttachmentEl) FlexGrow(grow float32) AttachmentEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AttachmentEl) FlexShrink(shrink float32) AttachmentEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e AttachmentEl) FontFamily(familyName string) AttachmentEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e AttachmentEl) FontFeatures(features FontFeatures) AttachmentEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e AttachmentEl) FontWeight(weight FontWeight) AttachmentEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e AttachmentEl) Gap(length Length) AttachmentEl    { tStyledGap(e.n, length); return e }
-func (e AttachmentEl) GapX(length Length) AttachmentEl   { tStyledGapX(e.n, length); return e }
-func (e AttachmentEl) GapY(length Length) AttachmentEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e AttachmentEl) Gap(length Length) AttachmentEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e AttachmentEl) GapX(length Length) AttachmentEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e AttachmentEl) GapY(length Length) AttachmentEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e AttachmentEl) GridCols(cols uint16) AttachmentEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e AttachmentEl) GridColsMaxContent(cols uint16) AttachmentEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentEl) GridColsMinContent(cols uint16) AttachmentEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e AttachmentEl) GridRows(rows uint16) AttachmentEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e AttachmentEl) GridRowsMaxContent(rows uint16) AttachmentEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentEl) GridRowsMinContent(rows uint16) AttachmentEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e AttachmentEl) H(length Length) AttachmentEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e AttachmentEl) H(length Length) AttachmentEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentEl) Inset(length Length) AttachmentEl { tStyledInset(e.n, length); return e }
-func (e AttachmentEl) Left(length Length) AttachmentEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AttachmentEl) Left(length Length) AttachmentEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e AttachmentEl) LineClamp(lines int) AttachmentEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e AttachmentEl) LineHeight(lineHeight Length) AttachmentEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e AttachmentEl) M(length Length) AttachmentEl         { tStyledM(e.n, length); return e }
-func (e AttachmentEl) MaxH(length Length) AttachmentEl      { tStyledMaxH(e.n, length); return e }
-func (e AttachmentEl) MaxSize(length Length) AttachmentEl   { tStyledMaxSize(e.n, length); return e }
-func (e AttachmentEl) MaxW(length Length) AttachmentEl      { tStyledMaxW(e.n, length); return e }
-func (e AttachmentEl) Mb(length Length) AttachmentEl        { tStyledMb(e.n, length); return e }
-func (e AttachmentEl) MinH(length Length) AttachmentEl      { tStyledMinH(e.n, length); return e }
-func (e AttachmentEl) MinSize(length Length) AttachmentEl   { tStyledMinSize(e.n, length); return e }
-func (e AttachmentEl) MinW(length Length) AttachmentEl      { tStyledMinW(e.n, length); return e }
-func (e AttachmentEl) Ml(length Length) AttachmentEl        { tStyledMl(e.n, length); return e }
-func (e AttachmentEl) Mr(length Length) AttachmentEl        { tStyledMr(e.n, length); return e }
-func (e AttachmentEl) Mt(length Length) AttachmentEl        { tStyledMt(e.n, length); return e }
-func (e AttachmentEl) Mx(length Length) AttachmentEl        { tStyledMx(e.n, length); return e }
-func (e AttachmentEl) My(length Length) AttachmentEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e AttachmentEl) M(length Length) AttachmentEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e AttachmentEl) MaxH(length Length) AttachmentEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e AttachmentEl) MaxSize(length Length) AttachmentEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e AttachmentEl) MaxW(length Length) AttachmentEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentEl) Mb(length Length) AttachmentEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e AttachmentEl) MinH(length Length) AttachmentEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e AttachmentEl) MinSize(length Length) AttachmentEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e AttachmentEl) MinW(length Length) AttachmentEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentEl) Ml(length Length) AttachmentEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentEl) Mr(length Length) AttachmentEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentEl) Mt(length Length) AttachmentEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e AttachmentEl) Mx(length Length) AttachmentEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e AttachmentEl) My(length Length) AttachmentEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e AttachmentEl) Opacity(opacity float32) AttachmentEl { tStyledOpacity(e.n, opacity); return e }
-func (e AttachmentEl) P(length Length) AttachmentEl         { tStyledP(e.n, length); return e }
-func (e AttachmentEl) Pb(length Length) AttachmentEl        { tStyledPb(e.n, length); return e }
-func (e AttachmentEl) Pl(length Length) AttachmentEl        { tStyledPl(e.n, length); return e }
-func (e AttachmentEl) Pr(length Length) AttachmentEl        { tStyledPr(e.n, length); return e }
-func (e AttachmentEl) Pt(length Length) AttachmentEl        { tStyledPt(e.n, length); return e }
-func (e AttachmentEl) Px(length Length) AttachmentEl        { tStyledPx(e.n, length); return e }
-func (e AttachmentEl) Py(length Length) AttachmentEl        { tStyledPy(e.n, length); return e }
-func (e AttachmentEl) Right(length Length) AttachmentEl     { tStyledRight(e.n, length); return e }
-func (e AttachmentEl) Rounded(length Length) AttachmentEl   { tStyledRounded(e.n, length); return e }
-func (e AttachmentEl) RoundedB(length Length) AttachmentEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e AttachmentEl) P(length Length) AttachmentEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AttachmentEl) Pb(length Length) AttachmentEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AttachmentEl) Pl(length Length) AttachmentEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AttachmentEl) Pr(length Length) AttachmentEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AttachmentEl) Pt(length Length) AttachmentEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e AttachmentEl) Px(length Length) AttachmentEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e AttachmentEl) Py(length Length) AttachmentEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AttachmentEl) Right(length Length) AttachmentEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e AttachmentEl) Rounded(length Length) AttachmentEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e AttachmentEl) RoundedB(length Length) AttachmentEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentEl) RoundedBl(length Length) AttachmentEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentEl) RoundedBr(length Length) AttachmentEl { tStyledRoundedBr(e.n, length); return e }
-func (e AttachmentEl) RoundedL(length Length) AttachmentEl  { tStyledRoundedL(e.n, length); return e }
-func (e AttachmentEl) RoundedR(length Length) AttachmentEl  { tStyledRoundedR(e.n, length); return e }
-func (e AttachmentEl) RoundedT(length Length) AttachmentEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e AttachmentEl) RoundedL(length Length) AttachmentEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e AttachmentEl) RoundedR(length Length) AttachmentEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e AttachmentEl) RoundedT(length Length) AttachmentEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentEl) RoundedTl(length Length) AttachmentEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentEl) RoundedTr(length Length) AttachmentEl { tStyledRoundedTr(e.n, length); return e }
-func (e AttachmentEl) RowEnd(end int16) AttachmentEl        { tStyledRowEnd(e.n, end); return e }
-func (e AttachmentEl) RowSpan(span uint16) AttachmentEl     { tStyledRowSpan(e.n, span); return e }
-func (e AttachmentEl) RowStart(start int16) AttachmentEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e AttachmentEl) RowEnd(end int16) AttachmentEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e AttachmentEl) RowSpan(span uint16) AttachmentEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e AttachmentEl) RowStart(start int16) AttachmentEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e AttachmentEl) ScrollbarWidth(width Length) AttachmentEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e AttachmentEl) Shadow(shadows []BoxShadow) AttachmentEl { tStyledShadow(e.n, shadows); return e }
-func (e AttachmentEl) Size(length Length) AttachmentEl         { tStyledSize(e.n, length); return e }
-func (e AttachmentEl) TextAlign(align TextAlign) AttachmentEl  { tStyledTextAlign(e.n, align); return e }
-func (e AttachmentEl) TextBg(bg Color) AttachmentEl            { tStyledTextBg(e.n, bg); return e }
-func (e AttachmentEl) TextColor(color Color) AttachmentEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e AttachmentEl) Size(length Length) AttachmentEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e AttachmentEl) TextAlign(align TextAlign) AttachmentEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e AttachmentEl) TextBg(bg Color) AttachmentEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e AttachmentEl) TextColor(color Color) AttachmentEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e AttachmentEl) TextDecorationColor(color Color) AttachmentEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e AttachmentEl) TextOverflow(overflow TextOverflow) AttachmentEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentEl) TextSize(size Length) AttachmentEl { tStyledTextSize(e.n, size); return e }
-func (e AttachmentEl) Top(length Length) AttachmentEl    { tStyledTop(e.n, length); return e }
-func (e AttachmentEl) W(length Length) AttachmentEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AttachmentEl) Top(length Length) AttachmentEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e AttachmentEl) W(length Length) AttachmentEl { tStyledW(e.n, length); return e }
 
 // AttachmentActionsEl is gpui_kit::component::attachment::AttachmentActions.
 type AttachmentActionsEl struct{ n *node }
 
 func (e AttachmentActionsEl) node() *node { return e.n }
 
+// Create an empty actions slot.
+//
 // AttachmentActions is <gpui_kit::component::attachment::AttachmentActions>::new.
 func AttachmentActions(st ...Style) AttachmentActionsEl {
 	useComponentAttachment()
@@ -294,20 +580,46 @@ func AttachmentActionsDefault(st ...Style) AttachmentActionsEl {
 	return AttachmentActionsEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e AttachmentActionsEl) PopoverStyle() AttachmentActionsEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e AttachmentActionsEl) RoundedFullStyle() AttachmentActionsEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e AttachmentActionsEl) FocusRingStyle() AttachmentActionsEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AttachmentActionsEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AttachmentActionsEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -344,7 +656,20 @@ func (e AttachmentActionsEl) FontSemibold() AttachmentActionsEl {
 	return e
 }
 func (e AttachmentActionsEl) FontThin() AttachmentActionsEl { tStyledExtFontThin(e.n); return e }
-func (e AttachmentActionsEl) HFlex() AttachmentActionsEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e AttachmentActionsEl) HFlex() AttachmentActionsEl { tStyledExtHFlex(e.n); return e }
 func (e AttachmentActionsEl) Margins(margins EdgesInto) AttachmentActionsEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -357,6 +682,11 @@ func (e AttachmentActionsEl) RefineStyle(style StyleRefinement) AttachmentAction
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e AttachmentActionsEl) VFlex() AttachmentActionsEl { tStyledExtVFlex(e.n); return e }
 
 func (e AttachmentActionsEl) Text(s string) AttachmentActionsEl { putText(e.n, s); return e }
@@ -364,10 +694,13 @@ func (e AttachmentActionsEl) Text(s string) AttachmentActionsEl { putText(e.n, s
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e AttachmentActionsEl) ChildView(v View) AttachmentActionsEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e AttachmentActionsEl) Child(child Element) AttachmentActionsEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e AttachmentActionsEl) Children(children ...Element) AttachmentActionsEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -376,265 +709,472 @@ func (e AttachmentActionsEl) Children(children ...Element) AttachmentActionsEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e AttachmentActionsEl) Style(st ...Style) AttachmentActionsEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e AttachmentActionsEl) AspectRatio(ratio float32) AttachmentActionsEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e AttachmentActionsEl) Bg(fill Fill) AttachmentActionsEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e AttachmentActionsEl) Border(length Length) AttachmentActionsEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentActionsEl) BorderB(length Length) AttachmentActionsEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e AttachmentActionsEl) BorderColor(borderColor Color) AttachmentActionsEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentActionsEl) BorderL(length Length) AttachmentActionsEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentActionsEl) BorderR(length Length) AttachmentActionsEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentActionsEl) BorderT(length Length) AttachmentActionsEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentActionsEl) BorderX(length Length) AttachmentActionsEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentActionsEl) BorderY(length Length) AttachmentActionsEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentActionsEl) Bottom(length Length) AttachmentActionsEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e AttachmentActionsEl) ColEnd(end int16) AttachmentActionsEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e AttachmentActionsEl) ColSpan(span uint16) AttachmentActionsEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e AttachmentActionsEl) ColStart(start int16) AttachmentActionsEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e AttachmentActionsEl) Cursor(cursor CursorStyle) AttachmentActionsEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e AttachmentActionsEl) FlexBasis(basis Length) AttachmentActionsEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e AttachmentActionsEl) FlexGrow(grow float32) AttachmentActionsEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AttachmentActionsEl) FlexShrink(shrink float32) AttachmentActionsEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e AttachmentActionsEl) FontFamily(familyName string) AttachmentActionsEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e AttachmentActionsEl) FontFeatures(features FontFeatures) AttachmentActionsEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e AttachmentActionsEl) FontWeight(weight FontWeight) AttachmentActionsEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e AttachmentActionsEl) Gap(length Length) AttachmentActionsEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentActionsEl) GapX(length Length) AttachmentActionsEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentActionsEl) GapY(length Length) AttachmentActionsEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e AttachmentActionsEl) GridCols(cols uint16) AttachmentActionsEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e AttachmentActionsEl) GridColsMaxContent(cols uint16) AttachmentActionsEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentActionsEl) GridColsMinContent(cols uint16) AttachmentActionsEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e AttachmentActionsEl) GridRows(rows uint16) AttachmentActionsEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e AttachmentActionsEl) GridRowsMaxContent(rows uint16) AttachmentActionsEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentActionsEl) GridRowsMinContent(rows uint16) AttachmentActionsEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e AttachmentActionsEl) H(length Length) AttachmentActionsEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentActionsEl) Inset(length Length) AttachmentActionsEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentActionsEl) Left(length Length) AttachmentActionsEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e AttachmentActionsEl) LineClamp(lines int) AttachmentActionsEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e AttachmentActionsEl) LineHeight(lineHeight Length) AttachmentActionsEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e AttachmentActionsEl) M(length Length) AttachmentActionsEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e AttachmentActionsEl) MaxH(length Length) AttachmentActionsEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e AttachmentActionsEl) MaxSize(length Length) AttachmentActionsEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e AttachmentActionsEl) MaxW(length Length) AttachmentActionsEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentActionsEl) Mb(length Length) AttachmentActionsEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e AttachmentActionsEl) MinH(length Length) AttachmentActionsEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e AttachmentActionsEl) MinSize(length Length) AttachmentActionsEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e AttachmentActionsEl) MinW(length Length) AttachmentActionsEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentActionsEl) Ml(length Length) AttachmentActionsEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentActionsEl) Mr(length Length) AttachmentActionsEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentActionsEl) Mt(length Length) AttachmentActionsEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e AttachmentActionsEl) Mx(length Length) AttachmentActionsEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e AttachmentActionsEl) My(length Length) AttachmentActionsEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e AttachmentActionsEl) Opacity(opacity float32) AttachmentActionsEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e AttachmentActionsEl) P(length Length) AttachmentActionsEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e AttachmentActionsEl) P(length Length) AttachmentActionsEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentActionsEl) Pb(length Length) AttachmentActionsEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentActionsEl) Pl(length Length) AttachmentActionsEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentActionsEl) Pr(length Length) AttachmentActionsEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentActionsEl) Pt(length Length) AttachmentActionsEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e AttachmentActionsEl) Px(length Length) AttachmentActionsEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e AttachmentActionsEl) Py(length Length) AttachmentActionsEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentActionsEl) Right(length Length) AttachmentActionsEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e AttachmentActionsEl) Rounded(length Length) AttachmentActionsEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentActionsEl) RoundedB(length Length) AttachmentActionsEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentActionsEl) RoundedBl(length Length) AttachmentActionsEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentActionsEl) RoundedBr(length Length) AttachmentActionsEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentActionsEl) RoundedL(length Length) AttachmentActionsEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentActionsEl) RoundedR(length Length) AttachmentActionsEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentActionsEl) RoundedT(length Length) AttachmentActionsEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentActionsEl) RoundedTl(length Length) AttachmentActionsEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentActionsEl) RoundedTr(length Length) AttachmentActionsEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e AttachmentActionsEl) RowEnd(end int16) AttachmentActionsEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e AttachmentActionsEl) RowSpan(span uint16) AttachmentActionsEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e AttachmentActionsEl) RowStart(start int16) AttachmentActionsEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e AttachmentActionsEl) ScrollbarWidth(width Length) AttachmentActionsEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e AttachmentActionsEl) Shadow(shadows []BoxShadow) AttachmentActionsEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e AttachmentActionsEl) Size(length Length) AttachmentActionsEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e AttachmentActionsEl) TextAlign(align TextAlign) AttachmentActionsEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentActionsEl) TextBg(bg Color) AttachmentActionsEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentActionsEl) TextColor(color Color) AttachmentActionsEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e AttachmentActionsEl) TextDecorationColor(color Color) AttachmentActionsEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e AttachmentActionsEl) TextOverflow(overflow TextOverflow) AttachmentActionsEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentActionsEl) TextSize(size Length) AttachmentActionsEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentActionsEl) Top(length Length) AttachmentActionsEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e AttachmentActionsEl) W(length Length) AttachmentActionsEl { tStyledW(e.n, length); return e }
 
 // AttachmentContentEl is gpui_kit::component::attachment::AttachmentContent.
@@ -642,6 +1182,8 @@ type AttachmentContentEl struct{ n *node }
 
 func (e AttachmentContentEl) node() *node { return e.n }
 
+// Create an empty metadata slot.
+//
 // AttachmentContent is <gpui_kit::component::attachment::AttachmentContent>::new.
 func AttachmentContent(st ...Style) AttachmentContentEl {
 	useComponentAttachment()
@@ -658,6 +1200,8 @@ func AttachmentContentDefault(st ...Style) AttachmentContentEl {
 	return AttachmentContentEl{n}
 }
 
+// Add a status-aware single-line description.
+//
 // Description is <gpui_kit::component::attachment::AttachmentContent>::description.
 func (e AttachmentContentEl) Description(description AttachmentDescriptionEl) AttachmentContentEl {
 	o := op(e.n, 256)
@@ -665,6 +1209,8 @@ func (e AttachmentContentEl) Description(description AttachmentDescriptionEl) At
 	return e
 }
 
+// Add a status-aware single-line title.
+//
 // Title is <gpui_kit::component::attachment::AttachmentContent>::title.
 func (e AttachmentContentEl) Title(title AttachmentTitleEl) AttachmentContentEl {
 	o := op(e.n, 257)
@@ -672,20 +1218,46 @@ func (e AttachmentContentEl) Title(title AttachmentTitleEl) AttachmentContentEl 
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e AttachmentContentEl) PopoverStyle() AttachmentContentEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e AttachmentContentEl) RoundedFullStyle() AttachmentContentEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e AttachmentContentEl) FocusRingStyle() AttachmentContentEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AttachmentContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AttachmentContentEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -722,7 +1294,20 @@ func (e AttachmentContentEl) FontSemibold() AttachmentContentEl {
 	return e
 }
 func (e AttachmentContentEl) FontThin() AttachmentContentEl { tStyledExtFontThin(e.n); return e }
-func (e AttachmentContentEl) HFlex() AttachmentContentEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e AttachmentContentEl) HFlex() AttachmentContentEl { tStyledExtHFlex(e.n); return e }
 func (e AttachmentContentEl) Margins(margins EdgesInto) AttachmentContentEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -735,6 +1320,11 @@ func (e AttachmentContentEl) RefineStyle(style StyleRefinement) AttachmentConten
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e AttachmentContentEl) VFlex() AttachmentContentEl { tStyledExtVFlex(e.n); return e }
 
 func (e AttachmentContentEl) Text(s string) AttachmentContentEl { putText(e.n, s); return e }
@@ -742,10 +1332,13 @@ func (e AttachmentContentEl) Text(s string) AttachmentContentEl { putText(e.n, s
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e AttachmentContentEl) ChildView(v View) AttachmentContentEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e AttachmentContentEl) Child(child Element) AttachmentContentEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e AttachmentContentEl) Children(children ...Element) AttachmentContentEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -754,265 +1347,472 @@ func (e AttachmentContentEl) Children(children ...Element) AttachmentContentEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e AttachmentContentEl) Style(st ...Style) AttachmentContentEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e AttachmentContentEl) AspectRatio(ratio float32) AttachmentContentEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e AttachmentContentEl) Bg(fill Fill) AttachmentContentEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e AttachmentContentEl) Border(length Length) AttachmentContentEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentContentEl) BorderB(length Length) AttachmentContentEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e AttachmentContentEl) BorderColor(borderColor Color) AttachmentContentEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentContentEl) BorderL(length Length) AttachmentContentEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentContentEl) BorderR(length Length) AttachmentContentEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentContentEl) BorderT(length Length) AttachmentContentEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentContentEl) BorderX(length Length) AttachmentContentEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentContentEl) BorderY(length Length) AttachmentContentEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentContentEl) Bottom(length Length) AttachmentContentEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e AttachmentContentEl) ColEnd(end int16) AttachmentContentEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e AttachmentContentEl) ColSpan(span uint16) AttachmentContentEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e AttachmentContentEl) ColStart(start int16) AttachmentContentEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e AttachmentContentEl) Cursor(cursor CursorStyle) AttachmentContentEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e AttachmentContentEl) FlexBasis(basis Length) AttachmentContentEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e AttachmentContentEl) FlexGrow(grow float32) AttachmentContentEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AttachmentContentEl) FlexShrink(shrink float32) AttachmentContentEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e AttachmentContentEl) FontFamily(familyName string) AttachmentContentEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e AttachmentContentEl) FontFeatures(features FontFeatures) AttachmentContentEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e AttachmentContentEl) FontWeight(weight FontWeight) AttachmentContentEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e AttachmentContentEl) Gap(length Length) AttachmentContentEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentContentEl) GapX(length Length) AttachmentContentEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentContentEl) GapY(length Length) AttachmentContentEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e AttachmentContentEl) GridCols(cols uint16) AttachmentContentEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e AttachmentContentEl) GridColsMaxContent(cols uint16) AttachmentContentEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentContentEl) GridColsMinContent(cols uint16) AttachmentContentEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e AttachmentContentEl) GridRows(rows uint16) AttachmentContentEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e AttachmentContentEl) GridRowsMaxContent(rows uint16) AttachmentContentEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentContentEl) GridRowsMinContent(rows uint16) AttachmentContentEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e AttachmentContentEl) H(length Length) AttachmentContentEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentContentEl) Inset(length Length) AttachmentContentEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentContentEl) Left(length Length) AttachmentContentEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e AttachmentContentEl) LineClamp(lines int) AttachmentContentEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e AttachmentContentEl) LineHeight(lineHeight Length) AttachmentContentEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e AttachmentContentEl) M(length Length) AttachmentContentEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e AttachmentContentEl) MaxH(length Length) AttachmentContentEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e AttachmentContentEl) MaxSize(length Length) AttachmentContentEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e AttachmentContentEl) MaxW(length Length) AttachmentContentEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentContentEl) Mb(length Length) AttachmentContentEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e AttachmentContentEl) MinH(length Length) AttachmentContentEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e AttachmentContentEl) MinSize(length Length) AttachmentContentEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e AttachmentContentEl) MinW(length Length) AttachmentContentEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentContentEl) Ml(length Length) AttachmentContentEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentContentEl) Mr(length Length) AttachmentContentEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentContentEl) Mt(length Length) AttachmentContentEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e AttachmentContentEl) Mx(length Length) AttachmentContentEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e AttachmentContentEl) My(length Length) AttachmentContentEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e AttachmentContentEl) Opacity(opacity float32) AttachmentContentEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e AttachmentContentEl) P(length Length) AttachmentContentEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e AttachmentContentEl) P(length Length) AttachmentContentEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentContentEl) Pb(length Length) AttachmentContentEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentContentEl) Pl(length Length) AttachmentContentEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentContentEl) Pr(length Length) AttachmentContentEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentContentEl) Pt(length Length) AttachmentContentEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e AttachmentContentEl) Px(length Length) AttachmentContentEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e AttachmentContentEl) Py(length Length) AttachmentContentEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentContentEl) Right(length Length) AttachmentContentEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e AttachmentContentEl) Rounded(length Length) AttachmentContentEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentContentEl) RoundedB(length Length) AttachmentContentEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentContentEl) RoundedBl(length Length) AttachmentContentEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentContentEl) RoundedBr(length Length) AttachmentContentEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentContentEl) RoundedL(length Length) AttachmentContentEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentContentEl) RoundedR(length Length) AttachmentContentEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentContentEl) RoundedT(length Length) AttachmentContentEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentContentEl) RoundedTl(length Length) AttachmentContentEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentContentEl) RoundedTr(length Length) AttachmentContentEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e AttachmentContentEl) RowEnd(end int16) AttachmentContentEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e AttachmentContentEl) RowSpan(span uint16) AttachmentContentEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e AttachmentContentEl) RowStart(start int16) AttachmentContentEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e AttachmentContentEl) ScrollbarWidth(width Length) AttachmentContentEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e AttachmentContentEl) Shadow(shadows []BoxShadow) AttachmentContentEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e AttachmentContentEl) Size(length Length) AttachmentContentEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e AttachmentContentEl) TextAlign(align TextAlign) AttachmentContentEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentContentEl) TextBg(bg Color) AttachmentContentEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentContentEl) TextColor(color Color) AttachmentContentEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e AttachmentContentEl) TextDecorationColor(color Color) AttachmentContentEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e AttachmentContentEl) TextOverflow(overflow TextOverflow) AttachmentContentEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentContentEl) TextSize(size Length) AttachmentContentEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentContentEl) Top(length Length) AttachmentContentEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e AttachmentContentEl) W(length Length) AttachmentContentEl { tStyledW(e.n, length); return e }
 
 // AttachmentDescriptionEl is gpui_kit::component::attachment::AttachmentDescription.
@@ -1020,6 +1820,8 @@ type AttachmentDescriptionEl struct{ n *node }
 
 func (e AttachmentDescriptionEl) node() *node { return e.n }
 
+// Create an attachment description.
+//
 // AttachmentDescription is <gpui_kit::component::attachment::AttachmentDescription>::new.
 func AttachmentDescription(text string, st ...Style) AttachmentDescriptionEl {
 	useComponentAttachment()
@@ -1030,6 +1832,8 @@ func AttachmentDescription(text string, st ...Style) AttachmentDescriptionEl {
 	return AttachmentDescriptionEl{n}
 }
 
+// Set the status used for the semantic description color.
+//
 // Status is <gpui_kit::component::attachment::AttachmentDescription>::status.
 func (e AttachmentDescriptionEl) Status(status AttachmentStatus) AttachmentDescriptionEl {
 	o := op(e.n, 256)
@@ -1037,10 +1841,22 @@ func (e AttachmentDescriptionEl) Status(status AttachmentStatus) AttachmentDescr
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e AttachmentDescriptionEl) PopoverStyle() AttachmentDescriptionEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e AttachmentDescriptionEl) RoundedFullStyle() AttachmentDescriptionEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -1110,6 +1926,19 @@ func (e AttachmentDescriptionEl) FontThin() AttachmentDescriptionEl {
 	tStyledExtFontThin(e.n)
 	return e
 }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e AttachmentDescriptionEl) HFlex() AttachmentDescriptionEl { tStyledExtHFlex(e.n); return e }
 func (e AttachmentDescriptionEl) Margins(margins EdgesInto) AttachmentDescriptionEl {
 	tStyledExtMargins(e.n, margins)
@@ -1123,6 +1952,11 @@ func (e AttachmentDescriptionEl) RefineStyle(style StyleRefinement) AttachmentDe
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e AttachmentDescriptionEl) VFlex() AttachmentDescriptionEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
@@ -1131,322 +1965,529 @@ func (e AttachmentDescriptionEl) Style(st ...Style) AttachmentDescriptionEl {
 	return e
 }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e AttachmentDescriptionEl) AspectRatio(ratio float32) AttachmentDescriptionEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e AttachmentDescriptionEl) Bg(fill Fill) AttachmentDescriptionEl {
 	tStyledBg(e.n, fill)
 	return e
 }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e AttachmentDescriptionEl) Border(length Length) AttachmentDescriptionEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentDescriptionEl) BorderB(length Length) AttachmentDescriptionEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e AttachmentDescriptionEl) BorderColor(borderColor Color) AttachmentDescriptionEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentDescriptionEl) BorderL(length Length) AttachmentDescriptionEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentDescriptionEl) BorderR(length Length) AttachmentDescriptionEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentDescriptionEl) BorderT(length Length) AttachmentDescriptionEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentDescriptionEl) BorderX(length Length) AttachmentDescriptionEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentDescriptionEl) BorderY(length Length) AttachmentDescriptionEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentDescriptionEl) Bottom(length Length) AttachmentDescriptionEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e AttachmentDescriptionEl) ColEnd(end int16) AttachmentDescriptionEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e AttachmentDescriptionEl) ColSpan(span uint16) AttachmentDescriptionEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e AttachmentDescriptionEl) ColStart(start int16) AttachmentDescriptionEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e AttachmentDescriptionEl) Cursor(cursor CursorStyle) AttachmentDescriptionEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e AttachmentDescriptionEl) FlexBasis(basis Length) AttachmentDescriptionEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e AttachmentDescriptionEl) FlexGrow(grow float32) AttachmentDescriptionEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AttachmentDescriptionEl) FlexShrink(shrink float32) AttachmentDescriptionEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e AttachmentDescriptionEl) FontFamily(familyName string) AttachmentDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e AttachmentDescriptionEl) FontFeatures(features FontFeatures) AttachmentDescriptionEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e AttachmentDescriptionEl) FontWeight(weight FontWeight) AttachmentDescriptionEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e AttachmentDescriptionEl) Gap(length Length) AttachmentDescriptionEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentDescriptionEl) GapX(length Length) AttachmentDescriptionEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentDescriptionEl) GapY(length Length) AttachmentDescriptionEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e AttachmentDescriptionEl) GridCols(cols uint16) AttachmentDescriptionEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e AttachmentDescriptionEl) GridColsMaxContent(cols uint16) AttachmentDescriptionEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentDescriptionEl) GridColsMinContent(cols uint16) AttachmentDescriptionEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e AttachmentDescriptionEl) GridRows(rows uint16) AttachmentDescriptionEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e AttachmentDescriptionEl) GridRowsMaxContent(rows uint16) AttachmentDescriptionEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentDescriptionEl) GridRowsMinContent(rows uint16) AttachmentDescriptionEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e AttachmentDescriptionEl) H(length Length) AttachmentDescriptionEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentDescriptionEl) Inset(length Length) AttachmentDescriptionEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentDescriptionEl) Left(length Length) AttachmentDescriptionEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e AttachmentDescriptionEl) LineClamp(lines int) AttachmentDescriptionEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e AttachmentDescriptionEl) LineHeight(lineHeight Length) AttachmentDescriptionEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e AttachmentDescriptionEl) M(length Length) AttachmentDescriptionEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e AttachmentDescriptionEl) MaxH(length Length) AttachmentDescriptionEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e AttachmentDescriptionEl) MaxSize(length Length) AttachmentDescriptionEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e AttachmentDescriptionEl) MaxW(length Length) AttachmentDescriptionEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentDescriptionEl) Mb(length Length) AttachmentDescriptionEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e AttachmentDescriptionEl) MinH(length Length) AttachmentDescriptionEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e AttachmentDescriptionEl) MinSize(length Length) AttachmentDescriptionEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e AttachmentDescriptionEl) MinW(length Length) AttachmentDescriptionEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentDescriptionEl) Ml(length Length) AttachmentDescriptionEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentDescriptionEl) Mr(length Length) AttachmentDescriptionEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e AttachmentDescriptionEl) Mt(length Length) AttachmentDescriptionEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e AttachmentDescriptionEl) Mx(length Length) AttachmentDescriptionEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e AttachmentDescriptionEl) My(length Length) AttachmentDescriptionEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e AttachmentDescriptionEl) Opacity(opacity float32) AttachmentDescriptionEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e AttachmentDescriptionEl) P(length Length) AttachmentDescriptionEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentDescriptionEl) Pb(length Length) AttachmentDescriptionEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentDescriptionEl) Pl(length Length) AttachmentDescriptionEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentDescriptionEl) Pr(length Length) AttachmentDescriptionEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentDescriptionEl) Pt(length Length) AttachmentDescriptionEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e AttachmentDescriptionEl) Px(length Length) AttachmentDescriptionEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e AttachmentDescriptionEl) Py(length Length) AttachmentDescriptionEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentDescriptionEl) Right(length Length) AttachmentDescriptionEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e AttachmentDescriptionEl) Rounded(length Length) AttachmentDescriptionEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentDescriptionEl) RoundedB(length Length) AttachmentDescriptionEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentDescriptionEl) RoundedBl(length Length) AttachmentDescriptionEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentDescriptionEl) RoundedBr(length Length) AttachmentDescriptionEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentDescriptionEl) RoundedL(length Length) AttachmentDescriptionEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentDescriptionEl) RoundedR(length Length) AttachmentDescriptionEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentDescriptionEl) RoundedT(length Length) AttachmentDescriptionEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentDescriptionEl) RoundedTl(length Length) AttachmentDescriptionEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentDescriptionEl) RoundedTr(length Length) AttachmentDescriptionEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e AttachmentDescriptionEl) RowEnd(end int16) AttachmentDescriptionEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e AttachmentDescriptionEl) RowSpan(span uint16) AttachmentDescriptionEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e AttachmentDescriptionEl) RowStart(start int16) AttachmentDescriptionEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e AttachmentDescriptionEl) ScrollbarWidth(width Length) AttachmentDescriptionEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e AttachmentDescriptionEl) Shadow(shadows []BoxShadow) AttachmentDescriptionEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e AttachmentDescriptionEl) Size(length Length) AttachmentDescriptionEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e AttachmentDescriptionEl) TextAlign(align TextAlign) AttachmentDescriptionEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentDescriptionEl) TextBg(bg Color) AttachmentDescriptionEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentDescriptionEl) TextColor(color Color) AttachmentDescriptionEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e AttachmentDescriptionEl) TextDecorationColor(color Color) AttachmentDescriptionEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e AttachmentDescriptionEl) TextOverflow(overflow TextOverflow) AttachmentDescriptionEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentDescriptionEl) TextSize(size Length) AttachmentDescriptionEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentDescriptionEl) Top(length Length) AttachmentDescriptionEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e AttachmentDescriptionEl) W(length Length) AttachmentDescriptionEl {
 	tStyledW(e.n, length)
 	return e
@@ -1457,6 +2498,8 @@ type AttachmentGroupEl struct{ n *node }
 
 func (e AttachmentGroupEl) node() *node { return e.n }
 
+// Create an empty attachment group with a stable scroll identifier.
+//
 // AttachmentGroup is <gpui_kit::component::attachment::AttachmentGroup>::new.
 func AttachmentGroup(id ID, st ...Style) AttachmentGroupEl {
 	useComponentAttachment()
@@ -1467,6 +2510,11 @@ func AttachmentGroup(id ID, st ...Style) AttachmentGroupEl {
 	return AttachmentGroupEl{n}
 }
 
+// Scroll the row through the caller's handle.
+//
+// The group keeps its own scroll state otherwise. Pass a handle when the application moves the row
+// itself, for example from paging buttons.
+//
 // TrackScroll is <gpui_kit::component::attachment::AttachmentGroup>::track_scroll.
 func (e AttachmentGroupEl) TrackScroll(handle ScrollHandle) AttachmentGroupEl {
 	o := op(e.n, 257)
@@ -1474,6 +2522,12 @@ func (e AttachmentGroupEl) TrackScroll(handle ScrollHandle) AttachmentGroupEl {
 	return e
 }
 
+// Fade the row's edges into `color` while attachments continue past them.
+//
+// Pass the color of the surface behind the row. Each fade shows only while its edge still hides
+// content, so a row that fits shows none; the fades sit above the attachments and do not take
+// pointer events.
+//
 // WithEdgeFade is <gpui_kit::component::attachment::AttachmentGroup>::with_edge_fade.
 func (e AttachmentGroupEl) WithEdgeFade(color Color) AttachmentGroupEl {
 	o := op(e.n, 256)
@@ -1481,17 +2535,43 @@ func (e AttachmentGroupEl) WithEdgeFade(color Color) AttachmentGroupEl {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e AttachmentGroupEl) PopoverStyle() AttachmentGroupEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e AttachmentGroupEl) RoundedFullStyle() AttachmentGroupEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e AttachmentGroupEl) FocusRingStyle() AttachmentGroupEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AttachmentGroupEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AttachmentGroupEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1522,7 +2602,20 @@ func (e AttachmentGroupEl) FontMedium() AttachmentGroupEl   { tStyledExtFontMedi
 func (e AttachmentGroupEl) FontNormal() AttachmentGroupEl   { tStyledExtFontNormal(e.n); return e }
 func (e AttachmentGroupEl) FontSemibold() AttachmentGroupEl { tStyledExtFontSemibold(e.n); return e }
 func (e AttachmentGroupEl) FontThin() AttachmentGroupEl     { tStyledExtFontThin(e.n); return e }
-func (e AttachmentGroupEl) HFlex() AttachmentGroupEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e AttachmentGroupEl) HFlex() AttachmentGroupEl { tStyledExtHFlex(e.n); return e }
 func (e AttachmentGroupEl) Margins(margins EdgesInto) AttachmentGroupEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1535,6 +2628,11 @@ func (e AttachmentGroupEl) RefineStyle(style StyleRefinement) AttachmentGroupEl 
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e AttachmentGroupEl) VFlex() AttachmentGroupEl { tStyledExtVFlex(e.n); return e }
 
 func (e AttachmentGroupEl) Text(s string) AttachmentGroupEl { putText(e.n, s); return e }
@@ -1542,10 +2640,13 @@ func (e AttachmentGroupEl) Text(s string) AttachmentGroupEl { putText(e.n, s); r
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e AttachmentGroupEl) ChildView(v View) AttachmentGroupEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e AttachmentGroupEl) Child(child Element) AttachmentGroupEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e AttachmentGroupEl) Children(children ...Element) AttachmentGroupEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1554,242 +2655,451 @@ func (e AttachmentGroupEl) Children(children ...Element) AttachmentGroupEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e AttachmentGroupEl) Style(st ...Style) AttachmentGroupEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e AttachmentGroupEl) AspectRatio(ratio float32) AttachmentGroupEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e AttachmentGroupEl) Bg(fill Fill) AttachmentGroupEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e AttachmentGroupEl) Border(length Length) AttachmentGroupEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentGroupEl) BorderB(length Length) AttachmentGroupEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e AttachmentGroupEl) BorderColor(borderColor Color) AttachmentGroupEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentGroupEl) BorderL(length Length) AttachmentGroupEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentGroupEl) BorderR(length Length) AttachmentGroupEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentGroupEl) BorderT(length Length) AttachmentGroupEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentGroupEl) BorderX(length Length) AttachmentGroupEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentGroupEl) BorderY(length Length) AttachmentGroupEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentGroupEl) Bottom(length Length) AttachmentGroupEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e AttachmentGroupEl) ColEnd(end int16) AttachmentGroupEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e AttachmentGroupEl) ColSpan(span uint16) AttachmentGroupEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e AttachmentGroupEl) ColStart(start int16) AttachmentGroupEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e AttachmentGroupEl) Cursor(cursor CursorStyle) AttachmentGroupEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e AttachmentGroupEl) FlexBasis(basis Length) AttachmentGroupEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e AttachmentGroupEl) FlexGrow(grow float32) AttachmentGroupEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AttachmentGroupEl) FlexShrink(shrink float32) AttachmentGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e AttachmentGroupEl) FontFamily(familyName string) AttachmentGroupEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e AttachmentGroupEl) FontFeatures(features FontFeatures) AttachmentGroupEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e AttachmentGroupEl) FontWeight(weight FontWeight) AttachmentGroupEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e AttachmentGroupEl) Gap(length Length) AttachmentGroupEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e AttachmentGroupEl) Gap(length Length) AttachmentGroupEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentGroupEl) GapX(length Length) AttachmentGroupEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentGroupEl) GapY(length Length) AttachmentGroupEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e AttachmentGroupEl) GridCols(cols uint16) AttachmentGroupEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e AttachmentGroupEl) GridColsMaxContent(cols uint16) AttachmentGroupEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentGroupEl) GridColsMinContent(cols uint16) AttachmentGroupEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e AttachmentGroupEl) GridRows(rows uint16) AttachmentGroupEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e AttachmentGroupEl) GridRowsMaxContent(rows uint16) AttachmentGroupEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentGroupEl) GridRowsMinContent(rows uint16) AttachmentGroupEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e AttachmentGroupEl) H(length Length) AttachmentGroupEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentGroupEl) Inset(length Length) AttachmentGroupEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentGroupEl) Left(length Length) AttachmentGroupEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e AttachmentGroupEl) LineClamp(lines int) AttachmentGroupEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e AttachmentGroupEl) LineHeight(lineHeight Length) AttachmentGroupEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e AttachmentGroupEl) M(length Length) AttachmentGroupEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e AttachmentGroupEl) M(length Length) AttachmentGroupEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e AttachmentGroupEl) MaxH(length Length) AttachmentGroupEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e AttachmentGroupEl) MaxSize(length Length) AttachmentGroupEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e AttachmentGroupEl) MaxW(length Length) AttachmentGroupEl { tStyledMaxW(e.n, length); return e }
-func (e AttachmentGroupEl) Mb(length Length) AttachmentGroupEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentGroupEl) Mb(length Length) AttachmentGroupEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e AttachmentGroupEl) MinH(length Length) AttachmentGroupEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e AttachmentGroupEl) MinSize(length Length) AttachmentGroupEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e AttachmentGroupEl) MinW(length Length) AttachmentGroupEl { tStyledMinW(e.n, length); return e }
-func (e AttachmentGroupEl) Ml(length Length) AttachmentGroupEl   { tStyledMl(e.n, length); return e }
-func (e AttachmentGroupEl) Mr(length Length) AttachmentGroupEl   { tStyledMr(e.n, length); return e }
-func (e AttachmentGroupEl) Mt(length Length) AttachmentGroupEl   { tStyledMt(e.n, length); return e }
-func (e AttachmentGroupEl) Mx(length Length) AttachmentGroupEl   { tStyledMx(e.n, length); return e }
-func (e AttachmentGroupEl) My(length Length) AttachmentGroupEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentGroupEl) Ml(length Length) AttachmentGroupEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentGroupEl) Mr(length Length) AttachmentGroupEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentGroupEl) Mt(length Length) AttachmentGroupEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e AttachmentGroupEl) Mx(length Length) AttachmentGroupEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e AttachmentGroupEl) My(length Length) AttachmentGroupEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e AttachmentGroupEl) Opacity(opacity float32) AttachmentGroupEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e AttachmentGroupEl) P(length Length) AttachmentGroupEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e AttachmentGroupEl) P(length Length) AttachmentGroupEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentGroupEl) Pb(length Length) AttachmentGroupEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentGroupEl) Pl(length Length) AttachmentGroupEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentGroupEl) Pr(length Length) AttachmentGroupEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentGroupEl) Pt(length Length) AttachmentGroupEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e AttachmentGroupEl) Px(length Length) AttachmentGroupEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e AttachmentGroupEl) Py(length Length) AttachmentGroupEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentGroupEl) Right(length Length) AttachmentGroupEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e AttachmentGroupEl) Rounded(length Length) AttachmentGroupEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentGroupEl) RoundedB(length Length) AttachmentGroupEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentGroupEl) RoundedBl(length Length) AttachmentGroupEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentGroupEl) RoundedBr(length Length) AttachmentGroupEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentGroupEl) RoundedL(length Length) AttachmentGroupEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentGroupEl) RoundedR(length Length) AttachmentGroupEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentGroupEl) RoundedT(length Length) AttachmentGroupEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentGroupEl) RoundedTl(length Length) AttachmentGroupEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentGroupEl) RoundedTr(length Length) AttachmentGroupEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e AttachmentGroupEl) RowEnd(end int16) AttachmentGroupEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e AttachmentGroupEl) RowSpan(span uint16) AttachmentGroupEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e AttachmentGroupEl) RowStart(start int16) AttachmentGroupEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e AttachmentGroupEl) ScrollbarWidth(width Length) AttachmentGroupEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e AttachmentGroupEl) Shadow(shadows []BoxShadow) AttachmentGroupEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e AttachmentGroupEl) Size(length Length) AttachmentGroupEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e AttachmentGroupEl) TextAlign(align TextAlign) AttachmentGroupEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentGroupEl) TextBg(bg Color) AttachmentGroupEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentGroupEl) TextColor(color Color) AttachmentGroupEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e AttachmentGroupEl) TextDecorationColor(color Color) AttachmentGroupEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e AttachmentGroupEl) TextOverflow(overflow TextOverflow) AttachmentGroupEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentGroupEl) TextSize(size Length) AttachmentGroupEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentGroupEl) Top(length Length) AttachmentGroupEl { tStyledTop(e.n, length); return e }
-func (e AttachmentGroupEl) W(length Length) AttachmentGroupEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e AttachmentGroupEl) W(length Length) AttachmentGroupEl { tStyledW(e.n, length); return e }
 
 // AttachmentMediaEl is gpui_kit::component::attachment::AttachmentMedia.
 type AttachmentMediaEl struct{ n *node }
 
 func (e AttachmentMediaEl) node() *node { return e.n }
 
+// Create an empty media slot.
+//
 // AttachmentMedia is <gpui_kit::component::attachment::AttachmentMedia>::new.
 func AttachmentMedia(st ...Style) AttachmentMediaEl {
 	useComponentAttachment()
@@ -1806,6 +3116,8 @@ func AttachmentMediaDefault(st ...Style) AttachmentMediaEl {
 	return AttachmentMediaEl{n}
 }
 
+// Add centered content above the preview and above the status treatment.
+//
 // Overlay is <gpui_kit::component::attachment::AttachmentMedia>::overlay.
 func (e AttachmentMediaEl) Overlay(overlay Element) AttachmentMediaEl {
 	o := op(e.n, 256)
@@ -1813,6 +3125,8 @@ func (e AttachmentMediaEl) Overlay(overlay Element) AttachmentMediaEl {
 	return e
 }
 
+// Set an image preview source.
+//
 // Src is <gpui_kit::component::attachment::AttachmentMedia>::src.
 func (e AttachmentMediaEl) Src(source ImageSourceInto) AttachmentMediaEl {
 	o := op(e.n, 257)
@@ -1820,17 +3134,43 @@ func (e AttachmentMediaEl) Src(source ImageSourceInto) AttachmentMediaEl {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e AttachmentMediaEl) PopoverStyle() AttachmentMediaEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e AttachmentMediaEl) RoundedFullStyle() AttachmentMediaEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e AttachmentMediaEl) FocusRingStyle() AttachmentMediaEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AttachmentMediaEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AttachmentMediaEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1861,7 +3201,20 @@ func (e AttachmentMediaEl) FontMedium() AttachmentMediaEl   { tStyledExtFontMedi
 func (e AttachmentMediaEl) FontNormal() AttachmentMediaEl   { tStyledExtFontNormal(e.n); return e }
 func (e AttachmentMediaEl) FontSemibold() AttachmentMediaEl { tStyledExtFontSemibold(e.n); return e }
 func (e AttachmentMediaEl) FontThin() AttachmentMediaEl     { tStyledExtFontThin(e.n); return e }
-func (e AttachmentMediaEl) HFlex() AttachmentMediaEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e AttachmentMediaEl) HFlex() AttachmentMediaEl { tStyledExtHFlex(e.n); return e }
 func (e AttachmentMediaEl) Margins(margins EdgesInto) AttachmentMediaEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1874,6 +3227,11 @@ func (e AttachmentMediaEl) RefineStyle(style StyleRefinement) AttachmentMediaEl 
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e AttachmentMediaEl) VFlex() AttachmentMediaEl { tStyledExtVFlex(e.n); return e }
 
 func (e AttachmentMediaEl) Text(s string) AttachmentMediaEl { putText(e.n, s); return e }
@@ -1881,262 +3239,484 @@ func (e AttachmentMediaEl) Text(s string) AttachmentMediaEl { putText(e.n, s); r
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e AttachmentMediaEl) ChildView(v View) AttachmentMediaEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e AttachmentMediaEl) Child(child Element) AttachmentMediaEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e AttachmentMediaEl) Children(children ...Element) AttachmentMediaEl {
 	tParentElementChildren(e.n, children...)
 	return e
 }
 
+// Set to Size::Large
 func (e AttachmentMediaEl) Large() AttachmentMediaEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e AttachmentMediaEl) Small() AttachmentMediaEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e AttachmentMediaEl) WithSize(size SizeInto) AttachmentMediaEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e AttachmentMediaEl) Xsmall() AttachmentMediaEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e AttachmentMediaEl) Style(st ...Style) AttachmentMediaEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e AttachmentMediaEl) AspectRatio(ratio float32) AttachmentMediaEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e AttachmentMediaEl) Bg(fill Fill) AttachmentMediaEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e AttachmentMediaEl) Border(length Length) AttachmentMediaEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentMediaEl) BorderB(length Length) AttachmentMediaEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e AttachmentMediaEl) BorderColor(borderColor Color) AttachmentMediaEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentMediaEl) BorderL(length Length) AttachmentMediaEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentMediaEl) BorderR(length Length) AttachmentMediaEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentMediaEl) BorderT(length Length) AttachmentMediaEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentMediaEl) BorderX(length Length) AttachmentMediaEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentMediaEl) BorderY(length Length) AttachmentMediaEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentMediaEl) Bottom(length Length) AttachmentMediaEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e AttachmentMediaEl) ColEnd(end int16) AttachmentMediaEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e AttachmentMediaEl) ColSpan(span uint16) AttachmentMediaEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e AttachmentMediaEl) ColStart(start int16) AttachmentMediaEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e AttachmentMediaEl) Cursor(cursor CursorStyle) AttachmentMediaEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e AttachmentMediaEl) FlexBasis(basis Length) AttachmentMediaEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e AttachmentMediaEl) FlexGrow(grow float32) AttachmentMediaEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AttachmentMediaEl) FlexShrink(shrink float32) AttachmentMediaEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e AttachmentMediaEl) FontFamily(familyName string) AttachmentMediaEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e AttachmentMediaEl) FontFeatures(features FontFeatures) AttachmentMediaEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e AttachmentMediaEl) FontWeight(weight FontWeight) AttachmentMediaEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e AttachmentMediaEl) Gap(length Length) AttachmentMediaEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e AttachmentMediaEl) Gap(length Length) AttachmentMediaEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentMediaEl) GapX(length Length) AttachmentMediaEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentMediaEl) GapY(length Length) AttachmentMediaEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e AttachmentMediaEl) GridCols(cols uint16) AttachmentMediaEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e AttachmentMediaEl) GridColsMaxContent(cols uint16) AttachmentMediaEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentMediaEl) GridColsMinContent(cols uint16) AttachmentMediaEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e AttachmentMediaEl) GridRows(rows uint16) AttachmentMediaEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e AttachmentMediaEl) GridRowsMaxContent(rows uint16) AttachmentMediaEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentMediaEl) GridRowsMinContent(rows uint16) AttachmentMediaEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e AttachmentMediaEl) H(length Length) AttachmentMediaEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentMediaEl) Inset(length Length) AttachmentMediaEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentMediaEl) Left(length Length) AttachmentMediaEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e AttachmentMediaEl) LineClamp(lines int) AttachmentMediaEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e AttachmentMediaEl) LineHeight(lineHeight Length) AttachmentMediaEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e AttachmentMediaEl) M(length Length) AttachmentMediaEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e AttachmentMediaEl) M(length Length) AttachmentMediaEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e AttachmentMediaEl) MaxH(length Length) AttachmentMediaEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e AttachmentMediaEl) MaxSize(length Length) AttachmentMediaEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e AttachmentMediaEl) MaxW(length Length) AttachmentMediaEl { tStyledMaxW(e.n, length); return e }
-func (e AttachmentMediaEl) Mb(length Length) AttachmentMediaEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentMediaEl) Mb(length Length) AttachmentMediaEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e AttachmentMediaEl) MinH(length Length) AttachmentMediaEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e AttachmentMediaEl) MinSize(length Length) AttachmentMediaEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e AttachmentMediaEl) MinW(length Length) AttachmentMediaEl { tStyledMinW(e.n, length); return e }
-func (e AttachmentMediaEl) Ml(length Length) AttachmentMediaEl   { tStyledMl(e.n, length); return e }
-func (e AttachmentMediaEl) Mr(length Length) AttachmentMediaEl   { tStyledMr(e.n, length); return e }
-func (e AttachmentMediaEl) Mt(length Length) AttachmentMediaEl   { tStyledMt(e.n, length); return e }
-func (e AttachmentMediaEl) Mx(length Length) AttachmentMediaEl   { tStyledMx(e.n, length); return e }
-func (e AttachmentMediaEl) My(length Length) AttachmentMediaEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentMediaEl) Ml(length Length) AttachmentMediaEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentMediaEl) Mr(length Length) AttachmentMediaEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentMediaEl) Mt(length Length) AttachmentMediaEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e AttachmentMediaEl) Mx(length Length) AttachmentMediaEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e AttachmentMediaEl) My(length Length) AttachmentMediaEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e AttachmentMediaEl) Opacity(opacity float32) AttachmentMediaEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e AttachmentMediaEl) P(length Length) AttachmentMediaEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e AttachmentMediaEl) P(length Length) AttachmentMediaEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentMediaEl) Pb(length Length) AttachmentMediaEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentMediaEl) Pl(length Length) AttachmentMediaEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentMediaEl) Pr(length Length) AttachmentMediaEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentMediaEl) Pt(length Length) AttachmentMediaEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e AttachmentMediaEl) Px(length Length) AttachmentMediaEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e AttachmentMediaEl) Py(length Length) AttachmentMediaEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentMediaEl) Right(length Length) AttachmentMediaEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e AttachmentMediaEl) Rounded(length Length) AttachmentMediaEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentMediaEl) RoundedB(length Length) AttachmentMediaEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentMediaEl) RoundedBl(length Length) AttachmentMediaEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentMediaEl) RoundedBr(length Length) AttachmentMediaEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentMediaEl) RoundedL(length Length) AttachmentMediaEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentMediaEl) RoundedR(length Length) AttachmentMediaEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentMediaEl) RoundedT(length Length) AttachmentMediaEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentMediaEl) RoundedTl(length Length) AttachmentMediaEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentMediaEl) RoundedTr(length Length) AttachmentMediaEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e AttachmentMediaEl) RowEnd(end int16) AttachmentMediaEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e AttachmentMediaEl) RowSpan(span uint16) AttachmentMediaEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e AttachmentMediaEl) RowStart(start int16) AttachmentMediaEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e AttachmentMediaEl) ScrollbarWidth(width Length) AttachmentMediaEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e AttachmentMediaEl) Shadow(shadows []BoxShadow) AttachmentMediaEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e AttachmentMediaEl) Size(length Length) AttachmentMediaEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e AttachmentMediaEl) TextAlign(align TextAlign) AttachmentMediaEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentMediaEl) TextBg(bg Color) AttachmentMediaEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentMediaEl) TextColor(color Color) AttachmentMediaEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e AttachmentMediaEl) TextDecorationColor(color Color) AttachmentMediaEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e AttachmentMediaEl) TextOverflow(overflow TextOverflow) AttachmentMediaEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentMediaEl) TextSize(size Length) AttachmentMediaEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentMediaEl) Top(length Length) AttachmentMediaEl { tStyledTop(e.n, length); return e }
-func (e AttachmentMediaEl) W(length Length) AttachmentMediaEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e AttachmentMediaEl) W(length Length) AttachmentMediaEl { tStyledW(e.n, length); return e }
 
 // AttachmentTitleEl is gpui_kit::component::attachment::AttachmentTitle.
 type AttachmentTitleEl struct{ n *node }
 
 func (e AttachmentTitleEl) node() *node { return e.n }
 
+// Create an attachment title.
+//
 // AttachmentTitle is <gpui_kit::component::attachment::AttachmentTitle>::new.
 func AttachmentTitle(text string, st ...Style) AttachmentTitleEl {
 	useComponentAttachment()
@@ -2147,6 +3727,8 @@ func AttachmentTitle(text string, st ...Style) AttachmentTitleEl {
 	return AttachmentTitleEl{n}
 }
 
+// Override the attachment lifecycle status used for the loading shimmer.
+//
 // Status is <gpui_kit::component::attachment::AttachmentTitle>::status.
 func (e AttachmentTitleEl) Status(status AttachmentStatus) AttachmentTitleEl {
 	o := op(e.n, 256)
@@ -2154,6 +3736,8 @@ func (e AttachmentTitleEl) Status(status AttachmentStatus) AttachmentTitleEl {
 	return e
 }
 
+// Customize the shimmer used while this attachment is uploading or processing.
+//
 // WithShimmerStyle is <gpui_kit::component::attachment::AttachmentTitle>::with_shimmer_style.
 func (e AttachmentTitleEl) WithShimmerStyle(style ShimmerStyle) AttachmentTitleEl {
 	o := op(e.n, 257)
@@ -2161,7 +3745,19 @@ func (e AttachmentTitleEl) WithShimmerStyle(style ShimmerStyle) AttachmentTitleE
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e AttachmentTitleEl) PopoverStyle() AttachmentTitleEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e AttachmentTitleEl) RoundedFullStyle() AttachmentTitleEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -2192,7 +3788,20 @@ func (e AttachmentTitleEl) FontMedium() AttachmentTitleEl   { tStyledExtFontMedi
 func (e AttachmentTitleEl) FontNormal() AttachmentTitleEl   { tStyledExtFontNormal(e.n); return e }
 func (e AttachmentTitleEl) FontSemibold() AttachmentTitleEl { tStyledExtFontSemibold(e.n); return e }
 func (e AttachmentTitleEl) FontThin() AttachmentTitleEl     { tStyledExtFontThin(e.n); return e }
-func (e AttachmentTitleEl) HFlex() AttachmentTitleEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e AttachmentTitleEl) HFlex() AttachmentTitleEl { tStyledExtHFlex(e.n); return e }
 func (e AttachmentTitleEl) Margins(margins EdgesInto) AttachmentTitleEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -2205,238 +3814,450 @@ func (e AttachmentTitleEl) RefineStyle(style StyleRefinement) AttachmentTitleEl 
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e AttachmentTitleEl) VFlex() AttachmentTitleEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e AttachmentTitleEl) Style(st ...Style) AttachmentTitleEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e AttachmentTitleEl) AspectRatio(ratio float32) AttachmentTitleEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e AttachmentTitleEl) Bg(fill Fill) AttachmentTitleEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e AttachmentTitleEl) Border(length Length) AttachmentTitleEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentTitleEl) BorderB(length Length) AttachmentTitleEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e AttachmentTitleEl) BorderColor(borderColor Color) AttachmentTitleEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentTitleEl) BorderL(length Length) AttachmentTitleEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentTitleEl) BorderR(length Length) AttachmentTitleEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AttachmentTitleEl) BorderT(length Length) AttachmentTitleEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentTitleEl) BorderX(length Length) AttachmentTitleEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e AttachmentTitleEl) BorderY(length Length) AttachmentTitleEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentTitleEl) Bottom(length Length) AttachmentTitleEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e AttachmentTitleEl) ColEnd(end int16) AttachmentTitleEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e AttachmentTitleEl) ColSpan(span uint16) AttachmentTitleEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e AttachmentTitleEl) ColStart(start int16) AttachmentTitleEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e AttachmentTitleEl) Cursor(cursor CursorStyle) AttachmentTitleEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e AttachmentTitleEl) FlexBasis(basis Length) AttachmentTitleEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e AttachmentTitleEl) FlexGrow(grow float32) AttachmentTitleEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AttachmentTitleEl) FlexShrink(shrink float32) AttachmentTitleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e AttachmentTitleEl) FontFamily(familyName string) AttachmentTitleEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e AttachmentTitleEl) FontFeatures(features FontFeatures) AttachmentTitleEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e AttachmentTitleEl) FontWeight(weight FontWeight) AttachmentTitleEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e AttachmentTitleEl) Gap(length Length) AttachmentTitleEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e AttachmentTitleEl) Gap(length Length) AttachmentTitleEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentTitleEl) GapX(length Length) AttachmentTitleEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e AttachmentTitleEl) GapY(length Length) AttachmentTitleEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e AttachmentTitleEl) GridCols(cols uint16) AttachmentTitleEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e AttachmentTitleEl) GridColsMaxContent(cols uint16) AttachmentTitleEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentTitleEl) GridColsMinContent(cols uint16) AttachmentTitleEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e AttachmentTitleEl) GridRows(rows uint16) AttachmentTitleEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e AttachmentTitleEl) GridRowsMaxContent(rows uint16) AttachmentTitleEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e AttachmentTitleEl) GridRowsMinContent(rows uint16) AttachmentTitleEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e AttachmentTitleEl) H(length Length) AttachmentTitleEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentTitleEl) Inset(length Length) AttachmentTitleEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentTitleEl) Left(length Length) AttachmentTitleEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e AttachmentTitleEl) LineClamp(lines int) AttachmentTitleEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e AttachmentTitleEl) LineHeight(lineHeight Length) AttachmentTitleEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e AttachmentTitleEl) M(length Length) AttachmentTitleEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e AttachmentTitleEl) M(length Length) AttachmentTitleEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e AttachmentTitleEl) MaxH(length Length) AttachmentTitleEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e AttachmentTitleEl) MaxSize(length Length) AttachmentTitleEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e AttachmentTitleEl) MaxW(length Length) AttachmentTitleEl { tStyledMaxW(e.n, length); return e }
-func (e AttachmentTitleEl) Mb(length Length) AttachmentTitleEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentTitleEl) Mb(length Length) AttachmentTitleEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e AttachmentTitleEl) MinH(length Length) AttachmentTitleEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e AttachmentTitleEl) MinSize(length Length) AttachmentTitleEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e AttachmentTitleEl) MinW(length Length) AttachmentTitleEl { tStyledMinW(e.n, length); return e }
-func (e AttachmentTitleEl) Ml(length Length) AttachmentTitleEl   { tStyledMl(e.n, length); return e }
-func (e AttachmentTitleEl) Mr(length Length) AttachmentTitleEl   { tStyledMr(e.n, length); return e }
-func (e AttachmentTitleEl) Mt(length Length) AttachmentTitleEl   { tStyledMt(e.n, length); return e }
-func (e AttachmentTitleEl) Mx(length Length) AttachmentTitleEl   { tStyledMx(e.n, length); return e }
-func (e AttachmentTitleEl) My(length Length) AttachmentTitleEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentTitleEl) Ml(length Length) AttachmentTitleEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentTitleEl) Mr(length Length) AttachmentTitleEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AttachmentTitleEl) Mt(length Length) AttachmentTitleEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e AttachmentTitleEl) Mx(length Length) AttachmentTitleEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e AttachmentTitleEl) My(length Length) AttachmentTitleEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e AttachmentTitleEl) Opacity(opacity float32) AttachmentTitleEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e AttachmentTitleEl) P(length Length) AttachmentTitleEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e AttachmentTitleEl) P(length Length) AttachmentTitleEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentTitleEl) Pb(length Length) AttachmentTitleEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentTitleEl) Pl(length Length) AttachmentTitleEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentTitleEl) Pr(length Length) AttachmentTitleEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e AttachmentTitleEl) Pt(length Length) AttachmentTitleEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e AttachmentTitleEl) Px(length Length) AttachmentTitleEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e AttachmentTitleEl) Py(length Length) AttachmentTitleEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentTitleEl) Right(length Length) AttachmentTitleEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e AttachmentTitleEl) Rounded(length Length) AttachmentTitleEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentTitleEl) RoundedB(length Length) AttachmentTitleEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentTitleEl) RoundedBl(length Length) AttachmentTitleEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentTitleEl) RoundedBr(length Length) AttachmentTitleEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentTitleEl) RoundedL(length Length) AttachmentTitleEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentTitleEl) RoundedR(length Length) AttachmentTitleEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AttachmentTitleEl) RoundedT(length Length) AttachmentTitleEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentTitleEl) RoundedTl(length Length) AttachmentTitleEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AttachmentTitleEl) RoundedTr(length Length) AttachmentTitleEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e AttachmentTitleEl) RowEnd(end int16) AttachmentTitleEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e AttachmentTitleEl) RowSpan(span uint16) AttachmentTitleEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e AttachmentTitleEl) RowStart(start int16) AttachmentTitleEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e AttachmentTitleEl) ScrollbarWidth(width Length) AttachmentTitleEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e AttachmentTitleEl) Shadow(shadows []BoxShadow) AttachmentTitleEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e AttachmentTitleEl) Size(length Length) AttachmentTitleEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e AttachmentTitleEl) TextAlign(align TextAlign) AttachmentTitleEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentTitleEl) TextBg(bg Color) AttachmentTitleEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentTitleEl) TextColor(color Color) AttachmentTitleEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e AttachmentTitleEl) TextDecorationColor(color Color) AttachmentTitleEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e AttachmentTitleEl) TextOverflow(overflow TextOverflow) AttachmentTitleEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e AttachmentTitleEl) TextSize(size Length) AttachmentTitleEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AttachmentTitleEl) Top(length Length) AttachmentTitleEl { tStyledTop(e.n, length); return e }
-func (e AttachmentTitleEl) W(length Length) AttachmentTitleEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e AttachmentTitleEl) W(length Length) AttachmentTitleEl { tStyledW(e.n, length); return e }

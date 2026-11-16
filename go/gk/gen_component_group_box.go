@@ -9,6 +9,8 @@ type GroupBoxEl struct{ n *node }
 
 func (e GroupBoxEl) node() *node { return e.n }
 
+// Create a new GroupBox.
+//
 // GroupBox is <gpui_kit::component::group_box::GroupBox>::new.
 func GroupBox(st ...Style) GroupBoxEl {
 	useComponentGroupBox()
@@ -17,6 +19,8 @@ func GroupBox(st ...Style) GroupBoxEl {
 	return GroupBoxEl{n}
 }
 
+// Set the style of the content of the group box to override the default style, default is None.
+//
 // ContentStyle is <gpui_kit::component::group_box::GroupBox>::content_style.
 func (e GroupBoxEl) ContentStyle(style StyleRefinement) GroupBoxEl {
 	o := op(e.n, 256)
@@ -24,6 +28,11 @@ func (e GroupBoxEl) ContentStyle(style StyleRefinement) GroupBoxEl {
 	return e
 }
 
+// Set supporting content below the group's filled or outlined surface.
+//
+// The footer shares the title's leading edge, sits 8 px under the surface, and renders as small
+// muted text like a description.
+//
 // Footer is <gpui_kit::component::group_box::GroupBox>::footer.
 func (e GroupBoxEl) Footer(footer Element) GroupBoxEl {
 	o := op(e.n, 257)
@@ -31,6 +40,8 @@ func (e GroupBoxEl) Footer(footer Element) GroupBoxEl {
 	return e
 }
 
+// Set the id of the group box, default is None.
+//
 // ID is <gpui_kit::component::group_box::GroupBox>::id.
 func (e GroupBoxEl) ID(id ID) GroupBoxEl {
 	o := op(e.n, 258)
@@ -38,6 +49,8 @@ func (e GroupBoxEl) ID(id ID) GroupBoxEl {
 	return e
 }
 
+// Set the title of the group box, default is None.
+//
 // Title is <gpui_kit::component::group_box::GroupBox>::title.
 func (e GroupBoxEl) Title(title Element) GroupBoxEl {
 	o := op(e.n, 259)
@@ -45,6 +58,8 @@ func (e GroupBoxEl) Title(title Element) GroupBoxEl {
 	return e
 }
 
+// Set the style of the title of the group box to override the default style, default is None.
+//
 // TitleStyle is <gpui_kit::component::group_box::GroupBox>::title_style.
 func (e GroupBoxEl) TitleStyle(style StyleRefinement) GroupBoxEl {
 	o := op(e.n, 260)
@@ -52,14 +67,40 @@ func (e GroupBoxEl) TitleStyle(style StyleRefinement) GroupBoxEl {
 	return e
 }
 
-func (e GroupBoxEl) PopoverStyle() GroupBoxEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e GroupBoxEl) PopoverStyle() GroupBoxEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e GroupBoxEl) RoundedFullStyle() GroupBoxEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e GroupBoxEl) FocusRingStyle() GroupBoxEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e GroupBoxEl) OnPrepaint(callback func(cx *Cx, e Bounds)) GroupBoxEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -74,19 +115,32 @@ func (e GroupBoxEl) DebugFocused(focusHandle FocusHandle) GroupBoxEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e GroupBoxEl) DebugGreen() GroupBoxEl               { tStyledExtDebugGreen(e.n); return e }
-func (e GroupBoxEl) DebugPink() GroupBoxEl                { tStyledExtDebugPink(e.n); return e }
-func (e GroupBoxEl) DebugRed() GroupBoxEl                 { tStyledExtDebugRed(e.n); return e }
-func (e GroupBoxEl) DebugYellow() GroupBoxEl              { tStyledExtDebugYellow(e.n); return e }
-func (e GroupBoxEl) FontBlack() GroupBoxEl                { tStyledExtFontBlack(e.n); return e }
-func (e GroupBoxEl) FontBold() GroupBoxEl                 { tStyledExtFontBold(e.n); return e }
-func (e GroupBoxEl) FontExtrabold() GroupBoxEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e GroupBoxEl) FontExtralight() GroupBoxEl           { tStyledExtFontExtralight(e.n); return e }
-func (e GroupBoxEl) FontLight() GroupBoxEl                { tStyledExtFontLight(e.n); return e }
-func (e GroupBoxEl) FontMedium() GroupBoxEl               { tStyledExtFontMedium(e.n); return e }
-func (e GroupBoxEl) FontNormal() GroupBoxEl               { tStyledExtFontNormal(e.n); return e }
-func (e GroupBoxEl) FontSemibold() GroupBoxEl             { tStyledExtFontSemibold(e.n); return e }
-func (e GroupBoxEl) FontThin() GroupBoxEl                 { tStyledExtFontThin(e.n); return e }
+func (e GroupBoxEl) DebugGreen() GroupBoxEl     { tStyledExtDebugGreen(e.n); return e }
+func (e GroupBoxEl) DebugPink() GroupBoxEl      { tStyledExtDebugPink(e.n); return e }
+func (e GroupBoxEl) DebugRed() GroupBoxEl       { tStyledExtDebugRed(e.n); return e }
+func (e GroupBoxEl) DebugYellow() GroupBoxEl    { tStyledExtDebugYellow(e.n); return e }
+func (e GroupBoxEl) FontBlack() GroupBoxEl      { tStyledExtFontBlack(e.n); return e }
+func (e GroupBoxEl) FontBold() GroupBoxEl       { tStyledExtFontBold(e.n); return e }
+func (e GroupBoxEl) FontExtrabold() GroupBoxEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e GroupBoxEl) FontExtralight() GroupBoxEl { tStyledExtFontExtralight(e.n); return e }
+func (e GroupBoxEl) FontLight() GroupBoxEl      { tStyledExtFontLight(e.n); return e }
+func (e GroupBoxEl) FontMedium() GroupBoxEl     { tStyledExtFontMedium(e.n); return e }
+func (e GroupBoxEl) FontNormal() GroupBoxEl     { tStyledExtFontNormal(e.n); return e }
+func (e GroupBoxEl) FontSemibold() GroupBoxEl   { tStyledExtFontSemibold(e.n); return e }
+func (e GroupBoxEl) FontThin() GroupBoxEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e GroupBoxEl) HFlex() GroupBoxEl                    { tStyledExtHFlex(e.n); return e }
 func (e GroupBoxEl) Margins(margins EdgesInto) GroupBoxEl { tStyledExtMargins(e.n, margins); return e }
 func (e GroupBoxEl) Paddings(paddings EdgesInto) GroupBoxEl {
@@ -97,6 +151,11 @@ func (e GroupBoxEl) RefineStyle(style StyleRefinement) GroupBoxEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e GroupBoxEl) VFlex() GroupBoxEl { tStyledExtVFlex(e.n); return e }
 
 func (e GroupBoxEl) Text(s string) GroupBoxEl { putText(e.n, s); return e }
@@ -104,7 +163,10 @@ func (e GroupBoxEl) Text(s string) GroupBoxEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e GroupBoxEl) ChildView(v View) GroupBoxEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e GroupBoxEl) Child(child Element) GroupBoxEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e GroupBoxEl) Children(children ...Element) GroupBoxEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -113,126 +175,340 @@ func (e GroupBoxEl) Children(children ...Element) GroupBoxEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e GroupBoxEl) Style(st ...Style) GroupBoxEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e GroupBoxEl) AspectRatio(ratio float32) GroupBoxEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e GroupBoxEl) Bg(fill Fill) GroupBoxEl              { tStyledBg(e.n, fill); return e }
-func (e GroupBoxEl) Border(length Length) GroupBoxEl      { tStyledBorder(e.n, length); return e }
-func (e GroupBoxEl) BorderB(length Length) GroupBoxEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e GroupBoxEl) Bg(fill Fill) GroupBoxEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e GroupBoxEl) Border(length Length) GroupBoxEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e GroupBoxEl) BorderB(length Length) GroupBoxEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e GroupBoxEl) BorderColor(borderColor Color) GroupBoxEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e GroupBoxEl) BorderL(length Length) GroupBoxEl     { tStyledBorderL(e.n, length); return e }
-func (e GroupBoxEl) BorderR(length Length) GroupBoxEl     { tStyledBorderR(e.n, length); return e }
-func (e GroupBoxEl) BorderT(length Length) GroupBoxEl     { tStyledBorderT(e.n, length); return e }
-func (e GroupBoxEl) BorderX(length Length) GroupBoxEl     { tStyledBorderX(e.n, length); return e }
-func (e GroupBoxEl) BorderY(length Length) GroupBoxEl     { tStyledBorderY(e.n, length); return e }
-func (e GroupBoxEl) Bottom(length Length) GroupBoxEl      { tStyledBottom(e.n, length); return e }
-func (e GroupBoxEl) ColEnd(end int16) GroupBoxEl          { tStyledColEnd(e.n, end); return e }
-func (e GroupBoxEl) ColSpan(span uint16) GroupBoxEl       { tStyledColSpan(e.n, span); return e }
-func (e GroupBoxEl) ColStart(start int16) GroupBoxEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e GroupBoxEl) BorderL(length Length) GroupBoxEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e GroupBoxEl) BorderR(length Length) GroupBoxEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e GroupBoxEl) BorderT(length Length) GroupBoxEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e GroupBoxEl) BorderX(length Length) GroupBoxEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e GroupBoxEl) BorderY(length Length) GroupBoxEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e GroupBoxEl) Bottom(length Length) GroupBoxEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e GroupBoxEl) ColEnd(end int16) GroupBoxEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e GroupBoxEl) ColSpan(span uint16) GroupBoxEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e GroupBoxEl) ColStart(start int16) GroupBoxEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e GroupBoxEl) Cursor(cursor CursorStyle) GroupBoxEl { tStyledCursor(e.n, cursor); return e }
-func (e GroupBoxEl) FlexBasis(basis Length) GroupBoxEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e GroupBoxEl) FlexGrow(grow float32) GroupBoxEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e GroupBoxEl) FlexBasis(basis Length) GroupBoxEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e GroupBoxEl) FlexGrow(grow float32) GroupBoxEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e GroupBoxEl) FlexShrink(shrink float32) GroupBoxEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e GroupBoxEl) FontFamily(familyName string) GroupBoxEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e GroupBoxEl) FontFeatures(features FontFeatures) GroupBoxEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e GroupBoxEl) FontWeight(weight FontWeight) GroupBoxEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e GroupBoxEl) Gap(length Length) GroupBoxEl    { tStyledGap(e.n, length); return e }
-func (e GroupBoxEl) GapX(length Length) GroupBoxEl   { tStyledGapX(e.n, length); return e }
-func (e GroupBoxEl) GapY(length Length) GroupBoxEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e GroupBoxEl) Gap(length Length) GroupBoxEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e GroupBoxEl) GapX(length Length) GroupBoxEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e GroupBoxEl) GapY(length Length) GroupBoxEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e GroupBoxEl) GridCols(cols uint16) GroupBoxEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e GroupBoxEl) GridColsMaxContent(cols uint16) GroupBoxEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e GroupBoxEl) GridColsMinContent(cols uint16) GroupBoxEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e GroupBoxEl) GridRows(rows uint16) GroupBoxEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e GroupBoxEl) GridRowsMaxContent(rows uint16) GroupBoxEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e GroupBoxEl) GridRowsMinContent(rows uint16) GroupBoxEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e GroupBoxEl) H(length Length) GroupBoxEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e GroupBoxEl) H(length Length) GroupBoxEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e GroupBoxEl) Inset(length Length) GroupBoxEl { tStyledInset(e.n, length); return e }
-func (e GroupBoxEl) Left(length Length) GroupBoxEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e GroupBoxEl) Left(length Length) GroupBoxEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e GroupBoxEl) LineClamp(lines int) GroupBoxEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e GroupBoxEl) LineHeight(lineHeight Length) GroupBoxEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e GroupBoxEl) M(length Length) GroupBoxEl         { tStyledM(e.n, length); return e }
-func (e GroupBoxEl) MaxH(length Length) GroupBoxEl      { tStyledMaxH(e.n, length); return e }
-func (e GroupBoxEl) MaxSize(length Length) GroupBoxEl   { tStyledMaxSize(e.n, length); return e }
-func (e GroupBoxEl) MaxW(length Length) GroupBoxEl      { tStyledMaxW(e.n, length); return e }
-func (e GroupBoxEl) Mb(length Length) GroupBoxEl        { tStyledMb(e.n, length); return e }
-func (e GroupBoxEl) MinH(length Length) GroupBoxEl      { tStyledMinH(e.n, length); return e }
-func (e GroupBoxEl) MinSize(length Length) GroupBoxEl   { tStyledMinSize(e.n, length); return e }
-func (e GroupBoxEl) MinW(length Length) GroupBoxEl      { tStyledMinW(e.n, length); return e }
-func (e GroupBoxEl) Ml(length Length) GroupBoxEl        { tStyledMl(e.n, length); return e }
-func (e GroupBoxEl) Mr(length Length) GroupBoxEl        { tStyledMr(e.n, length); return e }
-func (e GroupBoxEl) Mt(length Length) GroupBoxEl        { tStyledMt(e.n, length); return e }
-func (e GroupBoxEl) Mx(length Length) GroupBoxEl        { tStyledMx(e.n, length); return e }
-func (e GroupBoxEl) My(length Length) GroupBoxEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e GroupBoxEl) M(length Length) GroupBoxEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e GroupBoxEl) MaxH(length Length) GroupBoxEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e GroupBoxEl) MaxSize(length Length) GroupBoxEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e GroupBoxEl) MaxW(length Length) GroupBoxEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e GroupBoxEl) Mb(length Length) GroupBoxEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e GroupBoxEl) MinH(length Length) GroupBoxEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e GroupBoxEl) MinSize(length Length) GroupBoxEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e GroupBoxEl) MinW(length Length) GroupBoxEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e GroupBoxEl) Ml(length Length) GroupBoxEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e GroupBoxEl) Mr(length Length) GroupBoxEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e GroupBoxEl) Mt(length Length) GroupBoxEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e GroupBoxEl) Mx(length Length) GroupBoxEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e GroupBoxEl) My(length Length) GroupBoxEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e GroupBoxEl) Opacity(opacity float32) GroupBoxEl { tStyledOpacity(e.n, opacity); return e }
-func (e GroupBoxEl) P(length Length) GroupBoxEl         { tStyledP(e.n, length); return e }
-func (e GroupBoxEl) Pb(length Length) GroupBoxEl        { tStyledPb(e.n, length); return e }
-func (e GroupBoxEl) Pl(length Length) GroupBoxEl        { tStyledPl(e.n, length); return e }
-func (e GroupBoxEl) Pr(length Length) GroupBoxEl        { tStyledPr(e.n, length); return e }
-func (e GroupBoxEl) Pt(length Length) GroupBoxEl        { tStyledPt(e.n, length); return e }
-func (e GroupBoxEl) Px(length Length) GroupBoxEl        { tStyledPx(e.n, length); return e }
-func (e GroupBoxEl) Py(length Length) GroupBoxEl        { tStyledPy(e.n, length); return e }
-func (e GroupBoxEl) Right(length Length) GroupBoxEl     { tStyledRight(e.n, length); return e }
-func (e GroupBoxEl) Rounded(length Length) GroupBoxEl   { tStyledRounded(e.n, length); return e }
-func (e GroupBoxEl) RoundedB(length Length) GroupBoxEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e GroupBoxEl) P(length Length) GroupBoxEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e GroupBoxEl) Pb(length Length) GroupBoxEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e GroupBoxEl) Pl(length Length) GroupBoxEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e GroupBoxEl) Pr(length Length) GroupBoxEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e GroupBoxEl) Pt(length Length) GroupBoxEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e GroupBoxEl) Px(length Length) GroupBoxEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e GroupBoxEl) Py(length Length) GroupBoxEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e GroupBoxEl) Right(length Length) GroupBoxEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e GroupBoxEl) Rounded(length Length) GroupBoxEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e GroupBoxEl) RoundedB(length Length) GroupBoxEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e GroupBoxEl) RoundedBl(length Length) GroupBoxEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e GroupBoxEl) RoundedBr(length Length) GroupBoxEl { tStyledRoundedBr(e.n, length); return e }
-func (e GroupBoxEl) RoundedL(length Length) GroupBoxEl  { tStyledRoundedL(e.n, length); return e }
-func (e GroupBoxEl) RoundedR(length Length) GroupBoxEl  { tStyledRoundedR(e.n, length); return e }
-func (e GroupBoxEl) RoundedT(length Length) GroupBoxEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e GroupBoxEl) RoundedL(length Length) GroupBoxEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e GroupBoxEl) RoundedR(length Length) GroupBoxEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e GroupBoxEl) RoundedT(length Length) GroupBoxEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e GroupBoxEl) RoundedTl(length Length) GroupBoxEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e GroupBoxEl) RoundedTr(length Length) GroupBoxEl { tStyledRoundedTr(e.n, length); return e }
-func (e GroupBoxEl) RowEnd(end int16) GroupBoxEl        { tStyledRowEnd(e.n, end); return e }
-func (e GroupBoxEl) RowSpan(span uint16) GroupBoxEl     { tStyledRowSpan(e.n, span); return e }
-func (e GroupBoxEl) RowStart(start int16) GroupBoxEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e GroupBoxEl) RowEnd(end int16) GroupBoxEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e GroupBoxEl) RowSpan(span uint16) GroupBoxEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e GroupBoxEl) RowStart(start int16) GroupBoxEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e GroupBoxEl) ScrollbarWidth(width Length) GroupBoxEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e GroupBoxEl) Shadow(shadows []BoxShadow) GroupBoxEl { tStyledShadow(e.n, shadows); return e }
-func (e GroupBoxEl) Size(length Length) GroupBoxEl         { tStyledSize(e.n, length); return e }
-func (e GroupBoxEl) TextAlign(align TextAlign) GroupBoxEl  { tStyledTextAlign(e.n, align); return e }
-func (e GroupBoxEl) TextBg(bg Color) GroupBoxEl            { tStyledTextBg(e.n, bg); return e }
-func (e GroupBoxEl) TextColor(color Color) GroupBoxEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e GroupBoxEl) Size(length Length) GroupBoxEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e GroupBoxEl) TextAlign(align TextAlign) GroupBoxEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e GroupBoxEl) TextBg(bg Color) GroupBoxEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e GroupBoxEl) TextColor(color Color) GroupBoxEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e GroupBoxEl) TextDecorationColor(color Color) GroupBoxEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e GroupBoxEl) TextOverflow(overflow TextOverflow) GroupBoxEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e GroupBoxEl) TextSize(size Length) GroupBoxEl { tStyledTextSize(e.n, size); return e }
-func (e GroupBoxEl) Top(length Length) GroupBoxEl    { tStyledTop(e.n, length); return e }
-func (e GroupBoxEl) W(length Length) GroupBoxEl      { tStyledW(e.n, length); return e }
 
-func (e GroupBoxEl) Fill() GroupBoxEl    { tGroupBoxVariantsFill(e.n); return e }
-func (e GroupBoxEl) Normal() GroupBoxEl  { tGroupBoxVariantsNormal(e.n); return e }
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e GroupBoxEl) TextSize(size Length) GroupBoxEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e GroupBoxEl) Top(length Length) GroupBoxEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e GroupBoxEl) W(length Length) GroupBoxEl { tStyledW(e.n, length); return e }
+
+// Set to use `Fill` to GroupBox.
+func (e GroupBoxEl) Fill() GroupBoxEl { tGroupBoxVariantsFill(e.n); return e }
+
+// Set to use `Normal` to GroupBox.
+func (e GroupBoxEl) Normal() GroupBoxEl { tGroupBoxVariantsNormal(e.n); return e }
+
+// Set to use `Outline` to GroupBox.
 func (e GroupBoxEl) Outline() GroupBoxEl { tGroupBoxVariantsOutline(e.n); return e }
+
+// Set the variant of the `GroupBoxEl`.
 func (e GroupBoxEl) WithVariant(variant GroupBoxVariant) GroupBoxEl {
 	tGroupBoxVariantsWithVariant(e.n, variant)
 	return e

@@ -3,16 +3,21 @@ package gk
 
 import "core:time"
 
+// A host-owned value being dragged over the dock, opaque to the dock itself.
+//
 // Any_Drag is a handle to gpui_kit::base::dock::AnyDrag, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named any_drag_*.
 Any_Drag :: struct {
 	using state: State,
 }
 
+// The application menu bar, for Windows and Linux.
+//
 // App_Menu_Bar is a handle to gpui_kit::component::menu::AppMenuBar, an entity the library keeps. Its procedures are named app_menu_bar_*.
 App_Menu_Bar :: struct {
 	using state: State,
 }
 
+// Reload the menus from the app.
 app_menu_bar_reload :: proc(s: App_Menu_Bar, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -22,11 +27,17 @@ app_menu_bar_reload :: proc(s: App_Menu_Bar, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// The PCM format a `SpeechRecognizer` consumes.
+//
+// Audio always arrives as interleaved signed 16-bit samples; an `AudioInput` converts whatever its
+// device produces to this rate and channel count.
+//
 // Audio_Format is a handle to gpui_kit::component::speech::AudioFormat, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named audio_format_*.
 Audio_Format :: struct {
 	using state: State,
 }
 
+// Number of interleaved channels.
 audio_format_channels :: proc(s: Audio_Format, cx: ^Cx, loc := #caller_location) -> (v: u16) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -38,6 +49,7 @@ audio_format_channels :: proc(s: Audio_Format, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// Samples per second of each channel.
 audio_format_sample_rate :: proc(s: Audio_Format, cx: ^Cx, loc := #caller_location) -> (v: u32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -49,6 +61,7 @@ audio_format_sample_rate :: proc(s: Audio_Format, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// A format of `sample_rate` samples per second on each of `channels`.
 audio_format :: proc(cx: ^Cx, sample_rate: u32, channels: u16, loc := #caller_location) -> Audio_Format {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -61,6 +74,7 @@ audio_format :: proc(cx: ^Cx, sample_rate: u32, channels: u16, loc := #caller_lo
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Computes the scroll delta for a pointer Y position within the viewport.
 auto_scroll_compute_delta :: proc(cx: ^Cx, y: f32, bounds: Bounds, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -73,11 +87,16 @@ auto_scroll_compute_delta :: proc(cx: ^Cx, y: f32, bounds: Bounds, loc := #calle
 	return
 }
 
+// Manages timer-based auto-scrolling during drag interactions.
+//
+// Delta convention: positive moves toward the bottom and negative moves toward the top.
+//
 // Auto_Scroll is a handle to gpui_kit::base::AutoScroll, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named auto_scroll_*.
 Auto_Scroll :: struct {
 	using state: State,
 }
 
+// Returns the current scroll delta.
 auto_scroll_delta :: proc(s: Auto_Scroll, cx: ^Cx, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -89,6 +108,7 @@ auto_scroll_delta :: proc(s: Auto_Scroll, cx: ^Cx, loc := #caller_location) -> (
 	return
 }
 
+// Returns whether automatic scrolling is active.
 auto_scroll_is_active :: proc(s: Auto_Scroll, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -100,6 +120,7 @@ auto_scroll_is_active :: proc(s: Auto_Scroll, cx: ^Cx, loc := #caller_location) 
 	return
 }
 
+// Stops automatic scrolling and clears the last drag position.
 auto_scroll_stop :: proc(s: Auto_Scroll, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -119,11 +140,14 @@ auto_scroll_default :: proc(cx: ^Cx, loc := #caller_location) -> Auto_Scroll {
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A table: rows of cell paragraphs and per-column alignment.
+//
 // Base_Table_2 is a handle to gpui_kit::base::text::editor_host::Table, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named base_table_2_*.
 Base_Table_2 :: struct {
 	using state: State,
 }
 
+// The alignment of each column.
 base_table_2_column_aligns :: proc(s: Base_Table_2, cx: ^Cx, loc := #caller_location) -> (v: []Columnumn_Align) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -135,6 +159,7 @@ base_table_2_column_aligns :: proc(s: Base_Table_2, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// The rows, each an iterator over its cells' paragraphs.
 base_table_2_rows :: proc(s: Base_Table_2, cx: ^Cx, loc := #caller_location) -> (v: [][]Paragraph_Read) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -146,6 +171,7 @@ base_table_2_rows :: proc(s: Base_Table_2, cx: ^Cx, loc := #caller_location) -> 
 	return
 }
 
+// A table of `rows` (one paragraph per cell) with the column alignments.
 base_table_2 :: proc(cx: ^Cx, rows: [][]Paragraph, column_aligns: []Columnumn_Align, loc := #caller_location) -> Base_Table_2 {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -176,6 +202,8 @@ base_theme_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Base_Theme {
 	return {state = {h = rd_u64(&r)}}
 }
 
+// Construct with `default` and assign fields; new fields may be added without a breaking change.
+//
 // Base_Theme is a handle to gpui_kit::base::Theme, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named base_theme_*.
 Base_Theme :: struct {
 	using state: State,
@@ -317,6 +345,8 @@ base_theme_global :: proc(cx: ^Cx, loc := #caller_location) -> Base_Theme {
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A flat representation of a tree item with its depth.
+//
 // Base_Tree_Entry is a handle to gpui_kit::base::TreeEntry, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named base_tree_entry_*.
 Base_Tree_Entry :: struct {
 	using state: State,
@@ -482,6 +512,8 @@ calendar_state_has_prev_year_page :: proc(s: Calendar_State, cx: ^Cx, loc := #ca
 	return
 }
 
+// Calendar weeks grouped by visible month. This preserves six-week months and is the preferred
+// rendering API.
 calendar_state_month_days :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_location) -> (v: [][][]Naive_Date) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -549,6 +581,8 @@ calendar_state_years_on_page :: proc(s: Calendar_State, cx: ^Cx, loc := #caller_
 	return
 }
 
+// Activates a day item and emits `Selected` once the controlled value is complete. This is the
+// single pointer/keyboard activation path used by the calendar root.
 calendar_state_activate_date :: proc(s: Calendar_State, cx: ^Cx, value: Naive_Date, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -754,11 +788,19 @@ calendar_state :: proc(cx: ^Cx, loc := #caller_location) -> Calendar_State_Build
 	return {vt = &calendar_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Shared behavior state for every part of a `Carousel`.
+//
+// `CarouselState` intentionally owns behavior only. The content and its items provide presentation
+// and layout, while this state owns selection, orientation, looping, the shared scroll handle, and
+// the input snapshots used to settle gestures. Programmatic setters are silent; user-facing
+// selection methods emit one `Change` for a successful selection.
+//
 // Carousel_State is a handle to gpui_kit::component::carousel::CarouselState, an entity the library keeps. Its procedures are named carousel_state_*.
 Carousel_State :: struct {
 	using state: State,
 }
 
+// Returns the configured orientation.
 carousel_state_axis :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: Axis) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -770,6 +812,7 @@ carousel_state_axis :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// Returns whether a next item can be selected.
 carousel_state_has_next :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -781,6 +824,7 @@ carousel_state_has_next :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Returns whether a previous item can be selected.
 carousel_state_has_previous :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -792,6 +836,7 @@ carousel_state_has_previous :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Returns whether navigation wraps at the carousel edges.
 carousel_state_is_looping :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -803,6 +848,7 @@ carousel_state_is_looping :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Returns the number of logical items.
 carousel_state_item_count :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -814,6 +860,7 @@ carousel_state_item_count :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Returns the selected logical item, or `None` when the carousel is empty.
 carousel_state_selected_index :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -825,6 +872,7 @@ carousel_state_selected_index :: proc(s: Carousel_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// Selects the first item through the user-facing path.
 carousel_state_select_first :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -836,6 +884,8 @@ carousel_state_select_first :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Selects an item through a user-facing path and emits one change event when the index is valid
+// and differs from the current selection.
 carousel_state_select_index :: proc(s: Carousel_State, cx: ^Cx, index: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -848,6 +898,7 @@ carousel_state_select_index :: proc(s: Carousel_State, cx: ^Cx, index: int, loc 
 	return
 }
 
+// Selects the last item through the user-facing path.
 carousel_state_select_last :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -859,6 +910,7 @@ carousel_state_select_last :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Selects the next item, wrapping when looping is enabled.
 carousel_state_select_next :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -870,6 +922,7 @@ carousel_state_select_next :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Selects the previous item, wrapping when looping is enabled.
 carousel_state_select_previous :: proc(s: Carousel_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -881,6 +934,7 @@ carousel_state_select_previous :: proc(s: Carousel_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Silently changes the carousel orientation.
 carousel_state_set_axis :: proc(s: Carousel_State, cx: ^Cx, axis: Axis, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -891,6 +945,7 @@ carousel_state_set_axis :: proc(s: Carousel_State, cx: ^Cx, axis: Axis, loc := #
 	state_set(cx, req[:], loc)
 }
 
+// Silently changes the number of logical items and clamps the selection.
 carousel_state_set_item_count :: proc(s: Carousel_State, cx: ^Cx, item_count: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -901,6 +956,7 @@ carousel_state_set_item_count :: proc(s: Carousel_State, cx: ^Cx, item_count: in
 	state_set(cx, req[:], loc)
 }
 
+// Silently changes whether edge navigation wraps.
 carousel_state_set_looping :: proc(s: Carousel_State, cx: ^Cx, looping: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -911,6 +967,9 @@ carousel_state_set_looping :: proc(s: Carousel_State, cx: ^Cx, looping: bool, lo
 	state_set(cx, req[:], loc)
 }
 
+// Silently changes the selected item for controlled/programmatic use.
+//
+// The value is clamped to the available item range. This method does not emit `Change`.
 carousel_state_set_selected_index :: proc(s: Carousel_State, cx: ^Cx, index: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -942,8 +1001,11 @@ Carousel_State_Builder :: struct {
 }
 
 Carousel_State_Builder_VT :: struct {
+	// Sets the carousel orientation.
 	with_axis: proc(b: Carousel_State_Builder, axis: Axis) -> Carousel_State_Builder,
+	// Enables or disables wrapping at the first and last items.
 	with_looping: proc(b: Carousel_State_Builder, looping: bool) -> Carousel_State_Builder,
+	// Sets the initially selected item.
 	with_selected_index: proc(b: Carousel_State_Builder, index: int) -> Carousel_State_Builder,
 	build: proc(b: Carousel_State_Builder) -> Carousel_State,
 }
@@ -976,6 +1038,8 @@ carousel_state_builder_vt := Carousel_State_Builder_VT {
 	},
 }
 
+// Creates state for `item_count` items, initially selecting the first item when at least one item
+// exists.
 carousel_state :: proc(cx: ^Cx, item_count: int, loc := #caller_location) -> Carousel_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -992,6 +1056,7 @@ Code_Action_Menu_State :: struct {
 	using state: State,
 }
 
+// Bumped whenever the content changes. See `gk.completion_menu_state_revision`.
 code_action_menu_state_revision :: proc(s: Code_Action_Menu_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1013,11 +1078,19 @@ code_action_menu_state_default :: proc(cx: ^Cx, loc := #caller_location) -> Code
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// State and interaction model for a color picker.
+//
+// This owns the committed color, the transient preview shown while the user hovers or edits, the
+// controlled open state, the active panel, and the hex field and component sliders that stay in
+// sync with all of them. The application owns the palette, popup, layout, and every visual
+// decision.
+//
 // Color_Picker_State is a handle to gpui_kit::base::ColorPickerState, an entity the library keeps. Its procedures are named color_picker_state_*.
 Color_Picker_State :: struct {
 	using state: State,
 }
 
+// Returns the selected application-defined picker panel.
 color_picker_state_active_tab :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1029,6 +1102,7 @@ color_picker_state_active_tab :: proc(s: Color_Picker_State, cx: ^Cx, loc := #ca
 	return
 }
 
+// Returns the previewed color, falling back to the committed color.
 color_picker_state_displayed_color :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Hsla)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1040,6 +1114,7 @@ color_picker_state_displayed_color :: proc(s: Color_Picker_State, cx: ^Cx, loc :
 	return
 }
 
+// The hex text field. Render it with an application-owned input element.
 color_picker_state_hex_input :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Input_State) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1051,6 +1126,7 @@ color_picker_state_hex_input :: proc(s: Color_Picker_State, cx: ^Cx, loc := #cal
 	return
 }
 
+// Returns whether the picker popup is open.
 color_picker_state_is_open :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1062,6 +1138,7 @@ color_picker_state_is_open :: proc(s: Color_Picker_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Returns the color currently being previewed.
 color_picker_state_preview :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Hsla)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1073,6 +1150,7 @@ color_picker_state_preview :: proc(s: Color_Picker_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// The HSLA component sliders.
 color_picker_state_sliders :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Hsla_Sliders) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1084,6 +1162,7 @@ color_picker_state_sliders :: proc(s: Color_Picker_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Returns the committed color.
 color_picker_state_value :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Hsla)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1095,6 +1174,7 @@ color_picker_state_value :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_
 	return
 }
 
+// Returns the committed color.
 color_picker_state_try_value :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Hsla), ok: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1106,6 +1186,7 @@ color_picker_state_try_value :: proc(s: Color_Picker_State, cx: ^Cx, loc := #cal
 	return v, true
 }
 
+// Parses and commits a hex color, closing the picker on success.
 color_picker_state_commit_hex :: proc(s: Color_Picker_State, cx: ^Cx, value: string, loc := #caller_location) -> (v: Maybe(Hsla)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1118,6 +1199,10 @@ color_picker_state_commit_hex :: proc(s: Color_Picker_State, cx: ^Cx, value: str
 	return
 }
 
+// Parses a hex color into the transient preview.
+//
+// Invalid or incomplete input leaves the current preview unchanged. This does not write the hex
+// field, so it is safe to call while typing in it.
 color_picker_state_preview_hex :: proc(s: Color_Picker_State, cx: ^Cx, value: string, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1130,6 +1215,7 @@ color_picker_state_preview_hex :: proc(s: Color_Picker_State, cx: ^Cx, value: st
 	return
 }
 
+// Drops the transient preview, restoring the committed color.
 color_picker_state_clear_preview :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1139,6 +1225,7 @@ color_picker_state_clear_preview :: proc(s: Color_Picker_State, cx: ^Cx, loc := 
 	state_set(cx, req[:], loc)
 }
 
+// Clears the committed color without emitting a change.
 color_picker_state_clear_value :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1148,6 +1235,7 @@ color_picker_state_clear_value :: proc(s: Color_Picker_State, cx: ^Cx, loc := #c
 	state_set(cx, req[:], loc)
 }
 
+// Updates the transient preview color and the hex field that shows it.
 color_picker_state_preview_color :: proc(s: Color_Picker_State, cx: ^Cx, value: Color, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1158,6 +1246,7 @@ color_picker_state_preview_color :: proc(s: Color_Picker_State, cx: ^Cx, value: 
 	state_set(cx, req[:], loc)
 }
 
+// Commits a color and closes the picker, as a palette selection does.
 color_picker_state_select_color :: proc(s: Color_Picker_State, cx: ^Cx, value: Color, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1168,6 +1257,7 @@ color_picker_state_select_color :: proc(s: Color_Picker_State, cx: ^Cx, value: C
 	state_set(cx, req[:], loc)
 }
 
+// Selects the application-defined picker panel.
 color_picker_state_set_active_tab :: proc(s: Color_Picker_State, cx: ^Cx, tab: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1178,6 +1268,7 @@ color_picker_state_set_active_tab :: proc(s: Color_Picker_State, cx: ^Cx, tab: i
 	state_set(cx, req[:], loc)
 }
 
+// Sets whether the picker popup is open.
 color_picker_state_set_open :: proc(s: Color_Picker_State, cx: ^Cx, open: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1188,6 +1279,7 @@ color_picker_state_set_open :: proc(s: Color_Picker_State, cx: ^Cx, open: bool, 
 	state_set(cx, req[:], loc)
 }
 
+// Replaces the committed color without emitting a change.
 color_picker_state_set_value :: proc(s: Color_Picker_State, cx: ^Cx, value: Color, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1198,6 +1290,8 @@ color_picker_state_set_value :: proc(s: Color_Picker_State, cx: ^Cx, value: Colo
 	state_set(cx, req[:], loc)
 }
 
+// Applies a value supplied to `->default_value` to the hex field and sliders. Call this from
+// render; it is a no-op once nothing is pending.
 color_picker_state_sync_pending_value :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1207,6 +1301,7 @@ color_picker_state_sync_pending_value :: proc(s: Color_Picker_State, cx: ^Cx, lo
 	state_set(cx, req[:], loc)
 }
 
+// Toggles the picker popup.
 color_picker_state_toggle_open :: proc(s: Color_Picker_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1216,6 +1311,7 @@ color_picker_state_toggle_open :: proc(s: Color_Picker_State, cx: ^Cx, loc := #c
 	state_set(cx, req[:], loc)
 }
 
+// Commits a color without changing the open state, as a slider drag does.
 color_picker_state_update_color :: proc(s: Color_Picker_State, cx: ^Cx, value: Color, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1247,6 +1343,7 @@ Color_Picker_State_Builder :: struct {
 }
 
 Color_Picker_State_Builder_VT :: struct {
+	// Sets the initial committed and previewed color.
 	default_value: proc(b: Color_Picker_State_Builder, value: Color) -> Color_Picker_State_Builder,
 	build: proc(b: Color_Picker_State_Builder) -> Color_Picker_State,
 }
@@ -1265,6 +1362,7 @@ color_picker_state_builder_vt := Color_Picker_State_Builder_VT {
 	},
 }
 
+// Creates an empty, closed picker.
 color_picker_state :: proc(cx: ^Cx, loc := #caller_location) -> Color_Picker_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -1280,6 +1378,7 @@ Combobox_State :: struct {
 	using state: State,
 }
 
+// Returns the search query.
 combobox_state_query :: proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1291,6 +1390,9 @@ combobox_state_query :: proc(s: Combobox_State, cx: ^Cx, loc := #caller_location
 	return
 }
 
+// Return the first selected value, or `None` when nothing is selected.
+//
+// Convenience for single-select mode (`.multiple(false)`).
 combobox_state_selected_value :: proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1302,6 +1404,7 @@ combobox_state_selected_value :: proc(s: Combobox_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// Return the currently selected values.
 combobox_state_selected_values :: proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1313,6 +1416,7 @@ combobox_state_selected_values :: proc(s: Combobox_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Return the currently selected `(IndexPath, Item)` pairs.
 combobox_state_selection :: proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_Base_Index_Path_Search_Item) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1324,6 +1428,7 @@ combobox_state_selection :: proc(s: Combobox_State, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Add a single index to the selection, if not already present, returning whether it was added.
 combobox_state_add_selected_index :: proc(s: Combobox_State, cx: ^Cx, index: Index_Path, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1343,6 +1448,7 @@ combobox_state_add_selected_index :: proc(s: Combobox_State, cx: ^Cx, index: Ind
 	return
 }
 
+// Remove a single index from the selection, returning whether it was removed.
 combobox_state_remove_selected_index :: proc(s: Combobox_State, cx: ^Cx, index: Index_Path, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1362,6 +1468,7 @@ combobox_state_remove_selected_index :: proc(s: Combobox_State, cx: ^Cx, index: 
 	return
 }
 
+// Clear all selected values.
 combobox_state_clear_selection :: proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1371,6 +1478,7 @@ combobox_state_clear_selection :: proc(s: Combobox_State, cx: ^Cx, loc := #calle
 	state_set(cx, req[:], loc)
 }
 
+// Focus the trigger.
 combobox_state_focus :: proc(s: Combobox_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1380,6 +1488,7 @@ combobox_state_focus :: proc(s: Combobox_State, cx: ^Cx, loc := #caller_location
 	state_set(cx, req[:], loc)
 }
 
+// Replace the underlying delegate (item data source).
 combobox_state_set_items :: proc(s: Combobox_State, cx: ^Cx, items: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1390,6 +1499,7 @@ combobox_state_set_items :: proc(s: Combobox_State, cx: ^Cx, items: Row_Source, 
 	state_set(cx, req[:], loc)
 }
 
+// Sets the search query and updates the filtered items.
 combobox_state_set_query :: proc(s: Combobox_State, cx: ^Cx, query: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1400,6 +1510,7 @@ combobox_state_set_query :: proc(s: Combobox_State, cx: ^Cx, query: string, loc 
 	state_set(cx, req[:], loc)
 }
 
+// Replace the entire selection set.
 combobox_state_set_selected_indices :: proc(s: Combobox_State, cx: ^Cx, indices: Index_Path_List, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1421,6 +1532,10 @@ combobox_state_set_selected_indices :: proc(s: Combobox_State, cx: ^Cx, indices:
 	state_set(cx, req[:], loc)
 }
 
+// Replace the entire selection set by item values.
+//
+// Values are resolved through the current delegate. Values that cannot be resolved are ignored.
+// This updates the committed selection and snapshot without emitting a `ComboboxEvent`.
 combobox_state_set_selected_values :: proc(s: Combobox_State, cx: ^Cx, values: []string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1455,7 +1570,12 @@ Combobox_State_Builder :: struct {
 }
 
 Combobox_State_Builder_VT :: struct {
+	// Enable multi-select mode.
+	//
+	// When `true`, clicking an item toggles it in the selection and the popover stays open. When
+	// `false` (default), clicking an item replaces the selection and closes the popover.
 	multiple: proc(b: Combobox_State_Builder, multiple: bool) -> Combobox_State_Builder,
+	// Enable or disable the search input at the top of the dropdown.
 	searchable: proc(b: Combobox_State_Builder, searchable: bool) -> Combobox_State_Builder,
 	build: proc(b: Combobox_State_Builder) -> Combobox_State,
 }
@@ -1481,6 +1601,7 @@ combobox_state_builder_vt := Combobox_State_Builder_VT {
 	},
 }
 
+// Create a new `Combobox` state.
 combobox_state :: proc(cx: ^Cx, delegate: Row_Source, selected_indices: Index_Path_List, loc := #caller_location) -> Combobox_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -1504,11 +1625,15 @@ combobox_state :: proc(cx: ^Cx, delegate: Row_Source, selected_indices: Index_Pa
 	return {vt = &combobox_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// The interaction state of a `Command` palette: its query, focus, scrolling, and highlighted
+// command.
+//
 // Command_State is a handle to gpui_kit::component::command::CommandState, an entity the library keeps. Its procedures are named command_state_*.
 Command_State :: struct {
 	using state: State,
 }
 
+// Whether the search field is showing its spinner.
 command_state_is_loading :: proc(s: Command_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1520,6 +1645,7 @@ command_state_is_loading :: proc(s: Command_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// The number of items matching the current query.
 command_state_matched_count :: proc(s: Command_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1531,6 +1657,7 @@ command_state_matched_count :: proc(s: Command_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// The current search query.
 command_state_query :: proc(s: Command_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1542,6 +1669,12 @@ command_state_query :: proc(s: Command_State, cx: ^Cx, loc := #caller_location) 
 	return
 }
 
+// The highlighted item's path in the model installed by the latest `Command` render, before local
+// filtering.
+//
+// Ungrouped items occupy section 0 and use their input position as the row. Explicit groups use
+// their group and item positions; when a model mixes both forms, the implicit ungrouped section
+// comes first.
 command_state_selected_index :: proc(s: Command_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Base_Index_Path)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1553,6 +1686,7 @@ command_state_selected_index :: proc(s: Command_State, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Move focus to the palette's active control.
 command_state_focus :: proc(s: Command_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1562,6 +1696,9 @@ command_state_focus :: proc(s: Command_State, cx: ^Cx, loc := #caller_location) 
 	state_set(cx, req[:], loc)
 }
 
+// Show or hide the search field's spinner, and suppress the empty message while it spins.
+//
+// Turn it on while an `on_query` callback is being answered.
 command_state_set_loading :: proc(s: Command_State, cx: ^Cx, loading: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1572,6 +1709,10 @@ command_state_set_loading :: proc(s: Command_State, cx: ^Cx, loading: bool, loc 
 	state_set(cx, req[:], loc)
 }
 
+// Replace the search query, as if it had been typed.
+//
+// The input suppresses its own change event for a programmatic write, so the re-filter and query
+// callback happen here instead.
 command_state_set_query :: proc(s: Command_State, cx: ^Cx, query: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1582,6 +1723,10 @@ command_state_set_query :: proc(s: Command_State, cx: ^Cx, query: string, loc :=
 	state_set(cx, req[:], loc)
 }
 
+// Highlight an item by its original, unfiltered model path, or clear the highlight with `None`.
+//
+// A path that is currently filtered out or disabled clears the highlight. A visible selection is
+// scrolled into view.
 command_state_set_selected_index :: proc(s: Command_State, cx: ^Cx, index: Maybe_Index_Path, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1604,6 +1749,7 @@ command_state_set_selected_index :: proc(s: Command_State, cx: ^Cx, index: Maybe
 	state_set(cx, req[:], loc)
 }
 
+// Create an empty palette.
 command_state :: proc(cx: ^Cx, loc := #caller_location) -> Command_State {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -1619,6 +1765,10 @@ Completion_Menu_State :: struct {
 	using state: State,
 }
 
+// Bumped whenever the content changes.
+//
+// A renderer that mirrors this menu compares revisions to decide whether to rebuild, so it never
+// has to compare the item list itself.
 completion_menu_state_revision :: proc(s: Completion_Menu_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1645,6 +1795,7 @@ Cursor_Blink_Read :: struct {
 	using state: State,
 }
 
+// The time since the last activity after which blinking stops.
 cursor_blink_read_idle_timeout :: proc(s: Cursor_Blink_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(time.Duration)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1656,6 +1807,7 @@ cursor_blink_read_idle_timeout :: proc(s: Cursor_Blink_Read, cx: ^Cx, loc := #ca
 	return
 }
 
+// The duration of each visible or hidden phase, or `None` when steady.
 cursor_blink_read_interval :: proc(s: Cursor_Blink_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(time.Duration)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1667,6 +1819,7 @@ cursor_blink_read_interval :: proc(s: Cursor_Blink_Read, cx: ^Cx, loc := #caller
 	return
 }
 
+// Whether the focused caret stays visible without blinking.
 cursor_blink_read_is_steady :: proc(s: Cursor_Blink_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1678,11 +1831,14 @@ cursor_blink_read_is_steady :: proc(s: Cursor_Blink_Read, cx: ^Cx, loc := #calle
 	return
 }
 
+// Use to store the state of the date picker.
+//
 // Date_Picker_State is a handle to gpui_kit::component::date_picker::DatePickerState, an entity the library keeps. Its procedures are named date_picker_state_*.
 Date_Picker_State :: struct {
 	using state: State,
 }
 
+// Get the date part of the value.
 date_picker_state_date :: proc(s: Date_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Date) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1694,6 +1850,7 @@ date_picker_state_date :: proc(s: Date_Picker_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Get the value, combining the date with its time of day.
 date_picker_state_date_time :: proc(s: Date_Picker_State, cx: ^Cx, loc := #caller_location) -> (v: Date_Time) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1705,6 +1862,7 @@ date_picker_state_date_time :: proc(s: Date_Picker_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Set the date, keeping the current time of day.
 date_picker_state_set_date :: proc(s: Date_Picker_State, cx: ^Cx, date: Date_Into, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1715,6 +1873,7 @@ date_picker_state_set_date :: proc(s: Date_Picker_State, cx: ^Cx, date: Date_Int
 	state_set(cx, req[:], loc)
 }
 
+// Set the date and the time of day.
 date_picker_state_set_date_time :: proc(s: Date_Picker_State, cx: ^Cx, value: Date_Time, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1725,6 +1884,10 @@ date_picker_state_set_date_time :: proc(s: Date_Picker_State, cx: ^Cx, value: Da
 	state_set(cx, req[:], loc)
 }
 
+// Set the year range for the internal calendar.
+//
+// Default is 50 years before and after the current year. `range` uses a half-open interval
+// `(start, end)` where `end` is exclusive.
 date_picker_state_set_year_range :: proc(s: Date_Picker_State, cx: ^Cx, range: Tuple_I32_I32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -1757,12 +1920,27 @@ Date_Picker_State_Builder :: struct {
 }
 
 Date_Picker_State_Builder_VT :: struct {
+	// Set the format of the value displayed in the picker.
+	//
+	// Default: `%Y/%m/%d`, followed by the time in the configured precision and hour cycle when the
+	// picker edits times, e.g. `%H:%M` or `%I:%M %p`.
 	date_format: proc(b: Date_Picker_State_Builder, format: string) -> Date_Picker_State_Builder,
+	// Set the time given to a date before the user edits it, default: `00:00`.
 	default_time: proc(b: Date_Picker_State_Builder, time: Naive_Time) -> Date_Picker_State_Builder,
+	// Set the disabled match for the calendar.
 	disabled_matcher: proc(b: Date_Picker_State_Builder, disabled: Matcher_Into) -> Date_Picker_State_Builder,
+	// Set the first day of the week.
 	first_day_of_week: proc(b: Date_Picker_State_Builder, day: Weekday) -> Date_Picker_State_Builder,
+	// Set how the time field counts hours, default: `H23`.
 	hour_cycle: proc(b: Date_Picker_State_Builder, hour_cycle: Hour_Cycle) -> Date_Picker_State_Builder,
+	// Set the number of months calendar view to display, default is 1.
 	number_of_months: proc(b: Date_Picker_State_Builder, number_of_months: int) -> Date_Picker_State_Builder,
+	// Edit the time of day as well as the date, down to `precision`.
+	//
+	// Selecting a date then keeps the popup open, and every change to the date or time is reported as
+	// it happens. Clicking the selected date again closes the popup.
+	//
+	// A range picker edits dates only; for a range with times, place two single pickers side by side.
 	time_precision: proc(b: Date_Picker_State_Builder, precision: Time_Precision) -> Date_Picker_State_Builder,
 	build: proc(b: Date_Picker_State_Builder) -> Date_Picker_State,
 }
@@ -1823,6 +2001,7 @@ date_picker_state_builder_vt := Date_Picker_State_Builder_VT {
 	},
 }
 
+// Create a date state.
 date_picker_state :: proc(cx: ^Cx, loc := #caller_location) -> Date_Picker_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -1833,6 +2012,7 @@ date_picker_state :: proc(cx: ^Cx, loc := #caller_location) -> Date_Picker_State
 	return {vt = &date_picker_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Create a date state with range mode.
 date_picker_state_range :: proc(cx: ^Cx, loc := #caller_location) -> Date_Picker_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -1987,6 +2167,11 @@ dialog_handle :: proc(cx: ^Cx, open: bool, loc := #caller_location) -> Dialog_Ha
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Application-owned content attached to a source line or to a whole file.
+//
+// The stable ID belongs to the annotation itself, while the target uses the file path and, for a
+// line, its side and one-based source line, independent of folding.
+//
 // Diff_Annotation is a handle to gpui_kit::component::diff::DiffAnnotation, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named diff_annotation_*.
 Diff_Annotation :: struct {
 	using state: State,
@@ -2003,6 +2188,7 @@ diff_annotation_id :: proc(s: Diff_Annotation, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// The `gk.diff_file_read_path` of the annotated file.
 diff_annotation_path :: proc(s: Diff_Annotation, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2014,6 +2200,7 @@ diff_annotation_path :: proc(s: Diff_Annotation, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// The annotated line, or `None` for a file annotation.
 diff_annotation_position :: proc(s: Diff_Annotation, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Diff_Line_Position)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2025,6 +2212,7 @@ diff_annotation_position :: proc(s: Diff_Annotation, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Attaches content beneath the header of the file at `path`.
 diff_annotation_file :: proc(cx: ^Cx, id: Id, path: string, loc := #caller_location) -> Diff_Annotation {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -2037,6 +2225,7 @@ diff_annotation_file :: proc(cx: ^Cx, id: Id, path: string, loc := #caller_locat
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Attaches content beneath a source line.
 diff_annotation_line :: proc(cx: ^Cx, id: Id, position: Diff_Line_Position, loc := #caller_location) -> Diff_Annotation {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -2049,11 +2238,19 @@ diff_annotation_line :: proc(cx: ^Cx, id: Id, position: Diff_Line_Position, loc 
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A parsed merge conflict in a working file.
+//
+// Source coordinates are one-based, half-open ranges, allowing empty parts. Returned by
+// `gk.diff_file_read_conflicts` in source order; its slice index is the index accepted by
+// `gk.diff_state_resolve_conflict`. Fields are private and only the parser constructs these
+// snapshots.
+//
 // Diff_Conflict is a handle to gpui_kit::component::diff::DiffConflict, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named diff_conflict_*.
 Diff_Conflict :: struct {
 	using state: State,
 }
 
+// The base marker label, or None for a two-way conflict.
 diff_conflict_base_label :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2065,6 +2262,7 @@ diff_conflict_base_label :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Base source lines for diff3, with an exclusive end; may be empty.
 diff_conflict_base_lines :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2076,6 +2274,7 @@ diff_conflict_base_lines :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// The label from the opening marker.
 diff_conflict_current_label :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2087,6 +2286,7 @@ diff_conflict_current_label :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Current-side source lines, with an exclusive end; may be empty.
 diff_conflict_current_lines :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2098,6 +2298,7 @@ diff_conflict_current_lines :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// The label from the closing marker.
 diff_conflict_incoming_label :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2109,6 +2310,7 @@ diff_conflict_incoming_label :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Incoming-side source lines, with an exclusive end; may be empty.
 diff_conflict_incoming_lines :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2120,6 +2322,7 @@ diff_conflict_incoming_lines :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// One-based working-file lines, including markers, with an exclusive end.
 diff_conflict_lines :: proc(s: Diff_Conflict, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2147,6 +2350,7 @@ diff_file_read_additions :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Merge conflicts in working-file order; slice indices identify resolutions.
 diff_file_read_conflicts :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: []Diff_Conflict) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2169,6 +2373,8 @@ diff_file_read_deletions :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Git extended header lines, such as file modes, similarity, renames and the binary marker, as
+// they appear in the patch.
 diff_file_read_extended_headers :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2180,6 +2386,8 @@ diff_file_read_extended_headers :: proc(s: Diff_File_Read, cx: ^Cx, loc := #call
 	return
 }
 
+// Whether the file changes, including an added or deleted empty file and metadata-only changes
+// such as a mode change or pure rename.
 diff_file_read_has_changes :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2191,6 +2399,7 @@ diff_file_read_has_changes :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Whether the patch reports binary contents rather than textual hunks.
 diff_file_read_is_binary :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2202,6 +2411,7 @@ diff_file_read_is_binary :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Whether a hunk ended before its declared line counts, which only `->truncated_hunks` accepts.
 diff_file_read_is_truncated :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2213,6 +2423,7 @@ diff_file_read_is_truncated :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// The syntax language: the override, or the one detected from the path.
 diff_file_read_language :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2224,6 +2435,7 @@ diff_file_read_language :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// The modified path, or `None` for a deleted file.
 diff_file_read_modified_path :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2235,6 +2447,7 @@ diff_file_read_modified_path :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_
 	return
 }
 
+// The original path, or `None` for an added file.
 diff_file_read_original_path :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2246,6 +2459,7 @@ diff_file_read_original_path :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_
 	return
 }
 
+// The path to show for this file: the modified path, or the original path of a deleted file.
 diff_file_read_path :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2257,6 +2471,7 @@ diff_file_read_path :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// How the file changed.
 diff_file_read_status :: proc(s: Diff_File_Read, cx: ^Cx, loc := #caller_location) -> (v: Diff_File_Status) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2306,6 +2521,11 @@ diff_gutter_marker_read_position :: proc(s: Diff_Gutter_Marker_Read, cx: ^Cx, lo
 	return
 }
 
+// A one-based source line, independent of the visual layout.
+//
+// The file is identified by its `gk.diff_file_read_path`, which stays stable when a newer revision
+// of the patch reorders its files.
+//
 // Diff_Line_Position is a handle to gpui_kit::component::diff::DiffLinePosition, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named diff_line_position_*.
 Diff_Line_Position :: struct {
 	using state: State,
@@ -2322,6 +2542,7 @@ diff_line_position_line :: proc(s: Diff_Line_Position, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// The `gk.diff_file_read_path` of the file.
 diff_line_position_path :: proc(s: Diff_Line_Position, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2344,6 +2565,7 @@ diff_line_position_side :: proc(s: Diff_Line_Position, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Creates a position, clamping the line to at least one.
 diff_line_position :: proc(cx: ^Cx, path: string, side: Diff_Side, line: int, loc := #caller_location) -> Diff_Line_Position {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -2373,6 +2595,7 @@ diff_line_range_read_end :: proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #calle
 	return
 }
 
+// The side `end` is on; the same as `gk.diff_line_range_read_side` unless set.
 diff_line_range_read_end_side :: proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #caller_location) -> (v: Diff_Side) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2384,6 +2607,7 @@ diff_line_range_read_end_side :: proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #
 	return
 }
 
+// The `gk.diff_file_read_path` of the file.
 diff_line_range_read_path :: proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2395,6 +2619,7 @@ diff_line_range_read_path :: proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #call
 	return
 }
 
+// The side `start` is on.
 diff_line_range_read_side :: proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #caller_location) -> (v: Diff_Side) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2417,6 +2642,8 @@ diff_line_range_read_start :: proc(s: Diff_Line_Range_Read, cx: ^Cx, loc := #cal
 	return
 }
 
+// A malformed or unsupported unified diff, with its one-based patch line.
+//
 // Diff_Parse_Error is a handle to gpui_kit::component::diff::DiffParseError, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named diff_parse_error_*.
 Diff_Parse_Error :: struct {
 	using state: State,
@@ -2444,11 +2671,20 @@ diff_parse_error_message :: proc(s: Diff_Parse_Error, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Retained focus, viewport, context expansion and selection for a `Diff` showing one or more files
+// of a patch.
+//
+// Create once in the owning view. Mutations notify observers; the application owns the patch and
+// chooses when to install new files. Syntax and inline emphasis are prepared on a background
+// thread and appear once ready.
+//
 // Diff_State is a handle to gpui_kit::component::diff::DiffState, an entity the library keeps. Its procedures are named diff_state_*.
 Diff_State :: struct {
 	using state: State,
 }
 
+// The resolution of conflict `ix` in the file at `path`, if any. Use `gk.diff_file_read_conflicts`
+// to enumerate valid indices; `None` means unresolved, or that the file or index does not exist.
 diff_state_conflict_resolution :: proc(s: Diff_State, cx: ^Cx, path: string, ix: int, loc := #caller_location) -> (v: Maybe(Diff_Conflict_Resolution)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2484,6 +2720,7 @@ diff_state_expansion_lines :: proc(s: Diff_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// The files in patch order.
 diff_state_files :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: []Diff_File_Read) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2517,6 +2754,7 @@ diff_state_inline_unit :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) 
 	return
 }
 
+// Whether the file at `path` shows only its header.
 diff_state_is_file_collapsed :: proc(s: Diff_State, cx: ^Cx, path: string, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2551,6 +2789,8 @@ diff_state_mode :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: 
 	return
 }
 
+// The working file with every conflict replaced by its resolution, or `None` while a conflict is
+// unresolved or `path` names no conflicted file.
 diff_state_resolved_text :: proc(s: Diff_State, cx: ^Cx, path: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2574,6 +2814,7 @@ diff_state_selected_lines :: proc(s: Diff_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Returns selected source without gutters, diff markers or annotation content.
 diff_state_selected_text :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2596,6 +2837,8 @@ diff_state_syntax_max_line_length :: proc(s: Diff_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// Returns to GPUI Kit's highlighter, preparing syntax again without resetting selection or
+// scrolling.
 diff_state_clear_syntax_highlighter :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2605,6 +2848,7 @@ diff_state_clear_syntax_highlighter :: proc(s: Diff_State, cx: ^Cx, loc := #call
 	state_set(cx, req[:], loc)
 }
 
+// Restores the configured context disclosures.
 diff_state_collapse_unchanged :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2614,6 +2858,7 @@ diff_state_collapse_unchanged :: proc(s: Diff_State, cx: ^Cx, loc := #caller_loc
 	state_set(cx, req[:], loc)
 }
 
+// Reveals all unchanged source while preserving the configured context count.
 diff_state_expand_unchanged :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2623,6 +2868,8 @@ diff_state_expand_unchanged :: proc(s: Diff_State, cx: ^Cx, loc := #caller_locat
 	state_set(cx, req[:], loc)
 }
 
+// Moves to the next changed group after the current viewport, across files, wrapping to the first
+// once the list is scrolled to its end.
 diff_state_next_change :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2632,6 +2879,7 @@ diff_state_next_change :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) 
 	state_set(cx, req[:], loc)
 }
 
+// Moves to the previous changed group before the current viewport, across files.
 diff_state_previous_change :: proc(s: Diff_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2641,6 +2889,8 @@ diff_state_previous_change :: proc(s: Diff_State, cx: ^Cx, loc := #caller_locati
 	state_set(cx, req[:], loc)
 }
 
+// Resolves conflict `ix` (an index in `gk.diff_file_read_conflicts`) in the file at `path`, or
+// clears its resolution with `None`, without emitting a user event.
 diff_state_resolve_conflict :: proc(s: Diff_State, cx: ^Cx, path: string, ix: int, resolution: Maybe(Diff_Conflict_Resolution), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2658,6 +2908,7 @@ diff_state_resolve_conflict :: proc(s: Diff_State, cx: ^Cx, path: string, ix: in
 	state_set(cx, req[:], loc)
 }
 
+// Scrolls to the header of the file at `path`, a `gk.diff_file_read_path`.
 diff_state_scroll_to_file :: proc(s: Diff_State, cx: ^Cx, path: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2668,6 +2919,7 @@ diff_state_scroll_to_file :: proc(s: Diff_State, cx: ^Cx, path: string, loc := #
 	state_set(cx, req[:], loc)
 }
 
+// Reveals and scrolls to a source line, expanding its file and hidden context if needed.
 diff_state_scroll_to_line :: proc(s: Diff_State, cx: ^Cx, position: Diff_Line_Position, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2678,6 +2930,7 @@ diff_state_scroll_to_line :: proc(s: Diff_State, cx: ^Cx, position: Diff_Line_Po
 	state_set(cx, req[:], loc)
 }
 
+// Sets surrounding context. `None` shows every supplied patch line.
 diff_state_set_context_lines :: proc(s: Diff_State, cx: ^Cx, lines: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2693,6 +2946,7 @@ diff_state_set_context_lines :: proc(s: Diff_State, cx: ^Cx, lines: Maybe(int), 
 	state_set(cx, req[:], loc)
 }
 
+// Changes the number of lines each disclosure reveals, preserving selection and scrolling.
 diff_state_set_expansion_lines :: proc(s: Diff_State, cx: ^Cx, lines: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2703,6 +2957,7 @@ diff_state_set_expansion_lines :: proc(s: Diff_State, cx: ^Cx, lines: int, loc :
 	state_set(cx, req[:], loc)
 }
 
+// Collapses the file at `path` to its header, or expands it, without emitting a user event.
 diff_state_set_file_collapsed :: proc(s: Diff_State, cx: ^Cx, path: string, collapsed: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2714,6 +2969,8 @@ diff_state_set_file_collapsed :: proc(s: Diff_State, cx: ^Cx, path: string, coll
 	state_set(cx, req[:], loc)
 }
 
+// Replaces the files and resets expansion, selection and viewport. Collapsed files stay collapsed
+// when their path is still present.
 diff_state_set_files :: proc(s: Diff_State, cx: ^Cx, files: []Diff_File, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2727,6 +2984,7 @@ diff_state_set_files :: proc(s: Diff_State, cx: ^Cx, files: []Diff_File, loc := 
 	state_set(cx, req[:], loc)
 }
 
+// Changes the inline comparison line limit in bytes without resetting selection or scrolling.
 diff_state_set_inline_max_line_length :: proc(s: Diff_State, cx: ^Cx, length: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2737,6 +2995,7 @@ diff_state_set_inline_max_line_length :: proc(s: Diff_State, cx: ^Cx, length: in
 	state_set(cx, req[:], loc)
 }
 
+// Changes the inline comparison unit without resetting selection or scrolling.
 diff_state_set_inline_unit :: proc(s: Diff_State, cx: ^Cx, unit: Maybe(Diff_Inline_Unit), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2752,6 +3011,7 @@ diff_state_set_inline_unit :: proc(s: Diff_State, cx: ^Cx, unit: Maybe(Diff_Inli
 	state_set(cx, req[:], loc)
 }
 
+// Changes the shortest unchanged range that collapses, preserving selection and scrolling.
 diff_state_set_min_collapsed_lines :: proc(s: Diff_State, cx: ^Cx, lines: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2762,6 +3022,7 @@ diff_state_set_min_collapsed_lines :: proc(s: Diff_State, cx: ^Cx, lines: int, l
 	state_set(cx, req[:], loc)
 }
 
+// Changes the display mode while preserving source-line selection and a nearby source row.
 diff_state_set_mode :: proc(s: Diff_State, cx: ^Cx, mode: Diff_Mode, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2772,6 +3033,8 @@ diff_state_set_mode :: proc(s: Diff_State, cx: ^Cx, mode: Diff_Mode, loc := #cal
 	state_set(cx, req[:], loc)
 }
 
+// Synchronizes source-line selection without emitting a user event. Clips to supplied patch lines;
+// a range containing none clears selection.
 diff_state_set_selected_lines :: proc(s: Diff_State, cx: ^Cx, range: Maybe(Diff_Line_Range), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2787,6 +3050,8 @@ diff_state_set_selected_lines :: proc(s: Diff_State, cx: ^Cx, range: Maybe(Diff_
 	state_set(cx, req[:], loc)
 }
 
+// Replaces the application's highlighter, preparing syntax again without resetting selection or
+// scrolling. See `->with_syntax_highlighter`.
 diff_state_set_syntax_highlighter :: proc(s: Diff_State, cx: ^Cx, highlighter: Ask(Tuple_Temp_String_Temp_String, []Tuple_Range_Highlight_Style), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2797,6 +3062,7 @@ diff_state_set_syntax_highlighter :: proc(s: Diff_State, cx: ^Cx, highlighter: A
 	state_set(cx, req[:], loc)
 }
 
+// Changes the syntax emphasis line limit in bytes without resetting selection or scrolling.
 diff_state_set_syntax_max_line_length :: proc(s: Diff_State, cx: ^Cx, length: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2828,13 +3094,29 @@ Diff_State_Builder :: struct {
 }
 
 Diff_State_Builder_VT :: struct {
+	// Sets the initial unchanged context around each change. Default is `Some(3)`; `None` shows every
+	// supplied patch line.
 	with_context_lines: proc(b: Diff_State_Builder, lines: Maybe(int)) -> Diff_State_Builder,
+	// Sets how many lines an up or down disclosure reveals. Default is 20.
 	with_expansion_lines: proc(b: Diff_State_Builder, lines: int) -> Diff_State_Builder,
+	// Sets the longest line, in bytes, compared for inline changes. Default is 1,000.
 	with_inline_max_line_length: proc(b: Diff_State_Builder, length: int) -> Diff_State_Builder,
+	// Sets the unit inline changes between paired lines are emphasized in, or `None` to emphasize
+	// whole lines only. Default is `Word`.
 	with_inline_unit: proc(b: Diff_State_Builder, unit: Maybe(Diff_Inline_Unit)) -> Diff_State_Builder,
+	// Sets the shortest unchanged range that collapses; shorter ranges stay visible. Default is 2.
 	with_min_collapsed_lines: proc(b: Diff_State_Builder, lines: int) -> Diff_State_Builder,
+	// Sets the initial display mode. Default is `Unified`.
 	with_mode: proc(b: Diff_State_Builder, mode: Diff_Mode) -> Diff_State_Builder,
+	// Highlights syntax with the application's highlighter instead of GPUI Kit's. Given a file's
+	// language (`gk.diff_file_read_language`) and the source text of one side of one hunk, it returns
+	// byte ranges into that text with their styles; a range that splits a character is ignored.
+	//
+	// It runs on the background executor, once for each side of each hunk, so an unterminated comment
+	// in one hunk cannot color the next. Styles are kept as returned rather than resolved against the
+	// theme when a line paints; set a new highlighter when its colors change.
 	with_syntax_highlighter: proc(b: Diff_State_Builder, highlighter: Ask(Tuple_Temp_String_Temp_String, []Tuple_Range_Highlight_Style)) -> Diff_State_Builder,
+	// Sets the longest line, in bytes, given syntax emphasis. Default is 1,000.
 	with_syntax_max_line_length: proc(b: Diff_State_Builder, length: int) -> Diff_State_Builder,
 	build: proc(b: Diff_State_Builder) -> Diff_State,
 }
@@ -2912,6 +3194,7 @@ diff_state_builder_vt := Diff_State_Builder_VT {
 	},
 }
 
+// Creates a unified viewer with three unchanged lines around each change.
 diff_state :: proc(cx: ^Cx, files: []Diff_File, loc := #caller_location) -> Diff_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -2967,11 +3250,19 @@ discrete :: proc(cx: ^Cx, from: f32, to: f32, loc := #caller_location) -> Discre
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// DisplayMap is the main interface for Editor/Input coordinate mapping.
+//
+// It manages the two-layer projection: 1. Buffer → Wrap (soft-wrapping) 2. Wrap → Display
+// (folding)
+//
+// Editor/Input only needs to work with BufferPoint and DisplayPoint.
+//
 // Display_Map is a handle to gpui_kit::base::input::DisplayMap, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named display_map_*.
 Display_Map :: struct {
 	using state: State,
 }
 
+// Get the buffer line count (logical lines)
 display_map_buffer_line_count :: proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2983,6 +3274,8 @@ display_map_buffer_line_count :: proc(s: Display_Map, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// First display row of a buffer line. If the line is fully folded, returns the nearest visible
+// display row.
 display_map_buffer_line_to_display_row :: proc(s: Display_Map, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -2995,6 +3288,8 @@ display_map_buffer_line_to_display_row :: proc(s: Display_Map, cx: ^Cx, line: in
 	return
 }
 
+// Get the display row range for a buffer line: [start, end) Returns None if the buffer line is
+// completely hidden
 display_map_buffer_line_to_display_row_range :: proc(s: Display_Map, cx: ^Cx, line: int, loc := #caller_location) -> (v: Maybe(Range)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3007,6 +3302,7 @@ display_map_buffer_line_to_display_row_range :: proc(s: Display_Map, cx: ^Cx, li
 	return
 }
 
+// Convert buffer position to display position
 display_map_buffer_pos_to_display_pos :: proc(s: Display_Map, cx: ^Cx, pos: Buffer_Point, loc := #caller_location) -> (v: Display_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3019,6 +3315,7 @@ display_map_buffer_pos_to_display_pos :: proc(s: Display_Map, cx: ^Cx, pos: Buff
 	return
 }
 
+// Convert display position to buffer position
 display_map_display_pos_to_buffer_pos :: proc(s: Display_Map, cx: ^Cx, pos: Display_Point, loc := #caller_location) -> (v: Buffer_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3031,6 +3328,7 @@ display_map_display_pos_to_buffer_pos :: proc(s: Display_Map, cx: ^Cx, pos: Disp
 	return
 }
 
+// Get total number of visible display rows
 display_map_display_row_count :: proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3042,6 +3340,7 @@ display_map_display_row_count :: proc(s: Display_Map, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Get the buffer line for a given display row
 display_map_display_row_to_buffer_line :: proc(s: Display_Map, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3054,6 +3353,7 @@ display_map_display_row_to_buffer_line :: proc(s: Display_Map, cx: ^Cx, display_
 	return
 }
 
+// Convert a display row to a wrap row.
 display_map_display_row_to_wrap_row :: proc(s: Display_Map, cx: ^Cx, display_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3066,6 +3366,7 @@ display_map_display_row_to_wrap_row :: proc(s: Display_Map, cx: ^Cx, display_row
 	return
 }
 
+// Get all currently folded ranges
 display_map_folded_ranges :: proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: []Fold_Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3077,6 +3378,7 @@ display_map_folded_ranges :: proc(s: Display_Map, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// Check if a buffer line is completely hidden
 display_map_is_buffer_line_hidden :: proc(s: Display_Map, cx: ^Cx, line: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3089,6 +3391,7 @@ display_map_is_buffer_line_hidden :: proc(s: Display_Map, cx: ^Cx, line: int, lo
 	return
 }
 
+// Check if a line is a fold candidate
 display_map_is_fold_candidate :: proc(s: Display_Map, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3101,6 +3404,7 @@ display_map_is_fold_candidate :: proc(s: Display_Map, cx: ^Cx, start_line: int, 
 	return
 }
 
+// Check if a line is currently folded
 display_map_is_folded_at :: proc(s: Display_Map, cx: ^Cx, start_line: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3113,6 +3417,7 @@ display_map_is_folded_at :: proc(s: Display_Map, cx: ^Cx, start_line: int, loc :
 	return
 }
 
+// Find the nearest visible display row for a given wrap row.
 display_map_nearest_visible_display_row :: proc(s: Display_Map, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3125,6 +3430,7 @@ display_map_nearest_visible_display_row :: proc(s: Display_Map, cx: ^Cx, wrap_ro
 	return
 }
 
+// Get the rope text
 display_map_text :: proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3136,6 +3442,7 @@ display_map_text :: proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v
 	return
 }
 
+// Calculate how many wrap rows of a buffer line are visible (not folded)
 display_map_visible_wrap_row_count_for_buffer_line :: proc(s: Display_Map, cx: ^Cx, line: int, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3148,6 +3455,7 @@ display_map_visible_wrap_row_count_for_buffer_line :: proc(s: Display_Map, cx: ^
 	return
 }
 
+// Get the wrap row count (before folding)
 display_map_wrap_row_count :: proc(s: Display_Map, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3159,6 +3467,8 @@ display_map_wrap_row_count :: proc(s: Display_Map, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Convert a wrap row to a display row (skipping folded rows). Returns None if the wrap row is
+// folded.
 display_map_wrap_row_to_display_row :: proc(s: Display_Map, cx: ^Cx, wrap_row: int, loc := #caller_location) -> (v: Maybe(int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3171,6 +3481,7 @@ display_map_wrap_row_to_display_row :: proc(s: Display_Map, cx: ^Cx, wrap_row: i
 	return
 }
 
+// Clear all folds
 display_map_clear_folds :: proc(s: Display_Map, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3195,6 +3506,7 @@ display_map_on_layout_changed :: proc(s: Display_Map, cx: ^Cx, wrap_width: Maybe
 	state_set(cx, req[:], loc)
 }
 
+// Set fold candidates (from tree-sitter/LSP)
 display_map_set_fold_candidates :: proc(s: Display_Map, cx: ^Cx, candidates: []Fold_Range, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3208,6 +3520,7 @@ display_map_set_fold_candidates :: proc(s: Display_Map, cx: ^Cx, candidates: []F
 	state_set(cx, req[:], loc)
 }
 
+// Set a fold at the given start_line (must be in candidates)
 display_map_set_folded :: proc(s: Display_Map, cx: ^Cx, start_line: int, folded: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3219,6 +3532,7 @@ display_map_set_folded :: proc(s: Display_Map, cx: ^Cx, start_line: int, folded:
 	state_set(cx, req[:], loc)
 }
 
+// Set font parameters
 display_map_set_font :: proc(s: Display_Map, cx: ^Cx, font: Font, font_size: f32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3230,6 +3544,7 @@ display_map_set_font :: proc(s: Display_Map, cx: ^Cx, font: Font, font_size: f32
 	state_set(cx, req[:], loc)
 }
 
+// Set the wrapping indent for continuation lines.
 display_map_set_wrapping_indent :: proc(s: Display_Map, cx: ^Cx, wrapping_indent: Wrapping_Indent, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3240,6 +3555,7 @@ display_map_set_wrapping_indent :: proc(s: Display_Map, cx: ^Cx, wrapping_indent
 	state_set(cx, req[:], loc)
 }
 
+// Toggle fold at the given start_line
 display_map_toggle_fold :: proc(s: Display_Map, cx: ^Cx, start_line: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3268,6 +3584,13 @@ display_map :: proc(cx: ^Cx, font: Font, font_size: f32, wrap_width: Maybe(f32),
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Runtime state for one dock: whether it is open, collapsible, its current size, and whether it is
+// mid-resize.
+//
+// This does not include the dock's placement or its panel content. `DockArea` owns one of these
+// per dock, paired with that dock's `PaneTree` and keyed by its `DockPlacement`; the placement is
+// the key, and the content is the tree.
+//
 // Dock is a handle to gpui_kit::base::dock::Dock, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named dock_*.
 Dock :: struct {
 	using state: State,
@@ -3347,6 +3670,11 @@ dock_set_resizing :: proc(s: Dock, cx: ^Cx, resizing: bool, loc := #caller_locat
 	state_set(cx, req[:], loc)
 }
 
+// Set the dock's size, never below `PANEL_MIN_SIZE`.
+//
+// The floor is here rather than at the call sites because `DockArea::set_dock_size` is public and
+// unclamped: a smaller value would collapse the dock to nothing, the skin clips the resize handle
+// that would drag it back out, and the collapsed size persists.
 dock_set_size :: proc(s: Dock, cx: ^Cx, size: f32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3368,11 +3696,17 @@ dock :: proc(cx: ^Cx, size: f32, loc := #caller_location) -> Dock {
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// The main area of the dock.
+//
+// It owns one `Pane_Tree` per region and the entity cache that mirrors them. Nothing else turns a
+// tree edit into live entities.
+//
 // Dock_Area is a handle to gpui_kit::base::dock::DockArea, an entity the library keeps. Its procedures are named dock_area_*.
 Dock_Area :: struct {
 	using state: State,
 }
 
+// The area's own bounds, recorded each frame. Dock resizing measures against it.
 dock_area_bounds :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3384,6 +3718,7 @@ dock_area_bounds :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: 
 	return
 }
 
+// The dock's size along its axis.
 dock_area_dock_size :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3396,6 +3731,22 @@ dock_area_dock_size :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, lo
 	return
 }
 
+// Write the layout out.
+//
+// Slot sizes are resolved to concrete pixels first. The tree represents an unconstrained slot as
+// `None` and the writer emits `0.0` for it, which *this* reader maps back to `None` — but an older
+// build has no notion of the sentinel and would construct a real zero-pixel panel from it.
+// Preference order is the split's measured size, then the tree's own size, then `PANEL_MIN_SIZE`
+// for a slot nothing has ever measured.
+//
+// The measurement wins because the tree does not track every change to it. `ResizableState` only
+// emits `Resized` from a finished drag, so that is all the subscription in `split_entity` writes
+// back; `adjust_to_container_size` rescales every slot silently on each window resize, insert and
+// remove. Preferring the tree would persist load-time or last-drag pixels after a window resize,
+// and worse, mix them: a slot left `None` by a later insert would be filled from the current
+// measurement while its untouched siblings kept file-era numbers, so the written ratio would match
+// neither the file nor the screen. Reading the measurement for every slot of a split writes one
+// internally consistent set, which is what the old `StackPanel::dump` did.
 dock_area_dump :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: Dock_Area_State) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3430,6 +3781,8 @@ dock_area_id :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: Temp
 	return
 }
 
+// Whether a dock may be collapsed at all. A skin drawing a collapse affordance in a tab bar reads
+// this to decide whether to offer one.
 dock_area_is_dock_collapsible :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3442,6 +3795,8 @@ dock_area_is_dock_collapsible :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Pla
 	return
 }
 
+// Whether a dock is on screen. A dock the area does not have is never open, so this answers the
+// question a caller usually means without a preceding `gk.dock_area_has_dock`.
 dock_area_is_dock_open :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3454,6 +3809,11 @@ dock_area_is_dock_open :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement,
 	return
 }
 
+// Whether a region currently holds no visible panel.
+//
+// This is the question the old `DockItem::is_empty` answered, and it is the same one
+// `is_node_visible` answers per container: a region is empty when nothing in it would be drawn. A
+// region that does not exist — a dock that was never installed — is empty too.
 dock_area_is_empty :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3488,6 +3848,11 @@ dock_area_is_zoomed :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (
 	return
 }
 
+// The tree for one region, or `None` for a dock that does not exist.
+//
+// The `Option` is in the signature rather than hidden behind a panic because a dock is genuinely
+// optional — it is `Option<DockState>` in the persisted schema — and there is no borrowable empty
+// tree to hand back for one that is absent.
 dock_area_layout :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) -> (v: Maybe(Pane_Tree)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3500,6 +3865,7 @@ dock_area_layout :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc :
 	return
 }
 
+// The live view for a panel, if the dock still holds it.
 dock_area_panel :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) -> (v: Maybe(Dock_Panel)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3523,6 +3889,7 @@ dock_area_version :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v:
 	return
 }
 
+// The tab group filling the area, if a group is what is zoomed.
 dock_area_zoomed_group :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Node_Id)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3534,6 +3901,9 @@ dock_area_zoomed_group :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// Read a persisted layout, rebuilding every panel through `Panel_Registry`. A panel this build
+// does not know about becomes a placeholder that carries the original `PanelState` forward, so the
+// next save does not erase it.
 dock_area_load :: proc(s: Dock_Area, cx: ^Cx, state: Dock_Area_State, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3546,6 +3916,8 @@ dock_area_load :: proc(s: Dock_Area, cx: ^Cx, state: Dock_Area_State, loc := #ca
 	return
 }
 
+// Add a panel to a region, merging it into the first tab group there, or starting a group when the
+// region is empty.
 dock_area_add_panel :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel, placement: Dock_Placement, size: Maybe(f32), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3563,6 +3935,11 @@ dock_area_add_panel :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel, placement:
 	state_set(cx, req[:], loc)
 }
 
+// Add an already-wrapped panel handle to a region.
+//
+// The companion to `gk.dock_area_add_panel`, for a layer that hands base its own concrete handle —
+// see `->as_any` — rather than a bare entity. The id comes from `->panel_id`, which is the only
+// place it can come from once the entity is behind the handle.
 dock_area_add_panel_view :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel, placement: Dock_Placement, size: Maybe(f32), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3580,6 +3957,7 @@ dock_area_add_panel_view :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel, place
 	state_set(cx, req[:], loc)
 }
 
+// Move a panel to a new home. The panel never leaves the dock, so it is never told it was removed.
 dock_area_move_panel :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel_Id, target: Insert_Target, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3591,6 +3969,8 @@ dock_area_move_panel :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel_Id, target
 	state_set(cx, req[:], loc)
 }
 
+// Take a dock away entirely, panels and all. Distinct from `gk.dock_area_toggle_dock`, which only
+// takes it off screen.
 dock_area_remove_dock :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3601,6 +3981,7 @@ dock_area_remove_dock :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, 
 	state_set(cx, req[:], loc)
 }
 
+// Remove a panel from wherever it lives, telling it that it was removed.
 dock_area_remove_panel :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3611,6 +3992,12 @@ dock_area_remove_panel :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel, loc := 
 	state_set(cx, req[:], loc)
 }
 
+// Display `panel` in the tab group that holds it, wherever that is.
+//
+// A host that is handed a file already open, or restores the tab a layout recorded as active,
+// wants that tab shown where it sits. `gk.dock_area_move_panel` with `activate` would also move
+// it, and the group entities are the dock's own, so this is the one way to select a panel by
+// identity. Nothing happens for a panel the dock does not hold, or one already displayed.
 dock_area_select_panel :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3621,6 +4008,8 @@ dock_area_select_panel :: proc(s: Dock_Area, cx: ^Cx, panel: Dock_Panel_Id, loc 
 	state_set(cx, req[:], loc)
 }
 
+// Replace the center region with a described layout. Whatever was there leaves the dock, so its
+// panels are told `->on_removed`.
 dock_area_set_center :: proc(s: Dock_Area, cx: ^Cx, layout: Dock_Layout, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3631,6 +4020,12 @@ dock_area_set_center :: proc(s: Dock_Area, cx: ^Cx, layout: Dock_Layout, loc := 
 	state_set(cx, req[:], loc)
 }
 
+// Replace one dock with a described layout, creating the dock if the area does not have one there
+// yet. A new dock keeps the size and open state of the one it replaces, so re-filling a dock does
+// not resize it.
+//
+// `Center` defers to `gk.dock_area_set_center`: the center is not a dock and has no size or open
+// state of its own.
 dock_area_set_dock :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, layout: Dock_Layout, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3664,6 +4059,7 @@ dock_area_set_dock_size :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement
 	state_set(cx, req[:], loc)
 }
 
+// Lock the layout against rearranging. Resizing stays available.
 dock_area_set_locked :: proc(s: Dock_Area, cx: ^Cx, locked: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3674,6 +4070,7 @@ dock_area_set_locked :: proc(s: Dock_Area, cx: ^Cx, locked: bool, loc := #caller
 	state_set(cx, req[:], loc)
 }
 
+// Replace the slot sizes of the split at `node` in place.
 dock_area_set_split_sizes :: proc(s: Dock_Area, cx: ^Cx, node: Node_Id, sizes: []f32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3688,6 +4085,11 @@ dock_area_set_split_sizes :: proc(s: Dock_Area, cx: ^Cx, node: Node_Id, sizes: [
 	state_set(cx, req[:], loc)
 }
 
+// Change the schema version a later `gk.dock_area_dump` writes.
+//
+// Set at construction for an area whose layout never changes shape. A host that installs one of
+// several preset layouts into the same area picks the version with the preset, which is after the
+// area exists.
 dock_area_set_version :: proc(s: Dock_Area, cx: ^Cx, version: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3703,6 +4105,10 @@ dock_area_set_version :: proc(s: Dock_Area, cx: ^Cx, version: Maybe(int), loc :=
 	state_set(cx, req[:], loc)
 }
 
+// Zoom the tab group at `node` in, as if its own zoom control had been used.
+//
+// Nothing happens for a node that is not a live tab group, or when the group refuses — the group
+// is the one that knows.
 dock_area_set_zoomed_in :: proc(s: Dock_Area, cx: ^Cx, node: Node_Id, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3713,6 +4119,11 @@ dock_area_set_zoomed_in :: proc(s: Dock_Area, cx: ^Cx, node: Node_Id, loc := #ca
 	state_set(cx, req[:], loc)
 }
 
+// Clear the zoom, putting the zoomed container's own flag back with it.
+//
+// A container toggles its zoom itself and only reports it, so an area that dropped the view
+// without telling the container would leave it believing it still fills the dock — and a zoomed
+// group refuses drops.
 dock_area_set_zoomed_out :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3722,6 +4133,7 @@ dock_area_set_zoomed_out :: proc(s: Dock_Area, cx: ^Cx, loc := #caller_location)
 	state_set(cx, req[:], loc)
 }
 
+// Put `panel` in a new tab group beside `node`.
 dock_area_split_at :: proc(s: Dock_Area, cx: ^Cx, node: Node_Id, panel: Dock_Panel_Id, placement: Placement, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3734,6 +4146,8 @@ dock_area_split_at :: proc(s: Dock_Area, cx: ^Cx, node: Node_Id, panel: Dock_Pan
 	state_set(cx, req[:], loc)
 }
 
+// Open a closed dock or close an open one. A dock that is not collapsible refuses to close; there
+// is nothing to refuse when opening.
 dock_area_toggle_dock :: proc(s: Dock_Area, cx: ^Cx, placement: Dock_Placement, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3765,6 +4179,8 @@ Dock_Area_Builder :: struct {
 }
 
 Dock_Area_Builder_VT :: struct {
+	// Install the appearance for this area and everything under it: the renderer also supplies the
+	// `TabGroupRenderer` every group it builds will use.
 	with_renderer: proc(b: Dock_Area_Builder, renderer: Dock_Renderer) -> Dock_Area_Builder,
 	build: proc(b: Dock_Area_Builder) -> Dock_Area,
 }
@@ -3783,6 +4199,13 @@ dock_area_builder_vt := Dock_Area_Builder_VT {
 	},
 }
 
+// An empty area that draws nothing but its panels.
+//
+// `id` names the area for the host's own persistence; `version` is written into
+// `gk.dock_area_dump` and read back by `gk.dock_area_load`, for a host that wants to reject or
+// migrate a layout an older build wrote.
+//
+// Install appearance with `->with_renderer`.
 dock_area :: proc(cx: ^Cx, id: string, version: Maybe(int), loc := #caller_location) -> Dock_Area_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -3800,6 +4223,9 @@ dock_area :: proc(cx: ^Cx, id: string, version: Maybe(int), loc := #caller_locat
 	return {vt = &dock_area_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// What a skin needs to draw one dock, and the callbacks it invokes rather than reimplementing the
+// open/close and clamping behavior.
+//
 // Dock_Context is a handle to gpui_kit::base::dock::DockContext, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named dock_context_*.
 Dock_Context :: struct {
 	using state: State,
@@ -3838,6 +4264,7 @@ dock_context_placement :: proc(s: Dock_Context, cx: ^Cx, loc := #caller_location
 	return
 }
 
+// The dock's extent along its own axis: width for left/right, height for bottom.
 dock_context_size :: proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3849,6 +4276,8 @@ dock_context_size :: proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) -> 
 	return
 }
 
+// End a resize started with `gk.dock_context_resize_to`. A bottom dock dragged below its minimum
+// snaps shut or to the minimum, whichever is nearer.
 dock_context_end_resize :: proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3858,6 +4287,8 @@ dock_context_end_resize :: proc(s: Dock_Context, cx: ^Cx, loc := #caller_locatio
 	state_set(cx, req[:], loc)
 }
 
+// Resize from a pointer position in window coordinates. Base clamps it against the area bounds and
+// the opposite dock.
 dock_context_resize_to :: proc(s: Dock_Context, cx: ^Cx, pointer: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3877,6 +4308,8 @@ dock_context_toggle :: proc(s: Dock_Context, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Used to serialize and deserialize the Dock.
+//
 // Dock_State is a handle to gpui_kit::base::dock::DockState, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named dock_state_*.
 Dock_State :: struct {
 	using state: State,
@@ -3940,6 +4373,13 @@ dock_state :: proc(cx: ^Cx, panel: Panel_State, placement: Dock_Placement, size:
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A panel being dragged out of a tab group.
+//
+// The panel is carried as a `Panel_Id` rather than a view handle: the base layer has no
+// `PanelView` trait or `TabPanel` entity of its own (those are layered above), and the layout
+// algebra already addresses panels this way (see `insert_panel`/`remove_panel`/`move_panel` in
+// `layout::edit`). A consumer resolves the id back to a view through the dock area's panel map.
+//
 // Drag_Panel is a handle to gpui_kit::base::dock::DragPanel, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named drag_panel_*.
 Drag_Panel :: struct {
 	using state: State,
@@ -3978,6 +4418,12 @@ drag_panel_panel :: proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location) -> (v:
 	return
 }
 
+// How large the drag preview is on screen.
+//
+// The dock reads it to decide where a drop placeholder flies in from, which is hit geometry rather
+// than styling; the preview's own size is a visual decision, so the skin that draws the preview
+// reports it here. Defaults to zero, which degrades to a placeholder that grows out of the cursor
+// rather than out of the preview.
 drag_panel_preview_size :: proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Size) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -3989,6 +4435,7 @@ drag_panel_preview_size :: proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// The tab group this panel was dragged out of.
 drag_panel_source :: proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location) -> (v: Node_Id) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4000,6 +4447,8 @@ drag_panel_source :: proc(s: Drag_Panel, cx: ^Cx, loc := #caller_location) -> (v
 	return
 }
 
+// Records where inside the panel the drag started, so a preview can be positioned relative to the
+// cursor.
 drag_panel_set_drag_offset :: proc(s: Drag_Panel, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4032,11 +4481,18 @@ drag_panel :: proc(cx: ^Cx, panel: Dock_Panel_Id, source: Node_Id, loc := #calle
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// What the skin should draw while a drag hovers a group.
+//
+// It carries geometry over time — where the placeholder comes from, where it settles, and which
+// run of the animation this is — but not the tween. Easing and duration are styling and belong to
+// the skin that draws it.
+//
 // Drop_Indicator is a handle to gpui_kit::base::dock::DropIndicator, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named drop_indicator_*.
 Drop_Indicator :: struct {
 	using state: State,
 }
 
+// The hovered group's content bounds, in window coordinates.
 drop_indicator_bounds :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4048,6 +4504,8 @@ drop_indicator_bounds :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Which drag session this indicator belongs to. Host-owned drag items share
+// `ITEM_DRAG_SESSION_ID`.
 drop_indicator_drag_session_id :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4059,6 +4517,8 @@ drop_indicator_drag_session_id :: proc(s: Drop_Indicator, cx: ^Cx, loc := #calle
 	return
 }
 
+// Bumped on every restart, so an animation keyed on it replays instead of resuming when the target
+// placement changes.
 drop_indicator_epoch :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4070,6 +4530,7 @@ drop_indicator_epoch :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location
 	return
 }
 
+// Where the placeholder starts, relative to `gk.drop_indicator_bounds`.
 drop_indicator_from :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: Drop_Placeholder_Bounds) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4081,6 +4542,7 @@ drop_indicator_from :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// `None` means the drop merges into the tab group.
 drop_indicator_placement :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Placement)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4092,6 +4554,7 @@ drop_indicator_placement :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Where the placeholder settles, relative to `gk.drop_indicator_bounds`.
 drop_indicator_to :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -> (v: Drop_Placeholder_Bounds) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4103,6 +4566,8 @@ drop_indicator_to :: proc(s: Drop_Indicator, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// The bounds a drop placeholder should occupy within a tab group, given where the drop would land.
+//
 // Drop_Placeholder_Bounds is a handle to gpui_kit::base::dock::DropPlaceholderBounds, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named drop_placeholder_bounds_*.
 Drop_Placeholder_Bounds :: struct {
 	using state: State,
@@ -4147,6 +4612,12 @@ drop_placeholder_bounds_for_placement :: proc(cx: ^Cx, bounds: Bounds, placement
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Where a host-owned drag landed: a tab group, and the edge it resolved.
+//
+// A split layout has no free coordinates, so the container reports the group and the placement
+// instead of a position. `placement` is `None` for the centre zone, meaning merge into the group
+// rather than split.
+//
 // Drop_Target is a handle to gpui_kit::base::dock::DropTarget, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named drop_target_*.
 Drop_Target :: struct {
 	using state: State,
@@ -4174,6 +4645,13 @@ drop_target_placement :: proc(s: Drop_Target, cx: ^Cx, loc := #caller_location) 
 	return
 }
 
+// What one edit changed.
+//
+// Only whether anything changed, for now. An earlier revision also carried the created and removed
+// nodes, the removed panels, and the activation edges — but nothing outside tests ever read them,
+// and computing them meant cloning the whole tree on every edit to diff against. Fields are
+// private, so any of them can come back the day something needs one.
+//
 // Edit_Result is a handle to gpui_kit::base::dock::EditResult, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named edit_result_*.
 Edit_Result :: struct {
 	using state: State,
@@ -4200,6 +4678,11 @@ edit_result_default :: proc(cx: ^Cx, loc := #caller_location) -> Edit_Result {
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Current-frame editor geometry and its retained scroll offset. The editor applies caret scrolling
+// before invoking the presentation callback. Like other `ScrollbarHandle` implementations, the
+// content size includes the viewport's padding, so subtracting the track size gives the scroll
+// range.
+//
 // Editor_Scrollbar_Context is a handle to gpui_kit::base::input::EditorScrollbarContext, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named editor_scrollbar_context_*.
 Editor_Scrollbar_Context :: struct {
 	using state: State,
@@ -4216,6 +4699,9 @@ editor_scrollbar_context_axis :: proc(s: Editor_Scrollbar_Context, cx: ^Cx, loc 
 	return
 }
 
+// The editor's viewport without padding, for consumers that need its text layout size. Scrollbars
+// should use `->content_size` and `->viewport_bounds` to calculate the scroll range; both include
+// the padding around this viewport.
 editor_scrollbar_context_scroll_viewport_size :: proc(s: Editor_Scrollbar_Context, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Size) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4243,6 +4729,9 @@ editor_state_context_menu_capabilities :: proc(s: Editor_State, cx: ^Cx, loc := 
 	return
 }
 
+// Get byte offset of the cursor.
+//
+// The offset is the UTF-8 offset.
 editor_state_cursor :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4254,6 +4743,7 @@ editor_state_cursor :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// Return the (0-based) `Position` of the cursor.
 editor_state_cursor_position :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Lsp_Position) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4519,6 +5009,7 @@ editor_state_input_bounds :: proc(s: Editor_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Whether this input is a source-code editor.
 editor_state_is_code_editor :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4530,6 +5021,9 @@ editor_state_is_code_editor :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Whether the user is allowed to copy the selection out.
+//
+// A masked input keeps its value out of the clipboard.
 editor_state_is_copyable :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4541,6 +5035,10 @@ editor_state_is_copyable :: proc(s: Editor_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// This is false when the input is `disabled` or `readonly`, the programmatic APIs (e.g.:
+// `gk.input_state_set_value`, `gk.input_state_insert`) are not limited by this.
 editor_state_is_editable :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4563,6 +5061,9 @@ editor_state_is_multi_line :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Returns true if the search panel can replace the matches.
+//
+// This is false when the input is not `replaceable`, or when it is `disabled` or `readonly`.
 editor_state_is_replaceable :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4574,6 +5075,10 @@ editor_state_is_replaceable :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Whether the active selection's caret is at the start of its range.
+//
+// Collapsed selections are not reversed. Use this with `gk.input_state_selected_range` and
+// `gk.input_state_set_selected_range_with_direction` to restore a selection.
 editor_state_is_selection_reversed :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4585,6 +5090,7 @@ editor_state_is_selection_reversed :: proc(s: Editor_State, cx: ^Cx, loc := #cal
 	return
 }
 
+// Whether this input is a single-line text field. See `gk.input_state_is_multi_line`.
 editor_state_is_single_line :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4596,6 +5102,7 @@ editor_state_is_single_line :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// The current language name, e.g. `"rust"`.
 editor_state_language_name :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4607,6 +5114,7 @@ editor_state_language_name :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Laid-out line height; `None` before first layout.
 editor_state_line_height :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4618,6 +5126,10 @@ editor_state_line_height :: proc(s: Editor_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// The LSP providers and their cached results.
+//
+// This exists on the editor alone: an ordinary input or textarea has no language server, and no
+// field to reach one through.
 editor_state_lsp :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Base_Lsp) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4640,6 +5152,9 @@ editor_state_presentation :: proc(s: Editor_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Return the rendered bounds for a UTF-8 byte range in the current input contents.
+//
+// Returns `None` when the requested range is not currently laid out or visible.
 editor_state_range_to_bounds :: proc(s: Editor_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Maybe(Bounds)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4652,6 +5167,7 @@ editor_state_range_to_bounds :: proc(s: Editor_State, cx: ^Cx, range: Range, loc
 	return
 }
 
+// Current scroll offset of the editor viewport.
 editor_state_scroll_offset :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4663,6 +5179,12 @@ editor_state_scroll_offset :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// A counter that advances every time `gk.input_state_open_search` runs, including while the
+// session is already open.
+//
+// Re-invoking search leaves the session itself identical, so a presentation layer that decides
+// what to rebuild by comparing session state cannot see the second request. Fold this into that
+// comparison to notice it.
 editor_state_search_activation_revision :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4685,6 +5207,12 @@ editor_state_search_session :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Returns the active selection as a byte range into the text.
+//
+// With multiple cursors, this reads only the active selection.
+//
+// The range is empty (`start == end`) when no text is selected; in that case the offset equals
+// `cursor()`. Byte offsets are measured in the underlying rope's byte units.
 editor_state_selected_range :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4696,6 +5224,7 @@ editor_state_selected_range :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// See `gk.input_state_selected_value` when an owned string is wanted.
 editor_state_selected_text :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4707,6 +5236,10 @@ editor_state_selected_text :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Return the portion of the value within the input field that is selected by the user, as an owned
+// string.
+//
+// The string is materialized on each call.
 editor_state_selected_value :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4718,6 +5251,10 @@ editor_state_selected_value :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Return the text `Rope` of the input field.
+//
+// Borrowed from the state, so reading even a large document copies nothing. See
+// `gk.input_state_value` when an owned string is wanted.
 editor_state_text :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4740,6 +5277,8 @@ editor_state_text_bounds :: proc(s: Editor_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// The text assistance a platform IME (a software keyboard) should give this input, from
+// `->input_action`, `->autocorrect` and `->autocapitalize` or the defaults they describe.
 editor_state_text_input_configuration :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Text_Input_Configuration) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4751,6 +5290,10 @@ editor_state_text_input_configuration :: proc(s: Editor_State, cx: ^Cx, loc := #
 	return
 }
 
+// The live touch selection, laid out for the handles and the edit menu.
+//
+// `None` when the last touch selection has since changed into something else, or when its ends are
+// not laid out (scrolled out of view).
 editor_state_touch_selection :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Touch_Selection_Snapshot)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4762,6 +5305,7 @@ editor_state_touch_selection :: proc(s: Editor_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Return the value without mask.
 editor_state_unmask_value :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4773,6 +5317,9 @@ editor_state_unmask_value :: proc(s: Editor_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Return the value of the input field as an owned string.
+//
+// The string is materialized on each call.
 editor_state_value :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4784,6 +5331,7 @@ editor_state_value :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// Visible row range in the last laid-out viewport, `None` before first layout.
 editor_state_visible_row_range :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4795,6 +5343,9 @@ editor_state_visible_row_range :: proc(s: Editor_State, cx: ^Cx, loc := #caller_
 	return
 }
 
+// Return the value of the input field as an owned string.
+//
+// The string is materialized on each call.
 editor_state_try_value :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String, ok: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4806,6 +5357,22 @@ editor_state_try_value :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location
 	return v, true
 }
 
+// Create an independently managed collection of text decorations.
+//
+// This follows Monaco's `createDecorationsCollection`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.ICodeEditor.html#createDecorationsCollection)
+// ownership model. Ranges use UTF-8 byte offsets into `gk.input_state_value`.
+//
+// Decoration ranges follow text edits and do not need to be set again after each change.
+// Insertions at a range boundary do not expand the range, matching Monaco's
+// `NeverGrowsWhenTypingAtEdges`
+// (https://microsoft.github.io/monaco-editor/typedoc/enums/editor_editor_api.editor.TrackedRangeStickiness.html#NeverGrowsWhenTypingAtEdges)
+// behavior. Decorations are not rendered while the input is masked. Collections live until their
+// `InputBaseState` is dropped.
+//
+// Collections are layered in insertion order; the first collection wins when overlapping
+// decorations set the same `HighlightStyle` property. Callers should avoid conflicting overlaps
+// within one collection.
 editor_state_create_decorations_collection :: proc(s: Editor_State, cx: ^Cx, decorations: []Text_Decoration, loc := #caller_location) -> (v: Text_Decoration_Collection) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4821,6 +5388,20 @@ editor_state_create_decorations_collection :: proc(s: Editor_State, cx: ^Cx, dec
 	return
 }
 
+// Create a collection of gutter marks, such as added, modified, and deleted lines in a
+// version-control diff.
+//
+// Marks draw in a strip before the line numbers. The strip stays reserved while any gutter
+// collection exists, including an empty collection, so the text does not shift when marks change.
+// Release every collection to drop the strip. Its width is `->gutter_decorations_width`.
+//
+// Ranges track edits as range decorations (`gk.editor_state_create_range_decorations_collection`)
+// do, but empty ranges are kept. They stay before text inserted at their offset, and a range that
+// an edit empties becomes a boundary. A mark whose range starts inside a fold draws a bar on the
+// fold's row, using its folded color (`->with_folded_color`), and marks the lines of the range
+// after the fold as usual. Later collections and items draw over earlier ones. After you recompute
+// the decorations, call `gk.gutter_decoration_collection_set` with the whole collection. Tracking
+// keeps marks on their lines between updates.
 editor_state_create_gutter_decorations_collection :: proc(s: Editor_State, cx: ^Cx, decorations: []Gutter_Decoration, loc := #caller_location) -> (v: Gutter_Decoration_Collection) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4836,6 +5417,12 @@ editor_state_create_gutter_decorations_collection :: proc(s: Editor_State, cx: ^
 	return
 }
 
+// Create a collection of marks on the vertical scrollbar track, Monaco's overview ruler.
+//
+// Each mark uses its `lane` at the rows' share of the content height. It is at least 6 px tall.
+// Touching marks with the same color merge. Marks draw under Base's scrollbar or one supplied with
+// `gk.input_state_set_scrollbar_renderer`, so they remain visible while the thumb fades. Ranges
+// track edits as gutter decorations (`gk.editor_state_create_gutter_decorations_collection`) do.
 editor_state_create_overview_ruler_decorations_collection :: proc(s: Editor_State, cx: ^Cx, decorations: []Overview_Ruler_Decoration, loc := #caller_location) -> (v: Overview_Ruler_Decoration_Collection) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4851,6 +5438,17 @@ editor_state_create_overview_ruler_decorations_collection :: proc(s: Editor_Stat
 	return
 }
 
+// Create an independently owned collection of geometric range decorations.
+//
+// Ranges use UTF-8 byte offsets and the same tracking as text decorations: insertion at either
+// edge does not expand the range, insertion inside does, replacement clips overlapping anchors,
+// and deletion removes empty ranges. Undo, redo, whole-document replacement and formatting apply
+// these same edit transforms; decorations themselves are not undo history, so deleted ranges are
+// not resurrected by undo. Folding changes projection, not stored ranges.
+//
+// Fills paint behind frames; within each style, later collections/items paint over earlier ones.
+// Neither affects text layout, hit testing or focus. The default color is the editor foreground
+// (12% opacity for fills). Collections live until explicitly disposed or the editor is dropped.
 editor_state_create_range_decorations_collection :: proc(s: Editor_State, cx: ^Cx, decorations: []Range_Decoration, loc := #caller_location) -> (v: Range_Decoration_Collection) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4877,6 +5475,7 @@ editor_state_diagnostics_mut :: proc(s: Editor_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Whether the input or its associated selection popup has focus.
 editor_state_has_selection_focus :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4910,6 +5509,7 @@ editor_state_previous_search_match :: proc(s: Editor_State, cx: ^Cx, loc := #cal
 	return
 }
 
+// Replace every match. Returns how many were replaced.
 editor_state_replace_all_search_matches :: proc(s: Editor_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4922,6 +5522,8 @@ editor_state_replace_all_search_matches :: proc(s: Editor_State, cx: ^Cx, replac
 	return
 }
 
+// Replace the current match and move on to the next one. Returns whether there was a match to
+// replace.
 editor_state_replace_current_search_match :: proc(s: Editor_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4946,6 +5548,17 @@ editor_state_route_overlay_action :: proc(s: Editor_State, cx: ^Cx, action: Acti
 	return
 }
 
+// Unfold any folded ranges that hide the given position.
+//
+// Use this to reveal a position before acting on it (e.g. before
+// `gk.input_state_set_cursor_position`, which stops at a fold boundary), without touching folds
+// elsewhere in the buffer. Fold candidates are kept, so the opened ranges can be folded again from
+// the gutter.
+//
+// A fold keeps its own first and last line visible, so a position on either of them opens nothing.
+// Nested folds all open, since opening only the outermost would leave the position hidden.
+//
+// Returns whether any fold was opened.
 editor_state_unfold_at :: proc(s: Editor_State, cx: ^Cx, position: Lsp_Position, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4958,6 +5571,13 @@ editor_state_unfold_at :: proc(s: Editor_State, cx: ^Cx, position: Lsp_Position,
 	return
 }
 
+// Add `range` as an additional selection, keeping the existing ones — the programmatic equivalent
+// of Alt-clicking another cursor into the text.
+//
+// The range is clipped to the text and expanded to character boundaries, like
+// `gk.input_state_set_selected_range`. A range already covered by a selection adds nothing.
+// Overlapping selections are merged. On a single-line input there is no second cursor to add, so
+// the call replaces the selection instead. The view scrolls to the new selection.
 editor_state_add_selection :: proc(s: Editor_State, cx: ^Cx, range: Range, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -4981,6 +5601,10 @@ editor_state_apply_highlighter_fold_candidates :: proc(s: Editor_State, cx: ^Cx,
 	state_set(cx, req[:], loc)
 }
 
+// Starts dragging one end of the touch selection from `finger`.
+//
+// The other end stays where it is. The menu closes for the duration of the drag and reopens on
+// `gk.input_state_end_edge_drag`.
 editor_state_begin_edge_drag :: proc(s: Editor_State, cx: ^Cx, edge: Selection_Edge, finger: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5019,6 +5643,10 @@ editor_state_clear_hover_state :: proc(s: Editor_State, cx: ^Cx, loc := #caller_
 	state_set(cx, req[:], loc)
 }
 
+// Closes the edit menu and keeps the selection with its handles.
+//
+// The menu's own actions end here: Copy has done its work, Select All reopens the menu over the
+// new range through `gk.input_state_select_all`.
 editor_state_close_edit_menu :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5028,6 +5656,8 @@ editor_state_close_edit_menu :: proc(s: Editor_State, cx: ^Cx, loc := #caller_lo
 	state_set(cx, req[:], loc)
 }
 
+// End the search: hide the built-in panel and the match highlights. The query is kept so the next
+// `gk.input_state_open_search` resumes it.
 editor_state_close_search :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5064,6 +5694,7 @@ editor_state_dismiss_lsp_overlays :: proc(s: Editor_State, cx: ^Cx, loc := #call
 	state_set(cx, req[:], loc)
 }
 
+// Ends the handle drag and reopens the edit menu.
 editor_state_end_edge_drag :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5073,6 +5704,7 @@ editor_state_end_edge_drag :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loca
 	state_set(cx, req[:], loc)
 }
 
+// Install a default adapter without replacing an application-provided one.
 editor_state_ensure_highlighter_factory :: proc(s: Editor_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5083,6 +5715,7 @@ editor_state_ensure_highlighter_factory :: proc(s: Editor_State, cx: ^Cx, factor
 	state_set(cx, req[:], loc)
 }
 
+// Apply the default numeric mask unless the caller explicitly selected a mask.
 editor_state_ensure_number_mask :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5092,6 +5725,7 @@ editor_state_ensure_number_mask :: proc(s: Editor_State, cx: ^Cx, loc := #caller
 	state_set(cx, req[:], loc)
 }
 
+// Focus the input field.
 editor_state_focus :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5101,6 +5735,9 @@ editor_state_focus :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Insert text at the current cursor position.
+//
+// And the cursor will be moved to the end of inserted text.
 editor_state_insert :: proc(s: Editor_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5122,6 +5759,7 @@ editor_state_insert_completion :: proc(s: Editor_State, cx: ^Cx, item: Completio
 	state_set(cx, req[:], loc)
 }
 
+// The LSP providers, mutably. Configure the providers through this.
 editor_state_lsp_mut :: proc(s: Editor_State, cx: ^Cx, edit: Lsp, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5142,6 +5780,13 @@ editor_state_on_context_menu :: proc(s: Editor_State, cx: ^Cx, handler: Handler,
 	state_set(cx, req[:], loc)
 }
 
+// Open the search session, or re-invoke it if it is already open.
+//
+// This is not idempotent: every call advances `gk.input_state_search_activation_revision`, and the
+// presentation layer answers that by re-focusing the search field and selecting its contents, the
+// same as pressing the shortcut a second time. Call it from an action or another user gesture,
+// never from a render pass or an observer that runs every frame — that would re-select the field
+// under the user on every frame and make it impossible to type.
 editor_state_open_search :: proc(s: Editor_State, cx: ^Cx, replace_mode: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5178,6 +5823,14 @@ editor_state_present_diagnostic :: proc(s: Editor_State, cx: ^Cx, range: Range, 
 	state_set(cx, req[:], loc)
 }
 
+// Wrap the text for `font`, `font_size` and `width` before the first layout, so that
+// `gk.display_map_wrap_row_count` is known on the first frame.
+//
+// Call it after setting the value and the wrapping indent. `width` is the width of the input's
+// text area: its width less its padding, and less the line-number gutter for an editor with line
+// numbers. It wraps as layout does, a little short of that width and with the state's wrapping
+// indent. Once the input has been laid out this does nothing, and layout keeps the wrap up to
+// date. The font and font size must match the input's actual text style.
 editor_state_prewrap :: proc(s: Editor_State, cx: ^Cx, font: Font, font_size: f32, width: f32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5190,6 +5843,11 @@ editor_state_prewrap :: proc(s: Editor_State, cx: ^Cx, font: Font, font_size: f3
 	state_set(cx, req[:], loc)
 }
 
+// Refresh the input, so the next render re-runs syntax highlighting and the LSP providers, not
+// just a redraw.
+//
+// Assigning the `lsp` providers (or other render-affecting state) at runtime does not take effect
+// until the text next changes. Call this afterwards to force the refresh on the next render.
 editor_state_refresh :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5199,6 +5857,9 @@ editor_state_refresh :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) 
 	state_set(cx, req[:], loc)
 }
 
+// Replace text at the current cursor position.
+//
+// And the cursor will be moved to the end of replaced text.
 editor_state_replace :: proc(s: Editor_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5209,6 +5870,14 @@ editor_state_replace :: proc(s: Editor_State, cx: ^Cx, text: string, loc := #cal
 	state_set(cx, req[:], loc)
 }
 
+// Replace the entire text content while preserving undo history.
+//
+// Unlike `gk.input_state_set_value`, this method records the replacement in the undo stack,
+// allowing the user to undo/redo the change. The selection is placed at the end of the new text
+// for single-line inputs, or cleared (0..0) for multi-line inputs.
+//
+// Use this when programmatically replacing the full text but the user should still be able to undo
+// the operation — e.g. formatting.
 editor_state_replace_all :: proc(s: Editor_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5228,6 +5897,8 @@ editor_state_select_all :: proc(s: Editor_State, cx: ^Cx, loc := #caller_locatio
 	state_set(cx, req[:], loc)
 }
 
+// Selects everything and, when a touch selection is live, keeps the handles and the edit menu over
+// the new range.
 editor_state_select_all_from_edit_menu :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5237,6 +5908,7 @@ editor_state_select_all_from_edit_menu :: proc(s: Editor_State, cx: ^Cx, loc := 
 	state_set(cx, req[:], loc)
 }
 
+// Project semantics onto the editor, never onto a second focus owner.
 editor_state_set_accessibility :: proc(s: Editor_State, cx: ^Cx, accessibility: Input_Accessibility, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5247,6 +5919,7 @@ editor_state_set_accessibility :: proc(s: Editor_State, cx: ^Cx, accessibility: 
 	state_set(cx, req[:], loc)
 }
 
+// Set automatic closing brackets and quotes at runtime.
 editor_state_set_auto_close :: proc(s: Editor_State, cx: ^Cx, auto_close: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5277,6 +5950,9 @@ editor_state_set_context_menu_enabled :: proc(s: Editor_State, cx: ^Cx, enabled:
 	state_set(cx, req[:], loc)
 }
 
+// Set (0-based) `Position` of the cursor.
+//
+// This will move the cursor to the specified line and column, and update the selection range.
 editor_state_set_cursor_position :: proc(s: Editor_State, cx: ^Cx, position: Lsp_Position, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5287,6 +5963,7 @@ editor_state_set_cursor_position :: proc(s: Editor_State, cx: ^Cx, position: Lsp
 	state_set(cx, req[:], loc)
 }
 
+// Update `->cursor_surrounding_lines` after construction.
 editor_state_set_cursor_surrounding_lines :: proc(s: Editor_State, cx: ^Cx, lines: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5322,6 +5999,7 @@ editor_state_set_editor_style :: proc(s: Editor_State, cx: ^Cx, style: Input_Edi
 	state_set(cx, req[:], loc)
 }
 
+// Fills each folded line across the editor, as VS Code's `editor.foldBackground`.
 editor_state_set_fold_background :: proc(s: Editor_State, cx: ^Cx, color: Maybe(Color), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5337,6 +6015,8 @@ editor_state_set_fold_background :: proc(s: Editor_State, cx: ^Cx, color: Maybe(
 	state_set(cx, req[:], loc)
 }
 
+// Draws a placeholder right after the text of each folded line, given its buffer row. Clicking it
+// unfolds the line.
 editor_state_set_fold_placeholder_renderer :: proc(s: Editor_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5352,6 +6032,9 @@ editor_state_set_fold_placeholder_renderer :: proc(s: Editor_State, cx: ^Cx, ren
 	state_set(cx, req[:], loc)
 }
 
+// Set code folding at runtime.
+//
+// When disabling, all existing folds are cleared.
 editor_state_set_folding :: proc(s: Editor_State, cx: ^Cx, folding: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5362,6 +6045,7 @@ editor_state_set_folding :: proc(s: Editor_State, cx: ^Cx, folding: bool, loc :=
 	state_set(cx, req[:], loc)
 }
 
+// Set the width of the strip that gutter decorations draw in.
 editor_state_set_gutter_decorations_width :: proc(s: Editor_State, cx: ^Cx, width: f32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5372,6 +6056,7 @@ editor_state_set_gutter_decorations_width :: proc(s: Editor_State, cx: ^Cx, widt
 	state_set(cx, req[:], loc)
 }
 
+// Set highlighter language for for `CodeEditor` mode.
 editor_state_set_highlighter :: proc(s: Editor_State, cx: ^Cx, new_language: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5382,6 +6067,7 @@ editor_state_set_highlighter :: proc(s: Editor_State, cx: ^Cx, new_language: str
 	state_set(cx, req[:], loc)
 }
 
+// Install the parser/highlighter adapter used by code-editor mode.
 editor_state_set_highlighter_factory :: proc(s: Editor_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5392,6 +6078,7 @@ editor_state_set_highlighter_factory :: proc(s: Editor_State, cx: ^Cx, factory: 
 	state_set(cx, req[:], loc)
 }
 
+// Set indent guides at runtime.
 editor_state_set_indent_guides :: proc(s: Editor_State, cx: ^Cx, indent_guides: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5402,6 +6089,7 @@ editor_state_set_indent_guides :: proc(s: Editor_State, cx: ^Cx, indent_guides: 
 	state_set(cx, req[:], loc)
 }
 
+// Set line number.
 editor_state_set_line_number :: proc(s: Editor_State, cx: ^Cx, line_number: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5436,6 +6124,7 @@ editor_state_set_overlay_action_handler :: proc(s: Editor_State, cx: ^Cx, taken:
 	state_set(cx, req[:], loc)
 }
 
+// Set placeholder
 editor_state_set_placeholder :: proc(s: Editor_State, cx: ^Cx, placeholder: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5456,6 +6145,7 @@ editor_state_set_readonly :: proc(s: Editor_State, cx: ^Cx, readonly: bool, loc 
 	state_set(cx, req[:], loc)
 }
 
+// Update `->scroll_beyond_last_line` after construction.
 editor_state_set_scroll_beyond_last_line :: proc(s: Editor_State, cx: ^Cx, rows: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5471,6 +6161,8 @@ editor_state_set_scroll_beyond_last_line :: proc(s: Editor_State, cx: ^Cx, rows:
 	state_set(cx, req[:], loc)
 }
 
+// Update whether the text stretches past its ends, see `->scroll_bounce`. Turning it off drops a
+// stretch in progress.
 editor_state_set_scroll_bounce :: proc(s: Editor_State, cx: ^Cx, scroll_bounce: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5481,6 +6173,9 @@ editor_state_set_scroll_bounce :: proc(s: Editor_State, cx: ^Cx, scroll_bounce: 
 	state_set(cx, req[:], loc)
 }
 
+// Set scroll offset of the editor viewport.
+//
+// The offset will be clamped to the valid range, and applied after the next layout.
 editor_state_set_scroll_offset :: proc(s: Editor_State, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5491,6 +6186,10 @@ editor_state_set_scroll_offset :: proc(s: Editor_State, cx: ^Cx, offset: Gpui_Po
 	state_set(cx, req[:], loc)
 }
 
+// Supply the element painted in place of the editor's scrollbar, or `None` to keep Base's. The
+// renderer is called where the editor paints its scrollbar, with that frame's
+// `EditorScrollbarContext`. Like `gk.input_state_set_editor_style`, this does not notify, so it
+// can be called while rendering.
 editor_state_set_scrollbar_renderer :: proc(s: Editor_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5506,6 +6205,15 @@ editor_state_set_scrollbar_renderer :: proc(s: Editor_State, cx: ^Cx, renderer: 
 	state_set(cx, req[:], loc)
 }
 
+// Set the search query and highlight its matches.
+//
+// This is the entry point for a custom search UI: it needs neither `searchable` nor the built-in
+// panel. Navigate the matches with `gk.input_state_next_search_match` and
+// `gk.input_state_previous_search_match`, read the count and the current index from
+// `gk.input_state_search_session`, and end the search with `gk.input_state_close_search`.
+//
+// A changed query or case mode starts at the current viewport. Setting the same query and case
+// mode again retains the current occurrence.
 editor_state_set_search_query :: proc(s: Editor_State, cx: ^Cx, query: string, case_insensitive: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5517,6 +6225,7 @@ editor_state_set_search_query :: proc(s: Editor_State, cx: ^Cx, query: string, c
 	state_set(cx, req[:], loc)
 }
 
+// See `->searchable`.
 editor_state_set_searchable :: proc(s: Editor_State, cx: ^Cx, searchable: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5527,6 +6236,10 @@ editor_state_set_searchable :: proc(s: Editor_State, cx: ^Cx, searchable: bool, 
 	state_set(cx, req[:], loc)
 }
 
+// Set the selected range using UTF-8 byte offsets, removing additional cursors.
+//
+// Non-empty ranges expand to character boundaries. Empty ranges remain empty and are clipped to
+// the preceding character boundary.
 editor_state_set_selected_range :: proc(s: Editor_State, cx: ^Cx, range: Range, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5537,6 +6250,11 @@ editor_state_set_selected_range :: proc(s: Editor_State, cx: ^Cx, range: Range, 
 	state_set(cx, req[:], loc)
 }
 
+// Set the selected UTF-8 byte range and the active caret direction.
+//
+// With `reversed`, the caret is at the start and the anchor is at the end. Empty ranges collapse
+// to a caret regardless of direction. Range clipping, token boundaries and removal of additional
+// cursors follow `gk.input_state_set_selected_range`.
 editor_state_set_selected_range_with_direction :: proc(s: Editor_State, cx: ^Cx, range: Range, reversed: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5548,6 +6266,10 @@ editor_state_set_selected_range_with_direction :: proc(s: Editor_State, cx: ^Cx,
 	state_set(cx, req[:], loc)
 }
 
+// Keeps the selection highlighted while this popup or one of its children has focus.
+//
+// This does not transfer keyboard focus or keep the caret visible. The association holds only a
+// weak focus handle. Pass `None` to clear it.
 editor_state_set_selection_focus :: proc(s: Editor_State, cx: ^Cx, focus: Maybe(Focus_Handle), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5563,6 +6285,7 @@ editor_state_set_selection_focus :: proc(s: Editor_State, cx: ^Cx, focus: Maybe(
 	state_set(cx, req[:], loc)
 }
 
+// Update whether to show whitespace characters.
 editor_state_set_show_whitespaces :: proc(s: Editor_State, cx: ^Cx, show: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5573,6 +6296,7 @@ editor_state_set_show_whitespaces :: proc(s: Editor_State, cx: ^Cx, show: bool, 
 	state_set(cx, req[:], loc)
 }
 
+// Set smart indent on Enter at runtime.
 editor_state_set_smart_indent :: proc(s: Editor_State, cx: ^Cx, smart_indent: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5583,6 +6307,7 @@ editor_state_set_smart_indent :: proc(s: Editor_State, cx: ^Cx, smart_indent: bo
 	state_set(cx, req[:], loc)
 }
 
+// Update the soft wrap mode, default is true.
 editor_state_set_soft_wrap :: proc(s: Editor_State, cx: ^Cx, wrap: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5623,6 +6348,12 @@ editor_state_set_text_align :: proc(s: Editor_State, cx: ^Cx, text_align: Text_A
 	state_set(cx, req[:], loc)
 }
 
+// Set the value of the input field: plain text, or `InputContent` to restore text together with
+// its inline tokens. Editing history is cleared and no `Change` is emitted.
+//
+// For single-line inputs the caret is placed at the end of the text while the view is scrolled
+// back to the start, so a long value shows its beginning instead of its tail (matching HTML
+// `<input>`). Multi-line inputs reset the selection to `0..0`.
 editor_state_set_value :: proc(s: Editor_State, cx: ^Cx, value: Input_Content_Into, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5633,6 +6364,7 @@ editor_state_set_value :: proc(s: Editor_State, cx: ^Cx, value: Input_Content_In
 	state_set(cx, req[:], loc)
 }
 
+// Update how soft-wrapped continuation lines are indented.
 editor_state_set_wrapping_indent :: proc(s: Editor_State, cx: ^Cx, wrapping_indent: Wrapping_Indent, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5643,6 +6375,15 @@ editor_state_set_wrapping_indent :: proc(s: Editor_State, cx: ^Cx, wrapping_inde
 	state_set(cx, req[:], loc)
 }
 
+// Request completions at the caret and focus the editor, without editing text.
+//
+// The current identifier prefix is used to refine the menu. An empty prefix still asks the
+// provider for suggestions. There is no default keybinding; applications can dispatch
+// `Show_Completions` in the `Input && mode == editor` context or call this method from a command.
+//
+// Disabled/readonly editors, IME preedit, and an already-open completion menu are left alone. A
+// new request cancels the previous overlay request and inline suggestion, and closes the
+// code-action menu.
 editor_state_show_completions :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5652,6 +6393,10 @@ editor_state_show_completions :: proc(s: Editor_State, cx: ^Cx, loc := #caller_l
 	state_set(cx, req[:], loc)
 }
 
+// Flip the password mask.
+//
+// Setting the mask is a single-line method, but flipping it stays here: the reveal button is
+// rendered from the generic path, and it can only be switched on through `InputState` anyway.
 editor_state_toggle_masked :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5661,6 +6406,7 @@ editor_state_toggle_masked :: proc(s: Editor_State, cx: ^Cx, loc := #caller_loca
 	state_set(cx, req[:], loc)
 }
 
+// Unselects the currently selected text.
 editor_state_unselect :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5670,6 +6416,10 @@ editor_state_unselect :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location)
 	state_set(cx, req[:], loc)
 }
 
+// Moves the dragged end to the text under `finger`.
+//
+// Past the top or bottom of a multi-line input the content scrolls under the finger, so the end
+// can reach text that was out of view.
 editor_state_update_edge_drag :: proc(s: Editor_State, cx: ^Cx, finger: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5713,19 +6463,80 @@ Editor_State_Builder :: struct {
 }
 
 Editor_State_Builder_VT :: struct {
+	// Set how a software keyboard capitalizes the text.
+	//
+	// Default is `None`. Enable capitalization explicitly for fields where it is appropriate,
+	// independently of autocorrection.
 	autocapitalize: proc(b: Editor_State_Builder, autocapitalize: Autocapitalize) -> Editor_State_Builder,
+	// Set whether the platform may autocorrect the text and offer word suggestions.
+	//
+	// Default is `false`. Enable this explicitly for fields that accept prose; masking or revealing
+	// text does not change the setting.
 	autocorrect: proc(b: Editor_State_Builder, autocorrect: bool) -> Editor_State_Builder,
+	// Set true to clear the input by pressing Escape key.
+	//
+	// Not on Android, where Escape is also the back button.
 	clean_on_escape: proc(b: Editor_State_Builder) -> Editor_State_Builder,
+	// Sets whether the context menu that shows on right-click is enabled.
+	//
+	// The context menu is enabled by default. Disabling it turns off the right-click menu entirely,
+	// including a custom menu set on the element. A custom menu already replaces the built-in one, so
+	// keep this enabled to show only your own items.
 	context_menu: proc(b: Editor_State_Builder, enable: bool) -> Editor_State_Builder,
+	// Minimum number of lines the cursor is kept clear of the viewport's top/bottom edge before
+	// auto-scroll engages. Mirrors VSCode's `editor.cursorSurroundingLines` / Zed's
+	// `vertical_scroll_margin`. Orthogonal to `->scroll_beyond_last_line`, which sizes the empty
+	// region; this controls the cursor's resting distance from the edge.
+	//
+	// - `None` (default): `BOTTOM_MARGIN_ROWS` lines, falling back to one line on small viewports.
+	// - `Some(n)`: requests `n` lines, clamped to half the viewport.
+	//
+	// In a constrained viewport, edge clearance yields to the cursor's complete visual row so
+	// surrounding space cannot clip the text being edited.
 	cursor_surrounding_lines: proc(b: Editor_State_Builder, lines: Maybe(int)) -> Editor_State_Builder,
+	// Set the default value of the input field.
 	default_value: proc(b: Editor_State_Builder, value: string) -> Editor_State_Builder,
+	// Set the width of the strip that gutter decorations
+	// (`gk.editor_state_create_gutter_decorations_collection`) draw in. The default is 3 px.
 	gutter_decorations_width: proc(b: Editor_State_Builder, width: f32) -> Editor_State_Builder,
+	// Set the action a software keyboard shows on its enter key, like Search or Send. Pressing it
+	// still emits `PressEnter`.
+	//
+	// Default is `Done` for a single-line input (and a multi-line one that submits on enter), and
+	// `Enter` (a line break) for a multi-line input.
 	input_action: proc(b: Editor_State_Builder, action: Text_Input_Action) -> Editor_State_Builder,
+	// Set the language to highlight, e.g. `"rust"`.
+	//
+	// See `gk.input_state_set_highlighter` to change it after construction.
 	language: proc(b: Editor_State_Builder, language: string) -> Editor_State_Builder,
+	// Set the mask pattern for formatting the input text.
+	//
+	// The pattern can contain: - 9: Any digit or dot - A: Any letter - *: Any character - Other
+	// characters will be treated as literal mask characters
+	//
+	// Example: "(999)999-999" for phone numbers
 	mask_pattern: proc(b: Editor_State_Builder, pattern: Mask_Pattern_Into) -> Editor_State_Builder,
+	// Set placeholder
 	placeholder: proc(b: Editor_State_Builder, placeholder: string) -> Editor_State_Builder,
+	// Empty rows reserved below the last line of content ("scroll beyond last line"), code-editor mode
+	// only. Mirrors VSCode's `editor.scrollBeyondLastLine` / Zed's `scroll_beyond_last_line`.
+	//
+	// - `None` (default): half the viewport, floored at `BOTTOM_MARGIN_ROWS` line-heights.
+	// - `Some(0)`: no trailing space; the cursor sits flush with the last row at scroll-max.
+	// - `Some(n)`: exactly `n` rows.
 	scroll_beyond_last_line: proc(b: Editor_State_Builder, rows: Maybe(int)) -> Editor_State_Builder,
+	// Set whether text taller than the input stretches past its top and bottom and springs back when
+	// precise trackpad or Magic Mouse scrolling or its momentum runs into an end. Ordinary line-wheel
+	// scrolling does not bounce. The default follows `gk.base_enabled_by_default`: on on iOS, Android
+	// and macOS, off elsewhere. Under reduced motion the text stops at its ends without stretching.
 	scroll_bounce: proc(b: Editor_State_Builder, scroll_bounce: bool) -> Editor_State_Builder,
+	// Whether the built-in search panel and its shortcut are enabled. Off by default, on for the code
+	// editor.
+	//
+	// This only concerns the panel. An input that is not searchable still answers
+	// `gk.input_state_set_search_query` and the other search methods, and lets `Ctrl-F` / `Cmd-F`
+	// bubble up to its ancestors, so an application can put its own search UI on top of the same
+	// engine.
 	searchable: proc(b: Editor_State_Builder, searchable: bool) -> Editor_State_Builder,
 	build: proc(b: Editor_State_Builder) -> Editor_State,
 }
@@ -5844,6 +6655,15 @@ editor_state_builder_vt := Editor_State_Builder_VT {
 	},
 }
 
+// Create a source-code editor state.
+//
+// Default options: line numbers on, tab size 2 with soft tabs, indent guides on, multi-line, and
+// search enabled. Set the language for syntax highlighting with `->language`; without one the text
+// is shown unhighlighted.
+//
+// The editor aims at simple code editing or display, not at being a full-featured code editor. It
+// offers syntax highlighting, auto indent, line numbers, and handles large text up to about 50K
+// lines.
 editor_state :: proc(cx: ^Cx, loc := #caller_location) -> Editor_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -5872,6 +6692,7 @@ global_state_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Global_Stat
 	return {state = {h = rd_u64(&r)}}
 }
 
+// Returns whether any deferred popup currently owns an open interaction context.
 global_state_is_in_deferred_context :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5882,6 +6703,8 @@ global_state_is_in_deferred_context :: proc(cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// Whether the press being handled came from a finger: a touch went down recently enough that the
+// mouse events of a tap are still arriving. A double tap takes up to twice the tap interval.
 global_state_is_touch_press :: proc(cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5892,6 +6715,8 @@ global_state_is_touch_press :: proc(cx: ^Cx, loc := #caller_location) -> (v: boo
 	return
 }
 
+// Records that a finger went down. Called from the touch drag GPUI offers on every touch, before
+// it becomes a tap, a long press or a pan.
 global_state_note_touch :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5900,6 +6725,10 @@ global_state_note_touch :: proc(cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Suppresses window-level text selection for the current mouse down.
+//
+// Controls that own a press or drag interaction use this so the same pointer event does not also
+// start application text selection.
 global_state_suppress_text_selection :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5908,16 +6737,25 @@ global_state_suppress_text_selection :: proc(cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Application-wide state shared by Base behaviors.
+//
 // Global_State is a handle to gpui_kit::base::GlobalState, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named global_state_*.
 Global_State :: struct {
 	using state: State,
 }
 
+// The state of a `Grid_Layout`: the items' areas, the rules the layout settles under, and any
+// gesture in progress.
+//
+// The application owns the layout. Create the state with the grid's rules, then its areas, and
+// subscribe to `Change` to persist what the user arranges.
+//
 // Grid_Layout_State is a handle to gpui_kit::base::GridLayoutState, an entity the library keeps. Its procedures are named grid_layout_state_*.
 Grid_Layout_State :: struct {
 	using state: State,
 }
 
+// The item being dragged or resized, if a gesture is in progress.
 grid_layout_state_active_item :: proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5929,6 +6767,7 @@ grid_layout_state_active_item :: proc(s: Grid_Layout_State, cx: ^Cx, loc := #cal
 	return
 }
 
+// The area of the item `id`.
 grid_layout_state_area :: proc(s: Grid_Layout_State, cx: ^Cx, id: string, loc := #caller_location) -> (v: Maybe(Base_Grid_Area)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -5941,6 +6780,7 @@ grid_layout_state_area :: proc(s: Grid_Layout_State, cx: ^Cx, id: string, loc :=
 	return
 }
 
+// The committed layout, in the order the areas were given.
 grid_layout_state_areas :: proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: []Base_Grid_Area) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6007,6 +6847,7 @@ grid_layout_state_is_resizable :: proc(s: Grid_Layout_State, cx: ^Cx, loc := #ca
 	return
 }
 
+// The item keyboard commands act on.
 grid_layout_state_selected_item :: proc(s: Grid_Layout_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6018,6 +6859,9 @@ grid_layout_state_selected_item :: proc(s: Grid_Layout_State, cx: ^Cx, loc := #c
 	return
 }
 
+// Move the item `id` so its leading column is `col` and its top row `row`, pushing whatever it
+// lands on out of the way. Returns whether the layout changed; a refused or no-op move returns
+// `false`.
 grid_layout_state_move_item :: proc(s: Grid_Layout_State, cx: ^Cx, id: string, col: int, row: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6032,6 +6876,8 @@ grid_layout_state_move_item :: proc(s: Grid_Layout_State, cx: ^Cx, id: string, c
 	return
 }
 
+// Resize the item `id` to cover `col_span` columns and `row_span` rows, clamped to its limits.
+// Returns whether the layout changed.
 grid_layout_state_resize_item :: proc(s: Grid_Layout_State, cx: ^Cx, id: string, col_span: int, row_span: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6046,6 +6892,8 @@ grid_layout_state_resize_item :: proc(s: Grid_Layout_State, cx: ^Cx, id: string,
 	return
 }
 
+// Replace the layout, settling it under the grid's rules. Cancels any gesture in progress, and
+// does not emit `Change`.
 grid_layout_state_set_areas :: proc(s: Grid_Layout_State, cx: ^Cx, areas: []Grid_Area, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6114,6 +6962,7 @@ grid_layout_state_set_resizable :: proc(s: Grid_Layout_State, cx: ^Cx, resizable
 	state_set(cx, req[:], loc)
 }
 
+// Select the item keyboard commands act on.
 grid_layout_state_set_selected_item :: proc(s: Grid_Layout_State, cx: ^Cx, id: Maybe(string), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6150,11 +6999,20 @@ Grid_Layout_State_Builder :: struct {
 }
 
 Grid_Layout_State_Builder_VT :: struct {
+	// The number of equal columns the width is divided into. Defaults to 12.
 	cols: proc(b: Grid_Layout_State_Builder, cols: int) -> Grid_Layout_State_Builder,
+	// The direction items float toward when space opens up, or `None` to leave them wherever they are
+	// put. Defaults to `Some(Axis::Vertical)`.
 	compaction: proc(b: Grid_Layout_State_Builder, compaction: Maybe(Axis)) -> Grid_Layout_State_Builder,
+	// The areas the grid starts with, settled under the rules set so far: overlaps are pushed apart
+	// and, with compaction on, gaps close. Set the rules first.
 	default_areas: proc(b: Grid_Layout_State_Builder, areas: []Grid_Area) -> Grid_Layout_State_Builder,
+	// Whether items can be moved. Defaults to `true`.
 	draggable: proc(b: Grid_Layout_State_Builder, draggable: bool) -> Grid_Layout_State_Builder,
+	// Refuse a move or resize that would overlap another item, instead of pushing that item out of the
+	// way. Defaults to `false`.
 	prevent_collision: proc(b: Grid_Layout_State_Builder, prevent_collision: bool) -> Grid_Layout_State_Builder,
+	// Whether items can be resized. Defaults to `true`.
 	resizable: proc(b: Grid_Layout_State_Builder, resizable: bool) -> Grid_Layout_State_Builder,
 	build: proc(b: Grid_Layout_State_Builder) -> Grid_Layout_State,
 }
@@ -6216,6 +7074,7 @@ grid_layout_state_builder_vt := Grid_Layout_State_Builder_VT {
 	},
 }
 
+// An empty, 12-column grid that compacts vertically.
 grid_layout_state :: proc(cx: ^Cx, loc := #caller_location) -> Grid_Layout_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -6226,11 +7085,18 @@ grid_layout_state :: proc(cx: ^Cx, loc := #caller_location) -> Grid_Layout_State
 	return {vt = &grid_layout_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// An independently managed collection of `Gutter_Decoration` values.
+//
+// Each clone refers to the same collection. Dropping a handle does not clear it. Call
+// `gk.gutter_decoration_collection_clear` to empty it or `gk.gutter_decoration_collection_dispose`
+// to release it. Calls after disposal or after the editor is dropped do nothing.
+//
 // Gutter_Decoration_Collection is a handle to gpui_kit::base::input::GutterDecorationCollection, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named gutter_decoration_collection_*.
 Gutter_Decoration_Collection :: struct {
 	using state: State,
 }
 
+// Return tracked UTF-8 byte ranges in insertion order.
 gutter_decoration_collection_get_ranges :: proc(s: Gutter_Decoration_Collection, cx: ^Cx, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6242,6 +7108,7 @@ gutter_decoration_collection_get_ranges :: proc(s: Gutter_Decoration_Collection,
 	return
 }
 
+// Add decorations to this collection in paint order.
 gutter_decoration_collection_append :: proc(s: Gutter_Decoration_Collection, cx: ^Cx, decorations: []Gutter_Decoration, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6255,6 +7122,7 @@ gutter_decoration_collection_append :: proc(s: Gutter_Decoration_Collection, cx:
 	state_set(cx, req[:], loc)
 }
 
+// Empty this collection and keep its handles usable. The gutter keeps its strip.
 gutter_decoration_collection_clear :: proc(s: Gutter_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6264,6 +7132,8 @@ gutter_decoration_collection_clear :: proc(s: Gutter_Decoration_Collection, cx: 
 	state_set(cx, req[:], loc)
 }
 
+// Release this collection. Its cloned handles stop working. The gutter drops its strip after the
+// last gutter collection is released.
 gutter_decoration_collection_dispose :: proc(s: Gutter_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6273,6 +7143,7 @@ gutter_decoration_collection_dispose :: proc(s: Gutter_Decoration_Collection, cx
 	state_set(cx, req[:], loc)
 }
 
+// Replace this collection's decorations and clip ranges to UTF-8 boundaries.
 gutter_decoration_collection_set :: proc(s: Gutter_Decoration_Collection, cx: ^Cx, decorations: []Gutter_Decoration, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6306,6 +7177,7 @@ History :: struct {
 	using state: State,
 }
 
+// Returns whether moving back would keep a root entry current.
 history_can_back :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6317,6 +7189,7 @@ history_can_back :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: bo
 	return
 }
 
+// Returns whether a forward entry is available.
 history_can_forward :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6328,6 +7201,7 @@ history_can_forward :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v:
 	return
 }
 
+// Returns the current entry.
 history_current :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6339,6 +7213,7 @@ history_current :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: May
 	return
 }
 
+// Iterates from the root entry to the current entry.
 history_entries :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6350,6 +7225,7 @@ history_entries :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: []T
 	return
 }
 
+// Iterates from the nearest forward entry to the furthest.
 history_forward_entries :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6361,6 +7237,7 @@ history_forward_entries :: proc(s: History, cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// Moves back one entry and returns the new current entry.
 history_back :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6372,6 +7249,7 @@ history_back :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: Maybe(
 	return
 }
 
+// Moves forward one entry and returns the restored entry.
 history_forward :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6383,6 +7261,7 @@ history_forward :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: May
 	return
 }
 
+// Removes and returns the current entry without changing the forward branch.
 history_remove_current :: proc(s: History, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6394,6 +7273,7 @@ history_remove_current :: proc(s: History, cx: ^Cx, loc := #caller_location) -> 
 	return
 }
 
+// Clears current, back, and forward entries.
 history_clear :: proc(s: History, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6403,6 +7283,7 @@ history_clear :: proc(s: History, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Pushes an entry and drops the forward branch.
 history_push :: proc(s: History, cx: ^Cx, entry: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6413,6 +7294,7 @@ history_push :: proc(s: History, cx: ^Cx, entry: string, loc := #caller_location
 	state_set(cx, req[:], loc)
 }
 
+// Replaces the current entry, or pushes when the trail is empty.
 history_replace_current :: proc(s: History, cx: ^Cx, entry: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6423,6 +7305,7 @@ history_replace_current :: proc(s: History, cx: ^Cx, entry: string, loc := #call
 	state_set(cx, req[:], loc)
 }
 
+// Keeps only entries accepted by `keep` on both sides of the current position.
 history_retain :: proc(s: History, cx: ^Cx, keep: []string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6445,6 +7328,9 @@ History_Builder :: struct {
 }
 
 History_Builder_VT :: struct {
+	// Sets the maximum number of root-to-current entries to keep, defaults to 1000.
+	//
+	// Lowering the limit immediately removes the oldest entries.
 	max_entries: proc(b: History_Builder, max_entries: int) -> History_Builder,
 	build: proc(b: History_Builder) -> History,
 }
@@ -6473,11 +7359,14 @@ history :: proc(cx: ^Cx, loc := #caller_location) -> History_Builder {
 	return {vt = &history_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// A scroll step that a horizontal `Scrollable_Mask` used to move its content.
+//
 // Horizontal_Scroll_Claim is a handle to gpui_kit::base::HorizontalScrollClaim, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named horizontal_scroll_claim_*.
 Horizontal_Scroll_Claim :: struct {
 	using state: State,
 }
 
+// When the step was handled.
 horizontal_scroll_claim_at :: proc(s: Horizontal_Scroll_Claim, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6489,6 +7378,7 @@ horizontal_scroll_claim_at :: proc(s: Horizontal_Scroll_Claim, cx: ^Cx, loc := #
 	return
 }
 
+// How far the content moved: positive moves it right, negative moves it left.
 horizontal_scroll_claim_delta_x :: proc(s: Horizontal_Scroll_Claim, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6500,11 +7390,17 @@ horizontal_scroll_claim_delta_x :: proc(s: Horizontal_Scroll_Claim, cx: ^Cx, loc
 	return
 }
 
+// The four component sliders owned by a `Color_Picker_State`.
+//
+// Applications render these with their own slider presentation; the picker keeps them in sync with
+// the committed color.
+//
 // Hsla_Sliders is a handle to gpui_kit::base::HslaSliders, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named hsla_sliders_*.
 Hsla_Sliders :: struct {
 	using state: State,
 }
 
+// The alpha slider, in `0..=1`.
 hsla_sliders_alpha :: proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) -> (v: Slider_State) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6516,6 +7412,7 @@ hsla_sliders_alpha :: proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// The hue slider, in `0..=1`.
 hsla_sliders_hue :: proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) -> (v: Slider_State) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6527,6 +7424,7 @@ hsla_sliders_hue :: proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) -> (
 	return
 }
 
+// The lightness slider, in `0..=1`.
 hsla_sliders_lightness :: proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) -> (v: Slider_State) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6538,6 +7436,7 @@ hsla_sliders_lightness :: proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location
 	return
 }
 
+// The saturation slider, in `0..=1`.
 hsla_sliders_saturation :: proc(s: Hsla_Sliders, cx: ^Cx, loc := #caller_location) -> (v: Slider_State) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6580,6 +7479,7 @@ Inline_Node_Read :: struct {
 	using state: State,
 }
 
+// The custom node, when this run is one.
 inline_node_read_as_custom :: proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Markdown_Node_Read)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6591,6 +7491,7 @@ inline_node_read_as_custom :: proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_
 	return
 }
 
+// The image, when this run is an image.
 inline_node_read_as_image :: proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Image_Node)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6602,6 +7503,7 @@ inline_node_read_as_image :: proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// The marks, each a byte range of the text and its style.
 inline_node_read_mark_runs :: proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_Range_Base_Text_Mark) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6613,6 +7515,7 @@ inline_node_read_mark_runs :: proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_
 	return
 }
 
+// The text of the run (the fallback text of a custom node, empty for an image).
 inline_node_read_text :: proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6624,11 +7527,16 @@ inline_node_read_text :: proc(s: Inline_Node_Read, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Inherited typography for a format-independent inline renderer.
+//
+// TextView builds this while laying a line out; renderers only read it.
+//
 // Inline_Render_Context is a handle to gpui_kit::base::InlineRenderContext, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named inline_render_context_*.
 Inline_Render_Context :: struct {
 	using state: State,
 }
 
+// Font size of the surrounding text, in logical pixels.
 inline_render_context_font_size :: proc(s: Inline_Render_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6640,6 +7548,7 @@ inline_render_context_font_size :: proc(s: Inline_Render_Context, cx: ^Cx, loc :
 	return
 }
 
+// Line height of the surrounding text, in logical pixels.
 inline_render_context_line_height :: proc(s: Inline_Render_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6651,6 +7560,7 @@ inline_render_context_line_height :: proc(s: Inline_Render_Context, cx: ^Cx, loc
 	return
 }
 
+// Root font size, for resolving rem-relative lengths.
 inline_render_context_rem_size :: proc(s: Inline_Render_Context, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6662,6 +7572,7 @@ inline_render_context_rem_size :: proc(s: Inline_Render_Context, cx: ^Cx, loc :=
 	return
 }
 
+// Effective text style at the object's position, marks already applied.
 inline_render_context_text_style :: proc(s: Inline_Render_Context, cx: ^Cx, loc := #caller_location) -> (v: Text_Style) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6689,6 +7600,7 @@ inline_token_click_event_bounds :: proc(s: Inline_Token_Click_Event, cx: ^Cx, lo
 	return
 }
 
+// The click that opened the token; keyboard activation reports a keyboard click.
 inline_token_click_event_click :: proc(s: Inline_Token_Click_Event, cx: ^Cx, loc := #caller_location) -> (v: Click_Event) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6722,6 +7634,8 @@ inline_token_click_event_token :: proc(s: Inline_Token_Click_Event, cx: ^Cx, loc
 	return
 }
 
+// Read-only context for a single inline renderer. Width is the full available row.
+//
 // Inline_Token_Context is a handle to gpui_kit::base::input::InlineTokenContext, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named inline_token_context_*.
 Inline_Token_Context :: struct {
 	using state: State,
@@ -6804,6 +7718,9 @@ inline_token_context_token :: proc(s: Inline_Token_Context, cx: ^Cx, loc := #cal
 	return
 }
 
+// Hover snapshot for one atomic inline token. Hover never selects or edits; it reports pointer
+// presence so the application can show a tooltip or run custom logic.
+//
 // Inline_Token_Hover_Event is a handle to gpui_kit::base::input::InlineTokenHoverEvent, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named inline_token_hover_event_*.
 Inline_Token_Hover_Event :: struct {
 	using state: State,
@@ -6820,6 +7737,7 @@ inline_token_hover_event_bounds :: proc(s: Inline_Token_Hover_Event, cx: ^Cx, lo
 	return
 }
 
+// Whether the pointer entered (`true`) or left (`false`) the token.
 inline_token_hover_event_is_hovered :: proc(s: Inline_Token_Hover_Event, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6842,6 +7760,9 @@ inline_token_hover_event_range :: proc(s: Inline_Token_Hover_Event, cx: ^Cx, loc
 	return
 }
 
+// The token range in UTF-16 code units, captured when the event was built. Exits delivered after
+// the text changed report these entry coordinates, since the byte range can no longer be converted
+// against the current text.
 inline_token_hover_event_range_utf16 :: proc(s: Inline_Token_Hover_Event, cx: ^Cx, loc := #caller_location) -> (v: Tuple_Int_Int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -6902,6 +7823,8 @@ inline_token_read_text :: proc(s: Inline_Token_Read, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// A token and its current half-open UTF-8 byte range.
+//
 // Inline_Token_Span is a handle to gpui_kit::base::input::InlineTokenSpan, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named inline_token_span_*.
 Inline_Token_Span :: struct {
 	using state: State,
@@ -6929,6 +7852,10 @@ inline_token_span_token :: proc(s: Inline_Token_Span, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// An owned, coherent text-and-token snapshot: what `content()` returns and what `set_value`
+// accepts. Plain text converts into content without tokens, and every token is validated against
+// the text as it is attached, so a content value is always consistent.
+//
 // Input_Content is a handle to gpui_kit::base::input::InputContent, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named input_content_*.
 Input_Content :: struct {
 	using state: State,
@@ -6956,6 +7883,8 @@ input_content_tokens :: proc(s: Input_Content, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// Attach a token to a half-open UTF-8 byte range of the text. The range must be nonempty, sit on
+// grapheme boundaries, contain exactly the token's text and not overlap another token.
 input_content_with_token :: proc(s: Input_Content, cx: ^Cx, range: Range, token: Inline_Token, loc := #caller_location) -> (v: Fallible(Input_Content)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7029,6 +7958,10 @@ input_context_menu_capabilities_read_is_code_editor :: proc(s: Input_Context_Men
 	return
 }
 
+// Returns true if the user is allowed to copy the text out.
+//
+// A masked input keeps its value out of the clipboard, so Copy and Cut are both unavailable while
+// the value is hidden.
 input_context_menu_capabilities_read_is_copyable :: proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7051,6 +7984,10 @@ input_context_menu_capabilities_read_is_disabled :: proc(s: Input_Context_Menu_C
 	return
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// The items that write to the input (Cut, Paste, Code Actions) belong to this, the reading ones
+// (Copy, Go to Definition) do not.
 input_context_menu_capabilities_read_is_editable :: proc(s: Input_Context_Menu_Capabilities_Read, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7084,6 +8021,11 @@ input_context_menu_capabilities_read_is_readonly :: proc(s: Input_Context_Menu_C
 	return
 }
 
+// Read-only styling data exposed to presentation facades.
+//
+// The fields are private and read through the methods below, so that a new one can be added
+// without breaking the facades.
+//
 // Input_Presentation is a handle to gpui_kit::base::input::InputPresentation, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named input_presentation_*.
 Input_Presentation :: struct {
 	using state: State,
@@ -7122,6 +8064,9 @@ input_presentation_is_disabled :: proc(s: Input_Presentation, cx: ^Cx, loc := #c
 	return
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// See also: `gk.input_state_is_editable`.
 input_presentation_is_editable :: proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7177,6 +8122,7 @@ input_presentation_is_readonly :: proc(s: Input_Presentation, cx: ^Cx, loc := #c
 	return
 }
 
+// The placeholder derived from the mask pattern, e.g.: `(___) ___-____`.
 input_presentation_mask_placeholder :: proc(s: Input_Presentation, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7215,6 +8161,7 @@ Input_State :: struct {
 	using state: State,
 }
 
+// The text with its tokens, as `set_value` accepts it.
 input_state_content :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Content) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7237,6 +8184,9 @@ input_state_context_menu_capabilities :: proc(s: Input_State, cx: ^Cx, loc := #c
 	return
 }
 
+// Get byte offset of the cursor.
+//
+// The offset is the UTF-8 offset.
 input_state_cursor :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7248,6 +8198,7 @@ input_state_cursor :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> 
 	return
 }
 
+// Return the (0-based) `Position` of the cursor.
 input_state_cursor_position :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Lsp_Position) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7491,6 +8442,7 @@ input_state_input_bounds :: proc(s: Input_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Whether this input is a source-code editor.
 input_state_is_code_editor :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7502,6 +8454,9 @@ input_state_is_code_editor :: proc(s: Input_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Whether the user is allowed to copy the selection out.
+//
+// A masked input keeps its value out of the clipboard.
 input_state_is_copyable :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7513,6 +8468,10 @@ input_state_is_copyable :: proc(s: Input_State, cx: ^Cx, loc := #caller_location
 	return
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// This is false when the input is `disabled` or `readonly`, the programmatic APIs (e.g.:
+// `gk.input_state_set_value`, `gk.input_state_insert`) are not limited by this.
 input_state_is_editable :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7535,6 +8494,9 @@ input_state_is_multi_line :: proc(s: Input_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// Returns true if the search panel can replace the matches.
+//
+// This is false when the input is not `replaceable`, or when it is `disabled` or `readonly`.
 input_state_is_replaceable :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7546,6 +8508,10 @@ input_state_is_replaceable :: proc(s: Input_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Whether the active selection's caret is at the start of its range.
+//
+// Collapsed selections are not reversed. Use this with `gk.input_state_selected_range` and
+// `gk.input_state_set_selected_range_with_direction` to restore a selection.
 input_state_is_selection_reversed :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7557,6 +8523,7 @@ input_state_is_selection_reversed :: proc(s: Input_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Whether this input is a single-line text field. See `gk.input_state_is_multi_line`.
 input_state_is_single_line :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7568,6 +8535,7 @@ input_state_is_single_line :: proc(s: Input_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Laid-out line height; `None` before first layout.
 input_state_line_height :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7590,6 +8558,9 @@ input_state_presentation :: proc(s: Input_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Return the rendered bounds for a UTF-8 byte range in the current input contents.
+//
+// Returns `None` when the requested range is not currently laid out or visible.
 input_state_range_to_bounds :: proc(s: Input_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Maybe(Bounds)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7602,6 +8573,7 @@ input_state_range_to_bounds :: proc(s: Input_State, cx: ^Cx, range: Range, loc :
 	return
 }
 
+// Current scroll offset of the editor viewport.
 input_state_scroll_offset :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7613,6 +8585,12 @@ input_state_scroll_offset :: proc(s: Input_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// A counter that advances every time `gk.input_state_open_search` runs, including while the
+// session is already open.
+//
+// Re-invoking search leaves the session itself identical, so a presentation layer that decides
+// what to rebuild by comparing session state cannot see the second request. Fold this into that
+// comparison to notice it.
 input_state_search_activation_revision :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7635,6 +8613,12 @@ input_state_search_session :: proc(s: Input_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Returns the active selection as a byte range into the text.
+//
+// With multiple cursors, this reads only the active selection.
+//
+// The range is empty (`start == end`) when no text is selected; in that case the offset equals
+// `cursor()`. Byte offsets are measured in the underlying rope's byte units.
 input_state_selected_range :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7646,6 +8630,7 @@ input_state_selected_range :: proc(s: Input_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// See `gk.input_state_selected_value` when an owned string is wanted.
 input_state_selected_text :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7657,6 +8642,10 @@ input_state_selected_text :: proc(s: Input_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// Return the portion of the value within the input field that is selected by the user, as an owned
+// string.
+//
+// The string is materialized on each call.
 input_state_selected_value :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7668,6 +8657,10 @@ input_state_selected_value :: proc(s: Input_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Return the text `Rope` of the input field.
+//
+// Borrowed from the state, so reading even a large document copies nothing. See
+// `gk.input_state_value` when an owned string is wanted.
 input_state_text :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7690,6 +8683,8 @@ input_state_text_bounds :: proc(s: Input_State, cx: ^Cx, loc := #caller_location
 	return
 }
 
+// The text assistance a platform IME (a software keyboard) should give this input, from
+// `->input_action`, `->autocorrect` and `->autocapitalize` or the defaults they describe.
 input_state_text_input_configuration :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Text_Input_Configuration) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7712,6 +8707,10 @@ input_state_tokens :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> 
 	return
 }
 
+// The live touch selection, laid out for the handles and the edit menu.
+//
+// `None` when the last touch selection has since changed into something else, or when its ends are
+// not laid out (scrolled out of view).
 input_state_touch_selection :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Touch_Selection_Snapshot)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7723,6 +8722,7 @@ input_state_touch_selection :: proc(s: Input_State, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Return the value without mask.
 input_state_unmask_value :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7734,6 +8734,9 @@ input_state_unmask_value :: proc(s: Input_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Return the value of the input field as an owned string.
+//
+// The string is materialized on each call.
 input_state_value :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7745,6 +8748,7 @@ input_state_value :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (
 	return
 }
 
+// Visible row range in the last laid-out viewport, `None` before first layout.
 input_state_visible_row_range :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7756,6 +8760,9 @@ input_state_visible_row_range :: proc(s: Input_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Return the value of the input field as an owned string.
+//
+// The string is materialized on each call.
 input_state_try_value :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String, ok: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7778,6 +8785,7 @@ input_state_diagnostics_mut :: proc(s: Input_State, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// Whether the input or its associated selection popup has focus.
 input_state_has_selection_focus :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7811,6 +8819,7 @@ input_state_previous_search_match :: proc(s: Input_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Replace every match. Returns how many were replaced.
 input_state_replace_all_search_matches :: proc(s: Input_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7823,6 +8832,8 @@ input_state_replace_all_search_matches :: proc(s: Input_State, cx: ^Cx, replacem
 	return
 }
 
+// Replace the current match and move on to the next one. Returns whether there was a match to
+// replace.
 input_state_replace_current_search_match :: proc(s: Input_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7835,6 +8846,7 @@ input_state_replace_current_search_match :: proc(s: Input_State, cx: ^Cx, replac
 	return
 }
 
+// Replace a UTF-8 byte range, expanding overlaps to whole tokens.
 input_state_replace_range_with_token :: proc(s: Input_State, cx: ^Cx, range: Range, token: Inline_Token, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7848,6 +8860,7 @@ input_state_replace_range_with_token :: proc(s: Input_State, cx: ^Cx, range: Ran
 	return
 }
 
+// Replace the selection with an atomic token; no delimiter is added.
 input_state_replace_with_token :: proc(s: Input_State, cx: ^Cx, token: Inline_Token, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7860,6 +8873,13 @@ input_state_replace_with_token :: proc(s: Input_State, cx: ^Cx, token: Inline_To
 	return
 }
 
+// Add `range` as an additional selection, keeping the existing ones — the programmatic equivalent
+// of Alt-clicking another cursor into the text.
+//
+// The range is clipped to the text and expanded to character boundaries, like
+// `gk.input_state_set_selected_range`. A range already covered by a selection adds nothing.
+// Overlapping selections are merged. On a single-line input there is no second cursor to add, so
+// the call replaces the selection instead. The view scrolls to the new selection.
 input_state_add_selection :: proc(s: Input_State, cx: ^Cx, range: Range, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7883,6 +8903,10 @@ input_state_apply_highlighter_fold_candidates :: proc(s: Input_State, cx: ^Cx, c
 	state_set(cx, req[:], loc)
 }
 
+// Starts dragging one end of the touch selection from `finger`.
+//
+// The other end stays where it is. The menu closes for the duration of the drag and reopens on
+// `gk.input_state_end_edge_drag`.
 input_state_begin_edge_drag :: proc(s: Input_State, cx: ^Cx, edge: Selection_Edge, finger: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7903,6 +8927,10 @@ input_state_clean :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Closes the edit menu and keeps the selection with its handles.
+//
+// The menu's own actions end here: Copy has done its work, Select All reopens the menu over the
+// new range through `gk.input_state_select_all`.
 input_state_close_edit_menu :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7912,6 +8940,8 @@ input_state_close_edit_menu :: proc(s: Input_State, cx: ^Cx, loc := #caller_loca
 	state_set(cx, req[:], loc)
 }
 
+// End the search: hide the built-in panel and the match highlights. The query is kept so the next
+// `gk.input_state_open_search` resumes it.
 input_state_close_search :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7921,6 +8951,7 @@ input_state_close_search :: proc(s: Input_State, cx: ^Cx, loc := #caller_locatio
 	state_set(cx, req[:], loc)
 }
 
+// Ends the handle drag and reopens the edit menu.
 input_state_end_edge_drag :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7930,6 +8961,7 @@ input_state_end_edge_drag :: proc(s: Input_State, cx: ^Cx, loc := #caller_locati
 	state_set(cx, req[:], loc)
 }
 
+// Install a default adapter without replacing an application-provided one.
 input_state_ensure_highlighter_factory :: proc(s: Input_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7940,6 +8972,7 @@ input_state_ensure_highlighter_factory :: proc(s: Input_State, cx: ^Cx, factory:
 	state_set(cx, req[:], loc)
 }
 
+// Apply the default numeric mask unless the caller explicitly selected a mask.
 input_state_ensure_number_mask :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7949,6 +8982,7 @@ input_state_ensure_number_mask :: proc(s: Input_State, cx: ^Cx, loc := #caller_l
 	state_set(cx, req[:], loc)
 }
 
+// Focus the input field.
 input_state_focus :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7958,6 +8992,9 @@ input_state_focus :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Insert text at the current cursor position.
+//
+// And the cursor will be moved to the end of inserted text.
 input_state_insert :: proc(s: Input_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7978,6 +9015,13 @@ input_state_on_context_menu :: proc(s: Input_State, cx: ^Cx, handler: Handler, l
 	state_set(cx, req[:], loc)
 }
 
+// Open the search session, or re-invoke it if it is already open.
+//
+// This is not idempotent: every call advances `gk.input_state_search_activation_revision`, and the
+// presentation layer answers that by re-focusing the search field and selecting its contents, the
+// same as pressing the shortcut a second time. Call it from an action or another user gesture,
+// never from a render pass or an observer that runs every frame — that would re-select the field
+// under the user on every frame and make it impossible to type.
 input_state_open_search :: proc(s: Input_State, cx: ^Cx, replace_mode: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -7988,6 +9032,14 @@ input_state_open_search :: proc(s: Input_State, cx: ^Cx, replace_mode: bool, loc
 	state_set(cx, req[:], loc)
 }
 
+// Wrap the text for `font`, `font_size` and `width` before the first layout, so that
+// `gk.display_map_wrap_row_count` is known on the first frame.
+//
+// Call it after setting the value and the wrapping indent. `width` is the width of the input's
+// text area: its width less its padding, and less the line-number gutter for an editor with line
+// numbers. It wraps as layout does, a little short of that width and with the state's wrapping
+// indent. Once the input has been laid out this does nothing, and layout keeps the wrap up to
+// date. The font and font size must match the input's actual text style.
 input_state_prewrap :: proc(s: Input_State, cx: ^Cx, font: Font, font_size: f32, width: f32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8000,6 +9052,11 @@ input_state_prewrap :: proc(s: Input_State, cx: ^Cx, font: Font, font_size: f32,
 	state_set(cx, req[:], loc)
 }
 
+// Refresh the input, so the next render re-runs syntax highlighting and the LSP providers, not
+// just a redraw.
+//
+// Assigning the `lsp` providers (or other render-affecting state) at runtime does not take effect
+// until the text next changes. Call this afterwards to force the refresh on the next render.
 input_state_refresh :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8009,6 +9066,9 @@ input_state_refresh :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Replace text at the current cursor position.
+//
+// And the cursor will be moved to the end of replaced text.
 input_state_replace :: proc(s: Input_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8019,6 +9079,14 @@ input_state_replace :: proc(s: Input_State, cx: ^Cx, text: string, loc := #calle
 	state_set(cx, req[:], loc)
 }
 
+// Replace the entire text content while preserving undo history.
+//
+// Unlike `gk.input_state_set_value`, this method records the replacement in the undo stack,
+// allowing the user to undo/redo the change. The selection is placed at the end of the new text
+// for single-line inputs, or cleared (0..0) for multi-line inputs.
+//
+// Use this when programmatically replacing the full text but the user should still be able to undo
+// the operation — e.g. formatting.
 input_state_replace_all :: proc(s: Input_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8038,6 +9106,8 @@ input_state_select_all :: proc(s: Input_State, cx: ^Cx, loc := #caller_location)
 	state_set(cx, req[:], loc)
 }
 
+// Selects everything and, when a touch selection is live, keeps the handles and the edit menu over
+// the new range.
 input_state_select_all_from_edit_menu :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8047,6 +9117,7 @@ input_state_select_all_from_edit_menu :: proc(s: Input_State, cx: ^Cx, loc := #c
 	state_set(cx, req[:], loc)
 }
 
+// Project semantics onto the editor, never onto a second focus owner.
 input_state_set_accessibility :: proc(s: Input_State, cx: ^Cx, accessibility: Input_Accessibility, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8077,6 +9148,9 @@ input_state_set_context_menu_enabled :: proc(s: Input_State, cx: ^Cx, enabled: b
 	state_set(cx, req[:], loc)
 }
 
+// Set (0-based) `Position` of the cursor.
+//
+// This will move the cursor to the specified line and column, and update the selection range.
 input_state_set_cursor_position :: proc(s: Input_State, cx: ^Cx, position: Lsp_Position, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8087,6 +9161,7 @@ input_state_set_cursor_position :: proc(s: Input_State, cx: ^Cx, position: Lsp_P
 	state_set(cx, req[:], loc)
 }
 
+// Update `->cursor_surrounding_lines` after construction.
 input_state_set_cursor_surrounding_lines :: proc(s: Input_State, cx: ^Cx, lines: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8122,6 +9197,7 @@ input_state_set_editor_style :: proc(s: Input_State, cx: ^Cx, style: Input_Edito
 	state_set(cx, req[:], loc)
 }
 
+// Fills each folded line across the editor, as VS Code's `editor.foldBackground`.
 input_state_set_fold_background :: proc(s: Input_State, cx: ^Cx, color: Maybe(Color), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8137,6 +9213,8 @@ input_state_set_fold_background :: proc(s: Input_State, cx: ^Cx, color: Maybe(Co
 	state_set(cx, req[:], loc)
 }
 
+// Draws a placeholder right after the text of each folded line, given its buffer row. Clicking it
+// unfolds the line.
 input_state_set_fold_placeholder_renderer :: proc(s: Input_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8152,6 +9230,7 @@ input_state_set_fold_placeholder_renderer :: proc(s: Input_State, cx: ^Cx, rende
 	state_set(cx, req[:], loc)
 }
 
+// Set highlighter language for for `CodeEditor` mode.
 input_state_set_highlighter :: proc(s: Input_State, cx: ^Cx, new_language: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8162,6 +9241,7 @@ input_state_set_highlighter :: proc(s: Input_State, cx: ^Cx, new_language: strin
 	state_set(cx, req[:], loc)
 }
 
+// Install the parser/highlighter adapter used by code-editor mode.
 input_state_set_highlighter_factory :: proc(s: Input_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8172,6 +9252,7 @@ input_state_set_highlighter_factory :: proc(s: Input_State, cx: ^Cx, factory: Ro
 	state_set(cx, req[:], loc)
 }
 
+// Set true to show spinner at the input right.
 input_state_set_loading :: proc(s: Input_State, cx: ^Cx, loading: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8192,6 +9273,7 @@ input_state_set_mask_pattern :: proc(s: Input_State, cx: ^Cx, pattern: Mask_Patt
 	state_set(cx, req[:], loc)
 }
 
+// Set the password masked state of the input field.
 input_state_set_masked :: proc(s: Input_State, cx: ^Cx, masked: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8202,6 +9284,7 @@ input_state_set_masked :: proc(s: Input_State, cx: ^Cx, masked: bool, loc := #ca
 	state_set(cx, req[:], loc)
 }
 
+// Update the maximum value after construction. See `->max`.
 input_state_set_max :: proc(s: Input_State, cx: ^Cx, max: Maybe(f64), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8217,6 +9300,7 @@ input_state_set_max :: proc(s: Input_State, cx: ^Cx, max: Maybe(f64), loc := #ca
 	state_set(cx, req[:], loc)
 }
 
+// Update the minimum value after construction. See `->min`.
 input_state_set_min :: proc(s: Input_State, cx: ^Cx, min: Maybe(f64), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8232,6 +9316,7 @@ input_state_set_min :: proc(s: Input_State, cx: ^Cx, min: Maybe(f64), loc := #ca
 	state_set(cx, req[:], loc)
 }
 
+// Set placeholder
 input_state_set_placeholder :: proc(s: Input_State, cx: ^Cx, placeholder: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8252,6 +9337,7 @@ input_state_set_readonly :: proc(s: Input_State, cx: ^Cx, readonly: bool, loc :=
 	state_set(cx, req[:], loc)
 }
 
+// Update `->scroll_beyond_last_line` after construction.
 input_state_set_scroll_beyond_last_line :: proc(s: Input_State, cx: ^Cx, rows: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8267,6 +9353,9 @@ input_state_set_scroll_beyond_last_line :: proc(s: Input_State, cx: ^Cx, rows: M
 	state_set(cx, req[:], loc)
 }
 
+// Set scroll offset of the editor viewport.
+//
+// The offset will be clamped to the valid range, and applied after the next layout.
 input_state_set_scroll_offset :: proc(s: Input_State, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8277,6 +9366,10 @@ input_state_set_scroll_offset :: proc(s: Input_State, cx: ^Cx, offset: Gpui_Poin
 	state_set(cx, req[:], loc)
 }
 
+// Supply the element painted in place of the editor's scrollbar, or `None` to keep Base's. The
+// renderer is called where the editor paints its scrollbar, with that frame's
+// `EditorScrollbarContext`. Like `gk.input_state_set_editor_style`, this does not notify, so it
+// can be called while rendering.
 input_state_set_scrollbar_renderer :: proc(s: Input_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8292,6 +9385,15 @@ input_state_set_scrollbar_renderer :: proc(s: Input_State, cx: ^Cx, renderer: Ma
 	state_set(cx, req[:], loc)
 }
 
+// Set the search query and highlight its matches.
+//
+// This is the entry point for a custom search UI: it needs neither `searchable` nor the built-in
+// panel. Navigate the matches with `gk.input_state_next_search_match` and
+// `gk.input_state_previous_search_match`, read the count and the current index from
+// `gk.input_state_search_session`, and end the search with `gk.input_state_close_search`.
+//
+// A changed query or case mode starts at the current viewport. Setting the same query and case
+// mode again retains the current occurrence.
 input_state_set_search_query :: proc(s: Input_State, cx: ^Cx, query: string, case_insensitive: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8303,6 +9405,10 @@ input_state_set_search_query :: proc(s: Input_State, cx: ^Cx, query: string, cas
 	state_set(cx, req[:], loc)
 }
 
+// Set the selected range using UTF-8 byte offsets, removing additional cursors.
+//
+// Non-empty ranges expand to character boundaries. Empty ranges remain empty and are clipped to
+// the preceding character boundary.
 input_state_set_selected_range :: proc(s: Input_State, cx: ^Cx, range: Range, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8313,6 +9419,11 @@ input_state_set_selected_range :: proc(s: Input_State, cx: ^Cx, range: Range, lo
 	state_set(cx, req[:], loc)
 }
 
+// Set the selected UTF-8 byte range and the active caret direction.
+//
+// With `reversed`, the caret is at the start and the anchor is at the end. Empty ranges collapse
+// to a caret regardless of direction. Range clipping, token boundaries and removal of additional
+// cursors follow `gk.input_state_set_selected_range`.
 input_state_set_selected_range_with_direction :: proc(s: Input_State, cx: ^Cx, range: Range, reversed: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8324,6 +9435,10 @@ input_state_set_selected_range_with_direction :: proc(s: Input_State, cx: ^Cx, r
 	state_set(cx, req[:], loc)
 }
 
+// Keeps the selection highlighted while this popup or one of its children has focus.
+//
+// This does not transfer keyboard focus or keep the caret visible. The association holds only a
+// weak focus handle. Pass `None` to clear it.
 input_state_set_selection_focus :: proc(s: Input_State, cx: ^Cx, focus: Maybe(Focus_Handle), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8339,6 +9454,7 @@ input_state_set_selection_focus :: proc(s: Input_State, cx: ^Cx, focus: Maybe(Fo
 	state_set(cx, req[:], loc)
 }
 
+// Update whether to show whitespace characters.
 input_state_set_show_whitespaces :: proc(s: Input_State, cx: ^Cx, show: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8349,6 +9465,10 @@ input_state_set_show_whitespaces :: proc(s: Input_State, cx: ^Cx, show: bool, lo
 	state_set(cx, req[:], loc)
 }
 
+// Update the step value after construction, `None` to fall back to emitting `Step` (if `min`,
+// `max` are unset).
+//
+// See `->step` and `->step_by`.
 input_state_set_step :: proc(s: Input_State, cx: ^Cx, step: Maybe(Number_Step), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8394,6 +9514,12 @@ input_state_set_validator :: proc(s: Input_State, cx: ^Cx, validate: Handler, lo
 	state_set(cx, req[:], loc)
 }
 
+// Set the value of the input field: plain text, or `InputContent` to restore text together with
+// its inline tokens. Editing history is cleared and no `Change` is emitted.
+//
+// For single-line inputs the caret is placed at the end of the text while the view is scrolled
+// back to the start, so a long value shows its beginning instead of its tail (matching HTML
+// `<input>`). Multi-line inputs reset the selection to `0..0`.
 input_state_set_value :: proc(s: Input_State, cx: ^Cx, value: Input_Content_Into, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8404,6 +9530,10 @@ input_state_set_value :: proc(s: Input_State, cx: ^Cx, value: Input_Content_Into
 	state_set(cx, req[:], loc)
 }
 
+// Flip the password mask.
+//
+// Setting the mask is a single-line method, but flipping it stays here: the reveal button is
+// rendered from the generic path, and it can only be switched on through `InputState` anyway.
 input_state_toggle_masked :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8413,6 +9543,7 @@ input_state_toggle_masked :: proc(s: Input_State, cx: ^Cx, loc := #caller_locati
 	state_set(cx, req[:], loc)
 }
 
+// Unselects the currently selected text.
 input_state_unselect :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8422,6 +9553,10 @@ input_state_unselect :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Moves the dragged end to the text under `finger`.
+//
+// Past the top or bottom of a multi-line input the content scrolls under the finger, so the end
+// can reach text that was out of view.
 input_state_update_edge_drag :: proc(s: Input_State, cx: ^Cx, finger: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8465,21 +9600,87 @@ Input_State_Builder :: struct {
 }
 
 Input_State_Builder_VT :: struct {
+	// Set how a software keyboard capitalizes the text.
+	//
+	// Default is `None`. Enable capitalization explicitly for fields where it is appropriate,
+	// independently of autocorrection.
 	autocapitalize: proc(b: Input_State_Builder, autocapitalize: Autocapitalize) -> Input_State_Builder,
+	// Set whether the platform may autocorrect the text and offer word suggestions.
+	//
+	// Default is `false`. Enable this explicitly for fields that accept prose; masking or revealing
+	// text does not change the setting.
 	autocorrect: proc(b: Input_State_Builder, autocorrect: bool) -> Input_State_Builder,
+	// Set true to clear the input by pressing Escape key.
+	//
+	// Not on Android, where Escape is also the back button.
 	clean_on_escape: proc(b: Input_State_Builder) -> Input_State_Builder,
+	// Sets whether the context menu that shows on right-click is enabled.
+	//
+	// The context menu is enabled by default. Disabling it turns off the right-click menu entirely,
+	// including a custom menu set on the element. A custom menu already replaces the built-in one, so
+	// keep this enabled to show only your own items.
 	context_menu: proc(b: Input_State_Builder, enable: bool) -> Input_State_Builder,
+	// Minimum number of lines the cursor is kept clear of the viewport's top/bottom edge before
+	// auto-scroll engages. Mirrors VSCode's `editor.cursorSurroundingLines` / Zed's
+	// `vertical_scroll_margin`. Orthogonal to `->scroll_beyond_last_line`, which sizes the empty
+	// region; this controls the cursor's resting distance from the edge.
+	//
+	// - `None` (default): `BOTTOM_MARGIN_ROWS` lines, falling back to one line on small viewports.
+	// - `Some(n)`: requests `n` lines, clamped to half the viewport.
+	//
+	// In a constrained viewport, edge clearance yields to the cursor's complete visual row so
+	// surrounding space cannot clip the text being edited.
 	cursor_surrounding_lines: proc(b: Input_State_Builder, lines: Maybe(int)) -> Input_State_Builder,
+	// Set the default value of the input field.
 	default_value: proc(b: Input_State_Builder, value: string) -> Input_State_Builder,
+	// Set the action a software keyboard shows on its enter key, like Search or Send. Pressing it
+	// still emits `PressEnter`.
+	//
+	// Default is `Done` for a single-line input (and a multi-line one that submits on enter), and
+	// `Enter` (a line break) for a multi-line input.
 	input_action: proc(b: Input_State_Builder, action: Text_Input_Action) -> Input_State_Builder,
+	// Set the mask pattern for formatting the input text.
+	//
+	// The pattern can contain: - 9: Any digit or dot - A: Any letter - *: Any character - Other
+	// characters will be treated as literal mask characters
+	//
+	// Example: "(999)999-999" for phone numbers
 	mask_pattern: proc(b: Input_State_Builder, pattern: Mask_Pattern_Into) -> Input_State_Builder,
+	// Set with password masked state.
 	masked: proc(b: Input_State_Builder, masked: bool) -> Input_State_Builder,
+	// Set the maximum value of the `NumberInput`.
+	//
+	// The value will be clamped to the maximum value on stepping and on blur (only if the clamped
+	// value passes the `pattern`/`validate` check). See also `->step`.
 	max: proc(b: Input_State_Builder, max: f64) -> Input_State_Builder,
+	// Set the minimum value of the `NumberInput`.
+	//
+	// The value will be clamped to the minimum value on stepping and on blur (only if the clamped
+	// value passes the `pattern`/`validate` check). See also `->step`.
 	min: proc(b: Input_State_Builder, min: f64) -> Input_State_Builder,
+	// Set placeholder
 	placeholder: proc(b: Input_State_Builder, placeholder: string) -> Input_State_Builder,
+	// Empty rows reserved below the last line of content ("scroll beyond last line"), code-editor mode
+	// only. Mirrors VSCode's `editor.scrollBeyondLastLine` / Zed's `scroll_beyond_last_line`.
+	//
+	// - `None` (default): half the viewport, floored at `BOTTOM_MARGIN_ROWS` line-heights.
+	// - `Some(0)`: no trailing space; the cursor sits flush with the last row at scroll-max.
+	// - `Some(n)`: exactly `n` rows.
 	scroll_beyond_last_line: proc(b: Input_State_Builder, rows: Maybe(int)) -> Input_State_Builder,
+	// Set the step value of the `NumberInput` for increment/decrement.
+	//
+	// If any of `step`, `min`, `max` is set, the `NumberInput` will update the value internally (step
+	// by `step`, default 1, clamp to the `min`/`max` range and emit `Change`) instead of emitting
+	// `Step`.
+	//
+	// See also `->step_by` to calculate the step value based on the current value.
 	step: proc(b: Input_State_Builder, step: Number_Step_Into) -> Input_State_Builder,
+	// Set a custom step function of the `NumberInput`.
+	//
+	// The `f` receives the current value and the `StepAction`, and returns the step to apply, so the
+	// step can vary with the value.
 	step_by: proc(b: Input_State_Builder, f: string) -> Input_State_Builder,
+	// Set the validation function of the input field.
 	validate: proc(b: Input_State_Builder, f: Handler) -> Input_State_Builder,
 	build: proc(b: Input_State_Builder) -> Input_State,
 }
@@ -8612,6 +9813,7 @@ input_state_builder_vt := Input_State_Builder_VT {
 	},
 }
 
+// Create a single-line text input state.
 input_state :: proc(cx: ^Cx, loc := #caller_location) -> Input_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -8675,11 +9877,20 @@ keyframes_sample :: proc(s: Keyframes, cx: ^Cx, progress: f32, loc := #caller_lo
 	return
 }
 
+// Where one keyed text leaf was laid out in the last frame.
+//
+// Indices are byte offsets into the leaf's text, where each inline atom (image, custom node) is
+// one `U+FFFC` (3 bytes). Coordinates are window pixels and are valid for the frame that produced
+// them. It is a value, not a handle: it owns its bounds and shares immutable shaped lines, never
+// the renderer's mutable layout state. Later frames do not mutate this snapshot. The host must
+// replace it after content, width, typography or scrolling changes.
+//
 // Leaf_Geometry is a handle to gpui_kit::base::text::editor_host::LeafGeometry, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named leaf_geometry_*.
 Leaf_Geometry :: struct {
 	using state: State,
 }
 
+// The byte range of the inline atom drawn under `at`, if any.
 leaf_geometry_atom_at :: proc(s: Leaf_Geometry, cx: ^Cx, at: Gpui_Point, loc := #caller_location) -> (v: Maybe(Range)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8692,6 +9903,7 @@ leaf_geometry_atom_at :: proc(s: Leaf_Geometry, cx: ^Cx, at: Gpui_Point, loc := 
 	return
 }
 
+// The bounds of the leaf: the union of its pieces.
 leaf_geometry_bounds :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8703,6 +9915,9 @@ leaf_geometry_bounds :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// The caret closest to `at`, keeping the visual line that was hit: at a soft wrap the end of the
+// upper line is `Upstream`. Pass it to `gk.leaf_geometry_position_for_caret` to round-trip a
+// click.
 leaf_geometry_caret_for_position :: proc(s: Leaf_Geometry, cx: ^Cx, at: Gpui_Point, loc := #caller_location) -> (v: Base_Caret) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8715,6 +9930,8 @@ leaf_geometry_caret_for_position :: proc(s: Leaf_Geometry, cx: ^Cx, at: Gpui_Poi
 	return
 }
 
+// The height of a caret: the font's ascent plus descent, not the whole line box, which includes
+// leading.
 leaf_geometry_caret_height :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8726,6 +9943,8 @@ leaf_geometry_caret_height :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// The byte index of the caret position closest to `at`: glyph halves round to the nearer side,
+// unlike `TextLayout::index_for_position`.
 leaf_geometry_index_for_position :: proc(s: Leaf_Geometry, cx: ^Cx, at: Gpui_Point, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8738,6 +9957,7 @@ leaf_geometry_index_for_position :: proc(s: Leaf_Geometry, cx: ^Cx, at: Gpui_Poi
 	return
 }
 
+// Whether the leaf's text is empty (it still has a line box).
 leaf_geometry_is_empty :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8749,6 +9969,7 @@ leaf_geometry_is_empty :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// The length of the leaf's text in bytes, atoms included.
 leaf_geometry_len :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8760,6 +9981,7 @@ leaf_geometry_len :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// The height of a line.
 leaf_geometry_line_height :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8771,6 +9993,8 @@ leaf_geometry_line_height :: proc(s: Leaf_Geometry, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// The top of `caret` in window coordinates. Unlike `gk.leaf_geometry_position_for_index`, a caret
+// at a soft wrap lands on the visual line its affinity names.
 leaf_geometry_position_for_caret :: proc(s: Leaf_Geometry, cx: ^Cx, caret: Base_Caret, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8783,6 +10007,7 @@ leaf_geometry_position_for_caret :: proc(s: Leaf_Geometry, cx: ^Cx, caret: Base_
 	return
 }
 
+// The top of a caret placed at byte `index`, in window coordinates.
 leaf_geometry_position_for_index :: proc(s: Leaf_Geometry, cx: ^Cx, index: int, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8811,6 +10036,7 @@ list_state_delegate :: proc(s: List_State, cx: ^Cx, loc := #caller_location) -> 
 	return
 }
 
+// Returns the index of the item that has been right clicked.
 list_state_right_clicked_index :: proc(s: List_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Base_Index_Path)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8822,6 +10048,7 @@ list_state_right_clicked_index :: proc(s: List_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Get scroll handle
 list_state_scroll_handle :: proc(s: List_State, cx: ^Cx, loc := #caller_location) -> (v: Virtual_List_Scroll_Handle) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8855,6 +10082,7 @@ list_state_delegate_mut :: proc(s: List_State, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// Focus the list, if the list is searchable, focus the search input.
 list_state_focus :: proc(s: List_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8864,6 +10092,7 @@ list_state_focus :: proc(s: List_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Scroll to the item at the given index.
 list_state_scroll_to_item :: proc(s: List_State, cx: ^Cx, ix: Index_Path, strategy: Scroll_Strategy, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8891,6 +10120,9 @@ list_state_scroll_to_selected_item :: proc(s: List_State, cx: ^Cx, loc := #calle
 	state_set(cx, req[:], loc)
 }
 
+// Set a specific list item for measurement.
+//
+// If the item is absent, measure the first item in the first non-empty section.
 list_state_set_item_to_measure_index :: proc(s: List_State, cx: ^Cx, ix: Index_Path, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8908,6 +10140,7 @@ list_state_set_item_to_measure_index :: proc(s: List_State, cx: ^Cx, ix: Index_P
 	state_set(cx, req[:], loc)
 }
 
+// Set the query text of the search input, this will trigger a search.
 list_state_set_query :: proc(s: List_State, cx: ^Cx, query: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8918,6 +10151,7 @@ list_state_set_query :: proc(s: List_State, cx: ^Cx, query: string, loc := #call
 	state_set(cx, req[:], loc)
 }
 
+// Set the index of the item that has been right clicked.
 list_state_set_right_clicked_index :: proc(s: List_State, cx: ^Cx, ix: Maybe_Index_Path, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8950,6 +10184,7 @@ list_state_set_searchable :: proc(s: List_State, cx: ^Cx, searchable: bool, loc 
 	state_set(cx, req[:], loc)
 }
 
+// Sets whether the list is selectable, default is true.
 list_state_set_selectable :: proc(s: List_State, cx: ^Cx, selectable: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -8960,6 +10195,7 @@ list_state_set_selectable :: proc(s: List_State, cx: ^Cx, selectable: bool, loc 
 	state_set(cx, req[:], loc)
 }
 
+// Set the selected index of the list, this method will not scroll to the selected item.
 list_state_set_selected_index :: proc(s: List_State, cx: ^Cx, ix: Maybe_Index_Path, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9003,7 +10239,11 @@ List_State_Builder :: struct {
 }
 
 List_State_Builder_VT :: struct {
+	// Sets whether the list is searchable, default is `false`.
+	//
+	// When `true`, there will be a search input at the top of the list.
 	searchable: proc(b: List_State_Builder, searchable: bool) -> List_State_Builder,
+	// Sets whether the list is selectable, default is true.
 	selectable: proc(b: List_State_Builder, selectable: bool) -> List_State_Builder,
 	build: proc(b: List_State_Builder) -> List_State,
 }
@@ -9061,6 +10301,7 @@ Markdown_Node_Read :: struct {
 	using state: State,
 }
 
+// Name exposed to accessibility clients, defaulting to the plain text.
 markdown_node_read_accessibility_name :: proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9072,6 +10313,7 @@ markdown_node_read_accessibility_name :: proc(s: Markdown_Node_Read, cx: ^Cx, lo
 	return
 }
 
+// Markdown representation of this custom node.
 markdown_node_read_as_markdown :: proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9083,6 +10325,7 @@ markdown_node_read_as_markdown :: proc(s: Markdown_Node_Read, cx: ^Cx, loc := #c
 	return
 }
 
+// Text representation of this custom node.
 markdown_node_read_as_text :: proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9094,6 +10337,7 @@ markdown_node_read_as_text :: proc(s: Markdown_Node_Read, cx: ^Cx, loc := #calle
 	return
 }
 
+// Stable name for this custom node.
 markdown_node_read_name :: proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9105,6 +10349,7 @@ markdown_node_read_name :: proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Full-document UTF-8 source byte range, including syntax delimiters.
 markdown_node_read_source_range :: proc(s: Markdown_Node_Read, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9116,11 +10361,17 @@ markdown_node_read_source_range :: proc(s: Markdown_Node_Read, cx: ^Cx, loc := #
 	return
 }
 
+// The entity-owned scrolling state for a `Message_Scroller`.
+//
+// The state owns only GPUI's virtual-list bookkeeping. Message data remains with the caller and is
+// read by the row renderer passed to `gk.message_scroller`.
+//
 // Message_Scroller_State is a handle to gpui_kit::component::message_scroller::MessageScrollerState, an entity the library keeps. Its procedures are named message_scroller_state_*.
 Message_Scroller_State :: struct {
 	using state: State,
 }
 
+// Return whether the list is actively following its tail.
 message_scroller_state_is_following_tail :: proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9132,6 +10383,7 @@ message_scroller_state_is_following_tail :: proc(s: Message_Scroller_State, cx: 
 	return
 }
 
+// Return whether the user has scrolled away from the latest content.
 message_scroller_state_is_scrolled_up :: proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9143,6 +10395,7 @@ message_scroller_state_is_scrolled_up :: proc(s: Message_Scroller_State, cx: ^Cx
 	return
 }
 
+// Return the current number of rows known by the virtual list.
 message_scroller_state_item_count :: proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9154,6 +10407,12 @@ message_scroller_state_item_count :: proc(s: Message_Scroller_State, cx: ^Cx, lo
 	return
 }
 
+// Return the row at the top of the viewport and how far into it the list is scrolled.
+//
+// Wheel, trackpad, and scrollbar scrolls and `gk.message_scroller_state_scroll_to_item` update it
+// at once. `gk.message_scroller_state_scroll_to_end` and tail following settle it when the list
+// next lays out; right after `scroll_to_end`, `item_ix` is `gk.message_scroller_state_item_count`
+// until then.
 message_scroller_state_logical_scroll_top :: proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) -> (v: List_Offset) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9165,6 +10424,7 @@ message_scroller_state_logical_scroll_top :: proc(s: Message_Scroller_State, cx:
 	return
 }
 
+// Append `count` rows to the end of the list.
 message_scroller_state_append :: proc(s: Message_Scroller_State, cx: ^Cx, count: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9177,6 +10437,7 @@ message_scroller_state_append :: proc(s: Message_Scroller_State, cx: ^Cx, count:
 	return
 }
 
+// Prepend `count` rows while preserving the current scroll anchor.
 message_scroller_state_prepend :: proc(s: Message_Scroller_State, cx: ^Cx, count: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9189,6 +10450,9 @@ message_scroller_state_prepend :: proc(s: Message_Scroller_State, cx: ^Cx, count
 	return
 }
 
+// Mark rows in `range` for remeasurement while preserving an item anchor.
+//
+// Returns `false` when the range is outside the current list.
 message_scroller_state_remeasure_items :: proc(s: Message_Scroller_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9201,6 +10465,7 @@ message_scroller_state_remeasure_items :: proc(s: Message_Scroller_State, cx: ^C
 	return
 }
 
+// Scroll to the row at `index`, if it exists.
 message_scroller_state_scroll_to_item :: proc(s: Message_Scroller_State, cx: ^Cx, index: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9213,6 +10478,9 @@ message_scroller_state_scroll_to_item :: proc(s: Message_Scroller_State, cx: ^Cx
 	return
 }
 
+// Replace `old_range` with `count` new rows.
+//
+// Returns `false` when the range is outside the current list and leaves the state unchanged.
 message_scroller_state_splice :: proc(s: Message_Scroller_State, cx: ^Cx, old_range: Range, count: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9226,6 +10494,7 @@ message_scroller_state_splice :: proc(s: Message_Scroller_State, cx: ^Cx, old_ra
 	return
 }
 
+// Mark all rows for remeasurement while preserving a proportional anchor.
 message_scroller_state_remeasure :: proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9235,6 +10504,7 @@ message_scroller_state_remeasure :: proc(s: Message_Scroller_State, cx: ^Cx, loc
 	state_set(cx, req[:], loc)
 }
 
+// Reset the list to `item_count` rows.
 message_scroller_state_reset :: proc(s: Message_Scroller_State, cx: ^Cx, item_count: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9245,6 +10515,7 @@ message_scroller_state_reset :: proc(s: Message_Scroller_State, cx: ^Cx, item_co
 	state_set(cx, req[:], loc)
 }
 
+// Resume tail following and scroll to the latest row.
 message_scroller_state_scroll_to_end :: proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9254,6 +10525,7 @@ message_scroller_state_scroll_to_end :: proc(s: Message_Scroller_State, cx: ^Cx,
 	state_set(cx, req[:], loc)
 }
 
+// Create a state for `item_count` rows and enable tail following.
 message_scroller_state :: proc(cx: ^Cx, item_count: int, loc := #caller_location) -> Message_Scroller_State {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -9265,11 +10537,28 @@ message_scroller_state :: proc(cx: ^Cx, item_count: int, loc := #caller_location
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A stack of views, one visible at a time, with the pages popped off it kept for `forward`.
+//
+// This is SwiftUI's `NavigationStack`, Qt's `StackView` and WinUI's `Frame`: navigation between
+// pages. Underneath it is a `History` of views from the root through the current page. A popped
+// page becomes a forward entry until a push discards that forward branch, which is what WinUI's
+// `BackStack` and `ForwardStack` do.
+//
+// The stack owns which view is current and the lifecycle of a change: after a push, pop or
+// replace, the outgoing view stays mounted until the `Nav_Stack`'s transition finishes, so the
+// application can animate it. The views themselves, and what a transition looks like, belong to
+// the application.
+//
+// `pop` keeps the root, as Qt's `StackView` and UIKit's navigation controller do; `clear` is the
+// way to empty the stack. A back button is shown when `depth() > 1`, a forward button when
+// `forward_views()` is not empty.
+//
 // Nav_Stack_State is a handle to gpui_kit::base::NavStackState, an entity the library keeps. Its procedures are named nav_stack_state_*.
 Nav_Stack_State :: struct {
 	using state: State,
 }
 
+// The view on top of the stack, which is the one shown once any transition has finished.
 nav_stack_state_current :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(View)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9281,6 +10570,7 @@ nav_stack_state_current :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_loca
 	return
 }
 
+// The number of views on the stack.
 nav_stack_state_depth :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9292,6 +10582,8 @@ nav_stack_state_depth :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// The views popped since the last push, nearest first: the one `forward` would bring back is the
+// first.
 nav_stack_state_forward_views :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: []View) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9314,6 +10606,7 @@ nav_stack_state_is_empty :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Every view on the stack, root first.
 nav_stack_state_views :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: []View) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9325,6 +10618,8 @@ nav_stack_state_views :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// Brings back the most recently popped view, starting a `Push` transition over the current top,
+// and returns it. `None` when nothing has been popped since the last push.
 nav_stack_state_forward :: proc(s: Nav_Stack_State, cx: ^Cx, motion: Nav_Motion, loc := #caller_location) -> (v: Maybe(View)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9337,6 +10632,10 @@ nav_stack_state_forward :: proc(s: Nav_Stack_State, cx: ^Cx, motion: Nav_Motion,
 	return
 }
 
+// Pops the top view and returns it, starting a `Pop` transition to the view below. The view waits
+// in `forward_views`.
+//
+// The root is never popped: this returns `None` at a depth of one or less.
 nav_stack_state_pop :: proc(s: Nav_Stack_State, cx: ^Cx, motion: Nav_Motion, loc := #caller_location) -> (v: Maybe(View)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9349,6 +10648,8 @@ nav_stack_state_pop :: proc(s: Nav_Stack_State, cx: ^Cx, motion: Nav_Motion, loc
 	return
 }
 
+// Pops every view above the root in one `Pop` transition from the previous top, and returns them
+// root-side first.
 nav_stack_state_pop_to_root :: proc(s: Nav_Stack_State, cx: ^Cx, motion: Nav_Motion, loc := #caller_location) -> (v: []View) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9361,6 +10662,8 @@ nav_stack_state_pop_to_root :: proc(s: Nav_Stack_State, cx: ^Cx, motion: Nav_Mot
 	return
 }
 
+// Swaps the top view for `view` and returns the one replaced, starting a `Replace` transition. The
+// forward views are kept. On an empty stack this is a push.
 nav_stack_state_replace :: proc(s: Nav_Stack_State, cx: ^Cx, view: View, motion: Nav_Motion, loc := #caller_location) -> (v: Maybe(View)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9374,6 +10677,7 @@ nav_stack_state_replace :: proc(s: Nav_Stack_State, cx: ^Cx, view: View, motion:
 	return
 }
 
+// Empties the stack and the forward views immediately, abandoning any running transition.
 nav_stack_state_clear :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9383,6 +10687,10 @@ nav_stack_state_clear :: proc(s: Nav_Stack_State, cx: ^Cx, loc := #caller_locati
 	state_set(cx, req[:], loc)
 }
 
+// Pushes `view` on top of the stack and discards the forward views.
+//
+// Into an empty stack this is immediate, like Qt's `initialItem`. Over an existing top it starts a
+// `Push` transition, unless `motion` is `Immediate`.
 nav_stack_state_push :: proc(s: Nav_Stack_State, cx: ^Cx, view: View, motion: Nav_Motion, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9416,11 +10724,14 @@ nav_stack_state :: proc(cx: ^Cx, loc := #caller_location) -> Nav_Stack_State {
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A notification element.
+//
 // Notification is a handle to gpui_kit::component::notification::Notification, an entity the library keeps. Its procedures are named notification_*.
 Notification :: struct {
 	using state: State,
 }
 
+// Dismiss the notification.
 notification_dismiss :: proc(s: Notification, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9439,18 +10750,58 @@ Notification_Builder :: struct {
 }
 
 Notification_Builder_VT :: struct {
+	// Set the action button of the notification.
+	//
+	// When an action is set, the notification will not autohide.
 	action: proc(b: Notification_Builder, action: Row_Source) -> Notification_Builder, // gk.items(cx, state, proc(s: ^S, cx: ^Cx) -> Button)
+	// Set the auto hide of the notification, default is true.
 	autohide: proc(b: Notification_Builder, autohide: bool) -> Notification_Builder,
+	// Set the content of the notification.
 	content: proc(b: Notification_Builder, content: Row_Source) -> Notification_Builder, // gk.items(cx, state, proc(s: ^S, cx: ^Cx) -> Element)
+	// Set where this notification is delivered, overriding the global `delivery`.
+	//
+	// System delivery uses the OS notification center: the title and message become the system
+	// notification's title and body (a notification with neither is not posted). Pushing again with
+	// the same `id` replaces the previous system notification. Clicking the system notification
+	// activates the window, closes the in-app toast (if any), and fires `->on_click`; with `System`
+	// the toast never exists, so `->on_close` is never called.
+	//
+	// Platform requirements: on macOS the application must run from a bundled `.app` in a location the
+	// system trusts, such as `/Applications` (posts are silently dropped under plain `cargo run`, and
+	// the first post triggers the authorization prompt); on Windows the application must call
+	// `set_app_identity` early in startup; on Linux a notification daemon must be present and
+	// retraction is unsupported (dismissed notifications age out).
 	delivery: proc(b: Notification_Builder, delivery: Notification_Delivery) -> Notification_Builder,
+	// Set the icon of the notification.
+	//
+	// If icon is None, the notification will use the default icon of the type.
 	icon: proc(b: Notification_Builder, icon: Icon_Name) -> Notification_Builder,
+	// Deliver this notification as an in-app toast and to the OS notification center.
+	//
+	// Shorthand for `->delivery` with `InAppAndSystem`; see there for platform requirements.
 	in_app_and_system: proc(b: Notification_Builder) -> Notification_Builder,
+	// Set the message of the notification, default is None.
 	message: proc(b: Notification_Builder, message: string) -> Notification_Builder,
+	// Set the click callback of the notification.
 	on_click: proc(b: Notification_Builder, on_click: Handler) -> Notification_Builder,
+	// Set the close callback of the notification.
+	//
+	// Triggered when the notification is closed by any means (close button, middle-click, autohide,
+	// click handler, or programmatic close).
 	on_close: proc(b: Notification_Builder, on_close: Handler) -> Notification_Builder,
+	// Set the placement of the notification, overriding the global `placement`.
+	//
+	// Notifications are stacked separately for each placement.
 	placement: proc(b: Notification_Builder, placement: Anchor) -> Notification_Builder,
+	// Deliver this notification only to the OS notification center.
+	//
+	// Shorthand for `->delivery` with `System`; see there for platform requirements.
 	system: proc(b: Notification_Builder) -> Notification_Builder,
+	// Set the title of the notification, default is None.
+	//
+	// If title is None, the notification will not have a title.
 	title: proc(b: Notification_Builder, title: string) -> Notification_Builder,
+	// Set the type of the notification, default is NotificationType::Info.
 	with_type: proc(b: Notification_Builder, type_: Notification_Type) -> Notification_Builder,
 	build: proc(b: Notification_Builder) -> Notification,
 }
@@ -9551,6 +10902,9 @@ notification_builder_vt := Notification_Builder_VT {
 	},
 }
 
+// Create a new notification.
+//
+// The default id is a random UUID.
 notification :: proc(cx: ^Cx, loc := #caller_location) -> Notification_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -9561,6 +10915,7 @@ notification :: proc(cx: ^Cx, loc := #caller_location) -> Notification_Builder {
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Create an error notification with the given message.
 notification_error :: proc(cx: ^Cx, message: string, loc := #caller_location) -> Notification_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -9572,6 +10927,7 @@ notification_error :: proc(cx: ^Cx, message: string, loc := #caller_location) ->
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Create an info notification with the given message.
 notification_info :: proc(cx: ^Cx, message: string, loc := #caller_location) -> Notification_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -9583,6 +10939,7 @@ notification_info :: proc(cx: ^Cx, message: string, loc := #caller_location) -> 
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Create a success notification with the given message.
 notification_success :: proc(cx: ^Cx, message: string, loc := #caller_location) -> Notification_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -9594,6 +10951,7 @@ notification_success :: proc(cx: ^Cx, message: string, loc := #caller_location) 
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Create a warning notification with the given message.
 notification_warning :: proc(cx: ^Cx, message: string, loc := #caller_location) -> Notification_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -9605,6 +10963,8 @@ notification_warning :: proc(cx: ^Cx, message: string, loc := #caller_location) 
 	return {vt = &notification_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// A list of notifications.
+//
 // Notification_List is a handle to gpui_kit::component::notification::NotificationList, an entity the library keeps. Its procedures are named notification_list_*.
 Notification_List :: struct {
 	using state: State,
@@ -9650,6 +11010,8 @@ notification_list :: proc(cx: ^Cx, loc := #caller_location) -> Notification_List
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Stateful input and focus behavior for a fixed-length numeric one-time code.
+//
 // Otp_State is a handle to gpui_kit::base::OtpState, an entity the library keeps. Its procedures are named otp_state_*.
 Otp_State :: struct {
 	using state: State,
@@ -9808,11 +11170,19 @@ otp_state :: proc(cx: ^Cx, length: int, loc := #caller_location) -> Otp_State_Bu
 	return {vt = &otp_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// An independently managed collection of `Overview_Ruler_Decoration` values.
+//
+// Each clone refers to the same collection. Dropping a handle does not clear it. Call
+// `gk.overview_ruler_decoration_collection_clear` to empty it or
+// `gk.overview_ruler_decoration_collection_dispose` to release it. Calls after disposal or after
+// the editor is dropped do nothing.
+//
 // Overview_Ruler_Decoration_Collection is a handle to gpui_kit::base::input::OverviewRulerDecorationCollection, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named overview_ruler_decoration_collection_*.
 Overview_Ruler_Decoration_Collection :: struct {
 	using state: State,
 }
 
+// Return tracked UTF-8 byte ranges in insertion order.
 overview_ruler_decoration_collection_get_ranges :: proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9824,6 +11194,7 @@ overview_ruler_decoration_collection_get_ranges :: proc(s: Overview_Ruler_Decora
 	return
 }
 
+// Add decorations to this collection in paint order.
 overview_ruler_decoration_collection_append :: proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, decorations: []Overview_Ruler_Decoration, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9837,6 +11208,7 @@ overview_ruler_decoration_collection_append :: proc(s: Overview_Ruler_Decoration
 	state_set(cx, req[:], loc)
 }
 
+// Empty this collection and keep its handles usable.
 overview_ruler_decoration_collection_clear :: proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9846,6 +11218,7 @@ overview_ruler_decoration_collection_clear :: proc(s: Overview_Ruler_Decoration_
 	state_set(cx, req[:], loc)
 }
 
+// Release this collection. Its cloned handles stop working.
 overview_ruler_decoration_collection_dispose :: proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9855,6 +11228,7 @@ overview_ruler_decoration_collection_dispose :: proc(s: Overview_Ruler_Decoratio
 	state_set(cx, req[:], loc)
 }
 
+// Replace this collection's decorations and clip ranges to UTF-8 boundaries.
 overview_ruler_decoration_collection_set :: proc(s: Overview_Ruler_Decoration_Collection, cx: ^Cx, decorations: []Overview_Ruler_Decoration, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9894,11 +11268,22 @@ pane_node_id :: proc(s: Pane_Node, cx: ^Cx, loc := #caller_location) -> (v: Node
 	return
 }
 
+// One region's layout, as pure data.
+//
+// A `DockArea` owns one of these per region — the center plus each dock it has. Containers are
+// addressed by `Base_Node_Id` and panels by `Panel_Id`; no entity handle lives in here, so a tree
+// can be built, edited, compared and serialized with no `App` in sight.
+//
+// Every edit method normalizes before returning and reports what it did as an `Edit_Result`, so
+// there is no window in which a caller can observe a tree with an empty container, a one-child
+// split, or an out-of-range active index.
+//
 // Pane_Tree is a handle to gpui_kit::base::dock::PaneTree, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named pane_tree_*.
 Pane_Tree :: struct {
 	using state: State,
 }
 
+// Whether `panel` is anywhere in this tree.
 pane_tree_contains_panel :: proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9923,6 +11308,7 @@ pane_tree_find_node :: proc(s: Pane_Tree, cx: ^Cx, id: Node_Id, loc := #caller_l
 	return
 }
 
+// The tab node holding `panel`.
 pane_tree_find_panel_node :: proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) -> (v: Maybe(Node_Id)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9935,6 +11321,7 @@ pane_tree_find_panel_node :: proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, l
 	return
 }
 
+// Every container id in the tree, in pre-order.
 pane_tree_node_ids :: proc(s: Pane_Tree, cx: ^Cx, loc := #caller_location) -> (v: []Node_Id) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9946,6 +11333,7 @@ pane_tree_node_ids :: proc(s: Pane_Tree, cx: ^Cx, loc := #caller_location) -> (v
 	return
 }
 
+// Every panel in the tree, in pre-order.
 pane_tree_panels :: proc(s: Pane_Tree, cx: ^Cx, loc := #caller_location) -> (v: []Dock_Panel_Id) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -9992,6 +11380,8 @@ pane_tree_insert_panel :: proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, targ
 	return
 }
 
+// Move a panel to a new home without ever removing it from the tree's perspective, so the caller
+// never fires `on_removed` for a drag.
 pane_tree_move_panel :: proc(s: Pane_Tree, cx: ^Cx, panel: Dock_Panel_Id, target: Insert_Target, loc := #caller_location) -> (v: Edit_Result) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10030,6 +11420,11 @@ pane_tree_set_active :: proc(s: Pane_Tree, cx: ^Cx, node: Node_Id, ix: int, loc 
 	return
 }
 
+// Replace a split's slot sizes wholesale.
+//
+// A no-op, like every other operation given input it cannot resolve, if `new_sizes.len()` does not
+// match the split's child count: no rule in `normalize` repairs a length mismatch, so applying it
+// would otherwise leave `children.len() != sizes.len()` and trip `normalize`'s `debug_assert!`.
 pane_tree_set_sizes :: proc(s: Pane_Tree, cx: ^Cx, node: Node_Id, new_sizes: []Maybe(f32), loc := #caller_location) -> (v: Edit_Result) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10071,6 +11466,23 @@ pane_tree_split :: proc(s: Pane_Tree, cx: ^Cx, at: Node_Id, panel: Dock_Panel_Id
 	return
 }
 
+// Collapse the tree to canonical shape.
+//
+// One post-order pass repeated to a fixpoint. This is the only place a container is removed for
+// being empty, replacing the mutually recursive `remove_self_if_empty` pair the old implementation
+// used. It needs no parent pointers and no deferred work, so the tree is self-consistent the
+// instant an edit returns.
+//
+// Rules, applied bottom up:
+// 1. An empty `Tabs` or `Split` is removed from its parent.
+// 2. A `Split` with one child is replaced by that child. The child keeps its own `NodeId` and
+//   inherits the split's slot size.
+// 3. A `Split` whose child is a `Split` of the same axis splices that child's children into
+//   itself.
+// 4. `active_ix` is clamped.
+// 5. The root is preserved according to `RootKind`.
+//
+// Idempotent: `normalize(normalize(t)) == normalize(t)`.
 pane_tree_normalize :: proc(s: Pane_Tree, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10091,6 +11503,8 @@ pane_tree :: proc(cx: ^Cx, root_kind: Root_Kind, loc := #caller_location) -> Pan
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A skin must draw something for that case; base's own `panel_name` is the fallback with no
+// obligations on the panel author.
 panel_handle_of :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_location) -> (v: Maybe(Panel_Handle)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10102,11 +11516,14 @@ panel_handle_of :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_location) -> 
 	return
 }
 
+// Concrete on purpose.
+//
 // Panel_Handle is a handle to gpui_kit::component::dock::PanelHandle, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named panel_handle_*.
 Panel_Handle :: struct {
 	using state: State,
 }
 
+// The presentation handle, cloned out.
 panel_handle_panel :: proc(s: Panel_Handle, cx: ^Cx, loc := #caller_location) -> (v: Dock_Panel) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10129,6 +11546,7 @@ panel_handle :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_location) -> Pan
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Wrap a presentation handle that is already erased.
 panel_handle_from_view :: proc(cx: ^Cx, panel: Dock_Panel, loc := #caller_location) -> Panel_Handle {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -10158,6 +11576,21 @@ panel_registry_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Panel_Reg
 	return {state = {h = rd_u64(&r)}}
 }
 
+// Global registry of panel builders, keyed by panel name, used to reconstruct a panel view from
+// persisted `PanelState`/`PanelInfo` data.
+//
+// An earlier revision of this module returned `AnyView` so that a builder would not have to depend
+// on the panel traits, on the reasoning that "a caller that needs a richer handle downcasts or
+// wraps the `AnyView` itself". `gk.dock_area_load` is that caller, and it cannot: downcasting
+// needs the concrete type, which the registry is precisely the mechanism for not knowing. Without
+// a `PanelView` a restored panel could not be asked for its `->dump`, so every registered panel's
+// own persisted payload would be dropped on the first save after a load.
+//
+// Building a panel that was never registered returns `None` rather than a placeholder view:
+// rendering an "invalid panel" placeholder is presentation behavior that belongs above this seam,
+// not inside `gpui-base`. `DockArea` substitutes a draw-nothing placeholder that carries the
+// original `PanelState` forward, so an unknown panel survives a round trip.
+//
 // Panel_Registry is a handle to gpui_kit::base::dock::PanelRegistry, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named panel_registry_*.
 Panel_Registry :: struct {
 	using state: State,
@@ -10178,6 +11611,7 @@ Paragraph_Read :: struct {
 	using state: State,
 }
 
+// The inline runs.
 paragraph_read_children :: proc(s: Paragraph_Read, cx: ^Cx, loc := #caller_location) -> (v: []Inline_Node_Read) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10189,11 +11623,20 @@ paragraph_read_children :: proc(s: Paragraph_Read, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// A tessellated path reused across frames while its shape is unchanged.
+//
+// A chart repaints on every frame it is on screen — a scrolling list moves it — and tessellating
+// its strokes (Catmull-Rom curves, dashes) is the bulk of that work, while the vertices only
+// depend on the projected points relative to the chart's origin. A plot keeps one cache per shape
+// and paints through `paint_cached` or `paint_cached`: the path is built once per shape key, at a
+// zero origin, and moved to the frame's origin on every paint.
+//
 // Path_Cache is a handle to gpui_kit::base::plot::PathCache, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named path_cache_*.
 Path_Cache :: struct {
 	using state: State,
 }
 
+// Whether the last `get` reused the path built by an earlier one.
 path_cache_is_warm :: proc(s: Path_Cache, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10215,6 +11658,13 @@ path_cache_default :: proc(cx: ^Cx, loc := #caller_location) -> Path_Cache {
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// The `Path_Cache`s of a plot that is rebuilt on every render, kept in the window's element state
+// so they outlive the plot value.
+//
+// Plots are plain values built by `render` and painted once, so a cache held by the plot would be
+// empty every frame; this keeps them under the element id the plot paints in (plus `key`), for as
+// long as the plot is painted on consecutive frames.
+//
 // Path_Caches is a handle to gpui_kit::base::plot::PathCaches, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named path_caches_*.
 Path_Caches :: struct {
 	using state: State,
@@ -10235,6 +11685,7 @@ Pie :: struct {
 	using state: State,
 }
 
+// Get the arcs of the Pie.
 pie_arcs :: proc(s: Pie, cx: ^Cx, data: Data, loc := #caller_location) -> (v: []Arc_Data) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10256,9 +11707,13 @@ Pie_Builder :: struct {
 }
 
 Pie_Builder_VT :: struct {
+	// Set the end angle of the Pie.
 	end_angle: proc(b: Pie_Builder, end_angle: f32) -> Pie_Builder,
+	// Set the pad angle of the Pie.
 	pad_angle: proc(b: Pie_Builder, pad_angle: f32) -> Pie_Builder,
+	// Set the start angle of the Pie.
 	start_angle: proc(b: Pie_Builder, start_angle: f32) -> Pie_Builder,
+	// Set the value of the Pie.
 	value: proc(b: Pie_Builder, value: string) -> Pie_Builder,
 	build: proc(b: Pie_Builder) -> Pie,
 }
@@ -10308,11 +11763,18 @@ pie :: proc(cx: ^Cx, loc := #caller_location) -> Pie_Builder {
 	return {vt = &pie_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// How far a plot's data marks have appeared this frame, handed to `appear`.
+//
+// The appear starts on the first frame a plot's id is painted and runs over the active
+// `Plot_Motion`'s appear. Base's default duration is zero, and reduced motion skips it, so a plot
+// is then complete from its first frame.
+//
 // Plot_Appear is a handle to gpui_kit::base::plot::PlotAppear, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named plot_appear_*.
 Plot_Appear :: struct {
 	using state: State,
 }
 
+// Whether the appear is still running.
 plot_appear_is_appearing :: proc(s: Plot_Appear, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10324,6 +11786,7 @@ plot_appear_is_appearing :: proc(s: Plot_Appear, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// How far the whole plot has appeared, from `0` to `1`, eased.
 plot_appear_progress :: proc(s: Plot_Appear, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10335,6 +11798,11 @@ plot_appear_progress :: proc(s: Plot_Appear, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// How far mark `index` of `count` has appeared, from `0` to `1`, eased.
+//
+// The marks start one after another across the first `spread` of the appear (`0..1`) and each runs
+// for the rest of it, so the last mark still finishes with the appear however many marks there
+// are. A `spread` of `0` moves every mark together.
 plot_appear_staggered :: proc(s: Plot_Appear, cx: ^Cx, index: int, count: int, spread: f32, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10349,6 +11817,7 @@ plot_appear_staggered :: proc(s: Plot_Appear, cx: ^Cx, index: int, count: int, s
 	return
 }
 
+// A finished appear: every mark is complete.
 plot_appear_complete :: proc(cx: ^Cx, loc := #caller_location) -> Plot_Appear {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -10364,6 +11833,7 @@ Plot_Label :: struct {
 	using state: State,
 }
 
+// Paint the Label.
 plot_label_paint :: proc(s: Plot_Label, cx: ^Cx, bounds: Bounds, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10409,6 +11879,12 @@ plot_theme_read_motion :: proc(s: Plot_Theme_Read, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// State and focus lifecycle for an unstyled popover.
+//
+// Applications own trigger/content construction, positioning, appearance, and animation. This
+// state owns the controlled open lifecycle, dismissal, focus capture and restoration, and
+// deferred-popup registration.
+//
 // Popover_State is a handle to gpui_kit::base::PopoverState, an entity the library keeps. Its procedures are named popover_state_*.
 Popover_State :: struct {
 	using state: State,
@@ -11053,6 +12529,8 @@ questionnaire_progress_state_total :: proc(s: Questionnaire_Progress_State, cx: 
 	return
 }
 
+// Owns questionnaire answers, validation, navigation and focus state.
+//
 // Questionnaire_State is a handle to gpui_kit::base::questionnaire::QuestionnaireState, an entity the library keeps. Its procedures are named questionnaire_state_*.
 Questionnaire_State :: struct {
 	using state: State,
@@ -11120,6 +12598,8 @@ questionnaire_state_choice_for_shortcut :: proc(s: Questionnaire_State, cx: ^Cx,
 	return
 }
 
+// One-based position of a choice among its item's enabled choices, with the enabled total.
+// Assistive technology announces the pair.
 questionnaire_state_choice_position :: proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Tuple_Int_Int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11146,6 +12626,8 @@ questionnaire_state_choice_state :: proc(s: Questionnaire_State, cx: ^Cx, item: 
 	return
 }
 
+// Whether the active item's freeform input currently holds text. The skin needs it to decide
+// whether an arrow key moves focus or edits the draft.
 questionnaire_state_current_input_has_text :: proc(s: Questionnaire_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11179,6 +12661,8 @@ questionnaire_state_current_ix :: proc(s: Questionnaire_State, cx: ^Cx, loc := #
 	return
 }
 
+// The active validation failure for an item, if any. Base reports the reason; the presentation
+// layer turns a built-in reason into text.
 questionnaire_state_error :: proc(s: Questionnaire_State, cx: ^Cx, name: string, loc := #caller_location) -> (v: Maybe(Questionnaire_Validation_Error)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11318,6 +12802,9 @@ questionnaire_state_total :: proc(s: Questionnaire_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Selects a choice, or toggles it on a multiple-answer item, without confirming the item.
+// Arrow-key movement inside a radio group uses this; a person's click, Space, Enter or shortcut
+// goes through `gk.questionnaire_state_choose`.
 questionnaire_state_activate_choice :: proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11343,6 +12830,19 @@ questionnaire_state_activate_shortcut :: proc(s: Questionnaire_State, cx: ^Cx, k
 	return
 }
 
+// Applies a person's activation of a choice: a click, Space or Enter on the focused choice, or its
+// shortcut.
+//
+// A multiple-answer item only toggles the choice. A single-answer item selects it and then
+// confirms the current item as `gk.questionnaire_state_confirm_current` does: it moves to the next
+// enabled item, or submits on the last one, unless validation fails. A choice that changes the
+// answer stays selected on screen for a moment before the confirm runs, so the person sees what
+// they picked; with reduced motion the confirm runs as soon as the answer change has been
+// delivered. Choosing the selected answer again confirms at once. Disabled items and choices
+// ignore activation.
+//
+// Arrow-key movement inside a radio group uses `gk.questionnaire_state_activate_choice` and never
+// confirms.
 questionnaire_state_choose :: proc(s: Questionnaire_State, cx: ^Cx, item: string, value: string, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11751,11 +13251,19 @@ questionnaire_submission_item_status :: proc(s: Questionnaire_Submission_Item, c
 	return
 }
 
+// An independently managed collection of geometric range decorations.
+//
+// Clones address the same collection. Dropping a handle does not clear it; use
+// `gk.range_decoration_collection_clear` to empty it or `gk.range_decoration_collection_dispose`
+// to release it permanently. Operations on a disposed collection or a dropped editor are harmless
+// no-ops.
+//
 // Range_Decoration_Collection is a handle to gpui_kit::base::input::RangeDecorationCollection, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named range_decoration_collection_*.
 Range_Decoration_Collection :: struct {
 	using state: State,
 }
 
+// Read tracked UTF-8 byte ranges in insertion order.
 range_decoration_collection_get_ranges :: proc(s: Range_Decoration_Collection, cx: ^Cx, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11767,6 +13275,7 @@ range_decoration_collection_get_ranges :: proc(s: Range_Decoration_Collection, c
 	return
 }
 
+// Append decorations, preserving their paint order.
 range_decoration_collection_append :: proc(s: Range_Decoration_Collection, cx: ^Cx, decorations: []Range_Decoration, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11780,6 +13289,7 @@ range_decoration_collection_append :: proc(s: Range_Decoration_Collection, cx: ^
 	state_set(cx, req[:], loc)
 }
 
+// Empty this collection without invalidating its handles.
 range_decoration_collection_clear :: proc(s: Range_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11789,6 +13299,7 @@ range_decoration_collection_clear :: proc(s: Range_Decoration_Collection, cx: ^C
 	state_set(cx, req[:], loc)
 }
 
+// Release this collection, invalidating all of its cloned handles.
 range_decoration_collection_dispose :: proc(s: Range_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11798,6 +13309,7 @@ range_decoration_collection_dispose :: proc(s: Range_Decoration_Collection, cx: 
 	state_set(cx, req[:], loc)
 }
 
+// Replace only this owner's decorations, clipping ranges to UTF-8 boundaries.
 range_decoration_collection_set :: proc(s: Range_Decoration_Collection, cx: ^Cx, decorations: []Range_Decoration, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11811,6 +13323,11 @@ range_decoration_collection_set :: proc(s: Range_Decoration_Collection, cx: ^Cx,
 	state_set(cx, req[:], loc)
 }
 
+// A background painted behind one range of a `Rendered_Text`.
+//
+// It is painted under the text and under the selection, and never changes layout. Where highlights
+// overlap, the later one paints over the earlier.
+//
 // Range_Highlight is a handle to gpui_kit::base::RangeHighlight, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named range_highlight_*.
 Range_Highlight :: struct {
 	using state: State,
@@ -11838,6 +13355,7 @@ range_highlight_range :: proc(s: Range_Highlight, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// A highlight over `range`, in byte offsets of a `Rendered_Text`.
 range_highlight :: proc(cx: ^Cx, range: Range, background: Color, loc := #caller_location) -> Range_Highlight {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -11850,11 +13368,28 @@ range_highlight :: proc(cx: ^Cx, range: Range, background: Color, loc := #caller
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A snapshot of the text a `Text_View_State` renders, as of one parse of its content.
+//
+// Offsets into it are UTF-8 byte offsets. It is the string plain copy produces: `hello **world**`
+// renders as `hello world`, escapes are resolved, and heading markers and list markers are left
+// out. Blocks end with a newline and table cells are joined with a space; those separators belong
+// to no block, so no highlight paints them.
+//
+// Two snapshots are equal when they come from the same view and the same parse. Comparing the
+// current `rendered_text` with the one last searched tells an observer of the view whether its
+// content changed, so setting highlights, which notifies the view too, does not start another
+// search. The text itself is only built when it is first read, from the parsed document the
+// snapshot holds on to, so drop a snapshot that is no longer needed rather than keeping it past
+// many changes.
+//
+// `rendered_text`: super::TextViewState::rendered_text
+//
 // Rendered_Text is a handle to gpui_kit::base::RenderedText, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named rendered_text_*.
 Rendered_Text :: struct {
 	using state: State,
 }
 
+// The rendered text.
 rendered_text_as_str :: proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11866,6 +13401,7 @@ rendered_text_as_str :: proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// Whether the view renders no text.
 rendered_text_is_empty :: proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11877,6 +13413,7 @@ rendered_text_is_empty :: proc(s: Rendered_Text, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// The length of the rendered text, in bytes.
 rendered_text_len :: proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11888,6 +13425,31 @@ rendered_text_len :: proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// The range of this text rendered from `source`, a UTF-8 byte range of `gk.rendered_text_source`.
+//
+// This converts a range of the Markdown source, such as one `selected_source_range` returned or
+// one an application stored with its own data, into the range a `Range_Highlight` takes. A
+// character is rendered from `source` when any of the source it was rendered from lies in it: all
+// of `&amp;` for `&`, the `\` and the `*` of `\*`, the whole source of an inline object for its
+// text. Source that renders nothing, such as emphasis delimiters, heading and list markers, code
+// fences, table pipes and link destinations, adds nothing, so `**bold**` and `bold` give the same
+// range.
+//
+// The result is the smallest range holding every character rendered from `source`. When `source`
+// spans blocks, it also holds the separators between them, which a highlight leaves unpainted.
+// Text the parser recorded no source position for, such as the text of inline HTML, is only
+// included when it lies between characters that are.
+//
+// Converting the source range a selection of this text reports gives the selected range back,
+// widened only to whole characters where several share their source, like the text of an inline
+// object. The separators between blocks are rendered from no source, so one at either end of the
+// selection is left out: Select All gives back everything but the line break after the last block.
+//
+// Returns `None` when `source` is empty, reversed, out of bounds, or not on a character boundary,
+// or when nothing is rendered from it. HTML views record no source positions, so they always
+// return `None`.
+//
+// `selected_source_range`: super::TextViewState::selected_source_range
 rendered_text_range_for_source :: proc(s: Rendered_Text, cx: ^Cx, source: Range, loc := #caller_location) -> (v: Maybe(Range)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11900,6 +13462,13 @@ rendered_text_range_for_source :: proc(s: Rendered_Text, cx: ^Cx, source: Range,
 	return
 }
 
+// The source this text was rendered from, whose byte ranges `gk.rendered_text_range_for_source`
+// takes.
+//
+// It comes from the same parse as the text, so it trails the text last given to the view until
+// that text's parse lands. Before converting a range, check that it indexes this source: while
+// text is streamed in, this source is a prefix of the text the application holds, and after
+// `gk.text_view_state_set_text` it may be different text.
 rendered_text_source :: proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11911,11 +13480,14 @@ rendered_text_source :: proc(s: Rendered_Text, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// State for a `Resizable_Panel`
+//
 // Resizable_State is a handle to gpui_kit::base::ResizableState, an entity the library keeps. Its procedures are named resizable_state_*.
 Resizable_State :: struct {
 	using state: State,
 }
 
+// Return the measured size of the group along its resize axis.
 resizable_state_container_size :: proc(s: Resizable_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11927,6 +13499,7 @@ resizable_state_container_size :: proc(s: Resizable_State, cx: ^Cx, loc := #call
 	return
 }
 
+// Get the size of the panels.
 resizable_state_sizes :: proc(s: Resizable_State, cx: ^Cx, loc := #caller_location) -> (v: []f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11938,6 +13511,7 @@ resizable_state_sizes :: proc(s: Resizable_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// Remove all panel state.
 resizable_state_clear :: proc(s: Resizable_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11947,6 +13521,10 @@ resizable_state_clear :: proc(s: Resizable_State, cx: ^Cx, loc := #caller_locati
 	state_set(cx, req[:], loc)
 }
 
+// Insert a panel state at `ix`, or append it when no index is supplied.
+//
+// Existing panel sizes are redistributed so their total remains equal to the current container
+// size.
 resizable_state_insert_panel :: proc(s: Resizable_State, cx: ^Cx, size: Maybe(f32), ix: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11968,6 +13546,7 @@ resizable_state_insert_panel :: proc(s: Resizable_State, cx: ^Cx, size: Maybe(f3
 	state_set(cx, req[:], loc)
 }
 
+// Remove the panel at `panel_ix` and redistribute the remaining space.
 resizable_state_remove_panel :: proc(s: Resizable_State, cx: ^Cx, panel_ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11978,6 +13557,7 @@ resizable_state_remove_panel :: proc(s: Resizable_State, cx: ^Cx, panel_ix: int,
 	state_set(cx, req[:], loc)
 }
 
+// Reset the panel at `panel_ix` while preserving its current size.
 resizable_state_reset_panel :: proc(s: Resizable_State, cx: ^Cx, panel_ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -11988,6 +13568,15 @@ resizable_state_reset_panel :: proc(s: Resizable_State, cx: ^Cx, panel_ix: int, 
 	state_set(cx, req[:], loc)
 }
 
+// Programmatically resize the panel at `ix` to `size`, redistributing space among siblings using
+// the same logic as a drag.
+//
+// Sizes are clamped to the panel's `size_range` and to the container. Emits
+// `ResizablePanelEvent::Resized` so subscribers (e.g. preference persistence) see the change just
+// as if the user had dragged a handle.
+//
+// Out-of-range indices are a no-op. For the last panel, space is taken from the previous sibling
+// (the last panel has no handle of its own).
 resizable_state_resize_panel :: proc(s: Resizable_State, cx: ^Cx, ix: int, size: f32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12021,11 +13610,14 @@ resizable_state :: proc(cx: ^Cx, loc := #caller_location) -> Resizable_State {
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// The window's content and overlay host, independent of any styled component library.
+//
 // Root is a handle to gpui_kit::base::Root, an entity the library keeps. Its procedures are named root_*.
 Root :: struct {
 	using state: State,
 }
 
+// The original application content entity.
 root_view :: proc(s: Root, cx: ^Cx, loc := #caller_location) -> (v: View) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12037,11 +13629,14 @@ root_view :: proc(s: Root, cx: ^Cx, loc := #caller_location) -> (v: View) {
 	return
 }
 
+// The computed Sankey layout.
+//
 // Sankey_Graph is a handle to gpui_kit::base::plot::shape::SankeyGraph, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named sankey_graph_*.
 Sankey_Graph :: struct {
 	using state: State,
 }
 
+// Number of layers (max layer + 1), 0 for an empty graph.
 sankey_graph_layer_count :: proc(s: Sankey_Graph, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12068,6 +13663,8 @@ Scale_Band :: struct {
 	using state: State,
 }
 
+// The width of a band: the range divided among the bands, less the inner padding, and no wider
+// than `->max_band_width` when set.
 scale_band_band_width :: proc(s: Scale_Band, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12079,6 +13676,8 @@ scale_band_band_width :: proc(s: Scale_Band, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// The index of the domain value whose position is nearest `tick`; `0` for an empty domain or a
+// scale without discrete positions.
 scale_band_nearest_index :: proc(s: Scale_Band, cx: ^Cx, arg0: f32, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12091,6 +13690,8 @@ scale_band_nearest_index :: proc(s: Scale_Band, cx: ^Cx, arg0: f32, loc := #call
 	return
 }
 
+// The distance between the starts of two adjacent bands: the band width plus the inner padding.
+// The whole range for a single band.
 scale_band_step :: proc(s: Scale_Band, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12102,6 +13703,7 @@ scale_band_step :: proc(s: Scale_Band, cx: ^Cx, loc := #caller_location) -> (v: 
 	return
 }
 
+// Get the tick of the scale.
 scale_band_tick :: proc(s: Scale_Band, cx: ^Cx, value: string, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12123,9 +13725,15 @@ Scale_Band_Builder :: struct {
 }
 
 Scale_Band_Builder_VT :: struct {
+	// Lay the range out for `count` bands, the domain taking the leading ones in order and the rest
+	// staying empty. A `count` below the domain's length has no effect.
 	band_count: proc(b: Scale_Band_Builder, count: int) -> Scale_Band_Builder,
+	// Cap the band width at `width`, so a few bands in a wide range stay narrow; a band still starts
+	// where it would uncapped. Unset by default.
 	max_band_width: proc(b: Scale_Band_Builder, width: f32) -> Scale_Band_Builder,
+	// Set the padding inner of the band.
 	padding_inner: proc(b: Scale_Band_Builder, padding_inner: f32) -> Scale_Band_Builder,
+	// Set the padding outer of the band.
 	padding_outer: proc(b: Scale_Band_Builder, padding_outer: f32) -> Scale_Band_Builder,
 	build: proc(b: Scale_Band_Builder) -> Scale_Band,
 }
@@ -12165,6 +13773,8 @@ scale_band_builder_vt := Scale_Band_Builder_VT {
 	},
 }
 
+// Lay the distinct values of `domain` out as bands across `range`, from its lower end in domain
+// order.
 scale_band :: proc(cx: ^Cx, domain: []string, range: [2]f32, loc := #caller_location) -> Scale_Band_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -12187,6 +13797,8 @@ Scale_Linear :: struct {
 	using state: State,
 }
 
+// The index of the domain value whose position is nearest `tick`; `0` for an empty domain or a
+// scale without discrete positions.
 scale_linear_nearest_index :: proc(s: Scale_Linear, cx: ^Cx, arg0: f32, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12199,6 +13811,7 @@ scale_linear_nearest_index :: proc(s: Scale_Linear, cx: ^Cx, arg0: f32, loc := #
 	return
 }
 
+// Get the tick of the scale.
 scale_linear_tick :: proc(s: Scale_Linear, cx: ^Cx, value: f64, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12211,6 +13824,8 @@ scale_linear_tick :: proc(s: Scale_Linear, cx: ^Cx, value: f64, loc := #caller_l
 	return
 }
 
+// Map the extent of `domain` onto `range`: the smallest domain value to `range`0`` and the largest
+// to `range`1``, so a reversed range such as `height, 0.` puts larger values higher.
 scale_linear :: proc(cx: ^Cx, domain: []f64, range: [2]f32, loc := #caller_location) -> Scale_Linear {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -12233,6 +13848,7 @@ Scale_Ordinal :: struct {
 	using state: State,
 }
 
+// Given a value in the input domain, returns the corresponding value in the output range.
 scale_ordinal_map :: proc(s: Scale_Ordinal, cx: ^Cx, value: string, loc := #caller_location) -> (v: Maybe(Hsla)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12254,8 +13870,11 @@ Scale_Ordinal_Builder :: struct {
 }
 
 Scale_Ordinal_Builder_VT :: struct {
+	// Set the domain to the specified array of values.
 	domain: proc(b: Scale_Ordinal_Builder, domain: []string) -> Scale_Ordinal_Builder,
+	// Set the range of the ordinal scale to the specified array of values.
 	range: proc(b: Scale_Ordinal_Builder, range: []Color) -> Scale_Ordinal_Builder,
+	// Set the output value of the scale for unknown input values and returns this scale.
 	unknown: proc(b: Scale_Ordinal_Builder, unknown: Color) -> Scale_Ordinal_Builder,
 	build: proc(b: Scale_Ordinal_Builder) -> Scale_Ordinal,
 }
@@ -12317,6 +13936,8 @@ Scale_Point :: struct {
 	using state: State,
 }
 
+// The index of the domain value whose position is nearest `tick`; `0` for an empty domain or a
+// scale without discrete positions.
 scale_point_nearest_index :: proc(s: Scale_Point, cx: ^Cx, arg0: f32, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12329,6 +13950,7 @@ scale_point_nearest_index :: proc(s: Scale_Point, cx: ^Cx, arg0: f32, loc := #ca
 	return
 }
 
+// Get the tick of the scale.
 scale_point_tick :: proc(s: Scale_Point, cx: ^Cx, value: string, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12341,6 +13963,11 @@ scale_point_tick :: proc(s: Scale_Point, cx: ^Cx, value: string, loc := #caller_
 	return
 }
 
+// Returns the position of the domain value at `index`.
+//
+// Equivalent to `gk.scale_band_tick` on `domain`index`` for a domain of unique values, without
+// searching the domain. Charts whose domain is built one entry per datum use this to project a
+// series in linear time.
 scale_point_tick_at :: proc(s: Scale_Point, cx: ^Cx, index: int, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12353,6 +13980,8 @@ scale_point_tick_at :: proc(s: Scale_Point, cx: ^Cx, index: int, loc := #caller_
 	return
 }
 
+// Place `domain` evenly from `range`0`` to `range`1``; a single value sits in the middle of the
+// range.
 scale_point :: proc(cx: ^Cx, domain: []string, range: [2]f32, loc := #caller_location) -> Scale_Point {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -12375,6 +14004,7 @@ Scroll_Handle :: struct {
 	using state: State,
 }
 
+// The full size of the content, including padding.
 scroll_handle_content_size :: proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Size) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12385,6 +14015,7 @@ scroll_handle_content_size :: proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Get the current offset of the scroll handle.
 scroll_handle_offset :: proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12395,6 +14026,7 @@ scroll_handle_offset :: proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// Bounds of the viewport the scrollbar overlays.
 scroll_handle_viewport_bounds :: proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12405,6 +14037,7 @@ scroll_handle_viewport_bounds :: proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_
 	return
 }
 
+// Called when end dragging the scrollbar thumb.
 scroll_handle_end_drag :: proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12413,6 +14046,7 @@ scroll_handle_end_drag :: proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_locatio
 	state_set(cx, req[:], loc)
 }
 
+// Set the offset of the scroll handle.
 scroll_handle_set_offset :: proc(s: Scroll_Handle, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12422,6 +14056,7 @@ scroll_handle_set_offset :: proc(s: Scroll_Handle, cx: ^Cx, offset: Gpui_Point, 
 	state_set(cx, req[:], loc)
 }
 
+// Called when start dragging the scrollbar thumb.
 scroll_handle_start_drag :: proc(s: Scroll_Handle, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12537,11 +14172,15 @@ scrollbar_theme_read_motion :: proc(s: Scrollbar_Theme_Read, cx: ^Cx, loc := #ca
 	return
 }
 
+// Stateful, presentation-independent search engine used by text inputs.
+//
 // Search_Matcher is a handle to gpui_kit::base::input::SearchMatcher, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named search_matcher_*.
 Search_Matcher :: struct {
 	using state: State,
 }
 
+// The index of the current match into `gk.search_matcher_matched_ranges`, `None` while there is no
+// match.
 search_matcher_current :: proc(s: Search_Matcher, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12575,6 +14214,7 @@ search_matcher_is_empty :: proc(s: Search_Matcher, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// `2/5`: the current match and the total, `0/0` without matches.
 search_matcher_label :: proc(s: Search_Matcher, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12639,11 +14279,17 @@ search_matcher :: proc(cx: ^Cx, loc := #caller_location) -> Search_Matcher {
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// One search over an input: the query, how the built-in panel shows it, and its matches. Read it
+// through `gk.input_state_search_session`; it is written only through the input state's search
+// methods, and it grows, so build it with `Default` and do not destructure it exhaustively.
+//
 // Search_Session is a handle to gpui_kit::base::input::SearchSession, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named search_session_*.
 Search_Session :: struct {
 	using state: State,
 }
 
+// Whether a search is in progress: the built-in panel is open, or a query was set without it and
+// `gk.input_state_close_search` has not run since. Matches are highlighted while this holds.
 search_session_is_active :: proc(s: Search_Session, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12670,6 +14316,7 @@ Select_State :: struct {
 	using state: State,
 }
 
+// Get the current selected index.
 select_state_selected_index :: proc(s: Select_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Base_Index_Path)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12681,6 +14328,7 @@ select_state_selected_index :: proc(s: Select_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Get the current selected value.
 select_state_selected_value :: proc(s: Select_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12692,6 +14340,7 @@ select_state_selected_value :: proc(s: Select_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Focus the select trigger input.
 select_state_focus :: proc(s: Select_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12701,6 +14350,7 @@ select_state_focus :: proc(s: Select_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Replace the delegate (item data) for the select state.
 select_state_set_items :: proc(s: Select_State, cx: ^Cx, items: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12711,6 +14361,7 @@ select_state_set_items :: proc(s: Select_State, cx: ^Cx, items: Row_Source, loc 
 	state_set(cx, req[:], loc)
 }
 
+// Set the selected index for the select.
 select_state_set_selected_index :: proc(s: Select_State, cx: ^Cx, selected_index: Maybe_Index_Path, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12733,6 +14384,13 @@ select_state_set_selected_index :: proc(s: Select_State, cx: ^Cx, selected_index
 	state_set(cx, req[:], loc)
 }
 
+// Set selected value for the select.
+//
+// Looks up the position from the delegate and sets the selected index accordingly. Passes `None`
+// when the value is not found.
+//
+// The delegate looks the value up in its matched items, so an active search query is cleared first
+// to get an index into the full item list.
 select_state_set_selected_value :: proc(s: Select_State, cx: ^Cx, selected_value: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12764,6 +14422,9 @@ Select_State_Builder :: struct {
 }
 
 Select_State_Builder_VT :: struct {
+	// Sets whether the dropdown menu is searchable, default is `false`.
+	//
+	// When `true`, a search input appears at the top of the dropdown menu.
 	searchable: proc(b: Select_State_Builder, searchable: bool) -> Select_State_Builder,
 	build: proc(b: Select_State_Builder) -> Select_State,
 }
@@ -12782,6 +14443,7 @@ select_state_builder_vt := Select_State_Builder_VT {
 	},
 }
 
+// Create a new Select state.
 select_state :: proc(cx: ^Cx, delegate: Row_Source, selected_index: Maybe_Index_Path, loc := #caller_location) -> Select_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -12833,6 +14495,7 @@ sequence_steps :: proc(s: Sequence, cx: ^Cx, loc := #caller_location) -> (v: []S
 	return
 }
 
+// Samples the sequence and requests a frame while a step is active.
 sequence_sample :: proc(s: Sequence, cx: ^Cx, loc := #caller_location) -> (v: Sequence_Sample) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12853,7 +14516,9 @@ Sequence_Builder :: struct {
 }
 
 Sequence_Builder_VT :: struct {
+	// Appends a step that transitions to `target` once the previous step ends.
 	with_step: proc(b: Sequence_Builder, target: f32, transition: Transition) -> Sequence_Builder,
+	// Appends steps built elsewhere, in order.
 	with_steps: proc(b: Sequence_Builder, steps: []Sequence_Step) -> Sequence_Builder,
 	build: proc(b: Sequence_Builder) -> Sequence,
 }
@@ -12883,6 +14548,7 @@ sequence_builder_vt := Sequence_Builder_VT {
 	},
 }
 
+// Starts a sequence at `from`, with no steps yet.
 sequence :: proc(cx: ^Cx, id: Transition_Id_Into, from: f32, loc := #caller_location) -> Sequence_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -12911,6 +14577,9 @@ sequence_sample_is_finished :: proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_
 	return
 }
 
+// The status of the step being played. `Finished` is reported only once the last step has
+// completed: a step that hands over to the next one reports that next step's `Delayed` or
+// `Running` instead.
 sequence_sample_status :: proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: Motion_Status) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12922,6 +14591,8 @@ sequence_sample_status :: proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// The index of the step being played. A finished sequence reports its last step; an empty one
+// reports `0`.
 sequence_sample_step :: proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12933,6 +14604,7 @@ sequence_sample_step :: proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// The interpolated value for this frame.
 sequence_sample_value :: proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12944,6 +14616,7 @@ sequence_sample_value :: proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// The interpolated value for this frame.
 sequence_sample_try_value :: proc(s: Sequence_Sample, cx: ^Cx, loc := #caller_location) -> (v: f32, ok: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -12994,6 +14667,9 @@ sequence_step :: proc(cx: ^Cx, target: f32, transition: Transition, loc := #call
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A shape key from its projected points (origin-relative) and whatever else shapes the
+// tessellation (stroke width, curve style, dash pattern).
+//
 // Shape_Key is a handle to gpui_kit::base::plot::ShapeKey, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named shape_key_*.
 Shape_Key :: struct {
 	using state: State,
@@ -13021,11 +14697,16 @@ shape_key :: proc(cx: ^Cx, extra: string, loc := #caller_location) -> Shape_Key 
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// State of the `Base_Slider`.
+//
 // Slider_State is a handle to gpui_kit::base::slider::SliderState, an entity the library keeps. Its procedures are named slider_state_*.
 Slider_State :: struct {
 	using state: State,
 }
 
+// The amount an assistive technology's Increment and Decrement move a thumb, and the step reported
+// to it: the step, or a hundredth of the range for a step that is not a positive finite number (a
+// continuous slider).
 slider_state_accessibility_step :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13037,6 +14718,7 @@ slider_state_accessibility_step :: proc(s: Slider_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// Get the maximum value.
 slider_state_max_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13048,6 +14730,7 @@ slider_state_max_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location
 	return
 }
 
+// Get the minimum value.
 slider_state_min_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13059,6 +14742,7 @@ slider_state_min_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location
 	return
 }
 
+// Get the step value.
 slider_state_step_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13070,6 +14754,7 @@ slider_state_step_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Get the value of the slider.
 slider_state_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: Slider_Value) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13081,6 +14766,7 @@ slider_state_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// Get the value of the slider.
 slider_state_try_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location) -> (v: Slider_Value, ok: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13092,6 +14778,7 @@ slider_state_try_value :: proc(s: Slider_State, cx: ^Cx, loc := #caller_location
 	return v, true
 }
 
+// Set the value of the slider.
 slider_state_set_value :: proc(s: Slider_State, cx: ^Cx, value: Slider_Value_Into, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13123,10 +14810,15 @@ Slider_State_Builder :: struct {
 }
 
 Slider_State_Builder_VT :: struct {
+	// Set the default value of the slider, default: 0.0
 	default_value: proc(b: Slider_State_Builder, value: Slider_Value_Into) -> Slider_State_Builder,
+	// Set the maximum value of the slider, default: 100.0
 	max: proc(b: Slider_State_Builder, max: f32) -> Slider_State_Builder,
+	// Set the minimum value of the slider, default: 0.0
 	min: proc(b: Slider_State_Builder, min: f32) -> Slider_State_Builder,
+	// Set the scale of the slider, default: `Linear`.
 	scale: proc(b: Slider_State_Builder, scale: Slider_Scale) -> Slider_State_Builder,
+	// Set the step value of the slider, default: 1.0
 	step: proc(b: Slider_State_Builder, step: f32) -> Slider_State_Builder,
 	build: proc(b: Slider_State_Builder) -> Slider_State,
 }
@@ -13173,6 +14865,7 @@ slider_state_builder_vt := Slider_State_Builder_VT {
 	},
 }
 
+// Create a new `Slider_State`.
 slider_state :: proc(cx: ^Cx, loc := #caller_location) -> Slider_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -13183,11 +14876,23 @@ slider_state :: proc(cx: ^Cx, loc := #caller_location) -> Slider_State_Builder {
 	return {vt = &slider_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// The state of a speech input: captures audio from an `AudioInput`, feeds it to a
+// `SpeechRecognizer` and tracks the transcript.
+//
+// Render it with `Speech_Button` and `Speech_Waveform`, and subscribe to `SpeechEvent` to receive
+// the text.
+//
+// The recognizer is, in order: the one passed to `recognizer`; else the platform's
+// `SystemRecognizer`, unless `->system_fallback` turned it off; else none, and the state is not
+// available. The input defaults to the `Microphone`. Both defaults need the `speech` feature.
+//
 // Speech_State is a handle to gpui_kit::component::speech::SpeechState, an entity the library keeps. Its procedures are named speech_state_*.
 Speech_State :: struct {
 	using state: State,
 }
 
+// Whether a recognizer and an input are configured, so that speech input can work on this platform
+// at all.
 speech_state_has_recognizer :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13199,6 +14904,8 @@ speech_state_has_recognizer :: proc(s: Speech_State, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Whether a session can start now: `gk.speech_state_has_recognizer` and the recognizer reports
+// itself available.
 speech_state_is_available :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13210,6 +14917,8 @@ speech_state_is_available :: proc(s: Speech_State, cx: ^Cx, loc := #caller_locat
 	return
 }
 
+// Recent input levels in `0.0..=1.0`, oldest first, one per 80 ms of audio. Peaks rise at once and
+// fall back smoothly; background noise reads as `0.0`.
 speech_state_levels :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: []f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13221,6 +14930,7 @@ speech_state_levels :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// Where the state is in its session.
 speech_state_status :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: Speech_Status) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13232,6 +14942,8 @@ speech_state_status :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// The transcript of the current or last session: every committed phrase followed by the current
+// hypothesis.
 speech_state_transcript :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13243,6 +14955,7 @@ speech_state_transcript :: proc(s: Speech_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// End the session at once and discard its transcript.
 speech_state_cancel :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13252,6 +14965,9 @@ speech_state_cancel :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Start a session. Does nothing while one is running.
+//
+// When the recognizer or the input fails to start, emits `Error` and stays idle.
 speech_state_start :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13261,6 +14977,7 @@ speech_state_start :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Stop capturing and wait for the final result, which arrives as `Final`.
 speech_state_stop :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13270,6 +14987,7 @@ speech_state_stop :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Start a session when idle, otherwise stop the running one.
 speech_state_toggle :: proc(s: Speech_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13300,7 +15018,13 @@ Speech_State_Builder :: struct {
 }
 
 Speech_State_Builder_VT :: struct {
+	// Set how long `gk.speech_state_stop` waits for the recognizer's final result before ending the
+	// session with the transcript so far, default 3 seconds.
 	stop_timeout: proc(b: Speech_State_Builder, timeout: time.Duration) -> Speech_State_Builder,
+	// Whether to fall back to the platform's recognizer when no `recognizer` is set, default `true`.
+	//
+	// On Windows the system recognizer dictates through Microsoft's online service; turn this off when
+	// audio must not leave the application.
 	system_fallback: proc(b: Speech_State_Builder, system_fallback: bool) -> Speech_State_Builder,
 	build: proc(b: Speech_State_Builder) -> Speech_State,
 }
@@ -13326,6 +15050,7 @@ speech_state_builder_vt := Speech_State_Builder_VT {
 	},
 }
 
+// Create a speech state with the default recognizer and input.
 speech_state :: proc(cx: ^Cx, loc := #caller_location) -> Speech_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -13341,6 +15066,7 @@ Stack :: struct {
 	using state: State,
 }
 
+// Compute the stacked series
 stack_series :: proc(s: Stack, cx: ^Cx, loc := #caller_location) -> (v: []Stack_Series) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13361,8 +15087,11 @@ Stack_Builder :: struct {
 }
 
 Stack_Builder_VT :: struct {
+	// Set the data to be stacked
 	data: proc(b: Stack_Builder, data: Data) -> Stack_Builder,
+	// Set the keys (series) for stacking
 	keys: proc(b: Stack_Builder, keys: []string) -> Stack_Builder,
+	// Set the value accessor function
 	value: proc(b: Stack_Builder, value: string) -> Stack_Builder,
 	build: proc(b: Stack_Builder) -> Stack,
 }
@@ -13728,6 +15457,16 @@ syntax_highlighter :: proc(cx: ^Cx, language: string, loc := #caller_location) -
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A tab group's behavior, with no appearance of its own.
+//
+// It owns the panel list mirrored from the layout tree, the displayed index, the focus handle,
+// drag and drop hit state, and the zoom flag. Everything visible is produced by the
+// `TabGroupRenderer` the host installs.
+//
+// The group holds no handle on its container. What the container knows — the facts in
+// `Tab_Group_Constraints` — is pushed in, and what the group needs done is emitted as a
+// `TabGroupEvent`. That keeps a group constructible, and testable, on its own.
+//
 // Tab_Group is a handle to gpui_kit::base::dock::TabGroup, an entity the library keeps. Its procedures are named tab_group_*.
 Tab_Group :: struct {
 	using state: State,
@@ -13744,6 +15483,8 @@ tab_group_active_ix :: proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (
 	return
 }
 
+// The panel currently on screen, which is the displayed tab unless it has gone invisible, in which
+// case rendering falls back to the first visible panel.
 tab_group_active_panel :: proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Dock_Panel)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13755,6 +15496,7 @@ tab_group_active_panel :: proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// A snapshot of everything a skin needs to draw this group.
 tab_group_context :: proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: Tab_Group_Context) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13766,6 +15508,10 @@ tab_group_context :: proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v:
 	return
 }
 
+// Whether closing this group's displayed panel is allowed at all.
+//
+// Mirrors the old `TabPanel::closable`: the container must permit it, the group must have
+// somewhere to go, and the displayed panel must itself be closable.
 tab_group_is_closable :: proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13799,6 +15545,7 @@ tab_group_is_zoomed :: proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (
 	return
 }
 
+// The `Tabs` node this group mirrors.
 tab_group_node :: proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: Node_Id) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13821,6 +15568,8 @@ tab_group_panels :: proc(s: Tab_Group, cx: ^Cx, loc := #caller_location) -> (v: 
 	return
 }
 
+// Ask the container to close `panel`. Nothing happens for a panel that is not in this group, or
+// when either the group or the panel refuses.
 tab_group_close_panel :: proc(s: Tab_Group, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13831,6 +15580,7 @@ tab_group_close_panel :: proc(s: Tab_Group, cx: ^Cx, panel: Dock_Panel_Id, loc :
 	state_set(cx, req[:], loc)
 }
 
+// Display `ix`, if it names a tab that is not already displayed.
 tab_group_select_tab :: proc(s: Tab_Group, cx: ^Cx, ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13889,6 +15639,9 @@ tab_group_builder_vt := Tab_Group_Builder_VT {
 	},
 }
 
+// What a skin needs to draw a tab group, and the callbacks it invokes rather than reimplementing
+// behavior.
+//
 // Tab_Group_Context is a handle to gpui_kit::base::dock::TabGroupContext, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named tab_group_context_*.
 Tab_Group_Context :: struct {
 	using state: State,
@@ -13905,6 +15658,7 @@ tab_group_context_active_ix :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #calle
 	return
 }
 
+// The panel on screen, which is the displayed tab unless that panel has gone invisible.
 tab_group_context_active_panel :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Dock_Panel)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13916,6 +15670,8 @@ tab_group_context_active_panel :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #ca
 	return
 }
 
+// The drag payload for the tab at `ix`, for a skin wiring `on_drag` onto its tabs. `None` when
+// `ix` names no panel.
 tab_group_context_drag_panel :: proc(s: Tab_Group_Context, cx: ^Cx, ix: int, loc := #caller_location) -> (v: Maybe(Drag_Panel)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13939,6 +15695,7 @@ tab_group_context_drop_indicator :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #
 	return
 }
 
+// Whether the active panel can be closed.
 tab_group_context_is_closable :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -13994,6 +15751,8 @@ tab_group_context_is_locked :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #calle
 	return
 }
 
+// Whether `panel` can be closed from this group. Uses the same constraints as
+// `gk.tab_group_close_panel`, including the panel's own `closable` flag.
 tab_group_context_is_panel_closable :: proc(s: Tab_Group_Context, cx: ^Cx, panel: Dock_Panel_Id, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14017,6 +15776,8 @@ tab_group_context_is_zoomed :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #calle
 	return
 }
 
+// The `Tabs` node this group mirrors, for a skin that needs to name the group in a drag payload or
+// a drop target.
 tab_group_context_node :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: Node_Id) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14028,6 +15789,8 @@ tab_group_context_node :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_loc
 	return
 }
 
+// Every panel in the group, in tab order — visible or not. A skin filters with `->visible` when it
+// draws.
 tab_group_context_panels :: proc(s: Tab_Group_Context, cx: ^Cx, loc := #caller_location) -> (v: []Dock_Panel) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14049,6 +15812,8 @@ tab_group_context_close :: proc(s: Tab_Group_Context, cx: ^Cx, panel: Dock_Panel
 	state_set(cx, req[:], loc)
 }
 
+// A host-owned drag dropped on the tab bar. `placement` is `None` to merge into this group rather
+// than split beside it.
 tab_group_context_drop_item :: proc(s: Tab_Group_Context, cx: ^Cx, item: Any_Drag, placement: Maybe(Placement), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14065,6 +15830,8 @@ tab_group_context_drop_item :: proc(s: Tab_Group_Context, cx: ^Cx, item: Any_Dra
 	state_set(cx, req[:], loc)
 }
 
+// A panel dropped on the tab bar. `ix` names the slot it lands in, or `None` to append; `activate`
+// decides whether it becomes displayed.
 tab_group_context_drop_panel :: proc(s: Tab_Group_Context, cx: ^Cx, drag: Drag_Panel, ix: Maybe(int), activate: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14106,6 +15873,10 @@ Table_State :: struct {
 	using state: State,
 }
 
+// The width column `col_ix` is drawn at now, or `None` past the last column.
+//
+// This is the table's own width, which follows a drag or a fit as it happens; the delegate's
+// `->width` is read again only on `gk.table_state_refresh`.
 table_state_col_width :: proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14118,6 +15889,7 @@ table_state_col_width :: proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #call
 	return
 }
 
+// Returns a reference to the delegate.
 table_state_delegate :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Row_Source) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14129,6 +15901,12 @@ table_state_delegate :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// Dump table data.
+//
+// Returns a tuple of (headers, rows) where each row is a vector of cell values.
+//
+// This materializes the complete table in memory. For large tables, prefer
+// `gk.table_state_dump_range` and process rows in batches.
 table_state_dump :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Tuple_Temp_String_Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14140,6 +15918,13 @@ table_state_dump :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v
 	return
 }
 
+// Dump table data for the specified row range.
+//
+// Returns the same `(headers, rows)` shape as `gk.table_state_dump`, with only the rows inside the
+// clamped range.
+//
+// The requested range is clamped to the table's current row count. For large tables, callers can
+// invoke this repeatedly with bounded ranges.
 table_state_dump_range :: proc(s: Table_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Tuple_Temp_String_Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14152,6 +15937,10 @@ table_state_dump_range :: proc(s: Table_State, cx: ^Cx, range: Range, loc := #ca
 	return
 }
 
+// Dump the header row of the table.
+//
+// Batched exporters can read the headers once with this, then stream the rows with
+// `gk.table_state_dump_range`.
 table_state_headers :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: []Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14163,6 +15952,7 @@ table_state_headers :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// Returns the cell that has been right clicked, as `(row_ix, col_ix)`.
 table_state_right_clicked_cell :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Tuple_Int_Int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14174,6 +15964,7 @@ table_state_right_clicked_cell :: proc(s: Table_State, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Returns the row that has been right clicked.
 table_state_right_clicked_row :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14185,6 +15976,9 @@ table_state_right_clicked_row :: proc(s: Table_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Returns the selected cell as `(row_ix, col_ix)`.
+//
+// `Some` only when a cell is selected; see `gk.table_state_selection`.
 table_state_selected_cell :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Tuple_Int_Int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14196,6 +15990,10 @@ table_state_selected_cell :: proc(s: Table_State, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// Returns the selected column index.
+//
+// `Some` only when a column itself is selected; a selected cell does not count, see
+// `gk.table_state_selection`.
 table_state_selected_col :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14207,6 +16005,10 @@ table_state_selected_col :: proc(s: Table_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Returns the selected row index.
+//
+// `Some` only when a row itself is selected; a selected cell does not count, see
+// `gk.table_state_selection`.
 table_state_selected_row :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14218,6 +16020,10 @@ table_state_selected_row :: proc(s: Table_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Returns the current selection as one value.
+//
+// A selected cell reports as `Cell` only; use `selected_cell().map(|(row_ix, _)| row_ix)` when the
+// cell's row is wanted.
 table_state_selection :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Table_Selection) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14251,6 +16057,7 @@ table_state_visible_range_rows :: proc(s: Table_State, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Returns a mutable reference to the delegate.
 table_state_delegate_mut :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) -> (v: Row_Source) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14262,6 +16069,11 @@ table_state_delegate_mut :: proc(s: Table_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Fits column `col_ix` to its content, as a double-click on its resize handle does.
+//
+// The width is `->fit_column` plus the cell padding, clamped to the column's `min_width` and
+// `max_width`, and `ColumnWidthsChanged` is emitted when it changed. Returns whether the delegate
+// gave a width: `false` when the column cannot be resized or the delegate answered `None`.
 table_state_fit_col :: proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14274,6 +16086,7 @@ table_state_fit_col :: proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #caller
 	return
 }
 
+// Clear the selection of the table.
 table_state_clear_selection :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14283,6 +16096,7 @@ table_state_clear_selection :: proc(s: Table_State, cx: ^Cx, loc := #caller_loca
 	state_set(cx, req[:], loc)
 }
 
+// When we update columns or rows, we need to refresh the table.
 table_state_refresh :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14292,6 +16106,9 @@ table_state_refresh :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Re-compute the header layout from the current delegate.
+//
+// Call this after changing delegate state that affects `group_headers`.
 table_state_refresh_header_layout :: proc(s: Table_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14311,6 +16128,7 @@ table_state_scroll_to_col :: proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #
 	state_set(cx, req[:], loc)
 }
 
+// Scroll to the row at the given index.
 table_state_scroll_to_row :: proc(s: Table_State, cx: ^Cx, row_ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14321,6 +16139,10 @@ table_state_scroll_to_row :: proc(s: Table_State, cx: ^Cx, row_ix: int, loc := #
 	state_set(cx, req[:], loc)
 }
 
+// Set or clear the right-clicked row state.
+//
+// Pass `None` to clear — useful when opening a header context menu to prevent the row context menu
+// from appearing simultaneously.
 table_state_set_right_clicked_row :: proc(s: Table_State, cx: ^Cx, row: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14336,6 +16158,10 @@ table_state_set_right_clicked_row :: proc(s: Table_State, cx: ^Cx, row: Maybe(in
 	state_set(cx, req[:], loc)
 }
 
+// Sets the selected cell to the given row and column indices.
+//
+// This method: - Switches the table to cell selection mode - Scrolls to make the cell visible
+// (centered vertically) - Emits a `SelectCell` event
 table_state_set_selected_cell :: proc(s: Table_State, cx: ^Cx, row_ix: int, col_ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14347,6 +16173,7 @@ table_state_set_selected_cell :: proc(s: Table_State, cx: ^Cx, row_ix: int, col_
 	state_set(cx, req[:], loc)
 }
 
+// Sets the selected col to the given index.
 table_state_set_selected_col :: proc(s: Table_State, cx: ^Cx, col_ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14357,6 +16184,7 @@ table_state_set_selected_col :: proc(s: Table_State, cx: ^Cx, col_ix: int, loc :
 	state_set(cx, req[:], loc)
 }
 
+// Sets the selected row to the given index.
 table_state_set_selected_row :: proc(s: Table_State, cx: ^Cx, row_ix: int, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14367,6 +16195,10 @@ table_state_set_selected_row :: proc(s: Table_State, cx: ^Cx, row_ix: int, loc :
 	state_set(cx, req[:], loc)
 }
 
+// Sets the selection as one value; `None` clears it.
+//
+// Scrolls and emits exactly as the matching `set_selected_*` or `gk.table_state_clear_selection`
+// call would.
 table_state_set_selection :: proc(s: Table_State, cx: ^Cx, selection: Table_Selection, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14398,14 +16230,36 @@ Table_State_Builder :: struct {
 }
 
 Table_State_Builder_VT :: struct {
+	// Set to enable/disable cell selection, default is false.
+	//
+	// When enabled: - Individual cells become selectable by clicking - A row header column appears on
+	// the left side (can be hidden via `->row_header`) - Keyboard navigation operates at the cell
+	// level - Cell-specific events (SelectCell, DoubleClickedCell, RightClickedCell) are emitted
 	cell_selectable: proc(b: Table_State_Builder, cell_selectable: bool) -> Table_State_Builder,
+	// Set to enable/disable column movable, default to true.
 	col_movable: proc(b: Table_State_Builder, col_movable: bool) -> Table_State_Builder,
+	// Set to enable/disable column resizable, default to true.
 	col_resizable: proc(b: Table_State_Builder, col_resizable: bool) -> Table_State_Builder,
+	// Set to enable/disable column selectable, default true
 	col_selectable: proc(b: Table_State_Builder, col_selectable: bool) -> Table_State_Builder,
+	// Set to loop selection, default to true.
 	loop_selection: proc(b: Table_State_Builder, loop_selection: bool) -> Table_State_Builder,
+	// Set whether the row header column is shown, default is `true`.
+	//
+	// Only effective when `cell_selectable` is `true` — otherwise the row header column is never
+	// rendered. Hide it when you want to use the leftmost column for your own content (e.g. a row
+	// index column).
+	//
+	// When hidden, the first click on a cell selects the cell; clicking the already-selected cell
+	// again escalates to selecting the whole row, so users can still pick rows without the dedicated
+	// header column. The row escalation requires `row_selectable` to be enabled.
 	row_header: proc(b: Table_State_Builder, row_header: bool) -> Table_State_Builder,
+	// Set to enable/disable row selectable, default true
 	row_selectable: proc(b: Table_State_Builder, row_selectable: bool) -> Table_State_Builder,
+	// Set whether a row click with the secondary modifier or Shift held selects the row, default is
+	// `true`.
 	select_on_modifier_click: proc(b: Table_State_Builder, select_on_modifier_click: bool) -> Table_State_Builder,
+	// Set to enable/disable column sortable, default true
 	sortable: proc(b: Table_State_Builder, sortable: bool) -> Table_State_Builder,
 	build: proc(b: Table_State_Builder) -> Table_State,
 }
@@ -14480,6 +16334,7 @@ table_state_builder_vt := Table_State_Builder_VT {
 	},
 }
 
+// Create a new TableState with the given delegate.
 table_state :: proc(cx: ^Cx, delegate: Row_Source, loc := #caller_location) -> Table_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -14491,11 +16346,14 @@ table_state :: proc(cx: ^Cx, delegate: Row_Source, loc := #caller_location) -> T
 	return {vt = &table_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// The visible range of the rows and columns.
+//
 // Table_Visible_Range is a handle to gpui_kit::component::table::TableVisibleRange, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named table_visible_range_*.
 Table_Visible_Range :: struct {
 	using state: State,
 }
 
+// Returns the visible range of the columns.
 table_visible_range_cols :: proc(s: Table_Visible_Range, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14507,6 +16365,7 @@ table_visible_range_cols :: proc(s: Table_Visible_Range, cx: ^Cx, loc := #caller
 	return
 }
 
+// Returns the visible range of the rows.
 table_visible_range_rows :: proc(s: Table_Visible_Range, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14528,11 +16387,16 @@ table_visible_range_default :: proc(cx: ^Cx, loc := #caller_location) -> Table_V
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// A click on the checkbox of a Markdown task list item, passed to the `->on_task_toggle` handler.
+//
+// The ranges are byte ranges in the view's source text.
+//
 // Task_Toggle_Event is a handle to gpui_kit::base::TaskToggleEvent, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named task_toggle_event_*.
 Task_Toggle_Event :: struct {
 	using state: State,
 }
 
+// The checked state the item should now have: the opposite of the state its checkbox shows.
 task_toggle_event_checked :: proc(s: Task_Toggle_Event, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14544,6 +16408,8 @@ task_toggle_event_checked :: proc(s: Task_Toggle_Event, cx: ^Cx, loc := #caller_
 	return
 }
 
+// The list item's source span, starting at its list marker (`-`, `*`, `1.`) and covering its
+// content, nested lists included.
 task_toggle_event_item_range :: proc(s: Task_Toggle_Event, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14555,6 +16421,7 @@ task_toggle_event_item_range :: proc(s: Task_Toggle_Event, cx: ^Cx, loc := #call
 	return
 }
 
+// The item's task marker: the ` ` or ``x`` itself, brackets included.
 task_toggle_event_marker_range :: proc(s: Task_Toggle_Event, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14566,11 +16433,20 @@ task_toggle_event_marker_range :: proc(s: Task_Toggle_Event, cx: ^Cx, loc := #ca
 	return
 }
 
+// An independently managed collection of `TextDecoration`s.
+//
+// This is the GPUI Component counterpart of Monaco's `IEditorDecorationsCollection`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IEditorDecorationsCollection.html).
+//
 // Text_Decoration_Collection is a handle to gpui_kit::base::input::TextDecorationCollection, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named text_decoration_collection_*.
 Text_Decoration_Collection :: struct {
 	using state: State,
 }
 
+// Return the UTF-8 byte ranges in this collection.
+//
+// This corresponds to Monaco's `IEditorDecorationsCollection.getRanges`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IEditorDecorationsCollection.html#getRanges).
 text_decoration_collection_get_ranges :: proc(s: Text_Decoration_Collection, cx: ^Cx, loc := #caller_location) -> (v: []Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14582,6 +16458,10 @@ text_decoration_collection_get_ranges :: proc(s: Text_Decoration_Collection, cx:
 	return
 }
 
+// Add decorations to this collection.
+//
+// This corresponds to Monaco's `IEditorDecorationsCollection.append`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IEditorDecorationsCollection.html#append).
 text_decoration_collection_append :: proc(s: Text_Decoration_Collection, cx: ^Cx, decorations: []Text_Decoration, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14595,6 +16475,10 @@ text_decoration_collection_append :: proc(s: Text_Decoration_Collection, cx: ^Cx
 	state_set(cx, req[:], loc)
 }
 
+// Remove all decorations from this collection.
+//
+// This corresponds to Monaco's `IEditorDecorationsCollection.clear`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IEditorDecorationsCollection.html#clear).
 text_decoration_collection_clear :: proc(s: Text_Decoration_Collection, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14604,6 +16488,10 @@ text_decoration_collection_clear :: proc(s: Text_Decoration_Collection, cx: ^Cx,
 	state_set(cx, req[:], loc)
 }
 
+// Replace all decorations in this collection.
+//
+// This corresponds to Monaco's `IEditorDecorationsCollection.set`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IEditorDecorationsCollection.html#set).
 text_decoration_collection_set :: proc(s: Text_Decoration_Collection, cx: ^Cx, decorations: []Text_Decoration, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14617,11 +16505,14 @@ text_decoration_collection_set :: proc(s: Text_Decoration_Collection, cx: ^Cx, d
 	state_set(cx, req[:], loc)
 }
 
+// A selection endpoint anchored to a participant's content coordinates.
+//
 // Text_Selection_Endpoint is a handle to gpui_kit::base::TextSelectionEndpoint, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named text_selection_endpoint_*.
 Text_Selection_Endpoint :: struct {
 	using state: State,
 }
 
+// Returns the participant-relative content point.
 text_selection_endpoint_content_point :: proc(s: Text_Selection_Endpoint, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14633,11 +16524,14 @@ text_selection_endpoint_content_point :: proc(s: Text_Selection_Endpoint, cx: ^C
 	return
 }
 
+// A stable, participant-neutral handle for text that participates in window selection.
+//
 // Text_Selection_Handle is a handle to gpui_kit::base::TextSelectionHandle, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named text_selection_handle_*.
 Text_Selection_Handle :: struct {
 	using state: State,
 }
 
+// Returns whether participant-local selection is active.
 text_selection_handle_has_local_selection :: proc(s: Text_Selection_Handle, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14649,6 +16543,7 @@ text_selection_handle_has_local_selection :: proc(s: Text_Selection_Handle, cx: 
 	return
 }
 
+// Returns the current geometry selection snapshot for this participant.
 text_selection_handle_snapshot :: proc(s: Text_Selection_Handle, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Text_Selection_Snapshot)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14660,6 +16555,11 @@ text_selection_handle_snapshot :: proc(s: Text_Selection_Handle, cx: ^Cx, loc :=
 	return
 }
 
+// Paints the touch handles at the ends of this participant's selection, in `color`, where the
+// participant is in the paint order — so whatever is drawn over the text is drawn over its handles
+// too. Call at the end of the participant's paint, after `register` for the frame.
+//
+// The handles take the finger's drag from there; Base moves the selection with it.
 text_selection_handle_paint_touch_handles :: proc(s: Text_Selection_Handle, cx: ^Cx, layout: Touch_Handle_Layout, color: Color, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14671,6 +16571,7 @@ text_selection_handle_paint_touch_handles :: proc(s: Text_Selection_Handle, cx: 
 	state_set(cx, req[:], loc)
 }
 
+// Sets the fallback text copied while this participant participates.
 text_selection_handle_set_fallback_copy_text :: proc(s: Text_Selection_Handle, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14681,6 +16582,7 @@ text_selection_handle_set_fallback_copy_text :: proc(s: Text_Selection_Handle, c
 	state_set(cx, req[:], loc)
 }
 
+// Marks participant-local selection, such as select-all, as active.
 text_selection_handle_set_local_selection :: proc(s: Text_Selection_Handle, cx: ^Cx, active: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14691,6 +16593,7 @@ text_selection_handle_set_local_selection :: proc(s: Text_Selection_Handle, cx: 
 	state_set(cx, req[:], loc)
 }
 
+// Creates a selection participant handle with fallback text for copying.
 text_selection_handle :: proc(cx: ^Cx, fallback_copy_text: string, loc := #caller_location) -> Text_Selection_Handle {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -14702,6 +16605,8 @@ text_selection_handle :: proc(cx: ^Cx, fallback_copy_text: string, loc := #calle
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Selection projected onto a participant's laid-out text runs.
+//
 // Text_Selection_Projection is a handle to gpui_kit::base::TextSelectionProjection, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named text_selection_projection_*.
 Text_Selection_Projection :: struct {
 	using state: State,
@@ -14717,11 +16622,14 @@ text_selection_projection_default :: proc(cx: ^Cx, loc := #caller_location) -> T
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Participant-relative selection endpoints with an optional rendering projection.
+//
 // Text_Selection_Snapshot is a handle to gpui_kit::base::TextSelectionSnapshot, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named text_selection_snapshot_*.
 Text_Selection_Snapshot :: struct {
 	using state: State,
 }
 
+// Returns the stable anchor endpoint.
 text_selection_snapshot_anchor :: proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Text_Selection_Endpoint) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14733,6 +16641,7 @@ text_selection_snapshot_anchor :: proc(s: Text_Selection_Snapshot, cx: ^Cx, loc 
 	return
 }
 
+// Returns the portion of the receiving participant covered by this selection.
 text_selection_snapshot_coverage :: proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Text_Selection_Coverage) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14744,6 +16653,7 @@ text_selection_snapshot_coverage :: proc(s: Text_Selection_Snapshot, cx: ^Cx, lo
 	return
 }
 
+// Returns the moving cursor endpoint.
 text_selection_snapshot_cursor :: proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Text_Selection_Endpoint) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14755,6 +16665,7 @@ text_selection_snapshot_cursor :: proc(s: Text_Selection_Snapshot, cx: ^Cx, loc 
 	return
 }
 
+// Returns whether the pointer gesture is still active.
 text_selection_snapshot_is_selecting :: proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14766,6 +16677,7 @@ text_selection_snapshot_is_selecting :: proc(s: Text_Selection_Snapshot, cx: ^Cx
 	return
 }
 
+// Returns the window-coordinate endpoints for participants that need them.
 text_selection_snapshot_window_points :: proc(s: Text_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Text_Selection_Window_Points)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14777,11 +16689,14 @@ text_selection_snapshot_window_points :: proc(s: Text_Selection_Snapshot, cx: ^C
 	return
 }
 
+// Window-coordinate anchor and cursor points for painting a selection.
+//
 // Text_Selection_Window_Points is a handle to gpui_kit::base::TextSelectionWindowPoints, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named text_selection_window_points_*.
 Text_Selection_Window_Points :: struct {
 	using state: State,
 }
 
+// Returns the stable anchor in window coordinates.
 text_selection_window_points_anchor :: proc(s: Text_Selection_Window_Points, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14793,6 +16708,7 @@ text_selection_window_points_anchor :: proc(s: Text_Selection_Window_Points, cx:
 	return
 }
 
+// Returns the moving cursor in window coordinates.
 text_selection_window_points_cursor :: proc(s: Text_Selection_Window_Points, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14804,11 +16720,15 @@ text_selection_window_points_cursor :: proc(s: Text_Selection_Window_Points, cx:
 	return
 }
 
+// Application-wide defaults for TextViews that do not provide explicit presentation or
+// syntax-highlighting overrides.
+//
 // Text_View_Defaults is a handle to gpui_kit::base::TextViewDefaults, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named text_view_defaults_*.
 Text_View_Defaults :: struct {
 	using state: State,
 }
 
+// Whether a syntax highlighter was installed.
 text_view_defaults_has_code_block_highlighter :: proc(s: Text_View_Defaults, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14820,6 +16740,7 @@ text_view_defaults_has_code_block_highlighter :: proc(s: Text_View_Defaults, cx:
 	return
 }
 
+// Whether text views follow the text color their container sets.
 text_view_defaults_inherit_text_color :: proc(s: Text_View_Defaults, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14831,6 +16752,7 @@ text_view_defaults_inherit_text_color :: proc(s: Text_View_Defaults, cx: ^Cx, lo
 	return
 }
 
+// Installs these defaults for the whole application.
 text_view_defaults_install :: proc(s: Text_View_Defaults, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14849,8 +16771,17 @@ Text_View_Defaults_Builder :: struct {
 }
 
 Text_View_Defaults_Builder_VT :: struct {
+	// Sets the syntax highlighter used for fenced code blocks.
 	with_code_block_highlighter: proc(b: Text_View_Defaults_Builder, highlighter: Ask(Code_Block, []Tuple_Range_Highlight_Style)) -> Text_View_Defaults_Builder,
+	// Sets whether text views without an explicit `->style` follow the text color their container
+	// sets, default false.
+	//
+	// The body text takes that color. On a surface inverted from the page, such as a `primary` fill,
+	// links, muted text, code, borders and selection are derived from it too, and the installed syntax
+	// highlighter is left out because its colors are made for the page. Enable this only when every
+	// window sets a text color at its root, as Component's does.
 	with_inherit_text_color: proc(b: Text_View_Defaults_Builder, inherit: bool) -> Text_View_Defaults_Builder,
+	// Sets the style every text view starts from.
 	with_style: proc(b: Text_View_Defaults_Builder, style: Base_Text_View_Style) -> Text_View_Defaults_Builder,
 	build: proc(b: Text_View_Defaults_Builder) -> Text_View_Defaults,
 }
@@ -14883,6 +16814,7 @@ text_view_defaults_builder_vt := Text_View_Defaults_Builder_VT {
 	},
 }
 
+// Creates defaults that leave every text view as Base renders it.
 text_view_defaults :: proc(cx: ^Cx, loc := #caller_location) -> Text_View_Defaults_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -14893,6 +16825,7 @@ text_view_defaults :: proc(cx: ^Cx, loc := #caller_location) -> Text_View_Defaul
 	return {vt = &text_view_defaults_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Returns the installed defaults, or the Base ones when none were.
 text_view_defaults_global :: proc(cx: ^Cx, loc := #caller_location) -> Text_View_Defaults_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -14903,11 +16836,14 @@ text_view_defaults_global :: proc(cx: ^Cx, loc := #caller_location) -> Text_View
 	return {vt = &text_view_defaults_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// The state of a TextView.
+//
 // Text_View_State is a handle to gpui_kit::base::TextViewState, an entity the library keeps. Its procedures are named text_view_state_*.
 Text_View_State :: struct {
 	using state: State,
 }
 
+// Whether the last painted frame clipped content because of `->max_lines`.
 text_view_state_is_clamped :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14919,6 +16855,10 @@ text_view_state_is_clamped :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// The text this view renders, which `Range_Highlight` ranges index.
+//
+// This is the string plain copy produces, as of the last parse that landed; text set since then is
+// not in it until its parse lands.
 text_view_state_rendered_text :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) -> (v: Rendered_Text) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14930,6 +16870,14 @@ text_view_state_rendered_text :: proc(s: Text_View_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Return the original Markdown source byte range corresponding to the rendered selection.
+//
+// The range addresses the source passed to this Markdown TextView. It is derived from parser
+// positions retained by the rendered inline nodes, so identical rendered text maps to the
+// occurrence that was actually selected. The result is one contiguous source range, so it includes
+// any Markdown delimiters between the selected rendered endpoints. HTML views and selections
+// without an exact source mapping return `None`. Select-all in a Markdown view returns the full
+// source range.
 text_view_state_selected_source_range :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14941,6 +16889,7 @@ text_view_state_selected_source_range :: proc(s: Text_View_State, cx: ^Cx, loc :
 	return
 }
 
+// Return the selected text, in the view's `SelectionFormat`.
 text_view_state_selected_text :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14952,6 +16901,23 @@ text_view_state_selected_text :: proc(s: Text_View_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Scroll the line `range` starts on into view, `range` indexing the current rendered text, as with
+// `gk.text_view_state_set_range_highlights`.
+//
+// A `->scrollable` view scrolls itself. Otherwise the nearest enclosing `gpui::list` scrolls, as
+// long as the row holding the view is laid out, so scroll to that row first when it may be off
+// screen. Any other scroll container scrolls through `->on_reveal`. An empty range reveals the
+// line of its position; a range in text that belongs to no block's text, such as a custom block's,
+// scrolls its whole block into a scrollable view.
+//
+// Only the latest reveal is carried out. It follows the content as range highlights
+// (`gk.text_view_state_set_range_highlights`) do, and it is dropped when its text changes, when
+// the view clamps its lines, or when it cannot be shown within a second, so it never scrolls long
+// after it was asked for. A whole block taller than the view, scrolled to from below, shows its
+// end.
+//
+// Revealing is best effort: `Ok(())` means the range is valid for the current text and the request
+// was taken, not that the view has scrolled. A dropped request is not reported.
 text_view_state_reveal_range :: proc(s: Text_View_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14964,6 +16930,19 @@ text_view_state_reveal_range :: proc(s: Text_View_State, cx: ^Cx, range: Range, 
 	return
 }
 
+// Replace the range highlights, whose ranges index the current rendered text.
+//
+// Compute ranges from the current `gk.text_view_state_rendered_text` and set them in the same
+// update. Search the new text again after its content changes. Ranges of the Markdown source, such
+// as `gk.text_view_state_selected_source_range` returns, convert with
+// `gk.rendered_text_range_for_source`. A range crossing blocks paints in both, skipping their
+// separator. Text outside every block (separators, custom blocks, HTML blocks, and inline objects)
+// is left unpainted. Any invalid range rejects the set.
+//
+// Highlights follow unchanged text through updates. Text appended while streaming keeps earlier
+// highlights; after a table edit, cells in and after the edited row lose theirs because cells are
+// known by position. Text backgrounds such as `<mark>` paint over a highlight; inline code
+// backgrounds paint under it.
 text_view_state_set_range_highlights :: proc(s: Text_View_State, cx: ^Cx, highlights: []Range_Highlight, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14979,6 +16958,7 @@ text_view_state_set_range_highlights :: proc(s: Text_View_State, cx: ^Cx, highli
 	return
 }
 
+// Remove all range highlights.
 text_view_state_clear_range_highlights :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14988,6 +16968,7 @@ text_view_state_clear_range_highlights :: proc(s: Text_View_State, cx: ^Cx, loc 
 	state_set(cx, req[:], loc)
 }
 
+// Clear the current text selection.
 text_view_state_clear_selection :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -14997,6 +16978,11 @@ text_view_state_clear_selection :: proc(s: Text_View_State, cx: ^Cx, loc := #cal
 	state_set(cx, req[:], loc)
 }
 
+// Remeasure inline resources after their prepared content or metrics change.
+//
+// Call from the resource owner's completion handler, through a weak entity when the task can
+// outlive this view. This does not reparse the document. Existing logical selection is retained
+// until the next selection gesture.
 text_view_state_invalidate_inline_layout :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15006,6 +16992,7 @@ text_view_state_invalidate_inline_layout :: proc(s: Text_View_State, cx: ^Cx, lo
 	state_set(cx, req[:], loc)
 }
 
+// Append partial text content to the existing text.
 text_view_state_push_str :: proc(s: Text_View_State, cx: ^Cx, new_text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15016,6 +17003,7 @@ text_view_state_push_str :: proc(s: Text_View_State, cx: ^Cx, new_text: string, 
 	state_set(cx, req[:], loc)
 }
 
+// Select all rendered text in this view.
 text_view_state_select_all :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15025,6 +17013,7 @@ text_view_state_select_all :: proc(s: Text_View_State, cx: ^Cx, loc := #caller_l
 	state_set(cx, req[:], loc)
 }
 
+// Set the motion policy; see `Text_View_Motion`.
 text_view_state_set_motion :: proc(s: Text_View_State, cx: ^Cx, motion: Text_View_Motion, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15035,6 +17024,7 @@ text_view_state_set_motion :: proc(s: Text_View_State, cx: ^Cx, motion: Text_Vie
 	state_set(cx, req[:], loc)
 }
 
+// Set whether the text view scrolls internally, default false.
 text_view_state_set_scrollable :: proc(s: Text_View_State, cx: ^Cx, scrollable: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15045,6 +17035,7 @@ text_view_state_set_scrollable :: proc(s: Text_View_State, cx: ^Cx, scrollable: 
 	state_set(cx, req[:], loc)
 }
 
+// Set whether the text is selectable, default false.
 text_view_state_set_selectable :: proc(s: Text_View_State, cx: ^Cx, selectable: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15055,6 +17046,7 @@ text_view_state_set_selectable :: proc(s: Text_View_State, cx: ^Cx, selectable: 
 	state_set(cx, req[:], loc)
 }
 
+// Set the `SelectionFormat`, default is `Plain`.
 text_view_state_set_selection_format :: proc(s: Text_View_State, cx: ^Cx, selection_format: Selection_Format, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15065,6 +17057,11 @@ text_view_state_set_selection_format :: proc(s: Text_View_State, cx: ^Cx, select
 	state_set(cx, req[:], loc)
 }
 
+// Set the text content.
+//
+// Markdown that extends the current non-empty text is appended like `gk.text_view_state_push_str`,
+// keeping the selection; any other text replaces it. With a streamed fade-in enabled, extended
+// text fades in; a replacement shows at once.
 text_view_state_set_text :: proc(s: Text_View_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15084,9 +17081,13 @@ Text_View_State_Builder :: struct {
 }
 
 Text_View_State_Builder_VT :: struct {
+	// Set the motion policy; see `Text_View_Motion`.
 	motion: proc(b: Text_View_State_Builder, motion: Text_View_Motion) -> Text_View_State_Builder,
+	// Set whether the text view scrolls internally, default false.
 	scrollable: proc(b: Text_View_State_Builder, scrollable: bool) -> Text_View_State_Builder,
+	// Set whether the text is selectable, default false.
 	selectable: proc(b: Text_View_State_Builder, selectable: bool) -> Text_View_State_Builder,
+	// Set the `SelectionFormat`, default is `Plain`.
 	selection_format: proc(b: Text_View_State_Builder, selection_format: Selection_Format) -> Text_View_State_Builder,
 	build: proc(b: Text_View_State_Builder) -> Text_View_State,
 }
@@ -15126,6 +17127,7 @@ text_view_state_builder_vt := Text_View_State_Builder_VT {
 	},
 }
 
+// Create a HTML TextViewState.
 text_view_state_html :: proc(cx: ^Cx, text: string, loc := #caller_location) -> Text_View_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -15137,6 +17139,7 @@ text_view_state_html :: proc(cx: ^Cx, text: string, loc := #caller_location) -> 
 	return {vt = &text_view_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Create a Markdown TextViewState.
 text_view_state_markdown :: proc(cx: ^Cx, text: string, loc := #caller_location) -> Text_View_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -15153,6 +17156,7 @@ Textarea_State :: struct {
 	using state: State,
 }
 
+// The text with its tokens, as `set_value` accepts it.
 textarea_state_content :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Input_Content) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15175,6 +17179,9 @@ textarea_state_context_menu_capabilities :: proc(s: Textarea_State, cx: ^Cx, loc
 	return
 }
 
+// Get byte offset of the cursor.
+//
+// The offset is the UTF-8 offset.
 textarea_state_cursor :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15186,6 +17193,7 @@ textarea_state_cursor :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Return the (0-based) `Position` of the cursor.
 textarea_state_cursor_position :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Lsp_Position) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15429,6 +17437,7 @@ textarea_state_input_bounds :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Whether this input is a source-code editor.
 textarea_state_is_code_editor :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15440,6 +17449,9 @@ textarea_state_is_code_editor :: proc(s: Textarea_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// Whether the user is allowed to copy the selection out.
+//
+// A masked input keeps its value out of the clipboard.
 textarea_state_is_copyable :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15451,6 +17463,10 @@ textarea_state_is_copyable :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// This is false when the input is `disabled` or `readonly`, the programmatic APIs (e.g.:
+// `gk.input_state_set_value`, `gk.input_state_insert`) are not limited by this.
 textarea_state_is_editable :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15473,6 +17489,9 @@ textarea_state_is_multi_line :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_
 	return
 }
 
+// Returns true if the search panel can replace the matches.
+//
+// This is false when the input is not `replaceable`, or when it is `disabled` or `readonly`.
 textarea_state_is_replaceable :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15484,6 +17503,10 @@ textarea_state_is_replaceable :: proc(s: Textarea_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// Whether the active selection's caret is at the start of its range.
+//
+// Collapsed selections are not reversed. Use this with `gk.input_state_selected_range` and
+// `gk.input_state_set_selected_range_with_direction` to restore a selection.
 textarea_state_is_selection_reversed :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15495,6 +17518,7 @@ textarea_state_is_selection_reversed :: proc(s: Textarea_State, cx: ^Cx, loc := 
 	return
 }
 
+// Whether this input is a single-line text field. See `gk.input_state_is_multi_line`.
 textarea_state_is_single_line :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15506,6 +17530,7 @@ textarea_state_is_single_line :: proc(s: Textarea_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// Laid-out line height; `None` before first layout.
 textarea_state_line_height :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(f32)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15528,6 +17553,9 @@ textarea_state_presentation :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Return the rendered bounds for a UTF-8 byte range in the current input contents.
+//
+// Returns `None` when the requested range is not currently laid out or visible.
 textarea_state_range_to_bounds :: proc(s: Textarea_State, cx: ^Cx, range: Range, loc := #caller_location) -> (v: Maybe(Bounds)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15540,6 +17568,7 @@ textarea_state_range_to_bounds :: proc(s: Textarea_State, cx: ^Cx, range: Range,
 	return
 }
 
+// Current scroll offset of the editor viewport.
 textarea_state_scroll_offset :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Gpui_Point) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15551,6 +17580,12 @@ textarea_state_scroll_offset :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_
 	return
 }
 
+// A counter that advances every time `gk.input_state_open_search` runs, including while the
+// session is already open.
+//
+// Re-invoking search leaves the session itself identical, so a presentation layer that decides
+// what to rebuild by comparing session state cannot see the second request. Fold this into that
+// comparison to notice it.
 textarea_state_search_activation_revision :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: u64) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15573,6 +17608,12 @@ textarea_state_search_session :: proc(s: Textarea_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// Returns the active selection as a byte range into the text.
+//
+// With multiple cursors, this reads only the active selection.
+//
+// The range is empty (`start == end`) when no text is selected; in that case the offset equals
+// `cursor()`. Byte offsets are measured in the underlying rope's byte units.
 textarea_state_selected_range :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Range) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15584,6 +17625,7 @@ textarea_state_selected_range :: proc(s: Textarea_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// See `gk.input_state_selected_value` when an owned string is wanted.
 textarea_state_selected_text :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15595,6 +17637,10 @@ textarea_state_selected_text :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_
 	return
 }
 
+// Return the portion of the value within the input field that is selected by the user, as an owned
+// string.
+//
+// The string is materialized on each call.
 textarea_state_selected_value :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15606,6 +17652,10 @@ textarea_state_selected_value :: proc(s: Textarea_State, cx: ^Cx, loc := #caller
 	return
 }
 
+// Return the text `Rope` of the input field.
+//
+// Borrowed from the state, so reading even a large document copies nothing. See
+// `gk.input_state_value` when an owned string is wanted.
 textarea_state_text :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15628,6 +17678,8 @@ textarea_state_text_bounds :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_lo
 	return
 }
 
+// The text assistance a platform IME (a software keyboard) should give this input, from
+// `->input_action`, `->autocorrect` and `->autocapitalize` or the defaults they describe.
 textarea_state_text_input_configuration :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Text_Input_Configuration) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15650,6 +17702,10 @@ textarea_state_tokens :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// The live touch selection, laid out for the handles and the edit menu.
+//
+// `None` when the last touch selection has since changed into something else, or when its ends are
+// not laid out (scrolled out of view).
 textarea_state_touch_selection :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Touch_Selection_Snapshot)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15661,6 +17717,7 @@ textarea_state_touch_selection :: proc(s: Textarea_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Return the value without mask.
 textarea_state_unmask_value :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15672,6 +17729,9 @@ textarea_state_unmask_value :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_l
 	return
 }
 
+// Return the value of the input field as an owned string.
+//
+// The string is materialized on each call.
 textarea_state_value :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15683,6 +17743,7 @@ textarea_state_value :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location
 	return
 }
 
+// Visible row range in the last laid-out viewport, `None` before first layout.
 textarea_state_visible_row_range :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Range)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15694,6 +17755,9 @@ textarea_state_visible_row_range :: proc(s: Textarea_State, cx: ^Cx, loc := #cal
 	return
 }
 
+// Return the value of the input field as an owned string.
+//
+// The string is materialized on each call.
 textarea_state_try_value :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Temp_String, ok: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15716,6 +17780,7 @@ textarea_state_diagnostics_mut :: proc(s: Textarea_State, cx: ^Cx, loc := #calle
 	return
 }
 
+// Whether the input or its associated selection popup has focus.
 textarea_state_has_selection_focus :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15749,6 +17814,7 @@ textarea_state_previous_search_match :: proc(s: Textarea_State, cx: ^Cx, loc := 
 	return
 }
 
+// Replace every match. Returns how many were replaced.
 textarea_state_replace_all_search_matches :: proc(s: Textarea_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15761,6 +17827,8 @@ textarea_state_replace_all_search_matches :: proc(s: Textarea_State, cx: ^Cx, re
 	return
 }
 
+// Replace the current match and move on to the next one. Returns whether there was a match to
+// replace.
 textarea_state_replace_current_search_match :: proc(s: Textarea_State, cx: ^Cx, replacement: string, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15773,6 +17841,7 @@ textarea_state_replace_current_search_match :: proc(s: Textarea_State, cx: ^Cx, 
 	return
 }
 
+// Replace a UTF-8 byte range, expanding overlaps to whole tokens.
 textarea_state_replace_range_with_token :: proc(s: Textarea_State, cx: ^Cx, range: Range, token: Inline_Token, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15786,6 +17855,7 @@ textarea_state_replace_range_with_token :: proc(s: Textarea_State, cx: ^Cx, rang
 	return
 }
 
+// Replace the selection with an atomic token; no delimiter is added.
 textarea_state_replace_with_token :: proc(s: Textarea_State, cx: ^Cx, token: Inline_Token, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15798,6 +17868,13 @@ textarea_state_replace_with_token :: proc(s: Textarea_State, cx: ^Cx, token: Inl
 	return
 }
 
+// Add `range` as an additional selection, keeping the existing ones — the programmatic equivalent
+// of Alt-clicking another cursor into the text.
+//
+// The range is clipped to the text and expanded to character boundaries, like
+// `gk.input_state_set_selected_range`. A range already covered by a selection adds nothing.
+// Overlapping selections are merged. On a single-line input there is no second cursor to add, so
+// the call replaces the selection instead. The view scrolls to the new selection.
 textarea_state_add_selection :: proc(s: Textarea_State, cx: ^Cx, range: Range, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15821,6 +17898,10 @@ textarea_state_apply_highlighter_fold_candidates :: proc(s: Textarea_State, cx: 
 	state_set(cx, req[:], loc)
 }
 
+// Starts dragging one end of the touch selection from `finger`.
+//
+// The other end stays where it is. The menu closes for the duration of the drag and reopens on
+// `gk.input_state_end_edge_drag`.
 textarea_state_begin_edge_drag :: proc(s: Textarea_State, cx: ^Cx, edge: Selection_Edge, finger: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15841,6 +17922,10 @@ textarea_state_clean :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location
 	state_set(cx, req[:], loc)
 }
 
+// Closes the edit menu and keeps the selection with its handles.
+//
+// The menu's own actions end here: Copy has done its work, Select All reopens the menu over the
+// new range through `gk.input_state_select_all`.
 textarea_state_close_edit_menu :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15850,6 +17935,8 @@ textarea_state_close_edit_menu :: proc(s: Textarea_State, cx: ^Cx, loc := #calle
 	state_set(cx, req[:], loc)
 }
 
+// End the search: hide the built-in panel and the match highlights. The query is kept so the next
+// `gk.input_state_open_search` resumes it.
 textarea_state_close_search :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15859,6 +17946,7 @@ textarea_state_close_search :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_l
 	state_set(cx, req[:], loc)
 }
 
+// Ends the handle drag and reopens the edit menu.
 textarea_state_end_edge_drag :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15868,6 +17956,7 @@ textarea_state_end_edge_drag :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_
 	state_set(cx, req[:], loc)
 }
 
+// Install a default adapter without replacing an application-provided one.
 textarea_state_ensure_highlighter_factory :: proc(s: Textarea_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15878,6 +17967,7 @@ textarea_state_ensure_highlighter_factory :: proc(s: Textarea_State, cx: ^Cx, fa
 	state_set(cx, req[:], loc)
 }
 
+// Apply the default numeric mask unless the caller explicitly selected a mask.
 textarea_state_ensure_number_mask :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15887,6 +17977,7 @@ textarea_state_ensure_number_mask :: proc(s: Textarea_State, cx: ^Cx, loc := #ca
 	state_set(cx, req[:], loc)
 }
 
+// Focus the input field.
 textarea_state_focus :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15896,6 +17987,9 @@ textarea_state_focus :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location
 	state_set(cx, req[:], loc)
 }
 
+// Insert text at the current cursor position.
+//
+// And the cursor will be moved to the end of inserted text.
 textarea_state_insert :: proc(s: Textarea_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15916,6 +18010,13 @@ textarea_state_on_context_menu :: proc(s: Textarea_State, cx: ^Cx, handler: Hand
 	state_set(cx, req[:], loc)
 }
 
+// Open the search session, or re-invoke it if it is already open.
+//
+// This is not idempotent: every call advances `gk.input_state_search_activation_revision`, and the
+// presentation layer answers that by re-focusing the search field and selecting its contents, the
+// same as pressing the shortcut a second time. Call it from an action or another user gesture,
+// never from a render pass or an observer that runs every frame — that would re-select the field
+// under the user on every frame and make it impossible to type.
 textarea_state_open_search :: proc(s: Textarea_State, cx: ^Cx, replace_mode: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15926,6 +18027,14 @@ textarea_state_open_search :: proc(s: Textarea_State, cx: ^Cx, replace_mode: boo
 	state_set(cx, req[:], loc)
 }
 
+// Wrap the text for `font`, `font_size` and `width` before the first layout, so that
+// `gk.display_map_wrap_row_count` is known on the first frame.
+//
+// Call it after setting the value and the wrapping indent. `width` is the width of the input's
+// text area: its width less its padding, and less the line-number gutter for an editor with line
+// numbers. It wraps as layout does, a little short of that width and with the state's wrapping
+// indent. Once the input has been laid out this does nothing, and layout keeps the wrap up to
+// date. The font and font size must match the input's actual text style.
 textarea_state_prewrap :: proc(s: Textarea_State, cx: ^Cx, font: Font, font_size: f32, width: f32, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15938,6 +18047,11 @@ textarea_state_prewrap :: proc(s: Textarea_State, cx: ^Cx, font: Font, font_size
 	state_set(cx, req[:], loc)
 }
 
+// Refresh the input, so the next render re-runs syntax highlighting and the LSP providers, not
+// just a redraw.
+//
+// Assigning the `lsp` providers (or other render-affecting state) at runtime does not take effect
+// until the text next changes. Call this afterwards to force the refresh on the next render.
 textarea_state_refresh :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15947,6 +18061,9 @@ textarea_state_refresh :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_locati
 	state_set(cx, req[:], loc)
 }
 
+// Replace text at the current cursor position.
+//
+// And the cursor will be moved to the end of replaced text.
 textarea_state_replace :: proc(s: Textarea_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15957,6 +18074,14 @@ textarea_state_replace :: proc(s: Textarea_State, cx: ^Cx, text: string, loc := 
 	state_set(cx, req[:], loc)
 }
 
+// Replace the entire text content while preserving undo history.
+//
+// Unlike `gk.input_state_set_value`, this method records the replacement in the undo stack,
+// allowing the user to undo/redo the change. The selection is placed at the end of the new text
+// for single-line inputs, or cleared (0..0) for multi-line inputs.
+//
+// Use this when programmatically replacing the full text but the user should still be able to undo
+// the operation — e.g. formatting.
 textarea_state_replace_all :: proc(s: Textarea_State, cx: ^Cx, text: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15976,6 +18101,8 @@ textarea_state_select_all :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_loc
 	state_set(cx, req[:], loc)
 }
 
+// Selects everything and, when a touch selection is live, keeps the handles and the edit menu over
+// the new range.
 textarea_state_select_all_from_edit_menu :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -15985,6 +18112,7 @@ textarea_state_select_all_from_edit_menu :: proc(s: Textarea_State, cx: ^Cx, loc
 	state_set(cx, req[:], loc)
 }
 
+// Project semantics onto the editor, never onto a second focus owner.
 textarea_state_set_accessibility :: proc(s: Textarea_State, cx: ^Cx, accessibility: Input_Accessibility, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16026,6 +18154,9 @@ textarea_state_set_context_menu_enabled :: proc(s: Textarea_State, cx: ^Cx, enab
 	state_set(cx, req[:], loc)
 }
 
+// Set (0-based) `Position` of the cursor.
+//
+// This will move the cursor to the specified line and column, and update the selection range.
 textarea_state_set_cursor_position :: proc(s: Textarea_State, cx: ^Cx, position: Lsp_Position, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16036,6 +18167,7 @@ textarea_state_set_cursor_position :: proc(s: Textarea_State, cx: ^Cx, position:
 	state_set(cx, req[:], loc)
 }
 
+// Update `->cursor_surrounding_lines` after construction.
 textarea_state_set_cursor_surrounding_lines :: proc(s: Textarea_State, cx: ^Cx, lines: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16071,6 +18203,7 @@ textarea_state_set_editor_style :: proc(s: Textarea_State, cx: ^Cx, style: Input
 	state_set(cx, req[:], loc)
 }
 
+// Fills each folded line across the editor, as VS Code's `editor.foldBackground`.
 textarea_state_set_fold_background :: proc(s: Textarea_State, cx: ^Cx, color: Maybe(Color), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16086,6 +18219,8 @@ textarea_state_set_fold_background :: proc(s: Textarea_State, cx: ^Cx, color: Ma
 	state_set(cx, req[:], loc)
 }
 
+// Draws a placeholder right after the text of each folded line, given its buffer row. Clicking it
+// unfolds the line.
 textarea_state_set_fold_placeholder_renderer :: proc(s: Textarea_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16101,6 +18236,7 @@ textarea_state_set_fold_placeholder_renderer :: proc(s: Textarea_State, cx: ^Cx,
 	state_set(cx, req[:], loc)
 }
 
+// Set highlighter language for for `CodeEditor` mode.
 textarea_state_set_highlighter :: proc(s: Textarea_State, cx: ^Cx, new_language: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16111,6 +18247,7 @@ textarea_state_set_highlighter :: proc(s: Textarea_State, cx: ^Cx, new_language:
 	state_set(cx, req[:], loc)
 }
 
+// Install the parser/highlighter adapter used by code-editor mode.
 textarea_state_set_highlighter_factory :: proc(s: Textarea_State, cx: ^Cx, factory: Row_Source, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16131,6 +18268,7 @@ textarea_state_set_mask_pattern :: proc(s: Textarea_State, cx: ^Cx, pattern: Mas
 	state_set(cx, req[:], loc)
 }
 
+// Set placeholder
 textarea_state_set_placeholder :: proc(s: Textarea_State, cx: ^Cx, placeholder: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16161,6 +18299,7 @@ textarea_state_set_rows :: proc(s: Textarea_State, cx: ^Cx, rows: int, loc := #c
 	state_set(cx, req[:], loc)
 }
 
+// Update `->scroll_beyond_last_line` after construction.
 textarea_state_set_scroll_beyond_last_line :: proc(s: Textarea_State, cx: ^Cx, rows: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16176,6 +18315,8 @@ textarea_state_set_scroll_beyond_last_line :: proc(s: Textarea_State, cx: ^Cx, r
 	state_set(cx, req[:], loc)
 }
 
+// Update whether the text stretches past its ends, see `->scroll_bounce`. Turning it off drops a
+// stretch in progress.
 textarea_state_set_scroll_bounce :: proc(s: Textarea_State, cx: ^Cx, scroll_bounce: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16186,6 +18327,9 @@ textarea_state_set_scroll_bounce :: proc(s: Textarea_State, cx: ^Cx, scroll_boun
 	state_set(cx, req[:], loc)
 }
 
+// Set scroll offset of the editor viewport.
+//
+// The offset will be clamped to the valid range, and applied after the next layout.
 textarea_state_set_scroll_offset :: proc(s: Textarea_State, cx: ^Cx, offset: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16196,6 +18340,10 @@ textarea_state_set_scroll_offset :: proc(s: Textarea_State, cx: ^Cx, offset: Gpu
 	state_set(cx, req[:], loc)
 }
 
+// Supply the element painted in place of the editor's scrollbar, or `None` to keep Base's. The
+// renderer is called where the editor paints its scrollbar, with that frame's
+// `EditorScrollbarContext`. Like `gk.input_state_set_editor_style`, this does not notify, so it
+// can be called while rendering.
 textarea_state_set_scrollbar_renderer :: proc(s: Textarea_State, cx: ^Cx, renderer: Maybe(Row_Source), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16211,6 +18359,15 @@ textarea_state_set_scrollbar_renderer :: proc(s: Textarea_State, cx: ^Cx, render
 	state_set(cx, req[:], loc)
 }
 
+// Set the search query and highlight its matches.
+//
+// This is the entry point for a custom search UI: it needs neither `searchable` nor the built-in
+// panel. Navigate the matches with `gk.input_state_next_search_match` and
+// `gk.input_state_previous_search_match`, read the count and the current index from
+// `gk.input_state_search_session`, and end the search with `gk.input_state_close_search`.
+//
+// A changed query or case mode starts at the current viewport. Setting the same query and case
+// mode again retains the current occurrence.
 textarea_state_set_search_query :: proc(s: Textarea_State, cx: ^Cx, query: string, case_insensitive: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16222,6 +18379,7 @@ textarea_state_set_search_query :: proc(s: Textarea_State, cx: ^Cx, query: strin
 	state_set(cx, req[:], loc)
 }
 
+// See `->searchable`.
 textarea_state_set_searchable :: proc(s: Textarea_State, cx: ^Cx, searchable: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16232,6 +18390,10 @@ textarea_state_set_searchable :: proc(s: Textarea_State, cx: ^Cx, searchable: bo
 	state_set(cx, req[:], loc)
 }
 
+// Set the selected range using UTF-8 byte offsets, removing additional cursors.
+//
+// Non-empty ranges expand to character boundaries. Empty ranges remain empty and are clipped to
+// the preceding character boundary.
 textarea_state_set_selected_range :: proc(s: Textarea_State, cx: ^Cx, range: Range, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16242,6 +18404,11 @@ textarea_state_set_selected_range :: proc(s: Textarea_State, cx: ^Cx, range: Ran
 	state_set(cx, req[:], loc)
 }
 
+// Set the selected UTF-8 byte range and the active caret direction.
+//
+// With `reversed`, the caret is at the start and the anchor is at the end. Empty ranges collapse
+// to a caret regardless of direction. Range clipping, token boundaries and removal of additional
+// cursors follow `gk.input_state_set_selected_range`.
 textarea_state_set_selected_range_with_direction :: proc(s: Textarea_State, cx: ^Cx, range: Range, reversed: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16253,6 +18420,10 @@ textarea_state_set_selected_range_with_direction :: proc(s: Textarea_State, cx: 
 	state_set(cx, req[:], loc)
 }
 
+// Keeps the selection highlighted while this popup or one of its children has focus.
+//
+// This does not transfer keyboard focus or keep the caret visible. The association holds only a
+// weak focus handle. Pass `None` to clear it.
 textarea_state_set_selection_focus :: proc(s: Textarea_State, cx: ^Cx, focus: Maybe(Focus_Handle), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16268,6 +18439,7 @@ textarea_state_set_selection_focus :: proc(s: Textarea_State, cx: ^Cx, focus: Ma
 	state_set(cx, req[:], loc)
 }
 
+// Update whether to show whitespace characters.
 textarea_state_set_show_whitespaces :: proc(s: Textarea_State, cx: ^Cx, show: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16278,6 +18450,7 @@ textarea_state_set_show_whitespaces :: proc(s: Textarea_State, cx: ^Cx, show: bo
 	state_set(cx, req[:], loc)
 }
 
+// Update the soft wrap mode, default is true.
 textarea_state_set_soft_wrap :: proc(s: Textarea_State, cx: ^Cx, wrap: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16318,6 +18491,12 @@ textarea_state_set_text_align :: proc(s: Textarea_State, cx: ^Cx, text_align: Te
 	state_set(cx, req[:], loc)
 }
 
+// Set the value of the input field: plain text, or `InputContent` to restore text together with
+// its inline tokens. Editing history is cleared and no `Change` is emitted.
+//
+// For single-line inputs the caret is placed at the end of the text while the view is scrolled
+// back to the start, so a long value shows its beginning instead of its tail (matching HTML
+// `<input>`). Multi-line inputs reset the selection to `0..0`.
 textarea_state_set_value :: proc(s: Textarea_State, cx: ^Cx, value: Input_Content_Into, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16328,6 +18507,7 @@ textarea_state_set_value :: proc(s: Textarea_State, cx: ^Cx, value: Input_Conten
 	state_set(cx, req[:], loc)
 }
 
+// Update how soft-wrapped continuation lines are indented.
 textarea_state_set_wrapping_indent :: proc(s: Textarea_State, cx: ^Cx, wrapping_indent: Wrapping_Indent, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16338,6 +18518,10 @@ textarea_state_set_wrapping_indent :: proc(s: Textarea_State, cx: ^Cx, wrapping_
 	state_set(cx, req[:], loc)
 }
 
+// Flip the password mask.
+//
+// Setting the mask is a single-line method, but flipping it stays here: the reveal button is
+// rendered from the generic path, and it can only be switched on through `InputState` anyway.
 textarea_state_toggle_masked :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16347,6 +18531,7 @@ textarea_state_toggle_masked :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_
 	state_set(cx, req[:], loc)
 }
 
+// Unselects the currently selected text.
 textarea_state_unselect :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16356,6 +18541,10 @@ textarea_state_unselect :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_locat
 	state_set(cx, req[:], loc)
 }
 
+// Moves the dragged end to the text under `finger`.
+//
+// Past the top or bottom of a multi-line input the content scrolls under the finger, so the end
+// can reach text that was out of view.
 textarea_state_update_edge_drag :: proc(s: Textarea_State, cx: ^Cx, finger: Gpui_Point, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16399,18 +18588,75 @@ Textarea_State_Builder :: struct {
 }
 
 Textarea_State_Builder_VT :: struct {
+	// Grow with the content from `min_rows` through `max_rows`.
 	auto_grow: proc(b: Textarea_State_Builder, min_rows: int, max_rows: int) -> Textarea_State_Builder,
+	// Set how a software keyboard capitalizes the text.
+	//
+	// Default is `None`. Enable capitalization explicitly for fields where it is appropriate,
+	// independently of autocorrection.
 	autocapitalize: proc(b: Textarea_State_Builder, autocapitalize: Autocapitalize) -> Textarea_State_Builder,
+	// Set whether the platform may autocorrect the text and offer word suggestions.
+	//
+	// Default is `false`. Enable this explicitly for fields that accept prose; masking or revealing
+	// text does not change the setting.
 	autocorrect: proc(b: Textarea_State_Builder, autocorrect: bool) -> Textarea_State_Builder,
+	// Set true to clear the input by pressing Escape key.
+	//
+	// Not on Android, where Escape is also the back button.
 	clean_on_escape: proc(b: Textarea_State_Builder) -> Textarea_State_Builder,
+	// Sets whether the context menu that shows on right-click is enabled.
+	//
+	// The context menu is enabled by default. Disabling it turns off the right-click menu entirely,
+	// including a custom menu set on the element. A custom menu already replaces the built-in one, so
+	// keep this enabled to show only your own items.
 	context_menu: proc(b: Textarea_State_Builder, enable: bool) -> Textarea_State_Builder,
+	// Minimum number of lines the cursor is kept clear of the viewport's top/bottom edge before
+	// auto-scroll engages. Mirrors VSCode's `editor.cursorSurroundingLines` / Zed's
+	// `vertical_scroll_margin`. Orthogonal to `->scroll_beyond_last_line`, which sizes the empty
+	// region; this controls the cursor's resting distance from the edge.
+	//
+	// - `None` (default): `BOTTOM_MARGIN_ROWS` lines, falling back to one line on small viewports.
+	// - `Some(n)`: requests `n` lines, clamped to half the viewport.
+	//
+	// In a constrained viewport, edge clearance yields to the cursor's complete visual row so
+	// surrounding space cannot clip the text being edited.
 	cursor_surrounding_lines: proc(b: Textarea_State_Builder, lines: Maybe(int)) -> Textarea_State_Builder,
+	// Set the default value of the input field.
 	default_value: proc(b: Textarea_State_Builder, value: string) -> Textarea_State_Builder,
+	// Set the action a software keyboard shows on its enter key, like Search or Send. Pressing it
+	// still emits `PressEnter`.
+	//
+	// Default is `Done` for a single-line input (and a multi-line one that submits on enter), and
+	// `Enter` (a line break) for a multi-line input.
 	input_action: proc(b: Textarea_State_Builder, action: Text_Input_Action) -> Textarea_State_Builder,
+	// Set the mask pattern for formatting the input text.
+	//
+	// The pattern can contain: - 9: Any digit or dot - A: Any letter - *: Any character - Other
+	// characters will be treated as literal mask characters
+	//
+	// Example: "(999)999-999" for phone numbers
 	mask_pattern: proc(b: Textarea_State_Builder, pattern: Mask_Pattern_Into) -> Textarea_State_Builder,
+	// Set placeholder
 	placeholder: proc(b: Textarea_State_Builder, placeholder: string) -> Textarea_State_Builder,
+	// Empty rows reserved below the last line of content ("scroll beyond last line"), code-editor mode
+	// only. Mirrors VSCode's `editor.scrollBeyondLastLine` / Zed's `scroll_beyond_last_line`.
+	//
+	// - `None` (default): half the viewport, floored at `BOTTOM_MARGIN_ROWS` line-heights.
+	// - `Some(0)`: no trailing space; the cursor sits flush with the last row at scroll-max.
+	// - `Some(n)`: exactly `n` rows.
 	scroll_beyond_last_line: proc(b: Textarea_State_Builder, rows: Maybe(int)) -> Textarea_State_Builder,
+	// Set whether text taller than the input stretches past its top and bottom and springs back when
+	// precise trackpad or Magic Mouse scrolling or its momentum runs into an end. Ordinary line-wheel
+	// scrolling does not bounce. The default follows `gk.base_enabled_by_default`: on on iOS, Android
+	// and macOS, off elsewhere. Under reduced motion the text stops at its ends without stretching.
 	scroll_bounce: proc(b: Textarea_State_Builder, scroll_bounce: bool) -> Textarea_State_Builder,
+	// Whether the built-in search panel and its shortcut are enabled. Off by default, on for the code
+	// editor.
+	//
+	// This only concerns the panel. An input that is not searchable still answers
+	// `gk.input_state_set_search_query` and the other search methods, and lets `Ctrl-F` / `Cmd-F`
+	// bubble up to its ancestors, so an application can put its own search UI on top of the same
+	// engine.
 	searchable: proc(b: Textarea_State_Builder, searchable: bool) -> Textarea_State_Builder,
 	build: proc(b: Textarea_State_Builder) -> Textarea_State,
 }
@@ -16523,6 +18769,10 @@ textarea_state_builder_vt := Textarea_State_Builder_VT {
 	},
 }
 
+// Create a multi-line text state.
+//
+// Being multi-line is carried by the mode, not by the layout, so the default plain-text layout
+// needs no adjustment here.
 textarea_state :: proc(cx: ^Cx, loc := #caller_location) -> Textarea_State_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -16533,6 +18783,12 @@ textarea_state :: proc(cx: ^Cx, loc := #caller_location) -> Textarea_State_Build
 	return {vt = &textarea_state_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Change the theme mode.
+//
+// Loads the registered theme for `mode` — even when `mode` is already current, so a caller that
+// swapped `light_theme` or `dark_theme` sees the new theme — through `update`, which keeps every
+// copy of the theme in step and refreshes every window. `window` is accepted for compatibility;
+// every window is refreshed either way, so it is not read.
 theme_change :: proc(cx: ^Cx, mode: Theme_Mode_Into, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16542,6 +18798,7 @@ theme_change :: proc(cx: ^Cx, mode: Theme_Mode_Into, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Returns the global theme reference
 theme_global :: proc(cx: ^Cx, loc := #caller_location) -> Theme {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16551,6 +18808,12 @@ theme_global :: proc(cx: ^Cx, loc := #caller_location) -> Theme {
 	return {state = {h = rd_u64(&r)}}
 }
 
+// Returns the global theme mutable reference.
+//
+// An edit made through this reference reaches nothing but the field it touches: `tokens` keeps the
+// colors it had, and so does the Base projection until `gk.theme_sync_base` rebuilds it. Prefer
+// `update`, which does both after the edit and refreshes every window. Keep this for an edit that
+// must not trigger any of that.
 theme_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Theme {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16560,6 +18823,8 @@ theme_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Theme {
 	return {state = {h = rd_u64(&r)}}
 }
 
+// Changes the scrollbar display mode through `update`, which projects it onto the Base scrollbar
+// and refreshes every window.
 theme_set_scrollbar_mode :: proc(cx: ^Cx, mode: Scrollbar_Mode, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16569,6 +18834,18 @@ theme_set_scrollbar_mode :: proc(cx: ^Cx, mode: Scrollbar_Mode, loc := #caller_l
 	state_set(cx, req[:], loc)
 }
 
+// Push the current theme down to the Base layer.
+//
+// The Base layer holds its own copy of the theme — the semantic tokens plus the scrollbar and
+// resize-handle styles — because it paints those without going through `gpui-component`.
+// `gk.theme_change` refreshes that copy, but writing to the theme's public fields directly does
+// not, so a scrollbar keeps painting with the radius and colors it was last given.
+//
+// `update` and `gk.theme_change` call this after their edits. After editing through
+// `gk.theme_global_mut`, call it yourself, then refresh the windows.
+//
+// It rebuilds the Base theme from scratch, so any style written straight onto the Base global is
+// replaced. It does not touch `tokens`.
 theme_sync_base :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16577,6 +18854,7 @@ theme_sync_base :: proc(cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Sync the Scrollbar showing behavior with the system
 theme_sync_scrollbar_appearance :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16585,6 +18863,7 @@ theme_sync_scrollbar_appearance :: proc(cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// Sync the theme with the system appearance
 theme_sync_system_appearance :: proc(cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16593,6 +18872,10 @@ theme_sync_system_appearance :: proc(cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// The global theme configuration.
+//
+// Construct with `default` and assign fields; new fields may be added without a breaking change.
+//
 // Theme is a handle to gpui_kit::component::Theme, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named theme_*.
 Theme :: struct {
 	using state: State,
@@ -16686,6 +18969,10 @@ theme_highlight_theme :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v:
 	return
 }
 
+// Get the input background color.
+//
+// For dark, use a transparent color mixed with the input border: the theme's `input` colour,
+// otherwise use the the theme's `background` colour color.
 theme_input_background :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Hsla) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16697,6 +18984,7 @@ theme_input_background :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v
 	return
 }
 
+// Returns true if the theme is dark.
 theme_is_dark :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16774,6 +19062,7 @@ theme_motion :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Kit_Moti
 	return
 }
 
+// Returns the styled layer's semantic motion policy.
 theme_motion_tokens :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Kit_Motion_Tokens) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16807,6 +19096,10 @@ theme_radius :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	return
 }
 
+// Returns the next surface radius above the existing `xl` theme tier.
+//
+// Larger surface tiers derive from the same application-controlled base radius, so adjusting or
+// squaring the theme updates every tier together.
 theme_radius_2xl :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16818,6 +19111,7 @@ theme_radius_2xl :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32)
 	return
 }
 
+// Returns the surface radius above `gk.theme_radius_2xl`.
 theme_radius_3xl :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16829,6 +19123,7 @@ theme_radius_3xl :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32)
 	return
 }
 
+// Returns the surface radius above `gk.theme_radius_3xl`.
 theme_radius_4xl :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16840,6 +19135,12 @@ theme_radius_4xl :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32)
 	return
 }
 
+// The radius of a shape that reads as a circle or a pill — an avatar, a slider thumb, a badge dot,
+// a pill tab.
+//
+// A theme whose `radius` is zero squares these off too, so one setting governs the whole UI
+// instead of leaving a handful of permanently round elements behind. Use it in place of
+// `rounded_full`, or reach for `->rounded_full_style` when styling an element.
 theme_radius_full :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16873,6 +19174,8 @@ theme_radius_tokens :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: B
 	return
 }
 
+// Resolves a standalone semantic configuration over the current legacy theme without mutating
+// either value.
 theme_resolve_semantic_config :: proc(s: Theme, cx: ^Cx, config: Semantic_Theme_Config, loc := #caller_location) -> (v: Base_Semantic_Theme_Tokens) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16896,6 +19199,9 @@ theme_scrollbar_mode :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: 
 	return
 }
 
+// Returns a snapshot of the semantic design tokens represented by this theme. The snapshot is
+// computed from the legacy public fields so direct mutations of those fields are reflected
+// immediately.
 theme_semantic_tokens :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Base_Semantic_Theme_Tokens) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -16951,6 +19257,7 @@ theme_spacing_tokens :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: 
 	return
 }
 
+// Returns the current theme name.
 theme_theme_name :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: Temp_String) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17006,6 +19313,8 @@ theme_window_radius :: proc(s: Theme, cx: ^Cx, loc := #caller_location) -> (v: f
 	return
 }
 
+// Applies the legacy-representable part of a standalone semantic config and returns the complete
+// resolved snapshot for application-owned UI.
 theme_apply_semantic_config :: proc(s: Theme, cx: ^Cx, config: Semantic_Theme_Config, loc := #caller_location) -> (v: Base_Semantic_Theme_Tokens) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17018,6 +19327,7 @@ theme_apply_semantic_config :: proc(s: Theme, cx: ^Cx, config: Semantic_Theme_Co
 	return
 }
 
+// Parses and applies a standalone `{ "tokens": ... }` semantic theme file.
 theme_apply_semantic_config_str :: proc(s: Theme, cx: ^Cx, content: string, loc := #caller_location) -> (v: Fallible(Base_Semantic_Theme_Tokens)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17030,6 +19340,7 @@ theme_apply_semantic_config_str :: proc(s: Theme, cx: ^Cx, content: string, loc 
 	return
 }
 
+// Apply the given theme configuration to the current theme.
 theme_apply_config :: proc(s: Theme, cx: ^Cx, config: Theme_Config_Rc, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17040,6 +19351,9 @@ theme_apply_config :: proc(s: Theme, cx: ^Cx, config: Theme_Config_Rc, loc := #c
 	state_set(cx, req[:], loc)
 }
 
+// Applies the subset of semantic tokens representable by the legacy theme. Scale-only spacing and
+// elevation details have no legacy storage; legacy components therefore keep their existing
+// behavior.
 theme_apply_semantic_tokens :: proc(s: Theme, cx: ^Cx, tokens: Semantic_Theme_Tokens, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17300,6 +19614,9 @@ theme_registry_global_mut :: proc(cx: ^Cx, loc := #caller_location) -> Theme_Reg
 	return {state = {h = rd_u64(&r)}}
 }
 
+// Watch themes directory.
+//
+// And reload themes to trigger the `on_load` callback.
 theme_registry_watch_dir :: proc(cx: ^Cx, themes_dir: string, on_load: Handler, loc := #caller_location) -> (v: Maybe(Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17339,6 +19656,7 @@ theme_registry_default_light_theme :: proc(s: Theme_Registry, cx: ^Cx, loc := #c
 	return
 }
 
+// Returns a reference to the map of default themes.
 theme_registry_default_themes :: proc(s: Theme_Registry, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_Theme_Mode_Theme_Config_Rc) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17350,6 +19668,7 @@ theme_registry_default_themes :: proc(s: Theme_Registry, cx: ^Cx, loc := #caller
 	return
 }
 
+// Returns a sorted list of themes.
 theme_registry_sorted_themes :: proc(s: Theme_Registry, cx: ^Cx, loc := #caller_location) -> (v: []Theme_Config_Rc) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17361,6 +19680,7 @@ theme_registry_sorted_themes :: proc(s: Theme_Registry, cx: ^Cx, loc := #caller_
 	return
 }
 
+// Returns a reference to the map of themes (including default themes).
 theme_registry_themes :: proc(s: Theme_Registry, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_Temp_String_Theme_Config_Rc) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17384,11 +19704,23 @@ theme_registry_load_themes_from_str :: proc(s: Theme_Registry, cx: ^Cx, content:
 	return
 }
 
+// Retained editing behavior for a segmented time field.
+//
+// The field is one Tab stop. Inside it, one segment is selected at a time: Up/Down step the
+// selected segment and wrap within it (no carry into the next unit), Left/Right and Tab/Shift-Tab
+// move between segments, digits are typed with a two-digit buffer that advances to the next
+// segment once no further digit could fit, `a`/`p` set the AM/PM segment, and Backspace/Delete
+// reset the segment.
+//
+// The owner supplies the value with `gk.time_field_state_set_time`, which does not emit; user
+// edits emit `Change`.
+//
 // Time_Field_State is a handle to gpui_kit::base::TimeFieldState, an entity the library keeps. Its procedures are named time_field_state_*.
 Time_Field_State :: struct {
 	using state: State,
 }
 
+// The segment that keyboard editing applies to.
 time_field_state_selected_segment :: proc(s: Time_Field_State, cx: ^Cx, loc := #caller_location) -> (v: Time_Segment) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17440,6 +19772,7 @@ time_field_state_set_precision :: proc(s: Time_Field_State, cx: ^Cx, precision: 
 	state_set(cx, req[:], loc)
 }
 
+// Replace the time without emitting `Change`.
 time_field_state_set_time :: proc(s: Time_Field_State, cx: ^Cx, time: Naive_Time, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17471,7 +19804,9 @@ Time_Field_State_Builder :: struct {
 }
 
 Time_Field_State_Builder_VT :: struct {
+	// Set the hour cycle, default: `H23`.
 	hour_cycle: proc(b: Time_Field_State_Builder, hour_cycle: Hour_Cycle) -> Time_Field_State_Builder,
+	// Set the precision, default: `Minute`.
 	precision: proc(b: Time_Field_State_Builder, precision: Time_Precision) -> Time_Field_State_Builder,
 	build: proc(b: Time_Field_State_Builder) -> Time_Field_State,
 }
@@ -17512,6 +19847,7 @@ Toast_Manager :: struct {
 	using state: State,
 }
 
+// Return a mounted toast value by id.
 toast_manager_get :: proc(s: Toast_Manager, cx: ^Cx, id: u64, loc := #caller_location) -> (v: Maybe(u64)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17524,6 +19860,7 @@ toast_manager_get :: proc(s: Toast_Manager, cx: ^Cx, id: u64, loc := #caller_loc
 	return
 }
 
+// Return whether no toast is mounted.
 toast_manager_is_empty :: proc(s: Toast_Manager, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17535,6 +19872,7 @@ toast_manager_is_empty :: proc(s: Toast_Manager, cx: ^Cx, loc := #caller_locatio
 	return
 }
 
+// Iterate over mounted toast ids, values, and phases in display order.
 toast_manager_iter :: proc(s: Toast_Manager, cx: ^Cx, loc := #caller_location) -> (v: []Tuple_U64_U64_Toast_Transition_Status) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17546,6 +19884,7 @@ toast_manager_iter :: proc(s: Toast_Manager, cx: ^Cx, loc := #caller_location) -
 	return
 }
 
+// Return the number of mounted toasts, including ending toasts.
 toast_manager_len :: proc(s: Toast_Manager, cx: ^Cx, loc := #caller_location) -> (v: int) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17557,6 +19896,7 @@ toast_manager_len :: proc(s: Toast_Manager, cx: ^Cx, loc := #caller_location) ->
 	return
 }
 
+// Iterate over newest visible active toasts plus ending toasts.
 toast_manager_visible :: proc(s: Toast_Manager, cx: ^Cx, limit: int, loc := #caller_location) -> (v: []Tuple_U64_U64_Toast_Transition_Status) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17569,6 +19909,7 @@ toast_manager_visible :: proc(s: Toast_Manager, cx: ^Cx, limit: int, loc := #cal
 	return
 }
 
+// Advance lifecycle time; active timers pause while `paused` is true.
 toast_manager_advance :: proc(s: Toast_Manager, cx: ^Cx, now: time.Duration, paused: bool, loc := #caller_location) -> (v: Toast_Advance_U64_U64) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17582,6 +19923,7 @@ toast_manager_advance :: proc(s: Toast_Manager, cx: ^Cx, now: time.Duration, pau
 	return
 }
 
+// Begin a toast's exit transition, returning whether its state changed.
 toast_manager_dismiss :: proc(s: Toast_Manager, cx: ^Cx, id: u64, now: time.Duration, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17595,6 +19937,7 @@ toast_manager_dismiss :: proc(s: Toast_Manager, cx: ^Cx, id: u64, now: time.Dura
 	return
 }
 
+// Begin the exit transition for every active toast.
 toast_manager_dismiss_all :: proc(s: Toast_Manager, cx: ^Cx, now: time.Duration, loc := #caller_location) -> (v: []u64) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17607,6 +19950,7 @@ toast_manager_dismiss_all :: proc(s: Toast_Manager, cx: ^Cx, now: time.Duration,
 	return
 }
 
+// Add a newest toast, replacing an existing toast with the same id.
 toast_manager_push :: proc(s: Toast_Manager, cx: ^Cx, id: u64, value: u64, options: Toast_Options, now: time.Duration, loc := #caller_location) -> (v: Maybe(u64)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17622,6 +19966,7 @@ toast_manager_push :: proc(s: Toast_Manager, cx: ^Cx, id: u64, value: u64, optio
 	return
 }
 
+// Create a manager using the supplied motion duration for enter and exit.
 toast_manager :: proc(cx: ^Cx, motion: Toast_Motion, loc := #caller_location) -> Toast_Manager {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -17633,11 +19978,14 @@ toast_manager :: proc(cx: ^Cx, motion: Toast_Motion, loc := #caller_location) ->
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Persistent private layout state used by `Toast_Stack`.
+//
 // Toast_Stack_State is a handle to gpui_kit::base::ToastStackState, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named toast_stack_state_*.
 Toast_Stack_State :: struct {
 	using state: State,
 }
 
+// Return whether interaction has expanded the stack.
 toast_stack_state_is_expanded :: proc(s: Toast_Stack_State, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17659,11 +20007,17 @@ toast_stack_state_default :: proc(cx: ^Cx, loc := #caller_location) -> Toast_Sta
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Application-wide timing for tooltips shown through `Tooltip_Overlay`.
+//
+// Read on every show and hide request, so installing new defaults takes effect in windows that are
+// already open.
+//
 // Tooltip_Defaults is a handle to gpui_kit::base::TooltipDefaults, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named tooltip_defaults_*.
 Tooltip_Defaults :: struct {
 	using state: State,
 }
 
+// How long a tooltip stays after the pointer leaves its trigger.
 tooltip_defaults_grace_period :: proc(s: Tooltip_Defaults, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17675,6 +20029,7 @@ tooltip_defaults_grace_period :: proc(s: Tooltip_Defaults, cx: ^Cx, loc := #call
 	return
 }
 
+// How long the pointer must rest on a trigger before its tooltip shows.
 tooltip_defaults_show_delay :: proc(s: Tooltip_Defaults, cx: ^Cx, loc := #caller_location) -> (v: time.Duration) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17686,6 +20041,7 @@ tooltip_defaults_show_delay :: proc(s: Tooltip_Defaults, cx: ^Cx, loc := #caller
 	return
 }
 
+// Installs these defaults for the whole application.
 tooltip_defaults_install :: proc(s: Tooltip_Defaults, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17704,7 +20060,12 @@ Tooltip_Defaults_Builder :: struct {
 }
 
 Tooltip_Defaults_Builder_VT :: struct {
+	// Sets how long a tooltip stays after the pointer leaves its trigger.
+	//
+	// Entering another trigger within this period switches to its tooltip without waiting for the show
+	// delay.
 	with_grace_period: proc(b: Tooltip_Defaults_Builder, period: time.Duration) -> Tooltip_Defaults_Builder,
+	// Sets how long the pointer must rest on a trigger before its tooltip shows.
 	with_show_delay: proc(b: Tooltip_Defaults_Builder, delay: time.Duration) -> Tooltip_Defaults_Builder,
 	build: proc(b: Tooltip_Defaults_Builder) -> Tooltip_Defaults,
 }
@@ -17730,6 +20091,7 @@ tooltip_defaults_builder_vt := Tooltip_Defaults_Builder_VT {
 	},
 }
 
+// Creates the Base defaults: a 500 ms show delay and a 300 ms grace period.
 tooltip_defaults :: proc(cx: ^Cx, loc := #caller_location) -> Tooltip_Defaults_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -17740,6 +20102,7 @@ tooltip_defaults :: proc(cx: ^Cx, loc := #caller_location) -> Tooltip_Defaults_B
 	return {vt = &tooltip_defaults_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Returns the installed defaults, or the Base ones when none were.
 tooltip_defaults_global :: proc(cx: ^Cx, loc := #caller_location) -> Tooltip_Defaults_Builder {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)
@@ -17750,6 +20113,11 @@ tooltip_defaults_global :: proc(cx: ^Cx, loc := #caller_location) -> Tooltip_Def
 	return {vt = &tooltip_defaults_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Per-window tooltip provider and overlay.
+//
+// Show requests are ignored on iOS and Android, where touch input must not open hover tooltips.
+// This does not control GPUI's native `.tooltip()` API.
+//
 // Tooltip_Overlay is a handle to gpui_kit::base::TooltipOverlay, an entity the library keeps. Its procedures are named tooltip_overlay_*.
 Tooltip_Overlay :: struct {
 	using state: State,
@@ -17820,11 +20188,19 @@ tooltip_overlay :: proc(cx: ^Cx, loc := #caller_location) -> Tooltip_Overlay_Bui
 	return {vt = &tooltip_overlay_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// Where a touch selection's ends are laid out this frame, and what the gesture is doing to them.
+//
+// Each end is the caret line box at that end in window coordinates: zero width, one line tall, at
+// the character boundary. An empty selection has both ends at the caret. Built only by Base; a
+// presentation layer reads it to draw the handles and place the edit menu.
+//
 // Touch_Selection_Snapshot is a handle to gpui_kit::base::TouchSelectionSnapshot, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named touch_selection_snapshot_*.
 Touch_Selection_Snapshot :: struct {
 	using state: State,
 }
 
+// The smallest box holding the ends in view, for anchoring the edit menu. `None` when the whole
+// selection is scrolled away.
 touch_selection_snapshot_bounds :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Bounds)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17836,6 +20212,7 @@ touch_selection_snapshot_bounds :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, lo
 	return
 }
 
+// The end currently being dragged by its handle.
 touch_selection_snapshot_dragging :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Maybe(Selection_Edge)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17847,6 +20224,7 @@ touch_selection_snapshot_dragging :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, 
 	return
 }
 
+// The caret line box at the given end.
 touch_selection_snapshot_edge :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, edge: Selection_Edge, loc := #caller_location) -> (v: Bounds) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17859,6 +20237,7 @@ touch_selection_snapshot_edge :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, edge
 	return
 }
 
+// The caret line box after the last selected character.
 touch_selection_snapshot_end :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17870,6 +20249,8 @@ touch_selection_snapshot_end :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc :
 	return
 }
 
+// Whether the given end is in view. A handle is drawn only for an end that is; the menu anchors to
+// the ends that are.
 touch_selection_snapshot_is_edge_visible :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, edge: Selection_Edge, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17882,6 +20263,7 @@ touch_selection_snapshot_is_edge_visible :: proc(s: Touch_Selection_Snapshot, cx
 	return
 }
 
+// Whether the selection is a bare caret, which gets a menu but no handles.
 touch_selection_snapshot_is_empty :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17893,6 +20275,8 @@ touch_selection_snapshot_is_empty :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, 
 	return
 }
 
+// Whether the edit menu is open. It closes while a handle is dragged and reopens when the drag
+// ends.
 touch_selection_snapshot_is_menu_open :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17904,6 +20288,7 @@ touch_selection_snapshot_is_menu_open :: proc(s: Touch_Selection_Snapshot, cx: ^
 	return
 }
 
+// The caret line box before the first selected character.
 touch_selection_snapshot_start :: proc(s: Touch_Selection_Snapshot, cx: ^Cx, loc := #caller_location) -> (v: Bounds) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17920,6 +20305,11 @@ Transition_State :: struct {
 	using state: State,
 }
 
+// Returns the current value toward `target`, as `transition_with_status` does, and requests the
+// next animation frame while the status is `Delayed` or `Running`.
+//
+// Call this while rendering an element. A target that changes while the element is not rendered
+// starts transitioning at the next sample.
 transition_state_sample :: proc(s: Transition_State, cx: ^Cx, target: f32, policy: Transition, loc := #caller_location) -> (v: Motion_Value_F32) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -17943,6 +20333,8 @@ transition_state_default :: proc(cx: ^Cx, loc := #caller_location) -> Transition
 	return {state = {h = state_make(cx, req[:], loc)}}
 }
 
+// Behavior and interaction state for a virtualized tree.
+//
 // Tree_State is a handle to gpui_kit::base::TreeState, an entity the library keeps. Its procedures are named tree_state_*.
 Tree_State :: struct {
 	using state: State,
@@ -18147,6 +20539,7 @@ Undo_History :: struct {
 	using state: State,
 }
 
+// Returns whether a redo transaction is available.
 undo_history_can_redo :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18158,6 +20551,7 @@ undo_history_can_redo :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// Returns whether an undo transaction is available.
 undo_history_can_undo :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18169,6 +20563,7 @@ undo_history_can_undo :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location)
 	return
 }
 
+// Returns whether history recording is currently ignored.
 undo_history_is_ignoring :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: bool) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18180,6 +20575,7 @@ undo_history_is_ignoring :: proc(s: Undo_History, cx: ^Cx, loc := #caller_locati
 	return
 }
 
+// Redoes the latest undone transaction, returning changes oldest first.
 undo_history_redo :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: Maybe([]Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18191,6 +20587,7 @@ undo_history_redo :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> 
 	return
 }
 
+// Undoes the latest transaction, returning changes newest first.
 undo_history_undo :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> (v: Maybe([]Temp_String)) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18202,6 +20599,7 @@ undo_history_undo :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) -> 
 	return
 }
 
+// Clears both undo and redo transactions.
 undo_history_clear :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18211,6 +20609,7 @@ undo_history_clear :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) {
 	state_set(cx, req[:], loc)
 }
 
+// End explicit grouping of pushed changes.
 undo_history_end_grouping :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18220,6 +20619,7 @@ undo_history_end_grouping :: proc(s: Undo_History, cx: ^Cx, loc := #caller_locat
 	state_set(cx, req[:], loc)
 }
 
+// Pushes a change into the current transaction or starts a new one.
 undo_history_push :: proc(s: Undo_History, cx: ^Cx, item: string, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18230,6 +20630,7 @@ undo_history_push :: proc(s: Undo_History, cx: ^Cx, item: string, loc := #caller
 	state_set(cx, req[:], loc)
 }
 
+// Sets whether history recording is currently ignored.
 undo_history_set_ignoring :: proc(s: Undo_History, cx: ^Cx, ignoring: bool, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18240,6 +20641,7 @@ undo_history_set_ignoring :: proc(s: Undo_History, cx: ^Cx, ignoring: bool, loc 
 	state_set(cx, req[:], loc)
 }
 
+// Start explicitly grouping pushed changes into one transaction.
 undo_history_start_grouping :: proc(s: Undo_History, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18258,7 +20660,14 @@ Undo_History_Builder :: struct {
 }
 
 Undo_History_Builder_VT :: struct {
+	// Set the interval in which consecutive changes are grouped.
+	//
+	// A successful undo or redo ends timed grouping. Explicit grouping is independent and can still
+	// append to the current transaction.
 	group_interval: proc(b: Undo_History_Builder, group_interval: time.Duration) -> Undo_History_Builder,
+	// Set the maximum number of undo transactions to keep, defaults to 1000.
+	//
+	// Lowering the limit immediately removes the oldest undo transactions.
 	max_undos: proc(b: Undo_History_Builder, max_undos: int) -> Undo_History_Builder,
 	build: proc(b: Undo_History_Builder) -> Undo_History,
 }
@@ -18294,11 +20703,16 @@ undo_history :: proc(cx: ^Cx, loc := #caller_location) -> Undo_History_Builder {
 	return {vt = &undo_history_builder_vt, cx = cx, req = req, count_at = len(req) - 2}
 }
 
+// A scroll handle for `Base_Virtual_List`.
+//
+// See also `ScrollHandle`.
+//
 // Virtual_List_Scroll_Handle is a handle to gpui_kit::base::VirtualListScrollHandle, a library object the library keeps (PROTOCOLS.md section 13): a temporary handle when a read, a call or an event hands it out (gk.retain keeps it), a kept one from its constructor. Its procedures are named virtual_list_scroll_handle_*.
 Virtual_List_Scroll_Handle :: struct {
 	using state: State,
 }
 
+// Get the base scroll handle.
 virtual_list_scroll_handle_base_handle :: proc(s: Virtual_List_Scroll_Handle, cx: ^Cx, loc := #caller_location) -> (v: Scroll_Handle) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18310,6 +20724,7 @@ virtual_list_scroll_handle_base_handle :: proc(s: Virtual_List_Scroll_Handle, cx
 	return
 }
 
+// Scrolls to the bottom of the list.
 virtual_list_scroll_handle_scroll_to_bottom :: proc(s: Virtual_List_Scroll_Handle, cx: ^Cx, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18319,6 +20734,7 @@ virtual_list_scroll_handle_scroll_to_bottom :: proc(s: Virtual_List_Scroll_Handl
 	state_set(cx, req[:], loc)
 }
 
+// Scroll to the item at the given index.
 virtual_list_scroll_handle_scroll_to_item :: proc(s: Virtual_List_Scroll_Handle, cx: ^Cx, ix: int, strategy: Scroll_Strategy, loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -18330,6 +20746,7 @@ virtual_list_scroll_handle_scroll_to_item :: proc(s: Virtual_List_Scroll_Handle,
 	state_set(cx, req[:], loc)
 }
 
+// Create a new VirtualListScrollHandle.
 virtual_list_scroll_handle :: proc(cx: ^Cx, loc := #caller_location) -> Virtual_List_Scroll_Handle {
 	req := new(Tape, context.temp_allocator)
 	req^ = make(Tape, 0, 64, context.temp_allocator)

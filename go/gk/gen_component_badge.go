@@ -9,6 +9,8 @@ type BadgeEl struct{ n *node }
 
 func (e BadgeEl) node() *node { return e.n }
 
+// Create a new badge.
+//
 // Badge is <gpui_kit::component::badge::Badge>::new.
 func Badge() BadgeEl {
 	useComponentBadge()
@@ -16,6 +18,8 @@ func Badge() BadgeEl {
 	return BadgeEl{n}
 }
 
+// Set the color (background) of the badge.
+//
 // Color is <gpui_kit::component::badge::Badge>::color.
 func (e BadgeEl) Color(color Color) BadgeEl {
 	o := op(e.n, 256)
@@ -23,6 +27,10 @@ func (e BadgeEl) Color(color Color) BadgeEl {
 	return e
 }
 
+// Set to use `Number` to show a count.
+//
+// If count is 0, the badge will be hidden.
+//
 // Count is <gpui_kit::component::badge::Badge>::count.
 func (e BadgeEl) Count(count int) BadgeEl {
 	o := op(e.n, 257)
@@ -30,12 +38,16 @@ func (e BadgeEl) Count(count int) BadgeEl {
 	return e
 }
 
+// Set to use `Dot` to show a dot.
+//
 // Dot is <gpui_kit::component::badge::Badge>::dot.
 func (e BadgeEl) Dot() BadgeEl {
 	op(e.n, 258)
 	return e
 }
 
+// Set to use `Icon` to show an icon.
+//
 // Icon is <gpui_kit::component::badge::Badge>::icon.
 func (e BadgeEl) Icon(icon IconName) BadgeEl {
 	o := op(e.n, 260)
@@ -43,6 +55,8 @@ func (e BadgeEl) Icon(icon IconName) BadgeEl {
 	return e
 }
 
+// Set the maximum count to show (Only if `Number` is used).
+//
 // Max is <gpui_kit::component::badge::Badge>::max.
 func (e BadgeEl) Max(max_ int) BadgeEl {
 	o := op(e.n, 259)
@@ -50,6 +64,7 @@ func (e BadgeEl) Max(max_ int) BadgeEl {
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BadgeEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BadgeEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -60,13 +75,26 @@ func (e BadgeEl) Text(s string) BadgeEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e BadgeEl) ChildView(v View) BadgeEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e BadgeEl) Child(child Element) BadgeEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e BadgeEl) Children(children ...Element) BadgeEl {
 	tParentElementChildren(e.n, children...)
 	return e
 }
 
-func (e BadgeEl) Large() BadgeEl                 { tSizableLarge(e.n); return e }
-func (e BadgeEl) Small() BadgeEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e BadgeEl) Large() BadgeEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e BadgeEl) Small() BadgeEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e BadgeEl) WithSize(size SizeInto) BadgeEl { tSizableWithSize(e.n, size); return e }
-func (e BadgeEl) Xsmall() BadgeEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e BadgeEl) Xsmall() BadgeEl { tSizableXsmall(e.n); return e }

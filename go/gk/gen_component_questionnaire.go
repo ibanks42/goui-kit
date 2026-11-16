@@ -19,17 +19,43 @@ func Questionnaire(state QuestionnaireState, st ...Style) QuestionnaireEl {
 	return QuestionnaireEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireEl) PopoverStyle() QuestionnaireEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireEl) RoundedFullStyle() QuestionnaireEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireEl) FocusRingStyle() QuestionnaireEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -57,7 +83,20 @@ func (e QuestionnaireEl) FontMedium() QuestionnaireEl     { tStyledExtFontMedium
 func (e QuestionnaireEl) FontNormal() QuestionnaireEl     { tStyledExtFontNormal(e.n); return e }
 func (e QuestionnaireEl) FontSemibold() QuestionnaireEl   { tStyledExtFontSemibold(e.n); return e }
 func (e QuestionnaireEl) FontThin() QuestionnaireEl       { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireEl) HFlex() QuestionnaireEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireEl) HFlex() QuestionnaireEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireEl) Margins(margins EdgesInto) QuestionnaireEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -70,220 +109,445 @@ func (e QuestionnaireEl) RefineStyle(style StyleRefinement) QuestionnaireEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireEl) VFlex() QuestionnaireEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e QuestionnaireEl) Large() QuestionnaireEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireEl) Small() QuestionnaireEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireEl) WithSize(size SizeInto) QuestionnaireEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireEl) Xsmall() QuestionnaireEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireEl) Style(st ...Style) QuestionnaireEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireEl) AspectRatio(ratio float32) QuestionnaireEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e QuestionnaireEl) Bg(fill Fill) QuestionnaireEl         { tStyledBg(e.n, fill); return e }
+
+// Sets the background color of the element.
+func (e QuestionnaireEl) Bg(fill Fill) QuestionnaireEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireEl) Border(length Length) QuestionnaireEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireEl) BorderB(length Length) QuestionnaireEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireEl) BorderColor(borderColor Color) QuestionnaireEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireEl) BorderL(length Length) QuestionnaireEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireEl) BorderR(length Length) QuestionnaireEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireEl) BorderT(length Length) QuestionnaireEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireEl) BorderX(length Length) QuestionnaireEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireEl) BorderY(length Length) QuestionnaireEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireEl) Bottom(length Length) QuestionnaireEl { tStyledBottom(e.n, length); return e }
-func (e QuestionnaireEl) ColEnd(end int16) QuestionnaireEl     { tStyledColEnd(e.n, end); return e }
-func (e QuestionnaireEl) ColSpan(span uint16) QuestionnaireEl  { tStyledColSpan(e.n, span); return e }
+
+// Sets the column end of this element.
+func (e QuestionnaireEl) ColEnd(end int16) QuestionnaireEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e QuestionnaireEl) ColSpan(span uint16) QuestionnaireEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e QuestionnaireEl) ColStart(start int16) QuestionnaireEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireEl) Cursor(cursor CursorStyle) QuestionnaireEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireEl) FlexBasis(basis Length) QuestionnaireEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireEl) FlexGrow(grow float32) QuestionnaireEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireEl) FlexShrink(shrink float32) QuestionnaireEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireEl) FontFamily(familyName string) QuestionnaireEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireEl) FontFeatures(features FontFeatures) QuestionnaireEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireEl) FontWeight(weight FontWeight) QuestionnaireEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e QuestionnaireEl) Gap(length Length) QuestionnaireEl    { tStyledGap(e.n, length); return e }
-func (e QuestionnaireEl) GapX(length Length) QuestionnaireEl   { tStyledGapX(e.n, length); return e }
-func (e QuestionnaireEl) GapY(length Length) QuestionnaireEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e QuestionnaireEl) Gap(length Length) QuestionnaireEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e QuestionnaireEl) GapX(length Length) QuestionnaireEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e QuestionnaireEl) GapY(length Length) QuestionnaireEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireEl) GridCols(cols uint16) QuestionnaireEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireEl) GridColsMaxContent(cols uint16) QuestionnaireEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireEl) GridColsMinContent(cols uint16) QuestionnaireEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireEl) GridRows(rows uint16) QuestionnaireEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireEl) GridRowsMaxContent(rows uint16) QuestionnaireEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireEl) GridRowsMinContent(rows uint16) QuestionnaireEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e QuestionnaireEl) H(length Length) QuestionnaireEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e QuestionnaireEl) H(length Length) QuestionnaireEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireEl) Inset(length Length) QuestionnaireEl { tStyledInset(e.n, length); return e }
-func (e QuestionnaireEl) Left(length Length) QuestionnaireEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e QuestionnaireEl) Left(length Length) QuestionnaireEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireEl) LineClamp(lines int) QuestionnaireEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireEl) LineHeight(lineHeight Length) QuestionnaireEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e QuestionnaireEl) M(length Length) QuestionnaireEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e QuestionnaireEl) M(length Length) QuestionnaireEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireEl) MaxH(length Length) QuestionnaireEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireEl) MaxSize(length Length) QuestionnaireEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireEl) MaxW(length Length) QuestionnaireEl { tStyledMaxW(e.n, length); return e }
-func (e QuestionnaireEl) Mb(length Length) QuestionnaireEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e QuestionnaireEl) Mb(length Length) QuestionnaireEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireEl) MinH(length Length) QuestionnaireEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireEl) MinSize(length Length) QuestionnaireEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireEl) MinW(length Length) QuestionnaireEl { tStyledMinW(e.n, length); return e }
-func (e QuestionnaireEl) Ml(length Length) QuestionnaireEl   { tStyledMl(e.n, length); return e }
-func (e QuestionnaireEl) Mr(length Length) QuestionnaireEl   { tStyledMr(e.n, length); return e }
-func (e QuestionnaireEl) Mt(length Length) QuestionnaireEl   { tStyledMt(e.n, length); return e }
-func (e QuestionnaireEl) Mx(length Length) QuestionnaireEl   { tStyledMx(e.n, length); return e }
-func (e QuestionnaireEl) My(length Length) QuestionnaireEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e QuestionnaireEl) Ml(length Length) QuestionnaireEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e QuestionnaireEl) Mr(length Length) QuestionnaireEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e QuestionnaireEl) Mt(length Length) QuestionnaireEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e QuestionnaireEl) Mx(length Length) QuestionnaireEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e QuestionnaireEl) My(length Length) QuestionnaireEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireEl) Opacity(opacity float32) QuestionnaireEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e QuestionnaireEl) P(length Length) QuestionnaireEl     { tStyledP(e.n, length); return e }
-func (e QuestionnaireEl) Pb(length Length) QuestionnaireEl    { tStyledPb(e.n, length); return e }
-func (e QuestionnaireEl) Pl(length Length) QuestionnaireEl    { tStyledPl(e.n, length); return e }
-func (e QuestionnaireEl) Pr(length Length) QuestionnaireEl    { tStyledPr(e.n, length); return e }
-func (e QuestionnaireEl) Pt(length Length) QuestionnaireEl    { tStyledPt(e.n, length); return e }
-func (e QuestionnaireEl) Px(length Length) QuestionnaireEl    { tStyledPx(e.n, length); return e }
-func (e QuestionnaireEl) Py(length Length) QuestionnaireEl    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e QuestionnaireEl) P(length Length) QuestionnaireEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e QuestionnaireEl) Pb(length Length) QuestionnaireEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e QuestionnaireEl) Pl(length Length) QuestionnaireEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e QuestionnaireEl) Pr(length Length) QuestionnaireEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e QuestionnaireEl) Pt(length Length) QuestionnaireEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e QuestionnaireEl) Px(length Length) QuestionnaireEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e QuestionnaireEl) Py(length Length) QuestionnaireEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireEl) Right(length Length) QuestionnaireEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireEl) Rounded(length Length) QuestionnaireEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireEl) RoundedB(length Length) QuestionnaireEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireEl) RoundedBl(length Length) QuestionnaireEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireEl) RoundedBr(length Length) QuestionnaireEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireEl) RoundedL(length Length) QuestionnaireEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireEl) RoundedR(length Length) QuestionnaireEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireEl) RoundedT(length Length) QuestionnaireEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireEl) RoundedTl(length Length) QuestionnaireEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireEl) RoundedTr(length Length) QuestionnaireEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e QuestionnaireEl) RowEnd(end int16) QuestionnaireEl     { tStyledRowEnd(e.n, end); return e }
-func (e QuestionnaireEl) RowSpan(span uint16) QuestionnaireEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e QuestionnaireEl) RowEnd(end int16) QuestionnaireEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e QuestionnaireEl) RowSpan(span uint16) QuestionnaireEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e QuestionnaireEl) RowStart(start int16) QuestionnaireEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireEl) ScrollbarWidth(width Length) QuestionnaireEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireEl) Shadow(shadows []BoxShadow) QuestionnaireEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireEl) Size(length Length) QuestionnaireEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e QuestionnaireEl) TextAlign(align TextAlign) QuestionnaireEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireEl) TextBg(bg Color) QuestionnaireEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireEl) TextColor(color Color) QuestionnaireEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireEl) TextDecorationColor(color Color) QuestionnaireEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireEl) TextOverflow(overflow TextOverflow) QuestionnaireEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireEl) TextSize(size Length) QuestionnaireEl { tStyledTextSize(e.n, size); return e }
-func (e QuestionnaireEl) Top(length Length) QuestionnaireEl    { tStyledTop(e.n, length); return e }
-func (e QuestionnaireEl) W(length Length) QuestionnaireEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e QuestionnaireEl) Top(length Length) QuestionnaireEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e QuestionnaireEl) W(length Length) QuestionnaireEl { tStyledW(e.n, length); return e }
 
 func (e QuestionnaireEl) Text(s string) QuestionnaireEl { putText(e.n, s); return e }
 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireEl) ChildView(v View) QuestionnaireEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireEl) Child(child Element) QuestionnaireEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireEl) Children(children ...Element) QuestionnaireEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -304,20 +568,46 @@ func QuestionnaireActions(state QuestionnaireState, st ...Style) QuestionnaireAc
 	return QuestionnaireActionsEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireActionsEl) PopoverStyle() QuestionnaireActionsEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireActionsEl) RoundedFullStyle() QuestionnaireActionsEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireActionsEl) FocusRingStyle() QuestionnaireActionsEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireActionsEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireActionsEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -378,7 +668,20 @@ func (e QuestionnaireActionsEl) FontSemibold() QuestionnaireActionsEl {
 	return e
 }
 func (e QuestionnaireActionsEl) FontThin() QuestionnaireActionsEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireActionsEl) HFlex() QuestionnaireActionsEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireActionsEl) HFlex() QuestionnaireActionsEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireActionsEl) Margins(margins EdgesInto) QuestionnaireActionsEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -391,332 +694,554 @@ func (e QuestionnaireActionsEl) RefineStyle(style StyleRefinement) Questionnaire
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireActionsEl) VFlex() QuestionnaireActionsEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e QuestionnaireActionsEl) Large() QuestionnaireActionsEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireActionsEl) Small() QuestionnaireActionsEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireActionsEl) WithSize(size SizeInto) QuestionnaireActionsEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireActionsEl) Xsmall() QuestionnaireActionsEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireActionsEl) Style(st ...Style) QuestionnaireActionsEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireActionsEl) AspectRatio(ratio float32) QuestionnaireActionsEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireActionsEl) Bg(fill Fill) QuestionnaireActionsEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireActionsEl) Border(length Length) QuestionnaireActionsEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireActionsEl) BorderB(length Length) QuestionnaireActionsEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireActionsEl) BorderColor(borderColor Color) QuestionnaireActionsEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireActionsEl) BorderL(length Length) QuestionnaireActionsEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireActionsEl) BorderR(length Length) QuestionnaireActionsEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireActionsEl) BorderT(length Length) QuestionnaireActionsEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireActionsEl) BorderX(length Length) QuestionnaireActionsEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireActionsEl) BorderY(length Length) QuestionnaireActionsEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireActionsEl) Bottom(length Length) QuestionnaireActionsEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireActionsEl) ColEnd(end int16) QuestionnaireActionsEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireActionsEl) ColSpan(span uint16) QuestionnaireActionsEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireActionsEl) ColStart(start int16) QuestionnaireActionsEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireActionsEl) Cursor(cursor CursorStyle) QuestionnaireActionsEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireActionsEl) FlexBasis(basis Length) QuestionnaireActionsEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireActionsEl) FlexGrow(grow float32) QuestionnaireActionsEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireActionsEl) FlexShrink(shrink float32) QuestionnaireActionsEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireActionsEl) FontFamily(familyName string) QuestionnaireActionsEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireActionsEl) FontFeatures(features FontFeatures) QuestionnaireActionsEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireActionsEl) FontWeight(weight FontWeight) QuestionnaireActionsEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireActionsEl) Gap(length Length) QuestionnaireActionsEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireActionsEl) GapX(length Length) QuestionnaireActionsEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireActionsEl) GapY(length Length) QuestionnaireActionsEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireActionsEl) GridCols(cols uint16) QuestionnaireActionsEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireActionsEl) GridColsMaxContent(cols uint16) QuestionnaireActionsEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireActionsEl) GridColsMinContent(cols uint16) QuestionnaireActionsEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireActionsEl) GridRows(rows uint16) QuestionnaireActionsEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireActionsEl) GridRowsMaxContent(rows uint16) QuestionnaireActionsEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireActionsEl) GridRowsMinContent(rows uint16) QuestionnaireActionsEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireActionsEl) H(length Length) QuestionnaireActionsEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireActionsEl) Inset(length Length) QuestionnaireActionsEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireActionsEl) Left(length Length) QuestionnaireActionsEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireActionsEl) LineClamp(lines int) QuestionnaireActionsEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireActionsEl) LineHeight(lineHeight Length) QuestionnaireActionsEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireActionsEl) M(length Length) QuestionnaireActionsEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireActionsEl) MaxH(length Length) QuestionnaireActionsEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireActionsEl) MaxSize(length Length) QuestionnaireActionsEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireActionsEl) MaxW(length Length) QuestionnaireActionsEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireActionsEl) Mb(length Length) QuestionnaireActionsEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireActionsEl) MinH(length Length) QuestionnaireActionsEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireActionsEl) MinSize(length Length) QuestionnaireActionsEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireActionsEl) MinW(length Length) QuestionnaireActionsEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireActionsEl) Ml(length Length) QuestionnaireActionsEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireActionsEl) Mr(length Length) QuestionnaireActionsEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireActionsEl) Mt(length Length) QuestionnaireActionsEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireActionsEl) Mx(length Length) QuestionnaireActionsEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireActionsEl) My(length Length) QuestionnaireActionsEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireActionsEl) Opacity(opacity float32) QuestionnaireActionsEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireActionsEl) P(length Length) QuestionnaireActionsEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireActionsEl) Pb(length Length) QuestionnaireActionsEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireActionsEl) Pl(length Length) QuestionnaireActionsEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireActionsEl) Pr(length Length) QuestionnaireActionsEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireActionsEl) Pt(length Length) QuestionnaireActionsEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireActionsEl) Px(length Length) QuestionnaireActionsEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireActionsEl) Py(length Length) QuestionnaireActionsEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireActionsEl) Right(length Length) QuestionnaireActionsEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireActionsEl) Rounded(length Length) QuestionnaireActionsEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireActionsEl) RoundedB(length Length) QuestionnaireActionsEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireActionsEl) RoundedBl(length Length) QuestionnaireActionsEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireActionsEl) RoundedBr(length Length) QuestionnaireActionsEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireActionsEl) RoundedL(length Length) QuestionnaireActionsEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireActionsEl) RoundedR(length Length) QuestionnaireActionsEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireActionsEl) RoundedT(length Length) QuestionnaireActionsEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireActionsEl) RoundedTl(length Length) QuestionnaireActionsEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireActionsEl) RoundedTr(length Length) QuestionnaireActionsEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireActionsEl) RowEnd(end int16) QuestionnaireActionsEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireActionsEl) RowSpan(span uint16) QuestionnaireActionsEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireActionsEl) RowStart(start int16) QuestionnaireActionsEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireActionsEl) ScrollbarWidth(width Length) QuestionnaireActionsEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireActionsEl) Shadow(shadows []BoxShadow) QuestionnaireActionsEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireActionsEl) Size(length Length) QuestionnaireActionsEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireActionsEl) TextAlign(align TextAlign) QuestionnaireActionsEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireActionsEl) TextBg(bg Color) QuestionnaireActionsEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireActionsEl) TextColor(color Color) QuestionnaireActionsEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireActionsEl) TextDecorationColor(color Color) QuestionnaireActionsEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireActionsEl) TextOverflow(overflow TextOverflow) QuestionnaireActionsEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireActionsEl) TextSize(size Length) QuestionnaireActionsEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireActionsEl) Top(length Length) QuestionnaireActionsEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireActionsEl) W(length Length) QuestionnaireActionsEl {
 	tStyledW(e.n, length)
 	return e
@@ -727,10 +1252,13 @@ func (e QuestionnaireActionsEl) Text(s string) QuestionnaireActionsEl { putText(
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireActionsEl) ChildView(v View) QuestionnaireActionsEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireActionsEl) Child(child Element) QuestionnaireActionsEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireActionsEl) Children(children ...Element) QuestionnaireActionsEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -774,20 +1302,46 @@ func (e QuestionnaireChoiceEl) ShortcutStyle(style StyleRefinement) Questionnair
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireChoiceEl) PopoverStyle() QuestionnaireChoiceEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireChoiceEl) RoundedFullStyle() QuestionnaireChoiceEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireChoiceEl) FocusRingStyle() QuestionnaireChoiceEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireChoiceEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireChoiceEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -836,7 +1390,20 @@ func (e QuestionnaireChoiceEl) FontSemibold() QuestionnaireChoiceEl {
 	return e
 }
 func (e QuestionnaireChoiceEl) FontThin() QuestionnaireChoiceEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireChoiceEl) HFlex() QuestionnaireChoiceEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireChoiceEl) HFlex() QuestionnaireChoiceEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireChoiceEl) Margins(margins EdgesInto) QuestionnaireChoiceEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -849,332 +1416,554 @@ func (e QuestionnaireChoiceEl) RefineStyle(style StyleRefinement) QuestionnaireC
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireChoiceEl) VFlex() QuestionnaireChoiceEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e QuestionnaireChoiceEl) Large() QuestionnaireChoiceEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireChoiceEl) Small() QuestionnaireChoiceEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireChoiceEl) WithSize(size SizeInto) QuestionnaireChoiceEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireChoiceEl) Xsmall() QuestionnaireChoiceEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireChoiceEl) Style(st ...Style) QuestionnaireChoiceEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireChoiceEl) AspectRatio(ratio float32) QuestionnaireChoiceEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireChoiceEl) Bg(fill Fill) QuestionnaireChoiceEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireChoiceEl) Border(length Length) QuestionnaireChoiceEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoiceEl) BorderB(length Length) QuestionnaireChoiceEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireChoiceEl) BorderColor(borderColor Color) QuestionnaireChoiceEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoiceEl) BorderL(length Length) QuestionnaireChoiceEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoiceEl) BorderR(length Length) QuestionnaireChoiceEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoiceEl) BorderT(length Length) QuestionnaireChoiceEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireChoiceEl) BorderX(length Length) QuestionnaireChoiceEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireChoiceEl) BorderY(length Length) QuestionnaireChoiceEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceEl) Bottom(length Length) QuestionnaireChoiceEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireChoiceEl) ColEnd(end int16) QuestionnaireChoiceEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireChoiceEl) ColSpan(span uint16) QuestionnaireChoiceEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireChoiceEl) ColStart(start int16) QuestionnaireChoiceEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireChoiceEl) Cursor(cursor CursorStyle) QuestionnaireChoiceEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireChoiceEl) FlexBasis(basis Length) QuestionnaireChoiceEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireChoiceEl) FlexGrow(grow float32) QuestionnaireChoiceEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireChoiceEl) FlexShrink(shrink float32) QuestionnaireChoiceEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireChoiceEl) FontFamily(familyName string) QuestionnaireChoiceEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireChoiceEl) FontFeatures(features FontFeatures) QuestionnaireChoiceEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoiceEl) FontWeight(weight FontWeight) QuestionnaireChoiceEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireChoiceEl) Gap(length Length) QuestionnaireChoiceEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireChoiceEl) GapX(length Length) QuestionnaireChoiceEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireChoiceEl) GapY(length Length) QuestionnaireChoiceEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireChoiceEl) GridCols(cols uint16) QuestionnaireChoiceEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireChoiceEl) GridColsMaxContent(cols uint16) QuestionnaireChoiceEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireChoiceEl) GridColsMinContent(cols uint16) QuestionnaireChoiceEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireChoiceEl) GridRows(rows uint16) QuestionnaireChoiceEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireChoiceEl) GridRowsMaxContent(rows uint16) QuestionnaireChoiceEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireChoiceEl) GridRowsMinContent(rows uint16) QuestionnaireChoiceEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireChoiceEl) H(length Length) QuestionnaireChoiceEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceEl) Inset(length Length) QuestionnaireChoiceEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceEl) Left(length Length) QuestionnaireChoiceEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireChoiceEl) LineClamp(lines int) QuestionnaireChoiceEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireChoiceEl) LineHeight(lineHeight Length) QuestionnaireChoiceEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireChoiceEl) M(length Length) QuestionnaireChoiceEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireChoiceEl) MaxH(length Length) QuestionnaireChoiceEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireChoiceEl) MaxSize(length Length) QuestionnaireChoiceEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireChoiceEl) MaxW(length Length) QuestionnaireChoiceEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoiceEl) Mb(length Length) QuestionnaireChoiceEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireChoiceEl) MinH(length Length) QuestionnaireChoiceEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireChoiceEl) MinSize(length Length) QuestionnaireChoiceEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireChoiceEl) MinW(length Length) QuestionnaireChoiceEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoiceEl) Ml(length Length) QuestionnaireChoiceEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoiceEl) Mr(length Length) QuestionnaireChoiceEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoiceEl) Mt(length Length) QuestionnaireChoiceEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireChoiceEl) Mx(length Length) QuestionnaireChoiceEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireChoiceEl) My(length Length) QuestionnaireChoiceEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireChoiceEl) Opacity(opacity float32) QuestionnaireChoiceEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireChoiceEl) P(length Length) QuestionnaireChoiceEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoiceEl) Pb(length Length) QuestionnaireChoiceEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoiceEl) Pl(length Length) QuestionnaireChoiceEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoiceEl) Pr(length Length) QuestionnaireChoiceEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoiceEl) Pt(length Length) QuestionnaireChoiceEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireChoiceEl) Px(length Length) QuestionnaireChoiceEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireChoiceEl) Py(length Length) QuestionnaireChoiceEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceEl) Right(length Length) QuestionnaireChoiceEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireChoiceEl) Rounded(length Length) QuestionnaireChoiceEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoiceEl) RoundedB(length Length) QuestionnaireChoiceEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoiceEl) RoundedBl(length Length) QuestionnaireChoiceEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoiceEl) RoundedBr(length Length) QuestionnaireChoiceEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoiceEl) RoundedL(length Length) QuestionnaireChoiceEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoiceEl) RoundedR(length Length) QuestionnaireChoiceEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoiceEl) RoundedT(length Length) QuestionnaireChoiceEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoiceEl) RoundedTl(length Length) QuestionnaireChoiceEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoiceEl) RoundedTr(length Length) QuestionnaireChoiceEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireChoiceEl) RowEnd(end int16) QuestionnaireChoiceEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireChoiceEl) RowSpan(span uint16) QuestionnaireChoiceEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireChoiceEl) RowStart(start int16) QuestionnaireChoiceEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireChoiceEl) ScrollbarWidth(width Length) QuestionnaireChoiceEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireChoiceEl) Shadow(shadows []BoxShadow) QuestionnaireChoiceEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireChoiceEl) Size(length Length) QuestionnaireChoiceEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireChoiceEl) TextAlign(align TextAlign) QuestionnaireChoiceEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoiceEl) TextBg(bg Color) QuestionnaireChoiceEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoiceEl) TextColor(color Color) QuestionnaireChoiceEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireChoiceEl) TextDecorationColor(color Color) QuestionnaireChoiceEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireChoiceEl) TextOverflow(overflow TextOverflow) QuestionnaireChoiceEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoiceEl) TextSize(size Length) QuestionnaireChoiceEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceEl) Top(length Length) QuestionnaireChoiceEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireChoiceEl) W(length Length) QuestionnaireChoiceEl {
 	tStyledW(e.n, length)
 	return e
@@ -1185,10 +1974,13 @@ func (e QuestionnaireChoiceEl) Text(s string) QuestionnaireChoiceEl { putText(e.
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireChoiceEl) ChildView(v View) QuestionnaireChoiceEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireChoiceEl) Child(child Element) QuestionnaireChoiceEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireChoiceEl) Children(children ...Element) QuestionnaireChoiceEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1215,20 +2007,46 @@ func QuestionnaireChoiceDescriptionDefault(st ...Style) QuestionnaireChoiceDescr
 	return QuestionnaireChoiceDescriptionEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireChoiceDescriptionEl) PopoverStyle() QuestionnaireChoiceDescriptionEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireChoiceDescriptionEl) RoundedFullStyle() QuestionnaireChoiceDescriptionEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireChoiceDescriptionEl) FocusRingStyle() QuestionnaireChoiceDescriptionEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireChoiceDescriptionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireChoiceDescriptionEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1298,6 +2116,19 @@ func (e QuestionnaireChoiceDescriptionEl) FontThin() QuestionnaireChoiceDescript
 	tStyledExtFontThin(e.n)
 	return e
 }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e QuestionnaireChoiceDescriptionEl) HFlex() QuestionnaireChoiceDescriptionEl {
 	tStyledExtHFlex(e.n)
 	return e
@@ -1314,23 +2145,38 @@ func (e QuestionnaireChoiceDescriptionEl) RefineStyle(style StyleRefinement) Que
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireChoiceDescriptionEl) VFlex() QuestionnaireChoiceDescriptionEl {
 	tStyledExtVFlex(e.n)
 	return e
 }
 
+// Set to Size::Large
 func (e QuestionnaireChoiceDescriptionEl) Large() QuestionnaireChoiceDescriptionEl {
 	tSizableLarge(e.n)
 	return e
 }
+
+// Set to Size::Small
 func (e QuestionnaireChoiceDescriptionEl) Small() QuestionnaireChoiceDescriptionEl {
 	tSizableSmall(e.n)
 	return e
 }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireChoiceDescriptionEl) WithSize(size SizeInto) QuestionnaireChoiceDescriptionEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireChoiceDescriptionEl) Xsmall() QuestionnaireChoiceDescriptionEl {
 	tSizableXsmall(e.n)
 	return e
@@ -1342,322 +2188,529 @@ func (e QuestionnaireChoiceDescriptionEl) Style(st ...Style) QuestionnaireChoice
 	return e
 }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireChoiceDescriptionEl) AspectRatio(ratio float32) QuestionnaireChoiceDescriptionEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireChoiceDescriptionEl) Bg(fill Fill) QuestionnaireChoiceDescriptionEl {
 	tStyledBg(e.n, fill)
 	return e
 }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireChoiceDescriptionEl) Border(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoiceDescriptionEl) BorderB(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireChoiceDescriptionEl) BorderColor(borderColor Color) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoiceDescriptionEl) BorderL(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoiceDescriptionEl) BorderR(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoiceDescriptionEl) BorderT(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireChoiceDescriptionEl) BorderX(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireChoiceDescriptionEl) BorderY(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceDescriptionEl) Bottom(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireChoiceDescriptionEl) ColEnd(end int16) QuestionnaireChoiceDescriptionEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireChoiceDescriptionEl) ColSpan(span uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireChoiceDescriptionEl) ColStart(start int16) QuestionnaireChoiceDescriptionEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireChoiceDescriptionEl) Cursor(cursor CursorStyle) QuestionnaireChoiceDescriptionEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireChoiceDescriptionEl) FlexBasis(basis Length) QuestionnaireChoiceDescriptionEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireChoiceDescriptionEl) FlexGrow(grow float32) QuestionnaireChoiceDescriptionEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireChoiceDescriptionEl) FlexShrink(shrink float32) QuestionnaireChoiceDescriptionEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireChoiceDescriptionEl) FontFamily(familyName string) QuestionnaireChoiceDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireChoiceDescriptionEl) FontFeatures(features FontFeatures) QuestionnaireChoiceDescriptionEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoiceDescriptionEl) FontWeight(weight FontWeight) QuestionnaireChoiceDescriptionEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireChoiceDescriptionEl) Gap(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireChoiceDescriptionEl) GapX(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireChoiceDescriptionEl) GapY(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireChoiceDescriptionEl) GridCols(cols uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireChoiceDescriptionEl) GridColsMaxContent(cols uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireChoiceDescriptionEl) GridColsMinContent(cols uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireChoiceDescriptionEl) GridRows(rows uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireChoiceDescriptionEl) GridRowsMaxContent(rows uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireChoiceDescriptionEl) GridRowsMinContent(rows uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireChoiceDescriptionEl) H(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceDescriptionEl) Inset(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceDescriptionEl) Left(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireChoiceDescriptionEl) LineClamp(lines int) QuestionnaireChoiceDescriptionEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireChoiceDescriptionEl) LineHeight(lineHeight Length) QuestionnaireChoiceDescriptionEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireChoiceDescriptionEl) M(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireChoiceDescriptionEl) MaxH(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireChoiceDescriptionEl) MaxSize(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireChoiceDescriptionEl) MaxW(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoiceDescriptionEl) Mb(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireChoiceDescriptionEl) MinH(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireChoiceDescriptionEl) MinSize(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireChoiceDescriptionEl) MinW(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoiceDescriptionEl) Ml(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoiceDescriptionEl) Mr(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoiceDescriptionEl) Mt(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireChoiceDescriptionEl) Mx(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireChoiceDescriptionEl) My(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireChoiceDescriptionEl) Opacity(opacity float32) QuestionnaireChoiceDescriptionEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireChoiceDescriptionEl) P(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoiceDescriptionEl) Pb(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoiceDescriptionEl) Pl(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoiceDescriptionEl) Pr(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoiceDescriptionEl) Pt(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireChoiceDescriptionEl) Px(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireChoiceDescriptionEl) Py(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceDescriptionEl) Right(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireChoiceDescriptionEl) Rounded(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoiceDescriptionEl) RoundedB(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoiceDescriptionEl) RoundedBl(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoiceDescriptionEl) RoundedBr(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoiceDescriptionEl) RoundedL(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoiceDescriptionEl) RoundedR(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoiceDescriptionEl) RoundedT(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoiceDescriptionEl) RoundedTl(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoiceDescriptionEl) RoundedTr(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireChoiceDescriptionEl) RowEnd(end int16) QuestionnaireChoiceDescriptionEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireChoiceDescriptionEl) RowSpan(span uint16) QuestionnaireChoiceDescriptionEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireChoiceDescriptionEl) RowStart(start int16) QuestionnaireChoiceDescriptionEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireChoiceDescriptionEl) ScrollbarWidth(width Length) QuestionnaireChoiceDescriptionEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireChoiceDescriptionEl) Shadow(shadows []BoxShadow) QuestionnaireChoiceDescriptionEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireChoiceDescriptionEl) Size(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireChoiceDescriptionEl) TextAlign(align TextAlign) QuestionnaireChoiceDescriptionEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoiceDescriptionEl) TextBg(bg Color) QuestionnaireChoiceDescriptionEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoiceDescriptionEl) TextColor(color Color) QuestionnaireChoiceDescriptionEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireChoiceDescriptionEl) TextDecorationColor(color Color) QuestionnaireChoiceDescriptionEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireChoiceDescriptionEl) TextOverflow(overflow TextOverflow) QuestionnaireChoiceDescriptionEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoiceDescriptionEl) TextSize(size Length) QuestionnaireChoiceDescriptionEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoiceDescriptionEl) Top(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireChoiceDescriptionEl) W(length Length) QuestionnaireChoiceDescriptionEl {
 	tStyledW(e.n, length)
 	return e
@@ -1674,10 +2727,13 @@ func (e QuestionnaireChoiceDescriptionEl) ChildView(v View) QuestionnaireChoiceD
 	return e
 }
 
+// Add a single child element to this element.
 func (e QuestionnaireChoiceDescriptionEl) Child(child Element) QuestionnaireChoiceDescriptionEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireChoiceDescriptionEl) Children(children ...Element) QuestionnaireChoiceDescriptionEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1699,20 +2755,46 @@ func QuestionnaireChoices(state QuestionnaireState, item string, st ...Style) Qu
 	return QuestionnaireChoicesEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireChoicesEl) PopoverStyle() QuestionnaireChoicesEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireChoicesEl) RoundedFullStyle() QuestionnaireChoicesEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireChoicesEl) FocusRingStyle() QuestionnaireChoicesEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireChoicesEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireChoicesEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1773,7 +2855,20 @@ func (e QuestionnaireChoicesEl) FontSemibold() QuestionnaireChoicesEl {
 	return e
 }
 func (e QuestionnaireChoicesEl) FontThin() QuestionnaireChoicesEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireChoicesEl) HFlex() QuestionnaireChoicesEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireChoicesEl) HFlex() QuestionnaireChoicesEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireChoicesEl) Margins(margins EdgesInto) QuestionnaireChoicesEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1786,332 +2881,554 @@ func (e QuestionnaireChoicesEl) RefineStyle(style StyleRefinement) Questionnaire
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireChoicesEl) VFlex() QuestionnaireChoicesEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e QuestionnaireChoicesEl) Large() QuestionnaireChoicesEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireChoicesEl) Small() QuestionnaireChoicesEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireChoicesEl) WithSize(size SizeInto) QuestionnaireChoicesEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireChoicesEl) Xsmall() QuestionnaireChoicesEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireChoicesEl) Style(st ...Style) QuestionnaireChoicesEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireChoicesEl) AspectRatio(ratio float32) QuestionnaireChoicesEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireChoicesEl) Bg(fill Fill) QuestionnaireChoicesEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireChoicesEl) Border(length Length) QuestionnaireChoicesEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoicesEl) BorderB(length Length) QuestionnaireChoicesEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireChoicesEl) BorderColor(borderColor Color) QuestionnaireChoicesEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoicesEl) BorderL(length Length) QuestionnaireChoicesEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoicesEl) BorderR(length Length) QuestionnaireChoicesEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireChoicesEl) BorderT(length Length) QuestionnaireChoicesEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireChoicesEl) BorderX(length Length) QuestionnaireChoicesEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireChoicesEl) BorderY(length Length) QuestionnaireChoicesEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoicesEl) Bottom(length Length) QuestionnaireChoicesEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireChoicesEl) ColEnd(end int16) QuestionnaireChoicesEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireChoicesEl) ColSpan(span uint16) QuestionnaireChoicesEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireChoicesEl) ColStart(start int16) QuestionnaireChoicesEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireChoicesEl) Cursor(cursor CursorStyle) QuestionnaireChoicesEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireChoicesEl) FlexBasis(basis Length) QuestionnaireChoicesEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireChoicesEl) FlexGrow(grow float32) QuestionnaireChoicesEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireChoicesEl) FlexShrink(shrink float32) QuestionnaireChoicesEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireChoicesEl) FontFamily(familyName string) QuestionnaireChoicesEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireChoicesEl) FontFeatures(features FontFeatures) QuestionnaireChoicesEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoicesEl) FontWeight(weight FontWeight) QuestionnaireChoicesEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireChoicesEl) Gap(length Length) QuestionnaireChoicesEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireChoicesEl) GapX(length Length) QuestionnaireChoicesEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireChoicesEl) GapY(length Length) QuestionnaireChoicesEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireChoicesEl) GridCols(cols uint16) QuestionnaireChoicesEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireChoicesEl) GridColsMaxContent(cols uint16) QuestionnaireChoicesEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireChoicesEl) GridColsMinContent(cols uint16) QuestionnaireChoicesEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireChoicesEl) GridRows(rows uint16) QuestionnaireChoicesEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireChoicesEl) GridRowsMaxContent(rows uint16) QuestionnaireChoicesEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireChoicesEl) GridRowsMinContent(rows uint16) QuestionnaireChoicesEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireChoicesEl) H(length Length) QuestionnaireChoicesEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoicesEl) Inset(length Length) QuestionnaireChoicesEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoicesEl) Left(length Length) QuestionnaireChoicesEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireChoicesEl) LineClamp(lines int) QuestionnaireChoicesEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireChoicesEl) LineHeight(lineHeight Length) QuestionnaireChoicesEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireChoicesEl) M(length Length) QuestionnaireChoicesEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireChoicesEl) MaxH(length Length) QuestionnaireChoicesEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireChoicesEl) MaxSize(length Length) QuestionnaireChoicesEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireChoicesEl) MaxW(length Length) QuestionnaireChoicesEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoicesEl) Mb(length Length) QuestionnaireChoicesEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireChoicesEl) MinH(length Length) QuestionnaireChoicesEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireChoicesEl) MinSize(length Length) QuestionnaireChoicesEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireChoicesEl) MinW(length Length) QuestionnaireChoicesEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoicesEl) Ml(length Length) QuestionnaireChoicesEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoicesEl) Mr(length Length) QuestionnaireChoicesEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireChoicesEl) Mt(length Length) QuestionnaireChoicesEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireChoicesEl) Mx(length Length) QuestionnaireChoicesEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireChoicesEl) My(length Length) QuestionnaireChoicesEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireChoicesEl) Opacity(opacity float32) QuestionnaireChoicesEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireChoicesEl) P(length Length) QuestionnaireChoicesEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoicesEl) Pb(length Length) QuestionnaireChoicesEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoicesEl) Pl(length Length) QuestionnaireChoicesEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoicesEl) Pr(length Length) QuestionnaireChoicesEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireChoicesEl) Pt(length Length) QuestionnaireChoicesEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireChoicesEl) Px(length Length) QuestionnaireChoicesEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireChoicesEl) Py(length Length) QuestionnaireChoicesEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoicesEl) Right(length Length) QuestionnaireChoicesEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireChoicesEl) Rounded(length Length) QuestionnaireChoicesEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoicesEl) RoundedB(length Length) QuestionnaireChoicesEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoicesEl) RoundedBl(length Length) QuestionnaireChoicesEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoicesEl) RoundedBr(length Length) QuestionnaireChoicesEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoicesEl) RoundedL(length Length) QuestionnaireChoicesEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoicesEl) RoundedR(length Length) QuestionnaireChoicesEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireChoicesEl) RoundedT(length Length) QuestionnaireChoicesEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoicesEl) RoundedTl(length Length) QuestionnaireChoicesEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireChoicesEl) RoundedTr(length Length) QuestionnaireChoicesEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireChoicesEl) RowEnd(end int16) QuestionnaireChoicesEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireChoicesEl) RowSpan(span uint16) QuestionnaireChoicesEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireChoicesEl) RowStart(start int16) QuestionnaireChoicesEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireChoicesEl) ScrollbarWidth(width Length) QuestionnaireChoicesEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireChoicesEl) Shadow(shadows []BoxShadow) QuestionnaireChoicesEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireChoicesEl) Size(length Length) QuestionnaireChoicesEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireChoicesEl) TextAlign(align TextAlign) QuestionnaireChoicesEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoicesEl) TextBg(bg Color) QuestionnaireChoicesEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoicesEl) TextColor(color Color) QuestionnaireChoicesEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireChoicesEl) TextDecorationColor(color Color) QuestionnaireChoicesEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireChoicesEl) TextOverflow(overflow TextOverflow) QuestionnaireChoicesEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireChoicesEl) TextSize(size Length) QuestionnaireChoicesEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireChoicesEl) Top(length Length) QuestionnaireChoicesEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireChoicesEl) W(length Length) QuestionnaireChoicesEl {
 	tStyledW(e.n, length)
 	return e
@@ -2122,10 +3439,13 @@ func (e QuestionnaireChoicesEl) Text(s string) QuestionnaireChoicesEl { putText(
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireChoicesEl) ChildView(v View) QuestionnaireChoicesEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireChoicesEl) Child(child Element) QuestionnaireChoicesEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireChoicesEl) Children(children ...Element) QuestionnaireChoicesEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -2147,20 +3467,46 @@ func QuestionnaireDescription(state QuestionnaireState, item string, st ...Style
 	return QuestionnaireDescriptionEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireDescriptionEl) PopoverStyle() QuestionnaireDescriptionEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireDescriptionEl) RoundedFullStyle() QuestionnaireDescriptionEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireDescriptionEl) FocusRingStyle() QuestionnaireDescriptionEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireDescriptionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireDescriptionEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -2230,6 +3576,19 @@ func (e QuestionnaireDescriptionEl) FontThin() QuestionnaireDescriptionEl {
 	tStyledExtFontThin(e.n)
 	return e
 }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e QuestionnaireDescriptionEl) HFlex() QuestionnaireDescriptionEl {
 	tStyledExtHFlex(e.n)
 	return e
@@ -2246,17 +3605,32 @@ func (e QuestionnaireDescriptionEl) RefineStyle(style StyleRefinement) Questionn
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireDescriptionEl) VFlex() QuestionnaireDescriptionEl {
 	tStyledExtVFlex(e.n)
 	return e
 }
 
+// Set to Size::Large
 func (e QuestionnaireDescriptionEl) Large() QuestionnaireDescriptionEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireDescriptionEl) Small() QuestionnaireDescriptionEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireDescriptionEl) WithSize(size SizeInto) QuestionnaireDescriptionEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireDescriptionEl) Xsmall() QuestionnaireDescriptionEl {
 	tSizableXsmall(e.n)
 	return e
@@ -2268,322 +3642,529 @@ func (e QuestionnaireDescriptionEl) Style(st ...Style) QuestionnaireDescriptionE
 	return e
 }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireDescriptionEl) AspectRatio(ratio float32) QuestionnaireDescriptionEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireDescriptionEl) Bg(fill Fill) QuestionnaireDescriptionEl {
 	tStyledBg(e.n, fill)
 	return e
 }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireDescriptionEl) Border(length Length) QuestionnaireDescriptionEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireDescriptionEl) BorderB(length Length) QuestionnaireDescriptionEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireDescriptionEl) BorderColor(borderColor Color) QuestionnaireDescriptionEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireDescriptionEl) BorderL(length Length) QuestionnaireDescriptionEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireDescriptionEl) BorderR(length Length) QuestionnaireDescriptionEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireDescriptionEl) BorderT(length Length) QuestionnaireDescriptionEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireDescriptionEl) BorderX(length Length) QuestionnaireDescriptionEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireDescriptionEl) BorderY(length Length) QuestionnaireDescriptionEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireDescriptionEl) Bottom(length Length) QuestionnaireDescriptionEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireDescriptionEl) ColEnd(end int16) QuestionnaireDescriptionEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireDescriptionEl) ColSpan(span uint16) QuestionnaireDescriptionEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireDescriptionEl) ColStart(start int16) QuestionnaireDescriptionEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireDescriptionEl) Cursor(cursor CursorStyle) QuestionnaireDescriptionEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireDescriptionEl) FlexBasis(basis Length) QuestionnaireDescriptionEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireDescriptionEl) FlexGrow(grow float32) QuestionnaireDescriptionEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireDescriptionEl) FlexShrink(shrink float32) QuestionnaireDescriptionEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireDescriptionEl) FontFamily(familyName string) QuestionnaireDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireDescriptionEl) FontFeatures(features FontFeatures) QuestionnaireDescriptionEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireDescriptionEl) FontWeight(weight FontWeight) QuestionnaireDescriptionEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireDescriptionEl) Gap(length Length) QuestionnaireDescriptionEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireDescriptionEl) GapX(length Length) QuestionnaireDescriptionEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireDescriptionEl) GapY(length Length) QuestionnaireDescriptionEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireDescriptionEl) GridCols(cols uint16) QuestionnaireDescriptionEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireDescriptionEl) GridColsMaxContent(cols uint16) QuestionnaireDescriptionEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireDescriptionEl) GridColsMinContent(cols uint16) QuestionnaireDescriptionEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireDescriptionEl) GridRows(rows uint16) QuestionnaireDescriptionEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireDescriptionEl) GridRowsMaxContent(rows uint16) QuestionnaireDescriptionEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireDescriptionEl) GridRowsMinContent(rows uint16) QuestionnaireDescriptionEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireDescriptionEl) H(length Length) QuestionnaireDescriptionEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireDescriptionEl) Inset(length Length) QuestionnaireDescriptionEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireDescriptionEl) Left(length Length) QuestionnaireDescriptionEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireDescriptionEl) LineClamp(lines int) QuestionnaireDescriptionEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireDescriptionEl) LineHeight(lineHeight Length) QuestionnaireDescriptionEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireDescriptionEl) M(length Length) QuestionnaireDescriptionEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireDescriptionEl) MaxH(length Length) QuestionnaireDescriptionEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireDescriptionEl) MaxSize(length Length) QuestionnaireDescriptionEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireDescriptionEl) MaxW(length Length) QuestionnaireDescriptionEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireDescriptionEl) Mb(length Length) QuestionnaireDescriptionEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireDescriptionEl) MinH(length Length) QuestionnaireDescriptionEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireDescriptionEl) MinSize(length Length) QuestionnaireDescriptionEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireDescriptionEl) MinW(length Length) QuestionnaireDescriptionEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireDescriptionEl) Ml(length Length) QuestionnaireDescriptionEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireDescriptionEl) Mr(length Length) QuestionnaireDescriptionEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireDescriptionEl) Mt(length Length) QuestionnaireDescriptionEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireDescriptionEl) Mx(length Length) QuestionnaireDescriptionEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireDescriptionEl) My(length Length) QuestionnaireDescriptionEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireDescriptionEl) Opacity(opacity float32) QuestionnaireDescriptionEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireDescriptionEl) P(length Length) QuestionnaireDescriptionEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireDescriptionEl) Pb(length Length) QuestionnaireDescriptionEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireDescriptionEl) Pl(length Length) QuestionnaireDescriptionEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireDescriptionEl) Pr(length Length) QuestionnaireDescriptionEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireDescriptionEl) Pt(length Length) QuestionnaireDescriptionEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireDescriptionEl) Px(length Length) QuestionnaireDescriptionEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireDescriptionEl) Py(length Length) QuestionnaireDescriptionEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireDescriptionEl) Right(length Length) QuestionnaireDescriptionEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireDescriptionEl) Rounded(length Length) QuestionnaireDescriptionEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireDescriptionEl) RoundedB(length Length) QuestionnaireDescriptionEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireDescriptionEl) RoundedBl(length Length) QuestionnaireDescriptionEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireDescriptionEl) RoundedBr(length Length) QuestionnaireDescriptionEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireDescriptionEl) RoundedL(length Length) QuestionnaireDescriptionEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireDescriptionEl) RoundedR(length Length) QuestionnaireDescriptionEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireDescriptionEl) RoundedT(length Length) QuestionnaireDescriptionEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireDescriptionEl) RoundedTl(length Length) QuestionnaireDescriptionEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireDescriptionEl) RoundedTr(length Length) QuestionnaireDescriptionEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireDescriptionEl) RowEnd(end int16) QuestionnaireDescriptionEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireDescriptionEl) RowSpan(span uint16) QuestionnaireDescriptionEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireDescriptionEl) RowStart(start int16) QuestionnaireDescriptionEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireDescriptionEl) ScrollbarWidth(width Length) QuestionnaireDescriptionEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireDescriptionEl) Shadow(shadows []BoxShadow) QuestionnaireDescriptionEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireDescriptionEl) Size(length Length) QuestionnaireDescriptionEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireDescriptionEl) TextAlign(align TextAlign) QuestionnaireDescriptionEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireDescriptionEl) TextBg(bg Color) QuestionnaireDescriptionEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireDescriptionEl) TextColor(color Color) QuestionnaireDescriptionEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireDescriptionEl) TextDecorationColor(color Color) QuestionnaireDescriptionEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireDescriptionEl) TextOverflow(overflow TextOverflow) QuestionnaireDescriptionEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireDescriptionEl) TextSize(size Length) QuestionnaireDescriptionEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireDescriptionEl) Top(length Length) QuestionnaireDescriptionEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireDescriptionEl) W(length Length) QuestionnaireDescriptionEl {
 	tStyledW(e.n, length)
 	return e
@@ -2600,10 +4181,13 @@ func (e QuestionnaireDescriptionEl) ChildView(v View) QuestionnaireDescriptionEl
 	return e
 }
 
+// Add a single child element to this element.
 func (e QuestionnaireDescriptionEl) Child(child Element) QuestionnaireDescriptionEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireDescriptionEl) Children(children ...Element) QuestionnaireDescriptionEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -2625,20 +4209,46 @@ func QuestionnaireError(state QuestionnaireState, item string, st ...Style) Ques
 	return QuestionnaireErrorEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireErrorEl) PopoverStyle() QuestionnaireErrorEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireErrorEl) RoundedFullStyle() QuestionnaireErrorEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireErrorEl) FocusRingStyle() QuestionnaireErrorEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireErrorEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireErrorEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -2678,7 +4288,20 @@ func (e QuestionnaireErrorEl) FontSemibold() QuestionnaireErrorEl {
 	return e
 }
 func (e QuestionnaireErrorEl) FontThin() QuestionnaireErrorEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireErrorEl) HFlex() QuestionnaireErrorEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireErrorEl) HFlex() QuestionnaireErrorEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireErrorEl) Margins(margins EdgesInto) QuestionnaireErrorEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -2691,320 +4314,542 @@ func (e QuestionnaireErrorEl) RefineStyle(style StyleRefinement) QuestionnaireEr
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireErrorEl) VFlex() QuestionnaireErrorEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e QuestionnaireErrorEl) Large() QuestionnaireErrorEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireErrorEl) Small() QuestionnaireErrorEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireErrorEl) WithSize(size SizeInto) QuestionnaireErrorEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireErrorEl) Xsmall() QuestionnaireErrorEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireErrorEl) Style(st ...Style) QuestionnaireErrorEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireErrorEl) AspectRatio(ratio float32) QuestionnaireErrorEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireErrorEl) Bg(fill Fill) QuestionnaireErrorEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireErrorEl) Border(length Length) QuestionnaireErrorEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireErrorEl) BorderB(length Length) QuestionnaireErrorEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireErrorEl) BorderColor(borderColor Color) QuestionnaireErrorEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireErrorEl) BorderL(length Length) QuestionnaireErrorEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireErrorEl) BorderR(length Length) QuestionnaireErrorEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireErrorEl) BorderT(length Length) QuestionnaireErrorEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireErrorEl) BorderX(length Length) QuestionnaireErrorEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireErrorEl) BorderY(length Length) QuestionnaireErrorEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireErrorEl) Bottom(length Length) QuestionnaireErrorEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireErrorEl) ColEnd(end int16) QuestionnaireErrorEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireErrorEl) ColSpan(span uint16) QuestionnaireErrorEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireErrorEl) ColStart(start int16) QuestionnaireErrorEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireErrorEl) Cursor(cursor CursorStyle) QuestionnaireErrorEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireErrorEl) FlexBasis(basis Length) QuestionnaireErrorEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireErrorEl) FlexGrow(grow float32) QuestionnaireErrorEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireErrorEl) FlexShrink(shrink float32) QuestionnaireErrorEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireErrorEl) FontFamily(familyName string) QuestionnaireErrorEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireErrorEl) FontFeatures(features FontFeatures) QuestionnaireErrorEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireErrorEl) FontWeight(weight FontWeight) QuestionnaireErrorEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireErrorEl) Gap(length Length) QuestionnaireErrorEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireErrorEl) GapX(length Length) QuestionnaireErrorEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireErrorEl) GapY(length Length) QuestionnaireErrorEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireErrorEl) GridCols(cols uint16) QuestionnaireErrorEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireErrorEl) GridColsMaxContent(cols uint16) QuestionnaireErrorEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireErrorEl) GridColsMinContent(cols uint16) QuestionnaireErrorEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireErrorEl) GridRows(rows uint16) QuestionnaireErrorEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireErrorEl) GridRowsMaxContent(rows uint16) QuestionnaireErrorEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireErrorEl) GridRowsMinContent(rows uint16) QuestionnaireErrorEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireErrorEl) H(length Length) QuestionnaireErrorEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireErrorEl) Inset(length Length) QuestionnaireErrorEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireErrorEl) Left(length Length) QuestionnaireErrorEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireErrorEl) LineClamp(lines int) QuestionnaireErrorEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireErrorEl) LineHeight(lineHeight Length) QuestionnaireErrorEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireErrorEl) M(length Length) QuestionnaireErrorEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireErrorEl) MaxH(length Length) QuestionnaireErrorEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireErrorEl) MaxSize(length Length) QuestionnaireErrorEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireErrorEl) MaxW(length Length) QuestionnaireErrorEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireErrorEl) Mb(length Length) QuestionnaireErrorEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireErrorEl) MinH(length Length) QuestionnaireErrorEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireErrorEl) MinSize(length Length) QuestionnaireErrorEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireErrorEl) MinW(length Length) QuestionnaireErrorEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireErrorEl) Ml(length Length) QuestionnaireErrorEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireErrorEl) Mr(length Length) QuestionnaireErrorEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireErrorEl) Mt(length Length) QuestionnaireErrorEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireErrorEl) Mx(length Length) QuestionnaireErrorEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireErrorEl) My(length Length) QuestionnaireErrorEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireErrorEl) Opacity(opacity float32) QuestionnaireErrorEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireErrorEl) P(length Length) QuestionnaireErrorEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireErrorEl) Pb(length Length) QuestionnaireErrorEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireErrorEl) Pl(length Length) QuestionnaireErrorEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireErrorEl) Pr(length Length) QuestionnaireErrorEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireErrorEl) Pt(length Length) QuestionnaireErrorEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireErrorEl) Px(length Length) QuestionnaireErrorEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireErrorEl) Py(length Length) QuestionnaireErrorEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireErrorEl) Right(length Length) QuestionnaireErrorEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireErrorEl) Rounded(length Length) QuestionnaireErrorEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireErrorEl) RoundedB(length Length) QuestionnaireErrorEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireErrorEl) RoundedBl(length Length) QuestionnaireErrorEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireErrorEl) RoundedBr(length Length) QuestionnaireErrorEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireErrorEl) RoundedL(length Length) QuestionnaireErrorEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireErrorEl) RoundedR(length Length) QuestionnaireErrorEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireErrorEl) RoundedT(length Length) QuestionnaireErrorEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireErrorEl) RoundedTl(length Length) QuestionnaireErrorEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireErrorEl) RoundedTr(length Length) QuestionnaireErrorEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireErrorEl) RowEnd(end int16) QuestionnaireErrorEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireErrorEl) RowSpan(span uint16) QuestionnaireErrorEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireErrorEl) RowStart(start int16) QuestionnaireErrorEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireErrorEl) ScrollbarWidth(width Length) QuestionnaireErrorEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireErrorEl) Shadow(shadows []BoxShadow) QuestionnaireErrorEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireErrorEl) Size(length Length) QuestionnaireErrorEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireErrorEl) TextAlign(align TextAlign) QuestionnaireErrorEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireErrorEl) TextBg(bg Color) QuestionnaireErrorEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireErrorEl) TextColor(color Color) QuestionnaireErrorEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireErrorEl) TextDecorationColor(color Color) QuestionnaireErrorEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireErrorEl) TextOverflow(overflow TextOverflow) QuestionnaireErrorEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireErrorEl) TextSize(size Length) QuestionnaireErrorEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireErrorEl) Top(length Length) QuestionnaireErrorEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireErrorEl) W(length Length) QuestionnaireErrorEl { tStyledW(e.n, length); return e }
 
 func (e QuestionnaireErrorEl) Text(s string) QuestionnaireErrorEl { putText(e.n, s); return e }
@@ -3012,10 +4857,13 @@ func (e QuestionnaireErrorEl) Text(s string) QuestionnaireErrorEl { putText(e.n,
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireErrorEl) ChildView(v View) QuestionnaireErrorEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireErrorEl) Child(child Element) QuestionnaireErrorEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireErrorEl) Children(children ...Element) QuestionnaireErrorEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -3037,10 +4885,22 @@ func QuestionnaireInput(state QuestionnaireState, item string, st ...Style) Ques
 	return QuestionnaireInputEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireInputEl) PopoverStyle() QuestionnaireInputEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireInputEl) RoundedFullStyle() QuestionnaireInputEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -3080,7 +4940,20 @@ func (e QuestionnaireInputEl) FontSemibold() QuestionnaireInputEl {
 	return e
 }
 func (e QuestionnaireInputEl) FontThin() QuestionnaireInputEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireInputEl) HFlex() QuestionnaireInputEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireInputEl) HFlex() QuestionnaireInputEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireInputEl) Margins(margins EdgesInto) QuestionnaireInputEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -3093,320 +4966,542 @@ func (e QuestionnaireInputEl) RefineStyle(style StyleRefinement) QuestionnaireIn
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireInputEl) VFlex() QuestionnaireInputEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e QuestionnaireInputEl) Large() QuestionnaireInputEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireInputEl) Small() QuestionnaireInputEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireInputEl) WithSize(size SizeInto) QuestionnaireInputEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireInputEl) Xsmall() QuestionnaireInputEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireInputEl) Style(st ...Style) QuestionnaireInputEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireInputEl) AspectRatio(ratio float32) QuestionnaireInputEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireInputEl) Bg(fill Fill) QuestionnaireInputEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireInputEl) Border(length Length) QuestionnaireInputEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireInputEl) BorderB(length Length) QuestionnaireInputEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireInputEl) BorderColor(borderColor Color) QuestionnaireInputEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireInputEl) BorderL(length Length) QuestionnaireInputEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireInputEl) BorderR(length Length) QuestionnaireInputEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireInputEl) BorderT(length Length) QuestionnaireInputEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireInputEl) BorderX(length Length) QuestionnaireInputEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireInputEl) BorderY(length Length) QuestionnaireInputEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireInputEl) Bottom(length Length) QuestionnaireInputEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireInputEl) ColEnd(end int16) QuestionnaireInputEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireInputEl) ColSpan(span uint16) QuestionnaireInputEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireInputEl) ColStart(start int16) QuestionnaireInputEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireInputEl) Cursor(cursor CursorStyle) QuestionnaireInputEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireInputEl) FlexBasis(basis Length) QuestionnaireInputEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireInputEl) FlexGrow(grow float32) QuestionnaireInputEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireInputEl) FlexShrink(shrink float32) QuestionnaireInputEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireInputEl) FontFamily(familyName string) QuestionnaireInputEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireInputEl) FontFeatures(features FontFeatures) QuestionnaireInputEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireInputEl) FontWeight(weight FontWeight) QuestionnaireInputEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireInputEl) Gap(length Length) QuestionnaireInputEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireInputEl) GapX(length Length) QuestionnaireInputEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireInputEl) GapY(length Length) QuestionnaireInputEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireInputEl) GridCols(cols uint16) QuestionnaireInputEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireInputEl) GridColsMaxContent(cols uint16) QuestionnaireInputEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireInputEl) GridColsMinContent(cols uint16) QuestionnaireInputEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireInputEl) GridRows(rows uint16) QuestionnaireInputEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireInputEl) GridRowsMaxContent(rows uint16) QuestionnaireInputEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireInputEl) GridRowsMinContent(rows uint16) QuestionnaireInputEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireInputEl) H(length Length) QuestionnaireInputEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireInputEl) Inset(length Length) QuestionnaireInputEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireInputEl) Left(length Length) QuestionnaireInputEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireInputEl) LineClamp(lines int) QuestionnaireInputEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireInputEl) LineHeight(lineHeight Length) QuestionnaireInputEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireInputEl) M(length Length) QuestionnaireInputEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireInputEl) MaxH(length Length) QuestionnaireInputEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireInputEl) MaxSize(length Length) QuestionnaireInputEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireInputEl) MaxW(length Length) QuestionnaireInputEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireInputEl) Mb(length Length) QuestionnaireInputEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireInputEl) MinH(length Length) QuestionnaireInputEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireInputEl) MinSize(length Length) QuestionnaireInputEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireInputEl) MinW(length Length) QuestionnaireInputEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireInputEl) Ml(length Length) QuestionnaireInputEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireInputEl) Mr(length Length) QuestionnaireInputEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireInputEl) Mt(length Length) QuestionnaireInputEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireInputEl) Mx(length Length) QuestionnaireInputEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireInputEl) My(length Length) QuestionnaireInputEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireInputEl) Opacity(opacity float32) QuestionnaireInputEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireInputEl) P(length Length) QuestionnaireInputEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireInputEl) Pb(length Length) QuestionnaireInputEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireInputEl) Pl(length Length) QuestionnaireInputEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireInputEl) Pr(length Length) QuestionnaireInputEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireInputEl) Pt(length Length) QuestionnaireInputEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireInputEl) Px(length Length) QuestionnaireInputEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireInputEl) Py(length Length) QuestionnaireInputEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireInputEl) Right(length Length) QuestionnaireInputEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireInputEl) Rounded(length Length) QuestionnaireInputEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireInputEl) RoundedB(length Length) QuestionnaireInputEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireInputEl) RoundedBl(length Length) QuestionnaireInputEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireInputEl) RoundedBr(length Length) QuestionnaireInputEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireInputEl) RoundedL(length Length) QuestionnaireInputEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireInputEl) RoundedR(length Length) QuestionnaireInputEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireInputEl) RoundedT(length Length) QuestionnaireInputEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireInputEl) RoundedTl(length Length) QuestionnaireInputEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireInputEl) RoundedTr(length Length) QuestionnaireInputEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireInputEl) RowEnd(end int16) QuestionnaireInputEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireInputEl) RowSpan(span uint16) QuestionnaireInputEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireInputEl) RowStart(start int16) QuestionnaireInputEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireInputEl) ScrollbarWidth(width Length) QuestionnaireInputEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireInputEl) Shadow(shadows []BoxShadow) QuestionnaireInputEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireInputEl) Size(length Length) QuestionnaireInputEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireInputEl) TextAlign(align TextAlign) QuestionnaireInputEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireInputEl) TextBg(bg Color) QuestionnaireInputEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireInputEl) TextColor(color Color) QuestionnaireInputEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireInputEl) TextDecorationColor(color Color) QuestionnaireInputEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireInputEl) TextOverflow(overflow TextOverflow) QuestionnaireInputEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireInputEl) TextSize(size Length) QuestionnaireInputEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireInputEl) Top(length Length) QuestionnaireInputEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireInputEl) W(length Length) QuestionnaireInputEl { tStyledW(e.n, length); return e }
 
 // QuestionnaireItemEl is gpui_kit::component::questionnaire::QuestionnaireItem.
@@ -3425,20 +5520,46 @@ func QuestionnaireItem(state QuestionnaireState, item string, st ...Style) Quest
 	return QuestionnaireItemEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireItemEl) PopoverStyle() QuestionnaireItemEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireItemEl) RoundedFullStyle() QuestionnaireItemEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireItemEl) FocusRingStyle() QuestionnaireItemEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireItemEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireItemEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -3475,7 +5596,20 @@ func (e QuestionnaireItemEl) FontSemibold() QuestionnaireItemEl {
 	return e
 }
 func (e QuestionnaireItemEl) FontThin() QuestionnaireItemEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireItemEl) HFlex() QuestionnaireItemEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireItemEl) HFlex() QuestionnaireItemEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireItemEl) Margins(margins EdgesInto) QuestionnaireItemEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -3488,278 +5622,500 @@ func (e QuestionnaireItemEl) RefineStyle(style StyleRefinement) QuestionnaireIte
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireItemEl) VFlex() QuestionnaireItemEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e QuestionnaireItemEl) Large() QuestionnaireItemEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireItemEl) Small() QuestionnaireItemEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireItemEl) WithSize(size SizeInto) QuestionnaireItemEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireItemEl) Xsmall() QuestionnaireItemEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireItemEl) Style(st ...Style) QuestionnaireItemEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireItemEl) AspectRatio(ratio float32) QuestionnaireItemEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireItemEl) Bg(fill Fill) QuestionnaireItemEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireItemEl) Border(length Length) QuestionnaireItemEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireItemEl) BorderB(length Length) QuestionnaireItemEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireItemEl) BorderColor(borderColor Color) QuestionnaireItemEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireItemEl) BorderL(length Length) QuestionnaireItemEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireItemEl) BorderR(length Length) QuestionnaireItemEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireItemEl) BorderT(length Length) QuestionnaireItemEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireItemEl) BorderX(length Length) QuestionnaireItemEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireItemEl) BorderY(length Length) QuestionnaireItemEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireItemEl) Bottom(length Length) QuestionnaireItemEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireItemEl) ColEnd(end int16) QuestionnaireItemEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e QuestionnaireItemEl) ColSpan(span uint16) QuestionnaireItemEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireItemEl) ColStart(start int16) QuestionnaireItemEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireItemEl) Cursor(cursor CursorStyle) QuestionnaireItemEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireItemEl) FlexBasis(basis Length) QuestionnaireItemEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireItemEl) FlexGrow(grow float32) QuestionnaireItemEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireItemEl) FlexShrink(shrink float32) QuestionnaireItemEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireItemEl) FontFamily(familyName string) QuestionnaireItemEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireItemEl) FontFeatures(features FontFeatures) QuestionnaireItemEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireItemEl) FontWeight(weight FontWeight) QuestionnaireItemEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireItemEl) Gap(length Length) QuestionnaireItemEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireItemEl) GapX(length Length) QuestionnaireItemEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireItemEl) GapY(length Length) QuestionnaireItemEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireItemEl) GridCols(cols uint16) QuestionnaireItemEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireItemEl) GridColsMaxContent(cols uint16) QuestionnaireItemEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireItemEl) GridColsMinContent(cols uint16) QuestionnaireItemEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireItemEl) GridRows(rows uint16) QuestionnaireItemEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireItemEl) GridRowsMaxContent(rows uint16) QuestionnaireItemEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireItemEl) GridRowsMinContent(rows uint16) QuestionnaireItemEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireItemEl) H(length Length) QuestionnaireItemEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireItemEl) Inset(length Length) QuestionnaireItemEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireItemEl) Left(length Length) QuestionnaireItemEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireItemEl) LineClamp(lines int) QuestionnaireItemEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireItemEl) LineHeight(lineHeight Length) QuestionnaireItemEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireItemEl) M(length Length) QuestionnaireItemEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireItemEl) MaxH(length Length) QuestionnaireItemEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireItemEl) MaxSize(length Length) QuestionnaireItemEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireItemEl) MaxW(length Length) QuestionnaireItemEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireItemEl) Mb(length Length) QuestionnaireItemEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireItemEl) MinH(length Length) QuestionnaireItemEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireItemEl) MinSize(length Length) QuestionnaireItemEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireItemEl) MinW(length Length) QuestionnaireItemEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireItemEl) Ml(length Length) QuestionnaireItemEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireItemEl) Mr(length Length) QuestionnaireItemEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireItemEl) Mt(length Length) QuestionnaireItemEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireItemEl) Mx(length Length) QuestionnaireItemEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireItemEl) My(length Length) QuestionnaireItemEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireItemEl) Opacity(opacity float32) QuestionnaireItemEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e QuestionnaireItemEl) P(length Length) QuestionnaireItemEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e QuestionnaireItemEl) P(length Length) QuestionnaireItemEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireItemEl) Pb(length Length) QuestionnaireItemEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireItemEl) Pl(length Length) QuestionnaireItemEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireItemEl) Pr(length Length) QuestionnaireItemEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireItemEl) Pt(length Length) QuestionnaireItemEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireItemEl) Px(length Length) QuestionnaireItemEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireItemEl) Py(length Length) QuestionnaireItemEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireItemEl) Right(length Length) QuestionnaireItemEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireItemEl) Rounded(length Length) QuestionnaireItemEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireItemEl) RoundedB(length Length) QuestionnaireItemEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireItemEl) RoundedBl(length Length) QuestionnaireItemEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireItemEl) RoundedBr(length Length) QuestionnaireItemEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireItemEl) RoundedL(length Length) QuestionnaireItemEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireItemEl) RoundedR(length Length) QuestionnaireItemEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireItemEl) RoundedT(length Length) QuestionnaireItemEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireItemEl) RoundedTl(length Length) QuestionnaireItemEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireItemEl) RoundedTr(length Length) QuestionnaireItemEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireItemEl) RowEnd(end int16) QuestionnaireItemEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e QuestionnaireItemEl) RowSpan(span uint16) QuestionnaireItemEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireItemEl) RowStart(start int16) QuestionnaireItemEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireItemEl) ScrollbarWidth(width Length) QuestionnaireItemEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireItemEl) Shadow(shadows []BoxShadow) QuestionnaireItemEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireItemEl) Size(length Length) QuestionnaireItemEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireItemEl) TextAlign(align TextAlign) QuestionnaireItemEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireItemEl) TextBg(bg Color) QuestionnaireItemEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireItemEl) TextColor(color Color) QuestionnaireItemEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireItemEl) TextDecorationColor(color Color) QuestionnaireItemEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireItemEl) TextOverflow(overflow TextOverflow) QuestionnaireItemEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireItemEl) TextSize(size Length) QuestionnaireItemEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireItemEl) Top(length Length) QuestionnaireItemEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireItemEl) W(length Length) QuestionnaireItemEl { tStyledW(e.n, length); return e }
 
 func (e QuestionnaireItemEl) Text(s string) QuestionnaireItemEl { putText(e.n, s); return e }
@@ -3767,10 +6123,13 @@ func (e QuestionnaireItemEl) Text(s string) QuestionnaireItemEl { putText(e.n, s
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireItemEl) ChildView(v View) QuestionnaireItemEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireItemEl) Child(child Element) QuestionnaireItemEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireItemEl) Children(children ...Element) QuestionnaireItemEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -3791,20 +6150,46 @@ func QuestionnaireNext(state QuestionnaireState, st ...Style) QuestionnaireNextE
 	return QuestionnaireNextEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireNextEl) PopoverStyle() QuestionnaireNextEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireNextEl) RoundedFullStyle() QuestionnaireNextEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireNextEl) FocusRingStyle() QuestionnaireNextEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireNextEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireNextEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -3841,7 +6226,20 @@ func (e QuestionnaireNextEl) FontSemibold() QuestionnaireNextEl {
 	return e
 }
 func (e QuestionnaireNextEl) FontThin() QuestionnaireNextEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireNextEl) HFlex() QuestionnaireNextEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireNextEl) HFlex() QuestionnaireNextEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireNextEl) Margins(margins EdgesInto) QuestionnaireNextEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -3854,278 +6252,500 @@ func (e QuestionnaireNextEl) RefineStyle(style StyleRefinement) QuestionnaireNex
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireNextEl) VFlex() QuestionnaireNextEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireNextEl) Style(st ...Style) QuestionnaireNextEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireNextEl) AspectRatio(ratio float32) QuestionnaireNextEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireNextEl) Bg(fill Fill) QuestionnaireNextEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireNextEl) Border(length Length) QuestionnaireNextEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireNextEl) BorderB(length Length) QuestionnaireNextEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireNextEl) BorderColor(borderColor Color) QuestionnaireNextEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireNextEl) BorderL(length Length) QuestionnaireNextEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireNextEl) BorderR(length Length) QuestionnaireNextEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireNextEl) BorderT(length Length) QuestionnaireNextEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireNextEl) BorderX(length Length) QuestionnaireNextEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireNextEl) BorderY(length Length) QuestionnaireNextEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireNextEl) Bottom(length Length) QuestionnaireNextEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireNextEl) ColEnd(end int16) QuestionnaireNextEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e QuestionnaireNextEl) ColSpan(span uint16) QuestionnaireNextEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireNextEl) ColStart(start int16) QuestionnaireNextEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireNextEl) Cursor(cursor CursorStyle) QuestionnaireNextEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireNextEl) FlexBasis(basis Length) QuestionnaireNextEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireNextEl) FlexGrow(grow float32) QuestionnaireNextEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireNextEl) FlexShrink(shrink float32) QuestionnaireNextEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireNextEl) FontFamily(familyName string) QuestionnaireNextEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireNextEl) FontFeatures(features FontFeatures) QuestionnaireNextEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireNextEl) FontWeight(weight FontWeight) QuestionnaireNextEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireNextEl) Gap(length Length) QuestionnaireNextEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireNextEl) GapX(length Length) QuestionnaireNextEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireNextEl) GapY(length Length) QuestionnaireNextEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireNextEl) GridCols(cols uint16) QuestionnaireNextEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireNextEl) GridColsMaxContent(cols uint16) QuestionnaireNextEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireNextEl) GridColsMinContent(cols uint16) QuestionnaireNextEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireNextEl) GridRows(rows uint16) QuestionnaireNextEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireNextEl) GridRowsMaxContent(rows uint16) QuestionnaireNextEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireNextEl) GridRowsMinContent(rows uint16) QuestionnaireNextEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireNextEl) H(length Length) QuestionnaireNextEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireNextEl) Inset(length Length) QuestionnaireNextEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireNextEl) Left(length Length) QuestionnaireNextEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireNextEl) LineClamp(lines int) QuestionnaireNextEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireNextEl) LineHeight(lineHeight Length) QuestionnaireNextEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireNextEl) M(length Length) QuestionnaireNextEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireNextEl) MaxH(length Length) QuestionnaireNextEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireNextEl) MaxSize(length Length) QuestionnaireNextEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireNextEl) MaxW(length Length) QuestionnaireNextEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireNextEl) Mb(length Length) QuestionnaireNextEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireNextEl) MinH(length Length) QuestionnaireNextEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireNextEl) MinSize(length Length) QuestionnaireNextEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireNextEl) MinW(length Length) QuestionnaireNextEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireNextEl) Ml(length Length) QuestionnaireNextEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireNextEl) Mr(length Length) QuestionnaireNextEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireNextEl) Mt(length Length) QuestionnaireNextEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireNextEl) Mx(length Length) QuestionnaireNextEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireNextEl) My(length Length) QuestionnaireNextEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireNextEl) Opacity(opacity float32) QuestionnaireNextEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e QuestionnaireNextEl) P(length Length) QuestionnaireNextEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e QuestionnaireNextEl) P(length Length) QuestionnaireNextEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireNextEl) Pb(length Length) QuestionnaireNextEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireNextEl) Pl(length Length) QuestionnaireNextEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireNextEl) Pr(length Length) QuestionnaireNextEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireNextEl) Pt(length Length) QuestionnaireNextEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireNextEl) Px(length Length) QuestionnaireNextEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireNextEl) Py(length Length) QuestionnaireNextEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireNextEl) Right(length Length) QuestionnaireNextEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireNextEl) Rounded(length Length) QuestionnaireNextEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireNextEl) RoundedB(length Length) QuestionnaireNextEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireNextEl) RoundedBl(length Length) QuestionnaireNextEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireNextEl) RoundedBr(length Length) QuestionnaireNextEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireNextEl) RoundedL(length Length) QuestionnaireNextEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireNextEl) RoundedR(length Length) QuestionnaireNextEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireNextEl) RoundedT(length Length) QuestionnaireNextEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireNextEl) RoundedTl(length Length) QuestionnaireNextEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireNextEl) RoundedTr(length Length) QuestionnaireNextEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireNextEl) RowEnd(end int16) QuestionnaireNextEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e QuestionnaireNextEl) RowSpan(span uint16) QuestionnaireNextEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireNextEl) RowStart(start int16) QuestionnaireNextEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireNextEl) ScrollbarWidth(width Length) QuestionnaireNextEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireNextEl) Shadow(shadows []BoxShadow) QuestionnaireNextEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireNextEl) Size(length Length) QuestionnaireNextEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireNextEl) TextAlign(align TextAlign) QuestionnaireNextEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireNextEl) TextBg(bg Color) QuestionnaireNextEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireNextEl) TextColor(color Color) QuestionnaireNextEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireNextEl) TextDecorationColor(color Color) QuestionnaireNextEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireNextEl) TextOverflow(overflow TextOverflow) QuestionnaireNextEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireNextEl) TextSize(size Length) QuestionnaireNextEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireNextEl) Top(length Length) QuestionnaireNextEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireNextEl) W(length Length) QuestionnaireNextEl { tStyledW(e.n, length); return e }
 
+// Set to Size::Large
 func (e QuestionnaireNextEl) Large() QuestionnaireNextEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireNextEl) Small() QuestionnaireNextEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireNextEl) WithSize(size SizeInto) QuestionnaireNextEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireNextEl) Xsmall() QuestionnaireNextEl { tSizableXsmall(e.n); return e }
 
 func (e QuestionnaireNextEl) Text(s string) QuestionnaireNextEl { putText(e.n, s); return e }
@@ -4133,10 +6753,13 @@ func (e QuestionnaireNextEl) Text(s string) QuestionnaireNextEl { putText(e.n, s
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireNextEl) ChildView(v View) QuestionnaireNextEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireNextEl) Child(child Element) QuestionnaireNextEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireNextEl) Children(children ...Element) QuestionnaireNextEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -4157,20 +6780,46 @@ func QuestionnairePrevious(state QuestionnaireState, st ...Style) QuestionnaireP
 	return QuestionnairePreviousEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnairePreviousEl) PopoverStyle() QuestionnairePreviousEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnairePreviousEl) RoundedFullStyle() QuestionnairePreviousEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnairePreviousEl) FocusRingStyle() QuestionnairePreviousEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnairePreviousEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnairePreviousEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -4240,6 +6889,19 @@ func (e QuestionnairePreviousEl) FontThin() QuestionnairePreviousEl {
 	tStyledExtFontThin(e.n)
 	return e
 }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e QuestionnairePreviousEl) HFlex() QuestionnairePreviousEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnairePreviousEl) Margins(margins EdgesInto) QuestionnairePreviousEl {
 	tStyledExtMargins(e.n, margins)
@@ -4253,6 +6915,11 @@ func (e QuestionnairePreviousEl) RefineStyle(style StyleRefinement) Questionnair
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnairePreviousEl) VFlex() QuestionnairePreviousEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
@@ -4261,333 +6928,550 @@ func (e QuestionnairePreviousEl) Style(st ...Style) QuestionnairePreviousEl {
 	return e
 }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnairePreviousEl) AspectRatio(ratio float32) QuestionnairePreviousEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnairePreviousEl) Bg(fill Fill) QuestionnairePreviousEl {
 	tStyledBg(e.n, fill)
 	return e
 }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnairePreviousEl) Border(length Length) QuestionnairePreviousEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnairePreviousEl) BorderB(length Length) QuestionnairePreviousEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnairePreviousEl) BorderColor(borderColor Color) QuestionnairePreviousEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnairePreviousEl) BorderL(length Length) QuestionnairePreviousEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnairePreviousEl) BorderR(length Length) QuestionnairePreviousEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnairePreviousEl) BorderT(length Length) QuestionnairePreviousEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnairePreviousEl) BorderX(length Length) QuestionnairePreviousEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnairePreviousEl) BorderY(length Length) QuestionnairePreviousEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnairePreviousEl) Bottom(length Length) QuestionnairePreviousEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnairePreviousEl) ColEnd(end int16) QuestionnairePreviousEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnairePreviousEl) ColSpan(span uint16) QuestionnairePreviousEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnairePreviousEl) ColStart(start int16) QuestionnairePreviousEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnairePreviousEl) Cursor(cursor CursorStyle) QuestionnairePreviousEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnairePreviousEl) FlexBasis(basis Length) QuestionnairePreviousEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnairePreviousEl) FlexGrow(grow float32) QuestionnairePreviousEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnairePreviousEl) FlexShrink(shrink float32) QuestionnairePreviousEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnairePreviousEl) FontFamily(familyName string) QuestionnairePreviousEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnairePreviousEl) FontFeatures(features FontFeatures) QuestionnairePreviousEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnairePreviousEl) FontWeight(weight FontWeight) QuestionnairePreviousEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnairePreviousEl) Gap(length Length) QuestionnairePreviousEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnairePreviousEl) GapX(length Length) QuestionnairePreviousEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnairePreviousEl) GapY(length Length) QuestionnairePreviousEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnairePreviousEl) GridCols(cols uint16) QuestionnairePreviousEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnairePreviousEl) GridColsMaxContent(cols uint16) QuestionnairePreviousEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnairePreviousEl) GridColsMinContent(cols uint16) QuestionnairePreviousEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnairePreviousEl) GridRows(rows uint16) QuestionnairePreviousEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnairePreviousEl) GridRowsMaxContent(rows uint16) QuestionnairePreviousEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnairePreviousEl) GridRowsMinContent(rows uint16) QuestionnairePreviousEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnairePreviousEl) H(length Length) QuestionnairePreviousEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnairePreviousEl) Inset(length Length) QuestionnairePreviousEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnairePreviousEl) Left(length Length) QuestionnairePreviousEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnairePreviousEl) LineClamp(lines int) QuestionnairePreviousEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnairePreviousEl) LineHeight(lineHeight Length) QuestionnairePreviousEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnairePreviousEl) M(length Length) QuestionnairePreviousEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnairePreviousEl) MaxH(length Length) QuestionnairePreviousEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnairePreviousEl) MaxSize(length Length) QuestionnairePreviousEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnairePreviousEl) MaxW(length Length) QuestionnairePreviousEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnairePreviousEl) Mb(length Length) QuestionnairePreviousEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnairePreviousEl) MinH(length Length) QuestionnairePreviousEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnairePreviousEl) MinSize(length Length) QuestionnairePreviousEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnairePreviousEl) MinW(length Length) QuestionnairePreviousEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnairePreviousEl) Ml(length Length) QuestionnairePreviousEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnairePreviousEl) Mr(length Length) QuestionnairePreviousEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnairePreviousEl) Mt(length Length) QuestionnairePreviousEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnairePreviousEl) Mx(length Length) QuestionnairePreviousEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnairePreviousEl) My(length Length) QuestionnairePreviousEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnairePreviousEl) Opacity(opacity float32) QuestionnairePreviousEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnairePreviousEl) P(length Length) QuestionnairePreviousEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnairePreviousEl) Pb(length Length) QuestionnairePreviousEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnairePreviousEl) Pl(length Length) QuestionnairePreviousEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnairePreviousEl) Pr(length Length) QuestionnairePreviousEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnairePreviousEl) Pt(length Length) QuestionnairePreviousEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnairePreviousEl) Px(length Length) QuestionnairePreviousEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnairePreviousEl) Py(length Length) QuestionnairePreviousEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnairePreviousEl) Right(length Length) QuestionnairePreviousEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnairePreviousEl) Rounded(length Length) QuestionnairePreviousEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnairePreviousEl) RoundedB(length Length) QuestionnairePreviousEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnairePreviousEl) RoundedBl(length Length) QuestionnairePreviousEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnairePreviousEl) RoundedBr(length Length) QuestionnairePreviousEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnairePreviousEl) RoundedL(length Length) QuestionnairePreviousEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnairePreviousEl) RoundedR(length Length) QuestionnairePreviousEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnairePreviousEl) RoundedT(length Length) QuestionnairePreviousEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnairePreviousEl) RoundedTl(length Length) QuestionnairePreviousEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnairePreviousEl) RoundedTr(length Length) QuestionnairePreviousEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnairePreviousEl) RowEnd(end int16) QuestionnairePreviousEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnairePreviousEl) RowSpan(span uint16) QuestionnairePreviousEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnairePreviousEl) RowStart(start int16) QuestionnairePreviousEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnairePreviousEl) ScrollbarWidth(width Length) QuestionnairePreviousEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnairePreviousEl) Shadow(shadows []BoxShadow) QuestionnairePreviousEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnairePreviousEl) Size(length Length) QuestionnairePreviousEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnairePreviousEl) TextAlign(align TextAlign) QuestionnairePreviousEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnairePreviousEl) TextBg(bg Color) QuestionnairePreviousEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnairePreviousEl) TextColor(color Color) QuestionnairePreviousEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnairePreviousEl) TextDecorationColor(color Color) QuestionnairePreviousEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnairePreviousEl) TextOverflow(overflow TextOverflow) QuestionnairePreviousEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnairePreviousEl) TextSize(size Length) QuestionnairePreviousEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnairePreviousEl) Top(length Length) QuestionnairePreviousEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnairePreviousEl) W(length Length) QuestionnairePreviousEl {
 	tStyledW(e.n, length)
 	return e
 }
 
+// Set to Size::Large
 func (e QuestionnairePreviousEl) Large() QuestionnairePreviousEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnairePreviousEl) Small() QuestionnairePreviousEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnairePreviousEl) WithSize(size SizeInto) QuestionnairePreviousEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnairePreviousEl) Xsmall() QuestionnairePreviousEl { tSizableXsmall(e.n); return e }
 
 func (e QuestionnairePreviousEl) Text(s string) QuestionnairePreviousEl { putText(e.n, s); return e }
@@ -4598,10 +7482,13 @@ func (e QuestionnairePreviousEl) ChildView(v View) QuestionnairePreviousEl {
 	return e
 }
 
+// Add a single child element to this element.
 func (e QuestionnairePreviousEl) Child(child Element) QuestionnairePreviousEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnairePreviousEl) Children(children ...Element) QuestionnairePreviousEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -4622,20 +7509,46 @@ func QuestionnaireProgress(state QuestionnaireState, st ...Style) QuestionnaireP
 	return QuestionnaireProgressEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireProgressEl) PopoverStyle() QuestionnaireProgressEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireProgressEl) RoundedFullStyle() QuestionnaireProgressEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireProgressEl) FocusRingStyle() QuestionnaireProgressEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireProgressEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireProgressEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -4705,6 +7618,19 @@ func (e QuestionnaireProgressEl) FontThin() QuestionnaireProgressEl {
 	tStyledExtFontThin(e.n)
 	return e
 }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e QuestionnaireProgressEl) HFlex() QuestionnaireProgressEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireProgressEl) Margins(margins EdgesInto) QuestionnaireProgressEl {
 	tStyledExtMargins(e.n, margins)
@@ -4718,14 +7644,29 @@ func (e QuestionnaireProgressEl) RefineStyle(style StyleRefinement) Questionnair
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireProgressEl) VFlex() QuestionnaireProgressEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e QuestionnaireProgressEl) Large() QuestionnaireProgressEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireProgressEl) Small() QuestionnaireProgressEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireProgressEl) WithSize(size SizeInto) QuestionnaireProgressEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireProgressEl) Xsmall() QuestionnaireProgressEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
@@ -4734,322 +7675,529 @@ func (e QuestionnaireProgressEl) Style(st ...Style) QuestionnaireProgressEl {
 	return e
 }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireProgressEl) AspectRatio(ratio float32) QuestionnaireProgressEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireProgressEl) Bg(fill Fill) QuestionnaireProgressEl {
 	tStyledBg(e.n, fill)
 	return e
 }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireProgressEl) Border(length Length) QuestionnaireProgressEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireProgressEl) BorderB(length Length) QuestionnaireProgressEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireProgressEl) BorderColor(borderColor Color) QuestionnaireProgressEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireProgressEl) BorderL(length Length) QuestionnaireProgressEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireProgressEl) BorderR(length Length) QuestionnaireProgressEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireProgressEl) BorderT(length Length) QuestionnaireProgressEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireProgressEl) BorderX(length Length) QuestionnaireProgressEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireProgressEl) BorderY(length Length) QuestionnaireProgressEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireProgressEl) Bottom(length Length) QuestionnaireProgressEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireProgressEl) ColEnd(end int16) QuestionnaireProgressEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireProgressEl) ColSpan(span uint16) QuestionnaireProgressEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireProgressEl) ColStart(start int16) QuestionnaireProgressEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireProgressEl) Cursor(cursor CursorStyle) QuestionnaireProgressEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireProgressEl) FlexBasis(basis Length) QuestionnaireProgressEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireProgressEl) FlexGrow(grow float32) QuestionnaireProgressEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireProgressEl) FlexShrink(shrink float32) QuestionnaireProgressEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireProgressEl) FontFamily(familyName string) QuestionnaireProgressEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireProgressEl) FontFeatures(features FontFeatures) QuestionnaireProgressEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireProgressEl) FontWeight(weight FontWeight) QuestionnaireProgressEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireProgressEl) Gap(length Length) QuestionnaireProgressEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireProgressEl) GapX(length Length) QuestionnaireProgressEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireProgressEl) GapY(length Length) QuestionnaireProgressEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireProgressEl) GridCols(cols uint16) QuestionnaireProgressEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireProgressEl) GridColsMaxContent(cols uint16) QuestionnaireProgressEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireProgressEl) GridColsMinContent(cols uint16) QuestionnaireProgressEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireProgressEl) GridRows(rows uint16) QuestionnaireProgressEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireProgressEl) GridRowsMaxContent(rows uint16) QuestionnaireProgressEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireProgressEl) GridRowsMinContent(rows uint16) QuestionnaireProgressEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireProgressEl) H(length Length) QuestionnaireProgressEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireProgressEl) Inset(length Length) QuestionnaireProgressEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireProgressEl) Left(length Length) QuestionnaireProgressEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireProgressEl) LineClamp(lines int) QuestionnaireProgressEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireProgressEl) LineHeight(lineHeight Length) QuestionnaireProgressEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireProgressEl) M(length Length) QuestionnaireProgressEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireProgressEl) MaxH(length Length) QuestionnaireProgressEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireProgressEl) MaxSize(length Length) QuestionnaireProgressEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireProgressEl) MaxW(length Length) QuestionnaireProgressEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireProgressEl) Mb(length Length) QuestionnaireProgressEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireProgressEl) MinH(length Length) QuestionnaireProgressEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireProgressEl) MinSize(length Length) QuestionnaireProgressEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireProgressEl) MinW(length Length) QuestionnaireProgressEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireProgressEl) Ml(length Length) QuestionnaireProgressEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireProgressEl) Mr(length Length) QuestionnaireProgressEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireProgressEl) Mt(length Length) QuestionnaireProgressEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireProgressEl) Mx(length Length) QuestionnaireProgressEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireProgressEl) My(length Length) QuestionnaireProgressEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireProgressEl) Opacity(opacity float32) QuestionnaireProgressEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireProgressEl) P(length Length) QuestionnaireProgressEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireProgressEl) Pb(length Length) QuestionnaireProgressEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireProgressEl) Pl(length Length) QuestionnaireProgressEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireProgressEl) Pr(length Length) QuestionnaireProgressEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireProgressEl) Pt(length Length) QuestionnaireProgressEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireProgressEl) Px(length Length) QuestionnaireProgressEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireProgressEl) Py(length Length) QuestionnaireProgressEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireProgressEl) Right(length Length) QuestionnaireProgressEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireProgressEl) Rounded(length Length) QuestionnaireProgressEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireProgressEl) RoundedB(length Length) QuestionnaireProgressEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireProgressEl) RoundedBl(length Length) QuestionnaireProgressEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireProgressEl) RoundedBr(length Length) QuestionnaireProgressEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireProgressEl) RoundedL(length Length) QuestionnaireProgressEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireProgressEl) RoundedR(length Length) QuestionnaireProgressEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireProgressEl) RoundedT(length Length) QuestionnaireProgressEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireProgressEl) RoundedTl(length Length) QuestionnaireProgressEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireProgressEl) RoundedTr(length Length) QuestionnaireProgressEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireProgressEl) RowEnd(end int16) QuestionnaireProgressEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireProgressEl) RowSpan(span uint16) QuestionnaireProgressEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireProgressEl) RowStart(start int16) QuestionnaireProgressEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireProgressEl) ScrollbarWidth(width Length) QuestionnaireProgressEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireProgressEl) Shadow(shadows []BoxShadow) QuestionnaireProgressEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireProgressEl) Size(length Length) QuestionnaireProgressEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireProgressEl) TextAlign(align TextAlign) QuestionnaireProgressEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireProgressEl) TextBg(bg Color) QuestionnaireProgressEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireProgressEl) TextColor(color Color) QuestionnaireProgressEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireProgressEl) TextDecorationColor(color Color) QuestionnaireProgressEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireProgressEl) TextOverflow(overflow TextOverflow) QuestionnaireProgressEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireProgressEl) TextSize(size Length) QuestionnaireProgressEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireProgressEl) Top(length Length) QuestionnaireProgressEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireProgressEl) W(length Length) QuestionnaireProgressEl {
 	tStyledW(e.n, length)
 	return e
@@ -5063,10 +8211,13 @@ func (e QuestionnaireProgressEl) ChildView(v View) QuestionnaireProgressEl {
 	return e
 }
 
+// Add a single child element to this element.
 func (e QuestionnaireProgressEl) Child(child Element) QuestionnaireProgressEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireProgressEl) Children(children ...Element) QuestionnaireProgressEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -5087,20 +8238,46 @@ func QuestionnaireSkip(state QuestionnaireState, st ...Style) QuestionnaireSkipE
 	return QuestionnaireSkipEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireSkipEl) PopoverStyle() QuestionnaireSkipEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireSkipEl) RoundedFullStyle() QuestionnaireSkipEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireSkipEl) FocusRingStyle() QuestionnaireSkipEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireSkipEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireSkipEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -5137,7 +8314,20 @@ func (e QuestionnaireSkipEl) FontSemibold() QuestionnaireSkipEl {
 	return e
 }
 func (e QuestionnaireSkipEl) FontThin() QuestionnaireSkipEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireSkipEl) HFlex() QuestionnaireSkipEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireSkipEl) HFlex() QuestionnaireSkipEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireSkipEl) Margins(margins EdgesInto) QuestionnaireSkipEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -5150,278 +8340,500 @@ func (e QuestionnaireSkipEl) RefineStyle(style StyleRefinement) QuestionnaireSki
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireSkipEl) VFlex() QuestionnaireSkipEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireSkipEl) Style(st ...Style) QuestionnaireSkipEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireSkipEl) AspectRatio(ratio float32) QuestionnaireSkipEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireSkipEl) Bg(fill Fill) QuestionnaireSkipEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireSkipEl) Border(length Length) QuestionnaireSkipEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireSkipEl) BorderB(length Length) QuestionnaireSkipEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireSkipEl) BorderColor(borderColor Color) QuestionnaireSkipEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireSkipEl) BorderL(length Length) QuestionnaireSkipEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireSkipEl) BorderR(length Length) QuestionnaireSkipEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireSkipEl) BorderT(length Length) QuestionnaireSkipEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireSkipEl) BorderX(length Length) QuestionnaireSkipEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireSkipEl) BorderY(length Length) QuestionnaireSkipEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSkipEl) Bottom(length Length) QuestionnaireSkipEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireSkipEl) ColEnd(end int16) QuestionnaireSkipEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e QuestionnaireSkipEl) ColSpan(span uint16) QuestionnaireSkipEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireSkipEl) ColStart(start int16) QuestionnaireSkipEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireSkipEl) Cursor(cursor CursorStyle) QuestionnaireSkipEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireSkipEl) FlexBasis(basis Length) QuestionnaireSkipEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireSkipEl) FlexGrow(grow float32) QuestionnaireSkipEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireSkipEl) FlexShrink(shrink float32) QuestionnaireSkipEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireSkipEl) FontFamily(familyName string) QuestionnaireSkipEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireSkipEl) FontFeatures(features FontFeatures) QuestionnaireSkipEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireSkipEl) FontWeight(weight FontWeight) QuestionnaireSkipEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireSkipEl) Gap(length Length) QuestionnaireSkipEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireSkipEl) GapX(length Length) QuestionnaireSkipEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireSkipEl) GapY(length Length) QuestionnaireSkipEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireSkipEl) GridCols(cols uint16) QuestionnaireSkipEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireSkipEl) GridColsMaxContent(cols uint16) QuestionnaireSkipEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireSkipEl) GridColsMinContent(cols uint16) QuestionnaireSkipEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireSkipEl) GridRows(rows uint16) QuestionnaireSkipEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireSkipEl) GridRowsMaxContent(rows uint16) QuestionnaireSkipEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireSkipEl) GridRowsMinContent(rows uint16) QuestionnaireSkipEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireSkipEl) H(length Length) QuestionnaireSkipEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSkipEl) Inset(length Length) QuestionnaireSkipEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSkipEl) Left(length Length) QuestionnaireSkipEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireSkipEl) LineClamp(lines int) QuestionnaireSkipEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireSkipEl) LineHeight(lineHeight Length) QuestionnaireSkipEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireSkipEl) M(length Length) QuestionnaireSkipEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireSkipEl) MaxH(length Length) QuestionnaireSkipEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireSkipEl) MaxSize(length Length) QuestionnaireSkipEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireSkipEl) MaxW(length Length) QuestionnaireSkipEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireSkipEl) Mb(length Length) QuestionnaireSkipEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireSkipEl) MinH(length Length) QuestionnaireSkipEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireSkipEl) MinSize(length Length) QuestionnaireSkipEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireSkipEl) MinW(length Length) QuestionnaireSkipEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireSkipEl) Ml(length Length) QuestionnaireSkipEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireSkipEl) Mr(length Length) QuestionnaireSkipEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireSkipEl) Mt(length Length) QuestionnaireSkipEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireSkipEl) Mx(length Length) QuestionnaireSkipEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireSkipEl) My(length Length) QuestionnaireSkipEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireSkipEl) Opacity(opacity float32) QuestionnaireSkipEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e QuestionnaireSkipEl) P(length Length) QuestionnaireSkipEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e QuestionnaireSkipEl) P(length Length) QuestionnaireSkipEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireSkipEl) Pb(length Length) QuestionnaireSkipEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireSkipEl) Pl(length Length) QuestionnaireSkipEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireSkipEl) Pr(length Length) QuestionnaireSkipEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireSkipEl) Pt(length Length) QuestionnaireSkipEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireSkipEl) Px(length Length) QuestionnaireSkipEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireSkipEl) Py(length Length) QuestionnaireSkipEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSkipEl) Right(length Length) QuestionnaireSkipEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireSkipEl) Rounded(length Length) QuestionnaireSkipEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireSkipEl) RoundedB(length Length) QuestionnaireSkipEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireSkipEl) RoundedBl(length Length) QuestionnaireSkipEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireSkipEl) RoundedBr(length Length) QuestionnaireSkipEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireSkipEl) RoundedL(length Length) QuestionnaireSkipEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireSkipEl) RoundedR(length Length) QuestionnaireSkipEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireSkipEl) RoundedT(length Length) QuestionnaireSkipEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireSkipEl) RoundedTl(length Length) QuestionnaireSkipEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireSkipEl) RoundedTr(length Length) QuestionnaireSkipEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireSkipEl) RowEnd(end int16) QuestionnaireSkipEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e QuestionnaireSkipEl) RowSpan(span uint16) QuestionnaireSkipEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireSkipEl) RowStart(start int16) QuestionnaireSkipEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireSkipEl) ScrollbarWidth(width Length) QuestionnaireSkipEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireSkipEl) Shadow(shadows []BoxShadow) QuestionnaireSkipEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireSkipEl) Size(length Length) QuestionnaireSkipEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireSkipEl) TextAlign(align TextAlign) QuestionnaireSkipEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireSkipEl) TextBg(bg Color) QuestionnaireSkipEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireSkipEl) TextColor(color Color) QuestionnaireSkipEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireSkipEl) TextDecorationColor(color Color) QuestionnaireSkipEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireSkipEl) TextOverflow(overflow TextOverflow) QuestionnaireSkipEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireSkipEl) TextSize(size Length) QuestionnaireSkipEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSkipEl) Top(length Length) QuestionnaireSkipEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireSkipEl) W(length Length) QuestionnaireSkipEl { tStyledW(e.n, length); return e }
 
+// Set to Size::Large
 func (e QuestionnaireSkipEl) Large() QuestionnaireSkipEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireSkipEl) Small() QuestionnaireSkipEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireSkipEl) WithSize(size SizeInto) QuestionnaireSkipEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireSkipEl) Xsmall() QuestionnaireSkipEl { tSizableXsmall(e.n); return e }
 
 func (e QuestionnaireSkipEl) Text(s string) QuestionnaireSkipEl { putText(e.n, s); return e }
@@ -5429,10 +8841,13 @@ func (e QuestionnaireSkipEl) Text(s string) QuestionnaireSkipEl { putText(e.n, s
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireSkipEl) ChildView(v View) QuestionnaireSkipEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireSkipEl) Child(child Element) QuestionnaireSkipEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireSkipEl) Children(children ...Element) QuestionnaireSkipEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -5453,20 +8868,46 @@ func QuestionnaireSubmit(state QuestionnaireState, st ...Style) QuestionnaireSub
 	return QuestionnaireSubmitEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireSubmitEl) PopoverStyle() QuestionnaireSubmitEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireSubmitEl) RoundedFullStyle() QuestionnaireSubmitEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireSubmitEl) FocusRingStyle() QuestionnaireSubmitEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireSubmitEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireSubmitEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -5515,7 +8956,20 @@ func (e QuestionnaireSubmitEl) FontSemibold() QuestionnaireSubmitEl {
 	return e
 }
 func (e QuestionnaireSubmitEl) FontThin() QuestionnaireSubmitEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireSubmitEl) HFlex() QuestionnaireSubmitEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireSubmitEl) HFlex() QuestionnaireSubmitEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireSubmitEl) Margins(margins EdgesInto) QuestionnaireSubmitEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -5528,335 +8982,557 @@ func (e QuestionnaireSubmitEl) RefineStyle(style StyleRefinement) QuestionnaireS
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireSubmitEl) VFlex() QuestionnaireSubmitEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireSubmitEl) Style(st ...Style) QuestionnaireSubmitEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireSubmitEl) AspectRatio(ratio float32) QuestionnaireSubmitEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireSubmitEl) Bg(fill Fill) QuestionnaireSubmitEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireSubmitEl) Border(length Length) QuestionnaireSubmitEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireSubmitEl) BorderB(length Length) QuestionnaireSubmitEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireSubmitEl) BorderColor(borderColor Color) QuestionnaireSubmitEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireSubmitEl) BorderL(length Length) QuestionnaireSubmitEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireSubmitEl) BorderR(length Length) QuestionnaireSubmitEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireSubmitEl) BorderT(length Length) QuestionnaireSubmitEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireSubmitEl) BorderX(length Length) QuestionnaireSubmitEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireSubmitEl) BorderY(length Length) QuestionnaireSubmitEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSubmitEl) Bottom(length Length) QuestionnaireSubmitEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireSubmitEl) ColEnd(end int16) QuestionnaireSubmitEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireSubmitEl) ColSpan(span uint16) QuestionnaireSubmitEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireSubmitEl) ColStart(start int16) QuestionnaireSubmitEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireSubmitEl) Cursor(cursor CursorStyle) QuestionnaireSubmitEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireSubmitEl) FlexBasis(basis Length) QuestionnaireSubmitEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireSubmitEl) FlexGrow(grow float32) QuestionnaireSubmitEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireSubmitEl) FlexShrink(shrink float32) QuestionnaireSubmitEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireSubmitEl) FontFamily(familyName string) QuestionnaireSubmitEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireSubmitEl) FontFeatures(features FontFeatures) QuestionnaireSubmitEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireSubmitEl) FontWeight(weight FontWeight) QuestionnaireSubmitEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireSubmitEl) Gap(length Length) QuestionnaireSubmitEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireSubmitEl) GapX(length Length) QuestionnaireSubmitEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireSubmitEl) GapY(length Length) QuestionnaireSubmitEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireSubmitEl) GridCols(cols uint16) QuestionnaireSubmitEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireSubmitEl) GridColsMaxContent(cols uint16) QuestionnaireSubmitEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireSubmitEl) GridColsMinContent(cols uint16) QuestionnaireSubmitEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireSubmitEl) GridRows(rows uint16) QuestionnaireSubmitEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireSubmitEl) GridRowsMaxContent(rows uint16) QuestionnaireSubmitEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireSubmitEl) GridRowsMinContent(rows uint16) QuestionnaireSubmitEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireSubmitEl) H(length Length) QuestionnaireSubmitEl {
 	tStyledH(e.n, length)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSubmitEl) Inset(length Length) QuestionnaireSubmitEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSubmitEl) Left(length Length) QuestionnaireSubmitEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireSubmitEl) LineClamp(lines int) QuestionnaireSubmitEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireSubmitEl) LineHeight(lineHeight Length) QuestionnaireSubmitEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireSubmitEl) M(length Length) QuestionnaireSubmitEl {
 	tStyledM(e.n, length)
 	return e
 }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireSubmitEl) MaxH(length Length) QuestionnaireSubmitEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireSubmitEl) MaxSize(length Length) QuestionnaireSubmitEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireSubmitEl) MaxW(length Length) QuestionnaireSubmitEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireSubmitEl) Mb(length Length) QuestionnaireSubmitEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireSubmitEl) MinH(length Length) QuestionnaireSubmitEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireSubmitEl) MinSize(length Length) QuestionnaireSubmitEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireSubmitEl) MinW(length Length) QuestionnaireSubmitEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireSubmitEl) Ml(length Length) QuestionnaireSubmitEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireSubmitEl) Mr(length Length) QuestionnaireSubmitEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireSubmitEl) Mt(length Length) QuestionnaireSubmitEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireSubmitEl) Mx(length Length) QuestionnaireSubmitEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireSubmitEl) My(length Length) QuestionnaireSubmitEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireSubmitEl) Opacity(opacity float32) QuestionnaireSubmitEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireSubmitEl) P(length Length) QuestionnaireSubmitEl {
 	tStyledP(e.n, length)
 	return e
 }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireSubmitEl) Pb(length Length) QuestionnaireSubmitEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireSubmitEl) Pl(length Length) QuestionnaireSubmitEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireSubmitEl) Pr(length Length) QuestionnaireSubmitEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireSubmitEl) Pt(length Length) QuestionnaireSubmitEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireSubmitEl) Px(length Length) QuestionnaireSubmitEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireSubmitEl) Py(length Length) QuestionnaireSubmitEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSubmitEl) Right(length Length) QuestionnaireSubmitEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireSubmitEl) Rounded(length Length) QuestionnaireSubmitEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireSubmitEl) RoundedB(length Length) QuestionnaireSubmitEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireSubmitEl) RoundedBl(length Length) QuestionnaireSubmitEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireSubmitEl) RoundedBr(length Length) QuestionnaireSubmitEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireSubmitEl) RoundedL(length Length) QuestionnaireSubmitEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireSubmitEl) RoundedR(length Length) QuestionnaireSubmitEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireSubmitEl) RoundedT(length Length) QuestionnaireSubmitEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireSubmitEl) RoundedTl(length Length) QuestionnaireSubmitEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireSubmitEl) RoundedTr(length Length) QuestionnaireSubmitEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireSubmitEl) RowEnd(end int16) QuestionnaireSubmitEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireSubmitEl) RowSpan(span uint16) QuestionnaireSubmitEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireSubmitEl) RowStart(start int16) QuestionnaireSubmitEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireSubmitEl) ScrollbarWidth(width Length) QuestionnaireSubmitEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireSubmitEl) Shadow(shadows []BoxShadow) QuestionnaireSubmitEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireSubmitEl) Size(length Length) QuestionnaireSubmitEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireSubmitEl) TextAlign(align TextAlign) QuestionnaireSubmitEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireSubmitEl) TextBg(bg Color) QuestionnaireSubmitEl {
 	tStyledTextBg(e.n, bg)
 	return e
 }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireSubmitEl) TextColor(color Color) QuestionnaireSubmitEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireSubmitEl) TextDecorationColor(color Color) QuestionnaireSubmitEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireSubmitEl) TextOverflow(overflow TextOverflow) QuestionnaireSubmitEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireSubmitEl) TextSize(size Length) QuestionnaireSubmitEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireSubmitEl) Top(length Length) QuestionnaireSubmitEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireSubmitEl) W(length Length) QuestionnaireSubmitEl {
 	tStyledW(e.n, length)
 	return e
 }
 
+// Set to Size::Large
 func (e QuestionnaireSubmitEl) Large() QuestionnaireSubmitEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireSubmitEl) Small() QuestionnaireSubmitEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireSubmitEl) WithSize(size SizeInto) QuestionnaireSubmitEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireSubmitEl) Xsmall() QuestionnaireSubmitEl { tSizableXsmall(e.n); return e }
 
 func (e QuestionnaireSubmitEl) Text(s string) QuestionnaireSubmitEl { putText(e.n, s); return e }
@@ -5864,10 +9540,13 @@ func (e QuestionnaireSubmitEl) Text(s string) QuestionnaireSubmitEl { putText(e.
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireSubmitEl) ChildView(v View) QuestionnaireSubmitEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireSubmitEl) Child(child Element) QuestionnaireSubmitEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireSubmitEl) Children(children ...Element) QuestionnaireSubmitEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -5889,20 +9568,46 @@ func QuestionnaireTitle(state QuestionnaireState, item string, st ...Style) Ques
 	return QuestionnaireTitleEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e QuestionnaireTitleEl) PopoverStyle() QuestionnaireTitleEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireTitleEl) RoundedFullStyle() QuestionnaireTitleEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e QuestionnaireTitleEl) FocusRingStyle() QuestionnaireTitleEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireTitleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireTitleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -5942,7 +9647,20 @@ func (e QuestionnaireTitleEl) FontSemibold() QuestionnaireTitleEl {
 	return e
 }
 func (e QuestionnaireTitleEl) FontThin() QuestionnaireTitleEl { tStyledExtFontThin(e.n); return e }
-func (e QuestionnaireTitleEl) HFlex() QuestionnaireTitleEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e QuestionnaireTitleEl) HFlex() QuestionnaireTitleEl { tStyledExtHFlex(e.n); return e }
 func (e QuestionnaireTitleEl) Margins(margins EdgesInto) QuestionnaireTitleEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -5955,320 +9673,542 @@ func (e QuestionnaireTitleEl) RefineStyle(style StyleRefinement) QuestionnaireTi
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e QuestionnaireTitleEl) VFlex() QuestionnaireTitleEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e QuestionnaireTitleEl) Large() QuestionnaireTitleEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e QuestionnaireTitleEl) Small() QuestionnaireTitleEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e QuestionnaireTitleEl) WithSize(size SizeInto) QuestionnaireTitleEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e QuestionnaireTitleEl) Xsmall() QuestionnaireTitleEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e QuestionnaireTitleEl) Style(st ...Style) QuestionnaireTitleEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e QuestionnaireTitleEl) AspectRatio(ratio float32) QuestionnaireTitleEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e QuestionnaireTitleEl) Bg(fill Fill) QuestionnaireTitleEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e QuestionnaireTitleEl) Border(length Length) QuestionnaireTitleEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireTitleEl) BorderB(length Length) QuestionnaireTitleEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e QuestionnaireTitleEl) BorderColor(borderColor Color) QuestionnaireTitleEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireTitleEl) BorderL(length Length) QuestionnaireTitleEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireTitleEl) BorderR(length Length) QuestionnaireTitleEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e QuestionnaireTitleEl) BorderT(length Length) QuestionnaireTitleEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireTitleEl) BorderX(length Length) QuestionnaireTitleEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e QuestionnaireTitleEl) BorderY(length Length) QuestionnaireTitleEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireTitleEl) Bottom(length Length) QuestionnaireTitleEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e QuestionnaireTitleEl) ColEnd(end int16) QuestionnaireTitleEl {
 	tStyledColEnd(e.n, end)
 	return e
 }
+
+// Sets the column span of this element.
 func (e QuestionnaireTitleEl) ColSpan(span uint16) QuestionnaireTitleEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e QuestionnaireTitleEl) ColStart(start int16) QuestionnaireTitleEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e QuestionnaireTitleEl) Cursor(cursor CursorStyle) QuestionnaireTitleEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e QuestionnaireTitleEl) FlexBasis(basis Length) QuestionnaireTitleEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e QuestionnaireTitleEl) FlexGrow(grow float32) QuestionnaireTitleEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireTitleEl) FlexShrink(shrink float32) QuestionnaireTitleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e QuestionnaireTitleEl) FontFamily(familyName string) QuestionnaireTitleEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e QuestionnaireTitleEl) FontFeatures(features FontFeatures) QuestionnaireTitleEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e QuestionnaireTitleEl) FontWeight(weight FontWeight) QuestionnaireTitleEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e QuestionnaireTitleEl) Gap(length Length) QuestionnaireTitleEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireTitleEl) GapX(length Length) QuestionnaireTitleEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e QuestionnaireTitleEl) GapY(length Length) QuestionnaireTitleEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e QuestionnaireTitleEl) GridCols(cols uint16) QuestionnaireTitleEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e QuestionnaireTitleEl) GridColsMaxContent(cols uint16) QuestionnaireTitleEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireTitleEl) GridColsMinContent(cols uint16) QuestionnaireTitleEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e QuestionnaireTitleEl) GridRows(rows uint16) QuestionnaireTitleEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e QuestionnaireTitleEl) GridRowsMaxContent(rows uint16) QuestionnaireTitleEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e QuestionnaireTitleEl) GridRowsMinContent(rows uint16) QuestionnaireTitleEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e QuestionnaireTitleEl) H(length Length) QuestionnaireTitleEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireTitleEl) Inset(length Length) QuestionnaireTitleEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireTitleEl) Left(length Length) QuestionnaireTitleEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e QuestionnaireTitleEl) LineClamp(lines int) QuestionnaireTitleEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e QuestionnaireTitleEl) LineHeight(lineHeight Length) QuestionnaireTitleEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e QuestionnaireTitleEl) M(length Length) QuestionnaireTitleEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e QuestionnaireTitleEl) MaxH(length Length) QuestionnaireTitleEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e QuestionnaireTitleEl) MaxSize(length Length) QuestionnaireTitleEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e QuestionnaireTitleEl) MaxW(length Length) QuestionnaireTitleEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireTitleEl) Mb(length Length) QuestionnaireTitleEl {
 	tStyledMb(e.n, length)
 	return e
 }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e QuestionnaireTitleEl) MinH(length Length) QuestionnaireTitleEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e QuestionnaireTitleEl) MinSize(length Length) QuestionnaireTitleEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e QuestionnaireTitleEl) MinW(length Length) QuestionnaireTitleEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireTitleEl) Ml(length Length) QuestionnaireTitleEl {
 	tStyledMl(e.n, length)
 	return e
 }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireTitleEl) Mr(length Length) QuestionnaireTitleEl {
 	tStyledMr(e.n, length)
 	return e
 }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e QuestionnaireTitleEl) Mt(length Length) QuestionnaireTitleEl {
 	tStyledMt(e.n, length)
 	return e
 }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e QuestionnaireTitleEl) Mx(length Length) QuestionnaireTitleEl {
 	tStyledMx(e.n, length)
 	return e
 }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e QuestionnaireTitleEl) My(length Length) QuestionnaireTitleEl {
 	tStyledMy(e.n, length)
 	return e
 }
+
+// Sets the opacity of this element and its children.
 func (e QuestionnaireTitleEl) Opacity(opacity float32) QuestionnaireTitleEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
 func (e QuestionnaireTitleEl) P(length Length) QuestionnaireTitleEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireTitleEl) Pb(length Length) QuestionnaireTitleEl {
 	tStyledPb(e.n, length)
 	return e
 }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireTitleEl) Pl(length Length) QuestionnaireTitleEl {
 	tStyledPl(e.n, length)
 	return e
 }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireTitleEl) Pr(length Length) QuestionnaireTitleEl {
 	tStyledPr(e.n, length)
 	return e
 }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e QuestionnaireTitleEl) Pt(length Length) QuestionnaireTitleEl {
 	tStyledPt(e.n, length)
 	return e
 }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e QuestionnaireTitleEl) Px(length Length) QuestionnaireTitleEl {
 	tStyledPx(e.n, length)
 	return e
 }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e QuestionnaireTitleEl) Py(length Length) QuestionnaireTitleEl {
 	tStyledPy(e.n, length)
 	return e
 }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireTitleEl) Right(length Length) QuestionnaireTitleEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e QuestionnaireTitleEl) Rounded(length Length) QuestionnaireTitleEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireTitleEl) RoundedB(length Length) QuestionnaireTitleEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireTitleEl) RoundedBl(length Length) QuestionnaireTitleEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireTitleEl) RoundedBr(length Length) QuestionnaireTitleEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireTitleEl) RoundedL(length Length) QuestionnaireTitleEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireTitleEl) RoundedR(length Length) QuestionnaireTitleEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e QuestionnaireTitleEl) RoundedT(length Length) QuestionnaireTitleEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireTitleEl) RoundedTl(length Length) QuestionnaireTitleEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e QuestionnaireTitleEl) RoundedTr(length Length) QuestionnaireTitleEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e QuestionnaireTitleEl) RowEnd(end int16) QuestionnaireTitleEl {
 	tStyledRowEnd(e.n, end)
 	return e
 }
+
+// Sets the row span of this element.
 func (e QuestionnaireTitleEl) RowSpan(span uint16) QuestionnaireTitleEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e QuestionnaireTitleEl) RowStart(start int16) QuestionnaireTitleEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e QuestionnaireTitleEl) ScrollbarWidth(width Length) QuestionnaireTitleEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e QuestionnaireTitleEl) Shadow(shadows []BoxShadow) QuestionnaireTitleEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e QuestionnaireTitleEl) Size(length Length) QuestionnaireTitleEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e QuestionnaireTitleEl) TextAlign(align TextAlign) QuestionnaireTitleEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireTitleEl) TextBg(bg Color) QuestionnaireTitleEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireTitleEl) TextColor(color Color) QuestionnaireTitleEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e QuestionnaireTitleEl) TextDecorationColor(color Color) QuestionnaireTitleEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e QuestionnaireTitleEl) TextOverflow(overflow TextOverflow) QuestionnaireTitleEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e QuestionnaireTitleEl) TextSize(size Length) QuestionnaireTitleEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e QuestionnaireTitleEl) Top(length Length) QuestionnaireTitleEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e QuestionnaireTitleEl) W(length Length) QuestionnaireTitleEl { tStyledW(e.n, length); return e }
 
 func (e QuestionnaireTitleEl) Text(s string) QuestionnaireTitleEl { putText(e.n, s); return e }
@@ -6276,10 +10216,13 @@ func (e QuestionnaireTitleEl) Text(s string) QuestionnaireTitleEl { putText(e.n,
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e QuestionnaireTitleEl) ChildView(v View) QuestionnaireTitleEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e QuestionnaireTitleEl) Child(child Element) QuestionnaireTitleEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e QuestionnaireTitleEl) Children(children ...Element) QuestionnaireTitleEl {
 	tParentElementChildren(e.n, children...)
 	return e

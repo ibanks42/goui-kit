@@ -13,6 +13,8 @@ type RadioEl struct{ n *node }
 
 func (e RadioEl) node() *node { return e.n }
 
+// Create a new Radio element with the given id.
+//
 // Radio is <gpui_kit::component::radio::Radio>::new.
 func Radio(id ID, st ...Style) RadioEl {
 	useComponentRadio()
@@ -23,6 +25,11 @@ func Radio(id ID, st ...Style) RadioEl {
 	return RadioEl{n}
 }
 
+// Set the name a screen reader announces, when the visible label is not it.
+//
+// A radio's name comes from its `Label` by default. Setting this replaces the announced name
+// without changing what is displayed.
+//
 // AccessibilityLabel is <gpui_kit::component::radio::Radio>::accessibility_label.
 func (e RadioEl) AccessibilityLabel(label string) RadioEl {
 	o := op(e.n, 256)
@@ -30,6 +37,8 @@ func (e RadioEl) AccessibilityLabel(label string) RadioEl {
 	return e
 }
 
+// Set the checked state of the Radio element, default is `false`.
+//
 // Checked is <gpui_kit::component::radio::Radio>::checked.
 func (e RadioEl) Checked(checked bool) RadioEl {
 	o := op(e.n, 257)
@@ -37,6 +46,8 @@ func (e RadioEl) Checked(checked bool) RadioEl {
 	return e
 }
 
+// Set the disabled state of the Radio element, default is `false`.
+//
 // Disabled is <gpui_kit::component::radio::Radio>::disabled.
 func (e RadioEl) Disabled(disabled bool) RadioEl {
 	o := op(e.n, 258)
@@ -44,6 +55,8 @@ func (e RadioEl) Disabled(disabled bool) RadioEl {
 	return e
 }
 
+// Set the label of the Radio element.
+//
 // Label is <gpui_kit::component::radio::Radio>::label.
 func (e RadioEl) Label(label TextInto) RadioEl {
 	o := op(e.n, 259)
@@ -51,6 +64,12 @@ func (e RadioEl) Label(label TextInto) RadioEl {
 	return e
 }
 
+// Handle a requested checked value from pointer or keyboard activation.
+//
+// This is a controlled value: the owner must write the requested value for it to show. Disabled
+// controls do not call the handler. This and `OnClick` share one callback; chaining them replaces
+// the previous handler instead of calling both.
+//
 // OnChange is <gpui_kit::component::radio::Radio>::on_change.
 func (e RadioEl) OnChange(handler func(cx *Cx, e bool)) RadioEl {
 	o := op(e.n, 260)
@@ -58,6 +77,8 @@ func (e RadioEl) OnChange(handler func(cx *Cx, e bool)) RadioEl {
 	return e
 }
 
+// Alias for `OnChange`. The last callback registered with either name wins.
+//
 // OnClick is <gpui_kit::component::radio::Radio>::on_click.
 func (e RadioEl) OnClick(handler func(cx *Cx, e bool)) RadioEl {
 	o := op(e.n, 261)
@@ -65,6 +86,8 @@ func (e RadioEl) OnClick(handler func(cx *Cx, e bool)) RadioEl {
 	return e
 }
 
+// Set the tab index for the Radio element, default is `0`.
+//
 // TabIndex is <gpui_kit::component::radio::Radio>::tab_index.
 func (e RadioEl) TabIndex(tabIndex int) RadioEl {
 	o := op(e.n, 262)
@@ -72,6 +95,8 @@ func (e RadioEl) TabIndex(tabIndex int) RadioEl {
 	return e
 }
 
+// Set the tab stop for the Radio element, default is `true`.
+//
 // TabStop is <gpui_kit::component::radio::Radio>::tab_stop.
 func (e RadioEl) TabStop(tabStop bool) RadioEl {
 	o := op(e.n, 263)
@@ -79,6 +104,8 @@ func (e RadioEl) TabStop(tabStop bool) RadioEl {
 	return e
 }
 
+// Set tooltip text for the radio.
+//
 // Tooltip is <gpui_kit::component::radio::Radio>::tooltip.
 func (e RadioEl) Tooltip(tooltip string) RadioEl {
 	o := op(e.n, 264)
@@ -86,6 +113,10 @@ func (e RadioEl) Tooltip(tooltip string) RadioEl {
 	return e
 }
 
+// Overrides how long the pointer must rest before the tooltip shows.
+//
+// Defaults to `show_delay`.
+//
 // TooltipShowDelay is <gpui_kit::component::radio::Radio>::tooltip_show_delay.
 func (e RadioEl) TooltipShowDelay(delay time.Duration) RadioEl {
 	o := op(e.n, 265)
@@ -93,11 +124,37 @@ func (e RadioEl) TooltipShowDelay(delay time.Duration) RadioEl {
 	return e
 }
 
-func (e RadioEl) PopoverStyle() RadioEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e RadioEl) PopoverStyle() RadioEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e RadioEl) RoundedFullStyle() RadioEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e RadioEl) FocusRingStyle() RadioEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e RadioEl) OnPrepaint(callback func(cx *Cx, e Bounds)) RadioEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -109,19 +166,32 @@ func (e RadioEl) DebugFocused(focusHandle FocusHandle) RadioEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e RadioEl) DebugGreen() RadioEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e RadioEl) DebugPink() RadioEl                  { tStyledExtDebugPink(e.n); return e }
-func (e RadioEl) DebugRed() RadioEl                   { tStyledExtDebugRed(e.n); return e }
-func (e RadioEl) DebugYellow() RadioEl                { tStyledExtDebugYellow(e.n); return e }
-func (e RadioEl) FontBlack() RadioEl                  { tStyledExtFontBlack(e.n); return e }
-func (e RadioEl) FontBold() RadioEl                   { tStyledExtFontBold(e.n); return e }
-func (e RadioEl) FontExtrabold() RadioEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e RadioEl) FontExtralight() RadioEl             { tStyledExtFontExtralight(e.n); return e }
-func (e RadioEl) FontLight() RadioEl                  { tStyledExtFontLight(e.n); return e }
-func (e RadioEl) FontMedium() RadioEl                 { tStyledExtFontMedium(e.n); return e }
-func (e RadioEl) FontNormal() RadioEl                 { tStyledExtFontNormal(e.n); return e }
-func (e RadioEl) FontSemibold() RadioEl               { tStyledExtFontSemibold(e.n); return e }
-func (e RadioEl) FontThin() RadioEl                   { tStyledExtFontThin(e.n); return e }
+func (e RadioEl) DebugGreen() RadioEl     { tStyledExtDebugGreen(e.n); return e }
+func (e RadioEl) DebugPink() RadioEl      { tStyledExtDebugPink(e.n); return e }
+func (e RadioEl) DebugRed() RadioEl       { tStyledExtDebugRed(e.n); return e }
+func (e RadioEl) DebugYellow() RadioEl    { tStyledExtDebugYellow(e.n); return e }
+func (e RadioEl) FontBlack() RadioEl      { tStyledExtFontBlack(e.n); return e }
+func (e RadioEl) FontBold() RadioEl       { tStyledExtFontBold(e.n); return e }
+func (e RadioEl) FontExtrabold() RadioEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e RadioEl) FontExtralight() RadioEl { tStyledExtFontExtralight(e.n); return e }
+func (e RadioEl) FontLight() RadioEl      { tStyledExtFontLight(e.n); return e }
+func (e RadioEl) FontMedium() RadioEl     { tStyledExtFontMedium(e.n); return e }
+func (e RadioEl) FontNormal() RadioEl     { tStyledExtFontNormal(e.n); return e }
+func (e RadioEl) FontSemibold() RadioEl   { tStyledExtFontSemibold(e.n); return e }
+func (e RadioEl) FontThin() RadioEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e RadioEl) HFlex() RadioEl                      { tStyledExtHFlex(e.n); return e }
 func (e RadioEl) Margins(margins EdgesInto) RadioEl   { tStyledExtMargins(e.n, margins); return e }
 func (e RadioEl) Paddings(paddings EdgesInto) RadioEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -129,380 +199,893 @@ func (e RadioEl) RefineStyle(style StyleRefinement) RadioEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e RadioEl) VFlex() RadioEl { tStyledExtVFlex(e.n); return e }
 
-func (e RadioEl) Large() RadioEl                 { tSizableLarge(e.n); return e }
-func (e RadioEl) Small() RadioEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e RadioEl) Large() RadioEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e RadioEl) Small() RadioEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e RadioEl) WithSize(size SizeInto) RadioEl { tSizableWithSize(e.n, size); return e }
-func (e RadioEl) Xsmall() RadioEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e RadioEl) Xsmall() RadioEl { tSizableXsmall(e.n); return e }
 
 func (e RadioEl) FocusRing(enabled bool) RadioEl { tFocusableExtFocusRing(e.n, enabled); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e RadioEl) Style(st ...Style) RadioEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e RadioEl) AspectRatio(ratio float32) RadioEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e RadioEl) Bg(fill Fill) RadioEl              { tStyledBg(e.n, fill); return e }
-func (e RadioEl) Border(length Length) RadioEl      { tStyledBorder(e.n, length); return e }
-func (e RadioEl) BorderB(length Length) RadioEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e RadioEl) Bg(fill Fill) RadioEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e RadioEl) Border(length Length) RadioEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RadioEl) BorderB(length Length) RadioEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e RadioEl) BorderColor(borderColor Color) RadioEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e RadioEl) BorderL(length Length) RadioEl        { tStyledBorderL(e.n, length); return e }
-func (e RadioEl) BorderR(length Length) RadioEl        { tStyledBorderR(e.n, length); return e }
-func (e RadioEl) BorderT(length Length) RadioEl        { tStyledBorderT(e.n, length); return e }
-func (e RadioEl) BorderX(length Length) RadioEl        { tStyledBorderX(e.n, length); return e }
-func (e RadioEl) BorderY(length Length) RadioEl        { tStyledBorderY(e.n, length); return e }
-func (e RadioEl) Bottom(length Length) RadioEl         { tStyledBottom(e.n, length); return e }
-func (e RadioEl) ColEnd(end int16) RadioEl             { tStyledColEnd(e.n, end); return e }
-func (e RadioEl) ColSpan(span uint16) RadioEl          { tStyledColSpan(e.n, span); return e }
-func (e RadioEl) ColStart(start int16) RadioEl         { tStyledColStart(e.n, start); return e }
-func (e RadioEl) Cursor(cursor CursorStyle) RadioEl    { tStyledCursor(e.n, cursor); return e }
-func (e RadioEl) FlexBasis(basis Length) RadioEl       { tStyledFlexBasis(e.n, basis); return e }
-func (e RadioEl) FlexGrow(grow float32) RadioEl        { tStyledFlexGrow(e.n, grow); return e }
-func (e RadioEl) FlexShrink(shrink float32) RadioEl    { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RadioEl) BorderL(length Length) RadioEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RadioEl) BorderR(length Length) RadioEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RadioEl) BorderT(length Length) RadioEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e RadioEl) BorderX(length Length) RadioEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e RadioEl) BorderY(length Length) RadioEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RadioEl) Bottom(length Length) RadioEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e RadioEl) ColEnd(end int16) RadioEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e RadioEl) ColSpan(span uint16) RadioEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e RadioEl) ColStart(start int16) RadioEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e RadioEl) Cursor(cursor CursorStyle) RadioEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e RadioEl) FlexBasis(basis Length) RadioEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e RadioEl) FlexGrow(grow float32) RadioEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e RadioEl) FlexShrink(shrink float32) RadioEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e RadioEl) FontFamily(familyName string) RadioEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e RadioEl) FontFeatures(features FontFeatures) RadioEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e RadioEl) FontWeight(weight FontWeight) RadioEl { tStyledFontWeight(e.n, weight); return e }
-func (e RadioEl) Gap(length Length) RadioEl            { tStyledGap(e.n, length); return e }
-func (e RadioEl) GapX(length Length) RadioEl           { tStyledGapX(e.n, length); return e }
-func (e RadioEl) GapY(length Length) RadioEl           { tStyledGapY(e.n, length); return e }
-func (e RadioEl) GridCols(cols uint16) RadioEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e RadioEl) Gap(length Length) RadioEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e RadioEl) GapX(length Length) RadioEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e RadioEl) GapY(length Length) RadioEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e RadioEl) GridCols(cols uint16) RadioEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e RadioEl) GridColsMaxContent(cols uint16) RadioEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e RadioEl) GridColsMinContent(cols uint16) RadioEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e RadioEl) GridRows(rows uint16) RadioEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e RadioEl) GridRowsMaxContent(rows uint16) RadioEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e RadioEl) GridRowsMinContent(rows uint16) RadioEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e RadioEl) H(length Length) RadioEl              { tStyledH(e.n, length); return e }
-func (e RadioEl) Inset(length Length) RadioEl          { tStyledInset(e.n, length); return e }
-func (e RadioEl) Left(length Length) RadioEl           { tStyledLeft(e.n, length); return e }
-func (e RadioEl) LineClamp(lines int) RadioEl          { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e RadioEl) H(length Length) RadioEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RadioEl) Inset(length Length) RadioEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RadioEl) Left(length Length) RadioEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e RadioEl) LineClamp(lines int) RadioEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e RadioEl) LineHeight(lineHeight Length) RadioEl { tStyledLineHeight(e.n, lineHeight); return e }
-func (e RadioEl) M(length Length) RadioEl              { tStyledM(e.n, length); return e }
-func (e RadioEl) MaxH(length Length) RadioEl           { tStyledMaxH(e.n, length); return e }
-func (e RadioEl) MaxSize(length Length) RadioEl        { tStyledMaxSize(e.n, length); return e }
-func (e RadioEl) MaxW(length Length) RadioEl           { tStyledMaxW(e.n, length); return e }
-func (e RadioEl) Mb(length Length) RadioEl             { tStyledMb(e.n, length); return e }
-func (e RadioEl) MinH(length Length) RadioEl           { tStyledMinH(e.n, length); return e }
-func (e RadioEl) MinSize(length Length) RadioEl        { tStyledMinSize(e.n, length); return e }
-func (e RadioEl) MinW(length Length) RadioEl           { tStyledMinW(e.n, length); return e }
-func (e RadioEl) Ml(length Length) RadioEl             { tStyledMl(e.n, length); return e }
-func (e RadioEl) Mr(length Length) RadioEl             { tStyledMr(e.n, length); return e }
-func (e RadioEl) Mt(length Length) RadioEl             { tStyledMt(e.n, length); return e }
-func (e RadioEl) Mx(length Length) RadioEl             { tStyledMx(e.n, length); return e }
-func (e RadioEl) My(length Length) RadioEl             { tStyledMy(e.n, length); return e }
-func (e RadioEl) Opacity(opacity float32) RadioEl      { tStyledOpacity(e.n, opacity); return e }
-func (e RadioEl) P(length Length) RadioEl              { tStyledP(e.n, length); return e }
-func (e RadioEl) Pb(length Length) RadioEl             { tStyledPb(e.n, length); return e }
-func (e RadioEl) Pl(length Length) RadioEl             { tStyledPl(e.n, length); return e }
-func (e RadioEl) Pr(length Length) RadioEl             { tStyledPr(e.n, length); return e }
-func (e RadioEl) Pt(length Length) RadioEl             { tStyledPt(e.n, length); return e }
-func (e RadioEl) Px(length Length) RadioEl             { tStyledPx(e.n, length); return e }
-func (e RadioEl) Py(length Length) RadioEl             { tStyledPy(e.n, length); return e }
-func (e RadioEl) Right(length Length) RadioEl          { tStyledRight(e.n, length); return e }
-func (e RadioEl) Rounded(length Length) RadioEl        { tStyledRounded(e.n, length); return e }
-func (e RadioEl) RoundedB(length Length) RadioEl       { tStyledRoundedB(e.n, length); return e }
-func (e RadioEl) RoundedBl(length Length) RadioEl      { tStyledRoundedBl(e.n, length); return e }
-func (e RadioEl) RoundedBr(length Length) RadioEl      { tStyledRoundedBr(e.n, length); return e }
-func (e RadioEl) RoundedL(length Length) RadioEl       { tStyledRoundedL(e.n, length); return e }
-func (e RadioEl) RoundedR(length Length) RadioEl       { tStyledRoundedR(e.n, length); return e }
-func (e RadioEl) RoundedT(length Length) RadioEl       { tStyledRoundedT(e.n, length); return e }
-func (e RadioEl) RoundedTl(length Length) RadioEl      { tStyledRoundedTl(e.n, length); return e }
-func (e RadioEl) RoundedTr(length Length) RadioEl      { tStyledRoundedTr(e.n, length); return e }
-func (e RadioEl) RowEnd(end int16) RadioEl             { tStyledRowEnd(e.n, end); return e }
-func (e RadioEl) RowSpan(span uint16) RadioEl          { tStyledRowSpan(e.n, span); return e }
-func (e RadioEl) RowStart(start int16) RadioEl         { tStyledRowStart(e.n, start); return e }
-func (e RadioEl) ScrollbarWidth(width Length) RadioEl  { tStyledScrollbarWidth(e.n, width); return e }
-func (e RadioEl) Shadow(shadows []BoxShadow) RadioEl   { tStyledShadow(e.n, shadows); return e }
-func (e RadioEl) Size(length Length) RadioEl           { tStyledSize(e.n, length); return e }
-func (e RadioEl) TextAlign(align TextAlign) RadioEl    { tStyledTextAlign(e.n, align); return e }
-func (e RadioEl) TextBg(bg Color) RadioEl              { tStyledTextBg(e.n, bg); return e }
-func (e RadioEl) TextColor(color Color) RadioEl        { tStyledTextColor(e.n, color); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e RadioEl) M(length Length) RadioEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e RadioEl) MaxH(length Length) RadioEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e RadioEl) MaxSize(length Length) RadioEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e RadioEl) MaxW(length Length) RadioEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RadioEl) Mb(length Length) RadioEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e RadioEl) MinH(length Length) RadioEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e RadioEl) MinSize(length Length) RadioEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e RadioEl) MinW(length Length) RadioEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RadioEl) Ml(length Length) RadioEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RadioEl) Mr(length Length) RadioEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RadioEl) Mt(length Length) RadioEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e RadioEl) Mx(length Length) RadioEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e RadioEl) My(length Length) RadioEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e RadioEl) Opacity(opacity float32) RadioEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e RadioEl) P(length Length) RadioEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RadioEl) Pb(length Length) RadioEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RadioEl) Pl(length Length) RadioEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RadioEl) Pr(length Length) RadioEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RadioEl) Pt(length Length) RadioEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e RadioEl) Px(length Length) RadioEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e RadioEl) Py(length Length) RadioEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RadioEl) Right(length Length) RadioEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e RadioEl) Rounded(length Length) RadioEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RadioEl) RoundedB(length Length) RadioEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e RadioEl) RoundedBl(length Length) RadioEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e RadioEl) RoundedBr(length Length) RadioEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RadioEl) RoundedL(length Length) RadioEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RadioEl) RoundedR(length Length) RadioEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RadioEl) RoundedT(length Length) RadioEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e RadioEl) RoundedTl(length Length) RadioEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e RadioEl) RoundedTr(length Length) RadioEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e RadioEl) RowEnd(end int16) RadioEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e RadioEl) RowSpan(span uint16) RadioEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e RadioEl) RowStart(start int16) RadioEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e RadioEl) ScrollbarWidth(width Length) RadioEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e RadioEl) Shadow(shadows []BoxShadow) RadioEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e RadioEl) Size(length Length) RadioEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e RadioEl) TextAlign(align TextAlign) RadioEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e RadioEl) TextBg(bg Color) RadioEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e RadioEl) TextColor(color Color) RadioEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e RadioEl) TextDecorationColor(color Color) RadioEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e RadioEl) TextOverflow(overflow TextOverflow) RadioEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e RadioEl) TextSize(size Length) RadioEl { tStyledTextSize(e.n, size); return e }
-func (e RadioEl) Top(length Length) RadioEl    { tStyledTop(e.n, length); return e }
-func (e RadioEl) W(length Length) RadioEl      { tStyledW(e.n, length); return e }
 
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e RadioEl) TextSize(size Length) RadioEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RadioEl) Top(length Length) RadioEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e RadioEl) W(length Length) RadioEl { tStyledW(e.n, length); return e }
+
+// Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
+// equivalent to `block_mouse_except_scroll`.
+//
+// See `is_hovered` for details.
 func (e RadioEl) BlockMouseExceptScroll() RadioEl {
 	tInteractiveElementBlockMouseExceptScroll(e.n)
 	return e
 }
+
+// Use the given predicate to determine whether or not a drop event should be dispatched to this
+// element. The fluent API equivalent to `can_drop`.
 func (e RadioEl) CanDrop(predicate DropAccept) RadioEl {
 	tInteractiveElementCanDrop(e.n, predicate)
 	return e
 }
+
+// Capture the given action, before normal action dispatch can fire. The fluent API equivalent to
+// `capture_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) CaptureAction(listener ActionHandler) RadioEl {
 	tInteractiveElementCaptureAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) RadioEl {
 	tInteractiveElementCaptureAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) RadioEl {
 	tInteractiveElementCaptureAnyMouseUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the capture phase. The fluent API equivalent
+// to `capture_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) RadioEl {
 	tInteractiveElementCaptureKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the capture phase. The fluent API equivalent to
+// `capture_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) RadioEl {
 	tInteractiveElementCaptureKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the capture phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) RadioEl {
 	tInteractiveElementCaptureMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the capture phase. The fluent API
+// equivalent to `capture_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) RadioEl {
 	tInteractiveElementCapturePinch(e.n, listener)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element
 func (e RadioEl) DragOver(f StyleRefinement) RadioEl { tInteractiveElementDragOver(e.n, f); return e }
-func (e RadioEl) Focus(f StyleRefinement) RadioEl    { tInteractiveElementFocus(e.n, f); return e }
+
+// Set the given styles to be applied when this element, specifically, is focused. Requires that
+// the element is focusable. Elements can be made focusable using `TrackFocus`.
+func (e RadioEl) Focus(f StyleRefinement) RadioEl { tInteractiveElementFocus(e.n, f); return e }
+
+// Set the given styles to be applied when this element is focused via keyboard navigation. This is
+// similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
+// the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
+// Elements can be made focusable using `TrackFocus`.
 func (e RadioEl) FocusVisible(f StyleRefinement) RadioEl {
 	tInteractiveElementFocusVisible(e.n, f)
 	return e
 }
+
+// Assign this element to a group of elements that can be styled together
 func (e RadioEl) Group(group string) RadioEl { tInteractiveElementGroup(e.n, group); return e }
+
+// Apply the given style when the given data type is dragged over this element's group
 func (e RadioEl) GroupDragOver(groupName string, f StyleRefinement) RadioEl {
 	tInteractiveElementGroupDragOver(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over a group member
 func (e RadioEl) GroupHover(groupName string, f StyleRefinement) RadioEl {
 	tInteractiveElementGroupHover(e.n, groupName, f)
 	return e
 }
-func (e RadioEl) Hover(f StyleRefinement) RadioEl   { tInteractiveElementHover(e.n, f); return e }
+
+// Apply the given style to this element when the mouse hovers over it
+func (e RadioEl) Hover(f StyleRefinement) RadioEl { tInteractiveElementHover(e.n, f); return e }
+
+// Set the given styles to be applied when this element is inside another element that is focused.
+// Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e RadioEl) InFocus(f StyleRefinement) RadioEl { tInteractiveElementInFocus(e.n, f); return e }
+
+// Set the keymap context for this element. This will be used to determine which action to dispatch
+// from the keymap.
 func (e RadioEl) KeyContext(keyContext string) RadioEl {
 	tInteractiveElementKeyContext(e.n, keyContext)
 	return e
 }
+
+// Block the mouse from all interactions with elements behind this element's hitbox. Typically
+// `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
 func (e RadioEl) Occlude() RadioEl { tInteractiveElementOcclude(e.n); return e }
+
+// Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
+// to `on_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnAction(listener ActionHandler) RadioEl {
 	tInteractiveElementOnAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `on_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) RadioEl {
 	tInteractiveElementOnAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to back-navigation gestures that start over this element, such as the
+// iOS swipe from the leading screen edge. The innermost element with a back listener claims the
+// gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) RadioEl {
 	tInteractiveElementOnBackGesture(e.n, listener)
 	return e
 }
+
+// Bind the given callback to an action dispatch, based on a dynamic action parameter instead of a
+// type parameter. Useful for component libraries that want to expose action bindings to their
+// users. The fluent API equivalent to `on_boxed_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) RadioEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
 	return e
 }
+
+// Bind the given callback to drop events of the given type, whether or not the drag started on
+// this element. The fluent API equivalent to `on_drop`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnDrop(listener func(cx *Cx, e DragValue)) RadioEl {
 	tInteractiveElementOnDrop(e.n, listener)
 	return e
 }
+
+// Bind the given callback to `Exited` when a platform file drag leaves this element's window while
+// the element is hovered.
+//
+// This is a window-local exit event, not notification that the platform drag session ended. The
+// fluent API equivalent to `on_file_drop_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) RadioEl {
 	tInteractiveElementOnFileDropExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the bubble phase. The fluent API equivalent to
+// `on_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) RadioEl {
 	tInteractiveElementOnKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the bubble phase. The fluent API equivalent to
+// `on_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) RadioEl {
 	tInteractiveElementOnKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to modifiers changing events. The fluent API equivalent to
+// `on_modifiers_changed`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) RadioEl {
 	tInteractiveElementOnModifiersChanged(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for the given mouse button. The fluent API
+// equivalent to `on_mouse_down`.
+//
+// See `listener` to get access to the view state from this callback.
 func (e RadioEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) RadioEl {
 	tInteractiveElementOnMouseDown(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event, on any button, during the capture phase, when
+// the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_down_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) RadioEl {
 	tInteractiveElementOnMouseDownOut(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse exit event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) RadioEl {
 	tInteractiveElementOnMouseExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse move event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_move`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) RadioEl {
 	tInteractiveElementOnMouseMove(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the bubble phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) RadioEl {
 	tInteractiveElementOnMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for the given button, during the bubble phase. The
+// fluent API equivalent to `on_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) RadioEl {
 	tInteractiveElementOnMouseUp(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event, for the given button, during the capture phase,
+// when the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_up_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) RadioEl {
 	tInteractiveElementOnMouseUpOut(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the bubble phase. The fluent API
+// equivalent to `on_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnPinch(listener func(cx *Cx, e PinchEvent)) RadioEl {
 	tInteractiveElementOnPinch(e.n, listener)
 	return e
 }
+
+// Bind the given callback to scroll events during the bubble phase. The fluent API equivalent to
+// `on_scroll`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) RadioEl {
 	tInteractiveElementOnScroll(e.n, listener)
 	return e
 }
+
+// Designate this div as a "tab group". Tab groups have their own location in the tab-index order,
+// but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
+// the order of tab stops within the group, without having to renumber all the tab stops in the
+// whole application.
 func (e RadioEl) TabGroup() RadioEl { tInteractiveElementTabGroup(e.n); return e }
+
+// Track the focus state of the given focus handle on this element. If the focus handle is focused
+// by the application, this element will apply its focused styles.
 func (e RadioEl) TrackFocus(focusHandle FocusHandle) RadioEl {
 	tInteractiveElementTrackFocus(e.n, focusHandle)
 	return e
 }
+
+// Set the bounds of this element as a window control area for the platform window. The fluent API
+// equivalent to `window_control_area`.
 func (e RadioEl) WindowControlArea(area WindowControlArea) RadioEl {
 	tInteractiveElementWindowControlArea(e.n, area)
 	return e
 }
 
+// Set the author-provided identifier exposed to accessibility clients.
+//
+// Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
+// within its accessibility tree. AccessKit maps it to platform identifiers where supported,
+// including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
+// Linux stacks whose deployed adapter exposes it.
 func (e RadioEl) AccessibilityID(id string) RadioEl {
 	tStatefulInteractiveElementAccessibilityID(e.n, id)
 	return e
 }
+
+// Set the given styles to be applied when this element is active.
 func (e RadioEl) Active(f StyleRefinement) RadioEl {
 	tStatefulInteractiveElementActive(e.n, f)
 	return e
 }
+
+// Report this element as the focused node in the accessibility tree, overriding the element that
+// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+//
+// This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
+// focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
+// selected child so assistive technology announces and highlights it as focused.
+//
+// The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
+// web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
+// when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
+// selected child — if the container isn't focused, the claim is ignored.
 func (e RadioEl) AriaActiveDescendant() RadioEl {
 	tStatefulInteractiveElementAriaActiveDescendant(e.n)
 	return e
 }
+
+// Set the column count for this element.
 func (e RadioEl) AriaColumnCount(count int) RadioEl {
 	tStatefulInteractiveElementAriaColumnCount(e.n, count)
 	return e
 }
+
+// Set the column index for this element.
 func (e RadioEl) AriaColumnIndex(index int) RadioEl {
 	tStatefulInteractiveElementAriaColumnIndex(e.n, index)
 	return e
 }
+
+// Set the accessible description for this element. Unlike the label (which names the element), the
+// description provides supplementary information that assistive technology announces after the
+// name, role, and value - for example a settings subtitle or a hint.
 func (e RadioEl) AriaDescription(description string) RadioEl {
 	tStatefulInteractiveElementAriaDescription(e.n, description)
 	return e
 }
+
+// Set the expanded state for this element.
 func (e RadioEl) AriaExpanded(expanded bool) RadioEl {
 	tStatefulInteractiveElementAriaExpanded(e.n, expanded)
 	return e
 }
+
+// Set the keyboard shortcut(s) that activate this element, announced by assistive technology (maps
+// to AccessKit's `keyboard_shortcut`).
+//
+// Note that this does not create a keymap. It simply instructs assistive technology what the
+// keymap is.
 func (e RadioEl) AriaKeyshortcuts(keyshortcuts string) RadioEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(e.n, keyshortcuts)
 	return e
 }
+
+// Set the accessible label for this element.
 func (e RadioEl) AriaLabel(label string) RadioEl {
 	tStatefulInteractiveElementAriaLabel(e.n, label)
 	return e
 }
+
+// Set the heading level of this element.
 func (e RadioEl) AriaLevel(level int) RadioEl {
 	tStatefulInteractiveElementAriaLevel(e.n, level)
 	return e
 }
+
+// Set the maximum numeric value for this element.
 func (e RadioEl) AriaMaxNumericValue(value float64) RadioEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(e.n, value)
 	return e
 }
+
+// Set the minimum numeric value for this element.
 func (e RadioEl) AriaMinNumericValue(value float64) RadioEl {
 	tStatefulInteractiveElementAriaMinNumericValue(e.n, value)
 	return e
 }
+
+// Set the numeric value for this element.
 func (e RadioEl) AriaNumericValue(value float64) RadioEl {
 	tStatefulInteractiveElementAriaNumericValue(e.n, value)
 	return e
 }
+
+// Set the step by which assistive technology should expect the numeric value of this element to
+// change (e.g. when incrementing a spin button).
 func (e RadioEl) AriaNumericValueStep(step float64) RadioEl {
 	tStatefulInteractiveElementAriaNumericValueStep(e.n, step)
 	return e
 }
+
+// Set the placeholder text reported to assistive technology for this element, shown when a text
+// input is empty.
 func (e RadioEl) AriaPlaceholder(placeholder string) RadioEl {
 	tStatefulInteractiveElementAriaPlaceholder(e.n, placeholder)
 	return e
 }
+
+// Set the position in set of this element.
 func (e RadioEl) AriaPositionInSet(position int) RadioEl {
 	tStatefulInteractiveElementAriaPositionInSet(e.n, position)
 	return e
 }
+
+// Set the row count for this element.
 func (e RadioEl) AriaRowCount(count int) RadioEl {
 	tStatefulInteractiveElementAriaRowCount(e.n, count)
 	return e
 }
+
+// Set the row index for this element.
 func (e RadioEl) AriaRowIndex(index int) RadioEl {
 	tStatefulInteractiveElementAriaRowIndex(e.n, index)
 	return e
 }
+
+// Set the selected state for this element.
 func (e RadioEl) AriaSelected(selected bool) RadioEl {
 	tStatefulInteractiveElementAriaSelected(e.n, selected)
 	return e
 }
+
+// Set the size of set for this element.
 func (e RadioEl) AriaSizeOfSet(size int) RadioEl {
 	tStatefulInteractiveElementAriaSizeOfSet(e.n, size)
 	return e
 }
+
+// Set the string value of this element, e.g. the text content of a simple text input.
 func (e RadioEl) AriaValue(value string) RadioEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
 	return e
 }
+
+// Set this element to focusable.
 func (e RadioEl) Focusable() RadioEl { tStatefulInteractiveElementFocusable(e.n); return e }
+
+// Set the given styles to be applied when this element's group is active.
 func (e RadioEl) GroupActive(groupName string, f StyleRefinement) RadioEl {
 	tStatefulInteractiveElementGroupActive(e.n, groupName, f)
 	return e
 }
+
+// Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
+// hover listener, not hover styles or tooltips. The fluent API equivalent to
+// `hover_listener_mode`.
 func (e RadioEl) HoverListenerMode(mode HoverListenerMode) RadioEl {
 	tStatefulInteractiveElementHoverListenerMode(e.n, mode)
 	return e
 }
+
+// Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
+// hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
+// equivalent to `hoverable_tooltip`.
 func (e RadioEl) HoverableTooltip(buildTooltip ViewOrTooltip) RadioEl {
 	tStatefulInteractiveElementHoverableTooltip(e.n, buildTooltip)
 	return e
 }
+
+// Bind the given callback to non-primary click events of this element. The fluent API equivalent
+// to `on_aux_click`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnAuxClick(listener func(cx *Cx, e ClickEvent)) RadioEl {
 	tStatefulInteractiveElementOnAuxClick(e.n, listener)
 	return e
 }
+
+// On drag initiation, this callback will be used to create a new view to render the dragged value
+// for a drag and drop operation. This API should also be used as the equivalent of 'on drag start'
+// with the `OnDragMove` API. The callback also has access to the offset of triggering click from
+// the origin of parent element. The fluent API equivalent to `on_drag`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnDrag(value DragValue, constructor View) RadioEl {
 	tStatefulInteractiveElementOnDrag(e.n, value, constructor)
 	return e
 }
+
+// Bind the given callback on the hover start and end events of this element. Note that the boolean
+// passed to the callback is true when the hover starts and false when it ends. Transitions caused
+// by layout changes under a stationary mouse also invoke the callback.
+//
+// By default, keyboard input suppresses hover until the next mouse move, mouse down, or touch. Set
+// `InputModalityIndependent` with `HoverListenerMode` to continue hit-testing hover after keyboard
+// input. The fluent API equivalent to `on_hover`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnHover(listener func(cx *Cx, e bool)) RadioEl {
 	tStatefulInteractiveElementOnHover(e.n, listener)
 	return e
 }
-func (e RadioEl) OverflowScroll() RadioEl  { tStatefulInteractiveElementOverflowScroll(e.n); return e }
+
+// Set the overflow x and y to scroll.
+func (e RadioEl) OverflowScroll() RadioEl { tStatefulInteractiveElementOverflowScroll(e.n); return e }
+
+// Set the overflow x to scroll.
 func (e RadioEl) OverflowXScroll() RadioEl { tStatefulInteractiveElementOverflowXScroll(e.n); return e }
+
+// Set the overflow y to scroll.
 func (e RadioEl) OverflowYScroll() RadioEl { tStatefulInteractiveElementOverflowYScroll(e.n); return e }
+
+// Restrict scrolling of this element to the axis of the input gesture.
+//
+// See `restrict_scroll_to_axis` for details.
 func (e RadioEl) RestrictScrollToAxis() RadioEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(e.n)
 	return e
 }
+
+// Set the accessible role for this element.
+//
+// See the accessibility guide for an overview.
 func (e RadioEl) Role(role Role) RadioEl { tStatefulInteractiveElementRole(e.n, role); return e }
+
+// Track the scroll state of this element with the given handle.
 func (e RadioEl) TrackScroll(scrollHandle ScrollHandle) RadioEl {
 	tStatefulInteractiveElementTrackScroll(e.n, scrollHandle)
 	return e
@@ -513,7 +1096,10 @@ func (e RadioEl) Text(s string) RadioEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e RadioEl) ChildView(v View) RadioEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e RadioEl) Child(child Element) RadioEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e RadioEl) Children(children ...Element) RadioEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -524,6 +1110,8 @@ type RadioGroupEl struct{ n *node }
 
 func (e RadioGroupEl) node() *node { return e.n }
 
+// Creates a radio group with vertical layout and no selected item.
+//
 // RadioGroup is <gpui_kit::component::radio::RadioGroup>::new.
 func RadioGroup(id ID, st ...Style) RadioGroupEl {
 	useComponentRadio()
@@ -534,6 +1122,8 @@ func RadioGroup(id ID, st ...Style) RadioGroupEl {
 	return RadioGroupEl{n}
 }
 
+// Create a new Radio group with Horizontal layout.
+//
 // RadioGroupHorizontal is <gpui_kit::component::radio::RadioGroup>::horizontal.
 func RadioGroupHorizontal(id ID, st ...Style) RadioGroupEl {
 	useComponentRadio()
@@ -544,6 +1134,8 @@ func RadioGroupHorizontal(id ID, st ...Style) RadioGroupEl {
 	return RadioGroupEl{n}
 }
 
+// Create a new Radio group with default Vertical layout.
+//
 // RadioGroupVertical is <gpui_kit::component::radio::RadioGroup>::vertical.
 func RadioGroupVertical(id ID, st ...Style) RadioGroupEl {
 	useComponentRadio()
@@ -554,6 +1146,8 @@ func RadioGroupVertical(id ID, st ...Style) RadioGroupEl {
 	return RadioGroupEl{n}
 }
 
+// Add a child Radio element.
+//
 // Child is <gpui_kit::component::radio::RadioGroup>::child.
 func (e RadioGroupEl) Child(child RadioInto) RadioGroupEl {
 	o := op(e.n, 256)
@@ -561,6 +1155,8 @@ func (e RadioGroupEl) Child(child RadioInto) RadioGroupEl {
 	return e
 }
 
+// Add multiple child Radio elements.
+//
 // Children is <gpui_kit::component::radio::RadioGroup>::children.
 func (e RadioGroupEl) Children(children []RadioInto) RadioGroupEl {
 	o := op(e.n, 257)
@@ -571,6 +1167,8 @@ func (e RadioGroupEl) Children(children []RadioInto) RadioGroupEl {
 	return e
 }
 
+// Set the disabled state.
+//
 // Disabled is <gpui_kit::component::radio::RadioGroup>::disabled.
 func (e RadioGroupEl) Disabled(disabled bool) RadioGroupEl {
 	o := op(e.n, 258)
@@ -578,6 +1176,8 @@ func (e RadioGroupEl) Disabled(disabled bool) RadioGroupEl {
 	return e
 }
 
+// Set the layout of the Radio group. Default is `Axis::Vertical`.
+//
 // Layout is <gpui_kit::component::radio::RadioGroup>::layout.
 func (e RadioGroupEl) Layout(layout Axis) RadioGroupEl {
 	o := op(e.n, 259)
@@ -585,6 +1185,12 @@ func (e RadioGroupEl) Layout(layout Axis) RadioGroupEl {
 	return e
 }
 
+// Handle a requested selected index from pointer or keyboard activation.
+//
+// This is a controlled value: the owner must write the requested value for it to show. Disabled
+// controls do not call the handler. This and `OnClick` share one callback; chaining them replaces
+// the previous handler instead of calling both.
+//
 // OnChange is <gpui_kit::component::radio::RadioGroup>::on_change.
 func (e RadioGroupEl) OnChange(handler func(cx *Cx, e int)) RadioGroupEl {
 	o := op(e.n, 260)
@@ -592,6 +1198,8 @@ func (e RadioGroupEl) OnChange(handler func(cx *Cx, e int)) RadioGroupEl {
 	return e
 }
 
+// Alias for `OnChange`. The last callback registered with either name wins.
+//
 // OnClick is <gpui_kit::component::radio::RadioGroup>::on_click.
 func (e RadioGroupEl) OnClick(handler func(cx *Cx, e int)) RadioGroupEl {
 	o := op(e.n, 261)
@@ -599,6 +1207,8 @@ func (e RadioGroupEl) OnClick(handler func(cx *Cx, e int)) RadioGroupEl {
 	return e
 }
 
+// Set the selected index.
+//
 // SelectedIndex is <gpui_kit::component::radio::RadioGroup>::selected_index.
 func (e RadioGroupEl) SelectedIndex(index Option[int]) RadioGroupEl {
 	o := op(e.n, 262)
@@ -611,7 +1221,19 @@ func (e RadioGroupEl) SelectedIndex(index Option[int]) RadioGroupEl {
 	return e
 }
 
-func (e RadioGroupEl) PopoverStyle() RadioGroupEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e RadioGroupEl) PopoverStyle() RadioGroupEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e RadioGroupEl) RoundedFullStyle() RadioGroupEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e RadioGroupEl) CornerRadii(radius Corners) RadioGroupEl {
@@ -636,7 +1258,20 @@ func (e RadioGroupEl) FontMedium() RadioGroupEl     { tStyledExtFontMedium(e.n);
 func (e RadioGroupEl) FontNormal() RadioGroupEl     { tStyledExtFontNormal(e.n); return e }
 func (e RadioGroupEl) FontSemibold() RadioGroupEl   { tStyledExtFontSemibold(e.n); return e }
 func (e RadioGroupEl) FontThin() RadioGroupEl       { tStyledExtFontThin(e.n); return e }
-func (e RadioGroupEl) HFlex() RadioGroupEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e RadioGroupEl) HFlex() RadioGroupEl { tStyledExtHFlex(e.n); return e }
 func (e RadioGroupEl) Margins(margins EdgesInto) RadioGroupEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -649,130 +1284,342 @@ func (e RadioGroupEl) RefineStyle(style StyleRefinement) RadioGroupEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e RadioGroupEl) VFlex() RadioGroupEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e RadioGroupEl) Style(st ...Style) RadioGroupEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e RadioGroupEl) AspectRatio(ratio float32) RadioGroupEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e RadioGroupEl) Bg(fill Fill) RadioGroupEl          { tStyledBg(e.n, fill); return e }
-func (e RadioGroupEl) Border(length Length) RadioGroupEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e RadioGroupEl) Bg(fill Fill) RadioGroupEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e RadioGroupEl) Border(length Length) RadioGroupEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e RadioGroupEl) BorderB(length Length) RadioGroupEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e RadioGroupEl) BorderColor(borderColor Color) RadioGroupEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e RadioGroupEl) BorderL(length Length) RadioGroupEl     { tStyledBorderL(e.n, length); return e }
-func (e RadioGroupEl) BorderR(length Length) RadioGroupEl     { tStyledBorderR(e.n, length); return e }
-func (e RadioGroupEl) BorderT(length Length) RadioGroupEl     { tStyledBorderT(e.n, length); return e }
-func (e RadioGroupEl) BorderX(length Length) RadioGroupEl     { tStyledBorderX(e.n, length); return e }
-func (e RadioGroupEl) BorderY(length Length) RadioGroupEl     { tStyledBorderY(e.n, length); return e }
-func (e RadioGroupEl) Bottom(length Length) RadioGroupEl      { tStyledBottom(e.n, length); return e }
-func (e RadioGroupEl) ColEnd(end int16) RadioGroupEl          { tStyledColEnd(e.n, end); return e }
-func (e RadioGroupEl) ColSpan(span uint16) RadioGroupEl       { tStyledColSpan(e.n, span); return e }
-func (e RadioGroupEl) ColStart(start int16) RadioGroupEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RadioGroupEl) BorderL(length Length) RadioGroupEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RadioGroupEl) BorderR(length Length) RadioGroupEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RadioGroupEl) BorderT(length Length) RadioGroupEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e RadioGroupEl) BorderX(length Length) RadioGroupEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e RadioGroupEl) BorderY(length Length) RadioGroupEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RadioGroupEl) Bottom(length Length) RadioGroupEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e RadioGroupEl) ColEnd(end int16) RadioGroupEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e RadioGroupEl) ColSpan(span uint16) RadioGroupEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e RadioGroupEl) ColStart(start int16) RadioGroupEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e RadioGroupEl) Cursor(cursor CursorStyle) RadioGroupEl { tStyledCursor(e.n, cursor); return e }
-func (e RadioGroupEl) FlexBasis(basis Length) RadioGroupEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e RadioGroupEl) FlexGrow(grow float32) RadioGroupEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e RadioGroupEl) FlexBasis(basis Length) RadioGroupEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e RadioGroupEl) FlexGrow(grow float32) RadioGroupEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e RadioGroupEl) FlexShrink(shrink float32) RadioGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e RadioGroupEl) FontFamily(familyName string) RadioGroupEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e RadioGroupEl) FontFeatures(features FontFeatures) RadioGroupEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e RadioGroupEl) FontWeight(weight FontWeight) RadioGroupEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e RadioGroupEl) Gap(length Length) RadioGroupEl    { tStyledGap(e.n, length); return e }
-func (e RadioGroupEl) GapX(length Length) RadioGroupEl   { tStyledGapX(e.n, length); return e }
-func (e RadioGroupEl) GapY(length Length) RadioGroupEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e RadioGroupEl) Gap(length Length) RadioGroupEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e RadioGroupEl) GapX(length Length) RadioGroupEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e RadioGroupEl) GapY(length Length) RadioGroupEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e RadioGroupEl) GridCols(cols uint16) RadioGroupEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e RadioGroupEl) GridColsMaxContent(cols uint16) RadioGroupEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e RadioGroupEl) GridColsMinContent(cols uint16) RadioGroupEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e RadioGroupEl) GridRows(rows uint16) RadioGroupEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e RadioGroupEl) GridRowsMaxContent(rows uint16) RadioGroupEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e RadioGroupEl) GridRowsMinContent(rows uint16) RadioGroupEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e RadioGroupEl) H(length Length) RadioGroupEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e RadioGroupEl) H(length Length) RadioGroupEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e RadioGroupEl) Inset(length Length) RadioGroupEl { tStyledInset(e.n, length); return e }
-func (e RadioGroupEl) Left(length Length) RadioGroupEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RadioGroupEl) Left(length Length) RadioGroupEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e RadioGroupEl) LineClamp(lines int) RadioGroupEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e RadioGroupEl) LineHeight(lineHeight Length) RadioGroupEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e RadioGroupEl) M(length Length) RadioGroupEl         { tStyledM(e.n, length); return e }
-func (e RadioGroupEl) MaxH(length Length) RadioGroupEl      { tStyledMaxH(e.n, length); return e }
-func (e RadioGroupEl) MaxSize(length Length) RadioGroupEl   { tStyledMaxSize(e.n, length); return e }
-func (e RadioGroupEl) MaxW(length Length) RadioGroupEl      { tStyledMaxW(e.n, length); return e }
-func (e RadioGroupEl) Mb(length Length) RadioGroupEl        { tStyledMb(e.n, length); return e }
-func (e RadioGroupEl) MinH(length Length) RadioGroupEl      { tStyledMinH(e.n, length); return e }
-func (e RadioGroupEl) MinSize(length Length) RadioGroupEl   { tStyledMinSize(e.n, length); return e }
-func (e RadioGroupEl) MinW(length Length) RadioGroupEl      { tStyledMinW(e.n, length); return e }
-func (e RadioGroupEl) Ml(length Length) RadioGroupEl        { tStyledMl(e.n, length); return e }
-func (e RadioGroupEl) Mr(length Length) RadioGroupEl        { tStyledMr(e.n, length); return e }
-func (e RadioGroupEl) Mt(length Length) RadioGroupEl        { tStyledMt(e.n, length); return e }
-func (e RadioGroupEl) Mx(length Length) RadioGroupEl        { tStyledMx(e.n, length); return e }
-func (e RadioGroupEl) My(length Length) RadioGroupEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e RadioGroupEl) M(length Length) RadioGroupEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e RadioGroupEl) MaxH(length Length) RadioGroupEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e RadioGroupEl) MaxSize(length Length) RadioGroupEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e RadioGroupEl) MaxW(length Length) RadioGroupEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RadioGroupEl) Mb(length Length) RadioGroupEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e RadioGroupEl) MinH(length Length) RadioGroupEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e RadioGroupEl) MinSize(length Length) RadioGroupEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e RadioGroupEl) MinW(length Length) RadioGroupEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RadioGroupEl) Ml(length Length) RadioGroupEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RadioGroupEl) Mr(length Length) RadioGroupEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RadioGroupEl) Mt(length Length) RadioGroupEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e RadioGroupEl) Mx(length Length) RadioGroupEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e RadioGroupEl) My(length Length) RadioGroupEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e RadioGroupEl) Opacity(opacity float32) RadioGroupEl { tStyledOpacity(e.n, opacity); return e }
-func (e RadioGroupEl) P(length Length) RadioGroupEl         { tStyledP(e.n, length); return e }
-func (e RadioGroupEl) Pb(length Length) RadioGroupEl        { tStyledPb(e.n, length); return e }
-func (e RadioGroupEl) Pl(length Length) RadioGroupEl        { tStyledPl(e.n, length); return e }
-func (e RadioGroupEl) Pr(length Length) RadioGroupEl        { tStyledPr(e.n, length); return e }
-func (e RadioGroupEl) Pt(length Length) RadioGroupEl        { tStyledPt(e.n, length); return e }
-func (e RadioGroupEl) Px(length Length) RadioGroupEl        { tStyledPx(e.n, length); return e }
-func (e RadioGroupEl) Py(length Length) RadioGroupEl        { tStyledPy(e.n, length); return e }
-func (e RadioGroupEl) Right(length Length) RadioGroupEl     { tStyledRight(e.n, length); return e }
-func (e RadioGroupEl) Rounded(length Length) RadioGroupEl   { tStyledRounded(e.n, length); return e }
-func (e RadioGroupEl) RoundedB(length Length) RadioGroupEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e RadioGroupEl) P(length Length) RadioGroupEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RadioGroupEl) Pb(length Length) RadioGroupEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RadioGroupEl) Pl(length Length) RadioGroupEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RadioGroupEl) Pr(length Length) RadioGroupEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RadioGroupEl) Pt(length Length) RadioGroupEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e RadioGroupEl) Px(length Length) RadioGroupEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e RadioGroupEl) Py(length Length) RadioGroupEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RadioGroupEl) Right(length Length) RadioGroupEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e RadioGroupEl) Rounded(length Length) RadioGroupEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RadioGroupEl) RoundedB(length Length) RadioGroupEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e RadioGroupEl) RoundedBl(length Length) RadioGroupEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e RadioGroupEl) RoundedBr(length Length) RadioGroupEl { tStyledRoundedBr(e.n, length); return e }
-func (e RadioGroupEl) RoundedL(length Length) RadioGroupEl  { tStyledRoundedL(e.n, length); return e }
-func (e RadioGroupEl) RoundedR(length Length) RadioGroupEl  { tStyledRoundedR(e.n, length); return e }
-func (e RadioGroupEl) RoundedT(length Length) RadioGroupEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RadioGroupEl) RoundedL(length Length) RadioGroupEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RadioGroupEl) RoundedR(length Length) RadioGroupEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RadioGroupEl) RoundedT(length Length) RadioGroupEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e RadioGroupEl) RoundedTl(length Length) RadioGroupEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e RadioGroupEl) RoundedTr(length Length) RadioGroupEl { tStyledRoundedTr(e.n, length); return e }
-func (e RadioGroupEl) RowEnd(end int16) RadioGroupEl        { tStyledRowEnd(e.n, end); return e }
-func (e RadioGroupEl) RowSpan(span uint16) RadioGroupEl     { tStyledRowSpan(e.n, span); return e }
-func (e RadioGroupEl) RowStart(start int16) RadioGroupEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e RadioGroupEl) RowEnd(end int16) RadioGroupEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e RadioGroupEl) RowSpan(span uint16) RadioGroupEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e RadioGroupEl) RowStart(start int16) RadioGroupEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e RadioGroupEl) ScrollbarWidth(width Length) RadioGroupEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e RadioGroupEl) Shadow(shadows []BoxShadow) RadioGroupEl { tStyledShadow(e.n, shadows); return e }
-func (e RadioGroupEl) Size(length Length) RadioGroupEl         { tStyledSize(e.n, length); return e }
-func (e RadioGroupEl) TextAlign(align TextAlign) RadioGroupEl  { tStyledTextAlign(e.n, align); return e }
-func (e RadioGroupEl) TextBg(bg Color) RadioGroupEl            { tStyledTextBg(e.n, bg); return e }
-func (e RadioGroupEl) TextColor(color Color) RadioGroupEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e RadioGroupEl) Size(length Length) RadioGroupEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e RadioGroupEl) TextAlign(align TextAlign) RadioGroupEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e RadioGroupEl) TextBg(bg Color) RadioGroupEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e RadioGroupEl) TextColor(color Color) RadioGroupEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e RadioGroupEl) TextDecorationColor(color Color) RadioGroupEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e RadioGroupEl) TextOverflow(overflow TextOverflow) RadioGroupEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e RadioGroupEl) TextSize(size Length) RadioGroupEl { tStyledTextSize(e.n, size); return e }
-func (e RadioGroupEl) Top(length Length) RadioGroupEl    { tStyledTop(e.n, length); return e }
-func (e RadioGroupEl) W(length Length) RadioGroupEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RadioGroupEl) Top(length Length) RadioGroupEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e RadioGroupEl) W(length Length) RadioGroupEl { tStyledW(e.n, length); return e }

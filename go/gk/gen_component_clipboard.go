@@ -13,6 +13,8 @@ type ClipboardEl struct{ n *node }
 
 func (e ClipboardEl) node() *node { return e.n }
 
+// Create a new Clipboard element with the given ID.
+//
 // Clipboard is <gpui_kit::component::clipboard::Clipboard>::new.
 func Clipboard(id ID) ClipboardEl {
 	useComponentClipboard()
@@ -22,6 +24,11 @@ func Clipboard(id ID) ClipboardEl {
 	return ClipboardEl{n}
 }
 
+// Set the name a screen reader announces. Defaults to the localized "Copy".
+//
+// The clipboard button shows only an icon, so it has no visible label to read, and its tooltip is
+// a hint rather than a name.
+//
 // AccessibilityLabel is <gpui_kit::component::clipboard::Clipboard>::accessibility_label.
 func (e ClipboardEl) AccessibilityLabel(label string) ClipboardEl {
 	o := op(e.n, 256)
@@ -29,6 +36,8 @@ func (e ClipboardEl) AccessibilityLabel(label string) ClipboardEl {
 	return e
 }
 
+// Set a callback to be invoked when the content is copied to the clipboard.
+//
 // OnCopied is <gpui_kit::component::clipboard::Clipboard>::on_copied.
 func (e ClipboardEl) OnCopied(handler func(cx *Cx, e string)) ClipboardEl {
 	o := op(e.n, 260)
@@ -36,6 +45,8 @@ func (e ClipboardEl) OnCopied(handler func(cx *Cx, e string)) ClipboardEl {
 	return e
 }
 
+// Set tooltip text for the clipboard button.
+//
 // Tooltip is <gpui_kit::component::clipboard::Clipboard>::tooltip.
 func (e ClipboardEl) Tooltip(tooltip string) ClipboardEl {
 	o := op(e.n, 257)
@@ -43,6 +54,10 @@ func (e ClipboardEl) Tooltip(tooltip string) ClipboardEl {
 	return e
 }
 
+// Overrides how long the pointer must rest before the tooltip shows.
+//
+// Defaults to `show_delay`.
+//
 // TooltipShowDelay is <gpui_kit::component::clipboard::Clipboard>::tooltip_show_delay.
 func (e ClipboardEl) TooltipShowDelay(delay time.Duration) ClipboardEl {
 	o := op(e.n, 258)
@@ -50,6 +65,8 @@ func (e ClipboardEl) TooltipShowDelay(delay time.Duration) ClipboardEl {
 	return e
 }
 
+// Set the value for copying to the clipboard. Default is an empty string.
+//
 // Value is <gpui_kit::component::clipboard::Clipboard>::value.
 func (e ClipboardEl) Value(value string) ClipboardEl {
 	o := op(e.n, 259)
@@ -57,6 +74,10 @@ func (e ClipboardEl) Value(value string) ClipboardEl {
 	return e
 }
 
+// Set the value of the clipboard to the result of the given function. Default is None.
+//
+// When used this, the copy value will use the result of the function.
+//
 // ValueFn is <gpui_kit::component::clipboard::Clipboard>::value_fn.
 func (e ClipboardEl) ValueFn(value func(cx *Cx) string) ClipboardEl {
 	o := op(e.n, 261)
@@ -64,7 +85,17 @@ func (e ClipboardEl) ValueFn(value func(cx *Cx) string) ClipboardEl {
 	return e
 }
 
-func (e ClipboardEl) Large() ClipboardEl                 { tSizableLarge(e.n); return e }
-func (e ClipboardEl) Small() ClipboardEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e ClipboardEl) Large() ClipboardEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e ClipboardEl) Small() ClipboardEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e ClipboardEl) WithSize(size SizeInto) ClipboardEl { tSizableWithSize(e.n, size); return e }
-func (e ClipboardEl) Xsmall() ClipboardEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e ClipboardEl) Xsmall() ClipboardEl { tSizableXsmall(e.n); return e }

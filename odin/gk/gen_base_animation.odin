@@ -3,6 +3,11 @@ package gk
 
 import "core:time"
 
+// A composable transition that applies concrete fade, slide, and size effects to an element.
+//
+// This is distinct from `Transition`, which is a timing policy for a caller-chosen value and never
+// picks a visual property. Prefer `motion` for new code.
+//
 // Effect_Transition is gpui_kit::base::animation::EffectTransition.
 Effect_Transition :: struct {
 	using nd: Value,
@@ -10,11 +15,17 @@ Effect_Transition :: struct {
 }
 
 Effect_Transition_VT :: struct {
+	// Set the easing function.
 	ease: proc(e: Effect_Transition, easing: string) -> Effect_Transition,
+	// Animate opacity from `from` to `to`.
 	fade: proc(e: Effect_Transition, from: f32, to: f32) -> Effect_Transition,
+	// Animate height from `from` to `to`.
 	height: proc(e: Effect_Transition, from: f32, to: f32) -> Effect_Transition,
+	// Animate horizontal offset from `from` to `to`.
 	slide_x: proc(e: Effect_Transition, from: f32, to: f32) -> Effect_Transition,
+	// Animate vertical offset from `from` to `to`.
 	slide_y: proc(e: Effect_Transition, from: f32, to: f32) -> Effect_Transition,
+	// Animate width from `from` to `to`.
 	width: proc(e: Effect_Transition, from: f32, to: f32) -> Effect_Transition,
 }
 

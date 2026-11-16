@@ -9,6 +9,8 @@ type BaseCodeBlock struct{ n *node }
 
 func (e BaseCodeBlock) valueNode() *node { return e.n }
 
+// A code block of `code` in `lang`.
+//
 // NewBaseCodeBlock is <gpui_kit::base::text::CodeBlock>::new.
 func NewBaseCodeBlock(code string, lang Option[string], span Option[Span]) BaseCodeBlock {
 	n := newValue(802)
@@ -29,6 +31,11 @@ func NewBaseCodeBlock(code string, lang Option[string], span Option[Span]) BaseC
 	return BaseCodeBlock{n}
 }
 
+// Builds a code block that is not tied to a parsed document.
+//
+// `CodeBlockHighlighter` hands a `&CodeBlock` to the highlighter it is given, so anyone writing
+// one needs a way to build a block to exercise it against.
+//
 // NewBaseCodeBlockFromCode is <gpui_kit::base::text::CodeBlock>::from_code.
 func NewBaseCodeBlockFromCode(code string, lang Option[string]) BaseCodeBlock {
 	n := newValue(544)
@@ -43,6 +50,9 @@ func NewBaseCodeBlockFromCode(code string, lang Option[string]) BaseCodeBlock {
 	return BaseCodeBlock{n}
 }
 
+// Marks this code block as a leaf of an external editor, like `WithLeafKey`. Rekeying detaches
+// runtime state from clones.
+//
 // WithLeafKey is <gpui_kit::base::text::CodeBlock>::with_leaf_key.
 func (e BaseCodeBlock) WithLeafKey(key uint64) BaseCodeBlock {
 	o := op(e.n, 256)
@@ -50,6 +60,8 @@ func (e BaseCodeBlock) WithLeafKey(key uint64) BaseCodeBlock {
 	return e
 }
 
+// Sets the fence's info string after the language. It is kept for round trips and is not rendered.
+//
 // WithMeta is <gpui_kit::base::text::CodeBlock>::with_meta.
 func (e BaseCodeBlock) WithMeta(meta Option[string]) BaseCodeBlock {
 	o := op(e.n, 257)
@@ -78,6 +90,9 @@ type FlowPosition struct{ n *node }
 
 func (e FlowPosition) valueNode() *node { return e.n }
 
+// The position of `blocks`ix“ among its siblings. Blocks that render nothing (definitions,
+// breaks) are skipped when looking for the block before it.
+//
 // NewFlowPositionAt is <gpui_kit::base::text::editor_host::FlowPosition>::at.
 func NewFlowPositionAt(blocks []BlockNode, ix int, isLast bool) FlowPosition {
 	n := newValue(546)
@@ -91,6 +106,9 @@ func NewFlowPositionAt(blocks []BlockNode, ix int, isLast bool) FlowPosition {
 	return FlowPosition{n}
 }
 
+// Overrides whether the block opens its flow, e.g. for a chunk of a long list rendered as a list
+// of its own.
+//
 // First is <gpui_kit::base::text::editor_host::FlowPosition>::first.
 func (e FlowPosition) First(isFirst bool) FlowPosition {
 	o := op(e.n, 256)
@@ -98,6 +116,8 @@ func (e FlowPosition) First(isFirst bool) FlowPosition {
 	return e
 }
 
+// Overrides whether the block closes its flow.
+//
 // Last is <gpui_kit::base::text::editor_host::FlowPosition>::last.
 func (e FlowPosition) Last(isLast bool) FlowPosition {
 	o := op(e.n, 257)
@@ -110,6 +130,8 @@ type InlineNode struct{ n *node }
 
 func (e InlineNode) valueNode() *node { return e.n }
 
+// A run of text with no marks.
+//
 // NewInlineNode is <gpui_kit::base::text::editor_host::InlineNode>::new.
 func NewInlineNode(text string) InlineNode {
 	n := newValue(549)
@@ -124,6 +146,8 @@ func NewInlineNodeDefault() InlineNode {
 	return InlineNode{n}
 }
 
+// An inline image, an atomic object in the flow.
+//
 // NewInlineNodeImage is <gpui_kit::base::text::editor_host::InlineNode>::image.
 func NewInlineNodeImage(image ImageNode) InlineNode {
 	n := newValue(826)
@@ -132,6 +156,8 @@ func NewInlineNodeImage(image ImageNode) InlineNode {
 	return InlineNode{n}
 }
 
+// Sets the marks, each a byte range of the text and its style.
+//
 // Marks is <gpui_kit::base::text::editor_host::InlineNode>::marks.
 func (e InlineNode) Marks(marks []TupleRangeTextmark) InlineNode {
 	o := op(e.n, 256)
@@ -154,6 +180,8 @@ func NewParagraphDefault() Paragraph {
 	return Paragraph{n}
 }
 
+// Appends an inline run.
+//
 // Push is (|mut s: gpui_kit::base::text::editor_host::Paragraph, a0| { s.push(a0); s }).
 func (e Paragraph) Push(text InlineNode) Paragraph {
 	o := op(e.n, 257)
@@ -161,6 +189,10 @@ func (e Paragraph) Push(text InlineNode) Paragraph {
 	return e
 }
 
+// Marks this paragraph as a leaf of an external editor: while a `CollectLeafGeometry` scope is
+// active, it reports its geometry under `key` and paints the decorations given for `key`. Rekeying
+// detaches runtime state from clones.
+//
 // WithLeafKey is <gpui_kit::base::text::editor_host::Paragraph>::with_leaf_key.
 func (e Paragraph) WithLeafKey(key uint64) Paragraph {
 	o := op(e.n, 256)
@@ -173,6 +205,9 @@ type RenderContext struct{ n *node }
 
 func (e RenderContext) valueNode() *node { return e.n }
 
+// Creates a local rendering context without reading application globals. The host supplies body
+// typography through its container or `with_body_font_size`.
+//
 // NewRenderContext is <gpui_kit::base::text::editor_host::RenderContext>::new.
 func NewRenderContext(style BaseTextViewStyle) RenderContext {
 	n := newValue(552)
@@ -181,12 +216,17 @@ func NewRenderContext(style BaseTextViewStyle) RenderContext {
 	return RenderContext{n}
 }
 
+// The context TextView would start from: the global `TextViewDefaults` style and code-block
+// highlighter when set, else the theme's style.
+//
 // NewRenderContextFromApp is <gpui_kit::base::text::editor_host::RenderContext>::from_app.
 func NewRenderContextFromApp() RenderContext {
 	n := newValue(551)
 	return RenderContext{n}
 }
 
+// Handles link activation. Without a handler, links use App::open_url.
+//
 // OnLinkClick is <gpui_kit::base::text::editor_host::RenderContext>::on_link_click.
 func (e RenderContext) OnLinkClick(handler func(cx *Cx, e Event83)) RenderContext {
 	o := op(e.n, 259)
@@ -194,6 +234,8 @@ func (e RenderContext) OnLinkClick(handler func(cx *Cx, e Event83)) RenderContex
 	return e
 }
 
+// Sets the font size body text inherits, which the block gaps and heading sizes are relative to.
+//
 // WithBodyFontSize is <gpui_kit::base::text::editor_host::RenderContext>::with_body_font_size.
 func (e RenderContext) WithBodyFontSize(size float32) RenderContext {
 	o := op(e.n, 256)
@@ -201,6 +243,19 @@ func (e RenderContext) WithBodyFontSize(size float32) RenderContext {
 	return e
 }
 
+// Supplies this render's foreground ranges for a keyed paragraph leaf, including a heading or
+// table cell. Replaces any ranges for the same key.
+//
+// Ranges use the leaf's rendered UTF-8 bytes; images and custom inline objects occupy one U+FFFC
+// (three bytes), as in `LeafGeometry`. Text ranges are clipped to each text fragment;
+// non-character boundaries and empty or reversed ranges are ignored. An object's foreground
+// changes only when a range covers its entire placeholder; images are unchanged.
+//
+// These colors override mark and link foregrounds; later ranges win overlaps. Other mark
+// properties and link activation are preserved. Uncovered text inherits its ordinary foreground.
+// Colors belong to this rendering context, never the document tree: supply current theme/surface
+// colors on each render, or omit the ranges to restore inheritance.
+//
 // WithForegroundRanges is <gpui_kit::base::text::editor_host::RenderContext>::with_foreground_ranges.
 func (e RenderContext) WithForegroundRanges(key uint64, ranges []TupleRangeColor) RenderContext {
 	o := op(e.n, 257)
@@ -213,6 +268,9 @@ func (e RenderContext) WithForegroundRanges(key uint64, ranges []TupleRangeColor
 	return e
 }
 
+// Registers a reference-link definition from the host's document. Supply definitions for the
+// entire document, including virtualized blocks.
+//
 // WithLinkReference is <gpui_kit::base::text::editor_host::RenderContext>::with_link_reference.
 func (e RenderContext) WithLinkReference(identifier string, link LinkMark) RenderContext {
 	o := op(e.n, 260)
@@ -221,6 +279,8 @@ func (e RenderContext) WithLinkReference(identifier string, link LinkMark) Rende
 	return e
 }
 
+// Sets the Markdown extensions that render custom nodes.
+//
 // WithMarkdownExtensions is <gpui_kit::base::text::editor_host::RenderContext>::with_markdown_extensions.
 func (e RenderContext) WithMarkdownExtensions(extensions MarkdownExtensionsArc) RenderContext {
 	o := op(e.n, 261)
@@ -228,6 +288,8 @@ func (e RenderContext) WithMarkdownExtensions(extensions MarkdownExtensionsArc) 
 	return e
 }
 
+// Replaces the text style.
+//
 // WithStyle is <gpui_kit::base::text::editor_host::RenderContext>::with_style.
 func (e RenderContext) WithStyle(style BaseTextViewStyle) RenderContext {
 	o := op(e.n, 258)
@@ -258,6 +320,8 @@ func (e TextMark) Code() TextMark {
 	return e
 }
 
+// Mark the text as highlighted (`<mark>`) with the given background color.
+//
 // Highlight is <gpui_kit::base::text::editor_host::TextMark>::highlight.
 func (e TextMark) Highlight(color Color) TextMark {
 	o := op(e.n, 258)

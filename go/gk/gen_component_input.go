@@ -13,6 +13,8 @@ type InputEl struct{ n *node }
 
 func (e InputEl) node() *node { return e.n }
 
+// Create a new `InputEl` element bind to the `InputState`.
+//
 // Input is <gpui_kit::component::input::Input>::new.
 func Input(state InputState, st ...Style) InputEl {
 	useComponentInput()
@@ -30,6 +32,8 @@ func (e InputEl) AccessibilityID(id string) InputEl {
 	return e
 }
 
+// Set the appearance of the input field, if false the input field will no border, background.
+//
 // Appearance is <gpui_kit::component::input::Input>::appearance.
 func (e InputEl) Appearance(appearance bool) InputEl {
 	o := op(e.n, 257)
@@ -44,6 +48,8 @@ func (e InputEl) AriaLabel(label string) InputEl {
 	return e
 }
 
+// Set the bordered for the input, default: true
+//
 // Bordered is <gpui_kit::component::input::Input>::bordered.
 func (e InputEl) Bordered(bordered bool) InputEl {
 	o := op(e.n, 259)
@@ -51,6 +57,8 @@ func (e InputEl) Bordered(bordered bool) InputEl {
 	return e
 }
 
+// Set whether to show the clear button when the input field is not empty, default is false.
+//
 // Cleanable is <gpui_kit::component::input::Input>::cleanable.
 func (e InputEl) Cleanable(cleanable bool) InputEl {
 	o := op(e.n, 260)
@@ -58,6 +66,11 @@ func (e InputEl) Cleanable(cleanable bool) InputEl {
 	return e
 }
 
+// Set the semantic content type for password managers and autofill.
+//
+// This is a component-level semantic hint. It does not change the text value or masked rendering
+// state.
+//
 // ContentType is <gpui_kit::component::input::Input>::content_type.
 func (e InputEl) ContentType(contentType InputContentType) InputEl {
 	o := op(e.n, 261)
@@ -65,6 +78,11 @@ func (e InputEl) ContentType(contentType InputContentType) InputEl {
 	return e
 }
 
+// Sets a custom context menu builder for the input, shown as a native OS menu.
+//
+// If set, this overrides the built-in right-click context menu. It shows only while the state's
+// context menu is enabled, which is the default.
+//
 // ContextMenu is <gpui_kit::component::input::Input>::context_menu.
 func (e InputEl) ContextMenu(f NativeMenu) InputEl {
 	o := op(e.n, 262)
@@ -72,6 +90,8 @@ func (e InputEl) ContextMenu(f NativeMenu) InputEl {
 	return e
 }
 
+// Set to disable the input field.
+//
 // Disabled is <gpui_kit::component::input::Input>::disabled.
 func (e InputEl) Disabled(disabled bool) InputEl {
 	o := op(e.n, 263)
@@ -79,6 +99,8 @@ func (e InputEl) Disabled(disabled bool) InputEl {
 	return e
 }
 
+// Set focus border for the input, default is true.
+//
 // FocusBordered is <gpui_kit::component::input::Input>::focus_bordered.
 func (e InputEl) FocusBordered(bordered bool) InputEl {
 	o := op(e.n, 264)
@@ -86,6 +108,8 @@ func (e InputEl) FocusBordered(bordered bool) InputEl {
 	return e
 }
 
+// Set height of the input (Multi-line only).
+//
 // H is <gpui_kit::component::input::Input>::h.
 func (e InputEl) H(height Length) InputEl {
 	o := op(e.n, 265)
@@ -93,12 +117,16 @@ func (e InputEl) H(height Length) InputEl {
 	return e
 }
 
+// Set full height of the input (Multi-line only).
+//
 // HFull is <gpui_kit::component::input::Input>::h_full.
 func (e InputEl) HFull() InputEl {
 	op(e.n, 266)
 	return e
 }
 
+// Sets the GPUI identity of the input frame. By default it uses the state entity ID.
+//
 // ID is <gpui_kit::component::input::Input>::id.
 func (e InputEl) ID(id ID) InputEl {
 	o := op(e.n, 267)
@@ -106,12 +134,27 @@ func (e InputEl) ID(id ID) InputEl {
 	return e
 }
 
+// Set to enable toggle button for password mask state.
+//
 // MaskToggle is <gpui_kit::component::input::Input>::mask_toggle.
 func (e InputEl) MaskToggle() InputEl {
 	op(e.n, 268)
 	return e
 }
 
+// Intercept paste payloads (images, files) before the default text insertion.
+//
+// The handler receives the clipboard item and returns whether it took the paste: `true` stops the
+// `input::Paste` action so the input inserts nothing, `false` lets it reach the engine, which
+// inserts `clipboard.text()` as today. Text stays in the `Rope`; images and copied files
+// (`ClipboardEntry::Image`, `ClipboardEntry::ExternalPaths`) belong in app-owned state beside the
+// input (e.g. `Attachment`s), never inside it.
+//
+// Known limit: on web `read_from_clipboard()` is `None`, so the handler is skipped there and the
+// input inserts the plain text itself (a keyboard paste arrives through the platform input
+// handler, a menu paste through the asynchronous clipboard read); image paste there needs
+// `read_from_clipboard_async` and permission, out of scope here.
+//
 // OnPaste is <gpui_kit::component::input::Input>::on_paste.
 func (e InputEl) OnPaste(handler func(cx *Cx, e ClipboardItem) bool) InputEl {
 	o := op(e.n, 269)
@@ -119,6 +162,8 @@ func (e InputEl) OnPaste(handler func(cx *Cx, e ClipboardItem) bool) InputEl {
 	return e
 }
 
+// Open a reference after a completed, unconsumed token click.
+//
 // OnTokenClick is <gpui_kit::component::input::Input>::on_token_click.
 func (e InputEl) OnTokenClick(listener func(cx *Cx, e InlineTokenClickEvent)) InputEl {
 	o := op(e.n, 275)
@@ -126,6 +171,9 @@ func (e InputEl) OnTokenClick(listener func(cx *Cx, e InlineTokenClickEvent)) In
 	return e
 }
 
+// Report pointer presence over a token so the application can show a tooltip or run custom logic.
+// Hover never selects or edits.
+//
 // OnTokenHover is <gpui_kit::component::input::Input>::on_token_hover.
 func (e InputEl) OnTokenHover(listener func(cx *Cx, e InlineTokenHoverEvent)) InputEl {
 	o := op(e.n, 276)
@@ -140,6 +188,11 @@ func (e InputEl) Prefix(prefix Element) InputEl {
 	return e
 }
 
+// Set the input field to read-only, default is `false`.
+//
+// Unlike `Disabled`, a read-only input keeps the normal appearance and still can be focused,
+// selected and copied, it only rejects the changes made by the user.
+//
 // Readonly is <gpui_kit::component::input::Input>::readonly.
 func (e InputEl) Readonly(readonly bool) InputEl {
 	o := op(e.n, 271)
@@ -147,6 +200,10 @@ func (e InputEl) Readonly(readonly bool) InputEl {
 	return e
 }
 
+// Override the accessible role for the input.
+//
+// If unset, the role is inferred from multi-line mode and content type.
+//
 // Role is <gpui_kit::component::input::Input>::role.
 func (e InputEl) Role(role RoleOverride) InputEl {
 	o := op(e.n, 272)
@@ -161,6 +218,8 @@ func (e InputEl) Suffix(suffix Element) InputEl {
 	return e
 }
 
+// Set the tab index for the input, default is 0.
+//
 // TabIndex is <gpui_kit::component::input::Input>::tab_index.
 func (e InputEl) TabIndex(index int) InputEl {
 	o := op(e.n, 274)
@@ -168,7 +227,19 @@ func (e InputEl) TabIndex(index int) InputEl {
 	return e
 }
 
-func (e InputEl) PopoverStyle() InputEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e InputEl) PopoverStyle() InputEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e InputEl) RoundedFullStyle() InputEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e InputEl) CornerRadii(radius Corners) InputEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -177,19 +248,32 @@ func (e InputEl) DebugFocused(focusHandle FocusHandle) InputEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e InputEl) DebugGreen() InputEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e InputEl) DebugPink() InputEl                  { tStyledExtDebugPink(e.n); return e }
-func (e InputEl) DebugRed() InputEl                   { tStyledExtDebugRed(e.n); return e }
-func (e InputEl) DebugYellow() InputEl                { tStyledExtDebugYellow(e.n); return e }
-func (e InputEl) FontBlack() InputEl                  { tStyledExtFontBlack(e.n); return e }
-func (e InputEl) FontBold() InputEl                   { tStyledExtFontBold(e.n); return e }
-func (e InputEl) FontExtrabold() InputEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e InputEl) FontExtralight() InputEl             { tStyledExtFontExtralight(e.n); return e }
-func (e InputEl) FontLight() InputEl                  { tStyledExtFontLight(e.n); return e }
-func (e InputEl) FontMedium() InputEl                 { tStyledExtFontMedium(e.n); return e }
-func (e InputEl) FontNormal() InputEl                 { tStyledExtFontNormal(e.n); return e }
-func (e InputEl) FontSemibold() InputEl               { tStyledExtFontSemibold(e.n); return e }
-func (e InputEl) FontThin() InputEl                   { tStyledExtFontThin(e.n); return e }
+func (e InputEl) DebugGreen() InputEl     { tStyledExtDebugGreen(e.n); return e }
+func (e InputEl) DebugPink() InputEl      { tStyledExtDebugPink(e.n); return e }
+func (e InputEl) DebugRed() InputEl       { tStyledExtDebugRed(e.n); return e }
+func (e InputEl) DebugYellow() InputEl    { tStyledExtDebugYellow(e.n); return e }
+func (e InputEl) FontBlack() InputEl      { tStyledExtFontBlack(e.n); return e }
+func (e InputEl) FontBold() InputEl       { tStyledExtFontBold(e.n); return e }
+func (e InputEl) FontExtrabold() InputEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e InputEl) FontExtralight() InputEl { tStyledExtFontExtralight(e.n); return e }
+func (e InputEl) FontLight() InputEl      { tStyledExtFontLight(e.n); return e }
+func (e InputEl) FontMedium() InputEl     { tStyledExtFontMedium(e.n); return e }
+func (e InputEl) FontNormal() InputEl     { tStyledExtFontNormal(e.n); return e }
+func (e InputEl) FontSemibold() InputEl   { tStyledExtFontSemibold(e.n); return e }
+func (e InputEl) FontThin() InputEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e InputEl) HFlex() InputEl                      { tStyledExtHFlex(e.n); return e }
 func (e InputEl) Margins(margins EdgesInto) InputEl   { tStyledExtMargins(e.n, margins); return e }
 func (e InputEl) Paddings(paddings EdgesInto) InputEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -197,13 +281,32 @@ func (e InputEl) RefineStyle(style StyleRefinement) InputEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e InputEl) VFlex() InputEl { tStyledExtVFlex(e.n); return e }
 
-func (e InputEl) Large() InputEl                 { tSizableLarge(e.n); return e }
-func (e InputEl) Small() InputEl                 { tSizableSmall(e.n); return e }
-func (e InputEl) WithSize(size SizeInto) InputEl { tSizableWithSize(e.n, size); return e }
-func (e InputEl) Xsmall() InputEl                { tSizableXsmall(e.n); return e }
+// Set to Size::Large
+func (e InputEl) Large() InputEl { tSizableLarge(e.n); return e }
 
+// Set to Size::Small
+func (e InputEl) Small() InputEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
+func (e InputEl) WithSize(size SizeInto) InputEl { tSizableWithSize(e.n, size); return e }
+
+// Set to Size::XSmall
+func (e InputEl) Xsmall() InputEl { tSizableXsmall(e.n); return e }
+
+// Sets the open state a popover, menu or dropdown holds on its trigger while it is open.
+//
+// Defaults to `selected`, so a trigger only overrides this when its selected state means something
+// other than "my popup is open".
 func (e InputEl) Open(open bool) InputEl { tSelectableOpen(e.n, open); return e }
 func (e InputEl) SecondarySelected(arg0 bool) InputEl {
 	tSelectableSecondarySelected(e.n, arg0)
@@ -216,109 +319,314 @@ func (e InputEl) FocusRing(enabled bool) InputEl { tFocusableExtFocusRing(e.n, e
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e InputEl) Style(st ...Style) InputEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e InputEl) AspectRatio(ratio float32) InputEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e InputEl) Bg(fill Fill) InputEl              { tStyledBg(e.n, fill); return e }
-func (e InputEl) Border(length Length) InputEl      { tStyledBorder(e.n, length); return e }
-func (e InputEl) BorderB(length Length) InputEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e InputEl) Bg(fill Fill) InputEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e InputEl) Border(length Length) InputEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputEl) BorderB(length Length) InputEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e InputEl) BorderColor(borderColor Color) InputEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e InputEl) BorderL(length Length) InputEl        { tStyledBorderL(e.n, length); return e }
-func (e InputEl) BorderR(length Length) InputEl        { tStyledBorderR(e.n, length); return e }
-func (e InputEl) BorderT(length Length) InputEl        { tStyledBorderT(e.n, length); return e }
-func (e InputEl) BorderX(length Length) InputEl        { tStyledBorderX(e.n, length); return e }
-func (e InputEl) BorderY(length Length) InputEl        { tStyledBorderY(e.n, length); return e }
-func (e InputEl) Bottom(length Length) InputEl         { tStyledBottom(e.n, length); return e }
-func (e InputEl) ColEnd(end int16) InputEl             { tStyledColEnd(e.n, end); return e }
-func (e InputEl) ColSpan(span uint16) InputEl          { tStyledColSpan(e.n, span); return e }
-func (e InputEl) ColStart(start int16) InputEl         { tStyledColStart(e.n, start); return e }
-func (e InputEl) Cursor(cursor CursorStyle) InputEl    { tStyledCursor(e.n, cursor); return e }
-func (e InputEl) FlexBasis(basis Length) InputEl       { tStyledFlexBasis(e.n, basis); return e }
-func (e InputEl) FlexGrow(grow float32) InputEl        { tStyledFlexGrow(e.n, grow); return e }
-func (e InputEl) FlexShrink(shrink float32) InputEl    { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputEl) BorderL(length Length) InputEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputEl) BorderR(length Length) InputEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputEl) BorderT(length Length) InputEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e InputEl) BorderX(length Length) InputEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e InputEl) BorderY(length Length) InputEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputEl) Bottom(length Length) InputEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e InputEl) ColEnd(end int16) InputEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e InputEl) ColSpan(span uint16) InputEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e InputEl) ColStart(start int16) InputEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e InputEl) Cursor(cursor CursorStyle) InputEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e InputEl) FlexBasis(basis Length) InputEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e InputEl) FlexGrow(grow float32) InputEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e InputEl) FlexShrink(shrink float32) InputEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e InputEl) FontFamily(familyName string) InputEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e InputEl) FontFeatures(features FontFeatures) InputEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e InputEl) FontWeight(weight FontWeight) InputEl { tStyledFontWeight(e.n, weight); return e }
-func (e InputEl) Gap(length Length) InputEl            { tStyledGap(e.n, length); return e }
-func (e InputEl) GapX(length Length) InputEl           { tStyledGapX(e.n, length); return e }
-func (e InputEl) GapY(length Length) InputEl           { tStyledGapY(e.n, length); return e }
-func (e InputEl) GridCols(cols uint16) InputEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e InputEl) Gap(length Length) InputEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e InputEl) GapX(length Length) InputEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e InputEl) GapY(length Length) InputEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e InputEl) GridCols(cols uint16) InputEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e InputEl) GridColsMaxContent(cols uint16) InputEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e InputEl) GridColsMinContent(cols uint16) InputEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e InputEl) GridRows(rows uint16) InputEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e InputEl) GridRowsMaxContent(rows uint16) InputEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e InputEl) GridRowsMinContent(rows uint16) InputEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e InputEl) Inset(length Length) InputEl          { tStyledInset(e.n, length); return e }
-func (e InputEl) Left(length Length) InputEl           { tStyledLeft(e.n, length); return e }
-func (e InputEl) LineClamp(lines int) InputEl          { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputEl) Inset(length Length) InputEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputEl) Left(length Length) InputEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e InputEl) LineClamp(lines int) InputEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e InputEl) LineHeight(lineHeight Length) InputEl { tStyledLineHeight(e.n, lineHeight); return e }
-func (e InputEl) M(length Length) InputEl              { tStyledM(e.n, length); return e }
-func (e InputEl) MaxH(length Length) InputEl           { tStyledMaxH(e.n, length); return e }
-func (e InputEl) MaxSize(length Length) InputEl        { tStyledMaxSize(e.n, length); return e }
-func (e InputEl) MaxW(length Length) InputEl           { tStyledMaxW(e.n, length); return e }
-func (e InputEl) Mb(length Length) InputEl             { tStyledMb(e.n, length); return e }
-func (e InputEl) MinH(length Length) InputEl           { tStyledMinH(e.n, length); return e }
-func (e InputEl) MinSize(length Length) InputEl        { tStyledMinSize(e.n, length); return e }
-func (e InputEl) MinW(length Length) InputEl           { tStyledMinW(e.n, length); return e }
-func (e InputEl) Ml(length Length) InputEl             { tStyledMl(e.n, length); return e }
-func (e InputEl) Mr(length Length) InputEl             { tStyledMr(e.n, length); return e }
-func (e InputEl) Mt(length Length) InputEl             { tStyledMt(e.n, length); return e }
-func (e InputEl) Mx(length Length) InputEl             { tStyledMx(e.n, length); return e }
-func (e InputEl) My(length Length) InputEl             { tStyledMy(e.n, length); return e }
-func (e InputEl) Opacity(opacity float32) InputEl      { tStyledOpacity(e.n, opacity); return e }
-func (e InputEl) P(length Length) InputEl              { tStyledP(e.n, length); return e }
-func (e InputEl) Pb(length Length) InputEl             { tStyledPb(e.n, length); return e }
-func (e InputEl) Pl(length Length) InputEl             { tStyledPl(e.n, length); return e }
-func (e InputEl) Pr(length Length) InputEl             { tStyledPr(e.n, length); return e }
-func (e InputEl) Pt(length Length) InputEl             { tStyledPt(e.n, length); return e }
-func (e InputEl) Px(length Length) InputEl             { tStyledPx(e.n, length); return e }
-func (e InputEl) Py(length Length) InputEl             { tStyledPy(e.n, length); return e }
-func (e InputEl) Right(length Length) InputEl          { tStyledRight(e.n, length); return e }
-func (e InputEl) Rounded(length Length) InputEl        { tStyledRounded(e.n, length); return e }
-func (e InputEl) RoundedB(length Length) InputEl       { tStyledRoundedB(e.n, length); return e }
-func (e InputEl) RoundedBl(length Length) InputEl      { tStyledRoundedBl(e.n, length); return e }
-func (e InputEl) RoundedBr(length Length) InputEl      { tStyledRoundedBr(e.n, length); return e }
-func (e InputEl) RoundedL(length Length) InputEl       { tStyledRoundedL(e.n, length); return e }
-func (e InputEl) RoundedR(length Length) InputEl       { tStyledRoundedR(e.n, length); return e }
-func (e InputEl) RoundedT(length Length) InputEl       { tStyledRoundedT(e.n, length); return e }
-func (e InputEl) RoundedTl(length Length) InputEl      { tStyledRoundedTl(e.n, length); return e }
-func (e InputEl) RoundedTr(length Length) InputEl      { tStyledRoundedTr(e.n, length); return e }
-func (e InputEl) RowEnd(end int16) InputEl             { tStyledRowEnd(e.n, end); return e }
-func (e InputEl) RowSpan(span uint16) InputEl          { tStyledRowSpan(e.n, span); return e }
-func (e InputEl) RowStart(start int16) InputEl         { tStyledRowStart(e.n, start); return e }
-func (e InputEl) ScrollbarWidth(width Length) InputEl  { tStyledScrollbarWidth(e.n, width); return e }
-func (e InputEl) Shadow(shadows []BoxShadow) InputEl   { tStyledShadow(e.n, shadows); return e }
-func (e InputEl) Size(length Length) InputEl           { tStyledSize(e.n, length); return e }
-func (e InputEl) TextAlign(align TextAlign) InputEl    { tStyledTextAlign(e.n, align); return e }
-func (e InputEl) TextBg(bg Color) InputEl              { tStyledTextBg(e.n, bg); return e }
-func (e InputEl) TextColor(color Color) InputEl        { tStyledTextColor(e.n, color); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e InputEl) M(length Length) InputEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e InputEl) MaxH(length Length) InputEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e InputEl) MaxSize(length Length) InputEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e InputEl) MaxW(length Length) InputEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputEl) Mb(length Length) InputEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e InputEl) MinH(length Length) InputEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e InputEl) MinSize(length Length) InputEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e InputEl) MinW(length Length) InputEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputEl) Ml(length Length) InputEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputEl) Mr(length Length) InputEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputEl) Mt(length Length) InputEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e InputEl) Mx(length Length) InputEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e InputEl) My(length Length) InputEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e InputEl) Opacity(opacity float32) InputEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e InputEl) P(length Length) InputEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputEl) Pb(length Length) InputEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputEl) Pl(length Length) InputEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputEl) Pr(length Length) InputEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputEl) Pt(length Length) InputEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e InputEl) Px(length Length) InputEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e InputEl) Py(length Length) InputEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputEl) Right(length Length) InputEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e InputEl) Rounded(length Length) InputEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputEl) RoundedB(length Length) InputEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e InputEl) RoundedBl(length Length) InputEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e InputEl) RoundedBr(length Length) InputEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputEl) RoundedL(length Length) InputEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputEl) RoundedR(length Length) InputEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputEl) RoundedT(length Length) InputEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e InputEl) RoundedTl(length Length) InputEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e InputEl) RoundedTr(length Length) InputEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e InputEl) RowEnd(end int16) InputEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e InputEl) RowSpan(span uint16) InputEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e InputEl) RowStart(start int16) InputEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e InputEl) ScrollbarWidth(width Length) InputEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e InputEl) Shadow(shadows []BoxShadow) InputEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e InputEl) Size(length Length) InputEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e InputEl) TextAlign(align TextAlign) InputEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e InputEl) TextBg(bg Color) InputEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e InputEl) TextColor(color Color) InputEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e InputEl) TextDecorationColor(color Color) InputEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e InputEl) TextOverflow(overflow TextOverflow) InputEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e InputEl) TextSize(size Length) InputEl { tStyledTextSize(e.n, size); return e }
-func (e InputEl) Top(length Length) InputEl    { tStyledTop(e.n, length); return e }
-func (e InputEl) W(length Length) InputEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputEl) Top(length Length) InputEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e InputEl) W(length Length) InputEl { tStyledW(e.n, length); return e }
 
 // InputGroupEl is gpui_kit::component::input::InputGroup.
 type InputGroupEl struct{ n *node }
@@ -335,6 +643,8 @@ func InputGroup(id ID, st ...Style) InputGroupEl {
 	return InputGroupEl{n}
 }
 
+// Append an addon. Addons on the same side retain their insertion order.
+//
 // Addon is <gpui_kit::component::input::InputGroup>::addon.
 func (e InputGroupEl) Addon(addon InputGroupAddonEl) InputGroupEl {
 	o := op(e.n, 256)
@@ -342,6 +652,8 @@ func (e InputGroupEl) Addon(addon InputGroupAddonEl) InputGroupEl {
 	return e
 }
 
+// Set a name for the group. Name its text control separately with `aria_label`.
+//
 // AriaLabel is <gpui_kit::component::input::InputGroup>::aria_label.
 func (e InputGroupEl) AriaLabel(label string) InputGroupEl {
 	o := op(e.n, 257)
@@ -349,6 +661,8 @@ func (e InputGroupEl) AriaLabel(label string) InputGroupEl {
 	return e
 }
 
+// Prevent editing and interaction throughout this group.
+//
 // Disabled is <gpui_kit::component::input::InputGroup>::disabled.
 func (e InputGroupEl) Disabled(disabled bool) InputGroupEl {
 	o := op(e.n, 258)
@@ -356,6 +670,8 @@ func (e InputGroupEl) Disabled(disabled bool) InputGroupEl {
 	return e
 }
 
+// Set the single-line input or textarea, replacing the previous control.
+//
 // Input is <gpui_kit::component::input::InputGroup>::input.
 func (e InputGroupEl) Input(input InputGroupControlInto) InputGroupEl {
 	o := op(e.n, 259)
@@ -363,6 +679,8 @@ func (e InputGroupEl) Input(input InputGroupControlInto) InputGroupEl {
 	return e
 }
 
+// Display the caller's validation result. This does not reject text edits.
+//
 // Invalid is <gpui_kit::component::input::InputGroup>::invalid.
 func (e InputGroupEl) Invalid(invalid bool) InputGroupEl {
 	o := op(e.n, 260)
@@ -370,6 +688,8 @@ func (e InputGroupEl) Invalid(invalid bool) InputGroupEl {
 	return e
 }
 
+// Prevent editing while preserving selection, copying, and addon actions.
+//
 // Readonly is <gpui_kit::component::input::InputGroup>::readonly.
 func (e InputGroupEl) Readonly(readonly bool) InputGroupEl {
 	o := op(e.n, 261)
@@ -377,7 +697,19 @@ func (e InputGroupEl) Readonly(readonly bool) InputGroupEl {
 	return e
 }
 
-func (e InputGroupEl) PopoverStyle() InputGroupEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e InputGroupEl) PopoverStyle() InputGroupEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e InputGroupEl) RoundedFullStyle() InputGroupEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e InputGroupEl) CornerRadii(radius Corners) InputGroupEl {
@@ -402,7 +734,20 @@ func (e InputGroupEl) FontMedium() InputGroupEl     { tStyledExtFontMedium(e.n);
 func (e InputGroupEl) FontNormal() InputGroupEl     { tStyledExtFontNormal(e.n); return e }
 func (e InputGroupEl) FontSemibold() InputGroupEl   { tStyledExtFontSemibold(e.n); return e }
 func (e InputGroupEl) FontThin() InputGroupEl       { tStyledExtFontThin(e.n); return e }
-func (e InputGroupEl) HFlex() InputGroupEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e InputGroupEl) HFlex() InputGroupEl { tStyledExtHFlex(e.n); return e }
 func (e InputGroupEl) Margins(margins EdgesInto) InputGroupEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -415,12 +760,27 @@ func (e InputGroupEl) RefineStyle(style StyleRefinement) InputGroupEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e InputGroupEl) VFlex() InputGroupEl { tStyledExtVFlex(e.n); return e }
 
-func (e InputGroupEl) Large() InputGroupEl                 { tSizableLarge(e.n); return e }
-func (e InputGroupEl) Small() InputGroupEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e InputGroupEl) Large() InputGroupEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e InputGroupEl) Small() InputGroupEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e InputGroupEl) WithSize(size SizeInto) InputGroupEl { tSizableWithSize(e.n, size); return e }
-func (e InputGroupEl) Xsmall() InputGroupEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e InputGroupEl) Xsmall() InputGroupEl { tSizableXsmall(e.n); return e }
 
 func (e InputGroupEl) FocusRing(enabled bool) InputGroupEl {
 	tFocusableExtFocusRing(e.n, enabled)
@@ -430,128 +790,335 @@ func (e InputGroupEl) FocusRing(enabled bool) InputGroupEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e InputGroupEl) Style(st ...Style) InputGroupEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e InputGroupEl) AspectRatio(ratio float32) InputGroupEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e InputGroupEl) Bg(fill Fill) InputGroupEl          { tStyledBg(e.n, fill); return e }
-func (e InputGroupEl) Border(length Length) InputGroupEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e InputGroupEl) Bg(fill Fill) InputGroupEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e InputGroupEl) Border(length Length) InputGroupEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupEl) BorderB(length Length) InputGroupEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e InputGroupEl) BorderColor(borderColor Color) InputGroupEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e InputGroupEl) BorderL(length Length) InputGroupEl     { tStyledBorderL(e.n, length); return e }
-func (e InputGroupEl) BorderR(length Length) InputGroupEl     { tStyledBorderR(e.n, length); return e }
-func (e InputGroupEl) BorderT(length Length) InputGroupEl     { tStyledBorderT(e.n, length); return e }
-func (e InputGroupEl) BorderX(length Length) InputGroupEl     { tStyledBorderX(e.n, length); return e }
-func (e InputGroupEl) BorderY(length Length) InputGroupEl     { tStyledBorderY(e.n, length); return e }
-func (e InputGroupEl) Bottom(length Length) InputGroupEl      { tStyledBottom(e.n, length); return e }
-func (e InputGroupEl) ColEnd(end int16) InputGroupEl          { tStyledColEnd(e.n, end); return e }
-func (e InputGroupEl) ColSpan(span uint16) InputGroupEl       { tStyledColSpan(e.n, span); return e }
-func (e InputGroupEl) ColStart(start int16) InputGroupEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputGroupEl) BorderL(length Length) InputGroupEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputGroupEl) BorderR(length Length) InputGroupEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputGroupEl) BorderT(length Length) InputGroupEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e InputGroupEl) BorderX(length Length) InputGroupEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e InputGroupEl) BorderY(length Length) InputGroupEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputGroupEl) Bottom(length Length) InputGroupEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e InputGroupEl) ColEnd(end int16) InputGroupEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e InputGroupEl) ColSpan(span uint16) InputGroupEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e InputGroupEl) ColStart(start int16) InputGroupEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e InputGroupEl) Cursor(cursor CursorStyle) InputGroupEl { tStyledCursor(e.n, cursor); return e }
-func (e InputGroupEl) FlexBasis(basis Length) InputGroupEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e InputGroupEl) FlexGrow(grow float32) InputGroupEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e InputGroupEl) FlexBasis(basis Length) InputGroupEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e InputGroupEl) FlexGrow(grow float32) InputGroupEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e InputGroupEl) FlexShrink(shrink float32) InputGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e InputGroupEl) FontFamily(familyName string) InputGroupEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e InputGroupEl) FontFeatures(features FontFeatures) InputGroupEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e InputGroupEl) FontWeight(weight FontWeight) InputGroupEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e InputGroupEl) Gap(length Length) InputGroupEl    { tStyledGap(e.n, length); return e }
-func (e InputGroupEl) GapX(length Length) InputGroupEl   { tStyledGapX(e.n, length); return e }
-func (e InputGroupEl) GapY(length Length) InputGroupEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e InputGroupEl) Gap(length Length) InputGroupEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e InputGroupEl) GapX(length Length) InputGroupEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e InputGroupEl) GapY(length Length) InputGroupEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e InputGroupEl) GridCols(cols uint16) InputGroupEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e InputGroupEl) GridColsMaxContent(cols uint16) InputGroupEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e InputGroupEl) GridColsMinContent(cols uint16) InputGroupEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e InputGroupEl) GridRows(rows uint16) InputGroupEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e InputGroupEl) GridRowsMaxContent(rows uint16) InputGroupEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e InputGroupEl) GridRowsMinContent(rows uint16) InputGroupEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e InputGroupEl) H(length Length) InputGroupEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e InputGroupEl) H(length Length) InputGroupEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupEl) Inset(length Length) InputGroupEl { tStyledInset(e.n, length); return e }
-func (e InputGroupEl) Left(length Length) InputGroupEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputGroupEl) Left(length Length) InputGroupEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e InputGroupEl) LineClamp(lines int) InputGroupEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e InputGroupEl) LineHeight(lineHeight Length) InputGroupEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e InputGroupEl) M(length Length) InputGroupEl         { tStyledM(e.n, length); return e }
-func (e InputGroupEl) MaxH(length Length) InputGroupEl      { tStyledMaxH(e.n, length); return e }
-func (e InputGroupEl) MaxSize(length Length) InputGroupEl   { tStyledMaxSize(e.n, length); return e }
-func (e InputGroupEl) MaxW(length Length) InputGroupEl      { tStyledMaxW(e.n, length); return e }
-func (e InputGroupEl) Mb(length Length) InputGroupEl        { tStyledMb(e.n, length); return e }
-func (e InputGroupEl) MinH(length Length) InputGroupEl      { tStyledMinH(e.n, length); return e }
-func (e InputGroupEl) MinSize(length Length) InputGroupEl   { tStyledMinSize(e.n, length); return e }
-func (e InputGroupEl) MinW(length Length) InputGroupEl      { tStyledMinW(e.n, length); return e }
-func (e InputGroupEl) Ml(length Length) InputGroupEl        { tStyledMl(e.n, length); return e }
-func (e InputGroupEl) Mr(length Length) InputGroupEl        { tStyledMr(e.n, length); return e }
-func (e InputGroupEl) Mt(length Length) InputGroupEl        { tStyledMt(e.n, length); return e }
-func (e InputGroupEl) Mx(length Length) InputGroupEl        { tStyledMx(e.n, length); return e }
-func (e InputGroupEl) My(length Length) InputGroupEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e InputGroupEl) M(length Length) InputGroupEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e InputGroupEl) MaxH(length Length) InputGroupEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e InputGroupEl) MaxSize(length Length) InputGroupEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e InputGroupEl) MaxW(length Length) InputGroupEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupEl) Mb(length Length) InputGroupEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e InputGroupEl) MinH(length Length) InputGroupEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e InputGroupEl) MinSize(length Length) InputGroupEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e InputGroupEl) MinW(length Length) InputGroupEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupEl) Ml(length Length) InputGroupEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupEl) Mr(length Length) InputGroupEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupEl) Mt(length Length) InputGroupEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e InputGroupEl) Mx(length Length) InputGroupEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e InputGroupEl) My(length Length) InputGroupEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e InputGroupEl) Opacity(opacity float32) InputGroupEl { tStyledOpacity(e.n, opacity); return e }
-func (e InputGroupEl) P(length Length) InputGroupEl         { tStyledP(e.n, length); return e }
-func (e InputGroupEl) Pb(length Length) InputGroupEl        { tStyledPb(e.n, length); return e }
-func (e InputGroupEl) Pl(length Length) InputGroupEl        { tStyledPl(e.n, length); return e }
-func (e InputGroupEl) Pr(length Length) InputGroupEl        { tStyledPr(e.n, length); return e }
-func (e InputGroupEl) Pt(length Length) InputGroupEl        { tStyledPt(e.n, length); return e }
-func (e InputGroupEl) Px(length Length) InputGroupEl        { tStyledPx(e.n, length); return e }
-func (e InputGroupEl) Py(length Length) InputGroupEl        { tStyledPy(e.n, length); return e }
-func (e InputGroupEl) Right(length Length) InputGroupEl     { tStyledRight(e.n, length); return e }
-func (e InputGroupEl) Rounded(length Length) InputGroupEl   { tStyledRounded(e.n, length); return e }
-func (e InputGroupEl) RoundedB(length Length) InputGroupEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e InputGroupEl) P(length Length) InputGroupEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputGroupEl) Pb(length Length) InputGroupEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputGroupEl) Pl(length Length) InputGroupEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputGroupEl) Pr(length Length) InputGroupEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputGroupEl) Pt(length Length) InputGroupEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e InputGroupEl) Px(length Length) InputGroupEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e InputGroupEl) Py(length Length) InputGroupEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputGroupEl) Right(length Length) InputGroupEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e InputGroupEl) Rounded(length Length) InputGroupEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputGroupEl) RoundedB(length Length) InputGroupEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupEl) RoundedBl(length Length) InputGroupEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupEl) RoundedBr(length Length) InputGroupEl { tStyledRoundedBr(e.n, length); return e }
-func (e InputGroupEl) RoundedL(length Length) InputGroupEl  { tStyledRoundedL(e.n, length); return e }
-func (e InputGroupEl) RoundedR(length Length) InputGroupEl  { tStyledRoundedR(e.n, length); return e }
-func (e InputGroupEl) RoundedT(length Length) InputGroupEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputGroupEl) RoundedL(length Length) InputGroupEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputGroupEl) RoundedR(length Length) InputGroupEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputGroupEl) RoundedT(length Length) InputGroupEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupEl) RoundedTl(length Length) InputGroupEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupEl) RoundedTr(length Length) InputGroupEl { tStyledRoundedTr(e.n, length); return e }
-func (e InputGroupEl) RowEnd(end int16) InputGroupEl        { tStyledRowEnd(e.n, end); return e }
-func (e InputGroupEl) RowSpan(span uint16) InputGroupEl     { tStyledRowSpan(e.n, span); return e }
-func (e InputGroupEl) RowStart(start int16) InputGroupEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e InputGroupEl) RowEnd(end int16) InputGroupEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e InputGroupEl) RowSpan(span uint16) InputGroupEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e InputGroupEl) RowStart(start int16) InputGroupEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e InputGroupEl) ScrollbarWidth(width Length) InputGroupEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e InputGroupEl) Shadow(shadows []BoxShadow) InputGroupEl { tStyledShadow(e.n, shadows); return e }
-func (e InputGroupEl) Size(length Length) InputGroupEl         { tStyledSize(e.n, length); return e }
-func (e InputGroupEl) TextAlign(align TextAlign) InputGroupEl  { tStyledTextAlign(e.n, align); return e }
-func (e InputGroupEl) TextBg(bg Color) InputGroupEl            { tStyledTextBg(e.n, bg); return e }
-func (e InputGroupEl) TextColor(color Color) InputGroupEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e InputGroupEl) Size(length Length) InputGroupEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e InputGroupEl) TextAlign(align TextAlign) InputGroupEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e InputGroupEl) TextBg(bg Color) InputGroupEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e InputGroupEl) TextColor(color Color) InputGroupEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e InputGroupEl) TextDecorationColor(color Color) InputGroupEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e InputGroupEl) TextOverflow(overflow TextOverflow) InputGroupEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupEl) TextSize(size Length) InputGroupEl { tStyledTextSize(e.n, size); return e }
-func (e InputGroupEl) Top(length Length) InputGroupEl    { tStyledTop(e.n, length); return e }
-func (e InputGroupEl) W(length Length) InputGroupEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputGroupEl) Top(length Length) InputGroupEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e InputGroupEl) W(length Length) InputGroupEl { tStyledW(e.n, length); return e }
 
 // InputGroupAddonEl is gpui_kit::component::input::InputGroupAddon.
 type InputGroupAddonEl struct{ n *node }
@@ -575,17 +1142,43 @@ func (e InputGroupAddonEl) Align(alignment InputGroupAddonAlignment) InputGroupA
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e InputGroupAddonEl) PopoverStyle() InputGroupAddonEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e InputGroupAddonEl) RoundedFullStyle() InputGroupAddonEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e InputGroupAddonEl) FocusRingStyle() InputGroupAddonEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e InputGroupAddonEl) OnPrepaint(callback func(cx *Cx, e Bounds)) InputGroupAddonEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -616,7 +1209,20 @@ func (e InputGroupAddonEl) FontMedium() InputGroupAddonEl   { tStyledExtFontMedi
 func (e InputGroupAddonEl) FontNormal() InputGroupAddonEl   { tStyledExtFontNormal(e.n); return e }
 func (e InputGroupAddonEl) FontSemibold() InputGroupAddonEl { tStyledExtFontSemibold(e.n); return e }
 func (e InputGroupAddonEl) FontThin() InputGroupAddonEl     { tStyledExtFontThin(e.n); return e }
-func (e InputGroupAddonEl) HFlex() InputGroupAddonEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e InputGroupAddonEl) HFlex() InputGroupAddonEl { tStyledExtHFlex(e.n); return e }
 func (e InputGroupAddonEl) Margins(margins EdgesInto) InputGroupAddonEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -629,6 +1235,11 @@ func (e InputGroupAddonEl) RefineStyle(style StyleRefinement) InputGroupAddonEl 
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e InputGroupAddonEl) VFlex() InputGroupAddonEl { tStyledExtVFlex(e.n); return e }
 
 func (e InputGroupAddonEl) Text(s string) InputGroupAddonEl { putText(e.n, s); return e }
@@ -636,10 +1247,13 @@ func (e InputGroupAddonEl) Text(s string) InputGroupAddonEl { putText(e.n, s); r
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e InputGroupAddonEl) ChildView(v View) InputGroupAddonEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e InputGroupAddonEl) Child(child Element) InputGroupAddonEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e InputGroupAddonEl) Children(children ...Element) InputGroupAddonEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -648,236 +1262,443 @@ func (e InputGroupAddonEl) Children(children ...Element) InputGroupAddonEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e InputGroupAddonEl) Style(st ...Style) InputGroupAddonEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e InputGroupAddonEl) AspectRatio(ratio float32) InputGroupAddonEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e InputGroupAddonEl) Bg(fill Fill) InputGroupAddonEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e InputGroupAddonEl) Border(length Length) InputGroupAddonEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupAddonEl) BorderB(length Length) InputGroupAddonEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e InputGroupAddonEl) BorderColor(borderColor Color) InputGroupAddonEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupAddonEl) BorderL(length Length) InputGroupAddonEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupAddonEl) BorderR(length Length) InputGroupAddonEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupAddonEl) BorderT(length Length) InputGroupAddonEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e InputGroupAddonEl) BorderX(length Length) InputGroupAddonEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e InputGroupAddonEl) BorderY(length Length) InputGroupAddonEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupAddonEl) Bottom(length Length) InputGroupAddonEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e InputGroupAddonEl) ColEnd(end int16) InputGroupAddonEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e InputGroupAddonEl) ColSpan(span uint16) InputGroupAddonEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e InputGroupAddonEl) ColStart(start int16) InputGroupAddonEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e InputGroupAddonEl) Cursor(cursor CursorStyle) InputGroupAddonEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e InputGroupAddonEl) FlexBasis(basis Length) InputGroupAddonEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e InputGroupAddonEl) FlexGrow(grow float32) InputGroupAddonEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e InputGroupAddonEl) FlexShrink(shrink float32) InputGroupAddonEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e InputGroupAddonEl) FontFamily(familyName string) InputGroupAddonEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e InputGroupAddonEl) FontFeatures(features FontFeatures) InputGroupAddonEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e InputGroupAddonEl) FontWeight(weight FontWeight) InputGroupAddonEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e InputGroupAddonEl) Gap(length Length) InputGroupAddonEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e InputGroupAddonEl) Gap(length Length) InputGroupAddonEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e InputGroupAddonEl) GapX(length Length) InputGroupAddonEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e InputGroupAddonEl) GapY(length Length) InputGroupAddonEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e InputGroupAddonEl) GridCols(cols uint16) InputGroupAddonEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e InputGroupAddonEl) GridColsMaxContent(cols uint16) InputGroupAddonEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e InputGroupAddonEl) GridColsMinContent(cols uint16) InputGroupAddonEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e InputGroupAddonEl) GridRows(rows uint16) InputGroupAddonEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e InputGroupAddonEl) GridRowsMaxContent(rows uint16) InputGroupAddonEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e InputGroupAddonEl) GridRowsMinContent(rows uint16) InputGroupAddonEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e InputGroupAddonEl) H(length Length) InputGroupAddonEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupAddonEl) Inset(length Length) InputGroupAddonEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupAddonEl) Left(length Length) InputGroupAddonEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e InputGroupAddonEl) LineClamp(lines int) InputGroupAddonEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e InputGroupAddonEl) LineHeight(lineHeight Length) InputGroupAddonEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e InputGroupAddonEl) M(length Length) InputGroupAddonEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e InputGroupAddonEl) M(length Length) InputGroupAddonEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e InputGroupAddonEl) MaxH(length Length) InputGroupAddonEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e InputGroupAddonEl) MaxSize(length Length) InputGroupAddonEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e InputGroupAddonEl) MaxW(length Length) InputGroupAddonEl { tStyledMaxW(e.n, length); return e }
-func (e InputGroupAddonEl) Mb(length Length) InputGroupAddonEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupAddonEl) Mb(length Length) InputGroupAddonEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e InputGroupAddonEl) MinH(length Length) InputGroupAddonEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e InputGroupAddonEl) MinSize(length Length) InputGroupAddonEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e InputGroupAddonEl) MinW(length Length) InputGroupAddonEl { tStyledMinW(e.n, length); return e }
-func (e InputGroupAddonEl) Ml(length Length) InputGroupAddonEl   { tStyledMl(e.n, length); return e }
-func (e InputGroupAddonEl) Mr(length Length) InputGroupAddonEl   { tStyledMr(e.n, length); return e }
-func (e InputGroupAddonEl) Mt(length Length) InputGroupAddonEl   { tStyledMt(e.n, length); return e }
-func (e InputGroupAddonEl) Mx(length Length) InputGroupAddonEl   { tStyledMx(e.n, length); return e }
-func (e InputGroupAddonEl) My(length Length) InputGroupAddonEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupAddonEl) Ml(length Length) InputGroupAddonEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupAddonEl) Mr(length Length) InputGroupAddonEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupAddonEl) Mt(length Length) InputGroupAddonEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e InputGroupAddonEl) Mx(length Length) InputGroupAddonEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e InputGroupAddonEl) My(length Length) InputGroupAddonEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e InputGroupAddonEl) Opacity(opacity float32) InputGroupAddonEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e InputGroupAddonEl) P(length Length) InputGroupAddonEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e InputGroupAddonEl) P(length Length) InputGroupAddonEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e InputGroupAddonEl) Pb(length Length) InputGroupAddonEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e InputGroupAddonEl) Pl(length Length) InputGroupAddonEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e InputGroupAddonEl) Pr(length Length) InputGroupAddonEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e InputGroupAddonEl) Pt(length Length) InputGroupAddonEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e InputGroupAddonEl) Px(length Length) InputGroupAddonEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e InputGroupAddonEl) Py(length Length) InputGroupAddonEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupAddonEl) Right(length Length) InputGroupAddonEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e InputGroupAddonEl) Rounded(length Length) InputGroupAddonEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupAddonEl) RoundedB(length Length) InputGroupAddonEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupAddonEl) RoundedBl(length Length) InputGroupAddonEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupAddonEl) RoundedBr(length Length) InputGroupAddonEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupAddonEl) RoundedL(length Length) InputGroupAddonEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupAddonEl) RoundedR(length Length) InputGroupAddonEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupAddonEl) RoundedT(length Length) InputGroupAddonEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupAddonEl) RoundedTl(length Length) InputGroupAddonEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupAddonEl) RoundedTr(length Length) InputGroupAddonEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e InputGroupAddonEl) RowEnd(end int16) InputGroupAddonEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e InputGroupAddonEl) RowSpan(span uint16) InputGroupAddonEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e InputGroupAddonEl) RowStart(start int16) InputGroupAddonEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e InputGroupAddonEl) ScrollbarWidth(width Length) InputGroupAddonEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e InputGroupAddonEl) Shadow(shadows []BoxShadow) InputGroupAddonEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e InputGroupAddonEl) Size(length Length) InputGroupAddonEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e InputGroupAddonEl) TextAlign(align TextAlign) InputGroupAddonEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupAddonEl) TextBg(bg Color) InputGroupAddonEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupAddonEl) TextColor(color Color) InputGroupAddonEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e InputGroupAddonEl) TextDecorationColor(color Color) InputGroupAddonEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e InputGroupAddonEl) TextOverflow(overflow TextOverflow) InputGroupAddonEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupAddonEl) TextSize(size Length) InputGroupAddonEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupAddonEl) Top(length Length) InputGroupAddonEl { tStyledTop(e.n, length); return e }
-func (e InputGroupAddonEl) W(length Length) InputGroupAddonEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e InputGroupAddonEl) W(length Length) InputGroupAddonEl { tStyledW(e.n, length); return e }
 
 // InputGroupButtonEl is gpui_kit::component::input::InputGroupButton.
 type InputGroupButtonEl struct{ n *node }
@@ -970,20 +1791,46 @@ func (e InputGroupButtonEl) TooltipShowDelay(delay time.Duration) InputGroupButt
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e InputGroupButtonEl) PopoverStyle() InputGroupButtonEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e InputGroupButtonEl) RoundedFullStyle() InputGroupButtonEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e InputGroupButtonEl) FocusRingStyle() InputGroupButtonEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e InputGroupButtonEl) OnPrepaint(callback func(cx *Cx, e Bounds)) InputGroupButtonEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1017,7 +1864,20 @@ func (e InputGroupButtonEl) FontMedium() InputGroupButtonEl   { tStyledExtFontMe
 func (e InputGroupButtonEl) FontNormal() InputGroupButtonEl   { tStyledExtFontNormal(e.n); return e }
 func (e InputGroupButtonEl) FontSemibold() InputGroupButtonEl { tStyledExtFontSemibold(e.n); return e }
 func (e InputGroupButtonEl) FontThin() InputGroupButtonEl     { tStyledExtFontThin(e.n); return e }
-func (e InputGroupButtonEl) HFlex() InputGroupButtonEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e InputGroupButtonEl) HFlex() InputGroupButtonEl { tStyledExtHFlex(e.n); return e }
 func (e InputGroupButtonEl) Margins(margins EdgesInto) InputGroupButtonEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1030,29 +1890,63 @@ func (e InputGroupButtonEl) RefineStyle(style StyleRefinement) InputGroupButtonE
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e InputGroupButtonEl) VFlex() InputGroupButtonEl { tStyledExtVFlex(e.n); return e }
 
+// Set to Size::Large
 func (e InputGroupButtonEl) Large() InputGroupButtonEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
 func (e InputGroupButtonEl) Small() InputGroupButtonEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e InputGroupButtonEl) WithSize(size SizeInto) InputGroupButtonEl {
 	tSizableWithSize(e.n, size)
 	return e
 }
+
+// Set to Size::XSmall
 func (e InputGroupButtonEl) Xsmall() InputGroupButtonEl { tSizableXsmall(e.n); return e }
 
+// With the custom style for the Button.
 func (e InputGroupButtonEl) Custom(style ButtonCustomVariant) InputGroupButtonEl {
 	tButtonVariantsCustom(e.n, style)
 	return e
 }
-func (e InputGroupButtonEl) Danger() InputGroupButtonEl    { tButtonVariantsDanger(e.n); return e }
-func (e InputGroupButtonEl) Ghost() InputGroupButtonEl     { tButtonVariantsGhost(e.n); return e }
-func (e InputGroupButtonEl) Info() InputGroupButtonEl      { tButtonVariantsInfo(e.n); return e }
-func (e InputGroupButtonEl) Link() InputGroupButtonEl      { tButtonVariantsLink(e.n); return e }
-func (e InputGroupButtonEl) Primary() InputGroupButtonEl   { tButtonVariantsPrimary(e.n); return e }
+
+// With the danger style for the Button.
+func (e InputGroupButtonEl) Danger() InputGroupButtonEl { tButtonVariantsDanger(e.n); return e }
+
+// With the ghost style for the Button.
+func (e InputGroupButtonEl) Ghost() InputGroupButtonEl { tButtonVariantsGhost(e.n); return e }
+
+// With the info style for the Button.
+func (e InputGroupButtonEl) Info() InputGroupButtonEl { tButtonVariantsInfo(e.n); return e }
+
+// With the link style for the Button.
+func (e InputGroupButtonEl) Link() InputGroupButtonEl { tButtonVariantsLink(e.n); return e }
+
+// With the primary style for the Button.
+func (e InputGroupButtonEl) Primary() InputGroupButtonEl { tButtonVariantsPrimary(e.n); return e }
+
+// With the secondary style for the Button.
 func (e InputGroupButtonEl) Secondary() InputGroupButtonEl { tButtonVariantsSecondary(e.n); return e }
-func (e InputGroupButtonEl) Success() InputGroupButtonEl   { tButtonVariantsSuccess(e.n); return e }
-func (e InputGroupButtonEl) Text() InputGroupButtonEl      { tButtonVariantsText(e.n); return e }
-func (e InputGroupButtonEl) Warning() InputGroupButtonEl   { tButtonVariantsWarning(e.n); return e }
+
+// With the success style for the Button.
+func (e InputGroupButtonEl) Success() InputGroupButtonEl { tButtonVariantsSuccess(e.n); return e }
+
+// With the text style for the Button, it will no padding look like a normal text.
+func (e InputGroupButtonEl) Text() InputGroupButtonEl { tButtonVariantsText(e.n); return e }
+
+// With the warning style for the Button.
+func (e InputGroupButtonEl) Warning() InputGroupButtonEl { tButtonVariantsWarning(e.n); return e }
 func (e InputGroupButtonEl) WithVariant(variant ButtonVariant) InputGroupButtonEl {
 	tButtonVariantsWithVariant(e.n, variant)
 	return e
@@ -1063,6 +1957,10 @@ func (e InputGroupButtonEl) Disabled(disabled bool) InputGroupButtonEl {
 	return e
 }
 
+// Sets the open state a popover, menu or dropdown holds on its trigger while it is open.
+//
+// Defaults to `selected`, so a trigger only overrides this when its selected state means something
+// other than "my popup is open".
 func (e InputGroupButtonEl) Open(open bool) InputGroupButtonEl { tSelectableOpen(e.n, open); return e }
 func (e InputGroupButtonEl) SecondarySelected(arg0 bool) InputGroupButtonEl {
 	tSelectableSecondarySelected(e.n, arg0)
@@ -1073,160 +1971,342 @@ func (e InputGroupButtonEl) Selected(selected bool) InputGroupButtonEl {
 	return e
 }
 
+// Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
+// equivalent to `block_mouse_except_scroll`.
+//
+// See `is_hovered` for details.
 func (e InputGroupButtonEl) BlockMouseExceptScroll() InputGroupButtonEl {
 	tInteractiveElementBlockMouseExceptScroll(e.n)
 	return e
 }
+
+// Use the given predicate to determine whether or not a drop event should be dispatched to this
+// element. The fluent API equivalent to `can_drop`.
 func (e InputGroupButtonEl) CanDrop(predicate DropAccept) InputGroupButtonEl {
 	tInteractiveElementCanDrop(e.n, predicate)
 	return e
 }
+
+// Capture the given action, before normal action dispatch can fire. The fluent API equivalent to
+// `capture_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) CaptureAction(listener ActionHandler) InputGroupButtonEl {
 	tInteractiveElementCaptureAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementCaptureAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementCaptureAnyMouseUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the capture phase. The fluent API equivalent
+// to `capture_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) InputGroupButtonEl {
 	tInteractiveElementCaptureKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the capture phase. The fluent API equivalent to
+// `capture_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) InputGroupButtonEl {
 	tInteractiveElementCaptureKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the capture phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) InputGroupButtonEl {
 	tInteractiveElementCaptureMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the capture phase. The fluent API
+// equivalent to `capture_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) InputGroupButtonEl {
 	tInteractiveElementCapturePinch(e.n, listener)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element
 func (e InputGroupButtonEl) DragOver(f StyleRefinement) InputGroupButtonEl {
 	tInteractiveElementDragOver(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element, specifically, is focused. Requires that
+// the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e InputGroupButtonEl) Focus(f StyleRefinement) InputGroupButtonEl {
 	tInteractiveElementFocus(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element is focused via keyboard navigation. This is
+// similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
+// the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
+// Elements can be made focusable using `TrackFocus`.
 func (e InputGroupButtonEl) FocusVisible(f StyleRefinement) InputGroupButtonEl {
 	tInteractiveElementFocusVisible(e.n, f)
 	return e
 }
+
+// Assign this element to a group of elements that can be styled together
 func (e InputGroupButtonEl) Group(group string) InputGroupButtonEl {
 	tInteractiveElementGroup(e.n, group)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element's group
 func (e InputGroupButtonEl) GroupDragOver(groupName string, f StyleRefinement) InputGroupButtonEl {
 	tInteractiveElementGroupDragOver(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over a group member
 func (e InputGroupButtonEl) GroupHover(groupName string, f StyleRefinement) InputGroupButtonEl {
 	tInteractiveElementGroupHover(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over it
 func (e InputGroupButtonEl) Hover(f StyleRefinement) InputGroupButtonEl {
 	tInteractiveElementHover(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element is inside another element that is focused.
+// Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e InputGroupButtonEl) InFocus(f StyleRefinement) InputGroupButtonEl {
 	tInteractiveElementInFocus(e.n, f)
 	return e
 }
+
+// Set the keymap context for this element. This will be used to determine which action to dispatch
+// from the keymap.
 func (e InputGroupButtonEl) KeyContext(keyContext string) InputGroupButtonEl {
 	tInteractiveElementKeyContext(e.n, keyContext)
 	return e
 }
+
+// Block the mouse from all interactions with elements behind this element's hitbox. Typically
+// `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
 func (e InputGroupButtonEl) Occlude() InputGroupButtonEl { tInteractiveElementOcclude(e.n); return e }
+
+// Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
+// to `on_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnAction(listener ActionHandler) InputGroupButtonEl {
 	tInteractiveElementOnAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `on_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementOnAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to back-navigation gestures that start over this element, such as the
+// iOS swipe from the leading screen edge. The innermost element with a back listener claims the
+// gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) InputGroupButtonEl {
 	tInteractiveElementOnBackGesture(e.n, listener)
 	return e
 }
+
+// Bind the given callback to an action dispatch, based on a dynamic action parameter instead of a
+// type parameter. Useful for component libraries that want to expose action bindings to their
+// users. The fluent API equivalent to `on_boxed_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) InputGroupButtonEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
 	return e
 }
+
+// Bind the given callback to drop events of the given type, whether or not the drag started on
+// this element. The fluent API equivalent to `on_drop`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnDrop(listener func(cx *Cx, e DragValue)) InputGroupButtonEl {
 	tInteractiveElementOnDrop(e.n, listener)
 	return e
 }
+
+// Bind the given callback to `Exited` when a platform file drag leaves this element's window while
+// the element is hovered.
+//
+// This is a window-local exit event, not notification that the platform drag session ended. The
+// fluent API equivalent to `on_file_drop_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) InputGroupButtonEl {
 	tInteractiveElementOnFileDropExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the bubble phase. The fluent API equivalent to
+// `on_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) InputGroupButtonEl {
 	tInteractiveElementOnKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the bubble phase. The fluent API equivalent to
+// `on_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) InputGroupButtonEl {
 	tInteractiveElementOnKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to modifiers changing events. The fluent API equivalent to
+// `on_modifiers_changed`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) InputGroupButtonEl {
 	tInteractiveElementOnModifiersChanged(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for the given mouse button. The fluent API
+// equivalent to `on_mouse_down`.
+//
+// See `listener` to get access to the view state from this callback.
 func (e InputGroupButtonEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMouseDown(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event, on any button, during the capture phase, when
+// the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_down_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMouseDownOut(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse exit event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMouseExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse move event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_move`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMouseMove(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the bubble phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for the given button, during the bubble phase. The
+// fluent API equivalent to `on_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMouseUp(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event, for the given button, during the capture phase,
+// when the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_up_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMouseUpOut(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the bubble phase. The fluent API
+// equivalent to `on_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnPinch(listener func(cx *Cx, e PinchEvent)) InputGroupButtonEl {
 	tInteractiveElementOnPinch(e.n, listener)
 	return e
 }
+
+// Bind the given callback to scroll events during the bubble phase. The fluent API equivalent to
+// `on_scroll`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) InputGroupButtonEl {
 	tInteractiveElementOnScroll(e.n, listener)
 	return e
 }
+
+// Designate this div as a "tab group". Tab groups have their own location in the tab-index order,
+// but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
+// the order of tab stops within the group, without having to renumber all the tab stops in the
+// whole application.
 func (e InputGroupButtonEl) TabGroup() InputGroupButtonEl { tInteractiveElementTabGroup(e.n); return e }
+
+// Set whether this element is a tab stop.
+//
+// When false, the element remains in tab-index order but cannot be reached via keyboard
+// navigation. Should only be used with `tab_index`.
 func (e InputGroupButtonEl) TabStop(tabStop bool) InputGroupButtonEl {
 	tInteractiveElementTabStop(e.n, tabStop)
 	return e
 }
+
+// Track the focus state of the given focus handle on this element. If the focus handle is focused
+// by the application, this element will apply its focused styles.
 func (e InputGroupButtonEl) TrackFocus(focusHandle FocusHandle) InputGroupButtonEl {
 	tInteractiveElementTrackFocus(e.n, focusHandle)
 	return e
 }
+
+// Set the bounds of this element as a window control area for the platform window. The fluent API
+// equivalent to `window_control_area`.
 func (e InputGroupButtonEl) WindowControlArea(area WindowControlArea) InputGroupButtonEl {
 	tInteractiveElementWindowControlArea(e.n, area)
 	return e
@@ -1235,268 +2315,478 @@ func (e InputGroupButtonEl) WindowControlArea(area WindowControlArea) InputGroup
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e InputGroupButtonEl) Style(st ...Style) InputGroupButtonEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e InputGroupButtonEl) AspectRatio(ratio float32) InputGroupButtonEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e InputGroupButtonEl) Bg(fill Fill) InputGroupButtonEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e InputGroupButtonEl) Border(length Length) InputGroupButtonEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupButtonEl) BorderB(length Length) InputGroupButtonEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e InputGroupButtonEl) BorderColor(borderColor Color) InputGroupButtonEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupButtonEl) BorderL(length Length) InputGroupButtonEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupButtonEl) BorderR(length Length) InputGroupButtonEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupButtonEl) BorderT(length Length) InputGroupButtonEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e InputGroupButtonEl) BorderX(length Length) InputGroupButtonEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e InputGroupButtonEl) BorderY(length Length) InputGroupButtonEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupButtonEl) Bottom(length Length) InputGroupButtonEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e InputGroupButtonEl) ColEnd(end int16) InputGroupButtonEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e InputGroupButtonEl) ColSpan(span uint16) InputGroupButtonEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e InputGroupButtonEl) ColStart(start int16) InputGroupButtonEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e InputGroupButtonEl) Cursor(cursor CursorStyle) InputGroupButtonEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e InputGroupButtonEl) FlexBasis(basis Length) InputGroupButtonEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e InputGroupButtonEl) FlexGrow(grow float32) InputGroupButtonEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e InputGroupButtonEl) FlexShrink(shrink float32) InputGroupButtonEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e InputGroupButtonEl) FontFamily(familyName string) InputGroupButtonEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e InputGroupButtonEl) FontFeatures(features FontFeatures) InputGroupButtonEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e InputGroupButtonEl) FontWeight(weight FontWeight) InputGroupButtonEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e InputGroupButtonEl) Gap(length Length) InputGroupButtonEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e InputGroupButtonEl) GapX(length Length) InputGroupButtonEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e InputGroupButtonEl) GapY(length Length) InputGroupButtonEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e InputGroupButtonEl) GridCols(cols uint16) InputGroupButtonEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e InputGroupButtonEl) GridColsMaxContent(cols uint16) InputGroupButtonEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e InputGroupButtonEl) GridColsMinContent(cols uint16) InputGroupButtonEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e InputGroupButtonEl) GridRows(rows uint16) InputGroupButtonEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e InputGroupButtonEl) GridRowsMaxContent(rows uint16) InputGroupButtonEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e InputGroupButtonEl) GridRowsMinContent(rows uint16) InputGroupButtonEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e InputGroupButtonEl) H(length Length) InputGroupButtonEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupButtonEl) Inset(length Length) InputGroupButtonEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupButtonEl) Left(length Length) InputGroupButtonEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e InputGroupButtonEl) LineClamp(lines int) InputGroupButtonEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e InputGroupButtonEl) LineHeight(lineHeight Length) InputGroupButtonEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e InputGroupButtonEl) M(length Length) InputGroupButtonEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e InputGroupButtonEl) MaxH(length Length) InputGroupButtonEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e InputGroupButtonEl) MaxSize(length Length) InputGroupButtonEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e InputGroupButtonEl) MaxW(length Length) InputGroupButtonEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e InputGroupButtonEl) Mb(length Length) InputGroupButtonEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e InputGroupButtonEl) MinH(length Length) InputGroupButtonEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e InputGroupButtonEl) MinSize(length Length) InputGroupButtonEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e InputGroupButtonEl) MinW(length Length) InputGroupButtonEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e InputGroupButtonEl) Ml(length Length) InputGroupButtonEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e InputGroupButtonEl) Mr(length Length) InputGroupButtonEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e InputGroupButtonEl) Mt(length Length) InputGroupButtonEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e InputGroupButtonEl) Mx(length Length) InputGroupButtonEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e InputGroupButtonEl) My(length Length) InputGroupButtonEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e InputGroupButtonEl) Opacity(opacity float32) InputGroupButtonEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e InputGroupButtonEl) P(length Length) InputGroupButtonEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e InputGroupButtonEl) P(length Length) InputGroupButtonEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e InputGroupButtonEl) Pb(length Length) InputGroupButtonEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e InputGroupButtonEl) Pl(length Length) InputGroupButtonEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e InputGroupButtonEl) Pr(length Length) InputGroupButtonEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e InputGroupButtonEl) Pt(length Length) InputGroupButtonEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e InputGroupButtonEl) Px(length Length) InputGroupButtonEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e InputGroupButtonEl) Py(length Length) InputGroupButtonEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupButtonEl) Right(length Length) InputGroupButtonEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e InputGroupButtonEl) Rounded(length Length) InputGroupButtonEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupButtonEl) RoundedB(length Length) InputGroupButtonEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupButtonEl) RoundedBl(length Length) InputGroupButtonEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupButtonEl) RoundedBr(length Length) InputGroupButtonEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupButtonEl) RoundedL(length Length) InputGroupButtonEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupButtonEl) RoundedR(length Length) InputGroupButtonEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupButtonEl) RoundedT(length Length) InputGroupButtonEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupButtonEl) RoundedTl(length Length) InputGroupButtonEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupButtonEl) RoundedTr(length Length) InputGroupButtonEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e InputGroupButtonEl) RowEnd(end int16) InputGroupButtonEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e InputGroupButtonEl) RowSpan(span uint16) InputGroupButtonEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e InputGroupButtonEl) RowStart(start int16) InputGroupButtonEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e InputGroupButtonEl) ScrollbarWidth(width Length) InputGroupButtonEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e InputGroupButtonEl) Shadow(shadows []BoxShadow) InputGroupButtonEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e InputGroupButtonEl) Size(length Length) InputGroupButtonEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e InputGroupButtonEl) TextAlign(align TextAlign) InputGroupButtonEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupButtonEl) TextBg(bg Color) InputGroupButtonEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupButtonEl) TextColor(color Color) InputGroupButtonEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e InputGroupButtonEl) TextDecorationColor(color Color) InputGroupButtonEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e InputGroupButtonEl) TextOverflow(overflow TextOverflow) InputGroupButtonEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupButtonEl) TextSize(size Length) InputGroupButtonEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupButtonEl) Top(length Length) InputGroupButtonEl { tStyledTop(e.n, length); return e }
-func (e InputGroupButtonEl) W(length Length) InputGroupButtonEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e InputGroupButtonEl) W(length Length) InputGroupButtonEl { tStyledW(e.n, length); return e }
 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e InputGroupButtonEl) ChildView(v View) InputGroupButtonEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e InputGroupButtonEl) Child(child Element) InputGroupButtonEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e InputGroupButtonEl) Children(children ...Element) InputGroupButtonEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1523,17 +2813,43 @@ func InputGroupTextDefault(st ...Style) InputGroupTextEl {
 	return InputGroupTextEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e InputGroupTextEl) PopoverStyle() InputGroupTextEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e InputGroupTextEl) RoundedFullStyle() InputGroupTextEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e InputGroupTextEl) FocusRingStyle() InputGroupTextEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e InputGroupTextEl) OnPrepaint(callback func(cx *Cx, e Bounds)) InputGroupTextEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1561,7 +2877,20 @@ func (e InputGroupTextEl) FontMedium() InputGroupTextEl     { tStyledExtFontMedi
 func (e InputGroupTextEl) FontNormal() InputGroupTextEl     { tStyledExtFontNormal(e.n); return e }
 func (e InputGroupTextEl) FontSemibold() InputGroupTextEl   { tStyledExtFontSemibold(e.n); return e }
 func (e InputGroupTextEl) FontThin() InputGroupTextEl       { tStyledExtFontThin(e.n); return e }
-func (e InputGroupTextEl) HFlex() InputGroupTextEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e InputGroupTextEl) HFlex() InputGroupTextEl { tStyledExtHFlex(e.n); return e }
 func (e InputGroupTextEl) Margins(margins EdgesInto) InputGroupTextEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1574,6 +2903,11 @@ func (e InputGroupTextEl) RefineStyle(style StyleRefinement) InputGroupTextEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e InputGroupTextEl) VFlex() InputGroupTextEl { tStyledExtVFlex(e.n); return e }
 
 func (e InputGroupTextEl) Text(s string) InputGroupTextEl { putText(e.n, s); return e }
@@ -1581,10 +2915,13 @@ func (e InputGroupTextEl) Text(s string) InputGroupTextEl { putText(e.n, s); ret
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e InputGroupTextEl) ChildView(v View) InputGroupTextEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e InputGroupTextEl) Child(child Element) InputGroupTextEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e InputGroupTextEl) Children(children ...Element) InputGroupTextEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1593,224 +2930,431 @@ func (e InputGroupTextEl) Children(children ...Element) InputGroupTextEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e InputGroupTextEl) Style(st ...Style) InputGroupTextEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e InputGroupTextEl) AspectRatio(ratio float32) InputGroupTextEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e InputGroupTextEl) Bg(fill Fill) InputGroupTextEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e InputGroupTextEl) Border(length Length) InputGroupTextEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupTextEl) BorderB(length Length) InputGroupTextEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e InputGroupTextEl) BorderColor(borderColor Color) InputGroupTextEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupTextEl) BorderL(length Length) InputGroupTextEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupTextEl) BorderR(length Length) InputGroupTextEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputGroupTextEl) BorderT(length Length) InputGroupTextEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e InputGroupTextEl) BorderX(length Length) InputGroupTextEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e InputGroupTextEl) BorderY(length Length) InputGroupTextEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupTextEl) Bottom(length Length) InputGroupTextEl {
 	tStyledBottom(e.n, length)
 	return e
 }
-func (e InputGroupTextEl) ColEnd(end int16) InputGroupTextEl    { tStyledColEnd(e.n, end); return e }
+
+// Sets the column end of this element.
+func (e InputGroupTextEl) ColEnd(end int16) InputGroupTextEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e InputGroupTextEl) ColSpan(span uint16) InputGroupTextEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e InputGroupTextEl) ColStart(start int16) InputGroupTextEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e InputGroupTextEl) Cursor(cursor CursorStyle) InputGroupTextEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e InputGroupTextEl) FlexBasis(basis Length) InputGroupTextEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e InputGroupTextEl) FlexGrow(grow float32) InputGroupTextEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e InputGroupTextEl) FlexShrink(shrink float32) InputGroupTextEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e InputGroupTextEl) FontFamily(familyName string) InputGroupTextEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e InputGroupTextEl) FontFeatures(features FontFeatures) InputGroupTextEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e InputGroupTextEl) FontWeight(weight FontWeight) InputGroupTextEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e InputGroupTextEl) Gap(length Length) InputGroupTextEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e InputGroupTextEl) Gap(length Length) InputGroupTextEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e InputGroupTextEl) GapX(length Length) InputGroupTextEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e InputGroupTextEl) GapY(length Length) InputGroupTextEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e InputGroupTextEl) GridCols(cols uint16) InputGroupTextEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e InputGroupTextEl) GridColsMaxContent(cols uint16) InputGroupTextEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e InputGroupTextEl) GridColsMinContent(cols uint16) InputGroupTextEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e InputGroupTextEl) GridRows(rows uint16) InputGroupTextEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e InputGroupTextEl) GridRowsMaxContent(rows uint16) InputGroupTextEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e InputGroupTextEl) GridRowsMinContent(rows uint16) InputGroupTextEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e InputGroupTextEl) H(length Length) InputGroupTextEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e InputGroupTextEl) H(length Length) InputGroupTextEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupTextEl) Inset(length Length) InputGroupTextEl { tStyledInset(e.n, length); return e }
-func (e InputGroupTextEl) Left(length Length) InputGroupTextEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputGroupTextEl) Left(length Length) InputGroupTextEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e InputGroupTextEl) LineClamp(lines int) InputGroupTextEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e InputGroupTextEl) LineHeight(lineHeight Length) InputGroupTextEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e InputGroupTextEl) M(length Length) InputGroupTextEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e InputGroupTextEl) M(length Length) InputGroupTextEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e InputGroupTextEl) MaxH(length Length) InputGroupTextEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e InputGroupTextEl) MaxSize(length Length) InputGroupTextEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e InputGroupTextEl) MaxW(length Length) InputGroupTextEl { tStyledMaxW(e.n, length); return e }
-func (e InputGroupTextEl) Mb(length Length) InputGroupTextEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupTextEl) Mb(length Length) InputGroupTextEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e InputGroupTextEl) MinH(length Length) InputGroupTextEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e InputGroupTextEl) MinSize(length Length) InputGroupTextEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e InputGroupTextEl) MinW(length Length) InputGroupTextEl { tStyledMinW(e.n, length); return e }
-func (e InputGroupTextEl) Ml(length Length) InputGroupTextEl   { tStyledMl(e.n, length); return e }
-func (e InputGroupTextEl) Mr(length Length) InputGroupTextEl   { tStyledMr(e.n, length); return e }
-func (e InputGroupTextEl) Mt(length Length) InputGroupTextEl   { tStyledMt(e.n, length); return e }
-func (e InputGroupTextEl) Mx(length Length) InputGroupTextEl   { tStyledMx(e.n, length); return e }
-func (e InputGroupTextEl) My(length Length) InputGroupTextEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupTextEl) Ml(length Length) InputGroupTextEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupTextEl) Mr(length Length) InputGroupTextEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputGroupTextEl) Mt(length Length) InputGroupTextEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e InputGroupTextEl) Mx(length Length) InputGroupTextEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e InputGroupTextEl) My(length Length) InputGroupTextEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e InputGroupTextEl) Opacity(opacity float32) InputGroupTextEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e InputGroupTextEl) P(length Length) InputGroupTextEl     { tStyledP(e.n, length); return e }
-func (e InputGroupTextEl) Pb(length Length) InputGroupTextEl    { tStyledPb(e.n, length); return e }
-func (e InputGroupTextEl) Pl(length Length) InputGroupTextEl    { tStyledPl(e.n, length); return e }
-func (e InputGroupTextEl) Pr(length Length) InputGroupTextEl    { tStyledPr(e.n, length); return e }
-func (e InputGroupTextEl) Pt(length Length) InputGroupTextEl    { tStyledPt(e.n, length); return e }
-func (e InputGroupTextEl) Px(length Length) InputGroupTextEl    { tStyledPx(e.n, length); return e }
-func (e InputGroupTextEl) Py(length Length) InputGroupTextEl    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e InputGroupTextEl) P(length Length) InputGroupTextEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputGroupTextEl) Pb(length Length) InputGroupTextEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputGroupTextEl) Pl(length Length) InputGroupTextEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputGroupTextEl) Pr(length Length) InputGroupTextEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputGroupTextEl) Pt(length Length) InputGroupTextEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e InputGroupTextEl) Px(length Length) InputGroupTextEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e InputGroupTextEl) Py(length Length) InputGroupTextEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupTextEl) Right(length Length) InputGroupTextEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e InputGroupTextEl) Rounded(length Length) InputGroupTextEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupTextEl) RoundedB(length Length) InputGroupTextEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupTextEl) RoundedBl(length Length) InputGroupTextEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupTextEl) RoundedBr(length Length) InputGroupTextEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupTextEl) RoundedL(length Length) InputGroupTextEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupTextEl) RoundedR(length Length) InputGroupTextEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e InputGroupTextEl) RoundedT(length Length) InputGroupTextEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupTextEl) RoundedTl(length Length) InputGroupTextEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputGroupTextEl) RoundedTr(length Length) InputGroupTextEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e InputGroupTextEl) RowEnd(end int16) InputGroupTextEl    { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row end of this element.
+func (e InputGroupTextEl) RowEnd(end int16) InputGroupTextEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e InputGroupTextEl) RowSpan(span uint16) InputGroupTextEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e InputGroupTextEl) RowStart(start int16) InputGroupTextEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e InputGroupTextEl) ScrollbarWidth(width Length) InputGroupTextEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e InputGroupTextEl) Shadow(shadows []BoxShadow) InputGroupTextEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e InputGroupTextEl) Size(length Length) InputGroupTextEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e InputGroupTextEl) TextAlign(align TextAlign) InputGroupTextEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupTextEl) TextBg(bg Color) InputGroupTextEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupTextEl) TextColor(color Color) InputGroupTextEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e InputGroupTextEl) TextDecorationColor(color Color) InputGroupTextEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e InputGroupTextEl) TextOverflow(overflow TextOverflow) InputGroupTextEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e InputGroupTextEl) TextSize(size Length) InputGroupTextEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputGroupTextEl) Top(length Length) InputGroupTextEl { tStyledTop(e.n, length); return e }
-func (e InputGroupTextEl) W(length Length) InputGroupTextEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e InputGroupTextEl) W(length Length) InputGroupTextEl { tStyledW(e.n, length); return e }
 
 // InputTokenEl is gpui_kit::component::input::InputToken.
 type InputTokenEl struct{ n *node }
@@ -1834,7 +3378,19 @@ func (e InputTokenEl) Icon(icon IconName) InputTokenEl {
 	return e
 }
 
-func (e InputTokenEl) PopoverStyle() InputTokenEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e InputTokenEl) PopoverStyle() InputTokenEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e InputTokenEl) RoundedFullStyle() InputTokenEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e InputTokenEl) CornerRadii(radius Corners) InputTokenEl {
@@ -1859,7 +3415,20 @@ func (e InputTokenEl) FontMedium() InputTokenEl     { tStyledExtFontMedium(e.n);
 func (e InputTokenEl) FontNormal() InputTokenEl     { tStyledExtFontNormal(e.n); return e }
 func (e InputTokenEl) FontSemibold() InputTokenEl   { tStyledExtFontSemibold(e.n); return e }
 func (e InputTokenEl) FontThin() InputTokenEl       { tStyledExtFontThin(e.n); return e }
-func (e InputTokenEl) HFlex() InputTokenEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e InputTokenEl) HFlex() InputTokenEl { tStyledExtHFlex(e.n); return e }
 func (e InputTokenEl) Margins(margins EdgesInto) InputTokenEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1872,139 +3441,353 @@ func (e InputTokenEl) RefineStyle(style StyleRefinement) InputTokenEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e InputTokenEl) VFlex() InputTokenEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e InputTokenEl) Style(st ...Style) InputTokenEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e InputTokenEl) AspectRatio(ratio float32) InputTokenEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e InputTokenEl) Bg(fill Fill) InputTokenEl          { tStyledBg(e.n, fill); return e }
-func (e InputTokenEl) Border(length Length) InputTokenEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e InputTokenEl) Bg(fill Fill) InputTokenEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e InputTokenEl) Border(length Length) InputTokenEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e InputTokenEl) BorderB(length Length) InputTokenEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e InputTokenEl) BorderColor(borderColor Color) InputTokenEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e InputTokenEl) BorderL(length Length) InputTokenEl     { tStyledBorderL(e.n, length); return e }
-func (e InputTokenEl) BorderR(length Length) InputTokenEl     { tStyledBorderR(e.n, length); return e }
-func (e InputTokenEl) BorderT(length Length) InputTokenEl     { tStyledBorderT(e.n, length); return e }
-func (e InputTokenEl) BorderX(length Length) InputTokenEl     { tStyledBorderX(e.n, length); return e }
-func (e InputTokenEl) BorderY(length Length) InputTokenEl     { tStyledBorderY(e.n, length); return e }
-func (e InputTokenEl) Bottom(length Length) InputTokenEl      { tStyledBottom(e.n, length); return e }
-func (e InputTokenEl) ColEnd(end int16) InputTokenEl          { tStyledColEnd(e.n, end); return e }
-func (e InputTokenEl) ColSpan(span uint16) InputTokenEl       { tStyledColSpan(e.n, span); return e }
-func (e InputTokenEl) ColStart(start int16) InputTokenEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputTokenEl) BorderL(length Length) InputTokenEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputTokenEl) BorderR(length Length) InputTokenEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e InputTokenEl) BorderT(length Length) InputTokenEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e InputTokenEl) BorderX(length Length) InputTokenEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e InputTokenEl) BorderY(length Length) InputTokenEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputTokenEl) Bottom(length Length) InputTokenEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e InputTokenEl) ColEnd(end int16) InputTokenEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e InputTokenEl) ColSpan(span uint16) InputTokenEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e InputTokenEl) ColStart(start int16) InputTokenEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e InputTokenEl) Cursor(cursor CursorStyle) InputTokenEl { tStyledCursor(e.n, cursor); return e }
-func (e InputTokenEl) FlexBasis(basis Length) InputTokenEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e InputTokenEl) FlexGrow(grow float32) InputTokenEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e InputTokenEl) FlexBasis(basis Length) InputTokenEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e InputTokenEl) FlexGrow(grow float32) InputTokenEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e InputTokenEl) FlexShrink(shrink float32) InputTokenEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e InputTokenEl) FontFamily(familyName string) InputTokenEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e InputTokenEl) FontFeatures(features FontFeatures) InputTokenEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e InputTokenEl) FontWeight(weight FontWeight) InputTokenEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e InputTokenEl) Gap(length Length) InputTokenEl    { tStyledGap(e.n, length); return e }
-func (e InputTokenEl) GapX(length Length) InputTokenEl   { tStyledGapX(e.n, length); return e }
-func (e InputTokenEl) GapY(length Length) InputTokenEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e InputTokenEl) Gap(length Length) InputTokenEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e InputTokenEl) GapX(length Length) InputTokenEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e InputTokenEl) GapY(length Length) InputTokenEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e InputTokenEl) GridCols(cols uint16) InputTokenEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e InputTokenEl) GridColsMaxContent(cols uint16) InputTokenEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e InputTokenEl) GridColsMinContent(cols uint16) InputTokenEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e InputTokenEl) GridRows(rows uint16) InputTokenEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e InputTokenEl) GridRowsMaxContent(rows uint16) InputTokenEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e InputTokenEl) GridRowsMinContent(rows uint16) InputTokenEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e InputTokenEl) H(length Length) InputTokenEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e InputTokenEl) H(length Length) InputTokenEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e InputTokenEl) Inset(length Length) InputTokenEl { tStyledInset(e.n, length); return e }
-func (e InputTokenEl) Left(length Length) InputTokenEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputTokenEl) Left(length Length) InputTokenEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e InputTokenEl) LineClamp(lines int) InputTokenEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e InputTokenEl) LineHeight(lineHeight Length) InputTokenEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e InputTokenEl) M(length Length) InputTokenEl         { tStyledM(e.n, length); return e }
-func (e InputTokenEl) MaxH(length Length) InputTokenEl      { tStyledMaxH(e.n, length); return e }
-func (e InputTokenEl) MaxSize(length Length) InputTokenEl   { tStyledMaxSize(e.n, length); return e }
-func (e InputTokenEl) MaxW(length Length) InputTokenEl      { tStyledMaxW(e.n, length); return e }
-func (e InputTokenEl) Mb(length Length) InputTokenEl        { tStyledMb(e.n, length); return e }
-func (e InputTokenEl) MinH(length Length) InputTokenEl      { tStyledMinH(e.n, length); return e }
-func (e InputTokenEl) MinSize(length Length) InputTokenEl   { tStyledMinSize(e.n, length); return e }
-func (e InputTokenEl) MinW(length Length) InputTokenEl      { tStyledMinW(e.n, length); return e }
-func (e InputTokenEl) Ml(length Length) InputTokenEl        { tStyledMl(e.n, length); return e }
-func (e InputTokenEl) Mr(length Length) InputTokenEl        { tStyledMr(e.n, length); return e }
-func (e InputTokenEl) Mt(length Length) InputTokenEl        { tStyledMt(e.n, length); return e }
-func (e InputTokenEl) Mx(length Length) InputTokenEl        { tStyledMx(e.n, length); return e }
-func (e InputTokenEl) My(length Length) InputTokenEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e InputTokenEl) M(length Length) InputTokenEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e InputTokenEl) MaxH(length Length) InputTokenEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e InputTokenEl) MaxSize(length Length) InputTokenEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e InputTokenEl) MaxW(length Length) InputTokenEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputTokenEl) Mb(length Length) InputTokenEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e InputTokenEl) MinH(length Length) InputTokenEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e InputTokenEl) MinSize(length Length) InputTokenEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e InputTokenEl) MinW(length Length) InputTokenEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputTokenEl) Ml(length Length) InputTokenEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputTokenEl) Mr(length Length) InputTokenEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e InputTokenEl) Mt(length Length) InputTokenEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e InputTokenEl) Mx(length Length) InputTokenEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e InputTokenEl) My(length Length) InputTokenEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e InputTokenEl) Opacity(opacity float32) InputTokenEl { tStyledOpacity(e.n, opacity); return e }
-func (e InputTokenEl) P(length Length) InputTokenEl         { tStyledP(e.n, length); return e }
-func (e InputTokenEl) Pb(length Length) InputTokenEl        { tStyledPb(e.n, length); return e }
-func (e InputTokenEl) Pl(length Length) InputTokenEl        { tStyledPl(e.n, length); return e }
-func (e InputTokenEl) Pr(length Length) InputTokenEl        { tStyledPr(e.n, length); return e }
-func (e InputTokenEl) Pt(length Length) InputTokenEl        { tStyledPt(e.n, length); return e }
-func (e InputTokenEl) Px(length Length) InputTokenEl        { tStyledPx(e.n, length); return e }
-func (e InputTokenEl) Py(length Length) InputTokenEl        { tStyledPy(e.n, length); return e }
-func (e InputTokenEl) Right(length Length) InputTokenEl     { tStyledRight(e.n, length); return e }
-func (e InputTokenEl) Rounded(length Length) InputTokenEl   { tStyledRounded(e.n, length); return e }
-func (e InputTokenEl) RoundedB(length Length) InputTokenEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e InputTokenEl) P(length Length) InputTokenEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputTokenEl) Pb(length Length) InputTokenEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputTokenEl) Pl(length Length) InputTokenEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputTokenEl) Pr(length Length) InputTokenEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e InputTokenEl) Pt(length Length) InputTokenEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e InputTokenEl) Px(length Length) InputTokenEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e InputTokenEl) Py(length Length) InputTokenEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputTokenEl) Right(length Length) InputTokenEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e InputTokenEl) Rounded(length Length) InputTokenEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputTokenEl) RoundedB(length Length) InputTokenEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputTokenEl) RoundedBl(length Length) InputTokenEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputTokenEl) RoundedBr(length Length) InputTokenEl { tStyledRoundedBr(e.n, length); return e }
-func (e InputTokenEl) RoundedL(length Length) InputTokenEl  { tStyledRoundedL(e.n, length); return e }
-func (e InputTokenEl) RoundedR(length Length) InputTokenEl  { tStyledRoundedR(e.n, length); return e }
-func (e InputTokenEl) RoundedT(length Length) InputTokenEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputTokenEl) RoundedL(length Length) InputTokenEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputTokenEl) RoundedR(length Length) InputTokenEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e InputTokenEl) RoundedT(length Length) InputTokenEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputTokenEl) RoundedTl(length Length) InputTokenEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e InputTokenEl) RoundedTr(length Length) InputTokenEl { tStyledRoundedTr(e.n, length); return e }
-func (e InputTokenEl) RowEnd(end int16) InputTokenEl        { tStyledRowEnd(e.n, end); return e }
-func (e InputTokenEl) RowSpan(span uint16) InputTokenEl     { tStyledRowSpan(e.n, span); return e }
-func (e InputTokenEl) RowStart(start int16) InputTokenEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e InputTokenEl) RowEnd(end int16) InputTokenEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e InputTokenEl) RowSpan(span uint16) InputTokenEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e InputTokenEl) RowStart(start int16) InputTokenEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e InputTokenEl) ScrollbarWidth(width Length) InputTokenEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e InputTokenEl) Shadow(shadows []BoxShadow) InputTokenEl { tStyledShadow(e.n, shadows); return e }
-func (e InputTokenEl) Size(length Length) InputTokenEl         { tStyledSize(e.n, length); return e }
-func (e InputTokenEl) TextAlign(align TextAlign) InputTokenEl  { tStyledTextAlign(e.n, align); return e }
-func (e InputTokenEl) TextBg(bg Color) InputTokenEl            { tStyledTextBg(e.n, bg); return e }
-func (e InputTokenEl) TextColor(color Color) InputTokenEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e InputTokenEl) Size(length Length) InputTokenEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e InputTokenEl) TextAlign(align TextAlign) InputTokenEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e InputTokenEl) TextBg(bg Color) InputTokenEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e InputTokenEl) TextColor(color Color) InputTokenEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e InputTokenEl) TextDecorationColor(color Color) InputTokenEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e InputTokenEl) TextOverflow(overflow TextOverflow) InputTokenEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e InputTokenEl) TextSize(size Length) InputTokenEl { tStyledTextSize(e.n, size); return e }
-func (e InputTokenEl) Top(length Length) InputTokenEl    { tStyledTop(e.n, length); return e }
-func (e InputTokenEl) W(length Length) InputTokenEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e InputTokenEl) Top(length Length) InputTokenEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e InputTokenEl) W(length Length) InputTokenEl { tStyledW(e.n, length); return e }
 
 // NumberInputEl is gpui_kit::component::input::NumberInput.
 type NumberInputEl struct{ n *node }
 
 func (e NumberInputEl) node() *node { return e.n }
 
+// Create a new `NumberInputEl` element bind to the `InputState`.
+//
 // NumberInput is <gpui_kit::component::input::NumberInput>::new.
 func NumberInput(state InputState, st ...Style) NumberInputEl {
 	useComponentInput()
@@ -2015,6 +3798,11 @@ func NumberInput(state InputState, st ...Style) NumberInputEl {
 	return NumberInputEl{n}
 }
 
+// Set the name a screen reader announces.
+//
+// A number input has no visible text of its own to be named by, so set this whenever it is shown
+// without one, for example next to a separate label. This does not change what is displayed.
+//
 // AccessibilityLabel is <gpui_kit::component::input::NumberInput>::accessibility_label.
 func (e NumberInputEl) AccessibilityLabel(label string) NumberInputEl {
 	o := op(e.n, 256)
@@ -2022,6 +3810,8 @@ func (e NumberInputEl) AccessibilityLabel(label string) NumberInputEl {
 	return e
 }
 
+// Set the appearance of the number input, if false will no border and background.
+//
 // Appearance is <gpui_kit::component::input::NumberInput>::appearance.
 func (e NumberInputEl) Appearance(appearance bool) NumberInputEl {
 	o := op(e.n, 257)
@@ -2029,6 +3819,8 @@ func (e NumberInputEl) Appearance(appearance bool) NumberInputEl {
 	return e
 }
 
+// Set the placeholder text of the number input.
+//
 // Placeholder is <gpui_kit::component::input::NumberInput>::placeholder.
 func (e NumberInputEl) Placeholder(placeholder string) NumberInputEl {
 	o := op(e.n, 258)
@@ -2036,6 +3828,8 @@ func (e NumberInputEl) Placeholder(placeholder string) NumberInputEl {
 	return e
 }
 
+// Set the prefix element of the number input.
+//
 // Prefix is <gpui_kit::component::input::NumberInput>::prefix.
 func (e NumberInputEl) Prefix(prefix Element) NumberInputEl {
 	o := op(e.n, 259)
@@ -2043,6 +3837,8 @@ func (e NumberInputEl) Prefix(prefix Element) NumberInputEl {
 	return e
 }
 
+// Set the suffix element of the number input.
+//
 // Suffix is <gpui_kit::component::input::NumberInput>::suffix.
 func (e NumberInputEl) Suffix(suffix Element) NumberInputEl {
 	o := op(e.n, 260)
@@ -2050,7 +3846,19 @@ func (e NumberInputEl) Suffix(suffix Element) NumberInputEl {
 	return e
 }
 
-func (e NumberInputEl) PopoverStyle() NumberInputEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e NumberInputEl) PopoverStyle() NumberInputEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e NumberInputEl) RoundedFullStyle() NumberInputEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e NumberInputEl) CornerRadii(radius Corners) NumberInputEl {
@@ -2075,7 +3883,20 @@ func (e NumberInputEl) FontMedium() NumberInputEl     { tStyledExtFontMedium(e.n
 func (e NumberInputEl) FontNormal() NumberInputEl     { tStyledExtFontNormal(e.n); return e }
 func (e NumberInputEl) FontSemibold() NumberInputEl   { tStyledExtFontSemibold(e.n); return e }
 func (e NumberInputEl) FontThin() NumberInputEl       { tStyledExtFontThin(e.n); return e }
-func (e NumberInputEl) HFlex() NumberInputEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e NumberInputEl) HFlex() NumberInputEl { tStyledExtHFlex(e.n); return e }
 func (e NumberInputEl) Margins(margins EdgesInto) NumberInputEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -2088,6 +3909,11 @@ func (e NumberInputEl) RefineStyle(style StyleRefinement) NumberInputEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e NumberInputEl) VFlex() NumberInputEl { tStyledExtVFlex(e.n); return e }
 
 func (e NumberInputEl) Disabled(disabled bool) NumberInputEl {
@@ -2100,160 +3926,379 @@ func (e NumberInputEl) FocusRing(enabled bool) NumberInputEl {
 	return e
 }
 
-func (e NumberInputEl) Large() NumberInputEl                 { tSizableLarge(e.n); return e }
-func (e NumberInputEl) Small() NumberInputEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e NumberInputEl) Large() NumberInputEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e NumberInputEl) Small() NumberInputEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e NumberInputEl) WithSize(size SizeInto) NumberInputEl { tSizableWithSize(e.n, size); return e }
-func (e NumberInputEl) Xsmall() NumberInputEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e NumberInputEl) Xsmall() NumberInputEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e NumberInputEl) Style(st ...Style) NumberInputEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e NumberInputEl) AspectRatio(ratio float32) NumberInputEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e NumberInputEl) Bg(fill Fill) NumberInputEl          { tStyledBg(e.n, fill); return e }
-func (e NumberInputEl) Border(length Length) NumberInputEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e NumberInputEl) Bg(fill Fill) NumberInputEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e NumberInputEl) Border(length Length) NumberInputEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e NumberInputEl) BorderB(length Length) NumberInputEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e NumberInputEl) BorderColor(borderColor Color) NumberInputEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e NumberInputEl) BorderL(length Length) NumberInputEl     { tStyledBorderL(e.n, length); return e }
-func (e NumberInputEl) BorderR(length Length) NumberInputEl     { tStyledBorderR(e.n, length); return e }
-func (e NumberInputEl) BorderT(length Length) NumberInputEl     { tStyledBorderT(e.n, length); return e }
-func (e NumberInputEl) BorderX(length Length) NumberInputEl     { tStyledBorderX(e.n, length); return e }
-func (e NumberInputEl) BorderY(length Length) NumberInputEl     { tStyledBorderY(e.n, length); return e }
-func (e NumberInputEl) Bottom(length Length) NumberInputEl      { tStyledBottom(e.n, length); return e }
-func (e NumberInputEl) ColEnd(end int16) NumberInputEl          { tStyledColEnd(e.n, end); return e }
-func (e NumberInputEl) ColSpan(span uint16) NumberInputEl       { tStyledColSpan(e.n, span); return e }
-func (e NumberInputEl) ColStart(start int16) NumberInputEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e NumberInputEl) BorderL(length Length) NumberInputEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e NumberInputEl) BorderR(length Length) NumberInputEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e NumberInputEl) BorderT(length Length) NumberInputEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e NumberInputEl) BorderX(length Length) NumberInputEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e NumberInputEl) BorderY(length Length) NumberInputEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e NumberInputEl) Bottom(length Length) NumberInputEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e NumberInputEl) ColEnd(end int16) NumberInputEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e NumberInputEl) ColSpan(span uint16) NumberInputEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e NumberInputEl) ColStart(start int16) NumberInputEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e NumberInputEl) Cursor(cursor CursorStyle) NumberInputEl { tStyledCursor(e.n, cursor); return e }
-func (e NumberInputEl) FlexBasis(basis Length) NumberInputEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e NumberInputEl) FlexGrow(grow float32) NumberInputEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e NumberInputEl) FlexBasis(basis Length) NumberInputEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e NumberInputEl) FlexGrow(grow float32) NumberInputEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e NumberInputEl) FlexShrink(shrink float32) NumberInputEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e NumberInputEl) FontFamily(familyName string) NumberInputEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e NumberInputEl) FontFeatures(features FontFeatures) NumberInputEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e NumberInputEl) FontWeight(weight FontWeight) NumberInputEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e NumberInputEl) Gap(length Length) NumberInputEl    { tStyledGap(e.n, length); return e }
-func (e NumberInputEl) GapX(length Length) NumberInputEl   { tStyledGapX(e.n, length); return e }
-func (e NumberInputEl) GapY(length Length) NumberInputEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e NumberInputEl) Gap(length Length) NumberInputEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e NumberInputEl) GapX(length Length) NumberInputEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e NumberInputEl) GapY(length Length) NumberInputEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e NumberInputEl) GridCols(cols uint16) NumberInputEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e NumberInputEl) GridColsMaxContent(cols uint16) NumberInputEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e NumberInputEl) GridColsMinContent(cols uint16) NumberInputEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e NumberInputEl) GridRows(rows uint16) NumberInputEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e NumberInputEl) GridRowsMaxContent(rows uint16) NumberInputEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e NumberInputEl) GridRowsMinContent(rows uint16) NumberInputEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e NumberInputEl) H(length Length) NumberInputEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e NumberInputEl) H(length Length) NumberInputEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e NumberInputEl) Inset(length Length) NumberInputEl { tStyledInset(e.n, length); return e }
-func (e NumberInputEl) Left(length Length) NumberInputEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e NumberInputEl) Left(length Length) NumberInputEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e NumberInputEl) LineClamp(lines int) NumberInputEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e NumberInputEl) LineHeight(lineHeight Length) NumberInputEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e NumberInputEl) M(length Length) NumberInputEl         { tStyledM(e.n, length); return e }
-func (e NumberInputEl) MaxH(length Length) NumberInputEl      { tStyledMaxH(e.n, length); return e }
-func (e NumberInputEl) MaxSize(length Length) NumberInputEl   { tStyledMaxSize(e.n, length); return e }
-func (e NumberInputEl) MaxW(length Length) NumberInputEl      { tStyledMaxW(e.n, length); return e }
-func (e NumberInputEl) Mb(length Length) NumberInputEl        { tStyledMb(e.n, length); return e }
-func (e NumberInputEl) MinH(length Length) NumberInputEl      { tStyledMinH(e.n, length); return e }
-func (e NumberInputEl) MinSize(length Length) NumberInputEl   { tStyledMinSize(e.n, length); return e }
-func (e NumberInputEl) MinW(length Length) NumberInputEl      { tStyledMinW(e.n, length); return e }
-func (e NumberInputEl) Ml(length Length) NumberInputEl        { tStyledMl(e.n, length); return e }
-func (e NumberInputEl) Mr(length Length) NumberInputEl        { tStyledMr(e.n, length); return e }
-func (e NumberInputEl) Mt(length Length) NumberInputEl        { tStyledMt(e.n, length); return e }
-func (e NumberInputEl) Mx(length Length) NumberInputEl        { tStyledMx(e.n, length); return e }
-func (e NumberInputEl) My(length Length) NumberInputEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e NumberInputEl) M(length Length) NumberInputEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e NumberInputEl) MaxH(length Length) NumberInputEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e NumberInputEl) MaxSize(length Length) NumberInputEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e NumberInputEl) MaxW(length Length) NumberInputEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e NumberInputEl) Mb(length Length) NumberInputEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e NumberInputEl) MinH(length Length) NumberInputEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e NumberInputEl) MinSize(length Length) NumberInputEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e NumberInputEl) MinW(length Length) NumberInputEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e NumberInputEl) Ml(length Length) NumberInputEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e NumberInputEl) Mr(length Length) NumberInputEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e NumberInputEl) Mt(length Length) NumberInputEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e NumberInputEl) Mx(length Length) NumberInputEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e NumberInputEl) My(length Length) NumberInputEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e NumberInputEl) Opacity(opacity float32) NumberInputEl { tStyledOpacity(e.n, opacity); return e }
-func (e NumberInputEl) P(length Length) NumberInputEl         { tStyledP(e.n, length); return e }
-func (e NumberInputEl) Pb(length Length) NumberInputEl        { tStyledPb(e.n, length); return e }
-func (e NumberInputEl) Pl(length Length) NumberInputEl        { tStyledPl(e.n, length); return e }
-func (e NumberInputEl) Pr(length Length) NumberInputEl        { tStyledPr(e.n, length); return e }
-func (e NumberInputEl) Pt(length Length) NumberInputEl        { tStyledPt(e.n, length); return e }
-func (e NumberInputEl) Px(length Length) NumberInputEl        { tStyledPx(e.n, length); return e }
-func (e NumberInputEl) Py(length Length) NumberInputEl        { tStyledPy(e.n, length); return e }
-func (e NumberInputEl) Right(length Length) NumberInputEl     { tStyledRight(e.n, length); return e }
-func (e NumberInputEl) Rounded(length Length) NumberInputEl   { tStyledRounded(e.n, length); return e }
-func (e NumberInputEl) RoundedB(length Length) NumberInputEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e NumberInputEl) P(length Length) NumberInputEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e NumberInputEl) Pb(length Length) NumberInputEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e NumberInputEl) Pl(length Length) NumberInputEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e NumberInputEl) Pr(length Length) NumberInputEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e NumberInputEl) Pt(length Length) NumberInputEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e NumberInputEl) Px(length Length) NumberInputEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e NumberInputEl) Py(length Length) NumberInputEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e NumberInputEl) Right(length Length) NumberInputEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e NumberInputEl) Rounded(length Length) NumberInputEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e NumberInputEl) RoundedB(length Length) NumberInputEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e NumberInputEl) RoundedBl(length Length) NumberInputEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e NumberInputEl) RoundedBr(length Length) NumberInputEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e NumberInputEl) RoundedL(length Length) NumberInputEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e NumberInputEl) RoundedR(length Length) NumberInputEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e NumberInputEl) RoundedT(length Length) NumberInputEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e NumberInputEl) RoundedTl(length Length) NumberInputEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e NumberInputEl) RoundedTr(length Length) NumberInputEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e NumberInputEl) RowEnd(end int16) NumberInputEl     { tStyledRowEnd(e.n, end); return e }
-func (e NumberInputEl) RowSpan(span uint16) NumberInputEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e NumberInputEl) RowEnd(end int16) NumberInputEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e NumberInputEl) RowSpan(span uint16) NumberInputEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e NumberInputEl) RowStart(start int16) NumberInputEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e NumberInputEl) ScrollbarWidth(width Length) NumberInputEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e NumberInputEl) Shadow(shadows []BoxShadow) NumberInputEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e NumberInputEl) Size(length Length) NumberInputEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e NumberInputEl) TextAlign(align TextAlign) NumberInputEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e NumberInputEl) TextBg(bg Color) NumberInputEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e NumberInputEl) TextBg(bg Color) NumberInputEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e NumberInputEl) TextColor(color Color) NumberInputEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e NumberInputEl) TextDecorationColor(color Color) NumberInputEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e NumberInputEl) TextOverflow(overflow TextOverflow) NumberInputEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e NumberInputEl) TextSize(size Length) NumberInputEl { tStyledTextSize(e.n, size); return e }
-func (e NumberInputEl) Top(length Length) NumberInputEl    { tStyledTop(e.n, length); return e }
-func (e NumberInputEl) W(length Length) NumberInputEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e NumberInputEl) Top(length Length) NumberInputEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e NumberInputEl) W(length Length) NumberInputEl { tStyledW(e.n, length); return e }
 
 // OtpInputEl is gpui_kit::component::input::OtpInput.
 type OtpInputEl struct{ n *node }
 
 func (e OtpInputEl) node() *node { return e.n }
 
+// Create a new `OtpInputEl` element bind to the `OtpState`.
+//
 // OtpInput is <gpui_kit::component::input::OtpInput>::new.
 func OtpInput(state OtpState) OtpInputEl {
 	useComponentInput()
@@ -2263,6 +4308,8 @@ func OtpInput(state OtpState) OtpInputEl {
 	return OtpInputEl{n}
 }
 
+// Set number of groups in the OTP Input.
+//
 // Groups is <gpui_kit::component::input::OtpInput>::groups.
 func (e OtpInputEl) Groups(n_ int) OtpInputEl {
 	o := op(e.n, 256)
@@ -2277,10 +4324,20 @@ func (e OtpInputEl) FocusRing(enabled bool) OtpInputEl {
 	return e
 }
 
-func (e OtpInputEl) Large() OtpInputEl                 { tSizableLarge(e.n); return e }
-func (e OtpInputEl) Small() OtpInputEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e OtpInputEl) Large() OtpInputEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e OtpInputEl) Small() OtpInputEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e OtpInputEl) WithSize(size SizeInto) OtpInputEl { tSizableWithSize(e.n, size); return e }
-func (e OtpInputEl) Xsmall() OtpInputEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e OtpInputEl) Xsmall() OtpInputEl { tSizableXsmall(e.n); return e }
 
 // TextareaEl is gpui_kit::component::input::Textarea.
 type TextareaEl struct{ n *node }
@@ -2297,6 +4354,8 @@ func Textarea(state TextareaState, st ...Style) TextareaEl {
 	return TextareaEl{n}
 }
 
+// Set the developer-assigned accessibility identifier.
+//
 // AccessibilityID is <gpui_kit::component::input::Textarea>::accessibility_id.
 func (e TextareaEl) AccessibilityID(id string) TextareaEl {
 	o := op(e.n, 256)
@@ -2325,6 +4384,12 @@ func (e TextareaEl) Bordered(bordered bool) TextareaEl {
 	return e
 }
 
+// Replace the built-in context menu shown on right-click.
+//
+// The closure receives an empty menu and returns the one to show, so it decides entirely what
+// appears — the default items are not added. It shows only while the state's context menu is
+// enabled, which is the default.
+//
 // ContextMenu is <gpui_kit::component::input::Textarea>::context_menu.
 func (e TextareaEl) ContextMenu(f NativeMenu) TextareaEl {
 	o := op(e.n, 260)
@@ -2346,6 +4411,12 @@ func (e TextareaEl) H(height Length) TextareaEl {
 	return e
 }
 
+// Intercept paste payloads (images, files) before the default text insertion.
+//
+// `true` consumes the paste so nothing is inserted, `false` falls through to `clipboard.text()`.
+// Copied files arrive as `ExternalPaths` through the same hook. On web the clipboard reads `None`;
+// image paste needs async clipboard access and is out of scope.
+//
 // OnPaste is <gpui_kit::component::input::Textarea>::on_paste.
 func (e TextareaEl) OnPaste(handler func(cx *Cx, e ClipboardItem) bool) TextareaEl {
 	o := op(e.n, 263)
@@ -2353,6 +4424,8 @@ func (e TextareaEl) OnPaste(handler func(cx *Cx, e ClipboardItem) bool) Textarea
 	return e
 }
 
+// Open a reference after a completed, unconsumed token click.
+//
 // OnTokenClick is <gpui_kit::component::input::Textarea>::on_token_click.
 func (e TextareaEl) OnTokenClick(listener func(cx *Cx, e InlineTokenClickEvent)) TextareaEl {
 	o := op(e.n, 267)
@@ -2360,6 +4433,9 @@ func (e TextareaEl) OnTokenClick(listener func(cx *Cx, e InlineTokenClickEvent))
 	return e
 }
 
+// Report pointer presence over a token so the application can show a tooltip or run custom logic.
+// Hover never selects or edits.
+//
 // OnTokenHover is <gpui_kit::component::input::Textarea>::on_token_hover.
 func (e TextareaEl) OnTokenHover(listener func(cx *Cx, e InlineTokenHoverEvent)) TextareaEl {
 	o := op(e.n, 268)
@@ -2367,6 +4443,11 @@ func (e TextareaEl) OnTokenHover(listener func(cx *Cx, e InlineTokenHoverEvent))
 	return e
 }
 
+// Set the textarea to read-only, default is `false`.
+//
+// Unlike `Disabled`, a read-only textarea keeps the normal appearance and still can be focused,
+// selected and copied, it only rejects the changes made by the user.
+//
 // Readonly is <gpui_kit::component::input::Textarea>::readonly.
 func (e TextareaEl) Readonly(readonly bool) TextareaEl {
 	o := op(e.n, 264)
@@ -2388,7 +4469,19 @@ func (e TextareaEl) TabIndex(index int) TextareaEl {
 	return e
 }
 
-func (e TextareaEl) PopoverStyle() TextareaEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TextareaEl) PopoverStyle() TextareaEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TextareaEl) RoundedFullStyle() TextareaEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e TextareaEl) CornerRadii(radius Corners) TextareaEl {
@@ -2400,19 +4493,32 @@ func (e TextareaEl) DebugFocused(focusHandle FocusHandle) TextareaEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e TextareaEl) DebugGreen() TextareaEl               { tStyledExtDebugGreen(e.n); return e }
-func (e TextareaEl) DebugPink() TextareaEl                { tStyledExtDebugPink(e.n); return e }
-func (e TextareaEl) DebugRed() TextareaEl                 { tStyledExtDebugRed(e.n); return e }
-func (e TextareaEl) DebugYellow() TextareaEl              { tStyledExtDebugYellow(e.n); return e }
-func (e TextareaEl) FontBlack() TextareaEl                { tStyledExtFontBlack(e.n); return e }
-func (e TextareaEl) FontBold() TextareaEl                 { tStyledExtFontBold(e.n); return e }
-func (e TextareaEl) FontExtrabold() TextareaEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e TextareaEl) FontExtralight() TextareaEl           { tStyledExtFontExtralight(e.n); return e }
-func (e TextareaEl) FontLight() TextareaEl                { tStyledExtFontLight(e.n); return e }
-func (e TextareaEl) FontMedium() TextareaEl               { tStyledExtFontMedium(e.n); return e }
-func (e TextareaEl) FontNormal() TextareaEl               { tStyledExtFontNormal(e.n); return e }
-func (e TextareaEl) FontSemibold() TextareaEl             { tStyledExtFontSemibold(e.n); return e }
-func (e TextareaEl) FontThin() TextareaEl                 { tStyledExtFontThin(e.n); return e }
+func (e TextareaEl) DebugGreen() TextareaEl     { tStyledExtDebugGreen(e.n); return e }
+func (e TextareaEl) DebugPink() TextareaEl      { tStyledExtDebugPink(e.n); return e }
+func (e TextareaEl) DebugRed() TextareaEl       { tStyledExtDebugRed(e.n); return e }
+func (e TextareaEl) DebugYellow() TextareaEl    { tStyledExtDebugYellow(e.n); return e }
+func (e TextareaEl) FontBlack() TextareaEl      { tStyledExtFontBlack(e.n); return e }
+func (e TextareaEl) FontBold() TextareaEl       { tStyledExtFontBold(e.n); return e }
+func (e TextareaEl) FontExtrabold() TextareaEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e TextareaEl) FontExtralight() TextareaEl { tStyledExtFontExtralight(e.n); return e }
+func (e TextareaEl) FontLight() TextareaEl      { tStyledExtFontLight(e.n); return e }
+func (e TextareaEl) FontMedium() TextareaEl     { tStyledExtFontMedium(e.n); return e }
+func (e TextareaEl) FontNormal() TextareaEl     { tStyledExtFontNormal(e.n); return e }
+func (e TextareaEl) FontSemibold() TextareaEl   { tStyledExtFontSemibold(e.n); return e }
+func (e TextareaEl) FontThin() TextareaEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e TextareaEl) HFlex() TextareaEl                    { tStyledExtHFlex(e.n); return e }
 func (e TextareaEl) Margins(margins EdgesInto) TextareaEl { tStyledExtMargins(e.n, margins); return e }
 func (e TextareaEl) Paddings(paddings EdgesInto) TextareaEl {
@@ -2423,128 +4529,348 @@ func (e TextareaEl) RefineStyle(style StyleRefinement) TextareaEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TextareaEl) VFlex() TextareaEl { tStyledExtVFlex(e.n); return e }
 
-func (e TextareaEl) Large() TextareaEl                 { tSizableLarge(e.n); return e }
-func (e TextareaEl) Small() TextareaEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e TextareaEl) Large() TextareaEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TextareaEl) Small() TextareaEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TextareaEl) WithSize(size SizeInto) TextareaEl { tSizableWithSize(e.n, size); return e }
-func (e TextareaEl) Xsmall() TextareaEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TextareaEl) Xsmall() TextareaEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TextareaEl) Style(st ...Style) TextareaEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TextareaEl) AspectRatio(ratio float32) TextareaEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e TextareaEl) Bg(fill Fill) TextareaEl              { tStyledBg(e.n, fill); return e }
-func (e TextareaEl) Border(length Length) TextareaEl      { tStyledBorder(e.n, length); return e }
-func (e TextareaEl) BorderB(length Length) TextareaEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TextareaEl) Bg(fill Fill) TextareaEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TextareaEl) Border(length Length) TextareaEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TextareaEl) BorderB(length Length) TextareaEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TextareaEl) BorderColor(borderColor Color) TextareaEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TextareaEl) BorderL(length Length) TextareaEl     { tStyledBorderL(e.n, length); return e }
-func (e TextareaEl) BorderR(length Length) TextareaEl     { tStyledBorderR(e.n, length); return e }
-func (e TextareaEl) BorderT(length Length) TextareaEl     { tStyledBorderT(e.n, length); return e }
-func (e TextareaEl) BorderX(length Length) TextareaEl     { tStyledBorderX(e.n, length); return e }
-func (e TextareaEl) BorderY(length Length) TextareaEl     { tStyledBorderY(e.n, length); return e }
-func (e TextareaEl) Bottom(length Length) TextareaEl      { tStyledBottom(e.n, length); return e }
-func (e TextareaEl) ColEnd(end int16) TextareaEl          { tStyledColEnd(e.n, end); return e }
-func (e TextareaEl) ColSpan(span uint16) TextareaEl       { tStyledColSpan(e.n, span); return e }
-func (e TextareaEl) ColStart(start int16) TextareaEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TextareaEl) BorderL(length Length) TextareaEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TextareaEl) BorderR(length Length) TextareaEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TextareaEl) BorderT(length Length) TextareaEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TextareaEl) BorderX(length Length) TextareaEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TextareaEl) BorderY(length Length) TextareaEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TextareaEl) Bottom(length Length) TextareaEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TextareaEl) ColEnd(end int16) TextareaEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TextareaEl) ColSpan(span uint16) TextareaEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TextareaEl) ColStart(start int16) TextareaEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TextareaEl) Cursor(cursor CursorStyle) TextareaEl { tStyledCursor(e.n, cursor); return e }
-func (e TextareaEl) FlexBasis(basis Length) TextareaEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e TextareaEl) FlexGrow(grow float32) TextareaEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TextareaEl) FlexBasis(basis Length) TextareaEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TextareaEl) FlexGrow(grow float32) TextareaEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TextareaEl) FlexShrink(shrink float32) TextareaEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e TextareaEl) FontFamily(familyName string) TextareaEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TextareaEl) FontFeatures(features FontFeatures) TextareaEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TextareaEl) FontWeight(weight FontWeight) TextareaEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e TextareaEl) Gap(length Length) TextareaEl    { tStyledGap(e.n, length); return e }
-func (e TextareaEl) GapX(length Length) TextareaEl   { tStyledGapX(e.n, length); return e }
-func (e TextareaEl) GapY(length Length) TextareaEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TextareaEl) Gap(length Length) TextareaEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TextareaEl) GapX(length Length) TextareaEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TextareaEl) GapY(length Length) TextareaEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e TextareaEl) GridCols(cols uint16) TextareaEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TextareaEl) GridColsMaxContent(cols uint16) TextareaEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TextareaEl) GridColsMinContent(cols uint16) TextareaEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TextareaEl) GridRows(rows uint16) TextareaEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TextareaEl) GridRowsMaxContent(rows uint16) TextareaEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TextareaEl) GridRowsMinContent(rows uint16) TextareaEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TextareaEl) Inset(length Length) TextareaEl { tStyledInset(e.n, length); return e }
-func (e TextareaEl) Left(length Length) TextareaEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TextareaEl) Left(length Length) TextareaEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TextareaEl) LineClamp(lines int) TextareaEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TextareaEl) LineHeight(lineHeight Length) TextareaEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TextareaEl) M(length Length) TextareaEl         { tStyledM(e.n, length); return e }
-func (e TextareaEl) MaxH(length Length) TextareaEl      { tStyledMaxH(e.n, length); return e }
-func (e TextareaEl) MaxSize(length Length) TextareaEl   { tStyledMaxSize(e.n, length); return e }
-func (e TextareaEl) MaxW(length Length) TextareaEl      { tStyledMaxW(e.n, length); return e }
-func (e TextareaEl) Mb(length Length) TextareaEl        { tStyledMb(e.n, length); return e }
-func (e TextareaEl) MinH(length Length) TextareaEl      { tStyledMinH(e.n, length); return e }
-func (e TextareaEl) MinSize(length Length) TextareaEl   { tStyledMinSize(e.n, length); return e }
-func (e TextareaEl) MinW(length Length) TextareaEl      { tStyledMinW(e.n, length); return e }
-func (e TextareaEl) Ml(length Length) TextareaEl        { tStyledMl(e.n, length); return e }
-func (e TextareaEl) Mr(length Length) TextareaEl        { tStyledMr(e.n, length); return e }
-func (e TextareaEl) Mt(length Length) TextareaEl        { tStyledMt(e.n, length); return e }
-func (e TextareaEl) Mx(length Length) TextareaEl        { tStyledMx(e.n, length); return e }
-func (e TextareaEl) My(length Length) TextareaEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TextareaEl) M(length Length) TextareaEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TextareaEl) MaxH(length Length) TextareaEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TextareaEl) MaxSize(length Length) TextareaEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TextareaEl) MaxW(length Length) TextareaEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TextareaEl) Mb(length Length) TextareaEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TextareaEl) MinH(length Length) TextareaEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TextareaEl) MinSize(length Length) TextareaEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TextareaEl) MinW(length Length) TextareaEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TextareaEl) Ml(length Length) TextareaEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TextareaEl) Mr(length Length) TextareaEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TextareaEl) Mt(length Length) TextareaEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TextareaEl) Mx(length Length) TextareaEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TextareaEl) My(length Length) TextareaEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TextareaEl) Opacity(opacity float32) TextareaEl { tStyledOpacity(e.n, opacity); return e }
-func (e TextareaEl) P(length Length) TextareaEl         { tStyledP(e.n, length); return e }
-func (e TextareaEl) Pb(length Length) TextareaEl        { tStyledPb(e.n, length); return e }
-func (e TextareaEl) Pl(length Length) TextareaEl        { tStyledPl(e.n, length); return e }
-func (e TextareaEl) Pr(length Length) TextareaEl        { tStyledPr(e.n, length); return e }
-func (e TextareaEl) Pt(length Length) TextareaEl        { tStyledPt(e.n, length); return e }
-func (e TextareaEl) Px(length Length) TextareaEl        { tStyledPx(e.n, length); return e }
-func (e TextareaEl) Py(length Length) TextareaEl        { tStyledPy(e.n, length); return e }
-func (e TextareaEl) Right(length Length) TextareaEl     { tStyledRight(e.n, length); return e }
-func (e TextareaEl) Rounded(length Length) TextareaEl   { tStyledRounded(e.n, length); return e }
-func (e TextareaEl) RoundedB(length Length) TextareaEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TextareaEl) P(length Length) TextareaEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TextareaEl) Pb(length Length) TextareaEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TextareaEl) Pl(length Length) TextareaEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TextareaEl) Pr(length Length) TextareaEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TextareaEl) Pt(length Length) TextareaEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TextareaEl) Px(length Length) TextareaEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TextareaEl) Py(length Length) TextareaEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TextareaEl) Right(length Length) TextareaEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TextareaEl) Rounded(length Length) TextareaEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TextareaEl) RoundedB(length Length) TextareaEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TextareaEl) RoundedBl(length Length) TextareaEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TextareaEl) RoundedBr(length Length) TextareaEl { tStyledRoundedBr(e.n, length); return e }
-func (e TextareaEl) RoundedL(length Length) TextareaEl  { tStyledRoundedL(e.n, length); return e }
-func (e TextareaEl) RoundedR(length Length) TextareaEl  { tStyledRoundedR(e.n, length); return e }
-func (e TextareaEl) RoundedT(length Length) TextareaEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TextareaEl) RoundedL(length Length) TextareaEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TextareaEl) RoundedR(length Length) TextareaEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TextareaEl) RoundedT(length Length) TextareaEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TextareaEl) RoundedTl(length Length) TextareaEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TextareaEl) RoundedTr(length Length) TextareaEl { tStyledRoundedTr(e.n, length); return e }
-func (e TextareaEl) RowEnd(end int16) TextareaEl        { tStyledRowEnd(e.n, end); return e }
-func (e TextareaEl) RowSpan(span uint16) TextareaEl     { tStyledRowSpan(e.n, span); return e }
-func (e TextareaEl) RowStart(start int16) TextareaEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e TextareaEl) RowEnd(end int16) TextareaEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TextareaEl) RowSpan(span uint16) TextareaEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TextareaEl) RowStart(start int16) TextareaEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TextareaEl) ScrollbarWidth(width Length) TextareaEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TextareaEl) Shadow(shadows []BoxShadow) TextareaEl { tStyledShadow(e.n, shadows); return e }
-func (e TextareaEl) Size(length Length) TextareaEl         { tStyledSize(e.n, length); return e }
-func (e TextareaEl) TextAlign(align TextAlign) TextareaEl  { tStyledTextAlign(e.n, align); return e }
-func (e TextareaEl) TextBg(bg Color) TextareaEl            { tStyledTextBg(e.n, bg); return e }
-func (e TextareaEl) TextColor(color Color) TextareaEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e TextareaEl) Size(length Length) TextareaEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TextareaEl) TextAlign(align TextAlign) TextareaEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TextareaEl) TextBg(bg Color) TextareaEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TextareaEl) TextColor(color Color) TextareaEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TextareaEl) TextDecorationColor(color Color) TextareaEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TextareaEl) TextOverflow(overflow TextOverflow) TextareaEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e TextareaEl) TextSize(size Length) TextareaEl { tStyledTextSize(e.n, size); return e }
-func (e TextareaEl) Top(length Length) TextareaEl    { tStyledTop(e.n, length); return e }
-func (e TextareaEl) W(length Length) TextareaEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TextareaEl) Top(length Length) TextareaEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TextareaEl) W(length Length) TextareaEl { tStyledW(e.n, length); return e }

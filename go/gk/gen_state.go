@@ -18,6 +18,8 @@ type AppMenuBar struct{ h uint64 }
 
 func (s AppMenuBar) handle() uint64 { return s.h }
 
+// Reload the menus from the app.
+//
 // Reload is <gpui_kit::component::menu::AppMenuBar>::reload.
 func (s AppMenuBar) Reload(cx *Cx) {
 	useComponentMenu()
@@ -31,6 +33,8 @@ type AudioFormat struct{ h uint64 }
 
 func (s AudioFormat) handle() uint64 { return s.h }
 
+// Number of interleaved channels.
+//
 // Channels is <gpui_kit::component::speech::AudioFormat>::channels.
 func (s AudioFormat) Channels(cx *Cx) uint16 {
 	useComponentSpeech()
@@ -40,6 +44,8 @@ func (s AudioFormat) Channels(cx *Cx) uint16 {
 	return uint16(r.u16())
 }
 
+// Samples per second of each channel.
+//
 // SampleRate is <gpui_kit::component::speech::AudioFormat>::sample_rate.
 func (s AudioFormat) SampleRate(cx *Cx) uint32 {
 	useComponentSpeech()
@@ -49,6 +55,8 @@ func (s AudioFormat) SampleRate(cx *Cx) uint32 {
 	return uint32(r.u32())
 }
 
+// A format of `sample_rate` samples per second on each of `channels`.
+//
 // NewAudioFormat is <gpui_kit::component::speech::AudioFormat>::new.
 func NewAudioFormat(cx *Cx, sampleRate uint32, channels uint16) AudioFormat {
 	useComponentSpeech()
@@ -64,6 +72,8 @@ type AutoScroll struct{ h uint64 }
 
 func (s AutoScroll) handle() uint64 { return s.h }
 
+// Returns the current scroll delta.
+//
 // Delta is <gpui_kit::base::AutoScroll>::delta.
 func (s AutoScroll) Delta(cx *Cx) Option[float32] {
 	useBaseAutoScroll()
@@ -73,6 +83,8 @@ func (s AutoScroll) Delta(cx *Cx) Option[float32] {
 	return rdOpt(r, func(r *reader) float32 { return r.f32() })
 }
 
+// Returns whether automatic scrolling is active.
+//
 // IsActive is <gpui_kit::base::AutoScroll>::is_active.
 func (s AutoScroll) IsActive(cx *Cx) bool {
 	useBaseAutoScroll()
@@ -82,6 +94,8 @@ func (s AutoScroll) IsActive(cx *Cx) bool {
 	return r.bool()
 }
 
+// Stops automatic scrolling and clears the last drag position.
+//
 // Stop is <gpui_kit::base::AutoScroll>::stop.
 func (s AutoScroll) Stop(cx *Cx) {
 	useBaseAutoScroll()
@@ -98,6 +112,8 @@ func NewAutoScrollDefault(cx *Cx) AutoScroll {
 	return AutoScroll{stateMake(cx, o)}
 }
 
+// Computes the scroll delta for a pointer Y position within the viewport.
+//
 // AutoScrollComputeDelta is <gpui_kit::base::AutoScroll>::compute_delta.
 func AutoScrollComputeDelta(cx *Cx, y float32, bounds Bounds) Option[float32] {
 	useBaseAutoScroll()
@@ -113,6 +129,8 @@ type BaseTable2 struct{ h uint64 }
 
 func (s BaseTable2) handle() uint64 { return s.h }
 
+// The alignment of each column.
+//
 // ColumnAligns is <gpui_kit::base::text::editor_host::Table>::column_aligns.
 func (s BaseTable2) ColumnAligns(cx *Cx) []ColumnumnAlign {
 	useBaseText()
@@ -122,6 +140,8 @@ func (s BaseTable2) ColumnAligns(cx *Cx) []ColumnumnAlign {
 	return rdList(r, func(r *reader) ColumnumnAlign { return ColumnumnAlign(r.u16()) })
 }
 
+// The rows, each an iterator over its cells' paragraphs.
+//
 // Rows is <gpui_kit::base::text::editor_host::Table>::rows.
 func (s BaseTable2) Rows(cx *Cx) [][]ParagraphRead {
 	useBaseText()
@@ -133,6 +153,8 @@ func (s BaseTable2) Rows(cx *Cx) [][]ParagraphRead {
 	})
 }
 
+// A table of `rows` (one paragraph per cell) with the column alignments.
+//
 // NewBaseTable2 is <gpui_kit::base::text::editor_host::Table>::new.
 func NewBaseTable2(cx *Cx, rows [][]Paragraph, columnAligns []ColumnumnAlign) BaseTable2 {
 	useBaseText()
@@ -596,6 +618,8 @@ type CarouselState struct{ h uint64 }
 
 func (s CarouselState) handle() uint64 { return s.h }
 
+// Returns the configured orientation.
+//
 // Axis is <gpui_kit::component::carousel::CarouselState>::axis.
 func (s CarouselState) Axis(cx *Cx) Axis {
 	useComponentCarousel()
@@ -605,6 +629,8 @@ func (s CarouselState) Axis(cx *Cx) Axis {
 	return Axis(r.u16())
 }
 
+// Returns whether a next item can be selected.
+//
 // HasNext is <gpui_kit::component::carousel::CarouselState>::has_next.
 func (s CarouselState) HasNext(cx *Cx) bool {
 	useComponentCarousel()
@@ -614,6 +640,8 @@ func (s CarouselState) HasNext(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns whether a previous item can be selected.
+//
 // HasPrevious is <gpui_kit::component::carousel::CarouselState>::has_previous.
 func (s CarouselState) HasPrevious(cx *Cx) bool {
 	useComponentCarousel()
@@ -623,6 +651,8 @@ func (s CarouselState) HasPrevious(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns whether navigation wraps at the carousel edges.
+//
 // IsLooping is <gpui_kit::component::carousel::CarouselState>::is_looping.
 func (s CarouselState) IsLooping(cx *Cx) bool {
 	useComponentCarousel()
@@ -632,6 +662,8 @@ func (s CarouselState) IsLooping(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns the number of logical items.
+//
 // ItemCount is <gpui_kit::component::carousel::CarouselState>::item_count.
 func (s CarouselState) ItemCount(cx *Cx) int {
 	useComponentCarousel()
@@ -641,6 +673,8 @@ func (s CarouselState) ItemCount(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Returns the selected logical item, or `None` when the carousel is empty.
+//
 // SelectedIndex is <gpui_kit::component::carousel::CarouselState>::selected_index.
 func (s CarouselState) SelectedIndex(cx *Cx) Option[int] {
 	useComponentCarousel()
@@ -650,6 +684,8 @@ func (s CarouselState) SelectedIndex(cx *Cx) Option[int] {
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
 }
 
+// Selects the first item through the user-facing path.
+//
 // SelectFirst is <gpui_kit::component::carousel::CarouselState>::select_first.
 func (s CarouselState) SelectFirst(cx *Cx) bool {
 	useComponentCarousel()
@@ -659,6 +695,9 @@ func (s CarouselState) SelectFirst(cx *Cx) bool {
 	return r.bool()
 }
 
+// Selects an item through a user-facing path and emits one change event when the index is valid
+// and differs from the current selection.
+//
 // SelectIndex is <gpui_kit::component::carousel::CarouselState>::select_index.
 func (s CarouselState) SelectIndex(cx *Cx, index int) bool {
 	useComponentCarousel()
@@ -669,6 +708,8 @@ func (s CarouselState) SelectIndex(cx *Cx, index int) bool {
 	return r.bool()
 }
 
+// Selects the last item through the user-facing path.
+//
 // SelectLast is <gpui_kit::component::carousel::CarouselState>::select_last.
 func (s CarouselState) SelectLast(cx *Cx) bool {
 	useComponentCarousel()
@@ -678,6 +719,8 @@ func (s CarouselState) SelectLast(cx *Cx) bool {
 	return r.bool()
 }
 
+// Selects the next item, wrapping when looping is enabled.
+//
 // SelectNext is <gpui_kit::component::carousel::CarouselState>::select_next.
 func (s CarouselState) SelectNext(cx *Cx) bool {
 	useComponentCarousel()
@@ -687,6 +730,8 @@ func (s CarouselState) SelectNext(cx *Cx) bool {
 	return r.bool()
 }
 
+// Selects the previous item, wrapping when looping is enabled.
+//
 // SelectPrevious is <gpui_kit::component::carousel::CarouselState>::select_previous.
 func (s CarouselState) SelectPrevious(cx *Cx) bool {
 	useComponentCarousel()
@@ -696,6 +741,8 @@ func (s CarouselState) SelectPrevious(cx *Cx) bool {
 	return r.bool()
 }
 
+// Silently changes the carousel orientation.
+//
 // SetAxis is <gpui_kit::component::carousel::CarouselState>::set_axis.
 func (s CarouselState) SetAxis(cx *Cx, axis Axis) {
 	useComponentCarousel()
@@ -705,6 +752,8 @@ func (s CarouselState) SetAxis(cx *Cx, axis Axis) {
 	stateSet(cx, o)
 }
 
+// Silently changes the number of logical items and clamps the selection.
+//
 // SetItemCount is <gpui_kit::component::carousel::CarouselState>::set_item_count.
 func (s CarouselState) SetItemCount(cx *Cx, itemCount int) {
 	useComponentCarousel()
@@ -714,6 +763,8 @@ func (s CarouselState) SetItemCount(cx *Cx, itemCount int) {
 	stateSet(cx, o)
 }
 
+// Silently changes whether edge navigation wraps.
+//
 // SetLooping is <gpui_kit::component::carousel::CarouselState>::set_looping.
 func (s CarouselState) SetLooping(cx *Cx, looping bool) {
 	useComponentCarousel()
@@ -723,6 +774,10 @@ func (s CarouselState) SetLooping(cx *Cx, looping bool) {
 	stateSet(cx, o)
 }
 
+// Silently changes the selected item for controlled/programmatic use.
+//
+// The value is clamped to the available item range. This method does not emit `Change`.
+//
 // SetSelectedIndex is <gpui_kit::component::carousel::CarouselState>::set_selected_index.
 func (s CarouselState) SetSelectedIndex(cx *Cx, index int) {
 	useComponentCarousel()
@@ -767,6 +822,9 @@ func (b CarouselStateBuilder) WithSelectedIndex(index int) CarouselStateBuilder 
 // Build makes the CarouselState.
 func (b CarouselStateBuilder) Build() CarouselState { return CarouselState{b.sb.build()} }
 
+// Creates state for `item_count` items, initially selecting the first item when at least one item
+// exists.
+//
 // NewCarouselState is <gpui_kit::component::carousel::CarouselState>::new.
 func NewCarouselState(cx *Cx, itemCount int) CarouselStateBuilder {
 	useComponentCarousel()
@@ -780,6 +838,8 @@ type CodeActionMenuState struct{ h uint64 }
 
 func (s CodeActionMenuState) handle() uint64 { return s.h }
 
+// Bumped whenever the content changes. See `Revision`.
+//
 // Revision is <gpui_kit::base::input::CodeActionMenuState>::revision.
 func (s CodeActionMenuState) Revision(cx *Cx) uint64 {
 	useBaseInput()
@@ -802,6 +862,8 @@ type ColorPickerState struct{ h uint64 }
 
 func (s ColorPickerState) handle() uint64 { return s.h }
 
+// Returns the selected application-defined picker panel.
+//
 // ActiveTab is <gpui_kit::base::ColorPickerState>::active_tab.
 func (s ColorPickerState) ActiveTab(cx *Cx) int {
 	useBaseColorPicker()
@@ -811,6 +873,8 @@ func (s ColorPickerState) ActiveTab(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Returns the previewed color, falling back to the committed color.
+//
 // DisplayedColor is <gpui_kit::base::ColorPickerState>::displayed_color.
 func (s ColorPickerState) DisplayedColor(cx *Cx) Option[Hsla] {
 	useBaseColorPicker()
@@ -820,6 +884,8 @@ func (s ColorPickerState) DisplayedColor(cx *Cx) Option[Hsla] {
 	return rdOpt(r, func(r *reader) Hsla { return rdHsla(r) })
 }
 
+// The hex text field. Render it with an application-owned input element.
+//
 // HexInput is <gpui_kit::base::ColorPickerState>::hex_input.
 func (s ColorPickerState) HexInput(cx *Cx) InputState {
 	useBaseColorPicker()
@@ -829,6 +895,8 @@ func (s ColorPickerState) HexInput(cx *Cx) InputState {
 	return InputState{h: r.u64()}
 }
 
+// Returns whether the picker popup is open.
+//
 // IsOpen is <gpui_kit::base::ColorPickerState>::is_open.
 func (s ColorPickerState) IsOpen(cx *Cx) bool {
 	useBaseColorPicker()
@@ -838,6 +906,8 @@ func (s ColorPickerState) IsOpen(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns the color currently being previewed.
+//
 // Preview is <gpui_kit::base::ColorPickerState>::preview.
 func (s ColorPickerState) Preview(cx *Cx) Option[Hsla] {
 	useBaseColorPicker()
@@ -847,6 +917,8 @@ func (s ColorPickerState) Preview(cx *Cx) Option[Hsla] {
 	return rdOpt(r, func(r *reader) Hsla { return rdHsla(r) })
 }
 
+// The HSLA component sliders.
+//
 // Sliders is <gpui_kit::base::ColorPickerState>::sliders.
 func (s ColorPickerState) Sliders(cx *Cx) HslaSliders {
 	useBaseColorPicker()
@@ -856,6 +928,8 @@ func (s ColorPickerState) Sliders(cx *Cx) HslaSliders {
 	return HslaSliders{h: r.u64()}
 }
 
+// Returns the committed color.
+//
 // Value is <gpui_kit::base::ColorPickerState>::value.
 func (s ColorPickerState) Value(cx *Cx) Option[Hsla] {
 	useBaseColorPicker()
@@ -877,6 +951,8 @@ func (s ColorPickerState) TryValue(cx *Cx) (v Option[Hsla], ok bool) {
 	return rdOpt(r, func(r *reader) Hsla { return rdHsla(r) }), true
 }
 
+// Parses and commits a hex color, closing the picker on success.
+//
 // CommitHex is <gpui_kit::base::ColorPickerState>::commit_hex.
 func (s ColorPickerState) CommitHex(cx *Cx, value string) Option[Hsla] {
 	useBaseColorPicker()
@@ -887,6 +963,11 @@ func (s ColorPickerState) CommitHex(cx *Cx, value string) Option[Hsla] {
 	return rdOpt(r, func(r *reader) Hsla { return rdHsla(r) })
 }
 
+// Parses a hex color into the transient preview.
+//
+// Invalid or incomplete input leaves the current preview unchanged. This does not write the hex
+// field, so it is safe to call while typing in it.
+//
 // PreviewHex is <gpui_kit::base::ColorPickerState>::preview_hex.
 func (s ColorPickerState) PreviewHex(cx *Cx, value string) bool {
 	useBaseColorPicker()
@@ -897,6 +978,8 @@ func (s ColorPickerState) PreviewHex(cx *Cx, value string) bool {
 	return r.bool()
 }
 
+// Drops the transient preview, restoring the committed color.
+//
 // ClearPreview is <gpui_kit::base::ColorPickerState>::clear_preview.
 func (s ColorPickerState) ClearPreview(cx *Cx) {
 	useBaseColorPicker()
@@ -905,6 +988,8 @@ func (s ColorPickerState) ClearPreview(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Clears the committed color without emitting a change.
+//
 // ClearValue is <gpui_kit::base::ColorPickerState>::clear_value.
 func (s ColorPickerState) ClearValue(cx *Cx) {
 	useBaseColorPicker()
@@ -913,6 +998,8 @@ func (s ColorPickerState) ClearValue(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Updates the transient preview color and the hex field that shows it.
+//
 // PreviewColor is <gpui_kit::base::ColorPickerState>::preview_color.
 func (s ColorPickerState) PreviewColor(cx *Cx, value Color) {
 	useBaseColorPicker()
@@ -922,6 +1009,8 @@ func (s ColorPickerState) PreviewColor(cx *Cx, value Color) {
 	stateSet(cx, o)
 }
 
+// Commits a color and closes the picker, as a palette selection does.
+//
 // SelectColor is <gpui_kit::base::ColorPickerState>::select_color.
 func (s ColorPickerState) SelectColor(cx *Cx, value Color) {
 	useBaseColorPicker()
@@ -931,6 +1020,8 @@ func (s ColorPickerState) SelectColor(cx *Cx, value Color) {
 	stateSet(cx, o)
 }
 
+// Selects the application-defined picker panel.
+//
 // SetActiveTab is <gpui_kit::base::ColorPickerState>::set_active_tab.
 func (s ColorPickerState) SetActiveTab(cx *Cx, tab int) {
 	useBaseColorPicker()
@@ -940,6 +1031,8 @@ func (s ColorPickerState) SetActiveTab(cx *Cx, tab int) {
 	stateSet(cx, o)
 }
 
+// Sets whether the picker popup is open.
+//
 // SetOpen is <gpui_kit::base::ColorPickerState>::set_open.
 func (s ColorPickerState) SetOpen(cx *Cx, open bool) {
 	useBaseColorPicker()
@@ -949,6 +1042,8 @@ func (s ColorPickerState) SetOpen(cx *Cx, open bool) {
 	stateSet(cx, o)
 }
 
+// Replaces the committed color without emitting a change.
+//
 // SetValue is <gpui_kit::base::ColorPickerState>::set_value.
 func (s ColorPickerState) SetValue(cx *Cx, value Color) {
 	useBaseColorPicker()
@@ -958,6 +1053,9 @@ func (s ColorPickerState) SetValue(cx *Cx, value Color) {
 	stateSet(cx, o)
 }
 
+// Applies a value supplied to `DefaultValue` to the hex field and sliders. Call this from render;
+// it is a no-op once nothing is pending.
+//
 // SyncPendingValue is <gpui_kit::base::ColorPickerState>::sync_pending_value.
 func (s ColorPickerState) SyncPendingValue(cx *Cx) {
 	useBaseColorPicker()
@@ -966,6 +1064,8 @@ func (s ColorPickerState) SyncPendingValue(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Toggles the picker popup.
+//
 // ToggleOpen is <gpui_kit::base::ColorPickerState>::toggle_open.
 func (s ColorPickerState) ToggleOpen(cx *Cx) {
 	useBaseColorPicker()
@@ -974,6 +1074,8 @@ func (s ColorPickerState) ToggleOpen(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Commits a color without changing the open state, as a slider drag does.
+//
 // UpdateColor is <gpui_kit::base::ColorPickerState>::update_color.
 func (s ColorPickerState) UpdateColor(cx *Cx, value Color) {
 	useBaseColorPicker()
@@ -1006,6 +1108,8 @@ func (b ColorPickerStateBuilder) DefaultValue(value Color) ColorPickerStateBuild
 // Build makes the ColorPickerState.
 func (b ColorPickerStateBuilder) Build() ColorPickerState { return ColorPickerState{b.sb.build()} }
 
+// Creates an empty, closed picker.
+//
 // NewColorPickerState is <gpui_kit::base::ColorPickerState>::new.
 func NewColorPickerState(cx *Cx) ColorPickerStateBuilder {
 	useBaseColorPicker()
@@ -1018,6 +1122,8 @@ type ComboboxState struct{ h uint64 }
 
 func (s ComboboxState) handle() uint64 { return s.h }
 
+// Returns the search query.
+//
 // Query is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::query.
 func (s ComboboxState) Query(cx *Cx) string {
 	useComponentCombobox()
@@ -1027,6 +1133,10 @@ func (s ComboboxState) Query(cx *Cx) string {
 	return r.str()
 }
 
+// Return the first selected value, or `None` when nothing is selected.
+//
+// Convenience for single-select mode (`.multiple(false)`).
+//
 // SelectedValue is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selected_value.
 func (s ComboboxState) SelectedValue(cx *Cx) Option[string] {
 	useComponentCombobox()
@@ -1036,6 +1146,8 @@ func (s ComboboxState) SelectedValue(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// Return the currently selected values.
+//
 // SelectedValues is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selected_values.
 func (s ComboboxState) SelectedValues(cx *Cx) []string {
 	useComponentCombobox()
@@ -1045,6 +1157,8 @@ func (s ComboboxState) SelectedValues(cx *Cx) []string {
 	return rdList(r, func(r *reader) string { return r.str() })
 }
 
+// Add a single index to the selection, if not already present, returning whether it was added.
+//
 // AddSelectedIndex is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::add_selected_index.
 func (s ComboboxState) AddSelectedIndex(cx *Cx, index BaseIndexPath) bool {
 	useComponentCombobox()
@@ -1055,6 +1169,8 @@ func (s ComboboxState) AddSelectedIndex(cx *Cx, index BaseIndexPath) bool {
 	return r.bool()
 }
 
+// Remove a single index from the selection, returning whether it was removed.
+//
 // RemoveSelectedIndex is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::remove_selected_index.
 func (s ComboboxState) RemoveSelectedIndex(cx *Cx, index BaseIndexPath) bool {
 	useComponentCombobox()
@@ -1065,6 +1181,8 @@ func (s ComboboxState) RemoveSelectedIndex(cx *Cx, index BaseIndexPath) bool {
 	return r.bool()
 }
 
+// Clear all selected values.
+//
 // ClearSelection is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::clear_selection.
 func (s ComboboxState) ClearSelection(cx *Cx) {
 	useComponentCombobox()
@@ -1073,6 +1191,8 @@ func (s ComboboxState) ClearSelection(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Focus the trigger.
+//
 // Focus is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::focus.
 func (s ComboboxState) Focus(cx *Cx) {
 	useComponentCombobox()
@@ -1081,6 +1201,8 @@ func (s ComboboxState) Focus(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Replace the underlying delegate (item data source).
+//
 // SetItems is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_items.
 func (s ComboboxState) SetItems(cx *Cx, items RowSource) {
 	useComponentCombobox()
@@ -1090,6 +1212,8 @@ func (s ComboboxState) SetItems(cx *Cx, items RowSource) {
 	stateSet(cx, o)
 }
 
+// Sets the search query and updates the filtered items.
+//
 // SetQuery is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_query.
 func (s ComboboxState) SetQuery(cx *Cx, query string) {
 	useComponentCombobox()
@@ -1099,6 +1223,8 @@ func (s ComboboxState) SetQuery(cx *Cx, query string) {
 	stateSet(cx, o)
 }
 
+// Replace the entire selection set.
+//
 // SetSelectedIndices is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_selected_indices.
 func (s ComboboxState) SetSelectedIndices(cx *Cx, indices []BaseIndexPath) {
 	useComponentCombobox()
@@ -1111,6 +1237,11 @@ func (s ComboboxState) SetSelectedIndices(cx *Cx, indices []BaseIndexPath) {
 	stateSet(cx, o)
 }
 
+// Replace the entire selection set by item values.
+//
+// Values are resolved through the current delegate. Values that cannot be resolved are ignored.
+// This updates the committed selection and snapshot without emitting a `ComboboxEvent`.
+//
 // SetSelectedValues is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::set_selected_values.
 func (s ComboboxState) SetSelectedValues(cx *Cx, values []string) {
 	useComponentCombobox()
@@ -1152,6 +1283,8 @@ func (b ComboboxStateBuilder) Searchable(searchable bool) ComboboxStateBuilder {
 // Build makes the ComboboxState.
 func (b ComboboxStateBuilder) Build() ComboboxState { return ComboboxState{b.sb.build()} }
 
+// Create a new `Combobox` state.
+//
 // NewComboboxState is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::new.
 func NewComboboxState(cx *Cx, delegate RowSource, selectedIndices []BaseIndexPath) ComboboxStateBuilder {
 	useComponentCombobox()
@@ -1169,6 +1302,8 @@ type CommandState struct{ h uint64 }
 
 func (s CommandState) handle() uint64 { return s.h }
 
+// Whether the search field is showing its spinner.
+//
 // IsLoading is <gpui_kit::component::command::CommandState>::is_loading.
 func (s CommandState) IsLoading(cx *Cx) bool {
 	useComponentCommand()
@@ -1178,6 +1313,8 @@ func (s CommandState) IsLoading(cx *Cx) bool {
 	return r.bool()
 }
 
+// The number of items matching the current query.
+//
 // MatchedCount is <gpui_kit::component::command::CommandState>::matched_count.
 func (s CommandState) MatchedCount(cx *Cx) int {
 	useComponentCommand()
@@ -1187,6 +1324,8 @@ func (s CommandState) MatchedCount(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The current search query.
+//
 // Query is <gpui_kit::component::command::CommandState>::query.
 func (s CommandState) Query(cx *Cx) string {
 	useComponentCommand()
@@ -1196,6 +1335,13 @@ func (s CommandState) Query(cx *Cx) string {
 	return r.str()
 }
 
+// The highlighted item's path in the model installed by the latest `CommandEl` render, before
+// local filtering.
+//
+// Ungrouped items occupy section 0 and use their input position as the row. Explicit groups use
+// their group and item positions; when a model mixes both forms, the implicit ungrouped section
+// comes first.
+//
 // SelectedIndex is <gpui_kit::component::command::CommandState>::selected_index.
 func (s CommandState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
 	useComponentCommand()
@@ -1205,6 +1351,8 @@ func (s CommandState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
 	return rdOpt(r, func(r *reader) BaseIndexPath { return rdBaseIndexPath(r) })
 }
 
+// Move focus to the palette's active control.
+//
 // Focus is <gpui_kit::component::command::CommandState>::focus.
 func (s CommandState) Focus(cx *Cx) {
 	useComponentCommand()
@@ -1213,6 +1361,10 @@ func (s CommandState) Focus(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Show or hide the search field's spinner, and suppress the empty message while it spins.
+//
+// Turn it on while an `on_query` callback is being answered.
+//
 // SetLoading is <gpui_kit::component::command::CommandState>::set_loading.
 func (s CommandState) SetLoading(cx *Cx, loading bool) {
 	useComponentCommand()
@@ -1222,6 +1374,11 @@ func (s CommandState) SetLoading(cx *Cx, loading bool) {
 	stateSet(cx, o)
 }
 
+// Replace the search query, as if it had been typed.
+//
+// The input suppresses its own change event for a programmatic write, so the re-filter and query
+// callback happen here instead.
+//
 // SetQuery is <gpui_kit::component::command::CommandState>::set_query.
 func (s CommandState) SetQuery(cx *Cx, query string) {
 	useComponentCommand()
@@ -1231,6 +1388,11 @@ func (s CommandState) SetQuery(cx *Cx, query string) {
 	stateSet(cx, o)
 }
 
+// Highlight an item by its original, unfiltered model path, or clear the highlight with `None`.
+//
+// A path that is currently filtered out or disabled clears the highlight. A visible selection is
+// scrolled into view.
+//
 // SetSelectedIndex is <gpui_kit::component::command::CommandState>::set_selected_index.
 func (s CommandState) SetSelectedIndex(cx *Cx, index Option[BaseIndexPath]) {
 	useComponentCommand()
@@ -1245,6 +1407,8 @@ func (s CommandState) SetSelectedIndex(cx *Cx, index Option[BaseIndexPath]) {
 	stateSet(cx, o)
 }
 
+// Create an empty palette.
+//
 // NewCommandState is <gpui_kit::component::command::CommandState>::new.
 func NewCommandState(cx *Cx) CommandState {
 	useComponentCommand()
@@ -1258,6 +1422,11 @@ type CompletionMenuState struct{ h uint64 }
 
 func (s CompletionMenuState) handle() uint64 { return s.h }
 
+// Bumped whenever the content changes.
+//
+// A renderer that mirrors this menu compares revisions to decide whether to rebuild, so it never
+// has to compare the item list itself.
+//
 // Revision is <gpui_kit::base::input::CompletionMenuState>::revision.
 func (s CompletionMenuState) Revision(cx *Cx) uint64 {
 	useBaseInput()
@@ -1280,6 +1449,8 @@ type CursorBlinkRead struct{ h uint64 }
 
 func (s CursorBlinkRead) handle() uint64 { return s.h }
 
+// The time since the last activity after which blinking stops.
+//
 // IdleTimeout is <gpui_kit::base::input::CursorBlink>::idle_timeout.
 func (s CursorBlinkRead) IdleTimeout(cx *Cx) Option[time.Duration] {
 	useBaseInput()
@@ -1289,6 +1460,8 @@ func (s CursorBlinkRead) IdleTimeout(cx *Cx) Option[time.Duration] {
 	return rdOpt(r, func(r *reader) time.Duration { return rdDuration(r) })
 }
 
+// The duration of each visible or hidden phase, or `None` when steady.
+//
 // Interval is <gpui_kit::base::input::CursorBlink>::interval.
 func (s CursorBlinkRead) Interval(cx *Cx) Option[time.Duration] {
 	useBaseInput()
@@ -1298,6 +1471,8 @@ func (s CursorBlinkRead) Interval(cx *Cx) Option[time.Duration] {
 	return rdOpt(r, func(r *reader) time.Duration { return rdDuration(r) })
 }
 
+// Whether the focused caret stays visible without blinking.
+//
 // IsSteady is <gpui_kit::base::input::CursorBlink>::is_steady.
 func (s CursorBlinkRead) IsSteady(cx *Cx) bool {
 	useBaseInput()
@@ -1312,6 +1487,8 @@ type DatePickerState struct{ h uint64 }
 
 func (s DatePickerState) handle() uint64 { return s.h }
 
+// Get the date part of the value.
+//
 // Date is <gpui_kit::component::date_picker::DatePickerState>::date.
 func (s DatePickerState) Date(cx *Cx) Date {
 	useComponentTime()
@@ -1321,6 +1498,8 @@ func (s DatePickerState) Date(cx *Cx) Date {
 	return rdDate(r)
 }
 
+// Get the value, combining the date with its time of day.
+//
 // DateTime is <gpui_kit::component::date_picker::DatePickerState>::date_time.
 func (s DatePickerState) DateTime(cx *Cx) DateTime {
 	useComponentTime()
@@ -1330,6 +1509,8 @@ func (s DatePickerState) DateTime(cx *Cx) DateTime {
 	return rdDateTime(r)
 }
 
+// Set the date, keeping the current time of day.
+//
 // SetDate is <gpui_kit::component::date_picker::DatePickerState>::set_date.
 func (s DatePickerState) SetDate(cx *Cx, date DateInto) {
 	useComponentTime()
@@ -1339,6 +1520,8 @@ func (s DatePickerState) SetDate(cx *Cx, date DateInto) {
 	stateSet(cx, o)
 }
 
+// Set the date and the time of day.
+//
 // SetDateTime is <gpui_kit::component::date_picker::DatePickerState>::set_date_time.
 func (s DatePickerState) SetDateTime(cx *Cx, value DateTime) {
 	useComponentTime()
@@ -1348,6 +1531,11 @@ func (s DatePickerState) SetDateTime(cx *Cx, value DateTime) {
 	stateSet(cx, o)
 }
 
+// Set the year range for the internal calendar.
+//
+// Default is 50 years before and after the current year. `range` uses a half-open interval
+// `(start, end)` where `end` is exclusive.
+//
 // SetYearRange is <gpui_kit::component::date_picker::DatePickerState>::set_year_range.
 func (s DatePickerState) SetYearRange(cx *Cx, range_ TupleInt32Int32) {
 	useComponentTime()
@@ -1405,6 +1593,8 @@ func (b DatePickerStateBuilder) TimePrecision(precision TimePrecision) DatePicke
 // Build makes the DatePickerState.
 func (b DatePickerStateBuilder) Build() DatePickerState { return DatePickerState{b.sb.build()} }
 
+// Create a date state.
+//
 // NewDatePickerState is <gpui_kit::component::date_picker::DatePickerState>::new.
 func NewDatePickerState(cx *Cx) DatePickerStateBuilder {
 	useComponentTime()
@@ -1412,6 +1602,8 @@ func NewDatePickerState(cx *Cx) DatePickerStateBuilder {
 	return DatePickerStateBuilder{newStateBuilder(cx, o)}
 }
 
+// Create a date state with range mode.
+//
 // NewDatePickerStateRange is <gpui_kit::component::date_picker::DatePickerState>::range.
 func NewDatePickerStateRange(cx *Cx) DatePickerStateBuilder {
 	useComponentTime()
@@ -1558,6 +1750,8 @@ func (s DiffAnnotation) ID(cx *Cx) string {
 	return r.str()
 }
 
+// The `Path` of the annotated file.
+//
 // Path is <gpui_kit::component::diff::DiffAnnotation>::path.
 func (s DiffAnnotation) Path(cx *Cx) string {
 	useComponentDiff()
@@ -1567,6 +1761,8 @@ func (s DiffAnnotation) Path(cx *Cx) string {
 	return r.str()
 }
 
+// The annotated line, or `None` for a file annotation.
+//
 // Position is <gpui_kit::component::diff::DiffAnnotation>::position.
 func (s DiffAnnotation) Position(cx *Cx) Option[DiffLinePosition] {
 	useComponentDiff()
@@ -1576,6 +1772,8 @@ func (s DiffAnnotation) Position(cx *Cx) Option[DiffLinePosition] {
 	return rdOpt(r, func(r *reader) DiffLinePosition { return DiffLinePosition{h: r.u64()} })
 }
 
+// Attaches content beneath the header of the file at `path`.
+//
 // NewDiffAnnotationFile is <gpui_kit::component::diff::DiffAnnotation>::file.
 func NewDiffAnnotationFile(cx *Cx, id ID, path string) DiffAnnotation {
 	useComponentDiff()
@@ -1586,6 +1784,8 @@ func NewDiffAnnotationFile(cx *Cx, id ID, path string) DiffAnnotation {
 	return DiffAnnotation{stateMake(cx, o)}
 }
 
+// Attaches content beneath a source line.
+//
 // NewDiffAnnotationLine is <gpui_kit::component::diff::DiffAnnotation>::line.
 func NewDiffAnnotationLine(cx *Cx, id ID, position DiffLinePosition) DiffAnnotation {
 	useComponentDiff()
@@ -1601,6 +1801,8 @@ type DiffConflict struct{ h uint64 }
 
 func (s DiffConflict) handle() uint64 { return s.h }
 
+// The base marker label, or None for a two-way conflict.
+//
 // BaseLabel is <gpui_kit::component::diff::DiffConflict>::base_label.
 func (s DiffConflict) BaseLabel(cx *Cx) Option[string] {
 	useComponentDiff()
@@ -1610,6 +1812,8 @@ func (s DiffConflict) BaseLabel(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// Base source lines for diff3, with an exclusive end; may be empty.
+//
 // BaseLines is <gpui_kit::component::diff::DiffConflict>::base_lines.
 func (s DiffConflict) BaseLines(cx *Cx) Option[Range] {
 	useComponentDiff()
@@ -1619,6 +1823,8 @@ func (s DiffConflict) BaseLines(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// The label from the opening marker.
+//
 // CurrentLabel is <gpui_kit::component::diff::DiffConflict>::current_label.
 func (s DiffConflict) CurrentLabel(cx *Cx) string {
 	useComponentDiff()
@@ -1628,6 +1834,8 @@ func (s DiffConflict) CurrentLabel(cx *Cx) string {
 	return r.str()
 }
 
+// Current-side source lines, with an exclusive end; may be empty.
+//
 // CurrentLines is <gpui_kit::component::diff::DiffConflict>::current_lines.
 func (s DiffConflict) CurrentLines(cx *Cx) Range {
 	useComponentDiff()
@@ -1637,6 +1845,8 @@ func (s DiffConflict) CurrentLines(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// The label from the closing marker.
+//
 // IncomingLabel is <gpui_kit::component::diff::DiffConflict>::incoming_label.
 func (s DiffConflict) IncomingLabel(cx *Cx) string {
 	useComponentDiff()
@@ -1646,6 +1856,8 @@ func (s DiffConflict) IncomingLabel(cx *Cx) string {
 	return r.str()
 }
 
+// Incoming-side source lines, with an exclusive end; may be empty.
+//
 // IncomingLines is <gpui_kit::component::diff::DiffConflict>::incoming_lines.
 func (s DiffConflict) IncomingLines(cx *Cx) Range {
 	useComponentDiff()
@@ -1655,6 +1867,8 @@ func (s DiffConflict) IncomingLines(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// One-based working-file lines, including markers, with an exclusive end.
+//
 // Lines is <gpui_kit::component::diff::DiffConflict>::lines.
 func (s DiffConflict) Lines(cx *Cx) Range {
 	useComponentDiff()
@@ -1678,6 +1892,8 @@ func (s DiffFileRead) Additions(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Merge conflicts in working-file order; slice indices identify resolutions.
+//
 // Conflicts is <gpui_kit::component::diff::DiffFile>::conflicts.
 func (s DiffFileRead) Conflicts(cx *Cx) []DiffConflict {
 	useComponentDiff()
@@ -1696,6 +1912,9 @@ func (s DiffFileRead) Deletions(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Git extended header lines, such as file modes, similarity, renames and the binary marker, as
+// they appear in the patch.
+//
 // ExtendedHeaders is <gpui_kit::component::diff::DiffFile>::extended_headers.
 func (s DiffFileRead) ExtendedHeaders(cx *Cx) []string {
 	useComponentDiff()
@@ -1705,6 +1924,9 @@ func (s DiffFileRead) ExtendedHeaders(cx *Cx) []string {
 	return rdList(r, func(r *reader) string { return r.str() })
 }
 
+// Whether the file changes, including an added or deleted empty file and metadata-only changes
+// such as a mode change or pure rename.
+//
 // HasChanges is <gpui_kit::component::diff::DiffFile>::has_changes.
 func (s DiffFileRead) HasChanges(cx *Cx) bool {
 	useComponentDiff()
@@ -1714,6 +1936,8 @@ func (s DiffFileRead) HasChanges(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether the patch reports binary contents rather than textual hunks.
+//
 // IsBinary is <gpui_kit::component::diff::DiffFile>::is_binary.
 func (s DiffFileRead) IsBinary(cx *Cx) bool {
 	useComponentDiff()
@@ -1723,6 +1947,8 @@ func (s DiffFileRead) IsBinary(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether a hunk ended before its declared line counts, which only `TruncatedHunks` accepts.
+//
 // IsTruncated is <gpui_kit::component::diff::DiffFile>::is_truncated.
 func (s DiffFileRead) IsTruncated(cx *Cx) bool {
 	useComponentDiff()
@@ -1732,6 +1958,8 @@ func (s DiffFileRead) IsTruncated(cx *Cx) bool {
 	return r.bool()
 }
 
+// The syntax language: the override, or the one detected from the path.
+//
 // Language is <gpui_kit::component::diff::DiffFile>::language.
 func (s DiffFileRead) Language(cx *Cx) string {
 	useComponentDiff()
@@ -1741,6 +1969,8 @@ func (s DiffFileRead) Language(cx *Cx) string {
 	return r.str()
 }
 
+// The modified path, or `None` for a deleted file.
+//
 // ModifiedPath is <gpui_kit::component::diff::DiffFile>::modified_path.
 func (s DiffFileRead) ModifiedPath(cx *Cx) Option[string] {
 	useComponentDiff()
@@ -1750,6 +1980,8 @@ func (s DiffFileRead) ModifiedPath(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// The original path, or `None` for an added file.
+//
 // OriginalPath is <gpui_kit::component::diff::DiffFile>::original_path.
 func (s DiffFileRead) OriginalPath(cx *Cx) Option[string] {
 	useComponentDiff()
@@ -1759,6 +1991,8 @@ func (s DiffFileRead) OriginalPath(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// The path to show for this file: the modified path, or the original path of a deleted file.
+//
 // Path is <gpui_kit::component::diff::DiffFile>::path.
 func (s DiffFileRead) Path(cx *Cx) string {
 	useComponentDiff()
@@ -1768,6 +2002,8 @@ func (s DiffFileRead) Path(cx *Cx) string {
 	return r.str()
 }
 
+// How the file changed.
+//
 // Status is <gpui_kit::component::diff::DiffFile>::status.
 func (s DiffFileRead) Status(cx *Cx) DiffFileStatus {
 	useComponentDiff()
@@ -1823,6 +2059,8 @@ func (s DiffLinePosition) Line(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The `Path` of the file.
+//
 // Path is <gpui_kit::component::diff::DiffLinePosition>::path.
 func (s DiffLinePosition) Path(cx *Cx) string {
 	useComponentDiff()
@@ -1841,6 +2079,8 @@ func (s DiffLinePosition) Side(cx *Cx) DiffSide {
 	return DiffSide(r.u16())
 }
 
+// Creates a position, clamping the line to at least one.
+//
 // NewDiffLinePosition is <gpui_kit::component::diff::DiffLinePosition>::new.
 func NewDiffLinePosition(cx *Cx, path string, side DiffSide, line int) DiffLinePosition {
 	useComponentDiff()
@@ -1866,6 +2106,8 @@ func (s DiffLineRangeRead) End(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The side `end` is on; the same as `Side` unless set.
+//
 // EndSide is <gpui_kit::component::diff::DiffLineRange>::end_side.
 func (s DiffLineRangeRead) EndSide(cx *Cx) DiffSide {
 	useComponentDiff()
@@ -1875,6 +2117,8 @@ func (s DiffLineRangeRead) EndSide(cx *Cx) DiffSide {
 	return DiffSide(r.u16())
 }
 
+// The `Path` of the file.
+//
 // Path is <gpui_kit::component::diff::DiffLineRange>::path.
 func (s DiffLineRangeRead) Path(cx *Cx) string {
 	useComponentDiff()
@@ -1884,6 +2128,8 @@ func (s DiffLineRangeRead) Path(cx *Cx) string {
 	return r.str()
 }
 
+// The side `start` is on.
+//
 // Side is <gpui_kit::component::diff::DiffLineRange>::side.
 func (s DiffLineRangeRead) Side(cx *Cx) DiffSide {
 	useComponentDiff()
@@ -1930,6 +2176,9 @@ type DiffState struct{ h uint64 }
 
 func (s DiffState) handle() uint64 { return s.h }
 
+// The resolution of conflict `ix` in the file at `path`, if any. Use `Conflicts` to enumerate
+// valid indices; `None` means unresolved, or that the file or index does not exist.
+//
 // ConflictResolution is <gpui_kit::component::diff::DiffState>::conflict_resolution.
 func (s DiffState) ConflictResolution(cx *Cx, path string, ix int) Option[DiffConflictResolution] {
 	useComponentDiff()
@@ -1959,6 +2208,8 @@ func (s DiffState) ExpansionLines(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The files in patch order.
+//
 // Files is <gpui_kit::component::diff::DiffState>::files.
 func (s DiffState) Files(cx *Cx) []DiffFileRead {
 	useComponentDiff()
@@ -1986,6 +2237,8 @@ func (s DiffState) InlineUnit(cx *Cx) Option[DiffInlineUnit] {
 	return rdOpt(r, func(r *reader) DiffInlineUnit { return DiffInlineUnit(r.u16()) })
 }
 
+// Whether the file at `path` shows only its header.
+//
 // IsFileCollapsed is <gpui_kit::component::diff::DiffState>::is_file_collapsed.
 func (s DiffState) IsFileCollapsed(cx *Cx, path string) bool {
 	useComponentDiff()
@@ -2014,6 +2267,9 @@ func (s DiffState) Mode(cx *Cx) DiffMode {
 	return DiffMode(r.u16())
 }
 
+// The working file with every conflict replaced by its resolution, or `None` while a conflict is
+// unresolved or `path` names no conflicted file.
+//
 // ResolvedText is <gpui_kit::component::diff::DiffState>::resolved_text.
 func (s DiffState) ResolvedText(cx *Cx, path string) Option[string] {
 	useComponentDiff()
@@ -2033,6 +2289,8 @@ func (s DiffState) SelectedLines(cx *Cx) Option[DiffLineRangeRead] {
 	return rdOpt(r, func(r *reader) DiffLineRangeRead { return DiffLineRangeRead{h: r.u64()} })
 }
 
+// Returns selected source without gutters, diff markers or annotation content.
+//
 // SelectedText is <gpui_kit::component::diff::DiffState>::selected_text.
 func (s DiffState) SelectedText(cx *Cx) string {
 	useComponentDiff()
@@ -2051,6 +2309,9 @@ func (s DiffState) SyntaxMaxLineLength(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Returns to GPUI Kit's highlighter, preparing syntax again without resetting selection or
+// scrolling.
+//
 // ClearSyntaxHighlighter is <gpui_kit::component::diff::DiffState>::clear_syntax_highlighter.
 func (s DiffState) ClearSyntaxHighlighter(cx *Cx) {
 	useComponentDiff()
@@ -2059,6 +2320,8 @@ func (s DiffState) ClearSyntaxHighlighter(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Restores the configured context disclosures.
+//
 // CollapseUnchanged is <gpui_kit::component::diff::DiffState>::collapse_unchanged.
 func (s DiffState) CollapseUnchanged(cx *Cx) {
 	useComponentDiff()
@@ -2067,6 +2330,8 @@ func (s DiffState) CollapseUnchanged(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Reveals all unchanged source while preserving the configured context count.
+//
 // ExpandUnchanged is <gpui_kit::component::diff::DiffState>::expand_unchanged.
 func (s DiffState) ExpandUnchanged(cx *Cx) {
 	useComponentDiff()
@@ -2075,6 +2340,9 @@ func (s DiffState) ExpandUnchanged(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Moves to the next changed group after the current viewport, across files, wrapping to the first
+// once the list is scrolled to its end.
+//
 // NextChange is <gpui_kit::component::diff::DiffState>::next_change.
 func (s DiffState) NextChange(cx *Cx) {
 	useComponentDiff()
@@ -2083,6 +2351,8 @@ func (s DiffState) NextChange(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Moves to the previous changed group before the current viewport, across files.
+//
 // PreviousChange is <gpui_kit::component::diff::DiffState>::previous_change.
 func (s DiffState) PreviousChange(cx *Cx) {
 	useComponentDiff()
@@ -2091,6 +2361,9 @@ func (s DiffState) PreviousChange(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Resolves conflict `ix` (an index in `Conflicts`) in the file at `path`, or clears its resolution
+// with `None`, without emitting a user event.
+//
 // ResolveConflict is <gpui_kit::component::diff::DiffState>::resolve_conflict.
 func (s DiffState) ResolveConflict(cx *Cx, path string, ix int, resolution Option[DiffConflictResolution]) {
 	useComponentDiff()
@@ -2107,6 +2380,8 @@ func (s DiffState) ResolveConflict(cx *Cx, path string, ix int, resolution Optio
 	stateSet(cx, o)
 }
 
+// Scrolls to the header of the file at `path`, a `Path`.
+//
 // ScrollToFile is <gpui_kit::component::diff::DiffState>::scroll_to_file.
 func (s DiffState) ScrollToFile(cx *Cx, path string) {
 	useComponentDiff()
@@ -2116,6 +2391,8 @@ func (s DiffState) ScrollToFile(cx *Cx, path string) {
 	stateSet(cx, o)
 }
 
+// Reveals and scrolls to a source line, expanding its file and hidden context if needed.
+//
 // ScrollToLine is <gpui_kit::component::diff::DiffState>::scroll_to_line.
 func (s DiffState) ScrollToLine(cx *Cx, position DiffLinePosition) {
 	useComponentDiff()
@@ -2125,6 +2402,8 @@ func (s DiffState) ScrollToLine(cx *Cx, position DiffLinePosition) {
 	stateSet(cx, o)
 }
 
+// Sets surrounding context. `None` shows every supplied patch line.
+//
 // SetContextLines is <gpui_kit::component::diff::DiffState>::set_context_lines.
 func (s DiffState) SetContextLines(cx *Cx, lines Option[int]) {
 	useComponentDiff()
@@ -2139,6 +2418,8 @@ func (s DiffState) SetContextLines(cx *Cx, lines Option[int]) {
 	stateSet(cx, o)
 }
 
+// Changes the number of lines each disclosure reveals, preserving selection and scrolling.
+//
 // SetExpansionLines is <gpui_kit::component::diff::DiffState>::set_expansion_lines.
 func (s DiffState) SetExpansionLines(cx *Cx, lines int) {
 	useComponentDiff()
@@ -2148,6 +2429,8 @@ func (s DiffState) SetExpansionLines(cx *Cx, lines int) {
 	stateSet(cx, o)
 }
 
+// Collapses the file at `path` to its header, or expands it, without emitting a user event.
+//
 // SetFileCollapsed is <gpui_kit::component::diff::DiffState>::set_file_collapsed.
 func (s DiffState) SetFileCollapsed(cx *Cx, path string, collapsed bool) {
 	useComponentDiff()
@@ -2158,6 +2441,9 @@ func (s DiffState) SetFileCollapsed(cx *Cx, path string, collapsed bool) {
 	stateSet(cx, o)
 }
 
+// Replaces the files and resets expansion, selection and viewport. Collapsed files stay collapsed
+// when their path is still present.
+//
 // SetFiles is <gpui_kit::component::diff::DiffState>::set_files.
 func (s DiffState) SetFiles(cx *Cx, files []DiffFile) {
 	useComponentDiff()
@@ -2170,6 +2456,8 @@ func (s DiffState) SetFiles(cx *Cx, files []DiffFile) {
 	stateSet(cx, o)
 }
 
+// Changes the inline comparison line limit in bytes without resetting selection or scrolling.
+//
 // SetInlineMaxLineLength is <gpui_kit::component::diff::DiffState>::set_inline_max_line_length.
 func (s DiffState) SetInlineMaxLineLength(cx *Cx, length int) {
 	useComponentDiff()
@@ -2179,6 +2467,8 @@ func (s DiffState) SetInlineMaxLineLength(cx *Cx, length int) {
 	stateSet(cx, o)
 }
 
+// Changes the inline comparison unit without resetting selection or scrolling.
+//
 // SetInlineUnit is <gpui_kit::component::diff::DiffState>::set_inline_unit.
 func (s DiffState) SetInlineUnit(cx *Cx, unit Option[DiffInlineUnit]) {
 	useComponentDiff()
@@ -2193,6 +2483,8 @@ func (s DiffState) SetInlineUnit(cx *Cx, unit Option[DiffInlineUnit]) {
 	stateSet(cx, o)
 }
 
+// Changes the shortest unchanged range that collapses, preserving selection and scrolling.
+//
 // SetMinCollapsedLines is <gpui_kit::component::diff::DiffState>::set_min_collapsed_lines.
 func (s DiffState) SetMinCollapsedLines(cx *Cx, lines int) {
 	useComponentDiff()
@@ -2202,6 +2494,8 @@ func (s DiffState) SetMinCollapsedLines(cx *Cx, lines int) {
 	stateSet(cx, o)
 }
 
+// Changes the display mode while preserving source-line selection and a nearby source row.
+//
 // SetMode is <gpui_kit::component::diff::DiffState>::set_mode.
 func (s DiffState) SetMode(cx *Cx, mode DiffMode) {
 	useComponentDiff()
@@ -2211,6 +2505,9 @@ func (s DiffState) SetMode(cx *Cx, mode DiffMode) {
 	stateSet(cx, o)
 }
 
+// Synchronizes source-line selection without emitting a user event. Clips to supplied patch lines;
+// a range containing none clears selection.
+//
 // SetSelectedLines is <gpui_kit::component::diff::DiffState>::set_selected_lines.
 func (s DiffState) SetSelectedLines(cx *Cx, range_ Option[DiffLineRange]) {
 	useComponentDiff()
@@ -2225,6 +2522,8 @@ func (s DiffState) SetSelectedLines(cx *Cx, range_ Option[DiffLineRange]) {
 	stateSet(cx, o)
 }
 
+// Changes the syntax emphasis line limit in bytes without resetting selection or scrolling.
+//
 // SetSyntaxMaxLineLength is <gpui_kit::component::diff::DiffState>::set_syntax_max_line_length.
 func (s DiffState) SetSyntaxMaxLineLength(cx *Cx, length int) {
 	useComponentDiff()
@@ -2303,6 +2602,8 @@ func (b DiffStateBuilder) WithSyntaxMaxLineLength(length int) DiffStateBuilder {
 // Build makes the DiffState.
 func (b DiffStateBuilder) Build() DiffState { return DiffState{b.sb.build()} }
 
+// Creates a unified viewer with three unchanged lines around each change.
+//
 // NewDiffState is <gpui_kit::component::diff::DiffState>::new.
 func NewDiffState(cx *Cx, files []DiffFile) DiffStateBuilder {
 	useComponentDiff()
@@ -2344,6 +2645,8 @@ type DisplayMap struct{ h uint64 }
 
 func (s DisplayMap) handle() uint64 { return s.h }
 
+// Get the buffer line count (logical lines)
+//
 // BufferLineCount is <gpui_kit::base::input::DisplayMap>::buffer_line_count.
 func (s DisplayMap) BufferLineCount(cx *Cx) int {
 	useBaseInput()
@@ -2353,6 +2656,9 @@ func (s DisplayMap) BufferLineCount(cx *Cx) int {
 	return int(r.u64())
 }
 
+// First display row of a buffer line. If the line is fully folded, returns the nearest visible
+// display row.
+//
 // BufferLineToDisplayRow is <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row.
 func (s DisplayMap) BufferLineToDisplayRow(cx *Cx, line int) int {
 	useBaseInput()
@@ -2363,6 +2669,9 @@ func (s DisplayMap) BufferLineToDisplayRow(cx *Cx, line int) int {
 	return int(r.u64())
 }
 
+// Get the display row range for a buffer line: [start, end) Returns None if the buffer line is
+// completely hidden
+//
 // BufferLineToDisplayRowRange is <gpui_kit::base::input::DisplayMap>::buffer_line_to_display_row_range.
 func (s DisplayMap) BufferLineToDisplayRowRange(cx *Cx, line int) Option[Range] {
 	useBaseInput()
@@ -2373,6 +2682,8 @@ func (s DisplayMap) BufferLineToDisplayRowRange(cx *Cx, line int) Option[Range] 
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Convert buffer position to display position
+//
 // BufferPosToDisplayPos is <gpui_kit::base::input::DisplayMap>::buffer_pos_to_display_pos.
 func (s DisplayMap) BufferPosToDisplayPos(cx *Cx, pos BufferPoint) DisplayPoint {
 	useBaseInput()
@@ -2383,6 +2694,8 @@ func (s DisplayMap) BufferPosToDisplayPos(cx *Cx, pos BufferPoint) DisplayPoint 
 	return rdDisplayPoint(r)
 }
 
+// Convert display position to buffer position
+//
 // DisplayPosToBufferPos is <gpui_kit::base::input::DisplayMap>::display_pos_to_buffer_pos.
 func (s DisplayMap) DisplayPosToBufferPos(cx *Cx, pos DisplayPoint) BufferPoint {
 	useBaseInput()
@@ -2393,6 +2706,8 @@ func (s DisplayMap) DisplayPosToBufferPos(cx *Cx, pos DisplayPoint) BufferPoint 
 	return rdBufferPoint(r)
 }
 
+// Get total number of visible display rows
+//
 // DisplayRowCount is <gpui_kit::base::input::DisplayMap>::display_row_count.
 func (s DisplayMap) DisplayRowCount(cx *Cx) int {
 	useBaseInput()
@@ -2402,6 +2717,8 @@ func (s DisplayMap) DisplayRowCount(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Get the buffer line for a given display row
+//
 // DisplayRowToBufferLine is <gpui_kit::base::input::DisplayMap>::display_row_to_buffer_line.
 func (s DisplayMap) DisplayRowToBufferLine(cx *Cx, displayRow int) int {
 	useBaseInput()
@@ -2412,6 +2729,8 @@ func (s DisplayMap) DisplayRowToBufferLine(cx *Cx, displayRow int) int {
 	return int(r.u64())
 }
 
+// Convert a display row to a wrap row.
+//
 // DisplayRowToWrapRow is <gpui_kit::base::input::DisplayMap>::display_row_to_wrap_row.
 func (s DisplayMap) DisplayRowToWrapRow(cx *Cx, displayRow int) Option[int] {
 	useBaseInput()
@@ -2422,6 +2741,8 @@ func (s DisplayMap) DisplayRowToWrapRow(cx *Cx, displayRow int) Option[int] {
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
 }
 
+// Get all currently folded ranges
+//
 // FoldedRanges is <gpui_kit::base::input::DisplayMap>::folded_ranges.
 func (s DisplayMap) FoldedRanges(cx *Cx) []FoldRange {
 	useBaseInput()
@@ -2431,6 +2752,8 @@ func (s DisplayMap) FoldedRanges(cx *Cx) []FoldRange {
 	return rdList(r, func(r *reader) FoldRange { return rdFoldRange(r) })
 }
 
+// Check if a buffer line is completely hidden
+//
 // IsBufferLineHidden is <gpui_kit::base::input::DisplayMap>::is_buffer_line_hidden.
 func (s DisplayMap) IsBufferLineHidden(cx *Cx, line int) bool {
 	useBaseInput()
@@ -2441,6 +2764,8 @@ func (s DisplayMap) IsBufferLineHidden(cx *Cx, line int) bool {
 	return r.bool()
 }
 
+// Check if a line is a fold candidate
+//
 // IsFoldCandidate is <gpui_kit::base::input::DisplayMap>::is_fold_candidate.
 func (s DisplayMap) IsFoldCandidate(cx *Cx, startLine int) bool {
 	useBaseInput()
@@ -2451,6 +2776,8 @@ func (s DisplayMap) IsFoldCandidate(cx *Cx, startLine int) bool {
 	return r.bool()
 }
 
+// Check if a line is currently folded
+//
 // IsFoldedAt is <gpui_kit::base::input::DisplayMap>::is_folded_at.
 func (s DisplayMap) IsFoldedAt(cx *Cx, startLine int) bool {
 	useBaseInput()
@@ -2461,6 +2788,8 @@ func (s DisplayMap) IsFoldedAt(cx *Cx, startLine int) bool {
 	return r.bool()
 }
 
+// Find the nearest visible display row for a given wrap row.
+//
 // NearestVisibleDisplayRow is <gpui_kit::base::input::DisplayMap>::nearest_visible_display_row.
 func (s DisplayMap) NearestVisibleDisplayRow(cx *Cx, wrapRow int) int {
 	useBaseInput()
@@ -2471,6 +2800,8 @@ func (s DisplayMap) NearestVisibleDisplayRow(cx *Cx, wrapRow int) int {
 	return int(r.u64())
 }
 
+// Get the rope text
+//
 // Text is <gpui_kit::base::input::DisplayMap>::text.
 func (s DisplayMap) Text(cx *Cx) string {
 	useBaseInput()
@@ -2480,6 +2811,8 @@ func (s DisplayMap) Text(cx *Cx) string {
 	return r.str()
 }
 
+// Calculate how many wrap rows of a buffer line are visible (not folded)
+//
 // VisibleWrapRowCountForBufferLine is <gpui_kit::base::input::DisplayMap>::visible_wrap_row_count_for_buffer_line.
 func (s DisplayMap) VisibleWrapRowCountForBufferLine(cx *Cx, line int) int {
 	useBaseInput()
@@ -2490,6 +2823,8 @@ func (s DisplayMap) VisibleWrapRowCountForBufferLine(cx *Cx, line int) int {
 	return int(r.u64())
 }
 
+// Get the wrap row count (before folding)
+//
 // WrapRowCount is <gpui_kit::base::input::DisplayMap>::wrap_row_count.
 func (s DisplayMap) WrapRowCount(cx *Cx) int {
 	useBaseInput()
@@ -2499,6 +2834,9 @@ func (s DisplayMap) WrapRowCount(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Convert a wrap row to a display row (skipping folded rows). Returns None if the wrap row is
+// folded.
+//
 // WrapRowToDisplayRow is <gpui_kit::base::input::DisplayMap>::wrap_row_to_display_row.
 func (s DisplayMap) WrapRowToDisplayRow(cx *Cx, wrapRow int) Option[int] {
 	useBaseInput()
@@ -2509,6 +2847,8 @@ func (s DisplayMap) WrapRowToDisplayRow(cx *Cx, wrapRow int) Option[int] {
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
 }
 
+// Clear all folds
+//
 // ClearFolds is <gpui_kit::base::input::DisplayMap>::clear_folds.
 func (s DisplayMap) ClearFolds(cx *Cx) {
 	useBaseInput()
@@ -2531,6 +2871,8 @@ func (s DisplayMap) OnLayoutChanged(cx *Cx, wrapWidth Option[float32]) {
 	stateSet(cx, o)
 }
 
+// Set fold candidates (from tree-sitter/LSP)
+//
 // SetFoldCandidates is <gpui_kit::base::input::DisplayMap>::set_fold_candidates.
 func (s DisplayMap) SetFoldCandidates(cx *Cx, candidates []FoldRange) {
 	useBaseInput()
@@ -2543,6 +2885,8 @@ func (s DisplayMap) SetFoldCandidates(cx *Cx, candidates []FoldRange) {
 	stateSet(cx, o)
 }
 
+// Set a fold at the given start_line (must be in candidates)
+//
 // SetFolded is <gpui_kit::base::input::DisplayMap>::set_folded.
 func (s DisplayMap) SetFolded(cx *Cx, startLine int, folded bool) {
 	useBaseInput()
@@ -2553,6 +2897,8 @@ func (s DisplayMap) SetFolded(cx *Cx, startLine int, folded bool) {
 	stateSet(cx, o)
 }
 
+// Set the wrapping indent for continuation lines.
+//
 // SetWrappingIndent is <gpui_kit::base::input::DisplayMap>::set_wrapping_indent.
 func (s DisplayMap) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
 	useBaseInput()
@@ -2562,6 +2908,8 @@ func (s DisplayMap) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
 	stateSet(cx, o)
 }
 
+// Toggle fold at the given start_line
+//
 // ToggleFold is <gpui_kit::base::input::DisplayMap>::toggle_fold.
 func (s DisplayMap) ToggleFold(cx *Cx, startLine int) {
 	useBaseInput()
@@ -2639,6 +2987,12 @@ func (s Dock) SetResizing(cx *Cx, resizing bool) {
 	stateSet(cx, o)
 }
 
+// Set the dock's size, never below `PANEL_MIN_SIZE`.
+//
+// The floor is here rather than at the call sites because `DockArea::set_dock_size` is public and
+// unclamped: a smaller value would collapse the dock to nothing, the skin clips the resize handle
+// that would drag it back out, and the collapsed size persists.
+//
 // SetSize is <gpui_kit::base::dock::Dock>::set_size.
 func (s Dock) SetSize(cx *Cx, size float32) {
 	useBaseDock()
@@ -2662,6 +3016,8 @@ type DockArea struct{ h uint64 }
 
 func (s DockArea) handle() uint64 { return s.h }
 
+// The area's own bounds, recorded each frame. Dock resizing measures against it.
+//
 // Bounds is <gpui_kit::base::dock::DockArea>::bounds.
 func (s DockArea) Bounds(cx *Cx) Bounds {
 	useBaseDock()
@@ -2671,6 +3027,8 @@ func (s DockArea) Bounds(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// The dock's size along its axis.
+//
 // DockSize is <gpui_kit::base::dock::DockArea>::dock_size.
 func (s DockArea) DockSize(cx *Cx, placement DockPlacement) Option[float32] {
 	useBaseDock()
@@ -2700,6 +3058,9 @@ func (s DockArea) ID(cx *Cx) string {
 	return r.str()
 }
 
+// Whether a dock may be collapsed at all. A skin drawing a collapse affordance in a tab bar reads
+// this to decide whether to offer one.
+//
 // IsDockCollapsible is <gpui_kit::base::dock::DockArea>::is_dock_collapsible.
 func (s DockArea) IsDockCollapsible(cx *Cx, placement DockPlacement) bool {
 	useBaseDock()
@@ -2710,6 +3071,9 @@ func (s DockArea) IsDockCollapsible(cx *Cx, placement DockPlacement) bool {
 	return r.bool()
 }
 
+// Whether a dock is on screen. A dock the area does not have is never open, so this answers the
+// question a caller usually means without a preceding `HasDock`.
+//
 // IsDockOpen is <gpui_kit::base::dock::DockArea>::is_dock_open.
 func (s DockArea) IsDockOpen(cx *Cx, placement DockPlacement) bool {
 	useBaseDock()
@@ -2720,6 +3084,12 @@ func (s DockArea) IsDockOpen(cx *Cx, placement DockPlacement) bool {
 	return r.bool()
 }
 
+// Whether a region currently holds no visible panel.
+//
+// This is the question the old `DockItem::is_empty` answered, and it is the same one
+// `is_node_visible` answers per container: a region is empty when nothing in it would be drawn. A
+// region that does not exist — a dock that was never installed — is empty too.
+//
 // IsEmpty is <gpui_kit::base::dock::DockArea>::is_empty.
 func (s DockArea) IsEmpty(cx *Cx, placement DockPlacement) bool {
 	useBaseDock()
@@ -2748,6 +3118,12 @@ func (s DockArea) IsZoomed(cx *Cx) bool {
 	return r.bool()
 }
 
+// The tree for one region, or `None` for a dock that does not exist.
+//
+// The `Option` is in the signature rather than hidden behind a panic because a dock is genuinely
+// optional — it is `Option<DockState>` in the persisted schema — and there is no borrowable empty
+// tree to hand back for one that is absent.
+//
 // Layout is <gpui_kit::base::dock::DockArea>::layout.
 func (s DockArea) Layout(cx *Cx, placement DockPlacement) Option[PaneTree] {
 	useBaseDock()
@@ -2767,6 +3143,9 @@ func (s DockArea) Version(cx *Cx) Option[int] {
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
 }
 
+// Add a panel to a region, merging it into the first tab group there, or starting a group when the
+// region is empty.
+//
 // AddPanel is <gpui_kit::base::dock::DockArea>::add_panel.
 func (s DockArea) AddPanel(cx *Cx, panel DockPanel, placement DockPlacement, size Option[float32]) {
 	useBaseDock()
@@ -2783,6 +3162,12 @@ func (s DockArea) AddPanel(cx *Cx, panel DockPanel, placement DockPlacement, siz
 	stateSet(cx, o)
 }
 
+// Add an already-wrapped panel handle to a region.
+//
+// The companion to `AddPanel`, for a layer that hands base its own concrete handle — see `AsAny` —
+// rather than a bare entity. The id comes from `PanelID`, which is the only place it can come from
+// once the entity is behind the handle.
+//
 // AddPanelView is <gpui_kit::base::dock::DockArea>::add_panel_view.
 func (s DockArea) AddPanelView(cx *Cx, panel DockPanel, placement DockPlacement, size Option[float32]) {
 	useBaseDock()
@@ -2799,6 +3184,9 @@ func (s DockArea) AddPanelView(cx *Cx, panel DockPanel, placement DockPlacement,
 	stateSet(cx, o)
 }
 
+// Take a dock away entirely, panels and all. Distinct from `ToggleDock`, which only takes it off
+// screen.
+//
 // RemoveDock is <gpui_kit::base::dock::DockArea>::remove_dock.
 func (s DockArea) RemoveDock(cx *Cx, placement DockPlacement) {
 	useBaseDock()
@@ -2808,6 +3196,8 @@ func (s DockArea) RemoveDock(cx *Cx, placement DockPlacement) {
 	stateSet(cx, o)
 }
 
+// Remove a panel from wherever it lives, telling it that it was removed.
+//
 // RemovePanel is <gpui_kit::base::dock::DockArea>::remove_panel.
 func (s DockArea) RemovePanel(cx *Cx, panel DockPanel) {
 	useBaseDock()
@@ -2817,6 +3207,9 @@ func (s DockArea) RemovePanel(cx *Cx, panel DockPanel) {
 	stateSet(cx, o)
 }
 
+// Replace the center region with a described layout. Whatever was there leaves the dock, so its
+// panels are told `OnRemoved`.
+//
 // SetCenter is <gpui_kit::base::dock::DockArea>::set_center.
 func (s DockArea) SetCenter(cx *Cx, layout DockLayout) {
 	useBaseDock()
@@ -2826,6 +3219,13 @@ func (s DockArea) SetCenter(cx *Cx, layout DockLayout) {
 	stateSet(cx, o)
 }
 
+// Replace one dock with a described layout, creating the dock if the area does not have one there
+// yet. A new dock keeps the size and open state of the one it replaces, so re-filling a dock does
+// not resize it.
+//
+// `Center` defers to `SetCenter`: the center is not a dock and has no size or open state of its
+// own.
+//
 // SetDock is <gpui_kit::base::dock::DockArea>::set_dock.
 func (s DockArea) SetDock(cx *Cx, placement DockPlacement, layout DockLayout) {
 	useBaseDock()
@@ -2856,6 +3256,8 @@ func (s DockArea) SetDockSize(cx *Cx, placement DockPlacement, size float32) {
 	stateSet(cx, o)
 }
 
+// Lock the layout against rearranging. Resizing stays available.
+//
 // SetLocked is <gpui_kit::base::dock::DockArea>::set_locked.
 func (s DockArea) SetLocked(cx *Cx, locked bool) {
 	useBaseDock()
@@ -2865,6 +3267,12 @@ func (s DockArea) SetLocked(cx *Cx, locked bool) {
 	stateSet(cx, o)
 }
 
+// Change the schema version a later `Dump` writes.
+//
+// Set at construction for an area whose layout never changes shape. A host that installs one of
+// several preset layouts into the same area picks the version with the preset, which is after the
+// area exists.
+//
 // SetVersion is <gpui_kit::base::dock::DockArea>::set_version.
 func (s DockArea) SetVersion(cx *Cx, version Option[int]) {
 	useBaseDock()
@@ -2879,6 +3287,12 @@ func (s DockArea) SetVersion(cx *Cx, version Option[int]) {
 	stateSet(cx, o)
 }
 
+// Clear the zoom, putting the zoomed container's own flag back with it.
+//
+// A container toggles its zoom itself and only reports it, so an area that dropped the view
+// without telling the container would leave it believing it still fills the dock — and a zoomed
+// group refuses drops.
+//
 // SetZoomedOut is <gpui_kit::base::dock::DockArea>::set_zoomed_out.
 func (s DockArea) SetZoomedOut(cx *Cx) {
 	useBaseDock()
@@ -2887,6 +3301,9 @@ func (s DockArea) SetZoomedOut(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Open a closed dock or close an open one. A dock that is not collapsible refuses to close; there
+// is nothing to refuse when opening.
+//
 // ToggleDock is <gpui_kit::base::dock::DockArea>::toggle_dock.
 func (s DockArea) ToggleDock(cx *Cx, placement DockPlacement) {
 	useBaseDock()
@@ -2913,6 +3330,13 @@ type DockAreaBuilder struct{ sb *stateBuilder }
 // Build makes the DockArea.
 func (b DockAreaBuilder) Build() DockArea { return DockArea{b.sb.build()} }
 
+// An empty area that draws nothing but its panels.
+//
+// `id` names the area for the host's own persistence; `version` is written into `Dump` and read
+// back by `Load`, for a host that wants to reject or migrate a layout an older build wrote.
+//
+// Install appearance with `WithRenderer`.
+//
 // NewDockArea is <gpui_kit::base::dock::DockArea>::new.
 func NewDockArea(cx *Cx, id string, version Option[int]) DockAreaBuilder {
 	useBaseDock()
@@ -2959,6 +3383,8 @@ func (s DockContext) Placement(cx *Cx) DockPlacement {
 	return DockPlacement(r.u16())
 }
 
+// The dock's extent along its own axis: width for left/right, height for bottom.
+//
 // Size is <gpui_kit::base::dock::DockContext>::size.
 func (s DockContext) Size(cx *Cx) float32 {
 	useBaseDock()
@@ -2968,6 +3394,9 @@ func (s DockContext) Size(cx *Cx) float32 {
 	return r.f32()
 }
 
+// End a resize started with `ResizeTo`. A bottom dock dragged below its minimum snaps shut or to
+// the minimum, whichever is nearer.
+//
 // EndResize is <gpui_kit::base::dock::DockContext>::end_resize.
 func (s DockContext) EndResize(cx *Cx) {
 	useBaseDock()
@@ -2976,6 +3405,9 @@ func (s DockContext) EndResize(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Resize from a pointer position in window coordinates. Base clamps it against the area bounds and
+// the opposite dock.
+//
 // ResizeTo is <gpui_kit::base::dock::DockContext>::resize_to.
 func (s DockContext) ResizeTo(cx *Cx, pointer GpuiPoint) {
 	useBaseDock()
@@ -3048,6 +3480,13 @@ func (s DragPanel) DragSessionID(cx *Cx) uint64 {
 	return uint64(r.u64())
 }
 
+// How large the drag preview is on screen.
+//
+// The dock reads it to decide where a drop placeholder flies in from, which is hit geometry rather
+// than styling; the preview's own size is a visual decision, so the skin that draws the preview
+// reports it here. Defaults to zero, which degrades to a placeholder that grows out of the cursor
+// rather than out of the preview.
+//
 // PreviewSize is <gpui_kit::base::dock::DragPanel>::preview_size.
 func (s DragPanel) PreviewSize(cx *Cx) GpuiSize {
 	useBaseDock()
@@ -3057,6 +3496,9 @@ func (s DragPanel) PreviewSize(cx *Cx) GpuiSize {
 	return rdGpuiSize(r)
 }
 
+// Records where inside the panel the drag started, so a preview can be positioned relative to the
+// cursor.
+//
 // SetDragOffset is <gpui_kit::base::dock::DragPanel>::set_drag_offset.
 func (s DragPanel) SetDragOffset(cx *Cx, offset GpuiPoint) {
 	useBaseDock()
@@ -3080,6 +3522,8 @@ type DropIndicator struct{ h uint64 }
 
 func (s DropIndicator) handle() uint64 { return s.h }
 
+// The hovered group's content bounds, in window coordinates.
+//
 // Bounds is <gpui_kit::base::dock::DropIndicator>::bounds.
 func (s DropIndicator) Bounds(cx *Cx) Bounds {
 	useBaseDock()
@@ -3089,6 +3533,9 @@ func (s DropIndicator) Bounds(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// Which drag session this indicator belongs to. Host-owned drag items share
+// `ITEM_DRAG_SESSION_ID`.
+//
 // DragSessionID is <gpui_kit::base::dock::DropIndicator>::drag_session_id.
 func (s DropIndicator) DragSessionID(cx *Cx) uint64 {
 	useBaseDock()
@@ -3098,6 +3545,9 @@ func (s DropIndicator) DragSessionID(cx *Cx) uint64 {
 	return uint64(r.u64())
 }
 
+// Bumped on every restart, so an animation keyed on it replays instead of resuming when the target
+// placement changes.
+//
 // Epoch is <gpui_kit::base::dock::DropIndicator>::epoch.
 func (s DropIndicator) Epoch(cx *Cx) uint64 {
 	useBaseDock()
@@ -3107,6 +3557,8 @@ func (s DropIndicator) Epoch(cx *Cx) uint64 {
 	return uint64(r.u64())
 }
 
+// Where the placeholder starts, relative to `Bounds`.
+//
 // From is <gpui_kit::base::dock::DropIndicator>::from.
 func (s DropIndicator) From(cx *Cx) DropPlaceholderBounds {
 	useBaseDock()
@@ -3116,6 +3568,8 @@ func (s DropIndicator) From(cx *Cx) DropPlaceholderBounds {
 	return DropPlaceholderBounds{h: r.u64()}
 }
 
+// `None` means the drop merges into the tab group.
+//
 // Placement is <gpui_kit::base::dock::DropIndicator>::placement.
 func (s DropIndicator) Placement(cx *Cx) Option[Placement] {
 	useBaseDock()
@@ -3125,6 +3579,8 @@ func (s DropIndicator) Placement(cx *Cx) Option[Placement] {
 	return rdOpt(r, func(r *reader) Placement { return Placement(r.u16()) })
 }
 
+// Where the placeholder settles, relative to `Bounds`.
+//
 // To is <gpui_kit::base::dock::DropIndicator>::to.
 func (s DropIndicator) To(cx *Cx) DropPlaceholderBounds {
 	useBaseDock()
@@ -3222,6 +3678,10 @@ func (s EditorScrollbarContext) Axis(cx *Cx) ScrollbarAxis {
 	return ScrollbarAxis(r.u16())
 }
 
+// The editor's viewport without padding, for consumers that need its text layout size. Scrollbars
+// should use `ContentSize` and `ViewportBounds` to calculate the scroll range; both include the
+// padding around this viewport.
+//
 // ScrollViewportSize is <gpui_kit::base::input::EditorScrollbarContext>::scroll_viewport_size.
 func (s EditorScrollbarContext) ScrollViewportSize(cx *Cx) GpuiSize {
 	useBaseInput()
@@ -3245,6 +3705,10 @@ func (s EditorState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilitie
 	return InputContextMenuCapabilitiesRead{h: r.u64()}
 }
 
+// Get byte offset of the cursor.
+//
+// The offset is the UTF-8 offset.
+//
 // Cursor is <gpui_kit::base::input::EditorState>::cursor.
 func (s EditorState) Cursor(cx *Cx) int {
 	useBaseInput()
@@ -3464,6 +3928,8 @@ func (s EditorState) InputBounds(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// Whether this input is a source-code editor.
+//
 // IsCodeEditor is <gpui_kit::base::input::EditorState>::is_code_editor.
 func (s EditorState) IsCodeEditor(cx *Cx) bool {
 	useBaseInput()
@@ -3473,6 +3939,10 @@ func (s EditorState) IsCodeEditor(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether the user is allowed to copy the selection out.
+//
+// A masked input keeps its value out of the clipboard.
+//
 // IsCopyable is <gpui_kit::base::input::EditorState>::is_copyable.
 func (s EditorState) IsCopyable(cx *Cx) bool {
 	useBaseInput()
@@ -3482,6 +3952,11 @@ func (s EditorState) IsCopyable(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// This is false when the input is `disabled` or `readonly`, the programmatic APIs (e.g.:
+// `SetValue`, `Insert`) are not limited by this.
+//
 // IsEditable is <gpui_kit::base::input::EditorState>::is_editable.
 func (s EditorState) IsEditable(cx *Cx) bool {
 	useBaseInput()
@@ -3500,6 +3975,10 @@ func (s EditorState) IsMultiLine(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if the search panel can replace the matches.
+//
+// This is false when the input is not `replaceable`, or when it is `disabled` or `readonly`.
+//
 // IsReplaceable is <gpui_kit::base::input::EditorState>::is_replaceable.
 func (s EditorState) IsReplaceable(cx *Cx) bool {
 	useBaseInput()
@@ -3509,6 +3988,11 @@ func (s EditorState) IsReplaceable(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether the active selection's caret is at the start of its range.
+//
+// Collapsed selections are not reversed. Use this with `SelectedRange` and
+// `SetSelectedRangeWithDirection` to restore a selection.
+//
 // IsSelectionReversed is <gpui_kit::base::input::EditorState>::is_selection_reversed.
 func (s EditorState) IsSelectionReversed(cx *Cx) bool {
 	useBaseInput()
@@ -3518,6 +4002,8 @@ func (s EditorState) IsSelectionReversed(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether this input is a single-line text field. See `IsMultiLine`.
+//
 // IsSingleLine is <gpui_kit::base::input::EditorState>::is_single_line.
 func (s EditorState) IsSingleLine(cx *Cx) bool {
 	useBaseInput()
@@ -3527,6 +4013,8 @@ func (s EditorState) IsSingleLine(cx *Cx) bool {
 	return r.bool()
 }
 
+// The current language name, e.g. `"rust"`.
+//
 // LanguageName is <gpui_kit::base::input::EditorState>::language_name.
 func (s EditorState) LanguageName(cx *Cx) string {
 	useBaseInput()
@@ -3536,6 +4024,8 @@ func (s EditorState) LanguageName(cx *Cx) string {
 	return r.str()
 }
 
+// Laid-out line height; `None` before first layout.
+//
 // LineHeight is <gpui_kit::base::input::EditorState>::line_height.
 func (s EditorState) LineHeight(cx *Cx) Option[float32] {
 	useBaseInput()
@@ -3545,6 +4035,11 @@ func (s EditorState) LineHeight(cx *Cx) Option[float32] {
 	return rdOpt(r, func(r *reader) float32 { return r.f32() })
 }
 
+// The LSP providers and their cached results.
+//
+// This exists on the editor alone: an ordinary input or textarea has no language server, and no
+// field to reach one through.
+//
 // Lsp is <gpui_kit::base::input::EditorState>::lsp.
 func (s EditorState) Lsp(cx *Cx) BaseLsp {
 	useBaseInput()
@@ -3563,6 +4058,10 @@ func (s EditorState) Presentation(cx *Cx) InputPresentation {
 	return InputPresentation{h: r.u64()}
 }
 
+// Return the rendered bounds for a UTF-8 byte range in the current input contents.
+//
+// Returns `None` when the requested range is not currently laid out or visible.
+//
 // RangeToBounds is <gpui_kit::base::input::EditorState>::range_to_bounds.
 func (s EditorState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
 	useBaseInput()
@@ -3573,6 +4072,8 @@ func (s EditorState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
 	return rdOpt(r, func(r *reader) Bounds { return rdBounds(r) })
 }
 
+// Current scroll offset of the editor viewport.
+//
 // ScrollOffset is <gpui_kit::base::input::EditorState>::scroll_offset.
 func (s EditorState) ScrollOffset(cx *Cx) GpuiPoint {
 	useBaseInput()
@@ -3582,6 +4083,13 @@ func (s EditorState) ScrollOffset(cx *Cx) GpuiPoint {
 	return rdGpuiPoint(r)
 }
 
+// A counter that advances every time `OpenSearch` runs, including while the session is already
+// open.
+//
+// Re-invoking search leaves the session itself identical, so a presentation layer that decides
+// what to rebuild by comparing session state cannot see the second request. Fold this into that
+// comparison to notice it.
+//
 // SearchActivationRevision is <gpui_kit::base::input::EditorState>::search_activation_revision.
 func (s EditorState) SearchActivationRevision(cx *Cx) uint64 {
 	useBaseInput()
@@ -3600,6 +4108,13 @@ func (s EditorState) SearchSession(cx *Cx) SearchSession {
 	return SearchSession{h: r.u64()}
 }
 
+// Returns the active selection as a byte range into the text.
+//
+// With multiple cursors, this reads only the active selection.
+//
+// The range is empty (`start == end`) when no text is selected; in that case the offset equals
+// `cursor()`. Byte offsets are measured in the underlying rope's byte units.
+//
 // SelectedRange is <gpui_kit::base::input::EditorState>::selected_range.
 func (s EditorState) SelectedRange(cx *Cx) Range {
 	useBaseInput()
@@ -3609,6 +4124,8 @@ func (s EditorState) SelectedRange(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// See `SelectedValue` when an owned string is wanted.
+//
 // SelectedText is <gpui_kit::base::input::EditorState>::selected_text.
 func (s EditorState) SelectedText(cx *Cx) string {
 	useBaseInput()
@@ -3618,6 +4135,11 @@ func (s EditorState) SelectedText(cx *Cx) string {
 	return r.str()
 }
 
+// Return the portion of the value within the input field that is selected by the user, as an owned
+// string.
+//
+// The string is materialized on each call.
+//
 // SelectedValue is <gpui_kit::base::input::EditorState>::selected_value.
 func (s EditorState) SelectedValue(cx *Cx) string {
 	useBaseInput()
@@ -3627,6 +4149,11 @@ func (s EditorState) SelectedValue(cx *Cx) string {
 	return r.str()
 }
 
+// Return the text `Rope` of the input field.
+//
+// Borrowed from the state, so reading even a large document copies nothing. See `Value` when an
+// owned string is wanted.
+//
 // Text is <gpui_kit::base::input::EditorState>::text.
 func (s EditorState) Text(cx *Cx) string {
 	useBaseInput()
@@ -3645,6 +4172,9 @@ func (s EditorState) TextBounds(cx *Cx) Option[Bounds] {
 	return rdOpt(r, func(r *reader) Bounds { return rdBounds(r) })
 }
 
+// The text assistance a platform IME (a software keyboard) should give this input, from
+// `InputAction`, `Autocorrect` and `Autocapitalize` or the defaults they describe.
+//
 // TextInputConfiguration is <gpui_kit::base::input::EditorState>::text_input_configuration.
 func (s EditorState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
 	useBaseInput()
@@ -3654,6 +4184,11 @@ func (s EditorState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
 	return rdTextInputConfiguration(r)
 }
 
+// The live touch selection, laid out for the handles and the edit menu.
+//
+// `None` when the last touch selection has since changed into something else, or when its ends are
+// not laid out (scrolled out of view).
+//
 // TouchSelection is <gpui_kit::base::input::EditorState>::touch_selection.
 func (s EditorState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
 	useBaseInput()
@@ -3663,6 +4198,8 @@ func (s EditorState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
 	return rdOpt(r, func(r *reader) TouchSelectionSnapshot { return TouchSelectionSnapshot{h: r.u64()} })
 }
 
+// Return the value without mask.
+//
 // UnmaskValue is <gpui_kit::base::input::EditorState>::unmask_value.
 func (s EditorState) UnmaskValue(cx *Cx) string {
 	useBaseInput()
@@ -3672,6 +4209,10 @@ func (s EditorState) UnmaskValue(cx *Cx) string {
 	return r.str()
 }
 
+// Return the value of the input field as an owned string.
+//
+// The string is materialized on each call.
+//
 // Value is <gpui_kit::base::input::EditorState>::value.
 func (s EditorState) Value(cx *Cx) string {
 	useBaseInput()
@@ -3693,6 +4234,8 @@ func (s EditorState) TryValue(cx *Cx) (v string, ok bool) {
 	return r.str(), true
 }
 
+// Visible row range in the last laid-out viewport, `None` before first layout.
+//
 // VisibleRowRange is <gpui_kit::base::input::EditorState>::visible_row_range.
 func (s EditorState) VisibleRowRange(cx *Cx) Option[Range] {
 	useBaseInput()
@@ -3702,6 +4245,23 @@ func (s EditorState) VisibleRowRange(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Create an independently managed collection of text decorations.
+//
+// This follows Monaco's `createDecorationsCollection`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.ICodeEditor.html#createDecorationsCollection)
+// ownership model. Ranges use UTF-8 byte offsets into `Value`.
+//
+// Decoration ranges follow text edits and do not need to be set again after each change.
+// Insertions at a range boundary do not expand the range, matching Monaco's
+// `NeverGrowsWhenTypingAtEdges`
+// (https://microsoft.github.io/monaco-editor/typedoc/enums/editor_editor_api.editor.TrackedRangeStickiness.html#NeverGrowsWhenTypingAtEdges)
+// behavior. Decorations are not rendered while the input is masked. Collections live until their
+// `InputBaseState` is dropped.
+//
+// Collections are layered in insertion order; the first collection wins when overlapping
+// decorations set the same `HighlightStyle` property. Callers should avoid conflicting overlaps
+// within one collection.
+//
 // CreateDecorationsCollection is <gpui_kit::base::input::EditorState>::create_decorations_collection.
 func (s EditorState) CreateDecorationsCollection(cx *Cx, decorations []TextDecoration) TextDecorationCollection {
 	useBaseInput()
@@ -3715,6 +4275,21 @@ func (s EditorState) CreateDecorationsCollection(cx *Cx, decorations []TextDecor
 	return TextDecorationCollection{h: r.u64()}
 }
 
+// Create a collection of gutter marks, such as added, modified, and deleted lines in a
+// version-control diff.
+//
+// Marks draw in a strip before the line numbers. The strip stays reserved while any gutter
+// collection exists, including an empty collection, so the text does not shift when marks change.
+// Release every collection to drop the strip. Its width is `GutterDecorationsWidth`.
+//
+// Ranges track edits as range decorations (`CreateRangeDecorationsCollection`) do, but empty
+// ranges are kept. They stay before text inserted at their offset, and a range that an edit
+// empties becomes a boundary. A mark whose range starts inside a fold draws a bar on the fold's
+// row, using its folded color (`WithFoldedColor`), and marks the lines of the range after the fold
+// as usual. Later collections and items draw over earlier ones. After you recompute the
+// decorations, call `Set` with the whole collection. Tracking keeps marks on their lines between
+// updates.
+//
 // CreateGutterDecorationsCollection is <gpui_kit::base::input::EditorState>::create_gutter_decorations_collection.
 func (s EditorState) CreateGutterDecorationsCollection(cx *Cx, decorations []GutterDecoration) GutterDecorationCollection {
 	useBaseInput()
@@ -3728,6 +4303,13 @@ func (s EditorState) CreateGutterDecorationsCollection(cx *Cx, decorations []Gut
 	return GutterDecorationCollection{h: r.u64()}
 }
 
+// Create a collection of marks on the vertical scrollbar track, Monaco's overview ruler.
+//
+// Each mark uses its `lane` at the rows' share of the content height. It is at least 6 px tall.
+// Touching marks with the same color merge. Marks draw under Base's scrollbar or one supplied with
+// `SetScrollbarRenderer`, so they remain visible while the thumb fades. Ranges track edits as
+// gutter decorations (`CreateGutterDecorationsCollection`) do.
+//
 // CreateOverviewRulerDecorationsCollection is <gpui_kit::base::input::EditorState>::create_overview_ruler_decorations_collection.
 func (s EditorState) CreateOverviewRulerDecorationsCollection(cx *Cx, decorations []OverviewRulerDecoration) OverviewRulerDecorationCollection {
 	useBaseInput()
@@ -3741,6 +4323,18 @@ func (s EditorState) CreateOverviewRulerDecorationsCollection(cx *Cx, decoration
 	return OverviewRulerDecorationCollection{h: r.u64()}
 }
 
+// Create an independently owned collection of geometric range decorations.
+//
+// Ranges use UTF-8 byte offsets and the same tracking as text decorations: insertion at either
+// edge does not expand the range, insertion inside does, replacement clips overlapping anchors,
+// and deletion removes empty ranges. Undo, redo, whole-document replacement and formatting apply
+// these same edit transforms; decorations themselves are not undo history, so deleted ranges are
+// not resurrected by undo. Folding changes projection, not stored ranges.
+//
+// Fills paint behind frames; within each style, later collections/items paint over earlier ones.
+// Neither affects text layout, hit testing or focus. The default color is the editor foreground
+// (12% opacity for fills). Collections live until explicitly disposed or the editor is dropped.
+//
 // CreateRangeDecorationsCollection is <gpui_kit::base::input::EditorState>::create_range_decorations_collection.
 func (s EditorState) CreateRangeDecorationsCollection(cx *Cx, decorations []RangeDecoration) RangeDecorationCollection {
 	useBaseInput()
@@ -3754,6 +4348,8 @@ func (s EditorState) CreateRangeDecorationsCollection(cx *Cx, decorations []Rang
 	return RangeDecorationCollection{h: r.u64()}
 }
 
+// Whether the input or its associated selection popup has focus.
+//
 // HasSelectionFocus is <gpui_kit::base::input::EditorState>::has_selection_focus.
 func (s EditorState) HasSelectionFocus(cx *Cx) bool {
 	useBaseInput()
@@ -3781,6 +4377,8 @@ func (s EditorState) PreviousSearchMatch(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Replace every match. Returns how many were replaced.
+//
 // ReplaceAllSearchMatches is <gpui_kit::base::input::EditorState>::replace_all_search_matches.
 func (s EditorState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
 	useBaseInput()
@@ -3791,6 +4389,9 @@ func (s EditorState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
 	return int(r.u64())
 }
 
+// Replace the current match and move on to the next one. Returns whether there was a match to
+// replace.
+//
 // ReplaceCurrentSearchMatch is <gpui_kit::base::input::EditorState>::replace_current_search_match.
 func (s EditorState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) bool {
 	useBaseInput()
@@ -3811,6 +4412,14 @@ func (s EditorState) RouteOverlayAction(cx *Cx, action Action) bool {
 	return r.bool()
 }
 
+// Add `range` as an additional selection, keeping the existing ones — the programmatic equivalent
+// of Alt-clicking another cursor into the text.
+//
+// The range is clipped to the text and expanded to character boundaries, like `SetSelectedRange`.
+// A range already covered by a selection adds nothing. Overlapping selections are merged. On a
+// single-line input there is no second cursor to add, so the call replaces the selection instead.
+// The view scrolls to the new selection.
+//
 // AddSelection is <gpui_kit::base::input::EditorState>::add_selection.
 func (s EditorState) AddSelection(cx *Cx, range_ Range) {
 	useBaseInput()
@@ -3832,6 +4441,11 @@ func (s EditorState) ApplyHighlighterFoldCandidates(cx *Cx, candidates []FoldRan
 	stateSet(cx, o)
 }
 
+// Starts dragging one end of the touch selection from `finger`.
+//
+// The other end stays where it is. The menu closes for the duration of the drag and reopens on
+// `EndEdgeDrag`.
+//
 // BeginEdgeDrag is <gpui_kit::base::input::EditorState>::begin_edge_drag.
 func (s EditorState) BeginEdgeDrag(cx *Cx, edge SelectionEdge, finger GpuiPoint) {
 	useBaseInput()
@@ -3866,6 +4480,11 @@ func (s EditorState) ClearHoverState(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Closes the edit menu and keeps the selection with its handles.
+//
+// The menu's own actions end here: Copy has done its work, Select All reopens the menu over the
+// new range through `SelectAll`.
+//
 // CloseEditMenu is <gpui_kit::base::input::EditorState>::close_edit_menu.
 func (s EditorState) CloseEditMenu(cx *Cx) {
 	useBaseInput()
@@ -3874,6 +4493,9 @@ func (s EditorState) CloseEditMenu(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// End the search: hide the built-in panel and the match highlights. The query is kept so the next
+// `OpenSearch` resumes it.
+//
 // CloseSearch is <gpui_kit::base::input::EditorState>::close_search.
 func (s EditorState) CloseSearch(cx *Cx) {
 	useBaseInput()
@@ -3906,6 +4528,8 @@ func (s EditorState) DismissLspOverlays(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Ends the handle drag and reopens the edit menu.
+//
 // EndEdgeDrag is <gpui_kit::base::input::EditorState>::end_edge_drag.
 func (s EditorState) EndEdgeDrag(cx *Cx) {
 	useBaseInput()
@@ -3914,6 +4538,8 @@ func (s EditorState) EndEdgeDrag(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Install a default adapter without replacing an application-provided one.
+//
 // EnsureHighlighterFactory is <gpui_kit::base::input::EditorState>::ensure_highlighter_factory.
 func (s EditorState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
 	useBaseInput()
@@ -3923,6 +4549,8 @@ func (s EditorState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
 	stateSet(cx, o)
 }
 
+// Apply the default numeric mask unless the caller explicitly selected a mask.
+//
 // EnsureNumberMask is <gpui_kit::base::input::EditorState>::ensure_number_mask.
 func (s EditorState) EnsureNumberMask(cx *Cx) {
 	useBaseInput()
@@ -3931,6 +4559,8 @@ func (s EditorState) EnsureNumberMask(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Focus the input field.
+//
 // Focus is <gpui_kit::base::input::EditorState>::focus.
 func (s EditorState) Focus(cx *Cx) {
 	useBaseInput()
@@ -3939,6 +4569,10 @@ func (s EditorState) Focus(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Insert text at the current cursor position.
+//
+// And the cursor will be moved to the end of inserted text.
+//
 // Insert is <gpui_kit::base::input::EditorState>::insert.
 func (s EditorState) Insert(cx *Cx, text string) {
 	useBaseInput()
@@ -3957,6 +4591,14 @@ func (s EditorState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
 	stateSet(cx, o)
 }
 
+// Open the search session, or re-invoke it if it is already open.
+//
+// This is not idempotent: every call advances `SearchActivationRevision`, and the presentation
+// layer answers that by re-focusing the search field and selecting its contents, the same as
+// pressing the shortcut a second time. Call it from an action or another user gesture, never from
+// a render pass or an observer that runs every frame — that would re-select the field under the
+// user on every frame and make it impossible to type.
+//
 // OpenSearch is <gpui_kit::base::input::EditorState>::open_search.
 func (s EditorState) OpenSearch(cx *Cx, replaceMode bool) {
 	useBaseInput()
@@ -3976,6 +4618,12 @@ func (s EditorState) PresentDiagnostic(cx *Cx, range_ Range, diagnostic Diagnost
 	stateSet(cx, o)
 }
 
+// Refresh the input, so the next render re-runs syntax highlighting and the LSP providers, not
+// just a redraw.
+//
+// Assigning the `lsp` providers (or other render-affecting state) at runtime does not take effect
+// until the text next changes. Call this afterwards to force the refresh on the next render.
+//
 // Refresh is <gpui_kit::base::input::EditorState>::refresh.
 func (s EditorState) Refresh(cx *Cx) {
 	useBaseInput()
@@ -3984,6 +4632,10 @@ func (s EditorState) Refresh(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Replace text at the current cursor position.
+//
+// And the cursor will be moved to the end of replaced text.
+//
 // Replace is <gpui_kit::base::input::EditorState>::replace.
 func (s EditorState) Replace(cx *Cx, text string) {
 	useBaseInput()
@@ -3993,6 +4645,15 @@ func (s EditorState) Replace(cx *Cx, text string) {
 	stateSet(cx, o)
 }
 
+// Replace the entire text content while preserving undo history.
+//
+// Unlike `SetValue`, this method records the replacement in the undo stack, allowing the user to
+// undo/redo the change. The selection is placed at the end of the new text for single-line inputs,
+// or cleared (0..0) for multi-line inputs.
+//
+// Use this when programmatically replacing the full text but the user should still be able to undo
+// the operation — e.g. formatting.
+//
 // ReplaceAll is <gpui_kit::base::input::EditorState>::replace_all.
 func (s EditorState) ReplaceAll(cx *Cx, text string) {
 	useBaseInput()
@@ -4010,6 +4671,9 @@ func (s EditorState) SelectAll(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Selects everything and, when a touch selection is live, keeps the handles and the edit menu over
+// the new range.
+//
 // SelectAllFromEditMenu is <gpui_kit::base::input::EditorState>::select_all_from_edit_menu.
 func (s EditorState) SelectAllFromEditMenu(cx *Cx) {
 	useBaseInput()
@@ -4018,6 +4682,8 @@ func (s EditorState) SelectAllFromEditMenu(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Project semantics onto the editor, never onto a second focus owner.
+//
 // SetAccessibility is <gpui_kit::base::input::EditorState>::set_accessibility.
 func (s EditorState) SetAccessibility(cx *Cx, accessibility InputAccessibility) {
 	useBaseInput()
@@ -4027,6 +4693,8 @@ func (s EditorState) SetAccessibility(cx *Cx, accessibility InputAccessibility) 
 	stateSet(cx, o)
 }
 
+// Set automatic closing brackets and quotes at runtime.
+//
 // SetAutoClose is <gpui_kit::base::input::EditorState>::set_auto_close.
 func (s EditorState) SetAutoClose(cx *Cx, autoClose bool) {
 	useBaseInput()
@@ -4054,6 +4722,8 @@ func (s EditorState) SetContextMenuEnabled(cx *Cx, enabled bool) {
 	stateSet(cx, o)
 }
 
+// Update `CursorSurroundingLines` after construction.
+//
 // SetCursorSurroundingLines is <gpui_kit::base::input::EditorState>::set_cursor_surrounding_lines.
 func (s EditorState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
 	useBaseInput()
@@ -4086,6 +4756,8 @@ func (s EditorState) SetEditorStyle(cx *Cx, style InputEditorStyle) {
 	stateSet(cx, o)
 }
 
+// Fills each folded line across the editor, as VS Code's `editor.foldBackground`.
+//
 // SetFoldBackground is <gpui_kit::base::input::EditorState>::set_fold_background.
 func (s EditorState) SetFoldBackground(cx *Cx, color Option[Color]) {
 	useBaseInput()
@@ -4100,6 +4772,10 @@ func (s EditorState) SetFoldBackground(cx *Cx, color Option[Color]) {
 	stateSet(cx, o)
 }
 
+// Set code folding at runtime.
+//
+// When disabling, all existing folds are cleared.
+//
 // SetFolding is <gpui_kit::base::input::EditorState>::set_folding.
 func (s EditorState) SetFolding(cx *Cx, folding bool) {
 	useBaseInput()
@@ -4109,6 +4785,8 @@ func (s EditorState) SetFolding(cx *Cx, folding bool) {
 	stateSet(cx, o)
 }
 
+// Set the width of the strip that gutter decorations draw in.
+//
 // SetGutterDecorationsWidth is <gpui_kit::base::input::EditorState>::set_gutter_decorations_width.
 func (s EditorState) SetGutterDecorationsWidth(cx *Cx, width float32) {
 	useBaseInput()
@@ -4118,6 +4796,8 @@ func (s EditorState) SetGutterDecorationsWidth(cx *Cx, width float32) {
 	stateSet(cx, o)
 }
 
+// Set highlighter language for for `CodeEditor` mode.
+//
 // SetHighlighter is <gpui_kit::base::input::EditorState>::set_highlighter.
 func (s EditorState) SetHighlighter(cx *Cx, newLanguage string) {
 	useBaseInput()
@@ -4127,6 +4807,8 @@ func (s EditorState) SetHighlighter(cx *Cx, newLanguage string) {
 	stateSet(cx, o)
 }
 
+// Install the parser/highlighter adapter used by code-editor mode.
+//
 // SetHighlighterFactory is <gpui_kit::base::input::EditorState>::set_highlighter_factory.
 func (s EditorState) SetHighlighterFactory(cx *Cx, factory RowSource) {
 	useBaseInput()
@@ -4136,6 +4818,8 @@ func (s EditorState) SetHighlighterFactory(cx *Cx, factory RowSource) {
 	stateSet(cx, o)
 }
 
+// Set indent guides at runtime.
+//
 // SetIndentGuides is <gpui_kit::base::input::EditorState>::set_indent_guides.
 func (s EditorState) SetIndentGuides(cx *Cx, indentGuides bool) {
 	useBaseInput()
@@ -4145,6 +4829,8 @@ func (s EditorState) SetIndentGuides(cx *Cx, indentGuides bool) {
 	stateSet(cx, o)
 }
 
+// Set line number.
+//
 // SetLineNumber is <gpui_kit::base::input::EditorState>::set_line_number.
 func (s EditorState) SetLineNumber(cx *Cx, lineNumber bool) {
 	useBaseInput()
@@ -4176,6 +4862,8 @@ func (s EditorState) SetOverlayActionHandler(cx *Cx, taken []TupleInputoverlayki
 	stateSet(cx, o)
 }
 
+// Set placeholder
+//
 // SetPlaceholder is <gpui_kit::base::input::EditorState>::set_placeholder.
 func (s EditorState) SetPlaceholder(cx *Cx, placeholder string) {
 	useBaseInput()
@@ -4194,6 +4882,8 @@ func (s EditorState) SetReadonly(cx *Cx, readonly bool) {
 	stateSet(cx, o)
 }
 
+// Update `ScrollBeyondLastLine` after construction.
+//
 // SetScrollBeyondLastLine is <gpui_kit::base::input::EditorState>::set_scroll_beyond_last_line.
 func (s EditorState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
 	useBaseInput()
@@ -4208,6 +4898,9 @@ func (s EditorState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
 	stateSet(cx, o)
 }
 
+// Update whether the text stretches past its ends, see `ScrollBounce`. Turning it off drops a
+// stretch in progress.
+//
 // SetScrollBounce is <gpui_kit::base::input::EditorState>::set_scroll_bounce.
 func (s EditorState) SetScrollBounce(cx *Cx, scrollBounce bool) {
 	useBaseInput()
@@ -4217,6 +4910,10 @@ func (s EditorState) SetScrollBounce(cx *Cx, scrollBounce bool) {
 	stateSet(cx, o)
 }
 
+// Set scroll offset of the editor viewport.
+//
+// The offset will be clamped to the valid range, and applied after the next layout.
+//
 // SetScrollOffset is <gpui_kit::base::input::EditorState>::set_scroll_offset.
 func (s EditorState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 	useBaseInput()
@@ -4226,6 +4923,15 @@ func (s EditorState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 	stateSet(cx, o)
 }
 
+// Set the search query and highlight its matches.
+//
+// This is the entry point for a custom search UI: it needs neither `searchable` nor the built-in
+// panel. Navigate the matches with `NextSearchMatch` and `PreviousSearchMatch`, read the count and
+// the current index from `SearchSession`, and end the search with `CloseSearch`.
+//
+// A changed query or case mode starts at the current viewport. Setting the same query and case
+// mode again retains the current occurrence.
+//
 // SetSearchQuery is <gpui_kit::base::input::EditorState>::set_search_query.
 func (s EditorState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) {
 	useBaseInput()
@@ -4236,6 +4942,8 @@ func (s EditorState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) 
 	stateSet(cx, o)
 }
 
+// See `Searchable`.
+//
 // SetSearchable is <gpui_kit::base::input::EditorState>::set_searchable.
 func (s EditorState) SetSearchable(cx *Cx, searchable bool) {
 	useBaseInput()
@@ -4245,6 +4953,11 @@ func (s EditorState) SetSearchable(cx *Cx, searchable bool) {
 	stateSet(cx, o)
 }
 
+// Set the selected range using UTF-8 byte offsets, removing additional cursors.
+//
+// Non-empty ranges expand to character boundaries. Empty ranges remain empty and are clipped to
+// the preceding character boundary.
+//
 // SetSelectedRange is <gpui_kit::base::input::EditorState>::set_selected_range.
 func (s EditorState) SetSelectedRange(cx *Cx, range_ Range) {
 	useBaseInput()
@@ -4254,6 +4967,12 @@ func (s EditorState) SetSelectedRange(cx *Cx, range_ Range) {
 	stateSet(cx, o)
 }
 
+// Set the selected UTF-8 byte range and the active caret direction.
+//
+// With `reversed`, the caret is at the start and the anchor is at the end. Empty ranges collapse
+// to a caret regardless of direction. Range clipping, token boundaries and removal of additional
+// cursors follow `SetSelectedRange`.
+//
 // SetSelectedRangeWithDirection is <gpui_kit::base::input::EditorState>::set_selected_range_with_direction.
 func (s EditorState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reversed bool) {
 	useBaseInput()
@@ -4264,6 +4983,11 @@ func (s EditorState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reverse
 	stateSet(cx, o)
 }
 
+// Keeps the selection highlighted while this popup or one of its children has focus.
+//
+// This does not transfer keyboard focus or keep the caret visible. The association holds only a
+// weak focus handle. Pass `None` to clear it.
+//
 // SetSelectionFocus is <gpui_kit::base::input::EditorState>::set_selection_focus.
 func (s EditorState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
 	useBaseInput()
@@ -4278,6 +5002,8 @@ func (s EditorState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
 	stateSet(cx, o)
 }
 
+// Update whether to show whitespace characters.
+//
 // SetShowWhitespaces is <gpui_kit::base::input::EditorState>::set_show_whitespaces.
 func (s EditorState) SetShowWhitespaces(cx *Cx, show bool) {
 	useBaseInput()
@@ -4287,6 +5013,8 @@ func (s EditorState) SetShowWhitespaces(cx *Cx, show bool) {
 	stateSet(cx, o)
 }
 
+// Set smart indent on Enter at runtime.
+//
 // SetSmartIndent is <gpui_kit::base::input::EditorState>::set_smart_indent.
 func (s EditorState) SetSmartIndent(cx *Cx, smartIndent bool) {
 	useBaseInput()
@@ -4296,6 +5024,8 @@ func (s EditorState) SetSmartIndent(cx *Cx, smartIndent bool) {
 	stateSet(cx, o)
 }
 
+// Update the soft wrap mode, default is true.
+//
 // SetSoftWrap is <gpui_kit::base::input::EditorState>::set_soft_wrap.
 func (s EditorState) SetSoftWrap(cx *Cx, wrap bool) {
 	useBaseInput()
@@ -4332,6 +5062,13 @@ func (s EditorState) SetTextAlign(cx *Cx, textAlign TextAlign) {
 	stateSet(cx, o)
 }
 
+// Set the value of the input field: plain text, or `InputContent` to restore text together with
+// its inline tokens. Editing history is cleared and no `Change` is emitted.
+//
+// For single-line inputs the caret is placed at the end of the text while the view is scrolled
+// back to the start, so a long value shows its beginning instead of its tail (matching HTML
+// `<input>`). Multi-line inputs reset the selection to `0..0`.
+//
 // SetValue is <gpui_kit::base::input::EditorState>::set_value.
 func (s EditorState) SetValue(cx *Cx, value InputContentInto) {
 	useBaseInput()
@@ -4341,6 +5078,8 @@ func (s EditorState) SetValue(cx *Cx, value InputContentInto) {
 	stateSet(cx, o)
 }
 
+// Update how soft-wrapped continuation lines are indented.
+//
 // SetWrappingIndent is <gpui_kit::base::input::EditorState>::set_wrapping_indent.
 func (s EditorState) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
 	useBaseInput()
@@ -4350,6 +5089,16 @@ func (s EditorState) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
 	stateSet(cx, o)
 }
 
+// Request completions at the caret and focus the editor, without editing text.
+//
+// The current identifier prefix is used to refine the menu. An empty prefix still asks the
+// provider for suggestions. There is no default keybinding; applications can dispatch
+// `ShowCompletions` in the `Input && mode == editor` context or call this method from a command.
+//
+// Disabled/readonly editors, IME preedit, and an already-open completion menu are left alone. A
+// new request cancels the previous overlay request and inline suggestion, and closes the
+// code-action menu.
+//
 // ShowCompletions is <gpui_kit::base::input::EditorState>::show_completions.
 func (s EditorState) ShowCompletions(cx *Cx) {
 	useBaseInput()
@@ -4358,6 +5107,11 @@ func (s EditorState) ShowCompletions(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Flip the password mask.
+//
+// Setting the mask is a single-line method, but flipping it stays here: the reveal button is
+// rendered from the generic path, and it can only be switched on through `InputState` anyway.
+//
 // ToggleMasked is <gpui_kit::base::input::EditorState>::toggle_masked.
 func (s EditorState) ToggleMasked(cx *Cx) {
 	useBaseInput()
@@ -4366,6 +5120,8 @@ func (s EditorState) ToggleMasked(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Unselects the currently selected text.
+//
 // Unselect is <gpui_kit::base::input::EditorState>::unselect.
 func (s EditorState) Unselect(cx *Cx) {
 	useBaseInput()
@@ -4374,6 +5130,11 @@ func (s EditorState) Unselect(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Moves the dragged end to the text under `finger`.
+//
+// Past the top or bottom of a multi-line input the content scrolls under the finger, so the end
+// can reach text that was out of view.
+//
 // UpdateEdgeDrag is <gpui_kit::base::input::EditorState>::update_edge_drag.
 func (s EditorState) UpdateEdgeDrag(cx *Cx, finger GpuiPoint) {
 	useBaseInput()
@@ -4504,6 +5265,16 @@ func (b EditorStateBuilder) Searchable(searchable bool) EditorStateBuilder {
 // Build makes the EditorState.
 func (b EditorStateBuilder) Build() EditorState { return EditorState{b.sb.build()} }
 
+// Create a source-code editor state.
+//
+// Default options: line numbers on, tab size 2 with soft tabs, indent guides on, multi-line, and
+// search enabled. Set the language for syntax highlighting with `Language`; without one the text
+// is shown unhighlighted.
+//
+// The editor aims at simple code editing or display, not at being a full-featured code editor. It
+// offers syntax highlighting, auto indent, line numbers, and handles large text up to about 50K
+// lines.
+//
 // NewEditorState is <gpui_kit::base::input::EditorState>::new.
 func NewEditorState(cx *Cx) EditorStateBuilder {
 	useBaseInput()
@@ -4532,6 +5303,8 @@ func GlobalStateGlobalMut(cx *Cx) GlobalState {
 	return GlobalState{h: r.u64()}
 }
 
+// Returns whether any deferred popup currently owns an open interaction context.
+//
 // GlobalStateIsInDeferredContext is <gpui_kit::base::GlobalState>::is_in_deferred_context.
 func GlobalStateIsInDeferredContext(cx *Cx) bool {
 	useBaseGlobalState()
@@ -4540,6 +5313,9 @@ func GlobalStateIsInDeferredContext(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether the press being handled came from a finger: a touch went down recently enough that the
+// mouse events of a tap are still arriving. A double tap takes up to twice the tap interval.
+//
 // GlobalStateIsTouchPress is <gpui_kit::base::GlobalState>::is_touch_press.
 func GlobalStateIsTouchPress(cx *Cx) bool {
 	useBaseGlobalState()
@@ -4548,6 +5324,9 @@ func GlobalStateIsTouchPress(cx *Cx) bool {
 	return r.bool()
 }
 
+// Records that a finger went down. Called from the touch drag GPUI offers on every touch, before
+// it becomes a tap, a long press or a pan.
+//
 // GlobalStateNoteTouch is <gpui_kit::base::GlobalState>::note_touch.
 func GlobalStateNoteTouch(cx *Cx) {
 	useBaseGlobalState()
@@ -4555,6 +5334,11 @@ func GlobalStateNoteTouch(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Suppresses window-level text selection for the current mouse down.
+//
+// Controls that own a press or drag interaction use this so the same pointer event does not also
+// start application text selection.
+//
 // GlobalStateSuppressTextSelection is <gpui_kit::base::GlobalState>::suppress_text_selection.
 func GlobalStateSuppressTextSelection(cx *Cx) {
 	useBaseGlobalState()
@@ -4567,6 +5351,8 @@ type GridLayoutState struct{ h uint64 }
 
 func (s GridLayoutState) handle() uint64 { return s.h }
 
+// The item being dragged or resized, if a gesture is in progress.
+//
 // ActiveItem is <gpui_kit::base::GridLayoutState>::active_item.
 func (s GridLayoutState) ActiveItem(cx *Cx) Option[string] {
 	useBaseGridLayout()
@@ -4576,6 +5362,8 @@ func (s GridLayoutState) ActiveItem(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// The area of the item `id`.
+//
 // Area is <gpui_kit::base::GridLayoutState>::area.
 func (s GridLayoutState) Area(cx *Cx, id string) Option[BaseGridArea] {
 	useBaseGridLayout()
@@ -4586,6 +5374,8 @@ func (s GridLayoutState) Area(cx *Cx, id string) Option[BaseGridArea] {
 	return rdOpt(r, func(r *reader) BaseGridArea { return rdBaseGridArea(r) })
 }
 
+// The committed layout, in the order the areas were given.
+//
 // Areas is <gpui_kit::base::GridLayoutState>::areas.
 func (s GridLayoutState) Areas(cx *Cx) []BaseGridArea {
 	useBaseGridLayout()
@@ -4640,6 +5430,8 @@ func (s GridLayoutState) IsResizable(cx *Cx) bool {
 	return r.bool()
 }
 
+// The item keyboard commands act on.
+//
 // SelectedItem is <gpui_kit::base::GridLayoutState>::selected_item.
 func (s GridLayoutState) SelectedItem(cx *Cx) Option[string] {
 	useBaseGridLayout()
@@ -4649,6 +5441,10 @@ func (s GridLayoutState) SelectedItem(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// Move the item `id` so its leading column is `col` and its top row `row`, pushing whatever it
+// lands on out of the way. Returns whether the layout changed; a refused or no-op move returns
+// `false`.
+//
 // MoveItem is <gpui_kit::base::GridLayoutState>::move_item.
 func (s GridLayoutState) MoveItem(cx *Cx, id string, col int, row int) bool {
 	useBaseGridLayout()
@@ -4661,6 +5457,9 @@ func (s GridLayoutState) MoveItem(cx *Cx, id string, col int, row int) bool {
 	return r.bool()
 }
 
+// Resize the item `id` to cover `col_span` columns and `row_span` rows, clamped to its limits.
+// Returns whether the layout changed.
+//
 // ResizeItem is <gpui_kit::base::GridLayoutState>::resize_item.
 func (s GridLayoutState) ResizeItem(cx *Cx, id string, colSpan int, rowSpan int) bool {
 	useBaseGridLayout()
@@ -4673,6 +5472,9 @@ func (s GridLayoutState) ResizeItem(cx *Cx, id string, colSpan int, rowSpan int)
 	return r.bool()
 }
 
+// Replace the layout, settling it under the grid's rules. Cancels any gesture in progress, and
+// does not emit `Change`.
+//
 // SetAreas is <gpui_kit::base::GridLayoutState>::set_areas.
 func (s GridLayoutState) SetAreas(cx *Cx, areas []GridArea) {
 	useBaseGridLayout()
@@ -4735,6 +5537,8 @@ func (s GridLayoutState) SetResizable(cx *Cx, resizable bool) {
 	stateSet(cx, o)
 }
 
+// Select the item keyboard commands act on.
+//
 // SetSelectedItem is <gpui_kit::base::GridLayoutState>::set_selected_item.
 func (s GridLayoutState) SetSelectedItem(cx *Cx, id Option[string]) {
 	useBaseGridLayout()
@@ -4810,6 +5614,8 @@ func (b GridLayoutStateBuilder) Resizable(resizable bool) GridLayoutStateBuilder
 // Build makes the GridLayoutState.
 func (b GridLayoutStateBuilder) Build() GridLayoutState { return GridLayoutState{b.sb.build()} }
 
+// An empty, 12-column grid that compacts vertically.
+//
 // NewGridLayoutState is <gpui_kit::base::GridLayoutState>::new.
 func NewGridLayoutState(cx *Cx) GridLayoutStateBuilder {
 	useBaseGridLayout()
@@ -4822,6 +5628,8 @@ type GutterDecorationCollection struct{ h uint64 }
 
 func (s GutterDecorationCollection) handle() uint64 { return s.h }
 
+// Return tracked UTF-8 byte ranges in insertion order.
+//
 // GetRanges is <gpui_kit::base::input::GutterDecorationCollection>::get_ranges.
 func (s GutterDecorationCollection) GetRanges(cx *Cx) []Range {
 	useBaseInput()
@@ -4831,6 +5639,8 @@ func (s GutterDecorationCollection) GetRanges(cx *Cx) []Range {
 	return rdList(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Add decorations to this collection in paint order.
+//
 // Append is <gpui_kit::base::input::GutterDecorationCollection>::append.
 func (s GutterDecorationCollection) Append(cx *Cx, decorations []GutterDecoration) {
 	useBaseInput()
@@ -4843,6 +5653,8 @@ func (s GutterDecorationCollection) Append(cx *Cx, decorations []GutterDecoratio
 	stateSet(cx, o)
 }
 
+// Empty this collection and keep its handles usable. The gutter keeps its strip.
+//
 // Clear is <gpui_kit::base::input::GutterDecorationCollection>::clear.
 func (s GutterDecorationCollection) Clear(cx *Cx) {
 	useBaseInput()
@@ -4851,6 +5663,9 @@ func (s GutterDecorationCollection) Clear(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Release this collection. Its cloned handles stop working. The gutter drops its strip after the
+// last gutter collection is released.
+//
 // Dispose is <gpui_kit::base::input::GutterDecorationCollection>::dispose.
 func (s GutterDecorationCollection) Dispose(cx *Cx) {
 	useBaseInput()
@@ -4859,6 +5674,8 @@ func (s GutterDecorationCollection) Dispose(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Replace this collection's decorations and clip ranges to UTF-8 boundaries.
+//
 // Set is <gpui_kit::base::input::GutterDecorationCollection>::set.
 func (s GutterDecorationCollection) Set(cx *Cx, decorations []GutterDecoration) {
 	useBaseInput()
@@ -4889,6 +5706,8 @@ type History struct{ h uint64 }
 
 func (s History) handle() uint64 { return s.h }
 
+// Returns whether moving back would keep a root entry current.
+//
 // CanBack is <gpui_kit::base::History<gpui_kit::SharedString>>::can_back.
 func (s History) CanBack(cx *Cx) bool {
 	useBaseRoot()
@@ -4898,6 +5717,8 @@ func (s History) CanBack(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns whether a forward entry is available.
+//
 // CanForward is <gpui_kit::base::History<gpui_kit::SharedString>>::can_forward.
 func (s History) CanForward(cx *Cx) bool {
 	useBaseRoot()
@@ -4907,6 +5728,8 @@ func (s History) CanForward(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns the current entry.
+//
 // Current is <gpui_kit::base::History<gpui_kit::SharedString>>::current.
 func (s History) Current(cx *Cx) Option[string] {
 	useBaseRoot()
@@ -4916,6 +5739,8 @@ func (s History) Current(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// Iterates from the root entry to the current entry.
+//
 // Entries is <gpui_kit::base::History<gpui_kit::SharedString>>::entries.
 func (s History) Entries(cx *Cx) []string {
 	useBaseRoot()
@@ -4925,6 +5750,8 @@ func (s History) Entries(cx *Cx) []string {
 	return rdList(r, func(r *reader) string { return r.str() })
 }
 
+// Iterates from the nearest forward entry to the furthest.
+//
 // ForwardEntries is <gpui_kit::base::History<gpui_kit::SharedString>>::forward_entries.
 func (s History) ForwardEntries(cx *Cx) []string {
 	useBaseRoot()
@@ -4934,6 +5761,8 @@ func (s History) ForwardEntries(cx *Cx) []string {
 	return rdList(r, func(r *reader) string { return r.str() })
 }
 
+// Moves back one entry and returns the new current entry.
+//
 // Back is <gpui_kit::base::History<gpui_kit::SharedString>>::back.
 func (s History) Back(cx *Cx) Option[string] {
 	useBaseRoot()
@@ -4943,6 +5772,8 @@ func (s History) Back(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// Moves forward one entry and returns the restored entry.
+//
 // Forward is <gpui_kit::base::History<gpui_kit::SharedString>>::forward.
 func (s History) Forward(cx *Cx) Option[string] {
 	useBaseRoot()
@@ -4952,6 +5783,8 @@ func (s History) Forward(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// Removes and returns the current entry without changing the forward branch.
+//
 // RemoveCurrent is <gpui_kit::base::History<gpui_kit::SharedString>>::remove_current.
 func (s History) RemoveCurrent(cx *Cx) Option[string] {
 	useBaseRoot()
@@ -4961,6 +5794,8 @@ func (s History) RemoveCurrent(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// Clears current, back, and forward entries.
+//
 // Clear is <gpui_kit::base::History<gpui_kit::SharedString>>::clear.
 func (s History) Clear(cx *Cx) {
 	useBaseRoot()
@@ -4969,6 +5804,8 @@ func (s History) Clear(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Pushes an entry and drops the forward branch.
+//
 // Push is <gpui_kit::base::History<gpui_kit::SharedString>>::push.
 func (s History) Push(cx *Cx, entry string) {
 	useBaseRoot()
@@ -4978,6 +5815,8 @@ func (s History) Push(cx *Cx, entry string) {
 	stateSet(cx, o)
 }
 
+// Replaces the current entry, or pushes when the trail is empty.
+//
 // ReplaceCurrent is <gpui_kit::base::History<gpui_kit::SharedString>>::replace_current.
 func (s History) ReplaceCurrent(cx *Cx, entry string) {
 	useBaseRoot()
@@ -5011,6 +5850,8 @@ type HorizontalScrollClaim struct{ h uint64 }
 
 func (s HorizontalScrollClaim) handle() uint64 { return s.h }
 
+// How far the content moved: positive moves it right, negative moves it left.
+//
 // DeltaX is <gpui_kit::base::HorizontalScrollClaim>::delta_x.
 func (s HorizontalScrollClaim) DeltaX(cx *Cx) float32 {
 	useBaseScrollableMask()
@@ -5025,6 +5866,8 @@ type HslaSliders struct{ h uint64 }
 
 func (s HslaSliders) handle() uint64 { return s.h }
 
+// The alpha slider, in `0..=1`.
+//
 // Alpha is <gpui_kit::base::HslaSliders>::alpha.
 func (s HslaSliders) Alpha(cx *Cx) SliderState {
 	useBaseColorPicker()
@@ -5034,6 +5877,8 @@ func (s HslaSliders) Alpha(cx *Cx) SliderState {
 	return SliderState{h: r.u64()}
 }
 
+// The hue slider, in `0..=1`.
+//
 // Hue is <gpui_kit::base::HslaSliders>::hue.
 func (s HslaSliders) Hue(cx *Cx) SliderState {
 	useBaseColorPicker()
@@ -5043,6 +5888,8 @@ func (s HslaSliders) Hue(cx *Cx) SliderState {
 	return SliderState{h: r.u64()}
 }
 
+// The lightness slider, in `0..=1`.
+//
 // Lightness is <gpui_kit::base::HslaSliders>::lightness.
 func (s HslaSliders) Lightness(cx *Cx) SliderState {
 	useBaseColorPicker()
@@ -5052,6 +5899,8 @@ func (s HslaSliders) Lightness(cx *Cx) SliderState {
 	return SliderState{h: r.u64()}
 }
 
+// The saturation slider, in `0..=1`.
+//
 // Saturation is <gpui_kit::base::HslaSliders>::saturation.
 func (s HslaSliders) Saturation(cx *Cx) SliderState {
 	useBaseColorPicker()
@@ -5088,6 +5937,8 @@ type InlineNodeRead struct{ h uint64 }
 
 func (s InlineNodeRead) handle() uint64 { return s.h }
 
+// The custom node, when this run is one.
+//
 // AsCustom is <gpui_kit::base::text::editor_host::InlineNode>::as_custom.
 func (s InlineNodeRead) AsCustom(cx *Cx) Option[MarkdownNodeRead] {
 	useBaseText()
@@ -5097,6 +5948,8 @@ func (s InlineNodeRead) AsCustom(cx *Cx) Option[MarkdownNodeRead] {
 	return rdOpt(r, func(r *reader) MarkdownNodeRead { return MarkdownNodeRead{h: r.u64()} })
 }
 
+// The image, when this run is an image.
+//
 // AsImage is <gpui_kit::base::text::editor_host::InlineNode>::as_image.
 func (s InlineNodeRead) AsImage(cx *Cx) Option[ImageNode] {
 	useBaseText()
@@ -5106,6 +5959,8 @@ func (s InlineNodeRead) AsImage(cx *Cx) Option[ImageNode] {
 	return rdOpt(r, func(r *reader) ImageNode { return ImageNode{h: r.u64()} })
 }
 
+// The marks, each a byte range of the text and its style.
+//
 // MarkRuns is <gpui_kit::base::text::editor_host::InlineNode>::mark_runs.
 func (s InlineNodeRead) MarkRuns(cx *Cx) []TupleRangeBasetextmark {
 	useBaseText()
@@ -5115,6 +5970,8 @@ func (s InlineNodeRead) MarkRuns(cx *Cx) []TupleRangeBasetextmark {
 	return rdList(r, func(r *reader) TupleRangeBasetextmark { return TupleRangeBasetextmark{rdRange(r), rdBaseTextMark(r)} })
 }
 
+// The text of the run (the fallback text of a custom node, empty for an image).
+//
 // Text is <gpui_kit::base::text::editor_host::InlineNode>::text.
 func (s InlineNodeRead) Text(cx *Cx) string {
 	useBaseText()
@@ -5129,6 +5986,8 @@ type InlineRenderContext struct{ h uint64 }
 
 func (s InlineRenderContext) handle() uint64 { return s.h }
 
+// Font size of the surrounding text, in logical pixels.
+//
 // FontSize is <gpui_kit::base::InlineRenderContext>::font_size.
 func (s InlineRenderContext) FontSize(cx *Cx) float32 {
 	useBaseText()
@@ -5138,6 +5997,8 @@ func (s InlineRenderContext) FontSize(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Line height of the surrounding text, in logical pixels.
+//
 // LineHeight is <gpui_kit::base::InlineRenderContext>::line_height.
 func (s InlineRenderContext) LineHeight(cx *Cx) float32 {
 	useBaseText()
@@ -5147,6 +6008,8 @@ func (s InlineRenderContext) LineHeight(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Root font size, for resolving rem-relative lengths.
+//
 // RemSize is <gpui_kit::base::InlineRenderContext>::rem_size.
 func (s InlineRenderContext) RemSize(cx *Cx) float32 {
 	useBaseText()
@@ -5156,6 +6019,8 @@ func (s InlineRenderContext) RemSize(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Effective text style at the object's position, marks already applied.
+//
 // TextStyle is <gpui_kit::base::InlineRenderContext>::text_style.
 func (s InlineRenderContext) TextStyle(cx *Cx) TextStyle {
 	useBaseText()
@@ -5179,6 +6044,8 @@ func (s InlineTokenClickEvent) Bounds(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// The click that opened the token; keyboard activation reports a keyboard click.
+//
 // Click is <gpui_kit::base::input::InlineTokenClickEvent>::click.
 func (s InlineTokenClickEvent) Click(cx *Cx) ClickEvent {
 	useBaseInput()
@@ -5288,6 +6155,8 @@ func (s InlineTokenHoverEvent) Bounds(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// Whether the pointer entered (`true`) or left (`false`) the token.
+//
 // IsHovered is <gpui_kit::base::input::InlineTokenHoverEvent>::is_hovered.
 func (s InlineTokenHoverEvent) IsHovered(cx *Cx) bool {
 	useBaseInput()
@@ -5306,6 +6175,10 @@ func (s InlineTokenHoverEvent) Range(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// The token range in UTF-16 code units, captured when the event was built. Exits delivered after
+// the text changed report these entry coordinates, since the byte range can no longer be converted
+// against the current text.
+//
 // RangeUtf16 is <gpui_kit::base::input::InlineTokenHoverEvent>::range_utf16.
 func (s InlineTokenHoverEvent) RangeUtf16(cx *Cx) TupleIntInt {
 	useBaseInput()
@@ -5452,6 +6325,11 @@ func (s InputContextMenuCapabilitiesRead) IsCodeEditor(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if the user is allowed to copy the text out.
+//
+// A masked input keeps its value out of the clipboard, so Copy and Cut are both unavailable while
+// the value is hidden.
+//
 // IsCopyable is <gpui_kit::base::input::InputContextMenuCapabilities>::is_copyable.
 func (s InputContextMenuCapabilitiesRead) IsCopyable(cx *Cx) bool {
 	useBaseInput()
@@ -5470,6 +6348,11 @@ func (s InputContextMenuCapabilitiesRead) IsDisabled(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// The items that write to the input (Cut, Paste, Code Actions) belong to this, the reading ones
+// (Copy, Go to Definition) do not.
+//
 // IsEditable is <gpui_kit::base::input::InputContextMenuCapabilities>::is_editable.
 func (s InputContextMenuCapabilitiesRead) IsEditable(cx *Cx) bool {
 	useBaseInput()
@@ -5529,6 +6412,10 @@ func (s InputPresentation) IsDisabled(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// See also: `IsEditable`.
+//
 // IsEditable is <gpui_kit::base::input::InputPresentation>::is_editable.
 func (s InputPresentation) IsEditable(cx *Cx) bool {
 	useBaseInput()
@@ -5574,6 +6461,8 @@ func (s InputPresentation) IsReadonly(cx *Cx) bool {
 	return r.bool()
 }
 
+// The placeholder derived from the mask pattern, e.g.: `(___) ___-____`.
+//
 // MaskPlaceholder is <gpui_kit::base::input::InputPresentation>::mask_placeholder.
 func (s InputPresentation) MaskPlaceholder(cx *Cx) Option[string] {
 	useBaseInput()
@@ -5606,6 +6495,8 @@ type InputState struct{ h uint64 }
 
 func (s InputState) handle() uint64 { return s.h }
 
+// The text with its tokens, as `set_value` accepts it.
+//
 // Content is <gpui_kit::base::input::InputState>::content.
 func (s InputState) Content(cx *Cx) InputContent {
 	useBaseInput()
@@ -5624,6 +6515,10 @@ func (s InputState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilities
 	return InputContextMenuCapabilitiesRead{h: r.u64()}
 }
 
+// Get byte offset of the cursor.
+//
+// The offset is the UTF-8 offset.
+//
 // Cursor is <gpui_kit::base::input::InputState>::cursor.
 func (s InputState) Cursor(cx *Cx) int {
 	useBaseInput()
@@ -5825,6 +6720,8 @@ func (s InputState) InputBounds(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// Whether this input is a source-code editor.
+//
 // IsCodeEditor is <gpui_kit::base::input::InputState>::is_code_editor.
 func (s InputState) IsCodeEditor(cx *Cx) bool {
 	useBaseInput()
@@ -5834,6 +6731,10 @@ func (s InputState) IsCodeEditor(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether the user is allowed to copy the selection out.
+//
+// A masked input keeps its value out of the clipboard.
+//
 // IsCopyable is <gpui_kit::base::input::InputState>::is_copyable.
 func (s InputState) IsCopyable(cx *Cx) bool {
 	useBaseInput()
@@ -5843,6 +6744,11 @@ func (s InputState) IsCopyable(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// This is false when the input is `disabled` or `readonly`, the programmatic APIs (e.g.:
+// `SetValue`, `Insert`) are not limited by this.
+//
 // IsEditable is <gpui_kit::base::input::InputState>::is_editable.
 func (s InputState) IsEditable(cx *Cx) bool {
 	useBaseInput()
@@ -5861,6 +6767,10 @@ func (s InputState) IsMultiLine(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if the search panel can replace the matches.
+//
+// This is false when the input is not `replaceable`, or when it is `disabled` or `readonly`.
+//
 // IsReplaceable is <gpui_kit::base::input::InputState>::is_replaceable.
 func (s InputState) IsReplaceable(cx *Cx) bool {
 	useBaseInput()
@@ -5870,6 +6780,11 @@ func (s InputState) IsReplaceable(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether the active selection's caret is at the start of its range.
+//
+// Collapsed selections are not reversed. Use this with `SelectedRange` and
+// `SetSelectedRangeWithDirection` to restore a selection.
+//
 // IsSelectionReversed is <gpui_kit::base::input::InputState>::is_selection_reversed.
 func (s InputState) IsSelectionReversed(cx *Cx) bool {
 	useBaseInput()
@@ -5879,6 +6794,8 @@ func (s InputState) IsSelectionReversed(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether this input is a single-line text field. See `IsMultiLine`.
+//
 // IsSingleLine is <gpui_kit::base::input::InputState>::is_single_line.
 func (s InputState) IsSingleLine(cx *Cx) bool {
 	useBaseInput()
@@ -5888,6 +6805,8 @@ func (s InputState) IsSingleLine(cx *Cx) bool {
 	return r.bool()
 }
 
+// Laid-out line height; `None` before first layout.
+//
 // LineHeight is <gpui_kit::base::input::InputState>::line_height.
 func (s InputState) LineHeight(cx *Cx) Option[float32] {
 	useBaseInput()
@@ -5906,6 +6825,10 @@ func (s InputState) Presentation(cx *Cx) InputPresentation {
 	return InputPresentation{h: r.u64()}
 }
 
+// Return the rendered bounds for a UTF-8 byte range in the current input contents.
+//
+// Returns `None` when the requested range is not currently laid out or visible.
+//
 // RangeToBounds is <gpui_kit::base::input::InputState>::range_to_bounds.
 func (s InputState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
 	useBaseInput()
@@ -5916,6 +6839,8 @@ func (s InputState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
 	return rdOpt(r, func(r *reader) Bounds { return rdBounds(r) })
 }
 
+// Current scroll offset of the editor viewport.
+//
 // ScrollOffset is <gpui_kit::base::input::InputState>::scroll_offset.
 func (s InputState) ScrollOffset(cx *Cx) GpuiPoint {
 	useBaseInput()
@@ -5925,6 +6850,13 @@ func (s InputState) ScrollOffset(cx *Cx) GpuiPoint {
 	return rdGpuiPoint(r)
 }
 
+// A counter that advances every time `OpenSearch` runs, including while the session is already
+// open.
+//
+// Re-invoking search leaves the session itself identical, so a presentation layer that decides
+// what to rebuild by comparing session state cannot see the second request. Fold this into that
+// comparison to notice it.
+//
 // SearchActivationRevision is <gpui_kit::base::input::InputState>::search_activation_revision.
 func (s InputState) SearchActivationRevision(cx *Cx) uint64 {
 	useBaseInput()
@@ -5943,6 +6875,13 @@ func (s InputState) SearchSession(cx *Cx) SearchSession {
 	return SearchSession{h: r.u64()}
 }
 
+// Returns the active selection as a byte range into the text.
+//
+// With multiple cursors, this reads only the active selection.
+//
+// The range is empty (`start == end`) when no text is selected; in that case the offset equals
+// `cursor()`. Byte offsets are measured in the underlying rope's byte units.
+//
 // SelectedRange is <gpui_kit::base::input::InputState>::selected_range.
 func (s InputState) SelectedRange(cx *Cx) Range {
 	useBaseInput()
@@ -5952,6 +6891,8 @@ func (s InputState) SelectedRange(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// See `SelectedValue` when an owned string is wanted.
+//
 // SelectedText is <gpui_kit::base::input::InputState>::selected_text.
 func (s InputState) SelectedText(cx *Cx) string {
 	useBaseInput()
@@ -5961,6 +6902,11 @@ func (s InputState) SelectedText(cx *Cx) string {
 	return r.str()
 }
 
+// Return the portion of the value within the input field that is selected by the user, as an owned
+// string.
+//
+// The string is materialized on each call.
+//
 // SelectedValue is <gpui_kit::base::input::InputState>::selected_value.
 func (s InputState) SelectedValue(cx *Cx) string {
 	useBaseInput()
@@ -5970,6 +6916,11 @@ func (s InputState) SelectedValue(cx *Cx) string {
 	return r.str()
 }
 
+// Return the text `Rope` of the input field.
+//
+// Borrowed from the state, so reading even a large document copies nothing. See `Value` when an
+// owned string is wanted.
+//
 // Text is <gpui_kit::base::input::InputState>::text.
 func (s InputState) Text(cx *Cx) string {
 	useBaseInput()
@@ -5988,6 +6939,9 @@ func (s InputState) TextBounds(cx *Cx) Option[Bounds] {
 	return rdOpt(r, func(r *reader) Bounds { return rdBounds(r) })
 }
 
+// The text assistance a platform IME (a software keyboard) should give this input, from
+// `InputAction`, `Autocorrect` and `Autocapitalize` or the defaults they describe.
+//
 // TextInputConfiguration is <gpui_kit::base::input::InputState>::text_input_configuration.
 func (s InputState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
 	useBaseInput()
@@ -6006,6 +6960,11 @@ func (s InputState) Tokens(cx *Cx) []InlineTokenSpan {
 	return rdList(r, func(r *reader) InlineTokenSpan { return InlineTokenSpan{h: r.u64()} })
 }
 
+// The live touch selection, laid out for the handles and the edit menu.
+//
+// `None` when the last touch selection has since changed into something else, or when its ends are
+// not laid out (scrolled out of view).
+//
 // TouchSelection is <gpui_kit::base::input::InputState>::touch_selection.
 func (s InputState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
 	useBaseInput()
@@ -6015,6 +6974,8 @@ func (s InputState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
 	return rdOpt(r, func(r *reader) TouchSelectionSnapshot { return TouchSelectionSnapshot{h: r.u64()} })
 }
 
+// Return the value without mask.
+//
 // UnmaskValue is <gpui_kit::base::input::InputState>::unmask_value.
 func (s InputState) UnmaskValue(cx *Cx) string {
 	useBaseInput()
@@ -6024,6 +6985,10 @@ func (s InputState) UnmaskValue(cx *Cx) string {
 	return r.str()
 }
 
+// Return the value of the input field as an owned string.
+//
+// The string is materialized on each call.
+//
 // Value is <gpui_kit::base::input::InputState>::value.
 func (s InputState) Value(cx *Cx) string {
 	useBaseInput()
@@ -6045,6 +7010,8 @@ func (s InputState) TryValue(cx *Cx) (v string, ok bool) {
 	return r.str(), true
 }
 
+// Visible row range in the last laid-out viewport, `None` before first layout.
+//
 // VisibleRowRange is <gpui_kit::base::input::InputState>::visible_row_range.
 func (s InputState) VisibleRowRange(cx *Cx) Option[Range] {
 	useBaseInput()
@@ -6054,6 +7021,8 @@ func (s InputState) VisibleRowRange(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Whether the input or its associated selection popup has focus.
+//
 // HasSelectionFocus is <gpui_kit::base::input::InputState>::has_selection_focus.
 func (s InputState) HasSelectionFocus(cx *Cx) bool {
 	useBaseInput()
@@ -6081,6 +7050,8 @@ func (s InputState) PreviousSearchMatch(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Replace every match. Returns how many were replaced.
+//
 // ReplaceAllSearchMatches is <gpui_kit::base::input::InputState>::replace_all_search_matches.
 func (s InputState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
 	useBaseInput()
@@ -6091,6 +7062,9 @@ func (s InputState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
 	return int(r.u64())
 }
 
+// Replace the current match and move on to the next one. Returns whether there was a match to
+// replace.
+//
 // ReplaceCurrentSearchMatch is <gpui_kit::base::input::InputState>::replace_current_search_match.
 func (s InputState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) bool {
 	useBaseInput()
@@ -6101,6 +7075,8 @@ func (s InputState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) bool {
 	return r.bool()
 }
 
+// Replace a UTF-8 byte range, expanding overlaps to whole tokens.
+//
 // ReplaceRangeWithToken is <gpui_kit::base::input::InputState>::replace_range_with_token.
 func (s InputState) ReplaceRangeWithToken(cx *Cx, range_ Range, token InlineToken) error {
 	useBaseInput()
@@ -6112,6 +7088,8 @@ func (s InputState) ReplaceRangeWithToken(cx *Cx, range_ Range, token InlineToke
 	return rdResult(r)
 }
 
+// Replace the selection with an atomic token; no delimiter is added.
+//
 // ReplaceWithToken is <gpui_kit::base::input::InputState>::replace_with_token.
 func (s InputState) ReplaceWithToken(cx *Cx, token InlineToken) error {
 	useBaseInput()
@@ -6122,6 +7100,14 @@ func (s InputState) ReplaceWithToken(cx *Cx, token InlineToken) error {
 	return rdResult(r)
 }
 
+// Add `range` as an additional selection, keeping the existing ones — the programmatic equivalent
+// of Alt-clicking another cursor into the text.
+//
+// The range is clipped to the text and expanded to character boundaries, like `SetSelectedRange`.
+// A range already covered by a selection adds nothing. Overlapping selections are merged. On a
+// single-line input there is no second cursor to add, so the call replaces the selection instead.
+// The view scrolls to the new selection.
+//
 // AddSelection is <gpui_kit::base::input::InputState>::add_selection.
 func (s InputState) AddSelection(cx *Cx, range_ Range) {
 	useBaseInput()
@@ -6143,6 +7129,11 @@ func (s InputState) ApplyHighlighterFoldCandidates(cx *Cx, candidates []FoldRang
 	stateSet(cx, o)
 }
 
+// Starts dragging one end of the touch selection from `finger`.
+//
+// The other end stays where it is. The menu closes for the duration of the drag and reopens on
+// `EndEdgeDrag`.
+//
 // BeginEdgeDrag is <gpui_kit::base::input::InputState>::begin_edge_drag.
 func (s InputState) BeginEdgeDrag(cx *Cx, edge SelectionEdge, finger GpuiPoint) {
 	useBaseInput()
@@ -6161,6 +7152,11 @@ func (s InputState) Clean(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Closes the edit menu and keeps the selection with its handles.
+//
+// The menu's own actions end here: Copy has done its work, Select All reopens the menu over the
+// new range through `SelectAll`.
+//
 // CloseEditMenu is <gpui_kit::base::input::InputState>::close_edit_menu.
 func (s InputState) CloseEditMenu(cx *Cx) {
 	useBaseInput()
@@ -6169,6 +7165,9 @@ func (s InputState) CloseEditMenu(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// End the search: hide the built-in panel and the match highlights. The query is kept so the next
+// `OpenSearch` resumes it.
+//
 // CloseSearch is <gpui_kit::base::input::InputState>::close_search.
 func (s InputState) CloseSearch(cx *Cx) {
 	useBaseInput()
@@ -6177,6 +7176,8 @@ func (s InputState) CloseSearch(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Ends the handle drag and reopens the edit menu.
+//
 // EndEdgeDrag is <gpui_kit::base::input::InputState>::end_edge_drag.
 func (s InputState) EndEdgeDrag(cx *Cx) {
 	useBaseInput()
@@ -6185,6 +7186,8 @@ func (s InputState) EndEdgeDrag(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Install a default adapter without replacing an application-provided one.
+//
 // EnsureHighlighterFactory is <gpui_kit::base::input::InputState>::ensure_highlighter_factory.
 func (s InputState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
 	useBaseInput()
@@ -6194,6 +7197,8 @@ func (s InputState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
 	stateSet(cx, o)
 }
 
+// Apply the default numeric mask unless the caller explicitly selected a mask.
+//
 // EnsureNumberMask is <gpui_kit::base::input::InputState>::ensure_number_mask.
 func (s InputState) EnsureNumberMask(cx *Cx) {
 	useBaseInput()
@@ -6202,6 +7207,8 @@ func (s InputState) EnsureNumberMask(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Focus the input field.
+//
 // Focus is <gpui_kit::base::input::InputState>::focus.
 func (s InputState) Focus(cx *Cx) {
 	useBaseInput()
@@ -6210,6 +7217,10 @@ func (s InputState) Focus(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Insert text at the current cursor position.
+//
+// And the cursor will be moved to the end of inserted text.
+//
 // Insert is <gpui_kit::base::input::InputState>::insert.
 func (s InputState) Insert(cx *Cx, text string) {
 	useBaseInput()
@@ -6228,6 +7239,14 @@ func (s InputState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
 	stateSet(cx, o)
 }
 
+// Open the search session, or re-invoke it if it is already open.
+//
+// This is not idempotent: every call advances `SearchActivationRevision`, and the presentation
+// layer answers that by re-focusing the search field and selecting its contents, the same as
+// pressing the shortcut a second time. Call it from an action or another user gesture, never from
+// a render pass or an observer that runs every frame — that would re-select the field under the
+// user on every frame and make it impossible to type.
+//
 // OpenSearch is <gpui_kit::base::input::InputState>::open_search.
 func (s InputState) OpenSearch(cx *Cx, replaceMode bool) {
 	useBaseInput()
@@ -6237,6 +7256,12 @@ func (s InputState) OpenSearch(cx *Cx, replaceMode bool) {
 	stateSet(cx, o)
 }
 
+// Refresh the input, so the next render re-runs syntax highlighting and the LSP providers, not
+// just a redraw.
+//
+// Assigning the `lsp` providers (or other render-affecting state) at runtime does not take effect
+// until the text next changes. Call this afterwards to force the refresh on the next render.
+//
 // Refresh is <gpui_kit::base::input::InputState>::refresh.
 func (s InputState) Refresh(cx *Cx) {
 	useBaseInput()
@@ -6245,6 +7270,10 @@ func (s InputState) Refresh(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Replace text at the current cursor position.
+//
+// And the cursor will be moved to the end of replaced text.
+//
 // Replace is <gpui_kit::base::input::InputState>::replace.
 func (s InputState) Replace(cx *Cx, text string) {
 	useBaseInput()
@@ -6254,6 +7283,15 @@ func (s InputState) Replace(cx *Cx, text string) {
 	stateSet(cx, o)
 }
 
+// Replace the entire text content while preserving undo history.
+//
+// Unlike `SetValue`, this method records the replacement in the undo stack, allowing the user to
+// undo/redo the change. The selection is placed at the end of the new text for single-line inputs,
+// or cleared (0..0) for multi-line inputs.
+//
+// Use this when programmatically replacing the full text but the user should still be able to undo
+// the operation — e.g. formatting.
+//
 // ReplaceAll is <gpui_kit::base::input::InputState>::replace_all.
 func (s InputState) ReplaceAll(cx *Cx, text string) {
 	useBaseInput()
@@ -6271,6 +7309,9 @@ func (s InputState) SelectAll(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Selects everything and, when a touch selection is live, keeps the handles and the edit menu over
+// the new range.
+//
 // SelectAllFromEditMenu is <gpui_kit::base::input::InputState>::select_all_from_edit_menu.
 func (s InputState) SelectAllFromEditMenu(cx *Cx) {
 	useBaseInput()
@@ -6279,6 +7320,8 @@ func (s InputState) SelectAllFromEditMenu(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Project semantics onto the editor, never onto a second focus owner.
+//
 // SetAccessibility is <gpui_kit::base::input::InputState>::set_accessibility.
 func (s InputState) SetAccessibility(cx *Cx, accessibility InputAccessibility) {
 	useBaseInput()
@@ -6306,6 +7349,8 @@ func (s InputState) SetContextMenuEnabled(cx *Cx, enabled bool) {
 	stateSet(cx, o)
 }
 
+// Update `CursorSurroundingLines` after construction.
+//
 // SetCursorSurroundingLines is <gpui_kit::base::input::InputState>::set_cursor_surrounding_lines.
 func (s InputState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
 	useBaseInput()
@@ -6338,6 +7383,8 @@ func (s InputState) SetEditorStyle(cx *Cx, style InputEditorStyle) {
 	stateSet(cx, o)
 }
 
+// Fills each folded line across the editor, as VS Code's `editor.foldBackground`.
+//
 // SetFoldBackground is <gpui_kit::base::input::InputState>::set_fold_background.
 func (s InputState) SetFoldBackground(cx *Cx, color Option[Color]) {
 	useBaseInput()
@@ -6352,6 +7399,8 @@ func (s InputState) SetFoldBackground(cx *Cx, color Option[Color]) {
 	stateSet(cx, o)
 }
 
+// Set highlighter language for for `CodeEditor` mode.
+//
 // SetHighlighter is <gpui_kit::base::input::InputState>::set_highlighter.
 func (s InputState) SetHighlighter(cx *Cx, newLanguage string) {
 	useBaseInput()
@@ -6361,6 +7410,8 @@ func (s InputState) SetHighlighter(cx *Cx, newLanguage string) {
 	stateSet(cx, o)
 }
 
+// Install the parser/highlighter adapter used by code-editor mode.
+//
 // SetHighlighterFactory is <gpui_kit::base::input::InputState>::set_highlighter_factory.
 func (s InputState) SetHighlighterFactory(cx *Cx, factory RowSource) {
 	useBaseInput()
@@ -6370,6 +7421,8 @@ func (s InputState) SetHighlighterFactory(cx *Cx, factory RowSource) {
 	stateSet(cx, o)
 }
 
+// Set true to show spinner at the input right.
+//
 // SetLoading is <gpui_kit::base::input::InputState>::set_loading.
 func (s InputState) SetLoading(cx *Cx, loading bool) {
 	useBaseInput()
@@ -6388,6 +7441,8 @@ func (s InputState) SetMaskPattern(cx *Cx, pattern MaskPatternInto) {
 	stateSet(cx, o)
 }
 
+// Set the password masked state of the input field.
+//
 // SetMasked is <gpui_kit::base::input::InputState>::set_masked.
 func (s InputState) SetMasked(cx *Cx, masked bool) {
 	useBaseInput()
@@ -6397,6 +7452,8 @@ func (s InputState) SetMasked(cx *Cx, masked bool) {
 	stateSet(cx, o)
 }
 
+// Update the maximum value after construction. See `Max`.
+//
 // SetMax is <gpui_kit::base::input::InputState>::set_max.
 func (s InputState) SetMax(cx *Cx, max_ Option[float64]) {
 	useBaseInput()
@@ -6411,6 +7468,8 @@ func (s InputState) SetMax(cx *Cx, max_ Option[float64]) {
 	stateSet(cx, o)
 }
 
+// Update the minimum value after construction. See `Min`.
+//
 // SetMin is <gpui_kit::base::input::InputState>::set_min.
 func (s InputState) SetMin(cx *Cx, min_ Option[float64]) {
 	useBaseInput()
@@ -6425,6 +7484,8 @@ func (s InputState) SetMin(cx *Cx, min_ Option[float64]) {
 	stateSet(cx, o)
 }
 
+// Set placeholder
+//
 // SetPlaceholder is <gpui_kit::base::input::InputState>::set_placeholder.
 func (s InputState) SetPlaceholder(cx *Cx, placeholder string) {
 	useBaseInput()
@@ -6443,6 +7504,8 @@ func (s InputState) SetReadonly(cx *Cx, readonly bool) {
 	stateSet(cx, o)
 }
 
+// Update `ScrollBeyondLastLine` after construction.
+//
 // SetScrollBeyondLastLine is <gpui_kit::base::input::InputState>::set_scroll_beyond_last_line.
 func (s InputState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
 	useBaseInput()
@@ -6457,6 +7520,10 @@ func (s InputState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
 	stateSet(cx, o)
 }
 
+// Set scroll offset of the editor viewport.
+//
+// The offset will be clamped to the valid range, and applied after the next layout.
+//
 // SetScrollOffset is <gpui_kit::base::input::InputState>::set_scroll_offset.
 func (s InputState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 	useBaseInput()
@@ -6466,6 +7533,15 @@ func (s InputState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 	stateSet(cx, o)
 }
 
+// Set the search query and highlight its matches.
+//
+// This is the entry point for a custom search UI: it needs neither `searchable` nor the built-in
+// panel. Navigate the matches with `NextSearchMatch` and `PreviousSearchMatch`, read the count and
+// the current index from `SearchSession`, and end the search with `CloseSearch`.
+//
+// A changed query or case mode starts at the current viewport. Setting the same query and case
+// mode again retains the current occurrence.
+//
 // SetSearchQuery is <gpui_kit::base::input::InputState>::set_search_query.
 func (s InputState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) {
 	useBaseInput()
@@ -6476,6 +7552,11 @@ func (s InputState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) {
 	stateSet(cx, o)
 }
 
+// Set the selected range using UTF-8 byte offsets, removing additional cursors.
+//
+// Non-empty ranges expand to character boundaries. Empty ranges remain empty and are clipped to
+// the preceding character boundary.
+//
 // SetSelectedRange is <gpui_kit::base::input::InputState>::set_selected_range.
 func (s InputState) SetSelectedRange(cx *Cx, range_ Range) {
 	useBaseInput()
@@ -6485,6 +7566,12 @@ func (s InputState) SetSelectedRange(cx *Cx, range_ Range) {
 	stateSet(cx, o)
 }
 
+// Set the selected UTF-8 byte range and the active caret direction.
+//
+// With `reversed`, the caret is at the start and the anchor is at the end. Empty ranges collapse
+// to a caret regardless of direction. Range clipping, token boundaries and removal of additional
+// cursors follow `SetSelectedRange`.
+//
 // SetSelectedRangeWithDirection is <gpui_kit::base::input::InputState>::set_selected_range_with_direction.
 func (s InputState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reversed bool) {
 	useBaseInput()
@@ -6495,6 +7582,11 @@ func (s InputState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reversed
 	stateSet(cx, o)
 }
 
+// Keeps the selection highlighted while this popup or one of its children has focus.
+//
+// This does not transfer keyboard focus or keep the caret visible. The association holds only a
+// weak focus handle. Pass `None` to clear it.
+//
 // SetSelectionFocus is <gpui_kit::base::input::InputState>::set_selection_focus.
 func (s InputState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
 	useBaseInput()
@@ -6509,6 +7601,8 @@ func (s InputState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
 	stateSet(cx, o)
 }
 
+// Update whether to show whitespace characters.
+//
 // SetShowWhitespaces is <gpui_kit::base::input::InputState>::set_show_whitespaces.
 func (s InputState) SetShowWhitespaces(cx *Cx, show bool) {
 	useBaseInput()
@@ -6518,6 +7612,11 @@ func (s InputState) SetShowWhitespaces(cx *Cx, show bool) {
 	stateSet(cx, o)
 }
 
+// Update the step value after construction, `None` to fall back to emitting `Step` (if `min`,
+// `max` are unset).
+//
+// See `Step` and `StepBy`.
+//
 // SetStep is <gpui_kit::base::input::InputState>::set_step.
 func (s InputState) SetStep(cx *Cx, step Option[NumberStep]) {
 	useBaseInput()
@@ -6559,6 +7658,13 @@ func (s InputState) SetValidator(cx *Cx, validate func(cx *Cx, e string) bool) {
 	stateSet(cx, o)
 }
 
+// Set the value of the input field: plain text, or `InputContent` to restore text together with
+// its inline tokens. Editing history is cleared and no `Change` is emitted.
+//
+// For single-line inputs the caret is placed at the end of the text while the view is scrolled
+// back to the start, so a long value shows its beginning instead of its tail (matching HTML
+// `<input>`). Multi-line inputs reset the selection to `0..0`.
+//
 // SetValue is <gpui_kit::base::input::InputState>::set_value.
 func (s InputState) SetValue(cx *Cx, value InputContentInto) {
 	useBaseInput()
@@ -6568,6 +7674,11 @@ func (s InputState) SetValue(cx *Cx, value InputContentInto) {
 	stateSet(cx, o)
 }
 
+// Flip the password mask.
+//
+// Setting the mask is a single-line method, but flipping it stays here: the reveal button is
+// rendered from the generic path, and it can only be switched on through `InputState` anyway.
+//
 // ToggleMasked is <gpui_kit::base::input::InputState>::toggle_masked.
 func (s InputState) ToggleMasked(cx *Cx) {
 	useBaseInput()
@@ -6576,6 +7687,8 @@ func (s InputState) ToggleMasked(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Unselects the currently selected text.
+//
 // Unselect is <gpui_kit::base::input::InputState>::unselect.
 func (s InputState) Unselect(cx *Cx) {
 	useBaseInput()
@@ -6584,6 +7697,11 @@ func (s InputState) Unselect(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Moves the dragged end to the text under `finger`.
+//
+// Past the top or bottom of a multi-line input the content scrolls under the finger, so the end
+// can reach text that was out of view.
+//
 // UpdateEdgeDrag is <gpui_kit::base::input::InputState>::update_edge_drag.
 func (s InputState) UpdateEdgeDrag(cx *Cx, finger GpuiPoint) {
 	useBaseInput()
@@ -6720,6 +7838,8 @@ func (b InputStateBuilder) Validate(f func(cx *Cx, e string) bool) InputStateBui
 // Build makes the InputState.
 func (b InputStateBuilder) Build() InputState { return InputState{b.sb.build()} }
 
+// Create a single-line text input state.
+//
 // NewInputState is <gpui_kit::base::input::InputState>::new.
 func NewInputState(cx *Cx) InputStateBuilder {
 	useBaseInput()
@@ -6765,6 +7885,8 @@ type LeafGeometry struct{ h uint64 }
 
 func (s LeafGeometry) handle() uint64 { return s.h }
 
+// The byte range of the inline atom drawn under `at`, if any.
+//
 // AtomAt is <gpui_kit::base::text::editor_host::LeafGeometry>::atom_at.
 func (s LeafGeometry) AtomAt(cx *Cx, at GpuiPoint) Option[Range] {
 	useBaseText()
@@ -6775,6 +7897,8 @@ func (s LeafGeometry) AtomAt(cx *Cx, at GpuiPoint) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// The bounds of the leaf: the union of its pieces.
+//
 // Bounds is <gpui_kit::base::text::editor_host::LeafGeometry>::bounds.
 func (s LeafGeometry) Bounds(cx *Cx) Bounds {
 	useBaseText()
@@ -6784,6 +7908,9 @@ func (s LeafGeometry) Bounds(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// The caret closest to `at`, keeping the visual line that was hit: at a soft wrap the end of the
+// upper line is `Upstream`. Pass it to `PositionForCaret` to round-trip a click.
+//
 // CaretForPosition is <gpui_kit::base::text::editor_host::LeafGeometry>::caret_for_position.
 func (s LeafGeometry) CaretForPosition(cx *Cx, at GpuiPoint) BaseCaret {
 	useBaseText()
@@ -6794,6 +7921,9 @@ func (s LeafGeometry) CaretForPosition(cx *Cx, at GpuiPoint) BaseCaret {
 	return rdBaseCaret(r)
 }
 
+// The height of a caret: the font's ascent plus descent, not the whole line box, which includes
+// leading.
+//
 // CaretHeight is <gpui_kit::base::text::editor_host::LeafGeometry>::caret_height.
 func (s LeafGeometry) CaretHeight(cx *Cx) float32 {
 	useBaseText()
@@ -6803,6 +7933,9 @@ func (s LeafGeometry) CaretHeight(cx *Cx) float32 {
 	return r.f32()
 }
 
+// The byte index of the caret position closest to `at`: glyph halves round to the nearer side,
+// unlike `TextLayout::index_for_position`.
+//
 // IndexForPosition is <gpui_kit::base::text::editor_host::LeafGeometry>::index_for_position.
 func (s LeafGeometry) IndexForPosition(cx *Cx, at GpuiPoint) int {
 	useBaseText()
@@ -6813,6 +7946,8 @@ func (s LeafGeometry) IndexForPosition(cx *Cx, at GpuiPoint) int {
 	return int(r.u64())
 }
 
+// Whether the leaf's text is empty (it still has a line box).
+//
 // IsEmpty is <gpui_kit::base::text::editor_host::LeafGeometry>::is_empty.
 func (s LeafGeometry) IsEmpty(cx *Cx) bool {
 	useBaseText()
@@ -6822,6 +7957,8 @@ func (s LeafGeometry) IsEmpty(cx *Cx) bool {
 	return r.bool()
 }
 
+// The length of the leaf's text in bytes, atoms included.
+//
 // Len is <gpui_kit::base::text::editor_host::LeafGeometry>::len.
 func (s LeafGeometry) Len(cx *Cx) int {
 	useBaseText()
@@ -6831,6 +7968,8 @@ func (s LeafGeometry) Len(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The height of a line.
+//
 // LineHeight is <gpui_kit::base::text::editor_host::LeafGeometry>::line_height.
 func (s LeafGeometry) LineHeight(cx *Cx) float32 {
 	useBaseText()
@@ -6840,6 +7979,9 @@ func (s LeafGeometry) LineHeight(cx *Cx) float32 {
 	return r.f32()
 }
 
+// The top of `caret` in window coordinates. Unlike `PositionForIndex`, a caret at a soft wrap
+// lands on the visual line its affinity names.
+//
 // PositionForCaret is <gpui_kit::base::text::editor_host::LeafGeometry>::position_for_caret.
 func (s LeafGeometry) PositionForCaret(cx *Cx, caret BaseCaret) GpuiPoint {
 	useBaseText()
@@ -6850,6 +7992,8 @@ func (s LeafGeometry) PositionForCaret(cx *Cx, caret BaseCaret) GpuiPoint {
 	return rdGpuiPoint(r)
 }
 
+// The top of a caret placed at byte `index`, in window coordinates.
+//
 // PositionForIndex is <gpui_kit::base::text::editor_host::LeafGeometry>::position_for_index.
 func (s LeafGeometry) PositionForIndex(cx *Cx, index int) GpuiPoint {
 	useBaseText()
@@ -6874,6 +8018,8 @@ func (s ListState) Delegate(cx *Cx) RowSource {
 	return RowSource{h: r.u64()}
 }
 
+// Returns the index of the item that has been right clicked.
+//
 // RightClickedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::right_clicked_index.
 func (s ListState) RightClickedIndex(cx *Cx) Option[BaseIndexPath] {
 	useComponentList()
@@ -6883,6 +8029,8 @@ func (s ListState) RightClickedIndex(cx *Cx) Option[BaseIndexPath] {
 	return rdOpt(r, func(r *reader) BaseIndexPath { return rdBaseIndexPath(r) })
 }
 
+// Get scroll handle
+//
 // ScrollHandle is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_handle.
 func (s ListState) ScrollHandle(cx *Cx) VirtualListScrollHandle {
 	useComponentList()
@@ -6910,6 +8058,8 @@ func (s ListState) DelegateMut(cx *Cx) RowSource {
 	return RowSource{h: r.u64()}
 }
 
+// Focus the list, if the list is searchable, focus the search input.
+//
 // Focus is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::focus.
 func (s ListState) Focus(cx *Cx) {
 	useComponentList()
@@ -6918,6 +8068,8 @@ func (s ListState) Focus(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Scroll to the item at the given index.
+//
 // ScrollToItem is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::scroll_to_item.
 func (s ListState) ScrollToItem(cx *Cx, ix BaseIndexPath, strategy ScrollStrategy) {
 	useComponentList()
@@ -6936,6 +8088,10 @@ func (s ListState) ScrollToSelectedItem(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Set a specific list item for measurement.
+//
+// If the item is absent, measure the first item in the first non-empty section.
+//
 // SetItemToMeasureIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_item_to_measure_index.
 func (s ListState) SetItemToMeasureIndex(cx *Cx, ix BaseIndexPath) {
 	useComponentList()
@@ -6945,6 +8101,8 @@ func (s ListState) SetItemToMeasureIndex(cx *Cx, ix BaseIndexPath) {
 	stateSet(cx, o)
 }
 
+// Set the query text of the search input, this will trigger a search.
+//
 // SetQuery is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_query.
 func (s ListState) SetQuery(cx *Cx, query string) {
 	useComponentList()
@@ -6954,6 +8112,8 @@ func (s ListState) SetQuery(cx *Cx, query string) {
 	stateSet(cx, o)
 }
 
+// Set the index of the item that has been right clicked.
+//
 // SetRightClickedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_right_clicked_index.
 func (s ListState) SetRightClickedIndex(cx *Cx, ix Option[BaseIndexPath]) {
 	useComponentList()
@@ -6977,6 +8137,8 @@ func (s ListState) SetSearchable(cx *Cx, searchable bool) {
 	stateSet(cx, o)
 }
 
+// Sets whether the list is selectable, default is true.
+//
 // SetSelectable is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_selectable.
 func (s ListState) SetSelectable(cx *Cx, selectable bool) {
 	useComponentList()
@@ -6986,6 +8148,8 @@ func (s ListState) SetSelectable(cx *Cx, selectable bool) {
 	stateSet(cx, o)
 }
 
+// Set the selected index of the list, this method will not scroll to the selected item.
+//
 // SetSelectedIndex is <gpui_kit::component::list::ListState<crate::shim_rows::GkListDelegate>>::set_selected_index.
 func (s ListState) SetSelectedIndex(cx *Cx, ix Option[BaseIndexPath]) {
 	useComponentList()
@@ -7056,6 +8220,8 @@ type MarkdownNodeRead struct{ h uint64 }
 
 func (s MarkdownNodeRead) handle() uint64 { return s.h }
 
+// Name exposed to accessibility clients, defaulting to the plain text.
+//
 // AccessibilityName is <gpui_kit::base::MarkdownNode>::accessibility_name.
 func (s MarkdownNodeRead) AccessibilityName(cx *Cx) string {
 	useBaseRoot()
@@ -7065,6 +8231,8 @@ func (s MarkdownNodeRead) AccessibilityName(cx *Cx) string {
 	return r.str()
 }
 
+// Markdown representation of this custom node.
+//
 // AsMarkdown is <gpui_kit::base::MarkdownNode>::as_markdown.
 func (s MarkdownNodeRead) AsMarkdown(cx *Cx) string {
 	useBaseRoot()
@@ -7074,6 +8242,8 @@ func (s MarkdownNodeRead) AsMarkdown(cx *Cx) string {
 	return r.str()
 }
 
+// Text representation of this custom node.
+//
 // AsText is <gpui_kit::base::MarkdownNode>::as_text.
 func (s MarkdownNodeRead) AsText(cx *Cx) string {
 	useBaseRoot()
@@ -7083,6 +8253,8 @@ func (s MarkdownNodeRead) AsText(cx *Cx) string {
 	return r.str()
 }
 
+// Stable name for this custom node.
+//
 // Name is <gpui_kit::base::MarkdownNode>::name.
 func (s MarkdownNodeRead) Name(cx *Cx) string {
 	useBaseRoot()
@@ -7092,6 +8264,8 @@ func (s MarkdownNodeRead) Name(cx *Cx) string {
 	return r.str()
 }
 
+// Full-document UTF-8 source byte range, including syntax delimiters.
+//
 // SourceRange is <gpui_kit::base::MarkdownNode>::source_range.
 func (s MarkdownNodeRead) SourceRange(cx *Cx) Option[Range] {
 	useBaseRoot()
@@ -7106,6 +8280,8 @@ type MessageScrollerState struct{ h uint64 }
 
 func (s MessageScrollerState) handle() uint64 { return s.h }
 
+// Return whether the list is actively following its tail.
+//
 // IsFollowingTail is <gpui_kit::component::message_scroller::MessageScrollerState>::is_following_tail.
 func (s MessageScrollerState) IsFollowingTail(cx *Cx) bool {
 	useComponentMessageScroller()
@@ -7115,6 +8291,8 @@ func (s MessageScrollerState) IsFollowingTail(cx *Cx) bool {
 	return r.bool()
 }
 
+// Return whether the user has scrolled away from the latest content.
+//
 // IsScrolledUp is <gpui_kit::component::message_scroller::MessageScrollerState>::is_scrolled_up.
 func (s MessageScrollerState) IsScrolledUp(cx *Cx) bool {
 	useComponentMessageScroller()
@@ -7124,6 +8302,8 @@ func (s MessageScrollerState) IsScrolledUp(cx *Cx) bool {
 	return r.bool()
 }
 
+// Return the current number of rows known by the virtual list.
+//
 // ItemCount is <gpui_kit::component::message_scroller::MessageScrollerState>::item_count.
 func (s MessageScrollerState) ItemCount(cx *Cx) int {
 	useComponentMessageScroller()
@@ -7133,6 +8313,12 @@ func (s MessageScrollerState) ItemCount(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Return the row at the top of the viewport and how far into it the list is scrolled.
+//
+// Wheel, trackpad, and scrollbar scrolls and `ScrollToItem` update it at once. `ScrollToEnd` and
+// tail following settle it when the list next lays out; right after `scroll_to_end`, `item_ix` is
+// `ItemCount` until then.
+//
 // LogicalScrollTop is <gpui_kit::component::message_scroller::MessageScrollerState>::logical_scroll_top.
 func (s MessageScrollerState) LogicalScrollTop(cx *Cx) ListOffset {
 	useComponentMessageScroller()
@@ -7142,6 +8328,8 @@ func (s MessageScrollerState) LogicalScrollTop(cx *Cx) ListOffset {
 	return rdListOffset(r)
 }
 
+// Append `count` rows to the end of the list.
+//
 // Append is <gpui_kit::component::message_scroller::MessageScrollerState>::append.
 func (s MessageScrollerState) Append(cx *Cx, count int) bool {
 	useComponentMessageScroller()
@@ -7152,6 +8340,8 @@ func (s MessageScrollerState) Append(cx *Cx, count int) bool {
 	return r.bool()
 }
 
+// Prepend `count` rows while preserving the current scroll anchor.
+//
 // Prepend is <gpui_kit::component::message_scroller::MessageScrollerState>::prepend.
 func (s MessageScrollerState) Prepend(cx *Cx, count int) bool {
 	useComponentMessageScroller()
@@ -7162,6 +8352,10 @@ func (s MessageScrollerState) Prepend(cx *Cx, count int) bool {
 	return r.bool()
 }
 
+// Mark rows in `range` for remeasurement while preserving an item anchor.
+//
+// Returns `false` when the range is outside the current list.
+//
 // RemeasureItems is <gpui_kit::component::message_scroller::MessageScrollerState>::remeasure_items.
 func (s MessageScrollerState) RemeasureItems(cx *Cx, range_ Range) bool {
 	useComponentMessageScroller()
@@ -7172,6 +8366,8 @@ func (s MessageScrollerState) RemeasureItems(cx *Cx, range_ Range) bool {
 	return r.bool()
 }
 
+// Scroll to the row at `index`, if it exists.
+//
 // ScrollToItem is <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_item.
 func (s MessageScrollerState) ScrollToItem(cx *Cx, index int) bool {
 	useComponentMessageScroller()
@@ -7182,6 +8378,10 @@ func (s MessageScrollerState) ScrollToItem(cx *Cx, index int) bool {
 	return r.bool()
 }
 
+// Replace `old_range` with `count` new rows.
+//
+// Returns `false` when the range is outside the current list and leaves the state unchanged.
+//
 // Splice is <gpui_kit::component::message_scroller::MessageScrollerState>::splice.
 func (s MessageScrollerState) Splice(cx *Cx, oldRange Range, count int) bool {
 	useComponentMessageScroller()
@@ -7193,6 +8393,8 @@ func (s MessageScrollerState) Splice(cx *Cx, oldRange Range, count int) bool {
 	return r.bool()
 }
 
+// Mark all rows for remeasurement while preserving a proportional anchor.
+//
 // Remeasure is <gpui_kit::component::message_scroller::MessageScrollerState>::remeasure.
 func (s MessageScrollerState) Remeasure(cx *Cx) {
 	useComponentMessageScroller()
@@ -7201,6 +8403,8 @@ func (s MessageScrollerState) Remeasure(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Reset the list to `item_count` rows.
+//
 // Reset is <gpui_kit::component::message_scroller::MessageScrollerState>::reset.
 func (s MessageScrollerState) Reset(cx *Cx, itemCount int) {
 	useComponentMessageScroller()
@@ -7210,6 +8414,8 @@ func (s MessageScrollerState) Reset(cx *Cx, itemCount int) {
 	stateSet(cx, o)
 }
 
+// Resume tail following and scroll to the latest row.
+//
 // ScrollToEnd is <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_end.
 func (s MessageScrollerState) ScrollToEnd(cx *Cx) {
 	useComponentMessageScroller()
@@ -7218,6 +8424,8 @@ func (s MessageScrollerState) ScrollToEnd(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Create a state for `item_count` rows and enable tail following.
+//
 // NewMessageScrollerState is <gpui_kit::component::message_scroller::MessageScrollerState>::new.
 func NewMessageScrollerState(cx *Cx, itemCount int) MessageScrollerState {
 	useComponentMessageScroller()
@@ -7232,6 +8440,8 @@ type NavStackState struct{ h uint64 }
 
 func (s NavStackState) handle() uint64 { return s.h }
 
+// The number of views on the stack.
+//
 // Depth is <gpui_kit::base::NavStackState>::depth.
 func (s NavStackState) Depth(cx *Cx) int {
 	useBaseNavStack()
@@ -7250,6 +8460,8 @@ func (s NavStackState) IsEmpty(cx *Cx) bool {
 	return r.bool()
 }
 
+// Empties the stack and the forward views immediately, abandoning any running transition.
+//
 // Clear is <gpui_kit::base::NavStackState>::clear.
 func (s NavStackState) Clear(cx *Cx) {
 	useBaseNavStack()
@@ -7282,6 +8494,8 @@ type Notification struct{ h uint64 }
 
 func (s Notification) handle() uint64 { return s.h }
 
+// Dismiss the notification.
+//
 // Dismiss is <gpui_kit::component::notification::Notification>::dismiss.
 func (s Notification) Dismiss(cx *Cx) {
 	useComponentNotification()
@@ -7360,6 +8574,10 @@ func (b NotificationBuilder) WithType(type_ NotificationType) NotificationBuilde
 // Build makes the Notification.
 func (b NotificationBuilder) Build() Notification { return Notification{b.sb.build()} }
 
+// Create a new notification.
+//
+// The default id is a random UUID.
+//
 // NewNotification is <gpui_kit::component::notification::Notification>::new.
 func NewNotification(cx *Cx) NotificationBuilder {
 	useComponentNotification()
@@ -7367,6 +8585,8 @@ func NewNotification(cx *Cx) NotificationBuilder {
 	return NotificationBuilder{newStateBuilder(cx, o)}
 }
 
+// Create an error notification with the given message.
+//
 // NewNotificationError is <gpui_kit::component::notification::Notification>::error.
 func NewNotificationError(cx *Cx, message string) NotificationBuilder {
 	useComponentNotification()
@@ -7375,6 +8595,8 @@ func NewNotificationError(cx *Cx, message string) NotificationBuilder {
 	return NotificationBuilder{newStateBuilder(cx, o)}
 }
 
+// Create an info notification with the given message.
+//
 // NewNotificationInfo is <gpui_kit::component::notification::Notification>::info.
 func NewNotificationInfo(cx *Cx, message string) NotificationBuilder {
 	useComponentNotification()
@@ -7383,6 +8605,8 @@ func NewNotificationInfo(cx *Cx, message string) NotificationBuilder {
 	return NotificationBuilder{newStateBuilder(cx, o)}
 }
 
+// Create a success notification with the given message.
+//
 // NewNotificationSuccess is <gpui_kit::component::notification::Notification>::success.
 func NewNotificationSuccess(cx *Cx, message string) NotificationBuilder {
 	useComponentNotification()
@@ -7391,6 +8615,8 @@ func NewNotificationSuccess(cx *Cx, message string) NotificationBuilder {
 	return NotificationBuilder{newStateBuilder(cx, o)}
 }
 
+// Create a warning notification with the given message.
+//
 // NewNotificationWarning is <gpui_kit::component::notification::Notification>::warning.
 func NewNotificationWarning(cx *Cx, message string) NotificationBuilder {
 	useComponentNotification()
@@ -7568,6 +8794,8 @@ type OverviewRulerDecorationCollection struct{ h uint64 }
 
 func (s OverviewRulerDecorationCollection) handle() uint64 { return s.h }
 
+// Return tracked UTF-8 byte ranges in insertion order.
+//
 // GetRanges is <gpui_kit::base::input::OverviewRulerDecorationCollection>::get_ranges.
 func (s OverviewRulerDecorationCollection) GetRanges(cx *Cx) []Range {
 	useBaseInput()
@@ -7577,6 +8805,8 @@ func (s OverviewRulerDecorationCollection) GetRanges(cx *Cx) []Range {
 	return rdList(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Add decorations to this collection in paint order.
+//
 // Append is <gpui_kit::base::input::OverviewRulerDecorationCollection>::append.
 func (s OverviewRulerDecorationCollection) Append(cx *Cx, decorations []OverviewRulerDecoration) {
 	useBaseInput()
@@ -7589,6 +8819,8 @@ func (s OverviewRulerDecorationCollection) Append(cx *Cx, decorations []Overview
 	stateSet(cx, o)
 }
 
+// Empty this collection and keep its handles usable.
+//
 // Clear is <gpui_kit::base::input::OverviewRulerDecorationCollection>::clear.
 func (s OverviewRulerDecorationCollection) Clear(cx *Cx) {
 	useBaseInput()
@@ -7597,6 +8829,8 @@ func (s OverviewRulerDecorationCollection) Clear(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Release this collection. Its cloned handles stop working.
+//
 // Dispose is <gpui_kit::base::input::OverviewRulerDecorationCollection>::dispose.
 func (s OverviewRulerDecorationCollection) Dispose(cx *Cx) {
 	useBaseInput()
@@ -7605,6 +8839,8 @@ func (s OverviewRulerDecorationCollection) Dispose(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Replace this collection's decorations and clip ranges to UTF-8 boundaries.
+//
 // Set is <gpui_kit::base::input::OverviewRulerDecorationCollection>::set.
 func (s OverviewRulerDecorationCollection) Set(cx *Cx, decorations []OverviewRulerDecoration) {
 	useBaseInput()
@@ -7653,6 +8889,24 @@ func (s PaneTree) RootKind(cx *Cx) RootKind {
 	return RootKind(r.u16())
 }
 
+// Collapse the tree to canonical shape.
+//
+// One post-order pass repeated to a fixpoint. This is the only place a container is removed for
+// being empty, replacing the mutually recursive `remove_self_if_empty` pair the old implementation
+// used. It needs no parent pointers and no deferred work, so the tree is self-consistent the
+// instant an edit returns.
+//
+// Rules, applied bottom up:
+//  1. An empty `Tabs` or `Split` is removed from its parent.
+//  2. A `Split` with one child is replaced by that child. The child keeps its own `NodeId` and
+//     inherits the split's slot size.
+//  3. A `Split` whose child is a `Split` of the same axis splices that child's children into
+//     itself.
+//  4. `active_ix` is clamped.
+//  5. The root is preserved according to `RootKind`.
+//
+// Idempotent: `normalize(normalize(t)) == normalize(t)`.
+//
 // Normalize is <gpui_kit::base::dock::PaneTree>::normalize.
 func (s PaneTree) Normalize(cx *Cx) {
 	useBaseDock()
@@ -7684,6 +8938,8 @@ func NewPanelHandle(cx *Cx, panel DockPanel) PanelHandle {
 	return PanelHandle{stateMake(cx, o)}
 }
 
+// Wrap a presentation handle that is already erased.
+//
 // NewPanelHandleFromView is <gpui_kit::component::dock::PanelHandle>::from_view.
 func NewPanelHandleFromView(cx *Cx, panel DockPanel) PanelHandle {
 	useComponentDock()
@@ -7693,6 +8949,9 @@ func NewPanelHandleFromView(cx *Cx, panel DockPanel) PanelHandle {
 	return PanelHandle{stateMake(cx, o)}
 }
 
+// A skin must draw something for that case; base's own `panel_name` is the fallback with no
+// obligations on the panel author.
+//
 // PanelHandleOf is <gpui_kit::component::dock::PanelHandle>::of.
 func PanelHandleOf(cx *Cx, panel DockPanel) Option[PanelHandle] {
 	useComponentDock()
@@ -7736,6 +8995,8 @@ type ParagraphRead struct{ h uint64 }
 
 func (s ParagraphRead) handle() uint64 { return s.h }
 
+// The inline runs.
+//
 // Children is <gpui_kit::base::text::editor_host::Paragraph>::children.
 func (s ParagraphRead) Children(cx *Cx) []InlineNodeRead {
 	useBaseText()
@@ -7750,6 +9011,8 @@ type PathCache struct{ h uint64 }
 
 func (s PathCache) handle() uint64 { return s.h }
 
+// Whether the last `get` reused the path built by an earlier one.
+//
 // IsWarm is <gpui_kit::base::plot::PathCache>::is_warm.
 func (s PathCache) IsWarm(cx *Cx) bool {
 	useBasePlot()
@@ -7827,6 +9090,8 @@ type PlotAppear struct{ h uint64 }
 
 func (s PlotAppear) handle() uint64 { return s.h }
 
+// Whether the appear is still running.
+//
 // IsAppearing is <gpui_kit::base::plot::PlotAppear>::is_appearing.
 func (s PlotAppear) IsAppearing(cx *Cx) bool {
 	useBasePlot()
@@ -7836,6 +9101,8 @@ func (s PlotAppear) IsAppearing(cx *Cx) bool {
 	return r.bool()
 }
 
+// How far the whole plot has appeared, from `0` to `1`, eased.
+//
 // Progress is <gpui_kit::base::plot::PlotAppear>::progress.
 func (s PlotAppear) Progress(cx *Cx) float32 {
 	useBasePlot()
@@ -7845,6 +9112,12 @@ func (s PlotAppear) Progress(cx *Cx) float32 {
 	return r.f32()
 }
 
+// How far mark `index` of `count` has appeared, from `0` to `1`, eased.
+//
+// The marks start one after another across the first `spread` of the appear (`0..1`) and each runs
+// for the rest of it, so the last mark still finishes with the appear however many marks there
+// are. A `spread` of `0` moves every mark together.
+//
 // Staggered is <gpui_kit::base::plot::PlotAppear>::staggered.
 func (s PlotAppear) Staggered(cx *Cx, index int, count int, spread float32) float32 {
 	useBasePlot()
@@ -7857,6 +9130,8 @@ func (s PlotAppear) Staggered(cx *Cx, index int, count int, spread float32) floa
 	return r.f32()
 }
 
+// A finished appear: every mark is complete.
+//
 // NewPlotAppearComplete is <gpui_kit::base::plot::PlotAppear>::complete.
 func NewPlotAppearComplete(cx *Cx) PlotAppear {
 	useBasePlot()
@@ -7870,6 +9145,8 @@ type PlotLabel struct{ h uint64 }
 
 func (s PlotLabel) handle() uint64 { return s.h }
 
+// Paint the Label.
+//
 // Paint is <gpui_kit::base::plot::PlotLabel>::paint.
 func (s PlotLabel) Paint(cx *Cx, bounds Bounds) {
 	useBasePlot()
@@ -8484,6 +9761,9 @@ func (s QuestionnaireState) ChoiceForShortcut(cx *Cx, item string, key string) O
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// One-based position of a choice among its item's enabled choices, with the enabled total.
+// Assistive technology announces the pair.
+//
 // ChoicePosition is <gpui_kit::base::questionnaire::QuestionnaireState>::choice_position.
 func (s QuestionnaireState) ChoicePosition(cx *Cx, item string, value string) Option[TupleIntInt] {
 	useBaseQuestionnaire()
@@ -8506,6 +9786,9 @@ func (s QuestionnaireState) ChoiceState(cx *Cx, item string, value string) Optio
 	return rdOpt(r, func(r *reader) QuestionnaireChoiceState { return QuestionnaireChoiceState{h: r.u64()} })
 }
 
+// Whether the active item's freeform input currently holds text. The skin needs it to decide
+// whether an arrow key moves focus or edits the draft.
+//
 // CurrentInputHasText is <gpui_kit::base::questionnaire::QuestionnaireState>::current_input_has_text.
 func (s QuestionnaireState) CurrentInputHasText(cx *Cx) bool {
 	useBaseQuestionnaire()
@@ -8533,6 +9816,9 @@ func (s QuestionnaireState) CurrentIx(cx *Cx) Option[int] {
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
 }
 
+// The active validation failure for an item, if any. Base reports the reason; the presentation
+// layer turns a built-in reason into text.
+//
 // Error is <gpui_kit::base::questionnaire::QuestionnaireState>::error.
 func (s QuestionnaireState) Error(cx *Cx, name string) Option[QuestionnaireValidationError] {
 	useBaseQuestionnaire()
@@ -8648,6 +9934,10 @@ func (s QuestionnaireState) Total(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Selects a choice, or toggles it on a multiple-answer item, without confirming the item.
+// Arrow-key movement inside a radio group uses this; a person's click, Space, Enter or shortcut
+// goes through `Choose`.
+//
 // ActivateChoice is <gpui_kit::base::questionnaire::QuestionnaireState>::activate_choice.
 func (s QuestionnaireState) ActivateChoice(cx *Cx, item string, value string) error {
 	useBaseQuestionnaire()
@@ -8669,6 +9959,18 @@ func (s QuestionnaireState) ActivateShortcut(cx *Cx, key string) bool {
 	return r.bool()
 }
 
+// Applies a person's activation of a choice: a click, Space or Enter on the focused choice, or its
+// shortcut.
+//
+// A multiple-answer item only toggles the choice. A single-answer item selects it and then
+// confirms the current item as `ConfirmCurrent` does: it moves to the next enabled item, or
+// submits on the last one, unless validation fails. A choice that changes the answer stays
+// selected on screen for a moment before the confirm runs, so the person sees what they picked;
+// with reduced motion the confirm runs as soon as the answer change has been delivered. Choosing
+// the selected answer again confirms at once. Disabled items and choices ignore activation.
+//
+// Arrow-key movement inside a radio group uses `ActivateChoice` and never confirms.
+//
 // Choose is <gpui_kit::base::questionnaire::QuestionnaireState>::choose.
 func (s QuestionnaireState) Choose(cx *Cx, item string, value string) error {
 	useBaseQuestionnaire()
@@ -9006,6 +10308,8 @@ type RangeDecorationCollection struct{ h uint64 }
 
 func (s RangeDecorationCollection) handle() uint64 { return s.h }
 
+// Read tracked UTF-8 byte ranges in insertion order.
+//
 // GetRanges is <gpui_kit::base::input::RangeDecorationCollection>::get_ranges.
 func (s RangeDecorationCollection) GetRanges(cx *Cx) []Range {
 	useBaseInput()
@@ -9015,6 +10319,8 @@ func (s RangeDecorationCollection) GetRanges(cx *Cx) []Range {
 	return rdList(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Append decorations, preserving their paint order.
+//
 // Append is <gpui_kit::base::input::RangeDecorationCollection>::append.
 func (s RangeDecorationCollection) Append(cx *Cx, decorations []RangeDecoration) {
 	useBaseInput()
@@ -9027,6 +10333,8 @@ func (s RangeDecorationCollection) Append(cx *Cx, decorations []RangeDecoration)
 	stateSet(cx, o)
 }
 
+// Empty this collection without invalidating its handles.
+//
 // Clear is <gpui_kit::base::input::RangeDecorationCollection>::clear.
 func (s RangeDecorationCollection) Clear(cx *Cx) {
 	useBaseInput()
@@ -9035,6 +10343,8 @@ func (s RangeDecorationCollection) Clear(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Release this collection, invalidating all of its cloned handles.
+//
 // Dispose is <gpui_kit::base::input::RangeDecorationCollection>::dispose.
 func (s RangeDecorationCollection) Dispose(cx *Cx) {
 	useBaseInput()
@@ -9043,6 +10353,8 @@ func (s RangeDecorationCollection) Dispose(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Replace only this owner's decorations, clipping ranges to UTF-8 boundaries.
+//
 // Set is <gpui_kit::base::input::RangeDecorationCollection>::set.
 func (s RangeDecorationCollection) Set(cx *Cx, decorations []RangeDecoration) {
 	useBaseInput()
@@ -9078,6 +10390,8 @@ func (s RangeHighlight) Range(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// A highlight over `range`, in byte offsets of a `RenderedText`.
+//
 // NewRangeHighlight is <gpui_kit::base::RangeHighlight>::new.
 func NewRangeHighlight(cx *Cx, range_ Range, background Color) RangeHighlight {
 	useBaseText()
@@ -9093,6 +10407,8 @@ type RenderedText struct{ h uint64 }
 
 func (s RenderedText) handle() uint64 { return s.h }
 
+// The rendered text.
+//
 // AsStr is <gpui_kit::base::RenderedText>::as_str.
 func (s RenderedText) AsStr(cx *Cx) string {
 	useBaseText()
@@ -9102,6 +10418,8 @@ func (s RenderedText) AsStr(cx *Cx) string {
 	return r.str()
 }
 
+// Whether the view renders no text.
+//
 // IsEmpty is <gpui_kit::base::RenderedText>::is_empty.
 func (s RenderedText) IsEmpty(cx *Cx) bool {
 	useBaseText()
@@ -9111,6 +10429,8 @@ func (s RenderedText) IsEmpty(cx *Cx) bool {
 	return r.bool()
 }
 
+// The length of the rendered text, in bytes.
+//
 // Len is <gpui_kit::base::RenderedText>::len.
 func (s RenderedText) Len(cx *Cx) int {
 	useBaseText()
@@ -9120,6 +10440,32 @@ func (s RenderedText) Len(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The range of this text rendered from `source`, a UTF-8 byte range of `Source`.
+//
+// This converts a range of the Markdown source, such as one `selected_source_range` returned or
+// one an application stored with its own data, into the range a `RangeHighlight` takes. A
+// character is rendered from `source` when any of the source it was rendered from lies in it: all
+// of `&amp;` for `&`, the `\` and the `*` of `\*`, the whole source of an inline object for its
+// text. Source that renders nothing, such as emphasis delimiters, heading and list markers, code
+// fences, table pipes and link destinations, adds nothing, so `**bold**` and `bold` give the same
+// range.
+//
+// The result is the smallest range holding every character rendered from `source`. When `source`
+// spans blocks, it also holds the separators between them, which a highlight leaves unpainted.
+// Text the parser recorded no source position for, such as the text of inline HTML, is only
+// included when it lies between characters that are.
+//
+// Converting the source range a selection of this text reports gives the selected range back,
+// widened only to whole characters where several share their source, like the text of an inline
+// object. The separators between blocks are rendered from no source, so one at either end of the
+// selection is left out: Select All gives back everything but the line break after the last block.
+//
+// Returns `None` when `source` is empty, reversed, out of bounds, or not on a character boundary,
+// or when nothing is rendered from it. HTML views record no source positions, so they always
+// return `None`.
+//
+// `selected_source_range`: super::TextViewState::selected_source_range
+//
 // RangeForSource is <gpui_kit::base::RenderedText>::range_for_source.
 func (s RenderedText) RangeForSource(cx *Cx, source Range) Option[Range] {
 	useBaseText()
@@ -9130,6 +10476,13 @@ func (s RenderedText) RangeForSource(cx *Cx, source Range) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// The source this text was rendered from, whose byte ranges `RangeForSource` takes.
+//
+// It comes from the same parse as the text, so it trails the text last given to the view until
+// that text's parse lands. Before converting a range, check that it indexes this source: while
+// text is streamed in, this source is a prefix of the text the application holds, and after
+// `SetText` it may be different text.
+//
 // Source is <gpui_kit::base::RenderedText>::source.
 func (s RenderedText) Source(cx *Cx) string {
 	useBaseText()
@@ -9144,6 +10497,8 @@ type ResizableState struct{ h uint64 }
 
 func (s ResizableState) handle() uint64 { return s.h }
 
+// Return the measured size of the group along its resize axis.
+//
 // ContainerSize is <gpui_kit::base::ResizableState>::container_size.
 func (s ResizableState) ContainerSize(cx *Cx) float32 {
 	useBaseResizable()
@@ -9153,6 +10508,8 @@ func (s ResizableState) ContainerSize(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Get the size of the panels.
+//
 // Sizes is <gpui_kit::base::ResizableState>::sizes.
 func (s ResizableState) Sizes(cx *Cx) []float32 {
 	useBaseResizable()
@@ -9162,6 +10519,8 @@ func (s ResizableState) Sizes(cx *Cx) []float32 {
 	return rdList(r, func(r *reader) float32 { return r.f32() })
 }
 
+// Remove all panel state.
+//
 // Clear is <gpui_kit::base::ResizableState>::clear.
 func (s ResizableState) Clear(cx *Cx) {
 	useBaseResizable()
@@ -9170,6 +10529,11 @@ func (s ResizableState) Clear(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Insert a panel state at `ix`, or append it when no index is supplied.
+//
+// Existing panel sizes are redistributed so their total remains equal to the current container
+// size.
+//
 // InsertPanel is <gpui_kit::base::ResizableState>::insert_panel.
 func (s ResizableState) InsertPanel(cx *Cx, size Option[float32], ix Option[int]) {
 	useBaseResizable()
@@ -9190,6 +10554,8 @@ func (s ResizableState) InsertPanel(cx *Cx, size Option[float32], ix Option[int]
 	stateSet(cx, o)
 }
 
+// Remove the panel at `panel_ix` and redistribute the remaining space.
+//
 // RemovePanel is <gpui_kit::base::ResizableState>::remove_panel.
 func (s ResizableState) RemovePanel(cx *Cx, panelIx int) {
 	useBaseResizable()
@@ -9199,6 +10565,8 @@ func (s ResizableState) RemovePanel(cx *Cx, panelIx int) {
 	stateSet(cx, o)
 }
 
+// Reset the panel at `panel_ix` while preserving its current size.
+//
 // ResetPanel is <gpui_kit::base::ResizableState>::reset_panel.
 func (s ResizableState) ResetPanel(cx *Cx, panelIx int) {
 	useBaseResizable()
@@ -9208,6 +10576,16 @@ func (s ResizableState) ResetPanel(cx *Cx, panelIx int) {
 	stateSet(cx, o)
 }
 
+// Programmatically resize the panel at `ix` to `size`, redistributing space among siblings using
+// the same logic as a drag.
+//
+// Sizes are clamped to the panel's `size_range` and to the container. Emits
+// `ResizablePanelEvent::Resized` so subscribers (e.g. preference persistence) see the change just
+// as if the user had dragged a handle.
+//
+// Out-of-range indices are a no-op. For the last panel, space is taken from the previous sibling
+// (the last panel has no handle of its own).
+//
 // ResizePanel is <gpui_kit::base::ResizableState>::resize_panel.
 func (s ResizableState) ResizePanel(cx *Cx, ix int, size float32) {
 	useBaseResizable()
@@ -9247,6 +10625,8 @@ type SankeyGraph struct{ h uint64 }
 
 func (s SankeyGraph) handle() uint64 { return s.h }
 
+// Number of layers (max layer + 1), 0 for an empty graph.
+//
 // LayerCount is <gpui_kit::base::plot::shape::SankeyGraph>::layer_count.
 func (s SankeyGraph) LayerCount(cx *Cx) int {
 	useBasePlot()
@@ -9269,6 +10649,9 @@ type ScaleBand struct{ h uint64 }
 
 func (s ScaleBand) handle() uint64 { return s.h }
 
+// The width of a band: the range divided among the bands, less the inner padding, and no wider
+// than `MaxBandWidth` when set.
+//
 // BandWidth is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::band_width.
 func (s ScaleBand) BandWidth(cx *Cx) float32 {
 	useBaseRoot()
@@ -9278,6 +10661,9 @@ func (s ScaleBand) BandWidth(cx *Cx) float32 {
 	return r.f32()
 }
 
+// The index of the domain value whose position is nearest `tick`; `0` for an empty domain or a
+// scale without discrete positions.
+//
 // NearestIndex is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::nearest_index.
 func (s ScaleBand) NearestIndex(cx *Cx, arg0 float32) int {
 	useBaseRoot()
@@ -9288,6 +10674,9 @@ func (s ScaleBand) NearestIndex(cx *Cx, arg0 float32) int {
 	return int(r.u64())
 }
 
+// The distance between the starts of two adjacent bands: the band width plus the inner padding.
+// The whole range for a single band.
+//
 // Step is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::step.
 func (s ScaleBand) Step(cx *Cx) float32 {
 	useBaseRoot()
@@ -9297,6 +10686,8 @@ func (s ScaleBand) Step(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Get the tick of the scale.
+//
 // Tick is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::tick.
 func (s ScaleBand) Tick(cx *Cx, value string) Option[float32] {
 	useBaseRoot()
@@ -9337,6 +10728,9 @@ func (b ScaleBandBuilder) PaddingOuter(paddingOuter float32) ScaleBandBuilder {
 // Build makes the ScaleBand.
 func (b ScaleBandBuilder) Build() ScaleBand { return ScaleBand{b.sb.build()} }
 
+// Lay the distinct values of `domain` out as bands across `range`, from its lower end in domain
+// order.
+//
 // NewScaleBand is <gpui_kit::base::plot::scale::ScaleBand<gpui_kit::SharedString>>::new.
 func NewScaleBand(cx *Cx, domain []string, range_ [2]float32) ScaleBandBuilder {
 	useBaseRoot()
@@ -9356,6 +10750,9 @@ type ScaleLinear struct{ h uint64 }
 
 func (s ScaleLinear) handle() uint64 { return s.h }
 
+// The index of the domain value whose position is nearest `tick`; `0` for an empty domain or a
+// scale without discrete positions.
+//
 // NearestIndex is <gpui_kit::base::plot::scale::ScaleLinear<f64> as gpui_kit::base::plot::scale::Scale<f64>>::nearest_index.
 func (s ScaleLinear) NearestIndex(cx *Cx, arg0 float32) int {
 	useBasePlot()
@@ -9366,6 +10763,8 @@ func (s ScaleLinear) NearestIndex(cx *Cx, arg0 float32) int {
 	return int(r.u64())
 }
 
+// Get the tick of the scale.
+//
 // Tick is <gpui_kit::base::plot::scale::ScaleLinear<f64> as gpui_kit::base::plot::scale::Scale<f64>>::tick.
 func (s ScaleLinear) Tick(cx *Cx, value float64) Option[float32] {
 	useBasePlot()
@@ -9376,6 +10775,9 @@ func (s ScaleLinear) Tick(cx *Cx, value float64) Option[float32] {
 	return rdOpt(r, func(r *reader) float32 { return r.f32() })
 }
 
+// Map the extent of `domain` onto `range`: the smallest domain value to `range`0“ and the largest
+// to `range`1“, so a reversed range such as `height, 0.` puts larger values higher.
+//
 // NewScaleLinear is <gpui_kit::base::plot::scale::ScaleLinear<f64>>::new.
 func NewScaleLinear(cx *Cx, domain []float64, range_ [2]float32) ScaleLinear {
 	useBasePlot()
@@ -9396,6 +10798,8 @@ type ScaleOrdinal struct{ h uint64 }
 
 func (s ScaleOrdinal) handle() uint64 { return s.h }
 
+// Given a value in the input domain, returns the corresponding value in the output range.
+//
 // Map is <gpui_kit::base::plot::scale::ScaleOrdinal<gpui_kit::SharedString, gpui_kit::Hsla>>::map.
 func (s ScaleOrdinal) Map(cx *Cx, value string) Option[Hsla] {
 	useBaseRoot()
@@ -9456,6 +10860,9 @@ type ScalePoint struct{ h uint64 }
 
 func (s ScalePoint) handle() uint64 { return s.h }
 
+// The index of the domain value whose position is nearest `tick`; `0` for an empty domain or a
+// scale without discrete positions.
+//
 // NearestIndex is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::nearest_index.
 func (s ScalePoint) NearestIndex(cx *Cx, arg0 float32) int {
 	useBaseRoot()
@@ -9466,6 +10873,8 @@ func (s ScalePoint) NearestIndex(cx *Cx, arg0 float32) int {
 	return int(r.u64())
 }
 
+// Get the tick of the scale.
+//
 // Tick is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString> as gpui_kit::base::plot::scale::Scale<gpui_kit::SharedString>>::tick.
 func (s ScalePoint) Tick(cx *Cx, value string) Option[float32] {
 	useBaseRoot()
@@ -9476,6 +10885,12 @@ func (s ScalePoint) Tick(cx *Cx, value string) Option[float32] {
 	return rdOpt(r, func(r *reader) float32 { return r.f32() })
 }
 
+// Returns the position of the domain value at `index`.
+//
+// Equivalent to `Tick` on `domain`index“ for a domain of unique values, without searching the
+// domain. Charts whose domain is built one entry per datum use this to project a series in linear
+// time.
+//
 // TickAt is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>>::tick_at.
 func (s ScalePoint) TickAt(cx *Cx, index int) Option[float32] {
 	useBaseRoot()
@@ -9486,6 +10901,9 @@ func (s ScalePoint) TickAt(cx *Cx, index int) Option[float32] {
 	return rdOpt(r, func(r *reader) float32 { return r.f32() })
 }
 
+// Place `domain` evenly from `range`0“ to `range`1“; a single value sits in the middle of the
+// range.
+//
 // NewScalePoint is <gpui_kit::base::plot::scale::ScalePoint<gpui_kit::SharedString>>::new.
 func NewScalePoint(cx *Cx, domain []string, range_ [2]float32) ScalePoint {
 	useBaseRoot()
@@ -9506,6 +10924,8 @@ type ScrollHandle struct{ h uint64 }
 
 func (s ScrollHandle) handle() uint64 { return s.h }
 
+// The full size of the content, including padding.
+//
 // ContentSize is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::content_size.
 func (s ScrollHandle) ContentSize(cx *Cx) GpuiSize {
 	o := newReq(1333)
@@ -9514,6 +10934,8 @@ func (s ScrollHandle) ContentSize(cx *Cx) GpuiSize {
 	return rdGpuiSize(r)
 }
 
+// Get the current offset of the scroll handle.
+//
 // Offset is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::offset.
 func (s ScrollHandle) Offset(cx *Cx) GpuiPoint {
 	o := newReq(1336)
@@ -9522,6 +10944,8 @@ func (s ScrollHandle) Offset(cx *Cx) GpuiPoint {
 	return rdGpuiPoint(r)
 }
 
+// Bounds of the viewport the scrollbar overlays.
+//
 // ViewportBounds is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::viewport_bounds.
 func (s ScrollHandle) ViewportBounds(cx *Cx) Bounds {
 	o := newReq(1339)
@@ -9530,6 +10954,8 @@ func (s ScrollHandle) ViewportBounds(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// Called when end dragging the scrollbar thumb.
+//
 // EndDrag is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::end_drag.
 func (s ScrollHandle) EndDrag(cx *Cx) {
 	o := newReq(1334)
@@ -9537,6 +10963,8 @@ func (s ScrollHandle) EndDrag(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Set the offset of the scroll handle.
+//
 // SetOffset is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::set_offset.
 func (s ScrollHandle) SetOffset(cx *Cx, offset GpuiPoint) {
 	o := newReq(1337)
@@ -9545,6 +10973,8 @@ func (s ScrollHandle) SetOffset(cx *Cx, offset GpuiPoint) {
 	stateSet(cx, o)
 }
 
+// Called when start dragging the scrollbar thumb.
+//
 // StartDrag is <gpui_kit::ScrollHandle as gpui_kit::base::ScrollbarHandle>::start_drag.
 func (s ScrollHandle) StartDrag(cx *Cx) {
 	o := newReq(1338)
@@ -9646,6 +11076,8 @@ type SearchMatcher struct{ h uint64 }
 
 func (s SearchMatcher) handle() uint64 { return s.h }
 
+// The index of the current match into `MatchedRanges`, `None` while there is no match.
+//
 // Current is <gpui_kit::base::input::SearchMatcher>::current.
 func (s SearchMatcher) Current(cx *Cx) Option[int] {
 	useBaseInput()
@@ -9673,6 +11105,8 @@ func (s SearchMatcher) IsEmpty(cx *Cx) bool {
 	return r.bool()
 }
 
+// `2/5`: the current match and the total, `0/0` without matches.
+//
 // Label is <gpui_kit::base::input::SearchMatcher>::label.
 func (s SearchMatcher) Label(cx *Cx) string {
 	useBaseInput()
@@ -9732,6 +11166,9 @@ type SearchSession struct{ h uint64 }
 
 func (s SearchSession) handle() uint64 { return s.h }
 
+// Whether a search is in progress: the built-in panel is open, or a query was set without it and
+// `CloseSearch` has not run since. Matches are highlighted while this holds.
+//
 // IsActive is <gpui_kit::base::input::SearchSession>::is_active.
 func (s SearchSession) IsActive(cx *Cx) bool {
 	useBaseInput()
@@ -9754,6 +11191,8 @@ type SelectState struct{ h uint64 }
 
 func (s SelectState) handle() uint64 { return s.h }
 
+// Get the current selected index.
+//
 // SelectedIndex is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::selected_index.
 func (s SelectState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
 	useComponentSelect()
@@ -9763,6 +11202,8 @@ func (s SelectState) SelectedIndex(cx *Cx) Option[BaseIndexPath] {
 	return rdOpt(r, func(r *reader) BaseIndexPath { return rdBaseIndexPath(r) })
 }
 
+// Get the current selected value.
+//
 // SelectedValue is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::selected_value.
 func (s SelectState) SelectedValue(cx *Cx) Option[string] {
 	useComponentSelect()
@@ -9772,6 +11213,8 @@ func (s SelectState) SelectedValue(cx *Cx) Option[string] {
 	return rdOpt(r, func(r *reader) string { return r.str() })
 }
 
+// Focus the select trigger input.
+//
 // Focus is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::focus.
 func (s SelectState) Focus(cx *Cx) {
 	useComponentSelect()
@@ -9780,6 +11223,8 @@ func (s SelectState) Focus(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Replace the delegate (item data) for the select state.
+//
 // SetItems is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_items.
 func (s SelectState) SetItems(cx *Cx, items RowSource) {
 	useComponentSelect()
@@ -9789,6 +11234,8 @@ func (s SelectState) SetItems(cx *Cx, items RowSource) {
 	stateSet(cx, o)
 }
 
+// Set the selected index for the select.
+//
 // SetSelectedIndex is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_selected_index.
 func (s SelectState) SetSelectedIndex(cx *Cx, selectedIndex Option[BaseIndexPath]) {
 	useComponentSelect()
@@ -9803,6 +11250,14 @@ func (s SelectState) SetSelectedIndex(cx *Cx, selectedIndex Option[BaseIndexPath
 	stateSet(cx, o)
 }
 
+// Set selected value for the select.
+//
+// Looks up the position from the delegate and sets the selected index accordingly. Passes `None`
+// when the value is not found.
+//
+// The delegate looks the value up in its matched items, so an active search query is cleared first
+// to get an index into the full item list.
+//
 // SetSelectedValue is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::set_selected_value.
 func (s SelectState) SetSelectedValue(cx *Cx, selectedValue string) {
 	useComponentSelect()
@@ -9835,6 +11290,8 @@ func (b SelectStateBuilder) Searchable(searchable bool) SelectStateBuilder {
 // Build makes the SelectState.
 func (b SelectStateBuilder) Build() SelectState { return SelectState{b.sb.build()} }
 
+// Create a new Select state.
+//
 // NewSelectState is <gpui_kit::component::select::SelectState<crate::shim_select::GkSearchDelegate>>::new.
 func NewSelectState(cx *Cx, delegate RowSource, selectedIndex Option[BaseIndexPath]) SelectStateBuilder {
 	useComponentSelect()
@@ -9872,6 +11329,8 @@ func (s Sequence) Steps(cx *Cx) []SequenceStep {
 	return rdList(r, func(r *reader) SequenceStep { return SequenceStep{h: r.u64()} })
 }
 
+// Samples the sequence and requests a frame while a step is active.
+//
 // Sample is <gpui_kit::base::Sequence<f32>>::sample.
 func (s Sequence) Sample(cx *Cx) SequenceSample {
 	useBaseMotion()
@@ -9903,6 +11362,8 @@ func (b SequenceBuilder) WithSteps(steps []SequenceStep) SequenceBuilder {
 // Build makes the Sequence.
 func (b SequenceBuilder) Build() Sequence { return Sequence{b.sb.build()} }
 
+// Starts a sequence at `from`, with no steps yet.
+//
 // NewSequence is <gpui_kit::base::Sequence<f32>>::new.
 func NewSequence(cx *Cx, id TransitionIDInto, from float32) SequenceBuilder {
 	useBaseMotion()
@@ -9926,6 +11387,10 @@ func (s SequenceSample) IsFinished(cx *Cx) bool {
 	return r.bool()
 }
 
+// The status of the step being played. `Finished` is reported only once the last step has
+// completed: a step that hands over to the next one reports that next step's `Delayed` or
+// `Running` instead.
+//
 // Status is <gpui_kit::base::SequenceSample<f32>>::status.
 func (s SequenceSample) Status(cx *Cx) MotionStatus {
 	useBaseMotion()
@@ -9935,6 +11400,9 @@ func (s SequenceSample) Status(cx *Cx) MotionStatus {
 	return MotionStatus(r.u16())
 }
 
+// The index of the step being played. A finished sequence reports its last step; an empty one
+// reports `0`.
+//
 // Step is <gpui_kit::base::SequenceSample<f32>>::step.
 func (s SequenceSample) Step(cx *Cx) int {
 	useBaseMotion()
@@ -9944,6 +11412,8 @@ func (s SequenceSample) Step(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The interpolated value for this frame.
+//
 // Value is <gpui_kit::base::SequenceSample<f32>>::value.
 func (s SequenceSample) Value(cx *Cx) float32 {
 	useBaseMotion()
@@ -10014,6 +11484,10 @@ type SliderState struct{ h uint64 }
 
 func (s SliderState) handle() uint64 { return s.h }
 
+// The amount an assistive technology's Increment and Decrement move a thumb, and the step reported
+// to it: the step, or a hundredth of the range for a step that is not a positive finite number (a
+// continuous slider).
+//
 // AccessibilityStep is <gpui_kit::base::slider::SliderState>::accessibility_step.
 func (s SliderState) AccessibilityStep(cx *Cx) float32 {
 	useBaseSlider()
@@ -10023,6 +11497,8 @@ func (s SliderState) AccessibilityStep(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Get the maximum value.
+//
 // MaxValue is <gpui_kit::base::slider::SliderState>::max_value.
 func (s SliderState) MaxValue(cx *Cx) float32 {
 	useBaseSlider()
@@ -10032,6 +11508,8 @@ func (s SliderState) MaxValue(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Get the minimum value.
+//
 // MinValue is <gpui_kit::base::slider::SliderState>::min_value.
 func (s SliderState) MinValue(cx *Cx) float32 {
 	useBaseSlider()
@@ -10041,6 +11519,8 @@ func (s SliderState) MinValue(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Get the step value.
+//
 // StepValue is <gpui_kit::base::slider::SliderState>::step_value.
 func (s SliderState) StepValue(cx *Cx) float32 {
 	useBaseSlider()
@@ -10050,6 +11530,8 @@ func (s SliderState) StepValue(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Get the value of the slider.
+//
 // Value is <gpui_kit::base::slider::SliderState>::value.
 func (s SliderState) Value(cx *Cx) SliderValue {
 	useBaseSlider()
@@ -10071,6 +11553,8 @@ func (s SliderState) TryValue(cx *Cx) (v SliderValue, ok bool) {
 	return rdSliderValue(r), true
 }
 
+// Set the value of the slider.
+//
 // SetValue is <gpui_kit::base::slider::SliderState>::set_value.
 func (s SliderState) SetValue(cx *Cx, value SliderValueInto) {
 	useBaseSlider()
@@ -10127,6 +11611,8 @@ func (b SliderStateBuilder) Step(step float32) SliderStateBuilder {
 // Build makes the SliderState.
 func (b SliderStateBuilder) Build() SliderState { return SliderState{b.sb.build()} }
 
+// Create a new `SliderState`.
+//
 // NewSliderState is <gpui_kit::base::slider::SliderState>::new.
 func NewSliderState(cx *Cx) SliderStateBuilder {
 	useBaseSlider()
@@ -10139,6 +11625,9 @@ type SpeechState struct{ h uint64 }
 
 func (s SpeechState) handle() uint64 { return s.h }
 
+// Whether a recognizer and an input are configured, so that speech input can work on this platform
+// at all.
+//
 // HasRecognizer is <gpui_kit::component::speech::SpeechState>::has_recognizer.
 func (s SpeechState) HasRecognizer(cx *Cx) bool {
 	useComponentSpeech()
@@ -10148,6 +11637,8 @@ func (s SpeechState) HasRecognizer(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether a session can start now: `HasRecognizer` and the recognizer reports itself available.
+//
 // IsAvailable is <gpui_kit::component::speech::SpeechState>::is_available.
 func (s SpeechState) IsAvailable(cx *Cx) bool {
 	useComponentSpeech()
@@ -10157,6 +11648,9 @@ func (s SpeechState) IsAvailable(cx *Cx) bool {
 	return r.bool()
 }
 
+// Recent input levels in `0.0..=1.0`, oldest first, one per 80 ms of audio. Peaks rise at once and
+// fall back smoothly; background noise reads as `0.0`.
+//
 // Levels is <gpui_kit::component::speech::SpeechState>::levels.
 func (s SpeechState) Levels(cx *Cx) []float32 {
 	useComponentSpeech()
@@ -10166,6 +11660,8 @@ func (s SpeechState) Levels(cx *Cx) []float32 {
 	return rdList(r, func(r *reader) float32 { return r.f32() })
 }
 
+// Where the state is in its session.
+//
 // Status is <gpui_kit::component::speech::SpeechState>::status.
 func (s SpeechState) Status(cx *Cx) SpeechStatus {
 	useComponentSpeech()
@@ -10175,6 +11671,9 @@ func (s SpeechState) Status(cx *Cx) SpeechStatus {
 	return SpeechStatus(r.u16())
 }
 
+// The transcript of the current or last session: every committed phrase followed by the current
+// hypothesis.
+//
 // Transcript is <gpui_kit::component::speech::SpeechState>::transcript.
 func (s SpeechState) Transcript(cx *Cx) string {
 	useComponentSpeech()
@@ -10184,6 +11683,8 @@ func (s SpeechState) Transcript(cx *Cx) string {
 	return r.str()
 }
 
+// End the session at once and discard its transcript.
+//
 // Cancel is <gpui_kit::component::speech::SpeechState>::cancel.
 func (s SpeechState) Cancel(cx *Cx) {
 	useComponentSpeech()
@@ -10192,6 +11693,10 @@ func (s SpeechState) Cancel(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Start a session. Does nothing while one is running.
+//
+// When the recognizer or the input fails to start, emits `Error` and stays idle.
+//
 // Start is <gpui_kit::component::speech::SpeechState>::start.
 func (s SpeechState) Start(cx *Cx) {
 	useComponentSpeech()
@@ -10200,6 +11705,8 @@ func (s SpeechState) Start(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Stop capturing and wait for the final result, which arrives as `Final`.
+//
 // Stop is <gpui_kit::component::speech::SpeechState>::stop.
 func (s SpeechState) Stop(cx *Cx) {
 	useComponentSpeech()
@@ -10208,6 +11715,8 @@ func (s SpeechState) Stop(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Start a session when idle, otherwise stop the running one.
+//
 // Toggle is <gpui_kit::component::speech::SpeechState>::toggle.
 func (s SpeechState) Toggle(cx *Cx) {
 	useComponentSpeech()
@@ -10245,6 +11754,8 @@ func (b SpeechStateBuilder) SystemFallback(systemFallback bool) SpeechStateBuild
 // Build makes the SpeechState.
 func (b SpeechStateBuilder) Build() SpeechState { return SpeechState{b.sb.build()} }
 
+// Create a speech state with the default recognizer and input.
+//
 // NewSpeechState is <gpui_kit::component::speech::SpeechState>::new.
 func NewSpeechState(cx *Cx) SpeechStateBuilder {
 	useComponentSpeech()
@@ -10571,6 +12082,8 @@ func (s TabGroup) ActiveIx(cx *Cx) int {
 	return int(r.u64())
 }
 
+// A snapshot of everything a skin needs to draw this group.
+//
 // Context is <gpui_kit::base::dock::TabGroup>::context.
 func (s TabGroup) Context(cx *Cx) TabGroupContext {
 	useBaseDock()
@@ -10580,6 +12093,11 @@ func (s TabGroup) Context(cx *Cx) TabGroupContext {
 	return TabGroupContext{h: r.u64()}
 }
 
+// Whether closing this group's displayed panel is allowed at all.
+//
+// Mirrors the old `TabPanel::closable`: the container must permit it, the group must have
+// somewhere to go, and the displayed panel must itself be closable.
+//
 // IsClosable is <gpui_kit::base::dock::TabGroup>::is_closable.
 func (s TabGroup) IsClosable(cx *Cx) bool {
 	useBaseDock()
@@ -10607,6 +12125,8 @@ func (s TabGroup) IsZoomed(cx *Cx) bool {
 	return r.bool()
 }
 
+// Display `ix`, if it names a tab that is not already displayed.
+//
 // SelectTab is <gpui_kit::base::dock::TabGroup>::select_tab.
 func (s TabGroup) SelectTab(cx *Cx, ix int) {
 	useBaseDock()
@@ -10655,6 +12175,9 @@ func (s TabGroupContext) ActiveIx(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The drag payload for the tab at `ix`, for a skin wiring `on_drag` onto its tabs. `None` when
+// `ix` names no panel.
+//
 // DragPanel is <gpui_kit::base::dock::TabGroupContext>::drag_panel.
 func (s TabGroupContext) DragPanel(cx *Cx, ix int) Option[DragPanel] {
 	useBaseDock()
@@ -10674,6 +12197,8 @@ func (s TabGroupContext) DropIndicator(cx *Cx) Option[DropIndicator] {
 	return rdOpt(r, func(r *reader) DropIndicator { return DropIndicator{h: r.u64()} })
 }
 
+// Whether the active panel can be closed.
+//
 // IsClosable is <gpui_kit::base::dock::TabGroupContext>::is_closable.
 func (s TabGroupContext) IsClosable(cx *Cx) bool {
 	useBaseDock()
@@ -10728,6 +12253,9 @@ func (s TabGroupContext) IsZoomed(cx *Cx) bool {
 	return r.bool()
 }
 
+// A host-owned drag dropped on the tab bar. `placement` is `None` to merge into this group rather
+// than split beside it.
+//
 // DropItem is <gpui_kit::base::dock::TabGroupContext>::drop_item.
 func (s TabGroupContext) DropItem(cx *Cx, item AnyDrag, placement Option[Placement]) {
 	useBaseDock()
@@ -10743,6 +12271,9 @@ func (s TabGroupContext) DropItem(cx *Cx, item AnyDrag, placement Option[Placeme
 	stateSet(cx, o)
 }
 
+// A panel dropped on the tab bar. `ix` names the slot it lands in, or `None` to append; `activate`
+// decides whether it becomes displayed.
+//
 // DropPanel is <gpui_kit::base::dock::TabGroupContext>::drop_panel.
 func (s TabGroupContext) DropPanel(cx *Cx, drag DragPanel, ix Option[int], activate bool) {
 	useBaseDock()
@@ -10781,6 +12312,11 @@ type TableState struct{ h uint64 }
 
 func (s TableState) handle() uint64 { return s.h }
 
+// The width column `col_ix` is drawn at now, or `None` past the last column.
+//
+// This is the table's own width, which follows a drag or a fit as it happens; the delegate's
+// `Width` is read again only on `Refresh`.
+//
 // ColWidth is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::col_width.
 func (s TableState) ColWidth(cx *Cx, colIx int) Option[float32] {
 	useComponentTable()
@@ -10791,6 +12327,8 @@ func (s TableState) ColWidth(cx *Cx, colIx int) Option[float32] {
 	return rdOpt(r, func(r *reader) float32 { return r.f32() })
 }
 
+// Returns a reference to the delegate.
+//
 // Delegate is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::delegate.
 func (s TableState) Delegate(cx *Cx) RowSource {
 	useComponentTable()
@@ -10800,6 +12338,13 @@ func (s TableState) Delegate(cx *Cx) RowSource {
 	return RowSource{h: r.u64()}
 }
 
+// Dump table data.
+//
+// Returns a tuple of (headers, rows) where each row is a vector of cell values.
+//
+// This materializes the complete table in memory. For large tables, prefer `DumpRange` and process
+// rows in batches.
+//
 // Dump is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump.
 func (s TableState) Dump(cx *Cx) TupleStringString {
 	useComponentTable()
@@ -10809,6 +12354,13 @@ func (s TableState) Dump(cx *Cx) TupleStringString {
 	return TupleStringString{rdList(r, func(r *reader) string { return r.str() }), rdList(r, func(r *reader) []string { return rdList(r, func(r *reader) string { return r.str() }) })}
 }
 
+// Dump table data for the specified row range.
+//
+// Returns the same `(headers, rows)` shape as `Dump`, with only the rows inside the clamped range.
+//
+// The requested range is clamped to the table's current row count. For large tables, callers can
+// invoke this repeatedly with bounded ranges.
+//
 // DumpRange is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump_range.
 func (s TableState) DumpRange(cx *Cx, range_ Range) TupleStringString {
 	useComponentTable()
@@ -10819,6 +12371,10 @@ func (s TableState) DumpRange(cx *Cx, range_ Range) TupleStringString {
 	return TupleStringString{rdList(r, func(r *reader) string { return r.str() }), rdList(r, func(r *reader) []string { return rdList(r, func(r *reader) string { return r.str() }) })}
 }
 
+// Dump the header row of the table.
+//
+// Batched exporters can read the headers once with this, then stream the rows with `DumpRange`.
+//
 // Headers is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::headers.
 func (s TableState) Headers(cx *Cx) []string {
 	useComponentTable()
@@ -10828,6 +12384,8 @@ func (s TableState) Headers(cx *Cx) []string {
 	return rdList(r, func(r *reader) string { return r.str() })
 }
 
+// Returns the cell that has been right clicked, as `(row_ix, col_ix)`.
+//
 // RightClickedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::right_clicked_cell.
 func (s TableState) RightClickedCell(cx *Cx) Option[TupleIntInt] {
 	useComponentTable()
@@ -10837,6 +12395,8 @@ func (s TableState) RightClickedCell(cx *Cx) Option[TupleIntInt] {
 	return rdOpt(r, func(r *reader) TupleIntInt { return TupleIntInt{int(r.u64()), int(r.u64())} })
 }
 
+// Returns the row that has been right clicked.
+//
 // RightClickedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::right_clicked_row.
 func (s TableState) RightClickedRow(cx *Cx) Option[int] {
 	useComponentTable()
@@ -10846,6 +12406,10 @@ func (s TableState) RightClickedRow(cx *Cx) Option[int] {
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
 }
 
+// Returns the selected cell as `(row_ix, col_ix)`.
+//
+// `Some` only when a cell is selected; see `Selection`.
+//
 // SelectedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_cell.
 func (s TableState) SelectedCell(cx *Cx) Option[TupleIntInt] {
 	useComponentTable()
@@ -10855,6 +12419,10 @@ func (s TableState) SelectedCell(cx *Cx) Option[TupleIntInt] {
 	return rdOpt(r, func(r *reader) TupleIntInt { return TupleIntInt{int(r.u64()), int(r.u64())} })
 }
 
+// Returns the selected column index.
+//
+// `Some` only when a column itself is selected; a selected cell does not count, see `Selection`.
+//
 // SelectedCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_col.
 func (s TableState) SelectedCol(cx *Cx) Option[int] {
 	useComponentTable()
@@ -10864,6 +12432,10 @@ func (s TableState) SelectedCol(cx *Cx) Option[int] {
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
 }
 
+// Returns the selected row index.
+//
+// `Some` only when a row itself is selected; a selected cell does not count, see `Selection`.
+//
 // SelectedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selected_row.
 func (s TableState) SelectedRow(cx *Cx) Option[int] {
 	useComponentTable()
@@ -10873,6 +12445,11 @@ func (s TableState) SelectedRow(cx *Cx) Option[int] {
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
 }
 
+// Returns the current selection as one value.
+//
+// A selected cell reports as `Cell` only; use `selected_cell().map(|(row_ix, _)| row_ix)` when the
+// cell's row is wanted.
+//
 // Selection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::selection.
 func (s TableState) Selection(cx *Cx) TableSelection {
 	useComponentTable()
@@ -10900,6 +12477,8 @@ func (s TableState) VisibleRangeRows(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// Returns a mutable reference to the delegate.
+//
 // DelegateMut is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::delegate_mut.
 func (s TableState) DelegateMut(cx *Cx) RowSource {
 	useComponentTable()
@@ -10909,6 +12488,12 @@ func (s TableState) DelegateMut(cx *Cx) RowSource {
 	return RowSource{h: r.u64()}
 }
 
+// Fits column `col_ix` to its content, as a double-click on its resize handle does.
+//
+// The width is `FitColumn` plus the cell padding, clamped to the column's `min_width` and
+// `max_width`, and `ColumnWidthsChanged` is emitted when it changed. Returns whether the delegate
+// gave a width: `false` when the column cannot be resized or the delegate answered `None`.
+//
 // FitCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::fit_col.
 func (s TableState) FitCol(cx *Cx, colIx int) bool {
 	useComponentTable()
@@ -10919,6 +12504,8 @@ func (s TableState) FitCol(cx *Cx, colIx int) bool {
 	return r.bool()
 }
 
+// Clear the selection of the table.
+//
 // ClearSelection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::clear_selection.
 func (s TableState) ClearSelection(cx *Cx) {
 	useComponentTable()
@@ -10927,6 +12514,8 @@ func (s TableState) ClearSelection(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// When we update columns or rows, we need to refresh the table.
+//
 // Refresh is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::refresh.
 func (s TableState) Refresh(cx *Cx) {
 	useComponentTable()
@@ -10935,6 +12524,10 @@ func (s TableState) Refresh(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Re-compute the header layout from the current delegate.
+//
+// Call this after changing delegate state that affects `group_headers`.
+//
 // RefreshHeaderLayout is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::refresh_header_layout.
 func (s TableState) RefreshHeaderLayout(cx *Cx) {
 	useComponentTable()
@@ -10952,6 +12545,8 @@ func (s TableState) ScrollToCol(cx *Cx, colIx int) {
 	stateSet(cx, o)
 }
 
+// Scroll to the row at the given index.
+//
 // ScrollToRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::scroll_to_row.
 func (s TableState) ScrollToRow(cx *Cx, rowIx int) {
 	useComponentTable()
@@ -10961,6 +12556,11 @@ func (s TableState) ScrollToRow(cx *Cx, rowIx int) {
 	stateSet(cx, o)
 }
 
+// Set or clear the right-clicked row state.
+//
+// Pass `None` to clear — useful when opening a header context menu to prevent the row context menu
+// from appearing simultaneously.
+//
 // SetRightClickedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_right_clicked_row.
 func (s TableState) SetRightClickedRow(cx *Cx, row Option[int]) {
 	useComponentTable()
@@ -10975,6 +12575,11 @@ func (s TableState) SetRightClickedRow(cx *Cx, row Option[int]) {
 	stateSet(cx, o)
 }
 
+// Sets the selected cell to the given row and column indices.
+//
+// This method: - Switches the table to cell selection mode - Scrolls to make the cell visible
+// (centered vertically) - Emits a `SelectCell` event
+//
 // SetSelectedCell is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_cell.
 func (s TableState) SetSelectedCell(cx *Cx, rowIx int, colIx int) {
 	useComponentTable()
@@ -10985,6 +12590,8 @@ func (s TableState) SetSelectedCell(cx *Cx, rowIx int, colIx int) {
 	stateSet(cx, o)
 }
 
+// Sets the selected col to the given index.
+//
 // SetSelectedCol is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_col.
 func (s TableState) SetSelectedCol(cx *Cx, colIx int) {
 	useComponentTable()
@@ -10994,6 +12601,8 @@ func (s TableState) SetSelectedCol(cx *Cx, colIx int) {
 	stateSet(cx, o)
 }
 
+// Sets the selected row to the given index.
+//
 // SetSelectedRow is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selected_row.
 func (s TableState) SetSelectedRow(cx *Cx, rowIx int) {
 	useComponentTable()
@@ -11003,6 +12612,10 @@ func (s TableState) SetSelectedRow(cx *Cx, rowIx int) {
 	stateSet(cx, o)
 }
 
+// Sets the selection as one value; `None` clears it.
+//
+// Scrolls and emits exactly as the matching `set_selected_*` or `ClearSelection` call would.
+//
 // SetSelection is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::set_selection.
 func (s TableState) SetSelection(cx *Cx, selection TableSelection) {
 	useComponentTable()
@@ -11083,6 +12696,8 @@ func (b TableStateBuilder) Sortable(sortable bool) TableStateBuilder {
 // Build makes the TableState.
 func (b TableStateBuilder) Build() TableState { return TableState{b.sb.build()} }
 
+// Create a new TableState with the given delegate.
+//
 // NewTableState is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::new.
 func NewTableState(cx *Cx, delegate RowSource) TableStateBuilder {
 	useComponentTable()
@@ -11096,6 +12711,8 @@ type TableVisibleRange struct{ h uint64 }
 
 func (s TableVisibleRange) handle() uint64 { return s.h }
 
+// Returns the visible range of the columns.
+//
 // Cols is <gpui_kit::component::table::TableVisibleRange>::cols.
 func (s TableVisibleRange) Cols(cx *Cx) Range {
 	useComponentTable()
@@ -11105,6 +12722,8 @@ func (s TableVisibleRange) Cols(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// Returns the visible range of the rows.
+//
 // Rows is <gpui_kit::component::table::TableVisibleRange>::rows.
 func (s TableVisibleRange) Rows(cx *Cx) Range {
 	useComponentTable()
@@ -11127,6 +12746,8 @@ type TaskToggleEvent struct{ h uint64 }
 
 func (s TaskToggleEvent) handle() uint64 { return s.h }
 
+// The checked state the item should now have: the opposite of the state its checkbox shows.
+//
 // Checked is <gpui_kit::base::TaskToggleEvent>::checked.
 func (s TaskToggleEvent) Checked(cx *Cx) bool {
 	useBaseText()
@@ -11136,6 +12757,9 @@ func (s TaskToggleEvent) Checked(cx *Cx) bool {
 	return r.bool()
 }
 
+// The list item's source span, starting at its list marker (`-`, `*`, `1.`) and covering its
+// content, nested lists included.
+//
 // ItemRange is <gpui_kit::base::TaskToggleEvent>::item_range.
 func (s TaskToggleEvent) ItemRange(cx *Cx) Range {
 	useBaseText()
@@ -11145,6 +12769,8 @@ func (s TaskToggleEvent) ItemRange(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// The item's task marker: the ` ` or “x“ itself, brackets included.
+//
 // MarkerRange is <gpui_kit::base::TaskToggleEvent>::marker_range.
 func (s TaskToggleEvent) MarkerRange(cx *Cx) Range {
 	useBaseText()
@@ -11159,6 +12785,11 @@ type TextDecorationCollection struct{ h uint64 }
 
 func (s TextDecorationCollection) handle() uint64 { return s.h }
 
+// Return the UTF-8 byte ranges in this collection.
+//
+// This corresponds to Monaco's `IEditorDecorationsCollection.getRanges`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IEditorDecorationsCollection.html#getRanges).
+//
 // GetRanges is <gpui_kit::base::input::TextDecorationCollection>::get_ranges.
 func (s TextDecorationCollection) GetRanges(cx *Cx) []Range {
 	useBaseInput()
@@ -11168,6 +12799,11 @@ func (s TextDecorationCollection) GetRanges(cx *Cx) []Range {
 	return rdList(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Add decorations to this collection.
+//
+// This corresponds to Monaco's `IEditorDecorationsCollection.append`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IEditorDecorationsCollection.html#append).
+//
 // Append is <gpui_kit::base::input::TextDecorationCollection>::append.
 func (s TextDecorationCollection) Append(cx *Cx, decorations []TextDecoration) {
 	useBaseInput()
@@ -11180,6 +12816,11 @@ func (s TextDecorationCollection) Append(cx *Cx, decorations []TextDecoration) {
 	stateSet(cx, o)
 }
 
+// Remove all decorations from this collection.
+//
+// This corresponds to Monaco's `IEditorDecorationsCollection.clear`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IEditorDecorationsCollection.html#clear).
+//
 // Clear is <gpui_kit::base::input::TextDecorationCollection>::clear.
 func (s TextDecorationCollection) Clear(cx *Cx) {
 	useBaseInput()
@@ -11188,6 +12829,11 @@ func (s TextDecorationCollection) Clear(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Replace all decorations in this collection.
+//
+// This corresponds to Monaco's `IEditorDecorationsCollection.set`
+// (https://microsoft.github.io/monaco-editor/typedoc/interfaces/editor_editor_api.editor.IEditorDecorationsCollection.html#set).
+//
 // Set is <gpui_kit::base::input::TextDecorationCollection>::set.
 func (s TextDecorationCollection) Set(cx *Cx, decorations []TextDecoration) {
 	useBaseInput()
@@ -11205,6 +12851,8 @@ type TextSelectionEndpoint struct{ h uint64 }
 
 func (s TextSelectionEndpoint) handle() uint64 { return s.h }
 
+// Returns the participant-relative content point.
+//
 // ContentPoint is <gpui_kit::base::TextSelectionEndpoint>::content_point.
 func (s TextSelectionEndpoint) ContentPoint(cx *Cx) GpuiPoint {
 	useBaseTextSelection()
@@ -11219,6 +12867,8 @@ type TextSelectionHandle struct{ h uint64 }
 
 func (s TextSelectionHandle) handle() uint64 { return s.h }
 
+// Returns whether participant-local selection is active.
+//
 // HasLocalSelection is <gpui_kit::base::TextSelectionHandle>::has_local_selection.
 func (s TextSelectionHandle) HasLocalSelection(cx *Cx) bool {
 	useBaseTextSelection()
@@ -11228,6 +12878,8 @@ func (s TextSelectionHandle) HasLocalSelection(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns the current geometry selection snapshot for this participant.
+//
 // Snapshot is <gpui_kit::base::TextSelectionHandle>::snapshot.
 func (s TextSelectionHandle) Snapshot(cx *Cx) Option[TextSelectionSnapshot] {
 	useBaseTextSelection()
@@ -11237,6 +12889,12 @@ func (s TextSelectionHandle) Snapshot(cx *Cx) Option[TextSelectionSnapshot] {
 	return rdOpt(r, func(r *reader) TextSelectionSnapshot { return TextSelectionSnapshot{h: r.u64()} })
 }
 
+// Paints the touch handles at the ends of this participant's selection, in `color`, where the
+// participant is in the paint order — so whatever is drawn over the text is drawn over its handles
+// too. Call at the end of the participant's paint, after `register` for the frame.
+//
+// The handles take the finger's drag from there; Base moves the selection with it.
+//
 // PaintTouchHandles is <gpui_kit::base::TextSelectionHandle>::paint_touch_handles.
 func (s TextSelectionHandle) PaintTouchHandles(cx *Cx, layout TouchHandleLayout, color Color) {
 	useBaseTextSelection()
@@ -11247,6 +12905,8 @@ func (s TextSelectionHandle) PaintTouchHandles(cx *Cx, layout TouchHandleLayout,
 	stateSet(cx, o)
 }
 
+// Sets the fallback text copied while this participant participates.
+//
 // SetFallbackCopyText is <gpui_kit::base::TextSelectionHandle>::set_fallback_copy_text.
 func (s TextSelectionHandle) SetFallbackCopyText(cx *Cx, text string) {
 	useBaseTextSelection()
@@ -11256,6 +12916,8 @@ func (s TextSelectionHandle) SetFallbackCopyText(cx *Cx, text string) {
 	stateSet(cx, o)
 }
 
+// Marks participant-local selection, such as select-all, as active.
+//
 // SetLocalSelection is <gpui_kit::base::TextSelectionHandle>::set_local_selection.
 func (s TextSelectionHandle) SetLocalSelection(cx *Cx, active bool) {
 	useBaseTextSelection()
@@ -11265,6 +12927,8 @@ func (s TextSelectionHandle) SetLocalSelection(cx *Cx, active bool) {
 	stateSet(cx, o)
 }
 
+// Creates a selection participant handle with fallback text for copying.
+//
 // NewTextSelectionHandle is <gpui_kit::base::TextSelectionHandle>::new.
 func NewTextSelectionHandle(cx *Cx, fallbackCopyText string) TextSelectionHandle {
 	useBaseTextSelection()
@@ -11292,6 +12956,8 @@ type TextSelectionSnapshot struct{ h uint64 }
 
 func (s TextSelectionSnapshot) handle() uint64 { return s.h }
 
+// Returns the stable anchor endpoint.
+//
 // Anchor is <gpui_kit::base::TextSelectionSnapshot>::anchor.
 func (s TextSelectionSnapshot) Anchor(cx *Cx) TextSelectionEndpoint {
 	useBaseTextSelection()
@@ -11301,6 +12967,8 @@ func (s TextSelectionSnapshot) Anchor(cx *Cx) TextSelectionEndpoint {
 	return TextSelectionEndpoint{h: r.u64()}
 }
 
+// Returns the portion of the receiving participant covered by this selection.
+//
 // Coverage is <gpui_kit::base::TextSelectionSnapshot>::coverage.
 func (s TextSelectionSnapshot) Coverage(cx *Cx) TextSelectionCoverage {
 	useBaseTextSelection()
@@ -11310,6 +12978,8 @@ func (s TextSelectionSnapshot) Coverage(cx *Cx) TextSelectionCoverage {
 	return TextSelectionCoverage(r.u16())
 }
 
+// Returns the moving cursor endpoint.
+//
 // Cursor is <gpui_kit::base::TextSelectionSnapshot>::cursor.
 func (s TextSelectionSnapshot) Cursor(cx *Cx) TextSelectionEndpoint {
 	useBaseTextSelection()
@@ -11319,6 +12989,8 @@ func (s TextSelectionSnapshot) Cursor(cx *Cx) TextSelectionEndpoint {
 	return TextSelectionEndpoint{h: r.u64()}
 }
 
+// Returns whether the pointer gesture is still active.
+//
 // IsSelecting is <gpui_kit::base::TextSelectionSnapshot>::is_selecting.
 func (s TextSelectionSnapshot) IsSelecting(cx *Cx) bool {
 	useBaseTextSelection()
@@ -11328,6 +13000,8 @@ func (s TextSelectionSnapshot) IsSelecting(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns the window-coordinate endpoints for participants that need them.
+//
 // WindowPoints is <gpui_kit::base::TextSelectionSnapshot>::window_points.
 func (s TextSelectionSnapshot) WindowPoints(cx *Cx) Option[TextSelectionWindowPoints] {
 	useBaseTextSelection()
@@ -11342,6 +13016,8 @@ type TextSelectionWindowPoints struct{ h uint64 }
 
 func (s TextSelectionWindowPoints) handle() uint64 { return s.h }
 
+// Returns the stable anchor in window coordinates.
+//
 // Anchor is <gpui_kit::base::TextSelectionWindowPoints>::anchor.
 func (s TextSelectionWindowPoints) Anchor(cx *Cx) GpuiPoint {
 	useBaseTextSelection()
@@ -11351,6 +13027,8 @@ func (s TextSelectionWindowPoints) Anchor(cx *Cx) GpuiPoint {
 	return rdGpuiPoint(r)
 }
 
+// Returns the moving cursor in window coordinates.
+//
 // Cursor is <gpui_kit::base::TextSelectionWindowPoints>::cursor.
 func (s TextSelectionWindowPoints) Cursor(cx *Cx) GpuiPoint {
 	useBaseTextSelection()
@@ -11365,6 +13043,8 @@ type TextViewDefaults struct{ h uint64 }
 
 func (s TextViewDefaults) handle() uint64 { return s.h }
 
+// Whether a syntax highlighter was installed.
+//
 // HasCodeBlockHighlighter is <gpui_kit::base::TextViewDefaults>::has_code_block_highlighter.
 func (s TextViewDefaults) HasCodeBlockHighlighter(cx *Cx) bool {
 	useBaseText()
@@ -11374,6 +13054,8 @@ func (s TextViewDefaults) HasCodeBlockHighlighter(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether text views follow the text color their container sets.
+//
 // InheritTextColor is <gpui_kit::base::TextViewDefaults>::inherit_text_color.
 func (s TextViewDefaults) InheritTextColor(cx *Cx) bool {
 	useBaseText()
@@ -11383,6 +13065,8 @@ func (s TextViewDefaults) InheritTextColor(cx *Cx) bool {
 	return r.bool()
 }
 
+// Installs these defaults for the whole application.
+//
 // Install is <gpui_kit::base::TextViewDefaults>::install.
 func (s TextViewDefaults) Install(cx *Cx) {
 	useBaseText()
@@ -11409,6 +13093,8 @@ func (b TextViewDefaultsBuilder) WithStyle(style BaseTextViewStyle) TextViewDefa
 // Build makes the TextViewDefaults.
 func (b TextViewDefaultsBuilder) Build() TextViewDefaults { return TextViewDefaults{b.sb.build()} }
 
+// Creates defaults that leave every text view as Base renders it.
+//
 // NewTextViewDefaults is <gpui_kit::base::TextViewDefaults>::new.
 func NewTextViewDefaults(cx *Cx) TextViewDefaultsBuilder {
 	useBaseText()
@@ -11416,6 +13102,8 @@ func NewTextViewDefaults(cx *Cx) TextViewDefaultsBuilder {
 	return TextViewDefaultsBuilder{newStateBuilder(cx, o)}
 }
 
+// Returns the installed defaults, or the Base ones when none were.
+//
 // NewTextViewDefaultsGlobal is <gpui_kit::base::TextViewDefaults>::global.
 func NewTextViewDefaultsGlobal(cx *Cx) TextViewDefaultsBuilder {
 	useBaseText()
@@ -11428,6 +13116,8 @@ type TextViewState struct{ h uint64 }
 
 func (s TextViewState) handle() uint64 { return s.h }
 
+// Whether the last painted frame clipped content because of `MaxLines`.
+//
 // IsClamped is <gpui_kit::base::TextViewState>::is_clamped.
 func (s TextViewState) IsClamped(cx *Cx) bool {
 	useBaseText()
@@ -11437,6 +13127,11 @@ func (s TextViewState) IsClamped(cx *Cx) bool {
 	return r.bool()
 }
 
+// The text this view renders, which `RangeHighlight` ranges index.
+//
+// This is the string plain copy produces, as of the last parse that landed; text set since then is
+// not in it until its parse lands.
+//
 // RenderedText is <gpui_kit::base::TextViewState>::rendered_text.
 func (s TextViewState) RenderedText(cx *Cx) RenderedText {
 	useBaseText()
@@ -11446,6 +13141,15 @@ func (s TextViewState) RenderedText(cx *Cx) RenderedText {
 	return RenderedText{h: r.u64()}
 }
 
+// Return the original Markdown source byte range corresponding to the rendered selection.
+//
+// The range addresses the source passed to this Markdown TextView. It is derived from parser
+// positions retained by the rendered inline nodes, so identical rendered text maps to the
+// occurrence that was actually selected. The result is one contiguous source range, so it includes
+// any Markdown delimiters between the selected rendered endpoints. HTML views and selections
+// without an exact source mapping return `None`. Select-all in a Markdown view returns the full
+// source range.
+//
 // SelectedSourceRange is <gpui_kit::base::TextViewState>::selected_source_range.
 func (s TextViewState) SelectedSourceRange(cx *Cx) Option[Range] {
 	useBaseText()
@@ -11455,6 +13159,8 @@ func (s TextViewState) SelectedSourceRange(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Return the selected text, in the view's `SelectionFormat`.
+//
 // SelectedText is <gpui_kit::base::TextViewState>::selected_text.
 func (s TextViewState) SelectedText(cx *Cx) string {
 	useBaseText()
@@ -11464,6 +13170,23 @@ func (s TextViewState) SelectedText(cx *Cx) string {
 	return r.str()
 }
 
+// Scroll the line `range` starts on into view, `range` indexing the current rendered text, as with
+// `SetRangeHighlights`.
+//
+// A `Scrollable` view scrolls itself. Otherwise the nearest enclosing `gpui::list` scrolls, as
+// long as the row holding the view is laid out, so scroll to that row first when it may be off
+// screen. Any other scroll container scrolls through `OnReveal`. An empty range reveals the line
+// of its position; a range in text that belongs to no block's text, such as a custom block's,
+// scrolls its whole block into a scrollable view.
+//
+// Only the latest reveal is carried out. It follows the content as range highlights
+// (`SetRangeHighlights`) do, and it is dropped when its text changes, when the view clamps its
+// lines, or when it cannot be shown within a second, so it never scrolls long after it was asked
+// for. A whole block taller than the view, scrolled to from below, shows its end.
+//
+// Revealing is best effort: `Ok(())` means the range is valid for the current text and the request
+// was taken, not that the view has scrolled. A dropped request is not reported.
+//
 // RevealRange is <gpui_kit::base::TextViewState>::reveal_range.
 func (s TextViewState) RevealRange(cx *Cx, range_ Range) error {
 	useBaseText()
@@ -11474,6 +13197,19 @@ func (s TextViewState) RevealRange(cx *Cx, range_ Range) error {
 	return rdResult(r)
 }
 
+// Replace the range highlights, whose ranges index the current rendered text.
+//
+// Compute ranges from the current `RenderedText` and set them in the same update. Search the new
+// text again after its content changes. Ranges of the Markdown source, such as
+// `SelectedSourceRange` returns, convert with `RangeForSource`. A range crossing blocks paints in
+// both, skipping their separator. Text outside every block (separators, custom blocks, HTML
+// blocks, and inline objects) is left unpainted. Any invalid range rejects the set.
+//
+// Highlights follow unchanged text through updates. Text appended while streaming keeps earlier
+// highlights; after a table edit, cells in and after the edited row lose theirs because cells are
+// known by position. Text backgrounds such as `<mark>` paint over a highlight; inline code
+// backgrounds paint under it.
+//
 // SetRangeHighlights is <gpui_kit::base::TextViewState>::set_range_highlights.
 func (s TextViewState) SetRangeHighlights(cx *Cx, highlights []RangeHighlight) error {
 	useBaseText()
@@ -11487,6 +13223,8 @@ func (s TextViewState) SetRangeHighlights(cx *Cx, highlights []RangeHighlight) e
 	return rdResult(r)
 }
 
+// Remove all range highlights.
+//
 // ClearRangeHighlights is <gpui_kit::base::TextViewState>::clear_range_highlights.
 func (s TextViewState) ClearRangeHighlights(cx *Cx) {
 	useBaseText()
@@ -11495,6 +13233,8 @@ func (s TextViewState) ClearRangeHighlights(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Clear the current text selection.
+//
 // ClearSelection is <gpui_kit::base::TextViewState>::clear_selection.
 func (s TextViewState) ClearSelection(cx *Cx) {
 	useBaseText()
@@ -11503,6 +13243,12 @@ func (s TextViewState) ClearSelection(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Remeasure inline resources after their prepared content or metrics change.
+//
+// Call from the resource owner's completion handler, through a weak entity when the task can
+// outlive this view. This does not reparse the document. Existing logical selection is retained
+// until the next selection gesture.
+//
 // InvalidateInlineLayout is <gpui_kit::base::TextViewState>::invalidate_inline_layout.
 func (s TextViewState) InvalidateInlineLayout(cx *Cx) {
 	useBaseText()
@@ -11511,6 +13257,8 @@ func (s TextViewState) InvalidateInlineLayout(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Append partial text content to the existing text.
+//
 // PushStr is <gpui_kit::base::TextViewState>::push_str.
 func (s TextViewState) PushStr(cx *Cx, newText string) {
 	useBaseText()
@@ -11520,6 +13268,8 @@ func (s TextViewState) PushStr(cx *Cx, newText string) {
 	stateSet(cx, o)
 }
 
+// Select all rendered text in this view.
+//
 // SelectAll is <gpui_kit::base::TextViewState>::select_all.
 func (s TextViewState) SelectAll(cx *Cx) {
 	useBaseText()
@@ -11528,6 +13278,8 @@ func (s TextViewState) SelectAll(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Set the motion policy; see `TextViewMotion`.
+//
 // SetMotion is <gpui_kit::base::TextViewState>::set_motion.
 func (s TextViewState) SetMotion(cx *Cx, motion TextViewMotion) {
 	useBaseText()
@@ -11537,6 +13289,8 @@ func (s TextViewState) SetMotion(cx *Cx, motion TextViewMotion) {
 	stateSet(cx, o)
 }
 
+// Set whether the text view scrolls internally, default false.
+//
 // SetScrollable is <gpui_kit::base::TextViewState>::set_scrollable.
 func (s TextViewState) SetScrollable(cx *Cx, scrollable bool) {
 	useBaseText()
@@ -11546,6 +13300,8 @@ func (s TextViewState) SetScrollable(cx *Cx, scrollable bool) {
 	stateSet(cx, o)
 }
 
+// Set whether the text is selectable, default false.
+//
 // SetSelectable is <gpui_kit::base::TextViewState>::set_selectable.
 func (s TextViewState) SetSelectable(cx *Cx, selectable bool) {
 	useBaseText()
@@ -11555,6 +13311,8 @@ func (s TextViewState) SetSelectable(cx *Cx, selectable bool) {
 	stateSet(cx, o)
 }
 
+// Set the `SelectionFormat`, default is `Plain`.
+//
 // SetSelectionFormat is <gpui_kit::base::TextViewState>::set_selection_format.
 func (s TextViewState) SetSelectionFormat(cx *Cx, selectionFormat SelectionFormat) {
 	useBaseText()
@@ -11564,6 +13322,12 @@ func (s TextViewState) SetSelectionFormat(cx *Cx, selectionFormat SelectionForma
 	stateSet(cx, o)
 }
 
+// Set the text content.
+//
+// Markdown that extends the current non-empty text is appended like `PushStr`, keeping the
+// selection; any other text replaces it. With a streamed fade-in enabled, extended text fades in;
+// a replacement shows at once.
+//
 // SetText is <gpui_kit::base::TextViewState>::set_text.
 func (s TextViewState) SetText(cx *Cx, text string) {
 	useBaseText()
@@ -11603,6 +13367,8 @@ func (b TextViewStateBuilder) SelectionFormat(selectionFormat SelectionFormat) T
 // Build makes the TextViewState.
 func (b TextViewStateBuilder) Build() TextViewState { return TextViewState{b.sb.build()} }
 
+// Create a HTML TextViewState.
+//
 // NewTextViewStateHTML is <gpui_kit::base::TextViewState>::html.
 func NewTextViewStateHTML(cx *Cx, text string) TextViewStateBuilder {
 	useBaseText()
@@ -11611,6 +13377,8 @@ func NewTextViewStateHTML(cx *Cx, text string) TextViewStateBuilder {
 	return TextViewStateBuilder{newStateBuilder(cx, o)}
 }
 
+// Create a Markdown TextViewState.
+//
 // NewTextViewStateMarkdown is <gpui_kit::base::TextViewState>::markdown.
 func NewTextViewStateMarkdown(cx *Cx, text string) TextViewStateBuilder {
 	useBaseText()
@@ -11624,6 +13392,8 @@ type TextareaState struct{ h uint64 }
 
 func (s TextareaState) handle() uint64 { return s.h }
 
+// The text with its tokens, as `set_value` accepts it.
+//
 // Content is <gpui_kit::base::input::TextareaState>::content.
 func (s TextareaState) Content(cx *Cx) InputContent {
 	useBaseInput()
@@ -11642,6 +13412,10 @@ func (s TextareaState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilit
 	return InputContextMenuCapabilitiesRead{h: r.u64()}
 }
 
+// Get byte offset of the cursor.
+//
+// The offset is the UTF-8 offset.
+//
 // Cursor is <gpui_kit::base::input::TextareaState>::cursor.
 func (s TextareaState) Cursor(cx *Cx) int {
 	useBaseInput()
@@ -11843,6 +13617,8 @@ func (s TextareaState) InputBounds(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// Whether this input is a source-code editor.
+//
 // IsCodeEditor is <gpui_kit::base::input::TextareaState>::is_code_editor.
 func (s TextareaState) IsCodeEditor(cx *Cx) bool {
 	useBaseInput()
@@ -11852,6 +13628,10 @@ func (s TextareaState) IsCodeEditor(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether the user is allowed to copy the selection out.
+//
+// A masked input keeps its value out of the clipboard.
+//
 // IsCopyable is <gpui_kit::base::input::TextareaState>::is_copyable.
 func (s TextareaState) IsCopyable(cx *Cx) bool {
 	useBaseInput()
@@ -11861,6 +13641,11 @@ func (s TextareaState) IsCopyable(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if the user is allowed to change the text.
+//
+// This is false when the input is `disabled` or `readonly`, the programmatic APIs (e.g.:
+// `SetValue`, `Insert`) are not limited by this.
+//
 // IsEditable is <gpui_kit::base::input::TextareaState>::is_editable.
 func (s TextareaState) IsEditable(cx *Cx) bool {
 	useBaseInput()
@@ -11879,6 +13664,10 @@ func (s TextareaState) IsMultiLine(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if the search panel can replace the matches.
+//
+// This is false when the input is not `replaceable`, or when it is `disabled` or `readonly`.
+//
 // IsReplaceable is <gpui_kit::base::input::TextareaState>::is_replaceable.
 func (s TextareaState) IsReplaceable(cx *Cx) bool {
 	useBaseInput()
@@ -11888,6 +13677,11 @@ func (s TextareaState) IsReplaceable(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether the active selection's caret is at the start of its range.
+//
+// Collapsed selections are not reversed. Use this with `SelectedRange` and
+// `SetSelectedRangeWithDirection` to restore a selection.
+//
 // IsSelectionReversed is <gpui_kit::base::input::TextareaState>::is_selection_reversed.
 func (s TextareaState) IsSelectionReversed(cx *Cx) bool {
 	useBaseInput()
@@ -11897,6 +13691,8 @@ func (s TextareaState) IsSelectionReversed(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether this input is a single-line text field. See `IsMultiLine`.
+//
 // IsSingleLine is <gpui_kit::base::input::TextareaState>::is_single_line.
 func (s TextareaState) IsSingleLine(cx *Cx) bool {
 	useBaseInput()
@@ -11906,6 +13702,8 @@ func (s TextareaState) IsSingleLine(cx *Cx) bool {
 	return r.bool()
 }
 
+// Laid-out line height; `None` before first layout.
+//
 // LineHeight is <gpui_kit::base::input::TextareaState>::line_height.
 func (s TextareaState) LineHeight(cx *Cx) Option[float32] {
 	useBaseInput()
@@ -11924,6 +13722,10 @@ func (s TextareaState) Presentation(cx *Cx) InputPresentation {
 	return InputPresentation{h: r.u64()}
 }
 
+// Return the rendered bounds for a UTF-8 byte range in the current input contents.
+//
+// Returns `None` when the requested range is not currently laid out or visible.
+//
 // RangeToBounds is <gpui_kit::base::input::TextareaState>::range_to_bounds.
 func (s TextareaState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
 	useBaseInput()
@@ -11934,6 +13736,8 @@ func (s TextareaState) RangeToBounds(cx *Cx, range_ Range) Option[Bounds] {
 	return rdOpt(r, func(r *reader) Bounds { return rdBounds(r) })
 }
 
+// Current scroll offset of the editor viewport.
+//
 // ScrollOffset is <gpui_kit::base::input::TextareaState>::scroll_offset.
 func (s TextareaState) ScrollOffset(cx *Cx) GpuiPoint {
 	useBaseInput()
@@ -11943,6 +13747,13 @@ func (s TextareaState) ScrollOffset(cx *Cx) GpuiPoint {
 	return rdGpuiPoint(r)
 }
 
+// A counter that advances every time `OpenSearch` runs, including while the session is already
+// open.
+//
+// Re-invoking search leaves the session itself identical, so a presentation layer that decides
+// what to rebuild by comparing session state cannot see the second request. Fold this into that
+// comparison to notice it.
+//
 // SearchActivationRevision is <gpui_kit::base::input::TextareaState>::search_activation_revision.
 func (s TextareaState) SearchActivationRevision(cx *Cx) uint64 {
 	useBaseInput()
@@ -11961,6 +13772,13 @@ func (s TextareaState) SearchSession(cx *Cx) SearchSession {
 	return SearchSession{h: r.u64()}
 }
 
+// Returns the active selection as a byte range into the text.
+//
+// With multiple cursors, this reads only the active selection.
+//
+// The range is empty (`start == end`) when no text is selected; in that case the offset equals
+// `cursor()`. Byte offsets are measured in the underlying rope's byte units.
+//
 // SelectedRange is <gpui_kit::base::input::TextareaState>::selected_range.
 func (s TextareaState) SelectedRange(cx *Cx) Range {
 	useBaseInput()
@@ -11970,6 +13788,8 @@ func (s TextareaState) SelectedRange(cx *Cx) Range {
 	return rdRange(r)
 }
 
+// See `SelectedValue` when an owned string is wanted.
+//
 // SelectedText is <gpui_kit::base::input::TextareaState>::selected_text.
 func (s TextareaState) SelectedText(cx *Cx) string {
 	useBaseInput()
@@ -11979,6 +13799,11 @@ func (s TextareaState) SelectedText(cx *Cx) string {
 	return r.str()
 }
 
+// Return the portion of the value within the input field that is selected by the user, as an owned
+// string.
+//
+// The string is materialized on each call.
+//
 // SelectedValue is <gpui_kit::base::input::TextareaState>::selected_value.
 func (s TextareaState) SelectedValue(cx *Cx) string {
 	useBaseInput()
@@ -11988,6 +13813,11 @@ func (s TextareaState) SelectedValue(cx *Cx) string {
 	return r.str()
 }
 
+// Return the text `Rope` of the input field.
+//
+// Borrowed from the state, so reading even a large document copies nothing. See `Value` when an
+// owned string is wanted.
+//
 // Text is <gpui_kit::base::input::TextareaState>::text.
 func (s TextareaState) Text(cx *Cx) string {
 	useBaseInput()
@@ -12006,6 +13836,9 @@ func (s TextareaState) TextBounds(cx *Cx) Option[Bounds] {
 	return rdOpt(r, func(r *reader) Bounds { return rdBounds(r) })
 }
 
+// The text assistance a platform IME (a software keyboard) should give this input, from
+// `InputAction`, `Autocorrect` and `Autocapitalize` or the defaults they describe.
+//
 // TextInputConfiguration is <gpui_kit::base::input::TextareaState>::text_input_configuration.
 func (s TextareaState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
 	useBaseInput()
@@ -12024,6 +13857,11 @@ func (s TextareaState) Tokens(cx *Cx) []InlineTokenSpan {
 	return rdList(r, func(r *reader) InlineTokenSpan { return InlineTokenSpan{h: r.u64()} })
 }
 
+// The live touch selection, laid out for the handles and the edit menu.
+//
+// `None` when the last touch selection has since changed into something else, or when its ends are
+// not laid out (scrolled out of view).
+//
 // TouchSelection is <gpui_kit::base::input::TextareaState>::touch_selection.
 func (s TextareaState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
 	useBaseInput()
@@ -12033,6 +13871,8 @@ func (s TextareaState) TouchSelection(cx *Cx) Option[TouchSelectionSnapshot] {
 	return rdOpt(r, func(r *reader) TouchSelectionSnapshot { return TouchSelectionSnapshot{h: r.u64()} })
 }
 
+// Return the value without mask.
+//
 // UnmaskValue is <gpui_kit::base::input::TextareaState>::unmask_value.
 func (s TextareaState) UnmaskValue(cx *Cx) string {
 	useBaseInput()
@@ -12042,6 +13882,10 @@ func (s TextareaState) UnmaskValue(cx *Cx) string {
 	return r.str()
 }
 
+// Return the value of the input field as an owned string.
+//
+// The string is materialized on each call.
+//
 // Value is <gpui_kit::base::input::TextareaState>::value.
 func (s TextareaState) Value(cx *Cx) string {
 	useBaseInput()
@@ -12063,6 +13907,8 @@ func (s TextareaState) TryValue(cx *Cx) (v string, ok bool) {
 	return r.str(), true
 }
 
+// Visible row range in the last laid-out viewport, `None` before first layout.
+//
 // VisibleRowRange is <gpui_kit::base::input::TextareaState>::visible_row_range.
 func (s TextareaState) VisibleRowRange(cx *Cx) Option[Range] {
 	useBaseInput()
@@ -12072,6 +13918,8 @@ func (s TextareaState) VisibleRowRange(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Whether the input or its associated selection popup has focus.
+//
 // HasSelectionFocus is <gpui_kit::base::input::TextareaState>::has_selection_focus.
 func (s TextareaState) HasSelectionFocus(cx *Cx) bool {
 	useBaseInput()
@@ -12099,6 +13947,8 @@ func (s TextareaState) PreviousSearchMatch(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// Replace every match. Returns how many were replaced.
+//
 // ReplaceAllSearchMatches is <gpui_kit::base::input::TextareaState>::replace_all_search_matches.
 func (s TextareaState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
 	useBaseInput()
@@ -12109,6 +13959,9 @@ func (s TextareaState) ReplaceAllSearchMatches(cx *Cx, replacement string) int {
 	return int(r.u64())
 }
 
+// Replace the current match and move on to the next one. Returns whether there was a match to
+// replace.
+//
 // ReplaceCurrentSearchMatch is <gpui_kit::base::input::TextareaState>::replace_current_search_match.
 func (s TextareaState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) bool {
 	useBaseInput()
@@ -12119,6 +13972,8 @@ func (s TextareaState) ReplaceCurrentSearchMatch(cx *Cx, replacement string) boo
 	return r.bool()
 }
 
+// Replace a UTF-8 byte range, expanding overlaps to whole tokens.
+//
 // ReplaceRangeWithToken is <gpui_kit::base::input::TextareaState>::replace_range_with_token.
 func (s TextareaState) ReplaceRangeWithToken(cx *Cx, range_ Range, token InlineToken) error {
 	useBaseInput()
@@ -12130,6 +13985,8 @@ func (s TextareaState) ReplaceRangeWithToken(cx *Cx, range_ Range, token InlineT
 	return rdResult(r)
 }
 
+// Replace the selection with an atomic token; no delimiter is added.
+//
 // ReplaceWithToken is <gpui_kit::base::input::TextareaState>::replace_with_token.
 func (s TextareaState) ReplaceWithToken(cx *Cx, token InlineToken) error {
 	useBaseInput()
@@ -12140,6 +13997,14 @@ func (s TextareaState) ReplaceWithToken(cx *Cx, token InlineToken) error {
 	return rdResult(r)
 }
 
+// Add `range` as an additional selection, keeping the existing ones — the programmatic equivalent
+// of Alt-clicking another cursor into the text.
+//
+// The range is clipped to the text and expanded to character boundaries, like `SetSelectedRange`.
+// A range already covered by a selection adds nothing. Overlapping selections are merged. On a
+// single-line input there is no second cursor to add, so the call replaces the selection instead.
+// The view scrolls to the new selection.
+//
 // AddSelection is <gpui_kit::base::input::TextareaState>::add_selection.
 func (s TextareaState) AddSelection(cx *Cx, range_ Range) {
 	useBaseInput()
@@ -12161,6 +14026,11 @@ func (s TextareaState) ApplyHighlighterFoldCandidates(cx *Cx, candidates []FoldR
 	stateSet(cx, o)
 }
 
+// Starts dragging one end of the touch selection from `finger`.
+//
+// The other end stays where it is. The menu closes for the duration of the drag and reopens on
+// `EndEdgeDrag`.
+//
 // BeginEdgeDrag is <gpui_kit::base::input::TextareaState>::begin_edge_drag.
 func (s TextareaState) BeginEdgeDrag(cx *Cx, edge SelectionEdge, finger GpuiPoint) {
 	useBaseInput()
@@ -12179,6 +14049,11 @@ func (s TextareaState) Clean(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Closes the edit menu and keeps the selection with its handles.
+//
+// The menu's own actions end here: Copy has done its work, Select All reopens the menu over the
+// new range through `SelectAll`.
+//
 // CloseEditMenu is <gpui_kit::base::input::TextareaState>::close_edit_menu.
 func (s TextareaState) CloseEditMenu(cx *Cx) {
 	useBaseInput()
@@ -12187,6 +14062,9 @@ func (s TextareaState) CloseEditMenu(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// End the search: hide the built-in panel and the match highlights. The query is kept so the next
+// `OpenSearch` resumes it.
+//
 // CloseSearch is <gpui_kit::base::input::TextareaState>::close_search.
 func (s TextareaState) CloseSearch(cx *Cx) {
 	useBaseInput()
@@ -12195,6 +14073,8 @@ func (s TextareaState) CloseSearch(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Ends the handle drag and reopens the edit menu.
+//
 // EndEdgeDrag is <gpui_kit::base::input::TextareaState>::end_edge_drag.
 func (s TextareaState) EndEdgeDrag(cx *Cx) {
 	useBaseInput()
@@ -12203,6 +14083,8 @@ func (s TextareaState) EndEdgeDrag(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Install a default adapter without replacing an application-provided one.
+//
 // EnsureHighlighterFactory is <gpui_kit::base::input::TextareaState>::ensure_highlighter_factory.
 func (s TextareaState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
 	useBaseInput()
@@ -12212,6 +14094,8 @@ func (s TextareaState) EnsureHighlighterFactory(cx *Cx, factory RowSource) {
 	stateSet(cx, o)
 }
 
+// Apply the default numeric mask unless the caller explicitly selected a mask.
+//
 // EnsureNumberMask is <gpui_kit::base::input::TextareaState>::ensure_number_mask.
 func (s TextareaState) EnsureNumberMask(cx *Cx) {
 	useBaseInput()
@@ -12220,6 +14104,8 @@ func (s TextareaState) EnsureNumberMask(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Focus the input field.
+//
 // Focus is <gpui_kit::base::input::TextareaState>::focus.
 func (s TextareaState) Focus(cx *Cx) {
 	useBaseInput()
@@ -12228,6 +14114,10 @@ func (s TextareaState) Focus(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Insert text at the current cursor position.
+//
+// And the cursor will be moved to the end of inserted text.
+//
 // Insert is <gpui_kit::base::input::TextareaState>::insert.
 func (s TextareaState) Insert(cx *Cx, text string) {
 	useBaseInput()
@@ -12246,6 +14136,14 @@ func (s TextareaState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
 	stateSet(cx, o)
 }
 
+// Open the search session, or re-invoke it if it is already open.
+//
+// This is not idempotent: every call advances `SearchActivationRevision`, and the presentation
+// layer answers that by re-focusing the search field and selecting its contents, the same as
+// pressing the shortcut a second time. Call it from an action or another user gesture, never from
+// a render pass or an observer that runs every frame — that would re-select the field under the
+// user on every frame and make it impossible to type.
+//
 // OpenSearch is <gpui_kit::base::input::TextareaState>::open_search.
 func (s TextareaState) OpenSearch(cx *Cx, replaceMode bool) {
 	useBaseInput()
@@ -12255,6 +14153,12 @@ func (s TextareaState) OpenSearch(cx *Cx, replaceMode bool) {
 	stateSet(cx, o)
 }
 
+// Refresh the input, so the next render re-runs syntax highlighting and the LSP providers, not
+// just a redraw.
+//
+// Assigning the `lsp` providers (or other render-affecting state) at runtime does not take effect
+// until the text next changes. Call this afterwards to force the refresh on the next render.
+//
 // Refresh is <gpui_kit::base::input::TextareaState>::refresh.
 func (s TextareaState) Refresh(cx *Cx) {
 	useBaseInput()
@@ -12263,6 +14167,10 @@ func (s TextareaState) Refresh(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Replace text at the current cursor position.
+//
+// And the cursor will be moved to the end of replaced text.
+//
 // Replace is <gpui_kit::base::input::TextareaState>::replace.
 func (s TextareaState) Replace(cx *Cx, text string) {
 	useBaseInput()
@@ -12272,6 +14180,15 @@ func (s TextareaState) Replace(cx *Cx, text string) {
 	stateSet(cx, o)
 }
 
+// Replace the entire text content while preserving undo history.
+//
+// Unlike `SetValue`, this method records the replacement in the undo stack, allowing the user to
+// undo/redo the change. The selection is placed at the end of the new text for single-line inputs,
+// or cleared (0..0) for multi-line inputs.
+//
+// Use this when programmatically replacing the full text but the user should still be able to undo
+// the operation — e.g. formatting.
+//
 // ReplaceAll is <gpui_kit::base::input::TextareaState>::replace_all.
 func (s TextareaState) ReplaceAll(cx *Cx, text string) {
 	useBaseInput()
@@ -12289,6 +14206,9 @@ func (s TextareaState) SelectAll(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Selects everything and, when a touch selection is live, keeps the handles and the edit menu over
+// the new range.
+//
 // SelectAllFromEditMenu is <gpui_kit::base::input::TextareaState>::select_all_from_edit_menu.
 func (s TextareaState) SelectAllFromEditMenu(cx *Cx) {
 	useBaseInput()
@@ -12297,6 +14217,8 @@ func (s TextareaState) SelectAllFromEditMenu(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Project semantics onto the editor, never onto a second focus owner.
+//
 // SetAccessibility is <gpui_kit::base::input::TextareaState>::set_accessibility.
 func (s TextareaState) SetAccessibility(cx *Cx, accessibility InputAccessibility) {
 	useBaseInput()
@@ -12334,6 +14256,8 @@ func (s TextareaState) SetContextMenuEnabled(cx *Cx, enabled bool) {
 	stateSet(cx, o)
 }
 
+// Update `CursorSurroundingLines` after construction.
+//
 // SetCursorSurroundingLines is <gpui_kit::base::input::TextareaState>::set_cursor_surrounding_lines.
 func (s TextareaState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
 	useBaseInput()
@@ -12366,6 +14290,8 @@ func (s TextareaState) SetEditorStyle(cx *Cx, style InputEditorStyle) {
 	stateSet(cx, o)
 }
 
+// Fills each folded line across the editor, as VS Code's `editor.foldBackground`.
+//
 // SetFoldBackground is <gpui_kit::base::input::TextareaState>::set_fold_background.
 func (s TextareaState) SetFoldBackground(cx *Cx, color Option[Color]) {
 	useBaseInput()
@@ -12380,6 +14306,8 @@ func (s TextareaState) SetFoldBackground(cx *Cx, color Option[Color]) {
 	stateSet(cx, o)
 }
 
+// Set highlighter language for for `CodeEditor` mode.
+//
 // SetHighlighter is <gpui_kit::base::input::TextareaState>::set_highlighter.
 func (s TextareaState) SetHighlighter(cx *Cx, newLanguage string) {
 	useBaseInput()
@@ -12389,6 +14317,8 @@ func (s TextareaState) SetHighlighter(cx *Cx, newLanguage string) {
 	stateSet(cx, o)
 }
 
+// Install the parser/highlighter adapter used by code-editor mode.
+//
 // SetHighlighterFactory is <gpui_kit::base::input::TextareaState>::set_highlighter_factory.
 func (s TextareaState) SetHighlighterFactory(cx *Cx, factory RowSource) {
 	useBaseInput()
@@ -12407,6 +14337,8 @@ func (s TextareaState) SetMaskPattern(cx *Cx, pattern MaskPatternInto) {
 	stateSet(cx, o)
 }
 
+// Set placeholder
+//
 // SetPlaceholder is <gpui_kit::base::input::TextareaState>::set_placeholder.
 func (s TextareaState) SetPlaceholder(cx *Cx, placeholder string) {
 	useBaseInput()
@@ -12434,6 +14366,8 @@ func (s TextareaState) SetRows(cx *Cx, rows int) {
 	stateSet(cx, o)
 }
 
+// Update `ScrollBeyondLastLine` after construction.
+//
 // SetScrollBeyondLastLine is <gpui_kit::base::input::TextareaState>::set_scroll_beyond_last_line.
 func (s TextareaState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
 	useBaseInput()
@@ -12448,6 +14382,9 @@ func (s TextareaState) SetScrollBeyondLastLine(cx *Cx, rows Option[int]) {
 	stateSet(cx, o)
 }
 
+// Update whether the text stretches past its ends, see `ScrollBounce`. Turning it off drops a
+// stretch in progress.
+//
 // SetScrollBounce is <gpui_kit::base::input::TextareaState>::set_scroll_bounce.
 func (s TextareaState) SetScrollBounce(cx *Cx, scrollBounce bool) {
 	useBaseInput()
@@ -12457,6 +14394,10 @@ func (s TextareaState) SetScrollBounce(cx *Cx, scrollBounce bool) {
 	stateSet(cx, o)
 }
 
+// Set scroll offset of the editor viewport.
+//
+// The offset will be clamped to the valid range, and applied after the next layout.
+//
 // SetScrollOffset is <gpui_kit::base::input::TextareaState>::set_scroll_offset.
 func (s TextareaState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 	useBaseInput()
@@ -12466,6 +14407,15 @@ func (s TextareaState) SetScrollOffset(cx *Cx, offset GpuiPoint) {
 	stateSet(cx, o)
 }
 
+// Set the search query and highlight its matches.
+//
+// This is the entry point for a custom search UI: it needs neither `searchable` nor the built-in
+// panel. Navigate the matches with `NextSearchMatch` and `PreviousSearchMatch`, read the count and
+// the current index from `SearchSession`, and end the search with `CloseSearch`.
+//
+// A changed query or case mode starts at the current viewport. Setting the same query and case
+// mode again retains the current occurrence.
+//
 // SetSearchQuery is <gpui_kit::base::input::TextareaState>::set_search_query.
 func (s TextareaState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool) {
 	useBaseInput()
@@ -12476,6 +14426,8 @@ func (s TextareaState) SetSearchQuery(cx *Cx, query string, caseInsensitive bool
 	stateSet(cx, o)
 }
 
+// See `Searchable`.
+//
 // SetSearchable is <gpui_kit::base::input::TextareaState>::set_searchable.
 func (s TextareaState) SetSearchable(cx *Cx, searchable bool) {
 	useBaseInput()
@@ -12485,6 +14437,11 @@ func (s TextareaState) SetSearchable(cx *Cx, searchable bool) {
 	stateSet(cx, o)
 }
 
+// Set the selected range using UTF-8 byte offsets, removing additional cursors.
+//
+// Non-empty ranges expand to character boundaries. Empty ranges remain empty and are clipped to
+// the preceding character boundary.
+//
 // SetSelectedRange is <gpui_kit::base::input::TextareaState>::set_selected_range.
 func (s TextareaState) SetSelectedRange(cx *Cx, range_ Range) {
 	useBaseInput()
@@ -12494,6 +14451,12 @@ func (s TextareaState) SetSelectedRange(cx *Cx, range_ Range) {
 	stateSet(cx, o)
 }
 
+// Set the selected UTF-8 byte range and the active caret direction.
+//
+// With `reversed`, the caret is at the start and the anchor is at the end. Empty ranges collapse
+// to a caret regardless of direction. Range clipping, token boundaries and removal of additional
+// cursors follow `SetSelectedRange`.
+//
 // SetSelectedRangeWithDirection is <gpui_kit::base::input::TextareaState>::set_selected_range_with_direction.
 func (s TextareaState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, reversed bool) {
 	useBaseInput()
@@ -12504,6 +14467,11 @@ func (s TextareaState) SetSelectedRangeWithDirection(cx *Cx, range_ Range, rever
 	stateSet(cx, o)
 }
 
+// Keeps the selection highlighted while this popup or one of its children has focus.
+//
+// This does not transfer keyboard focus or keep the caret visible. The association holds only a
+// weak focus handle. Pass `None` to clear it.
+//
 // SetSelectionFocus is <gpui_kit::base::input::TextareaState>::set_selection_focus.
 func (s TextareaState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
 	useBaseInput()
@@ -12518,6 +14486,8 @@ func (s TextareaState) SetSelectionFocus(cx *Cx, focus Option[FocusHandle]) {
 	stateSet(cx, o)
 }
 
+// Update whether to show whitespace characters.
+//
 // SetShowWhitespaces is <gpui_kit::base::input::TextareaState>::set_show_whitespaces.
 func (s TextareaState) SetShowWhitespaces(cx *Cx, show bool) {
 	useBaseInput()
@@ -12527,6 +14497,8 @@ func (s TextareaState) SetShowWhitespaces(cx *Cx, show bool) {
 	stateSet(cx, o)
 }
 
+// Update the soft wrap mode, default is true.
+//
 // SetSoftWrap is <gpui_kit::base::input::TextareaState>::set_soft_wrap.
 func (s TextareaState) SetSoftWrap(cx *Cx, wrap bool) {
 	useBaseInput()
@@ -12563,6 +14535,13 @@ func (s TextareaState) SetTextAlign(cx *Cx, textAlign TextAlign) {
 	stateSet(cx, o)
 }
 
+// Set the value of the input field: plain text, or `InputContent` to restore text together with
+// its inline tokens. Editing history is cleared and no `Change` is emitted.
+//
+// For single-line inputs the caret is placed at the end of the text while the view is scrolled
+// back to the start, so a long value shows its beginning instead of its tail (matching HTML
+// `<input>`). Multi-line inputs reset the selection to `0..0`.
+//
 // SetValue is <gpui_kit::base::input::TextareaState>::set_value.
 func (s TextareaState) SetValue(cx *Cx, value InputContentInto) {
 	useBaseInput()
@@ -12572,6 +14551,8 @@ func (s TextareaState) SetValue(cx *Cx, value InputContentInto) {
 	stateSet(cx, o)
 }
 
+// Update how soft-wrapped continuation lines are indented.
+//
 // SetWrappingIndent is <gpui_kit::base::input::TextareaState>::set_wrapping_indent.
 func (s TextareaState) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) {
 	useBaseInput()
@@ -12581,6 +14562,11 @@ func (s TextareaState) SetWrappingIndent(cx *Cx, wrappingIndent WrappingIndent) 
 	stateSet(cx, o)
 }
 
+// Flip the password mask.
+//
+// Setting the mask is a single-line method, but flipping it stays here: the reveal button is
+// rendered from the generic path, and it can only be switched on through `InputState` anyway.
+//
 // ToggleMasked is <gpui_kit::base::input::TextareaState>::toggle_masked.
 func (s TextareaState) ToggleMasked(cx *Cx) {
 	useBaseInput()
@@ -12589,6 +14575,8 @@ func (s TextareaState) ToggleMasked(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Unselects the currently selected text.
+//
 // Unselect is <gpui_kit::base::input::TextareaState>::unselect.
 func (s TextareaState) Unselect(cx *Cx) {
 	useBaseInput()
@@ -12597,6 +14585,11 @@ func (s TextareaState) Unselect(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Moves the dragged end to the text under `finger`.
+//
+// Past the top or bottom of a multi-line input the content scrolls under the finger, so the end
+// can reach text that was out of view.
+//
 // UpdateEdgeDrag is <gpui_kit::base::input::TextareaState>::update_edge_drag.
 func (s TextareaState) UpdateEdgeDrag(cx *Cx, finger GpuiPoint) {
 	useBaseInput()
@@ -12722,6 +14715,11 @@ func (b TextareaStateBuilder) Searchable(searchable bool) TextareaStateBuilder {
 // Build makes the TextareaState.
 func (b TextareaStateBuilder) Build() TextareaState { return TextareaState{b.sb.build()} }
 
+// Create a multi-line text state.
+//
+// Being multi-line is carried by the mode, not by the layout, so the default plain-text layout
+// needs no adjustment here.
+//
 // NewTextareaState is <gpui_kit::base::input::TextareaState>::new.
 func NewTextareaState(cx *Cx) TextareaStateBuilder {
 	useBaseInput()
@@ -12806,6 +14804,11 @@ func (s Theme) HighlightTheme(cx *Cx) HighlightThemeArc {
 	return HighlightThemeArc{h: r.u64()}
 }
 
+// Get the input background color.
+//
+// For dark, use a transparent color mixed with the input border: the theme's `input` colour,
+// otherwise use the the theme's `background` colour color.
+//
 // InputBackground is <gpui_kit::component::Theme>::input_background.
 func (s Theme) InputBackground(cx *Cx) Hsla {
 	useComponentTheme()
@@ -12815,6 +14818,8 @@ func (s Theme) InputBackground(cx *Cx) Hsla {
 	return rdHsla(r)
 }
 
+// Returns true if the theme is dark.
+//
 // IsDark is <gpui_kit::component::Theme>::is_dark.
 func (s Theme) IsDark(cx *Cx) bool {
 	useComponentTheme()
@@ -12878,6 +14883,8 @@ func (s Theme) Motion(cx *Cx) KitMotionTokens {
 	return rdKitMotionTokens(r)
 }
 
+// Returns the styled layer's semantic motion policy.
+//
 // MotionTokens is <gpui_kit::component::Theme>::motion_tokens.
 func (s Theme) MotionTokens(cx *Cx) KitMotionTokens {
 	useComponentTheme()
@@ -12905,6 +14912,11 @@ func (s Theme) Radius(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Returns the next surface radius above the existing `xl` theme tier.
+//
+// Larger surface tiers derive from the same application-controlled base radius, so adjusting or
+// squaring the theme updates every tier together.
+//
 // Radius2xl is <gpui_kit::component::Theme>::radius_2xl.
 func (s Theme) Radius2xl(cx *Cx) float32 {
 	useComponentTheme()
@@ -12914,6 +14926,8 @@ func (s Theme) Radius2xl(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Returns the surface radius above `Radius2xl`.
+//
 // Radius3xl is <gpui_kit::component::Theme>::radius_3xl.
 func (s Theme) Radius3xl(cx *Cx) float32 {
 	useComponentTheme()
@@ -12923,6 +14937,8 @@ func (s Theme) Radius3xl(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Returns the surface radius above `Radius3xl`.
+//
 // Radius4xl is <gpui_kit::component::Theme>::radius_4xl.
 func (s Theme) Radius4xl(cx *Cx) float32 {
 	useComponentTheme()
@@ -12932,6 +14948,13 @@ func (s Theme) Radius4xl(cx *Cx) float32 {
 	return r.f32()
 }
 
+// The radius of a shape that reads as a circle or a pill — an avatar, a slider thumb, a badge dot,
+// a pill tab.
+//
+// A theme whose `radius` is zero squares these off too, so one setting governs the whole UI
+// instead of leaving a handful of permanently round elements behind. Use it in place of
+// `rounded_full`, or reach for `RoundedFullStyle` when styling an element.
+//
 // RadiusFull is <gpui_kit::component::Theme>::radius_full.
 func (s Theme) RadiusFull(cx *Cx) float32 {
 	useComponentTheme()
@@ -12959,6 +14982,9 @@ func (s Theme) RadiusTokens(cx *Cx) BaseRadiusTokens {
 	return rdBaseRadiusTokens(r)
 }
 
+// Resolves a standalone semantic configuration over the current legacy theme without mutating
+// either value.
+//
 // ResolveSemanticConfig is <gpui_kit::component::Theme>::resolve_semantic_config.
 func (s Theme) ResolveSemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSemanticThemeTokens {
 	useComponentTheme()
@@ -12978,6 +15004,10 @@ func (s Theme) ScrollbarMode(cx *Cx) ScrollbarMode {
 	return ScrollbarMode(r.u16())
 }
 
+// Returns a snapshot of the semantic design tokens represented by this theme. The snapshot is
+// computed from the legacy public fields so direct mutations of those fields are reflected
+// immediately.
+//
 // SemanticTokens is <gpui_kit::component::Theme>::semantic_tokens.
 func (s Theme) SemanticTokens(cx *Cx) BaseSemanticThemeTokens {
 	useComponentTheme()
@@ -13023,6 +15053,8 @@ func (s Theme) SpacingTokens(cx *Cx) BaseSpacingTokens {
 	return rdBaseSpacingTokens(r)
 }
 
+// Returns the current theme name.
+//
 // ThemeName is <gpui_kit::component::Theme>::theme_name.
 func (s Theme) ThemeName(cx *Cx) string {
 	useComponentTheme()
@@ -13068,6 +15100,9 @@ func (s Theme) WindowRadius(cx *Cx) float32 {
 	return r.f32()
 }
 
+// Applies the legacy-representable part of a standalone semantic config and returns the complete
+// resolved snapshot for application-owned UI.
+//
 // ApplySemanticConfig is <gpui_kit::component::Theme>::apply_semantic_config.
 func (s Theme) ApplySemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSemanticThemeTokens {
 	useComponentTheme()
@@ -13078,6 +15113,8 @@ func (s Theme) ApplySemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSeman
 	return rdBaseSemanticThemeTokens(r)
 }
 
+// Apply the given theme configuration to the current theme.
+//
 // ApplyConfig is <gpui_kit::component::Theme>::apply_config.
 func (s Theme) ApplyConfig(cx *Cx, config ThemeConfigRc) {
 	useComponentTheme()
@@ -13087,6 +15124,10 @@ func (s Theme) ApplyConfig(cx *Cx, config ThemeConfigRc) {
 	stateSet(cx, o)
 }
 
+// Applies the subset of semantic tokens representable by the legacy theme. Scale-only spacing and
+// elevation details have no legacy storage; legacy components therefore keep their existing
+// behavior.
+//
 // ApplySemanticTokens is <gpui_kit::component::Theme>::apply_semantic_tokens.
 func (s Theme) ApplySemanticTokens(cx *Cx, tokens SemanticThemeTokens) {
 	useComponentTheme()
@@ -13276,6 +15317,13 @@ func (s Theme) SetWindowRadius(cx *Cx, value float32) {
 	stateSet(cx, o)
 }
 
+// Change the theme mode.
+//
+// Loads the registered theme for `mode` — even when `mode` is already current, so a caller that
+// swapped `light_theme` or `dark_theme` sees the new theme — through `update`, which keeps every
+// copy of the theme in step and refreshes every window. `window` is accepted for compatibility;
+// every window is refreshed either way, so it is not read.
+//
 // ThemeChange is <gpui_kit::component::Theme>::change.
 func ThemeChange(cx *Cx, mode ThemeModeInto) {
 	useComponentTheme()
@@ -13284,6 +15332,8 @@ func ThemeChange(cx *Cx, mode ThemeModeInto) {
 	stateSet(cx, o)
 }
 
+// Returns the global theme reference
+//
 // ThemeGlobal is <gpui_kit::component::Theme>::global.
 func ThemeGlobal(cx *Cx) Theme {
 	useComponentTheme()
@@ -13292,6 +15342,13 @@ func ThemeGlobal(cx *Cx) Theme {
 	return Theme{h: r.u64()}
 }
 
+// Returns the global theme mutable reference.
+//
+// An edit made through this reference reaches nothing but the field it touches: `tokens` keeps the
+// colors it had, and so does the Base projection until `gk.ThemeSyncBase` rebuilds it. Prefer
+// `update`, which does both after the edit and refreshes every window. Keep this for an edit that
+// must not trigger any of that.
+//
 // ThemeGlobalMut is <gpui_kit::component::Theme>::global_mut.
 func ThemeGlobalMut(cx *Cx) Theme {
 	useComponentTheme()
@@ -13300,6 +15357,9 @@ func ThemeGlobalMut(cx *Cx) Theme {
 	return Theme{h: r.u64()}
 }
 
+// Changes the scrollbar display mode through `update`, which projects it onto the Base scrollbar
+// and refreshes every window.
+//
 // ThemeSetScrollbarMode is <gpui_kit::component::Theme>::set_scrollbar_mode.
 func ThemeSetScrollbarMode(cx *Cx, mode ScrollbarMode) {
 	useComponentTheme()
@@ -13308,6 +15368,19 @@ func ThemeSetScrollbarMode(cx *Cx, mode ScrollbarMode) {
 	stateSet(cx, o)
 }
 
+// Push the current theme down to the Base layer.
+//
+// The Base layer holds its own copy of the theme — the semantic tokens plus the scrollbar and
+// resize-handle styles — because it paints those without going through `gpui-component`.
+// `gk.ThemeChange` refreshes that copy, but writing to the theme's public fields directly does
+// not, so a scrollbar keeps painting with the radius and colors it was last given.
+//
+// `update` and `gk.ThemeChange` call this after their edits. After editing through
+// `gk.ThemeGlobalMut`, call it yourself, then refresh the windows.
+//
+// It rebuilds the Base theme from scratch, so any style written straight onto the Base global is
+// replaced. It does not touch `tokens`.
+//
 // ThemeSyncBase is <gpui_kit::component::Theme>::sync_base.
 func ThemeSyncBase(cx *Cx) {
 	useComponentTheme()
@@ -13315,6 +15388,8 @@ func ThemeSyncBase(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Sync the Scrollbar showing behavior with the system
+//
 // ThemeSyncScrollbarAppearance is <gpui_kit::component::Theme>::sync_scrollbar_appearance.
 func ThemeSyncScrollbarAppearance(cx *Cx) {
 	useComponentTheme()
@@ -13322,6 +15397,8 @@ func ThemeSyncScrollbarAppearance(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Sync the theme with the system appearance
+//
 // ThemeSyncSystemAppearance is <gpui_kit::component::Theme>::sync_system_appearance.
 func ThemeSyncSystemAppearance(cx *Cx) {
 	useComponentTheme()
@@ -13380,6 +15457,8 @@ func (s ThemeRegistry) DefaultLightTheme(cx *Cx) ThemeConfigRc {
 	return ThemeConfigRc{h: r.u64()}
 }
 
+// Returns a reference to the map of default themes.
+//
 // DefaultThemes is <gpui_kit::component::ThemeRegistry>::default_themes.
 func (s ThemeRegistry) DefaultThemes(cx *Cx) []TupleThememodeThemeconfigrc {
 	useComponentTheme()
@@ -13391,6 +15470,8 @@ func (s ThemeRegistry) DefaultThemes(cx *Cx) []TupleThememodeThemeconfigrc {
 	})
 }
 
+// Returns a sorted list of themes.
+//
 // SortedThemes is <gpui_kit::component::ThemeRegistry>::sorted_themes.
 func (s ThemeRegistry) SortedThemes(cx *Cx) []ThemeConfigRc {
 	useComponentTheme()
@@ -13400,6 +15481,8 @@ func (s ThemeRegistry) SortedThemes(cx *Cx) []ThemeConfigRc {
 	return rdList(r, func(r *reader) ThemeConfigRc { return ThemeConfigRc{h: r.u64()} })
 }
 
+// Returns a reference to the map of themes (including default themes).
+//
 // Themes is <gpui_kit::component::ThemeRegistry>::themes.
 func (s ThemeRegistry) Themes(cx *Cx) []TupleStringThemeconfigrc {
 	useComponentTheme()
@@ -13437,6 +15520,10 @@ func ThemeRegistryGlobalMut(cx *Cx) ThemeRegistry {
 	return ThemeRegistry{h: r.u64()}
 }
 
+// Watch themes directory.
+//
+// And reload themes to trigger the `on_load` callback.
+//
 // ThemeRegistryWatchDir is <gpui_kit::component::ThemeRegistry>::watch_dir.
 func ThemeRegistryWatchDir(cx *Cx, themesDir string, onLoad func(cx *Cx)) error {
 	useComponentTheme()
@@ -13452,6 +15539,8 @@ type TimeFieldState struct{ h uint64 }
 
 func (s TimeFieldState) handle() uint64 { return s.h }
 
+// The segment that keyboard editing applies to.
+//
 // SelectedSegment is <gpui_kit::base::TimeFieldState>::selected_segment.
 func (s TimeFieldState) SelectedSegment(cx *Cx) TimeSegment {
 	useBaseTimeField()
@@ -13528,6 +15617,8 @@ type ToastManager struct{ h uint64 }
 
 func (s ToastManager) handle() uint64 { return s.h }
 
+// Return a mounted toast value by id.
+//
 // Get is <gpui_kit::base::ToastManager<u64, u64>>::get.
 func (s ToastManager) Get(cx *Cx, id uint64) Option[uint64] {
 	useBaseToast()
@@ -13538,6 +15629,8 @@ func (s ToastManager) Get(cx *Cx, id uint64) Option[uint64] {
 	return rdOpt(r, func(r *reader) uint64 { return uint64(r.u64()) })
 }
 
+// Return whether no toast is mounted.
+//
 // IsEmpty is <gpui_kit::base::ToastManager<u64, u64>>::is_empty.
 func (s ToastManager) IsEmpty(cx *Cx) bool {
 	useBaseToast()
@@ -13547,6 +15640,8 @@ func (s ToastManager) IsEmpty(cx *Cx) bool {
 	return r.bool()
 }
 
+// Iterate over mounted toast ids, values, and phases in display order.
+//
 // Iter is <gpui_kit::base::ToastManager<u64, u64>>::iter.
 func (s ToastManager) Iter(cx *Cx) []TupleUint64Uint64Toasttransitionstatus {
 	useBaseToast()
@@ -13558,6 +15653,8 @@ func (s ToastManager) Iter(cx *Cx) []TupleUint64Uint64Toasttransitionstatus {
 	})
 }
 
+// Return the number of mounted toasts, including ending toasts.
+//
 // Len is <gpui_kit::base::ToastManager<u64, u64>>::len.
 func (s ToastManager) Len(cx *Cx) int {
 	useBaseToast()
@@ -13567,6 +15664,8 @@ func (s ToastManager) Len(cx *Cx) int {
 	return int(r.u64())
 }
 
+// Iterate over newest visible active toasts plus ending toasts.
+//
 // Visible is <gpui_kit::base::ToastManager<u64, u64>>::visible.
 func (s ToastManager) Visible(cx *Cx, limit int) []TupleUint64Uint64Toasttransitionstatus {
 	useBaseToast()
@@ -13579,6 +15678,8 @@ func (s ToastManager) Visible(cx *Cx, limit int) []TupleUint64Uint64Toasttransit
 	})
 }
 
+// Create a manager using the supplied motion duration for enter and exit.
+//
 // NewToastManager is <gpui_kit::base::ToastManager<u64, u64>>::new.
 func NewToastManager(cx *Cx, motion ToastMotion) ToastManager {
 	useBaseToast()
@@ -13593,6 +15694,8 @@ type ToastStackState struct{ h uint64 }
 
 func (s ToastStackState) handle() uint64 { return s.h }
 
+// Return whether interaction has expanded the stack.
+//
 // IsExpanded is <gpui_kit::base::ToastStackState>::is_expanded.
 func (s ToastStackState) IsExpanded(cx *Cx) bool {
 	useBaseToast()
@@ -13615,6 +15718,8 @@ type TooltipDefaults struct{ h uint64 }
 
 func (s TooltipDefaults) handle() uint64 { return s.h }
 
+// How long a tooltip stays after the pointer leaves its trigger.
+//
 // GracePeriod is <gpui_kit::base::TooltipDefaults>::grace_period.
 func (s TooltipDefaults) GracePeriod(cx *Cx) time.Duration {
 	useBaseTooltip()
@@ -13624,6 +15729,8 @@ func (s TooltipDefaults) GracePeriod(cx *Cx) time.Duration {
 	return rdDuration(r)
 }
 
+// How long the pointer must rest on a trigger before its tooltip shows.
+//
 // ShowDelay is <gpui_kit::base::TooltipDefaults>::show_delay.
 func (s TooltipDefaults) ShowDelay(cx *Cx) time.Duration {
 	useBaseTooltip()
@@ -13633,6 +15740,8 @@ func (s TooltipDefaults) ShowDelay(cx *Cx) time.Duration {
 	return rdDuration(r)
 }
 
+// Installs these defaults for the whole application.
+//
 // Install is <gpui_kit::base::TooltipDefaults>::install.
 func (s TooltipDefaults) Install(cx *Cx) {
 	useBaseTooltip()
@@ -13659,6 +15768,8 @@ func (b TooltipDefaultsBuilder) WithShowDelay(delay time.Duration) TooltipDefaul
 // Build makes the TooltipDefaults.
 func (b TooltipDefaultsBuilder) Build() TooltipDefaults { return TooltipDefaults{b.sb.build()} }
 
+// Creates the Base defaults: a 500 ms show delay and a 300 ms grace period.
+//
 // NewTooltipDefaults is <gpui_kit::base::TooltipDefaults>::new.
 func NewTooltipDefaults(cx *Cx) TooltipDefaultsBuilder {
 	useBaseTooltip()
@@ -13666,6 +15777,8 @@ func NewTooltipDefaults(cx *Cx) TooltipDefaultsBuilder {
 	return TooltipDefaultsBuilder{newStateBuilder(cx, o)}
 }
 
+// Returns the installed defaults, or the Base ones when none were.
+//
 // NewTooltipDefaultsGlobal is <gpui_kit::base::TooltipDefaults>::global.
 func NewTooltipDefaultsGlobal(cx *Cx) TooltipDefaultsBuilder {
 	useBaseTooltip()
@@ -13721,6 +15834,9 @@ type TouchSelectionSnapshot struct{ h uint64 }
 
 func (s TouchSelectionSnapshot) handle() uint64 { return s.h }
 
+// The smallest box holding the ends in view, for anchoring the edit menu. `None` when the whole
+// selection is scrolled away.
+//
 // Bounds is <gpui_kit::base::TouchSelectionSnapshot>::bounds.
 func (s TouchSelectionSnapshot) Bounds(cx *Cx) Option[Bounds] {
 	useBaseTouchSelection()
@@ -13730,6 +15846,8 @@ func (s TouchSelectionSnapshot) Bounds(cx *Cx) Option[Bounds] {
 	return rdOpt(r, func(r *reader) Bounds { return rdBounds(r) })
 }
 
+// The end currently being dragged by its handle.
+//
 // Dragging is <gpui_kit::base::TouchSelectionSnapshot>::dragging.
 func (s TouchSelectionSnapshot) Dragging(cx *Cx) Option[SelectionEdge] {
 	useBaseTouchSelection()
@@ -13739,6 +15857,8 @@ func (s TouchSelectionSnapshot) Dragging(cx *Cx) Option[SelectionEdge] {
 	return rdOpt(r, func(r *reader) SelectionEdge { return SelectionEdge(r.u16()) })
 }
 
+// The caret line box at the given end.
+//
 // Edge is <gpui_kit::base::TouchSelectionSnapshot>::edge.
 func (s TouchSelectionSnapshot) Edge(cx *Cx, edge SelectionEdge) Bounds {
 	useBaseTouchSelection()
@@ -13749,6 +15869,8 @@ func (s TouchSelectionSnapshot) Edge(cx *Cx, edge SelectionEdge) Bounds {
 	return rdBounds(r)
 }
 
+// The caret line box after the last selected character.
+//
 // End is <gpui_kit::base::TouchSelectionSnapshot>::end.
 func (s TouchSelectionSnapshot) End(cx *Cx) Bounds {
 	useBaseTouchSelection()
@@ -13758,6 +15880,9 @@ func (s TouchSelectionSnapshot) End(cx *Cx) Bounds {
 	return rdBounds(r)
 }
 
+// Whether the given end is in view. A handle is drawn only for an end that is; the menu anchors to
+// the ends that are.
+//
 // IsEdgeVisible is <gpui_kit::base::TouchSelectionSnapshot>::is_edge_visible.
 func (s TouchSelectionSnapshot) IsEdgeVisible(cx *Cx, edge SelectionEdge) bool {
 	useBaseTouchSelection()
@@ -13768,6 +15893,8 @@ func (s TouchSelectionSnapshot) IsEdgeVisible(cx *Cx, edge SelectionEdge) bool {
 	return r.bool()
 }
 
+// Whether the selection is a bare caret, which gets a menu but no handles.
+//
 // IsEmpty is <gpui_kit::base::TouchSelectionSnapshot>::is_empty.
 func (s TouchSelectionSnapshot) IsEmpty(cx *Cx) bool {
 	useBaseTouchSelection()
@@ -13777,6 +15904,9 @@ func (s TouchSelectionSnapshot) IsEmpty(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether the edit menu is open. It closes while a handle is dragged and reopens when the drag
+// ends.
+//
 // IsMenuOpen is <gpui_kit::base::TouchSelectionSnapshot>::is_menu_open.
 func (s TouchSelectionSnapshot) IsMenuOpen(cx *Cx) bool {
 	useBaseTouchSelection()
@@ -13786,6 +15916,8 @@ func (s TouchSelectionSnapshot) IsMenuOpen(cx *Cx) bool {
 	return r.bool()
 }
 
+// The caret line box before the first selected character.
+//
 // Start is <gpui_kit::base::TouchSelectionSnapshot>::start.
 func (s TouchSelectionSnapshot) Start(cx *Cx) Bounds {
 	useBaseTouchSelection()
@@ -13800,6 +15932,12 @@ type TransitionState struct{ h uint64 }
 
 func (s TransitionState) handle() uint64 { return s.h }
 
+// Returns the current value toward `target`, as `transition_with_status` does, and requests the
+// next animation frame while the status is `Delayed` or `Running`.
+//
+// Call this while rendering an element. A target that changes while the element is not rendered
+// starts transitioning at the next sample.
+//
 // Sample is <gpui_kit::base::TransitionState<f32>>::sample.
 func (s TransitionState) Sample(cx *Cx, target float32, policy Transition) MotionValueF32 {
 	useBaseMotion()
@@ -13977,6 +16115,8 @@ type UndoHistory struct{ h uint64 }
 
 func (s UndoHistory) handle() uint64 { return s.h }
 
+// Returns whether a redo transaction is available.
+//
 // CanRedo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::can_redo.
 func (s UndoHistory) CanRedo(cx *Cx) bool {
 	useBaseRoot()
@@ -13986,6 +16126,8 @@ func (s UndoHistory) CanRedo(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns whether an undo transaction is available.
+//
 // CanUndo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::can_undo.
 func (s UndoHistory) CanUndo(cx *Cx) bool {
 	useBaseRoot()
@@ -13995,6 +16137,8 @@ func (s UndoHistory) CanUndo(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns whether history recording is currently ignored.
+//
 // IsIgnoring is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::is_ignoring.
 func (s UndoHistory) IsIgnoring(cx *Cx) bool {
 	useBaseRoot()
@@ -14004,6 +16148,8 @@ func (s UndoHistory) IsIgnoring(cx *Cx) bool {
 	return r.bool()
 }
 
+// Redoes the latest undone transaction, returning changes oldest first.
+//
 // Redo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::redo.
 func (s UndoHistory) Redo(cx *Cx) Option[[]string] {
 	useBaseRoot()
@@ -14013,6 +16159,8 @@ func (s UndoHistory) Redo(cx *Cx) Option[[]string] {
 	return rdOpt(r, func(r *reader) []string { return rdList(r, func(r *reader) string { return r.str() }) })
 }
 
+// Undoes the latest transaction, returning changes newest first.
+//
 // Undo is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::undo.
 func (s UndoHistory) Undo(cx *Cx) Option[[]string] {
 	useBaseRoot()
@@ -14022,6 +16170,8 @@ func (s UndoHistory) Undo(cx *Cx) Option[[]string] {
 	return rdOpt(r, func(r *reader) []string { return rdList(r, func(r *reader) string { return r.str() }) })
 }
 
+// Clears both undo and redo transactions.
+//
 // Clear is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::clear.
 func (s UndoHistory) Clear(cx *Cx) {
 	useBaseRoot()
@@ -14030,6 +16180,8 @@ func (s UndoHistory) Clear(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// End explicit grouping of pushed changes.
+//
 // EndGrouping is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::end_grouping.
 func (s UndoHistory) EndGrouping(cx *Cx) {
 	useBaseRoot()
@@ -14038,6 +16190,8 @@ func (s UndoHistory) EndGrouping(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Pushes a change into the current transaction or starts a new one.
+//
 // Push is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::push.
 func (s UndoHistory) Push(cx *Cx, item string) {
 	useBaseRoot()
@@ -14047,6 +16201,8 @@ func (s UndoHistory) Push(cx *Cx, item string) {
 	stateSet(cx, o)
 }
 
+// Sets whether history recording is currently ignored.
+//
 // SetIgnoring is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::set_ignoring.
 func (s UndoHistory) SetIgnoring(cx *Cx, ignoring bool) {
 	useBaseRoot()
@@ -14056,6 +16212,8 @@ func (s UndoHistory) SetIgnoring(cx *Cx, ignoring bool) {
 	stateSet(cx, o)
 }
 
+// Start explicitly grouping pushed changes into one transaction.
+//
 // StartGrouping is <gpui_kit::base::UndoHistory<gpui_kit::SharedString>>::start_grouping.
 func (s UndoHistory) StartGrouping(cx *Cx) {
 	useBaseRoot()
@@ -14094,6 +16252,8 @@ type VirtualListScrollHandle struct{ h uint64 }
 
 func (s VirtualListScrollHandle) handle() uint64 { return s.h }
 
+// Get the base scroll handle.
+//
 // BaseHandle is <gpui_kit::base::VirtualListScrollHandle>::base_handle.
 func (s VirtualListScrollHandle) BaseHandle(cx *Cx) ScrollHandle {
 	useBaseVirtualList()
@@ -14103,6 +16263,8 @@ func (s VirtualListScrollHandle) BaseHandle(cx *Cx) ScrollHandle {
 	return ScrollHandle{h: r.u64()}
 }
 
+// Scrolls to the bottom of the list.
+//
 // ScrollToBottom is <gpui_kit::base::VirtualListScrollHandle>::scroll_to_bottom.
 func (s VirtualListScrollHandle) ScrollToBottom(cx *Cx) {
 	useBaseVirtualList()
@@ -14111,6 +16273,8 @@ func (s VirtualListScrollHandle) ScrollToBottom(cx *Cx) {
 	stateSet(cx, o)
 }
 
+// Scroll to the item at the given index.
+//
 // ScrollToItem is <gpui_kit::base::VirtualListScrollHandle>::scroll_to_item.
 func (s VirtualListScrollHandle) ScrollToItem(cx *Cx, ix int, strategy ScrollStrategy) {
 	useBaseVirtualList()
@@ -14121,6 +16285,8 @@ func (s VirtualListScrollHandle) ScrollToItem(cx *Cx, ix int, strategy ScrollStr
 	stateSet(cx, o)
 }
 
+// Create a new VirtualListScrollHandle.
+//
 // NewVirtualListScrollHandle is <gpui_kit::base::VirtualListScrollHandle>::new.
 func NewVirtualListScrollHandle(cx *Cx) VirtualListScrollHandle {
 	useBaseVirtualList()

@@ -3,6 +3,10 @@ package gk
 
 import "core:time"
 
+// A Radio element.
+//
+// This is not included the Radio group implementation, you can manage the group by yourself.
+//
 // Radio is gpui_kit::component::radio::Radio.
 Radio :: struct {
 	using el: Element,
@@ -96,18 +100,38 @@ Radio_VT :: struct {
 	role: proc(e: Radio, role: Role) -> Radio,
 	track_scroll: proc(e: Radio, scroll_handle: Scroll_Handle) -> Radio,
 	using t_parent_element: ^Parent_Element_Trait(Radio),
+	// Set the name a screen reader announces, when the visible label is not it.
+	//
+	// A radio's name comes from its `->label` by default. Setting this replaces the announced name
+	// without changing what is displayed.
 	accessibility_label: proc(e: Radio, label: string) -> Radio,
+	// Set the checked state of the Radio element, default is `false`.
 	checked: proc(e: Radio, checked: bool) -> Radio,
+	// Set the disabled state of the Radio element, default is `false`.
 	disabled: proc(e: Radio, disabled: bool) -> Radio,
+	// Set the label of the Radio element.
 	label: proc(e: Radio, label: Text_Into) -> Radio,
+	// Handle a requested checked value from pointer or keyboard activation.
+	//
+	// This is a controlled value: the owner must write the requested value for it to show. Disabled
+	// controls do not call the handler. This and `->on_click` share one callback; chaining them
+	// replaces the previous handler instead of calling both.
 	on_change: proc(e: Radio, handler: Handler) -> Radio,
+	// Alias for `->on_change`. The last callback registered with either name wins.
 	on_click: proc(e: Radio, handler: Handler) -> Radio,
+	// Set the tab index for the Radio element, default is `0`.
 	tab_index: proc(e: Radio, tab_index: int) -> Radio,
+	// Set the tab stop for the Radio element, default is `true`.
 	tab_stop: proc(e: Radio, tab_stop: bool) -> Radio,
+	// Set tooltip text for the radio.
 	tooltip: proc(e: Radio, tooltip: string) -> Radio,
+	// Overrides how long the pointer must rest before the tooltip shows.
+	//
+	// Defaults to `show_delay`.
 	tooltip_show_delay: proc(e: Radio, delay: time.Duration) -> Radio,
 }
 
+// Create a new Radio element with the given id.
 radio :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Radio {
 	use_component_radio()
 	e := Radio{new_node(734, loc), &radio_vt}
@@ -257,6 +281,8 @@ radio_vt := Radio_VT {
 	},
 }
 
+// A Radio group element.
+//
 // Radio_Group is gpui_kit::component::radio::RadioGroup.
 Radio_Group :: struct {
 	using el: Element,
@@ -267,15 +293,27 @@ Radio_Group_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Radio_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Radio_Group),
 	using t_styled: ^Styled_Trait(Radio_Group),
+	// Add a child Radio element.
 	child: proc(e: Radio_Group, child: Radio_Into) -> Radio_Group,
+	// Add multiple child Radio elements.
 	children: proc(e: Radio_Group, children: []Radio_Into) -> Radio_Group,
+	// Set the disabled state.
 	disabled: proc(e: Radio_Group, disabled: bool) -> Radio_Group,
+	// Set the layout of the Radio group. Default is `Axis::Vertical`.
 	layout: proc(e: Radio_Group, layout: Axis) -> Radio_Group,
+	// Handle a requested selected index from pointer or keyboard activation.
+	//
+	// This is a controlled value: the owner must write the requested value for it to show. Disabled
+	// controls do not call the handler. This and `->on_click` share one callback; chaining them
+	// replaces the previous handler instead of calling both.
 	on_change: proc(e: Radio_Group, handler: Handler) -> Radio_Group,
+	// Alias for `->on_change`. The last callback registered with either name wins.
 	on_click: proc(e: Radio_Group, handler: Handler) -> Radio_Group,
+	// Set the selected index.
 	selected_index: proc(e: Radio_Group, index: Maybe(int)) -> Radio_Group,
 }
 
+// Creates a radio group with vertical layout and no selected item.
 radio_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Radio_Group {
 	use_component_radio()
 	e := Radio_Group{new_node(736, loc), &radio_group_vt}
@@ -285,6 +323,7 @@ radio_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Rad
 	return e
 }
 
+// Create a new Radio group with Horizontal layout.
 radio_group_horizontal :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Radio_Group {
 	use_component_radio()
 	e := Radio_Group{new_node(735, loc), &radio_group_vt}
@@ -294,6 +333,7 @@ radio_group_horizontal :: proc(id: Id, flags: ..Style_Flag, loc := #caller_locat
 	return e
 }
 
+// Create a new Radio group with default Vertical layout.
 radio_group_vertical :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Radio_Group {
 	use_component_radio()
 	e := Radio_Group{new_node(737, loc), &radio_group_vt}

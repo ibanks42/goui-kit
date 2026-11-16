@@ -73,6 +73,7 @@ def pname(name):
 class Go:
     def __init__(self, m, od, outdir):
         self.m, self.od, self.out = m, od, outdir
+        self.docs = self.doc_names = None  # gk_doc.Docs and its link resolver (gkgen.py sets them)
         self.names = {}
         self.collisions = []
         self.files = {}
@@ -576,7 +577,13 @@ class Go:
         return out
 
     def doc(self, it, name):
-        return f"// {name} is {it.get('callee') or it['id']}."
+        """The comment above a function: GPUI-kit's own doc of it (gen/gk_doc.py), then what it is
+        upstream, last."""
+        head = f"// {name} is {it.get('callee') or it['id']}."
+        body = self.docs.comment(it.get("doc"), "go", self.doc_names, it["id"]) if self.docs else []
+        if not body:
+            return head
+        return "\n".join([("// " + x).rstrip() for x in body] + ["//", head])
 
     # ------------------------------------------------------------ emit
 
@@ -743,7 +750,9 @@ class Go:
                 if runtime_child and it["args"][0]["desc"][0] == "list":
                     ps[-1] = ps[-1].replace(" []Element", " ...Element")
                     args[-1] += "..."
-                self.add(f"func (e {T}) {name}({', '.join(ps)}) {T} {{ {fn}({', '.join(['e.n'] + args)}); return e }}")
+                body = self.docs.comment(it.get("doc"), "go", self.doc_names, it["id"]) if self.docs else []
+                self.add(*[("// " + x).rstrip() for x in body],
+                         f"func (e {T}) {name}({', '.join(ps)}) {T} {{ {fn}({', '.join(['e.n'] + args)}); return e }}")
             self.add("")
         if node.get("oneof_of"):
             pass

@@ -645,7 +645,12 @@ committed files.
    builds (`DivInspector`, `ToggleInspector`, `Styled::debug`) are skipped as `feature-off`.
    rustdoc records each item's cfg; the generator keeps the target part and writes
    `#[cfg(..)]` on decoders of platform-only types (the Wayland layer shell exists on Linux
-   only).
+   only). The doc comments go to `api/rustdoc/docs.json.gz`: `gen/gk_doc.py` writes them above
+   the Go functions and Odin procedures, so an editor shows GPUI-kit's documentation on hover.
+   Intra-doc links become the binding's names, Rust examples are left out, and a sentence about
+   Rust-only mechanics (`cx.notify()`, borrowing, `crate::` paths) is rewritten or left out;
+   `gen/out/doc-rust-only.md` lists what was left out, so a new GPUI-kit version's additions
+   are easy to review.
 2. **Classify.** Rules plus `api/overrides.toml` plus `api/quarantine.json` give
    `gk.api.json`: every type, enum, record, element, state type, method, closure shape and
    bridge, with its class, the rule that bound it or the reason it is skipped, wire types,

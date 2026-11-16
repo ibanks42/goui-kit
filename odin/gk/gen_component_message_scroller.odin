@@ -3,6 +3,8 @@ package gk
 
 import "core:time"
 
+// A virtualized message list with optional scrollbar and jump-to-latest UI.
+//
 // Message_Scroller is gpui_kit::component::message_scroller::MessageScroller.
 Message_Scroller :: struct {
 	using el: Element,
@@ -13,18 +15,40 @@ Message_Scroller_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Message_Scroller),
 	using t_styled_ext: ^Styled_Ext_Trait(Message_Scroller),
 	using t_styled: ^Styled_Trait(Message_Scroller),
+	// Enable or disable the built-in jump-to-latest button.
 	jump_button: proc(e: Message_Scroller, jump_button: bool) -> Message_Scroller,
+	// Enable or disable the virtual-list scrollbar.
 	scrollbar: proc(e: Message_Scroller, scrollbar: bool) -> Message_Scroller,
+	// Fade the transcript's bottom edge into `color`.
+	//
+	// A partially visible row melts into the surface behind the scroller instead of clipping mid-line.
+	// The fade shows only while the reader is away from the live edge — at the bottom nothing is
+	// clipped. Pass the color of that surface; the fade is off by default and sits under the jump
+	// button.
 	with_bottom_fade: proc(e: Message_Scroller, color: Color) -> Message_Scroller,
+	// Refine the viewport that contains the list and scrollbar.
 	with_content_style: proc(e: Message_Scroller, style: Style_Refinement) -> Message_Scroller,
+	// Set the label used by the built-in jump-to-latest button.
 	with_jump_button_label: proc(e: Message_Scroller, label: string) -> Message_Scroller,
+	// Customize the built-in jump button without replacing its scroll action.
+	//
+	// The callback receives the fully configured Button, so its variant, semantic size, icon, tooltip,
+	// or instance styling may be adjusted.
 	with_jump_button_renderer: proc(e: Message_Scroller, renderer: Decorate) -> Message_Scroller,
+	// Refine the built-in jump-to-latest button after its defaults.
 	with_jump_button_style: proc(e: Message_Scroller, style: Style_Refinement) -> Message_Scroller,
+	// Set how long the built-in jump button takes to enter or leave.
+	//
+	// A zero duration disables its transition. Reduced-motion preferences always adopt the final state
+	// immediately.
 	with_jump_button_transition: proc(e: Message_Scroller, duration: time.Duration) -> Message_Scroller,
+	// Refine the GPUI list element used to render rows.
 	with_list_style: proc(e: Message_Scroller, style: Style_Refinement) -> Message_Scroller,
+	// Refine the full-width wrapper around every rendered row.
 	with_row_style: proc(e: Message_Scroller, style: Style_Refinement) -> Message_Scroller,
 }
 
+// Create a message scroller with a renderer for each row.
 message_scroller :: proc(id: Id, state: Message_Scroller_State, renderer: Row_Source, flags: ..Style_Flag, loc := #caller_location) -> Message_Scroller {
 	use_component_message_scroller()
 	e := Message_Scroller{new_node(849, loc), &message_scroller_vt}

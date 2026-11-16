@@ -3,6 +3,8 @@ package gk
 
 import "core:time"
 
+// An unstyled accordion root for application-owned items.
+//
 // Base_Accordion is gpui_kit::base::Accordion.
 Base_Accordion :: struct {
 	using el: Element,
@@ -37,6 +39,8 @@ base_accordion_vt := Base_Accordion_VT {
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Base_Accordion))&stateful_interactive_element_any,
 }
 
+// An unstyled heading that owns the trigger for one accordion item.
+//
 // Accordion_Header is gpui_kit::base::AccordionHeader.
 Accordion_Header :: struct {
 	using el: Element,
@@ -79,6 +83,8 @@ accordion_header_vt := Accordion_Header_VT {
 	},
 }
 
+// An unstyled accordion item connecting one trigger with its panel content.
+//
 // Base_Accordion_Item is gpui_kit::base::AccordionItem.
 Base_Accordion_Item :: struct {
 	using el: Element,
@@ -131,6 +137,8 @@ base_accordion_item_vt := Base_Accordion_Item_VT {
 	},
 }
 
+// An unstyled accordion panel with controlled mounting.
+//
 // Accordion_Panel is gpui_kit::base::AccordionPanel.
 Accordion_Panel :: struct {
 	using el: Element,
@@ -177,6 +185,11 @@ accordion_panel_vt := Accordion_Panel_VT {
 	},
 }
 
+// An unstyled accordion trigger with controlled expanded state.
+//
+// The application owns the title, disclosure icon, content, layout, and animation. Activating the
+// trigger requests the opposite of `open`.
+//
 // Accordion_Trigger is gpui_kit::base::AccordionTrigger.
 Accordion_Trigger :: struct {
 	using el: Element,
@@ -191,6 +204,7 @@ Accordion_Trigger_VT :: struct {
 	using t_interactive_element: ^Interactive_Element_Trait(Accordion_Trigger),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Accordion_Trigger),
 	disabled: proc(e: Accordion_Trigger, disabled: bool) -> Accordion_Trigger,
+	// Handles a requested change to the controlled expanded state.
 	on_change: proc(e: Accordion_Trigger, handler: Handler) -> Accordion_Trigger,
 	open: proc(e: Accordion_Trigger, open: bool) -> Accordion_Trigger,
 }
@@ -229,6 +243,8 @@ accordion_trigger_vt := Accordion_Trigger_VT {
 	},
 }
 
+// Alert-dialog specialization of the Base modal host.
+//
 // Base_Alert_Dialog is gpui_kit::base::AlertDialog.
 Base_Alert_Dialog :: struct {
 	using el: Element,
@@ -317,6 +333,8 @@ base_alert_dialog_vt := Base_Alert_Dialog_VT {
 	},
 }
 
+// Wrapper that dispatches the alert dialog's confirm action.
+//
 // Alert_Dialog_Action is gpui_kit::base::AlertDialogAction.
 Alert_Dialog_Action :: struct {
 	using el: Element,
@@ -595,6 +613,8 @@ alert_dialog_trigger_vt := Alert_Dialog_Trigger_VT {
 	},
 }
 
+// An unstyled avatar root that renders its image slot or fallback slot.
+//
 // Base_Avatar is gpui_kit::base::Avatar.
 Base_Avatar :: struct {
 	using el: Element,
@@ -640,6 +660,8 @@ base_avatar_vt := Base_Avatar_VT {
 	},
 }
 
+// An unstyled avatar fallback slot for initials or an application-owned icon.
+//
 // Avatar_Fallback is gpui_kit::base::AvatarFallback.
 Avatar_Fallback :: struct {
 	using el: Element,
@@ -675,6 +697,8 @@ avatar_fallback_vt := Avatar_Fallback_VT {
 	t_parent_element = cast(^Parent_Element_Trait(Avatar_Fallback))&parent_element_any,
 }
 
+// An unstyled avatar image slot.
+//
 // Avatar_Image is gpui_kit::base::AvatarImage.
 Avatar_Image :: struct {
 	using el: Element,
@@ -703,6 +727,11 @@ avatar_image_vt := Avatar_Image_VT {
 	t_interactive_element = cast(^Interactive_Element_Trait(Avatar_Image))&interactive_element_any,
 }
 
+// An unstyled button that owns interaction, focus, keyboard, and accessibility behavior.
+//
+// Layout and visual states are intentionally supplied by the application through GPUI's `Styled`
+// API.
+//
 // Base_Button is gpui_kit::base::Button.
 Base_Button :: struct {
 	using el: Element,
@@ -793,15 +822,38 @@ Base_Button_VT :: struct {
 	tooltip: proc(e: Base_Button, build_tooltip: View_Or_Tooltip) -> Base_Button,
 	tooltip_show_delay: proc(e: Base_Button, delay: time.Duration) -> Base_Button,
 	track_scroll: proc(e: Base_Button, scroll_handle: Scroll_Handle) -> Base_Button,
+	// Sets the label exposed to accessibility clients.
 	accessibility_label: proc(e: Base_Button, label: string) -> Base_Button,
+	// Sets whether the button ignores pointer and keyboard activation.
+	//
+	// Disabled buttons are skipped during Tab traversal. If this button already owns focus when it
+	// becomes disabled, it retains the focus binding until focus moves away, so keyboard traversal can
+	// continue in either direction.
 	disabled: proc(e: Base_Button, disabled: bool) -> Base_Button,
+	// Sets whether pressing the button moves focus onto it. The default is `true`.
+	//
+	// A non-focusable button leaves focus wherever it already is, which keeps a composed control from
+	// flickering its focus ring on every press. It also gives up Enter and Space activation, so only
+	// use it for a button that a focused sibling already exposes to the keyboard, such as a number
+	// input's step buttons.
 	focusable: proc(e: Base_Button, focusable: bool) -> Base_Button,
+	// Sets the activation handler for pointer, Enter, and Space input.
 	on_click: proc(e: Base_Button, handler: Handler) -> Base_Button,
+	// Overrides the accessibility role. The default is `Button`.
 	role: proc(e: Base_Button, role: Role_Override) -> Base_Button,
+	// Sets the application-controlled selected presentation state.
+	//
+	// This supports persistent trigger presentation while an associated menu or popover is open. It is
+	// distinct from momentary `active`, Toggle's `pressed` state, and accessibility toggle metadata;
+	// selecting a Button does not automatically set `aria_toggled`.
 	selected: proc(e: Base_Button, selected: bool) -> Base_Button,
+	// Defines application-owned styles for the button's semantic states.
 	styles: proc(e: Base_Button, build: Button_Styles) -> Base_Button,
+	// Sets the focus traversal index. The default is `0`.
 	tab_index: proc(e: Base_Button, tab_index: int) -> Base_Button,
+	// Sets whether the button participates in keyboard focus traversal.
 	tab_stop: proc(e: Base_Button, tab_stop: bool) -> Base_Button,
+	// Uses a caller-owned focus handle instead of creating keyed state.
 	track_focus: proc(e: Base_Button, focus_handle: Focus_Handle) -> Base_Button,
 }
 
@@ -951,6 +1003,8 @@ base_button_vt := Base_Button_VT {
 	},
 }
 
+// Semantic styles supported by `Base_Button`.
+//
 // Button_Styles is gpui_kit::base::ButtonStyles.
 Button_Styles :: struct {
 	using nd: Value,
@@ -958,7 +1012,9 @@ Button_Styles :: struct {
 }
 
 Button_Styles_VT :: struct {
+	// Refines the root style when the button is disabled.
 	disabled: proc(e: Button_Styles, build: State_Style) -> Button_Styles,
+	// Refines the root style when the button is selected.
 	selected: proc(e: Button_Styles, build: State_Style) -> Button_Styles,
 }
 
@@ -981,6 +1037,10 @@ button_styles_vt := Button_Styles_VT {
 	},
 }
 
+// Complete unstyled calendar structure and behavior.
+//
+// Base owns navigation, view switching, grids, disabled/selection state and click handling.
+//
 // Base_Calendar is gpui_kit::base::Calendar.
 Base_Calendar :: struct {
 	using el: Element,
@@ -1032,6 +1092,8 @@ base_calendar_vt := Base_Calendar_VT {
 	},
 }
 
+// An unstyled, pre-wired calendar item passed to the item slot.
+//
 // Calendar_Item is gpui_kit::base::CalendarItem.
 Calendar_Item :: struct {
 	using el: Element,
@@ -1045,6 +1107,7 @@ Calendar_Item_VT :: struct {
 	using t_styled: ^Styled_Trait(Calendar_Item),
 	using t_interactive_element: ^Interactive_Element_Trait(Calendar_Item),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Calendar_Item),
+	// Remove the default label so a styled facade can provide custom content.
 	clear_children: proc(e: Calendar_Item) -> Calendar_Item,
 }
 
@@ -1072,6 +1135,11 @@ calendar_item_vt := Calendar_Item_VT {
 	},
 }
 
+// An unstyled checkbox that owns toggle, focus, keyboard, and accessibility behavior.
+//
+// The application owns all layout and visual state rendering. Child elements can present the check
+// mark, indeterminate mark, label, or any other design-system UI.
+//
 // Base_Checkbox is gpui_kit::base::Checkbox.
 Base_Checkbox :: struct {
 	using el: Element,
@@ -1162,19 +1230,39 @@ Base_Checkbox_VT :: struct {
 	tooltip: proc(e: Base_Checkbox, build_tooltip: View_Or_Tooltip) -> Base_Checkbox,
 	tooltip_show_delay: proc(e: Base_Checkbox, delay: time.Duration) -> Base_Checkbox,
 	track_scroll: proc(e: Base_Checkbox, scroll_handle: Scroll_Handle) -> Base_Checkbox,
+	// Sets the label exposed to accessibility clients.
+	//
+	// A checkbox without text children has no accessible name, so set this whenever it is drawn
+	// without visible text.
 	accessibility_label: proc(e: Base_Checkbox, label: string) -> Base_Checkbox,
+	// Sets the checked state, clearing any indeterminate state.
 	checked: proc(e: Base_Checkbox, checked: bool) -> Base_Checkbox,
+	// Sets whether pointer and keyboard activation are ignored.
 	disabled: proc(e: Base_Checkbox, disabled: bool) -> Base_Checkbox,
+	// Sets or clears the indeterminate state.
+	//
+	// Clearing indeterminate leaves the checkbox unchecked. Applications with a controlled value can
+	// call `->state` when another fallback is desired.
 	indeterminate: proc(e: Base_Checkbox, indeterminate: bool) -> Base_Checkbox,
+	// Handles an activation with the next controlled state.
+	//
+	// An indeterminate checkbox becomes checked when activated. The activating `ClickEvent` is
+	// reported so callers can read its modifiers, for example to extend a selection.
 	on_change: proc(e: Base_Checkbox, handler: Handler) -> Base_Checkbox,
 	role: proc(e: Base_Checkbox, role: Role_Override) -> Base_Checkbox,
+	// Sets the controlled semantic state.
 	state: proc(e: Base_Checkbox, state: Checkbox_State) -> Base_Checkbox,
+	// Defines application-owned styles for the checkbox's semantic states.
 	styles: proc(e: Base_Checkbox, build: Checkbox_Styles) -> Base_Checkbox,
+	// Sets the focus traversal index. The default is `0`.
 	tab_index: proc(e: Base_Checkbox, tab_index: int) -> Base_Checkbox,
+	// Sets whether this checkbox participates in keyboard focus traversal.
 	tab_stop: proc(e: Base_Checkbox, tab_stop: bool) -> Base_Checkbox,
+	// Uses a caller-owned focus handle instead of creating keyed state.
 	track_focus: proc(e: Base_Checkbox, focus_handle: Focus_Handle) -> Base_Checkbox,
 }
 
+// Creates an unchecked checkbox with a stable element identifier.
 base_checkbox :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Checkbox {
 	use_base_checkbox()
 	e := Base_Checkbox{new_node(293, loc), &base_checkbox_vt}
@@ -1326,6 +1414,11 @@ base_checkbox_vt := Base_Checkbox_VT {
 	},
 }
 
+// An unstyled checkbox indicator part with typed checkbox-state projection.
+//
+// This renders its `Div` directly. Applications own its geometry, visual presentation, and
+// children.
+//
 // Checkbox_Indicator is gpui_kit::base::CheckboxIndicator.
 Checkbox_Indicator :: struct {
 	using el: Element,
@@ -1385,6 +1478,8 @@ checkbox_indicator_vt := Checkbox_Indicator_VT {
 	},
 }
 
+// Semantic styles supported by `Checkbox_Indicator`.
+//
 // Checkbox_Indicator_Styles is gpui_kit::base::CheckboxIndicatorStyles.
 Checkbox_Indicator_Styles :: struct {
 	using nd: Value,
@@ -1421,6 +1516,8 @@ checkbox_indicator_styles_vt := Checkbox_Indicator_Styles_VT {
 	},
 }
 
+// Semantic styles supported by `Base_Checkbox`.
+//
 // Checkbox_Styles is gpui_kit::base::CheckboxStyles.
 Checkbox_Styles :: struct {
 	using nd: Value,
@@ -1428,8 +1525,11 @@ Checkbox_Styles :: struct {
 }
 
 Checkbox_Styles_VT :: struct {
+	// Refines the root style when the checkbox is checked.
 	checked: proc(e: Checkbox_Styles, build: State_Style) -> Checkbox_Styles,
+	// Refines the root style when the checkbox is disabled.
 	disabled: proc(e: Checkbox_Styles, build: State_Style) -> Checkbox_Styles,
+	// Refines the root style when the checkbox is indeterminate.
 	indeterminate: proc(e: Checkbox_Styles, build: State_Style) -> Checkbox_Styles,
 }
 
@@ -1457,6 +1557,8 @@ checkbox_styles_vt := Checkbox_Styles_VT {
 	},
 }
 
+// An unstyled controlled region whose content can be expanded or collapsed.
+//
 // Base_Collapsible is gpui_kit::base::Collapsible.
 Base_Collapsible :: struct {
 	using el: Element,
@@ -1470,6 +1572,7 @@ Base_Collapsible_VT :: struct {
 	using t_parent_element: ^Parent_Element_Trait(Base_Collapsible),
 	content: proc(e: Base_Collapsible, content: Element) -> Base_Collapsible,
 	open: proc(e: Base_Collapsible, open: bool) -> Base_Collapsible,
+	// Keeps content mounted and reveals it at normalized `progress`.
 	reveal: proc(e: Base_Collapsible, id: Id, progress: f32) -> Base_Collapsible,
 }
 
@@ -1511,6 +1614,11 @@ base_collapsible_vt := Base_Collapsible_VT {
 	},
 }
 
+// An unstyled controlled color-picker root.
+//
+// Applications own the trigger, palette, popup, and every visual decision. This root owns focus,
+// accessibility semantics, and the keyboard behavior that opens and dismisses the picker.
+//
 // Base_Color_Picker is gpui_kit::base::ColorPicker.
 Base_Color_Picker :: struct {
 	using el: Element,
@@ -1603,11 +1711,19 @@ Base_Color_Picker_VT :: struct {
 	tooltip: proc(e: Base_Color_Picker, build_tooltip: View_Or_Tooltip) -> Base_Color_Picker,
 	tooltip_show_delay: proc(e: Base_Color_Picker, delay: time.Duration) -> Base_Color_Picker,
 	track_scroll: proc(e: Base_Color_Picker, scroll_handle: Scroll_Handle) -> Base_Color_Picker,
+	// Sets the accessible name exposed by the controlled root.
 	accessibility_label: proc(e: Base_Color_Picker, label: string) -> Base_Color_Picker,
+	// Prevents keyboard interaction and removes the trigger from tab traversal.
 	disabled: proc(e: Base_Color_Picker, disabled: bool) -> Base_Color_Picker,
+	// Handles requests to update the controlled open state.
+	//
+	// Confirm toggles the picker and Cancel dismisses an open one.
 	on_open_change: proc(e: Base_Color_Picker, handler: Handler) -> Base_Color_Picker,
+	// Sets the application-controlled open state.
 	open: proc(e: Base_Color_Picker, open: bool) -> Base_Color_Picker,
+	// Overrides the accessibility role. The default is `Button`.
 	role: proc(e: Base_Color_Picker, role: Role_Override) -> Base_Color_Picker,
+	// Supplies the focus handle for the picker trigger.
 	track_focus: proc(e: Base_Color_Picker, focus_handle: Focus_Handle) -> Base_Color_Picker,
 }
 
@@ -1739,6 +1855,11 @@ base_color_picker_vt := Base_Color_Picker_VT {
 	},
 }
 
+// An unstyled selectable color in a picker's palette.
+//
+// The application paints the color; this part carries the radio semantics, the accessible hex
+// name, and the hover and activation callbacks a picker uses to preview and commit a color.
+//
 // Color_Swatch is gpui_kit::base::ColorSwatch.
 Color_Swatch :: struct {
 	using el: Element,
@@ -1828,13 +1949,21 @@ Color_Swatch_VT :: struct {
 	tooltip: proc(e: Color_Swatch, build_tooltip: View_Or_Tooltip) -> Color_Swatch,
 	tooltip_show_delay: proc(e: Color_Swatch, delay: time.Duration) -> Color_Swatch,
 	track_scroll: proc(e: Color_Swatch, scroll_handle: Scroll_Handle) -> Color_Swatch,
+	// Overrides the accessible name. The default is the color's hex value.
 	accessibility_label: proc(e: Color_Swatch, label: string) -> Color_Swatch,
+	// Sets whether pointer and keyboard activation are ignored.
 	disabled: proc(e: Color_Swatch, disabled: bool) -> Color_Swatch,
+	// Handles activation with the swatch's color.
 	on_click: proc(e: Color_Swatch, handler: Handler) -> Color_Swatch,
+	// Handles hover enter and exit with the swatch's color.
 	on_hover: proc(e: Color_Swatch, handler: Handler) -> Color_Swatch,
+	// Overrides the accessibility role. The default is `RadioButton`.
 	role: proc(e: Color_Swatch, role: Role_Override) -> Color_Swatch,
+	// Marks this swatch as the picker's current color.
 	selected: proc(e: Color_Swatch, selected: bool) -> Color_Swatch,
+	// Sets the focus traversal index. The default is `0`.
 	tab_index: proc(e: Color_Swatch, tab_index: int) -> Color_Swatch,
+	// Sets whether this swatch participates in keyboard focus traversal.
 	tab_stop: proc(e: Color_Swatch, tab_stop: bool) -> Color_Swatch,
 }
 
@@ -1974,6 +2103,11 @@ color_swatch_vt := Color_Swatch_VT {
 	},
 }
 
+// An unstyled controlled combobox root.
+//
+// Applications own the trigger, popup, searchable collection, selection, and appearance. This root
+// owns combobox semantics and keyboard focus transfer.
+//
 // Base_Combobox is gpui_kit::base::Combobox.
 Base_Combobox :: struct {
 	using el: Element,
@@ -1988,7 +2122,12 @@ Base_Combobox_VT :: struct {
 	content_focus_handle: proc(e: Base_Combobox, focus_handle: Focus_Handle) -> Base_Combobox,
 	disabled: proc(e: Base_Combobox, disabled: bool) -> Base_Combobox,
 	focus_handle: proc(e: Base_Combobox, focus_handle: Focus_Handle) -> Base_Combobox,
+	// Handles the Confirm action while the combobox is open.
 	on_confirm: proc(e: Base_Combobox, handler: Handler) -> Base_Combobox,
+	// Handles a dismissal requested through the Cancel action.
+	//
+	// This runs before the controlled open state is asked to close, so a combobox that commits its
+	// pending value on dismissal can still read that value here.
 	on_dismiss: proc(e: Base_Combobox, handler: Handler) -> Base_Combobox,
 	on_open_change: proc(e: Base_Combobox, handler: Handler) -> Base_Combobox,
 	open: proc(e: Base_Combobox, open: bool) -> Base_Combobox,
@@ -2046,6 +2185,9 @@ base_combobox_vt := Base_Combobox_VT {
 	},
 }
 
+// Unstyled controlled date-picker root. Applications own its trigger, calendar, positioning, and
+// visual presentation; Base owns focus and open/dismiss keyboard behavior.
+//
 // Base_Date_Picker is gpui_kit::base::DatePicker.
 Base_Date_Picker :: struct {
 	using el: Element,
@@ -2118,6 +2260,8 @@ decrement_default :: proc(loc := #caller_location) -> Decrement {
 decrement_vt := Decrement_VT {
 }
 
+// Unstyled modal host owning focus, keyboard actions, dismissal, and callback ordering.
+//
 // Base_Dialog is gpui_kit::base::Dialog.
 Base_Dialog :: struct {
 	using el: Element,
@@ -2129,6 +2273,7 @@ Base_Dialog_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Dialog),
 	using t_styled: ^Styled_Trait(Base_Dialog),
 	using t_parent_element: ^Parent_Element_Trait(Base_Dialog),
+	// Names the dialog for accessibility clients (its title, typically).
 	accessibility_label: proc(e: Base_Dialog, label: string) -> Base_Dialog,
 	backdrop: proc(e: Base_Dialog, element: Element) -> Base_Dialog,
 	close_on_backdrop_press: proc(e: Base_Dialog, value: bool) -> Base_Dialog,
@@ -2218,6 +2363,8 @@ base_dialog_vt := Base_Dialog_VT {
 	},
 }
 
+// Unstyled backdrop part rendered behind a dialog popup.
+//
 // Dialog_Backdrop is gpui_kit::base::DialogBackdrop.
 Dialog_Backdrop :: struct {
 	using el: Element,
@@ -2253,6 +2400,8 @@ dialog_backdrop_vt := Dialog_Backdrop_VT {
 	t_parent_element = cast(^Parent_Element_Trait(Dialog_Backdrop))&parent_element_any,
 }
 
+// Wrapper that dispatches the dialog cancel action when activated.
+//
 // Base_Dialog_Close is gpui_kit::base::DialogClose.
 Base_Dialog_Close :: struct {
 	using el: Element,
@@ -2264,6 +2413,11 @@ Base_Dialog_Close_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Dialog_Close),
 	using t_parent_element: ^Parent_Element_Trait(Base_Dialog_Close),
 	using t_styled: ^Styled_Trait(Base_Dialog_Close),
+	// Styles a button with the accessible name "Close" and cancel activation.
+	//
+	// The supplied button already supports pointer, keyboard, and accessibility activation. The
+	// builder only needs to supply presentation. The wrapper does not also handle clicks when a
+	// trigger is supplied.
 	trigger: proc(e: Base_Dialog_Close, build: Base_Button) -> Base_Dialog_Close,
 }
 
@@ -2294,6 +2448,8 @@ base_dialog_close_vt := Base_Dialog_Close_VT {
 	},
 }
 
+// Unstyled descriptive-content slot for a dialog surface.
+//
 // Base_Dialog_Description is gpui_kit::base::DialogDescription.
 Base_Dialog_Description :: struct {
 	using el: Element,
@@ -2329,6 +2485,8 @@ base_dialog_description_vt := Base_Dialog_Description_VT {
 	t_parent_element = cast(^Parent_Element_Trait(Base_Dialog_Description))&parent_element_any,
 }
 
+// Unstyled popup part containing dialog content.
+//
 // Dialog_Popup is gpui_kit::base::DialogPopup.
 Dialog_Popup :: struct {
 	using el: Element,
@@ -2364,6 +2522,8 @@ dialog_popup_vt := Dialog_Popup_VT {
 	t_parent_element = cast(^Parent_Element_Trait(Dialog_Popup))&parent_element_any,
 }
 
+// Unstyled title slot for a dialog surface.
+//
 // Base_Dialog_Title is gpui_kit::base::DialogTitle.
 Base_Dialog_Title :: struct {
 	using el: Element,
@@ -2399,6 +2559,8 @@ base_dialog_title_vt := Base_Dialog_Title_VT {
 	t_parent_element = cast(^Parent_Element_Trait(Base_Dialog_Title))&parent_element_any,
 }
 
+// Unstyled trigger that owns pointer activation for opening a dialog.
+//
 // Dialog_Trigger is gpui_kit::base::DialogTrigger.
 Dialog_Trigger :: struct {
 	using el: Element,
@@ -2432,6 +2594,8 @@ dialog_trigger_vt := Dialog_Trigger_VT {
 	},
 }
 
+// An unstyled source-code editor.
+//
 // Editor is gpui_kit::base::Editor.
 Editor :: struct {
 	using el: Element,
@@ -2453,6 +2617,17 @@ editor :: proc(state: Editor_State, loc := #caller_location) -> Editor {
 editor_vt := Editor_VT {
 }
 
+// Where one item sits in a grid layout, in zero-based grid cells.
+//
+// `col` and `row` are the item's leading column and top row, counted from zero; `col_span` and
+// `row_span` are how many columns and rows it covers. Unlike GPUI's `col_start`, which names a
+// one-based CSS grid line, `col` is a cell index, so a layout reads the same in code and in its
+// saved form.
+//
+// A layout is a list of areas keyed by `id`, which is what an application persists to restore a
+// user's arrangement. Every field after the place has a serde default, so a layout saved with only
+// the place still loads.
+//
 // Grid_Area is gpui_kit::base::GridArea.
 Grid_Area :: struct {
 	using nd: Value,
@@ -2460,15 +2635,23 @@ Grid_Area :: struct {
 }
 
 Grid_Area_VT :: struct {
+	// The leading column, from zero.
 	col: proc(e: Grid_Area, col: int) -> Grid_Area,
+	// How many columns the item covers.
 	col_span: proc(e: Grid_Area, col_span: int) -> Grid_Area,
+	// Lock the item in place; see `->locked`.
 	locked: proc(e: Grid_Area, locked: bool) -> Grid_Area,
+	// The most columns and rows a resize may give the item.
 	max_span: proc(e: Grid_Area, col_span: int, row_span: int) -> Grid_Area,
+	// The fewest columns and rows a resize may leave the item.
 	min_span: proc(e: Grid_Area, col_span: int, row_span: int) -> Grid_Area,
+	// The top row, from zero.
 	row: proc(e: Grid_Area, row: int) -> Grid_Area,
+	// How many rows the item covers.
 	row_span: proc(e: Grid_Area, row_span: int) -> Grid_Area,
 }
 
+// A one-cell area at the top-leading corner; place and size it with the builders.
 grid_area :: proc(id: string, loc := #caller_location) -> Grid_Area {
 	e := Grid_Area{new_value(321, loc), &grid_area_vt}
 	o := node_args()
@@ -2517,6 +2700,11 @@ grid_area_vt := Grid_Area_VT {
 	},
 }
 
+// One item of a `Grid_Layout`, paired with the `Grid_Area` of the same id.
+//
+// The item fills the cells its area covers. Style it to match its content — round it like the card
+// inside it, say — so the dragged and selected styles follow the same corners.
+//
 // Grid_Item is gpui_kit::base::GridItem.
 Grid_Item :: struct {
 	using nd: Value,
@@ -2528,7 +2716,10 @@ Grid_Item_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Grid_Item),
 	using t_styled: ^Styled_Trait(Grid_Item),
 	using t_parent_element: ^Parent_Element_Trait(Grid_Item),
+	// Name the item for assistive technology — usually its visible title.
 	accessibility_label: proc(e: Grid_Item, label: string) -> Grid_Item,
+	// Move the item only from a `gk.grid_drag_handle` inside it, leaving the rest of its content free
+	// for its own pointer interaction.
 	drag_handle_only: proc(e: Grid_Item, handle_only: bool) -> Grid_Item,
 }
 
@@ -2558,6 +2749,24 @@ grid_item_vt := Grid_Item_VT {
 	},
 }
 
+// A grid whose items the user drags and resizes, the way dashboards and widget boards are
+// arranged.
+//
+// The `Grid_Layout_State` owns where every item sits; this element pairs each `Grid_Item` with the
+// `Grid_Area` of the same id and places it there. An item without an area is not drawn.
+//
+// Like every Base control it paints nothing of its own. Gaps come from the element's own `gap`,
+// `gap_x` and `gap_y`, as on a CSS grid; the look of the drop placeholder, the resize handle, and
+// the dragged and selected items, and the motion items settle with, come from the builders below.
+// GPUI Component's `grid_layout` supplies all of them from the theme.
+//
+// The grid is as wide as its container and as tall as its rows. Put it in a scrollable region when
+// the rows can outgrow the window.
+//
+// Click an item to select it. With the grid focused, the arrow keys move the selected item, Shift
+// with the arrow keys resizes it, Tab and Shift-Tab move the selection — and out of the grid past
+// either end — and Escape cancels a drag.
+//
 // Grid_Layout is gpui_kit::base::GridLayout.
 Grid_Layout :: struct {
 	using el: Element,
@@ -2567,16 +2776,38 @@ Grid_Layout :: struct {
 Grid_Layout_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Grid_Layout),
 	using t_styled: ^Styled_Trait(Grid_Layout),
+	// Name the grid for assistive technology. Defaults to "Grid layout".
 	accessibility_label: proc(e: Grid_Layout, label: string) -> Grid_Layout,
+	// The style of the item under the pointer, layered over its own.
 	dragging_item: proc(e: Grid_Layout, build: State_Style) -> Grid_Layout,
+	// The style of the selected item while the keyboard drives the grid, layered over
+	// `->selected_item`: the focus ring. A pointer press selects without showing it.
 	focused_item: proc(e: Grid_Layout, build: State_Style) -> Grid_Layout,
+	// Add an item, placed where the area with its id says.
 	item: proc(e: Grid_Layout, item: Grid_Item) -> Grid_Layout,
+	// Add several items.
 	items: proc(e: Grid_Layout, items: []Grid_Item) -> Grid_Layout,
+	// What marks the cells the dragged item will land in. It fills those cells; without one, nothing
+	// marks them.
 	placeholder: proc(e: Grid_Layout, render: Element) -> Grid_Layout,
+	// Lay the items out over `cols` columns for display, without changing the layout the state holds —
+	// a one-column stack for a narrow window, say.
+	//
+	// The areas are derived from the state's: each is fitted to the width and the result compacted
+	// upward in reading order, with locks set aside. While reflowed the grid is read-only — items
+	// cannot be dragged, resized or moved from the keyboard — so nothing is saved at the narrower
+	// width. Selection still works.
 	reflow: proc(e: Grid_Layout, cols: int) -> Grid_Layout,
+	// What a resizable item shows in the trailing-bottom corner the pointer resizes it by. The corner
+	// works without one.
 	resize_handle: proc(e: Grid_Layout, render: Element) -> Grid_Layout,
+	// The height of one row. Defaults to `2.5rem`, so rows follow the application's zoom.
 	row_height: proc(e: Grid_Layout, row_height: f32) -> Grid_Layout,
+	// The style of the selected item, layered over its own — whether the pointer or the keyboard
+	// selected it. An editor shows which item its settings apply to with this.
 	selected_item: proc(e: Grid_Layout, build: State_Style) -> Grid_Layout,
+	// How items ease into their cells when the layout changes. Without one they move at once; the item
+	// under the pointer always tracks it exactly.
 	transition: proc(e: Grid_Layout, transition: Transition) -> Grid_Layout,
 }
 
@@ -2590,6 +2821,16 @@ grid_layout :: proc(id: Id, state: Grid_Layout_State, flags: ..Style_Flag, loc :
 	return e
 }
 
+// Create a `GridLayout` wearing this design system: the theme's medium spacing between items, its
+// move motion, a dashed drop placeholder, a resize grip in each resizable item's corner and a
+// raised dragged item.
+//
+// While the grid is editable — its items can be moved or resized — the selected item carries a
+// ring in the primary color, so an editor shows which item its settings apply to. While the
+// keyboard drives the grid the focus ring takes its place, never both. A read-only grid marks no
+// selection.
+//
+// Every part can still be overridden on the returned builder — `.gap_4()` for more room, say.
 kit_grid_layout :: proc(id: Id, state: Grid_Layout_State, flags: ..Style_Flag, loc := #caller_location) -> Grid_Layout {
 	use_base_grid_layout()
 	e := Grid_Layout{new_node(324, loc), &grid_layout_vt}
@@ -2664,6 +2905,9 @@ grid_layout_vt := Grid_Layout_VT {
 	},
 }
 
+// An unstyled popup with delayed hover behavior on desktop. On iOS and Android, tapping toggles it
+// and tapping outside dismisses it.
+//
 // Base_Hover_Card is gpui_kit::base::HoverCard.
 Base_Hover_Card :: struct {
 	using el: Element,
@@ -2745,6 +2989,11 @@ increment_default :: proc(loc := #caller_location) -> Increment {
 increment_vt := Increment_VT {
 }
 
+// An unstyled single-line text input.
+//
+// Applications that need a fully styled control can wrap this state with their own presentation or
+// use `gpui-component::Input`.
+//
 // Base_Input is gpui_kit::base::Input.
 Base_Input :: struct {
 	using el: Element,
@@ -2752,8 +3001,11 @@ Base_Input :: struct {
 }
 
 Base_Input_VT :: struct {
+	// Open a reference after a completed, unconsumed token click.
 	on_token_click: proc(e: Base_Input, listener: Handler) -> Base_Input,
+	// Report pointer presence over a token; hover never selects or edits.
 	on_token_hover: proc(e: Base_Input, listener: Handler) -> Base_Input,
+	// The element each atomic token renders as; the input keeps editing and history.
 	token: proc(e: Base_Input, render: Row_Source) -> Base_Input, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, inline_token_context: Inline_Token_Context) -> Element)
 }
 
@@ -2784,6 +3036,11 @@ base_input_vt := Base_Input_VT {
 	},
 }
 
+// The foundational input frame.
+//
+// It intentionally owns only input semantics, interaction forwarding, and normal children.
+// Applications remain responsible for all presentation.
+//
 // Input_Base is gpui_kit::base::InputBase.
 Input_Base :: struct {
 	using el: Element,
@@ -2839,6 +3096,17 @@ Input_Base_VT :: struct {
 	disabled: proc(e: Input_Base, disabled: bool) -> Input_Base,
 	focused: proc(e: Input_Base, focused: bool) -> Input_Base,
 	role: proc(e: Input_Base, role: Role_Override) -> Input_Base,
+	// Exposes an editor's native semantics through this frame's component ID.
+	//
+	// `editor` must identify the input, textarea or editor state rendered below this frame, without
+	// intervening element IDs. Anonymous layout wrappers are allowed. ID queries retain the frame's
+	// path, bounds and visibility. Role, label, value, checked/indeterminate, selected, expanded,
+	// disabled and focus facts come from the editor's existing native node and observed focus scope,
+	// not independently focusable addon controls. Native snapshot enumeration is unchanged, so
+	// role/label queries do not duplicate editors.
+	//
+	// This only declares an observation relationship with `test-support`; it never adds a native
+	// accessibility node or registers a focus handle.
 	semantic_owner: proc(e: Input_Base, editor: Entity_Id) -> Input_Base,
 	styles: proc(e: Input_Base, build: Input_Styles) -> Input_Base,
 }
@@ -2960,6 +3228,13 @@ input_styles_vt := Input_Styles_VT {
 	},
 }
 
+// An unstyled link that owns focus, activation, and accessibility semantics.
+//
+// `href` is target data, not an instruction to launch a browser. Applications inject navigation
+// through `->open_with`, allowing internal routes, embedded web views, and external browsers to
+// share the same behavior module. `href` is also not rendered as text; applications provide
+// visible content through the element's child slot.
+//
 // Base_Link is gpui_kit::base::Link.
 Base_Link :: struct {
 	using el: Element,
@@ -3013,13 +3288,23 @@ Base_Link_VT :: struct {
 	track_focus: proc(e: Base_Link, focus_handle: Focus_Handle) -> Base_Link,
 	window_control_area: proc(e: Base_Link, area: Window_Control_Area) -> Base_Link,
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Link),
+	// Sets the name exposed to accessibility clients.
 	accessibility_label: proc(e: Base_Link, label: string) -> Base_Link,
+	// Sets whether pointer and keyboard activation are ignored.
 	disabled: proc(e: Base_Link, disabled: bool) -> Base_Link,
+	// Sets the application-defined navigation target.
 	href: proc(e: Base_Link, href: string) -> Base_Link,
+	// Observes pointer or keyboard activation after the open strategy runs.
 	on_activate: proc(e: Base_Link, handler: Handler) -> Base_Link,
+	// Injects the strategy used to open `href` on activation.
+	//
+	// Base never calls `open_url` on its own.
 	open_with: proc(e: Base_Link, open: Handler) -> Base_Link,
+	// Configures application-owned styles for the link's semantic states.
 	styles: proc(e: Base_Link, build: Link_Styles) -> Base_Link,
+	// Sets the focus traversal index. Use this within a GPUI tab group.
 	tab_index: proc(e: Base_Link, tab_index: int) -> Base_Link,
+	// Sets whether the link participates in keyboard focus traversal.
 	tab_stop: proc(e: Base_Link, tab_stop: bool) -> Base_Link,
 }
 
@@ -3122,6 +3407,8 @@ base_link_vt := Base_Link_VT {
 	},
 }
 
+// Semantic root styles supported by `Base_Link`.
+//
 // Link_Styles is gpui_kit::base::LinkStyles.
 Link_Styles :: struct {
 	using nd: Value,
@@ -3146,6 +3433,8 @@ link_styles_vt := Link_Styles_VT {
 	},
 }
 
+// Global settings for list presentation behavior.
+//
 // List_Settings is gpui_kit::base::ListSettings.
 List_Settings :: struct {
 	using nd: Value,
@@ -3164,6 +3453,8 @@ list_settings_default :: proc(loc := #caller_location) -> List_Settings {
 list_settings_vt := List_Settings_VT {
 }
 
+// Registry for custom Markdown parsing and rendering.
+//
 // Markdown_Extensions is gpui_kit::base::MarkdownExtensions.
 Markdown_Extensions :: struct {
 	using nd: Value,
@@ -3171,11 +3462,52 @@ Markdown_Extensions :: struct {
 }
 
 Markdown_Extensions_VT :: struct {
+	// Register a renderer for a custom block node name.
 	block_renderer: proc(e: Markdown_Extensions, name: string, renderer: Row_Source) -> Markdown_Extensions, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, markdown_node_read: Markdown_Node_Read) -> Element)
+	// Draw a top-level blockquote that opens with the marker `!name` inside a container.
+	//
+	// This is the syntax of GitHub alerts, with names of your own, and other renderers show it as a
+	// blockquote. Names match ASCII-case-insensitively, so `!NOTE` opens a surface registered as
+	// `note`. The marker is alone on the first line, and is not document text; the lines after it are
+	// the first paragraph.
+	//
+	// `render` runs each time the document renders and returns the container with its background,
+	// shape, padding and text style, and any children to show before the blocks, such as an icon and a
+	// title. The blocks are appended to it and bring the view's paragraph gap, so a `gap` on the
+	// container adds to that. Read theme colors in `render`, so a theme change needs no new parse.
+	// What the container shows itself is not document text. Unless the container sets a width, it
+	// takes the row's.
+	//
+	// The blocks remain the document's: selection, range highlights and reveals go across and inside
+	// the container, and `gk.text_view_state_rendered_text` has them without the marker. A select-all
+	// copies the source verbatim. A partial source copy is quoted under the marker line, as a
+	// blockquote's is quoted.
+	//
+	// Only a blockquote at the top level of a Markdown view, with a registered name, is a surface. A
+	// nested one stays a blockquote, and so does one with text after the marker on its line, such as
+	// Obsidian's `> !note Title`: the container shows its own title. Surfaces do not nest. The marker
+	// is markup, so escape text you don't control, as with any other Markdown.
+	//
+	// A surface is one row of a scrollable view, so keep it to what fits a few screens. While it is
+	// the last block of a streaming view, each append parses and measures all of it again, so
+	// streaming one costs time quadratic in its length. Until its marker line is complete, it shows as
+	// a blockquote.
 	block_surface: proc(e: Markdown_Extensions, name: string, render: Div) -> Markdown_Extensions,
+	// Enable YAML frontmatter parsing.
+	//
+	// Frontmatter is disabled by default because it is not part of CommonMark or GFM. Register a block
+	// parser or `MarkdownPlugin` to render the resulting `Yaml` node.
 	frontmatter: proc(e: Markdown_Extensions) -> Markdown_Extensions,
+	// Enable MDX JSX/expression constructs.
+	//
+	// This disables raw HTML constructs because `markdown-rs` gives HTML priority over MDX when both
+	// are enabled.
 	mdx: proc(e: Markdown_Extensions) -> Markdown_Extensions,
+	// Change this revision when parser captures or plugin configuration change. Reusing it allows
+	// equivalent registrations rebuilt during rendering to retain the parsed document. Renderer-only
+	// changes do not need a new value.
 	parser_revision: proc(e: Markdown_Extensions, revision: u64) -> Markdown_Extensions,
+	// Apply a reusable Markdown plugin.
 	plugin: proc(e: Markdown_Extensions, plugin: Markdown_Plugin_Any) -> Markdown_Extensions,
 }
 
@@ -3228,6 +3560,8 @@ markdown_extensions_vt := Markdown_Extensions_VT {
 	},
 }
 
+// A measured, clipped vertical reveal driven by normalized progress.
+//
 // Motion_Reveal is gpui_kit::base::MotionReveal.
 Motion_Reveal :: struct {
 	using el: Element,
@@ -3251,6 +3585,13 @@ motion_reveal :: proc(id: Id, progress: f32, child: Element, loc := #caller_loca
 motion_reveal_vt := Motion_Reveal_VT {
 }
 
+// One mounted view of a `Nav_Stack`, handed to the item renderer.
+//
+// The item fills its container. Its readers describe where the view is in the change that is
+// running, so the renderer can move it: `phase` says whether it is arriving, settled, or leaving;
+// `operation` says which change; `progress` runs from `0.0` to `1.0` over the transition, already
+// eased, and is shared by both views of one change.
+//
 // Nav_Page is gpui_kit::base::NavPage.
 Nav_Page :: struct {
 	using el: Element,
@@ -3278,6 +3619,15 @@ nav_page_vt := Nav_Page_VT {
 	t_styled = cast(^Styled_Trait(Nav_Page))&styled_any,
 }
 
+// An unstyled host for a `Nav_Stack_State`.
+//
+// The container is positioned so that the two views of a transition can overlap; each mounted view
+// is handed to the `item` renderer as a `Nav_Page` that already fills the container. Everything
+// else — size, clipping, background, and how a transition moves — is the application's.
+//
+// Without a `transition` the stack switches views immediately, as it also does under reduced
+// motion.
+//
 // Nav_Stack is gpui_kit::base::NavStack.
 Nav_Stack :: struct {
 	using el: Element,
@@ -3287,7 +3637,10 @@ Nav_Stack :: struct {
 Nav_Stack_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Nav_Stack),
 	using t_styled: ^Styled_Trait(Nav_Stack),
+	// Renders each mounted view. The item is already positioned to fill the container; refine it to
+	// move or fade the view by its phase and progress, then return it.
 	item: proc(e: Nav_Stack, render: Row_Source) -> Nav_Stack, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, nav_page: Nav_Page, nav_page_reads: Nav_Page_Reads) -> Element)
+	// The timing every push, pop and replace runs under.
 	transition: proc(e: Nav_Stack, transition: Transition) -> Nav_Stack,
 }
 
@@ -3316,6 +3669,8 @@ nav_stack_vt := Nav_Stack_VT {
 	},
 }
 
+// An unstyled spinbutton root composed from the foundational `Input_Base` frame.
+//
 // Base_Number_Input is gpui_kit::base::NumberInput.
 Base_Number_Input :: struct {
 	using el: Element,
@@ -3327,11 +3682,19 @@ Base_Number_Input_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Number_Input),
 	using t_styled: ^Styled_Trait(Base_Number_Input),
 	using t_parent_element: ^Parent_Element_Trait(Base_Number_Input),
+	// Sets the name exposed to accessibility clients.
+	//
+	// A number input has no visible text of its own to be named by, so set this unless the input is
+	// named some other way.
 	accessibility_label: proc(e: Base_Number_Input, label: string) -> Base_Number_Input,
+	// Stack both step buttons on the right side of the text region.
 	controls_right: proc(e: Base_Number_Input) -> Base_Number_Input,
+	// Decorate the built-in decrement button with application-owned content and styles.
 	decrement_button: proc(e: Base_Number_Input, decorate: Decorate) -> Base_Number_Input,
 	disabled: proc(e: Base_Number_Input, disabled: bool) -> Base_Number_Input,
+	// Decorate the built-in increment button with application-owned content and styles.
 	increment_button: proc(e: Base_Number_Input, decorate: Decorate) -> Base_Number_Input,
+	// Decorate the built-in text region with an editor, adornments, and styles.
 	input: proc(e: Base_Number_Input, input: Element) -> Base_Number_Input,
 	on_step: proc(e: Base_Number_Input, handler: Handler) -> Base_Number_Input,
 }
@@ -3387,6 +3750,11 @@ base_number_input_vt := Base_Number_Input_VT {
 	},
 }
 
+// The built-in text region of a `Base_Number_Input`.
+//
+// Applications provide the editor itself as a child and can style this region without having to
+// recreate the number input's fixed three-part structure.
+//
 // Number_Input_Text is gpui_kit::base::NumberInputText.
 Number_Input_Text :: struct {
 	using el: Element,
@@ -3422,6 +3790,8 @@ number_input_text_vt := Number_Input_Text_VT {
 	t_parent_element = cast(^Parent_Element_Trait(Number_Input_Text))&parent_element_any,
 }
 
+// Unstyled OTP interaction root. Applications provide the visual cells as children.
+//
 // Base_Otp_Input is gpui_kit::base::OtpInput.
 Base_Otp_Input :: struct {
 	using el: Element,
@@ -3458,6 +3828,8 @@ base_otp_input_vt := Base_Otp_Input_VT {
 	},
 }
 
+// An unstyled pagination navigation landmark.
+//
 // Base_Pagination is gpui_kit::base::Pagination.
 Base_Pagination :: struct {
 	using el: Element,
@@ -3499,6 +3871,8 @@ base_pagination_vt := Base_Pagination_VT {
 	},
 }
 
+// The controlled behavior shared by every part of a pagination control.
+//
 // Pagination_State is gpui_kit::base::PaginationState.
 Pagination_State :: struct {
 	using nd: Value,
@@ -3507,6 +3881,10 @@ Pagination_State :: struct {
 
 Pagination_State_VT :: struct {
 	disabled: proc(e: Pagination_State, disabled: bool) -> Pagination_State,
+	// Handles a requested page change.
+	//
+	// Unlike the element-level controls, this is a model-level request that may also come from the
+	// keyboard or from application code, so it does not carry a pointer event.
 	on_change: proc(e: Pagination_State, handler: Handler) -> Pagination_State,
 	visible_pages: proc(e: Pagination_State, visible_pages: int) -> Pagination_State,
 }
@@ -3538,6 +3916,13 @@ pagination_state_vt := Pagination_State_VT {
 	},
 }
 
+// The timing of a plot's motion: how its data marks appear when it is first painted, how its hover
+// progress fades in and out, and the spring a pointer follows the hovered datum with.
+//
+// Base installs no motion of its own: every duration defaults to zero, so the hover appears, fades
+// and glides at once. Product timing belongs to the styled layer, which projects it through
+// `Plot_Theme`.
+//
 // Plot_Motion is gpui_kit::base::PlotMotion.
 Plot_Motion :: struct {
 	using nd: Value,
@@ -3545,9 +3930,13 @@ Plot_Motion :: struct {
 }
 
 Plot_Motion_VT :: struct {
+	// How a plot's data marks appear the first time it is painted; see `Plot_Appear`.
 	with_appear: proc(e: Plot_Motion, appear: Transition) -> Plot_Motion,
+	// How the hover fades in when the cursor lands on a datum.
 	with_enter: proc(e: Plot_Motion, enter: Transition) -> Plot_Motion,
+	// How the hover fades out after the cursor leaves.
 	with_exit: proc(e: Plot_Motion, exit: Transition) -> Plot_Motion,
+	// The spring a crosshair, highlight band or hover dot follows the hovered datum with.
 	with_pointer: proc(e: Plot_Motion, pointer: Spring) -> Plot_Motion,
 }
 
@@ -3580,6 +3969,11 @@ plot_motion_vt := Plot_Motion_VT {
 	},
 }
 
+// Global defaults used by `plot`.
+//
+// `motion` defaults to motionless. Styled layers project their own timing; Base never installs a
+// fade or glide of its own.
+//
 // Plot_Theme is gpui_kit::base::PlotTheme.
 Plot_Theme :: struct {
 	using nd: Value,
@@ -3609,6 +4003,11 @@ plot_theme_vt := Plot_Theme_VT {
 	},
 }
 
+// An unstyled popover owning trigger interaction, open state, dismissal, and focus.
+//
+// Enter and Space on the trigger toggle the popover. Inside its content, those keys belong to the
+// focused control instead; Escape dismisses the popover and restores the previous focus.
+//
 // Base_Popover is gpui_kit::base::Popover.
 Base_Popover :: struct {
 	using el: Element,
@@ -3622,8 +4021,10 @@ Base_Popover_VT :: struct {
 	content: proc(e: Base_Popover, content: Row_Source) -> Base_Popover, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, popover_state_reads: Popover_State_Reads) -> Element)
 	default_open: proc(e: Base_Popover, open: bool) -> Base_Popover,
 	mouse_button: proc(e: Base_Popover, mouse_button: Mouse_Button) -> Base_Popover,
+	// Gap from the trigger along the anchor's outward direction, zero by default.
 	offset: proc(e: Base_Popover, offset: f32) -> Base_Popover,
 	on_open_change: proc(e: Base_Popover, callback: Handler) -> Base_Popover,
+	// Observe geometry to supply presentation such as a pointer arrow.
 	on_position: proc(e: Base_Popover, callback: Handler) -> Base_Popover,
 	open: proc(e: Base_Popover, open: bool) -> Base_Popover,
 	overlay_closable: proc(e: Base_Popover, closable: bool) -> Base_Popover,
@@ -3728,6 +4129,12 @@ base_popover_vt := Base_Popover_VT {
 	},
 }
 
+// An unstyled trigger and anchored popup host.
+//
+// `Popup` owns trigger measurement, anchor-point calculation, first-frame synchronization,
+// deferred rendering, and window-edge snapping. Callers own open state, interaction, popup
+// content, appearance, and motion.
+//
 // Popup is gpui_kit::base::Popup.
 Popup :: struct {
 	using el: Element,
@@ -3741,7 +4148,9 @@ Popup_VT :: struct {
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Popup),
 	anchor: proc(e: Popup, anchor: Anchor) -> Popup,
 	content: proc(e: Popup, content: Element) -> Popup,
+	// Gap from the trigger along the anchor's outward direction, zero by default.
 	offset: proc(e: Popup, offset: f32) -> Popup,
+	// Observe resolved popup and trigger bounds before content prepaint.
 	on_position: proc(e: Popup, callback: Handler) -> Popup,
 }
 
@@ -3783,6 +4192,11 @@ popup_vt := Popup_VT {
 	},
 }
 
+// An unstyled element that positions its children as an anchored popup.
+//
+// This owns measurement, side selection, alignment, and viewport clamping. It installs no
+// presentation of its own and adds no wrapper element around its children.
+//
 // Positioner is gpui_kit::base::Positioner.
 Positioner :: struct {
 	using el: Element,
@@ -3792,15 +4206,33 @@ Positioner :: struct {
 Positioner_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Positioner),
 	using t_parent_element: ^Parent_Element_Trait(Positioner),
+	// Sets the alignment along the chosen side. Only meaningful for `gk.positioner_side`.
 	align: proc(e: Positioner, align: Align) -> Positioner,
+	// Sets the minimum distance kept between the popup and the viewport edge.
 	margin: proc(e: Positioner, margin: f32) -> Positioner,
+	// Blocks the mouse over the positioned popup.
+	//
+	// Off by default, because a tooltip that swallowed the pointer would un-hover the very trigger
+	// keeping it open. An interactive surface — a popover, a menu, a dropdown — wants it on: what the
+	// surface covers is the surface's, not the panel underneath.
 	occlude: proc(e: Positioner) -> Positioner,
+	// Sets the gap between the trigger and the popup. Only meaningful for `gk.positioner_side`.
 	offset: proc(e: Positioner, offset: f32) -> Positioner,
+	// Observe resolved geometry before children prepaint.
 	on_position: proc(e: Positioner, callback: Handler) -> Positioner,
+	// Sets the preferred side. Only meaningful for `gk.positioner_side`.
 	placement: proc(e: Positioner, placement: Placement) -> Positioner,
+	// Updates the requested corner position.
+	//
+	// This is useful when an animation moves an already-composed popup. It has no effect on a
+	// side-positioned popup.
 	position: proc(e: Positioner, position: Gpui_Point) -> Positioner,
 }
 
+// Places `anchor`'s corner of the popup at `position`.
+//
+// This is the corner-anchoring path used by triggers that were written against GPUI's `anchored`
+// element. It clamps into the viewport without changing the requested anchor.
 positioner_corner :: proc(anchor: Anchor, position: Gpui_Point, loc := #caller_location) -> Positioner {
 	use_base_positioner()
 	e := Positioner{new_node(351, loc), &positioner_vt}
@@ -3810,6 +4242,7 @@ positioner_corner :: proc(anchor: Anchor, position: Gpui_Point, loc := #caller_l
 	return e
 }
 
+// Places the popup on a side of `trigger_bounds`, flipping when needed.
 positioner_side :: proc(trigger_bounds: Bounds, loc := #caller_location) -> Positioner {
 	use_base_positioner()
 	e := Positioner{new_node(352, loc), &positioner_vt}
@@ -3885,6 +4318,8 @@ presence_vt := Presence_VT {
 	},
 }
 
+// An unstyled linear progress root with controlled value accessibility.
+//
 // Base_Progress is gpui_kit::base::Progress.
 Base_Progress :: struct {
 	using el: Element,
@@ -3900,6 +4335,7 @@ Base_Progress_VT :: struct {
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Progress),
 	accessibility_label: proc(e: Base_Progress, label: string) -> Base_Progress,
 	indeterminate: proc(e: Base_Progress, indeterminate: bool) -> Base_Progress,
+	// Sets the controlled percentage value, clamped to `0..=100`.
 	value: proc(e: Base_Progress, value: f32) -> Base_Progress,
 }
 
@@ -3937,6 +4373,8 @@ base_progress_vt := Base_Progress_VT {
 	},
 }
 
+// An unstyled progress indicator.
+//
 // Progress_Indicator is gpui_kit::base::ProgressIndicator.
 Progress_Indicator :: struct {
 	using el: Element,
@@ -3965,6 +4403,8 @@ progress_indicator_vt := Progress_Indicator_VT {
 	t_parent_element = cast(^Parent_Element_Trait(Progress_Indicator))&parent_element_any,
 }
 
+// An unstyled progress track.
+//
 // Progress_Track is gpui_kit::base::ProgressTrack.
 Progress_Track :: struct {
 	using el: Element,
@@ -3993,6 +4433,12 @@ progress_track_vt := Progress_Track_VT {
 	t_parent_element = cast(^Parent_Element_Trait(Progress_Track))&parent_element_any,
 }
 
+// An unstyled radio control that owns activation, focus, and accessibility behavior.
+//
+// The application owns its indicator, label, layout, colors, and state styling. Selection is
+// controlled through `->checked`; activating an unchecked radio requests `true` through
+// `->on_change`.
+//
 // Base_Radio is gpui_kit::base::Radio.
 Base_Radio :: struct {
 	using el: Element,
@@ -4048,12 +4494,26 @@ Base_Radio_VT :: struct {
 	accessibility_label: proc(e: Base_Radio, label: string) -> Base_Radio,
 	checked: proc(e: Base_Radio, checked: bool) -> Base_Radio,
 	disabled: proc(e: Base_Radio, disabled: bool) -> Base_Radio,
+	// Updates the element identity used when the radio is rendered.
+	//
+	// A group that assigns positional ids after construction needs this so each radio keeps a distinct
+	// element identity.
 	id: proc(e: Base_Radio, id: Id) -> Base_Radio,
+	// Handles a requested selection change.
+	//
+	// The callback receives `true`. Activating an already checked radio is a no-op because a radio
+	// cannot deselect itself.
 	on_change: proc(e: Base_Radio, handler: Handler) -> Base_Radio,
+	// Sets this radio's one-based position and its group's total size, so assistive technology can
+	// announce "option 2 of 5".
 	set_position: proc(e: Base_Radio, position: int, size: int) -> Base_Radio,
+	// Configures application-owned styles for the radio's semantic states.
 	styles: proc(e: Base_Radio, build: Radio_Styles) -> Base_Radio,
 	tab_index: proc(e: Base_Radio, tab_index: int) -> Base_Radio,
 	tab_stop: proc(e: Base_Radio, tab_stop: bool) -> Base_Radio,
+	// Uses a caller-owned focus handle instead of creating keyed state.
+	//
+	// A styled radio needs this to draw its own focus ring from the same handle the primitive tracks.
 	track_focus: proc(e: Base_Radio, focus_handle: Focus_Handle) -> Base_Radio,
 }
 
@@ -4166,6 +4626,8 @@ base_radio_vt := Base_Radio_VT {
 	},
 }
 
+// An unstyled container for a set of radio elements.
+//
 // Base_Radio_Group is gpui_kit::base::RadioGroup.
 Base_Radio_Group :: struct {
 	using el: Element,
@@ -4179,6 +4641,7 @@ Base_Radio_Group_VT :: struct {
 	using t_parent_element: ^Parent_Element_Trait(Base_Radio_Group),
 	using t_interactive_element: ^Interactive_Element_Trait(Base_Radio_Group),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Radio_Group),
+	// Sets the semantic axis of the group.
 	axis: proc(e: Base_Radio_Group, axis: Axis) -> Base_Radio_Group,
 }
 
@@ -4206,6 +4669,8 @@ base_radio_group_vt := Base_Radio_Group_VT {
 	},
 }
 
+// Semantic root styles supported by `Base_Radio`.
+//
 // Radio_Styles is gpui_kit::base::RadioStyles.
 Radio_Styles :: struct {
 	using nd: Value,
@@ -4236,6 +4701,26 @@ radio_styles_vt := Radio_Styles_VT {
 	},
 }
 
+// A resizable panel inside a `Resizable_Panel_Group`.
+//
+// Implements `Styled`, so call sites can override the panel's rendered styles. User overrides are
+// applied **between** the panel's flex defaults and its size management — the caller can override
+// the internal `flex_grow: 1` (e.g. via `.flex_none()`) and add their own padding / colors /
+// borders, while the panel's runtime size constraints (`min_w`/`max_w`/`flex_basis` driven by
+// `ResizableState`) always win.
+//
+// A common override is `.flex_none()`: the panel sets `flex_grow: 1` internally, so a sized panel
+// that should hold its width when a sibling collapses needs to opt out of growth via
+// `.flex_none()`.
+//
+// To keep a panel's size when the group's container resizes, use `->fixed`.
+//
+// **Reserved styles**: do not call these from outside — they fight the panel's own layout
+// management: - `.flex_basis(...)` — driven by `ResizableState`, not by the caller. -
+// `.absolute()` — would remove the panel from the resizable's flex flow. - `.overflow_hidden()` —
+// may clip the resize handle, which is positioned absolute at `left: -4px` of each panel after the
+// first.
+//
 // Resizable_Panel is gpui_kit::base::ResizablePanel.
 Resizable_Panel :: struct {
 	using el: Element,
@@ -4327,12 +4812,24 @@ Resizable_Panel_VT :: struct {
 	w: proc(e: Resizable_Panel, length: Length) -> Resizable_Panel,
 	style: proc(e: Resizable_Panel, flags: ..Style_Flag) -> Resizable_Panel,
 	using t_parent_element: ^Parent_Element_Trait(Resizable_Panel),
+	// Keep this panel's size when the group's container resizes.
+	//
+	// When the container grows or shrinks, the other panels share the difference in proportion to
+	// their sizes, so a sidebar or an inspector keeps the width the user gave it. Dragging its own
+	// handle still resizes it. It needs a `->size`, and at least one panel in the group should not be
+	// fixed.
 	fixed: proc(e: Resizable_Panel) -> Resizable_Panel,
+	// Set the initial size of the panel.
 	size: proc(e: Resizable_Panel, size: f32) -> Resizable_Panel,
+	// Set the size range to limit panel resize.
+	//
+	// Default is `PANEL_MIN_SIZE` to `MAX`.
 	size_range: proc(e: Resizable_Panel, range: [2]f32) -> Resizable_Panel,
+	// Set the visibility of the panel, default is true.
 	visible: proc(e: Resizable_Panel, visible: bool) -> Resizable_Panel,
 }
 
+// Create a `Resizable_Panel`.
 resizable_panel :: proc(flags: ..Style_Flag, loc := #caller_location) -> Resizable_Panel {
 	use_base_resizable()
 	e := Resizable_Panel{new_node(361, loc), &resizable_panel_vt}
@@ -4448,6 +4945,8 @@ resizable_panel_vt := Resizable_Panel_VT {
 	},
 }
 
+// A group of resizable panels.
+//
 // Resizable_Panel_Group is gpui_kit::base::ResizablePanelGroup.
 Resizable_Panel_Group :: struct {
 	using el: Element,
@@ -4455,15 +4954,35 @@ Resizable_Panel_Group :: struct {
 }
 
 Resizable_Panel_Group_VT :: struct {
+	// Set the axis of the resizable panel group, default is horizontal.
 	axis: proc(e: Resizable_Panel_Group, axis: Axis) -> Resizable_Panel_Group,
+	// Add a panel to the group.
+	//
+	// - The `axis` will be set to the same axis as the group.
+	// - The `initial_size` will be set to the average size of all panels if not provided.
+	// - The `group` will be set to the group entity.
 	child: proc(e: Resizable_Panel_Group, panel: Resizable_Panel_Into) -> Resizable_Panel_Group,
+	// Add multiple panels to the group.
 	children: proc(e: Resizable_Panel_Group, panels: []Resizable_Panel) -> Resizable_Panel_Group,
+	// Set the callback to be called when the panels are resized.
 	on_resize: proc(e: Resizable_Panel_Group, on_resize: Handler) -> Resizable_Panel_Group,
+	// Set size of the resizable panel group
+	//
+	// - When the axis is horizontal, the size is the height of the group.
+	// - When the axis is vertical, the size is the width of the group.
 	size: proc(e: Resizable_Panel_Group, size: f32) -> Resizable_Panel_Group,
+	// Hand the painted part of every divider in this group to `appearance`.
+	//
+	// The hit area, the cursor and the drag stay here; a renderer that returns `None` for a given
+	// handle leaves the built-in line on it.
 	with_handle_appearance: proc(e: Resizable_Panel_Group, appearance: Resize_Handle_Renderer) -> Resizable_Panel_Group,
+	// Bind yourself to a resizable state entity.
+	//
+	// If not provided, it will handle its own state internally.
 	with_state: proc(e: Resizable_Panel_Group, state: Resizable_State) -> Resizable_Panel_Group,
 }
 
+// Create a `Resizable_Panel_Group` with horizontal resizing
 h_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
 	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(865, loc), &resizable_panel_group_vt}
@@ -4472,6 +4991,7 @@ h_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
 	return e
 }
 
+// Create a `ResizablePanelGroup` with horizontal resizing.
 kit_h_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
 	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(867, loc), &resizable_panel_group_vt}
@@ -4480,6 +5000,7 @@ kit_h_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Grou
 	return e
 }
 
+// Create a `ResizablePanelGroup` with vertical resizing.
 kit_v_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
 	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(868, loc), &resizable_panel_group_vt}
@@ -4488,6 +5009,7 @@ kit_v_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Grou
 	return e
 }
 
+// Create a new resizable panel group.
 resizable_panel_group :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
 	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(864, loc), &resizable_panel_group_vt}
@@ -4496,6 +5018,7 @@ resizable_panel_group :: proc(id: Id, loc := #caller_location) -> Resizable_Pane
 	return e
 }
 
+// Create a `Resizable_Panel_Group` with vertical resizing
 v_resizable :: proc(id: Id, loc := #caller_location) -> Resizable_Panel_Group {
 	use_base_resizable()
 	e := Resizable_Panel_Group{new_node(866, loc), &resizable_panel_group_vt}
@@ -4557,6 +5080,18 @@ resizable_panel_group_vt := Resizable_Panel_Group_VT {
 	},
 }
 
+// Global visual defaults used by resizable panel handles.
+//
+// `None` means *unset*, not invisible: a handle with nothing projected onto it resolves from the
+// active `Semantic_Theme_Tokens` -- `border` at rest, `ring` while dragging -- which are the
+// tokens those two states already mean everywhere else.
+//
+// These were plain colors, so the Base default was `Hsla::default()`: fully transparent. That
+// reads as a deliberate choice next to a styled façade, which projects its own values and never
+// sees it, and as a missing divider to anything that does not -- and a consumer with no façade has
+// no way to project anything. Making them optional keeps the projection exactly as it was while
+// giving the unprojected case an answer.
+//
 // Resizable_Theme is gpui_kit::base::ResizableTheme.
 Resizable_Theme :: struct {
 	using nd: Value,
@@ -4575,6 +5110,19 @@ resizable_theme_default :: proc(loc := #caller_location) -> Resizable_Theme {
 resizable_theme_vt := Resizable_Theme_VT {
 }
 
+// Keeps a rounded scroll viewport's corners clean at every scroll offset.
+//
+// GPUI clips children with a rectangular content mask, so content scrolled under a rounded frame
+// paints square into the corner notches — the regions inside the frame's rect corners but outside
+// its border arcs. Rounding the content itself (e.g. a table's first row) only helps while its own
+// corners sit at the viewport corners; once the content scrolls, the clipped edge meets the notch
+// square again. The cover fills each notch with the backdrop color, which reads as a rounded clip.
+// The frame's own border needs no help: gpui paints an element's border after its children, so it
+// already draws over both the scrolled content and these covers.
+//
+// Like `Scrollable_Mask`, it must be a sibling of the scrolled element so it does not move with
+// the scroll offset.
+//
 // Rounded_Frame_Cover is gpui_kit::base::RoundedFrameCover.
 Rounded_Frame_Cover :: struct {
 	using el: Element,
@@ -4582,10 +5130,16 @@ Rounded_Frame_Cover :: struct {
 }
 
 Rounded_Frame_Cover_VT :: struct {
+	// The color behind the frame, used to fill the corner notches. Defaults to the theme background.
 	backdrop: proc(e: Rounded_Frame_Cover, color: Color) -> Rounded_Frame_Cover,
+	// The frame's border width, when the cover is a child of the bordered element itself: the cover's
+	// bounds are then the content box, so the painted notches are grown outward by this width to reach
+	// the border box. The border itself needs no repaint — gpui paints an element's border after its
+	// children, so the frame's own border already draws over the covers.
 	frame_border: proc(e: Rounded_Frame_Cover, width: f32) -> Rounded_Frame_Cover,
 }
 
+// A frame with the same radius on all four corners.
 rounded_frame_cover_uniform :: proc(radius: f32, loc := #caller_location) -> Rounded_Frame_Cover {
 	use_base_scrollable_mask()
 	e := Rounded_Frame_Cover{new_node(363, loc), &rounded_frame_cover_vt}
@@ -4608,6 +5162,22 @@ rounded_frame_cover_vt := Rounded_Frame_Cover_VT {
 	},
 }
 
+// Adds vertical touch overscroll to an existing scroll viewport.
+//
+// The child owns layout, content, and ordinary scrolling; `handle` must be the child's scroll
+// handle. Only unused vertical deltas stretch the viewport. The stable `id` owns gesture and
+// spring state. Change it when replacing the document. Put fixed chrome (scrollbars, toolbars)
+// outside this wrapper.
+//
+// Enabled by default where the platform's own scroll views bounce: iOS, Android and macOS. Reduced
+// motion disables displacement. Keyboard and focus remain owned by the child. No colors, padding,
+// or dimensions are imposed.
+//
+// Nested scroll areas follow the platform: the innermost one under the pointer takes the whole
+// gesture, at its ends too, and bounces there rather than handing the rest to the area around it.
+// A disabled `ScrollBounce` still scrolls its child and keeps the gesture from the areas around
+// it; it only stops at the ends instead of stretching.
+//
 // Scroll_Bounce is gpui_kit::base::ScrollBounce.
 Scroll_Bounce :: struct {
 	using el: Element,
@@ -4615,9 +5185,19 @@ Scroll_Bounce :: struct {
 }
 
 Scroll_Bounce_VT :: struct {
+	// Turn the bounce on or off. Defaults to `gk.base_enabled_by_default`.
 	enabled: proc(e: Scroll_Bounce, enabled: bool) -> Scroll_Bounce,
+	// Set how far a drag stretches past an edge and how the edge returns.
 	motion: proc(e: Scroll_Bounce, motion: Scroll_Bounce_Motion) -> Scroll_Bounce,
+	// Observe a logical scroll performed when a reverse drag leaves the stretched region. Ordinary
+	// child scrolling continues to use the child's own notifications.
 	on_scroll: proc(e: Scroll_Bounce, handler: Handler) -> Scroll_Bounce,
+	// Own vertical scrolling using the shared input overscroll engine. Precise pixel input can bounce;
+	// ordinary line-wheel input only scrolls and cancels any existing displacement. Keep fixed chrome
+	// outside it.
+	//
+	// On by default. Turned off, the child scrolls itself and only its unused deltas stretch the edge;
+	// that needs input that emits `Ended` at finger release, before momentum, as touch does.
 	scroll_wheel: proc(e: Scroll_Bounce, enabled: bool) -> Scroll_Bounce,
 }
 
@@ -4655,6 +5235,13 @@ scroll_bounce_vt := Scroll_Bounce_VT {
 	},
 }
 
+// Motion tokens for `Scroll_Bounce`: how far a drag stretches the viewport past an edge, and how
+// quickly a released edge returns.
+//
+// Base plays the stretch and the return; the feel belongs to the caller. The default is tuned to
+// feel like a `UIScrollView` bounce on iOS and Android, and like an `NSScrollView` bounce
+// elsewhere.
+//
 // Scroll_Bounce_Motion is gpui_kit::base::ScrollBounceMotion.
 Scroll_Bounce_Motion :: struct {
 	using nd: Value,
@@ -4662,8 +5249,27 @@ Scroll_Bounce_Motion :: struct {
 }
 
 Scroll_Bounce_Motion_VT :: struct {
+	// The farthest the edge goes past its end, in pixels, whether stretched or thrown by a fling. The
+	// stretch eases into it rather than stopping at it.
+	//
+	// Panics:
+	// Panics when `max_stretch` is not finite or not positive.
 	with_max_stretch: proc(e: Scroll_Bounce_Motion, max_stretch: f32) -> Scroll_Bounce_Motion,
+	// Time scale of the return once the finger lifts.
+	//
+	// Read the way `gk.spring` reads its response: the period one full oscillation would take without
+	// damping, which is the scale the return is felt at rather than the moment it stops. The return is
+	// critically damped, so it never crosses the edge. A zero response snaps the edge back on the
+	// spot.
 	with_response: proc(e: Scroll_Bounce_Motion, response: time.Duration) -> Scroll_Bounce_Motion,
+	// Fraction of finger travel the stretched edge follows at first.
+	//
+	// The edge follows less and less as it approaches the viewport height, which it never reaches.
+	// Tracking is independent of the return, so slowing the return does not change how the finger
+	// feels.
+	//
+	// Panics:
+	// Panics when `tracking` is not finite or not positive.
 	with_tracking: proc(e: Scroll_Bounce_Motion, tracking: f32) -> Scroll_Bounce_Motion,
 }
 
@@ -4691,6 +5297,8 @@ scroll_bounce_motion_vt := Scroll_Bounce_Motion_VT {
 	},
 }
 
+// Scrollbar control for scroll-area or a uniform-list.
+//
 // Scrollbar is gpui_kit::base::Scrollbar.
 Scrollbar :: struct {
 	using el: Element,
@@ -4698,15 +5306,38 @@ Scrollbar :: struct {
 }
 
 Scrollbar_VT :: struct {
+	// Set scrollbar axis.
 	axis: proc(e: Scrollbar, axis: Scrollbar_Axis_Into) -> Scrollbar,
+	// Set a specific element id, default is the `caller`.
+	//
+	// NOTE: In most cases, you don't need to set a specific id for scrollbar.
 	id: proc(e: Scrollbar, id: Id) -> Scrollbar,
+	// Set the scrollbar show mode `ScrollbarMode`.
+	//
+	// If unset, the current application theme projection is used.
 	mode: proc(e: Scrollbar, mode: Scrollbar_Mode) -> Scrollbar,
+	// Set a special scroll size of the content area, default is None.
+	//
+	// Default will sync the `content_size` from `scroll_handle`.
 	scroll_size: proc(e: Scrollbar, scroll_size: Gpui_Size) -> Scrollbar,
 	styles: proc(e: Scrollbar, build: Scrollbar_Styles) -> Scrollbar,
+	// Override the viewport bounds that this scrollbar overlays.
+	//
+	// Most scroll containers should rely on the bounds reported by their scroll handle. Custom-painted
+	// viewports, such as the text editor, can use this when their visible bounds differ from the
+	// handle's layout bounds.
 	viewport_bounds: proc(e: Scrollbar, bounds: Bounds) -> Scrollbar,
+	// Use the scrollbar element's layout bounds as its viewport.
+	//
+	// This is useful for composite widgets whose scrollbar viewport excludes fixed headers or columns
+	// and is therefore defined by a positioned overlay container rather than by the underlying scroll
+	// handle.
 	viewport_from_layout: proc(e: Scrollbar) -> Scrollbar,
 }
 
+// Create a new scrollbar.
+//
+// This will have both vertical and horizontal scrollbars.
 scrollbar :: proc(scroll_handle: Scroll_Handle, loc := #caller_location) -> Scrollbar {
 	use_base_scrollbar()
 	e := Scrollbar{new_node(841, loc), &scrollbar_vt}
@@ -4715,6 +5346,7 @@ scrollbar :: proc(scroll_handle: Scroll_Handle, loc := #caller_location) -> Scro
 	return e
 }
 
+// Create with horizontal scrollbar.
 scrollbar_horizontal :: proc(scroll_handle: Scroll_Handle, loc := #caller_location) -> Scrollbar {
 	use_base_scrollbar()
 	e := Scrollbar{new_node(840, loc), &scrollbar_vt}
@@ -4723,6 +5355,7 @@ scrollbar_horizontal :: proc(scroll_handle: Scroll_Handle, loc := #caller_locati
 	return e
 }
 
+// Create with vertical scrollbar.
 scrollbar_vertical :: proc(scroll_handle: Scroll_Handle, loc := #caller_location) -> Scrollbar {
 	use_base_scrollbar()
 	e := Scrollbar{new_node(842, loc), &scrollbar_vt}
@@ -4769,6 +5402,12 @@ scrollbar_vt := Scrollbar_VT {
 	},
 }
 
+// Motion tokens used by `Scrollbar`.
+//
+// Base installs no motion of its own: every transition duration defaults to zero, so visibility
+// and thumb width snap. Product timing belongs to the styled layer, which projects it through
+// `Scrollbar_Theme`.
+//
 // Scrollbar_Motion is gpui_kit::base::ScrollbarMotion.
 Scrollbar_Motion :: struct {
 	using nd: Value,
@@ -4776,11 +5415,17 @@ Scrollbar_Motion :: struct {
 }
 
 Scrollbar_Motion_VT :: struct {
+	// How long the scrollbar takes to become fully visible.
 	with_enter: proc(e: Scrollbar_Motion, enter: time.Duration) -> Scrollbar_Motion,
+	// Which entrance choreography to play.
 	with_entrance: proc(e: Scrollbar_Motion, entrance: Scrollbar_Entrance) -> Scrollbar_Motion,
+	// How long the scrollbar takes to fade away once the idle hold expires.
 	with_exit: proc(e: Scrollbar_Motion, exit: time.Duration) -> Scrollbar_Motion,
+	// How long the thumb takes to reach a new width.
 	with_expand: proc(e: Scrollbar_Motion, expand: time.Duration) -> Scrollbar_Motion,
+	// How long visibility is held after the last scroll, drag, or hover.
 	with_idle: proc(e: Scrollbar_Motion, idle: time.Duration) -> Scrollbar_Motion,
+	// Which entrance choreography to play when hover reveals the thumb.
 	with_thumb_hover_entrance: proc(e: Scrollbar_Motion, entrance: Scrollbar_Entrance) -> Scrollbar_Motion,
 }
 
@@ -4823,6 +5468,8 @@ scrollbar_motion_vt := Scrollbar_Motion_VT {
 	},
 }
 
+// Typed paint styles supported by `Scrollbar`.
+//
 // Scrollbar_Styles is gpui_kit::base::ScrollbarStyles.
 Scrollbar_Styles :: struct {
 	using nd: Value,
@@ -4877,6 +5524,11 @@ scrollbar_styles_vt := Scrollbar_Styles_VT {
 	},
 }
 
+// Global defaults used by `Scrollbar`.
+//
+// `motion` defaults to motionless. Styled layers project their own timing; Base never installs a
+// fade or slide of its own.
+//
 // Scrollbar_Theme is gpui_kit::base::ScrollbarTheme.
 Scrollbar_Theme :: struct {
 	using nd: Value,
@@ -4918,6 +5570,8 @@ scrollbar_theme_vt := Scrollbar_Theme_VT {
 	},
 }
 
+// Paint-only styles for a scrollbar thumb.
+//
 // Scrollbar_Thumb_Style is gpui_kit::base::ScrollbarThumbStyle.
 Scrollbar_Thumb_Style :: struct {
 	using nd: Value,
@@ -4966,6 +5620,8 @@ scrollbar_thumb_style_vt := Scrollbar_Thumb_Style_VT {
 	},
 }
 
+// Paint-only styles for a scrollbar track.
+//
 // Scrollbar_Track_Style is gpui_kit::base::ScrollbarTrackStyle.
 Scrollbar_Track_Style :: struct {
 	using nd: Value,
@@ -5002,6 +5658,16 @@ scrollbar_track_style_vt := Scrollbar_Track_Style_VT {
 	},
 }
 
+// An unstyled controlled select root.
+//
+// Applications own the trigger and popup presentation, the option collection, and the selected
+// value. This root owns combobox accessibility semantics, keyboard opening and dismissal, and
+// focus transfer between the trigger and popup content.
+//
+// GPUI marks the active option on the option element itself rather than on the container, so the
+// application marks its highlighted option with `aria_active_descendant()`; this root cannot do it
+// on the caller's behalf.
+//
 // Base_Select is gpui_kit::base::Select.
 Base_Select :: struct {
 	using el: Element,
@@ -5013,14 +5679,31 @@ Base_Select_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Select),
 	using t_styled: ^Styled_Trait(Base_Select),
 	using t_parent_element: ^Parent_Element_Trait(Base_Select),
+	// Sets the accessible name exposed by the controlled root.
 	accessibility_label: proc(e: Base_Select, label: string) -> Base_Select,
+	// Sets the committed value exposed by the controlled root.
+	//
+	// Supply a readable selection title, not the current search query or cursor.
 	accessibility_value: proc(e: Base_Select, value: string) -> Base_Select,
+	// Supplies the focus handle that receives keyboard navigation while open.
 	content_focus_handle: proc(e: Base_Select, focus_handle: Focus_Handle) -> Base_Select,
+	// Prevents keyboard and accessible activation and removes the trigger from tab traversal.
 	disabled: proc(e: Base_Select, disabled: bool) -> Base_Select,
+	// Supplies the focus handle for the select trigger.
 	focus_handle: proc(e: Base_Select, focus_handle: Focus_Handle) -> Base_Select,
+	// Handles the Confirm action while the select is open.
+	//
+	// Confirming a closed select opens it instead, so this never runs for that case.
 	on_confirm: proc(e: Base_Select, handler: Handler) -> Base_Select,
+	// Handles a dismissal, however it was requested: the Cancel action, or the accessible activation
+	// that closes an open control.
+	//
+	// This runs before the controlled open state is asked to close, so a caller that commits its
+	// pending value on dismissal can still read that value here.
 	on_dismiss: proc(e: Base_Select, handler: Handler) -> Base_Select,
+	// Handles requests to update the controlled open state.
 	on_open_change: proc(e: Base_Select, handler: Handler) -> Base_Select,
+	// Sets the application-controlled open state.
 	open: proc(e: Base_Select, open: bool) -> Base_Select,
 }
 
@@ -5086,6 +5769,14 @@ base_select_vt := Base_Select_VT {
 	},
 }
 
+// Plain text that participates in the window-scoped `TextSelection`.
+//
+// Use `gk.selectable_text` for an independent run, or `gk.selectable_text_with_handle` when
+// several elements form one selectable document.
+//
+// Applications must render one `Text_Selection_Layer` above their content and call `init` during
+// startup. Selection and copy then work without depending on `gpui-component`.
+//
 // Selectable_Text is gpui_kit::base::SelectableText.
 Selectable_Text :: struct {
 	using el: Element,
@@ -5093,11 +5784,15 @@ Selectable_Text :: struct {
 }
 
 Selectable_Text_VT :: struct {
+	// Places this run in reading order among the others sharing its handle.
 	document_order: proc(e: Selectable_Text, order: u64) -> Selectable_Text,
+	// Overrides the selection background, which defaults to the theme's `colors.selection` token.
 	selection_color: proc(e: Selectable_Text, color: Color) -> Selectable_Text,
+	// Sets the text style the run is laid out and painted with.
 	text_style: proc(e: Selectable_Text, style: Text_Style_Refinement) -> Selectable_Text,
 }
 
+// Creates a run that owns its own selection.
 selectable_text :: proc(id: Id, text: string, loc := #caller_location) -> Selectable_Text {
 	use_base_selectable_text()
 	e := Selectable_Text{new_node(372, loc), &selectable_text_vt}
@@ -5107,6 +5802,7 @@ selectable_text :: proc(id: Id, text: string, loc := #caller_location) -> Select
 	return e
 }
 
+// Creates a run that joins the document `handle` belongs to.
 selectable_text_with_handle :: proc(id: Id, handle: Text_Selection_Handle, text: string, loc := #caller_location) -> Selectable_Text {
 	use_base_selectable_text()
 	e := Selectable_Text{new_node(823, loc), &selectable_text_vt}
@@ -5154,6 +5850,11 @@ semantic_theme_tokens_default :: proc(loc := #caller_location) -> Semantic_Theme
 semantic_theme_tokens_vt := Semantic_Theme_Tokens_VT {
 }
 
+// An unstyled modal sheet host.
+//
+// Applications provide the overlay and surface. The host owns focus trapping, Escape handling,
+// overlay dismissal, and close callback ordering.
+//
 // Base_Sheet is gpui_kit::base::Sheet.
 Base_Sheet :: struct {
 	using el: Element,
@@ -5202,6 +5903,10 @@ base_sheet_vt := Base_Sheet_VT {
 	},
 }
 
+// An unstyled slider behavior root.
+//
+// Applications provide the track, range, and thumb presentation as children.
+//
 // Base_Slider is gpui_kit::base::Slider.
 Base_Slider :: struct {
 	using el: Element,
@@ -5213,10 +5918,13 @@ Base_Slider_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Slider),
 	using t_parent_element: ^Parent_Element_Trait(Base_Slider),
 	using t_styled: ^Styled_Trait(Base_Slider),
+	// Sets the label exposed to accessibility clients.
 	accessibility_label: proc(e: Base_Slider, label: string) -> Base_Slider,
 	axis: proc(e: Base_Slider, axis: Axis) -> Base_Slider,
 	disabled: proc(e: Base_Slider, disabled: bool) -> Base_Slider,
 	horizontal: proc(e: Base_Slider) -> Base_Slider,
+	// Makes the slider's accessibility node itself focusable with `focus`, so keyboard focus and
+	// assistive technology land on the slider.
 	track_focus: proc(e: Base_Slider, focus: Focus_Handle) -> Base_Slider,
 	vertical: proc(e: Base_Slider) -> Base_Slider,
 }
@@ -5266,6 +5974,8 @@ base_slider_vt := Base_Slider_VT {
 	},
 }
 
+// An unstyled slider indicator that records the value-mapping bounds.
+//
 // Slider_Indicator is gpui_kit::base::SliderIndicator.
 Slider_Indicator :: struct {
 	using el: Element,
@@ -5300,6 +6010,8 @@ slider_indicator_vt := Slider_Indicator_VT {
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Slider_Indicator))&stateful_interactive_element_any,
 }
 
+// An unstyled draggable slider thumb.
+//
 // Slider_Thumb is gpui_kit::base::SliderThumb.
 Slider_Thumb :: struct {
 	using el: Element,
@@ -5352,6 +6064,8 @@ slider_thumb_vt := Slider_Thumb_VT {
 	},
 }
 
+// An unstyled track that records the geometry used to map pointer positions.
+//
 // Slider_Track is gpui_kit::base::SliderTrack.
 Slider_Track :: struct {
 	using el: Element,
@@ -5396,6 +6110,14 @@ slider_track_vt := Slider_Track_VT {
 	},
 }
 
+// A physical spring policy for `->spring`.
+//
+// A spring is the counterpart to `Transition` for values that can be retargeted while they are
+// still moving. A duration-based transition restarts its easing from the value sampled at that
+// instant, which is continuous in position but not in velocity. A spring carries velocity across
+// the retarget, so a value reversed mid-flight decelerates and turns around instead of snapping to
+// a new curve's initial speed.
+//
 // Spring is gpui_kit::base::Spring.
 Spring :: struct {
 	using nd: Value,
@@ -5403,16 +6125,59 @@ Spring :: struct {
 }
 
 Spring_VT :: struct {
+	// Sets the damping ratio, which is `1.0` — no overshoot — by default.
+	//
+	// Below `1.0` the spring passes its target and comes back; above `1.0` it approaches slowly.
+	// Overshoot suits a value with room to pass its target and nothing to collide with. A height, an
+	// opacity, or anything bounded by the geometry around it should stay at the default.
+	//
+	// This is $\zeta$, not GPUI's `SpringConfig::damping`, which is the coefficient $c = 2 \zeta
+	// \omega_0$.
+	//
+	// Panics:
+	// Panics when `ratio` is negative or non-finite. Use `try_with_damping` when the value is not a
+	// trusted constant.
 	with_damping: proc(e: Spring, ratio: f32) -> Spring,
+	// Sets the settling tolerance, expressed in the target's own units.
+	//
+	// The default suits targets that move within a normalized `0..1` range. A spring over pixels
+	// settles perceptibly sooner with a coarser tolerance, which also ends the animation frames that
+	// the remaining sub-pixel motion would otherwise request.
+	//
+	// Panics:
+	// Panics when `epsilon` is zero, negative, or non-finite. Use `try_with_epsilon` when the value is
+	// not a trusted constant.
 	with_epsilon: proc(e: Spring, epsilon: f32) -> Spring,
+	// Sets whether the spring travels to its target or adopts it on the spot.
+	//
+	// A value the pointer is already moving — a panel being dragged by its resize handle — must not
+	// lag behind the pointer, so the spring stops travelling for as long as the drag lasts. Retained
+	// state stays pinned to the target meanwhile, so travel resumes from the value the drag released
+	// rather than from wherever the spring was when it began.
+	//
+	// This says at the call that the motion is suspended, and it says it without disturbing the
+	// response, damping or tolerance the spring is configured with — which a policy swapped out for
+	// the length of the drag would have to restate or discard.
 	with_travel: proc(e: Spring, travel: bool) -> Spring,
 }
 
+// The spring a hover pointer — the crosshair, highlight band or hover dot — follows the hovered
+// datum with: the active `Plot_Motion`'s pointer, which snaps unless a styled layer projects one.
 pointer_spring :: proc(loc := #caller_location) -> Spring {
 	e := Spring{new_value(383, loc), &spring_vt}
 	return e
 }
 
+// Builds a spring that reaches its target in about `response` without overshooting it.
+//
+// `response` is not a duration in the sense `gk.transition` means one. A spring has no end to
+// schedule: this is the period one full oscillation would take without damping, which is the scale
+// the motion is felt at rather than the moment it stops. The remaining fraction of a percent keeps
+// settling past it, until it is within the tolerance `->with_epsilon` sets.
+//
+// A zero response adopts the target on the spot, as a zero duration does for a transition. Say
+// that with `->with_travel` where it is what you mean; a zero here is the degenerate case, defined
+// so an infinitely stiff spring resolves rather than dividing by its own period.
 spring :: proc(response: time.Duration, loc := #caller_location) -> Spring {
 	e := Spring{new_value(382, loc), &spring_vt}
 	o := node_args()
@@ -5439,6 +6204,11 @@ spring_vt := Spring_VT {
 	},
 }
 
+// A semantic-state style builder.
+//
+// Visual modifiers come from GPUI's `Styled` trait. Unlike a bare `StyleRefinement`, this wrapper
+// also supports `FluentBuilder` helpers such as `when`, `when_some`, and `when_none`.
+//
 // State_Style is gpui_kit::base::StateStyle.
 State_Style :: struct {
 	using nd: Value,
@@ -5462,6 +6232,12 @@ state_style_vt := State_Style_VT {
 	t_styled = cast(^Styled_Trait(State_Style))&styled_any,
 }
 
+// An unstyled binary control that owns switch interaction and semantics.
+//
+// The checked value is controlled by the application. Activation reports the next value through
+// `->on_change`; the application must render that value back through `->checked`. Children and all
+// visual states remain application-owned.
+//
 // Base_Switch is gpui_kit::base::Switch.
 Base_Switch :: struct {
 	using el: Element,
@@ -5514,13 +6290,24 @@ Base_Switch_VT :: struct {
 	tab_group: proc(e: Base_Switch) -> Base_Switch,
 	window_control_area: proc(e: Base_Switch, area: Window_Control_Area) -> Base_Switch,
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Switch),
+	// Sets the name exposed to accessibility clients.
+	//
+	// A switch without text children has no accessible name, so set this whenever it is drawn without
+	// visible text.
 	accessibility_label: proc(e: Base_Switch, label: string) -> Base_Switch,
+	// Sets the application-controlled checked value.
 	checked: proc(e: Base_Switch, checked: bool) -> Base_Switch,
+	// Sets whether pointer and keyboard activation are ignored.
 	disabled: proc(e: Base_Switch, disabled: bool) -> Base_Switch,
+	// Handles activation with the next checked value and its input event.
 	on_change: proc(e: Base_Switch, handler: Handler) -> Base_Switch,
+	// Configures application-owned styles for the switch's semantic states.
 	styles: proc(e: Base_Switch, build: Switch_Styles) -> Base_Switch,
+	// Sets the focus traversal index. Use this within a GPUI tab group.
 	tab_index: proc(e: Base_Switch, tab_index: int) -> Base_Switch,
+	// Sets whether the switch participates in keyboard focus traversal.
 	tab_stop: proc(e: Base_Switch, tab_stop: bool) -> Base_Switch,
+	// Uses a caller-owned focus handle instead of creating keyed state.
 	track_focus: proc(e: Base_Switch, focus_handle: Focus_Handle) -> Base_Switch,
 }
 
@@ -5622,6 +6409,8 @@ base_switch_vt := Base_Switch_VT {
 	},
 }
 
+// Semantic root styles supported by `Base_Switch`.
+//
 // Switch_Styles is gpui_kit::base::SwitchStyles.
 Switch_Styles :: struct {
 	using nd: Value,
@@ -5652,6 +6441,8 @@ switch_styles_vt := Switch_Styles_VT {
 	},
 }
 
+// An unstyled switch thumb with typed checked and disabled state projection.
+//
 // Switch_Thumb is gpui_kit::base::SwitchThumb.
 Switch_Thumb :: struct {
 	using el: Element,
@@ -5694,6 +6485,8 @@ switch_thumb_vt := Switch_Thumb_VT {
 	},
 }
 
+// Semantic styles supported by `Switch_Thumb`.
+//
 // Switch_Thumb_Styles is gpui_kit::base::SwitchThumbStyles.
 Switch_Thumb_Styles :: struct {
 	using nd: Value,
@@ -5724,6 +6517,8 @@ switch_thumb_styles_vt := Switch_Thumb_Styles_VT {
 	},
 }
 
+// An unstyled switch track with typed checked and disabled state projection.
+//
 // Switch_Track is gpui_kit::base::SwitchTrack.
 Switch_Track :: struct {
 	using el: Element,
@@ -5776,6 +6571,8 @@ switch_track_vt := Switch_Track_VT {
 	},
 }
 
+// Semantic styles supported by `Switch_Track`.
+//
 // Switch_Track_Styles is gpui_kit::base::SwitchTrackStyles.
 Switch_Track_Styles :: struct {
 	using nd: Value,
@@ -5806,6 +6603,11 @@ switch_track_styles_vt := Switch_Track_Styles_VT {
 	},
 }
 
+// An unstyled tab that owns pointer activation and accessibility behavior.
+//
+// Tabs do not participate in keyboard focus by themselves. A compound tab list may add keyboard
+// navigation when that behavior is introduced.
+//
 // Base_Tab is gpui_kit::base::Tab.
 Base_Tab :: struct {
 	using el: Element,
@@ -5859,9 +6661,12 @@ Base_Tab_VT :: struct {
 	track_scroll: proc(e: Base_Tab, scroll_handle: Scroll_Handle) -> Base_Tab,
 	accessibility_label: proc(e: Base_Tab, label: string) -> Base_Tab,
 	disabled: proc(e: Base_Tab, disabled: bool) -> Base_Tab,
+	// Updates the element identity used when the tab is rendered.
 	id: proc(e: Base_Tab, id: Id) -> Base_Tab,
 	on_click: proc(e: Base_Tab, handler: Handler) -> Base_Tab,
 	selected: proc(e: Base_Tab, selected: bool) -> Base_Tab,
+	// Sets this tab's one-based position and the tab list's total size, so assistive technology can
+	// announce "tab 2 of 5".
 	set_position: proc(e: Base_Tab, position: int, size: int) -> Base_Tab,
 	styles: proc(e: Base_Tab, build: Tab_Styles) -> Base_Tab,
 }
@@ -5989,6 +6794,8 @@ tab_styles_vt := Tab_Styles_VT {
 	},
 }
 
+// An unstyled semantic table root.
+//
 // Base_Table is gpui_kit::base::Table.
 Base_Table :: struct {
 	using el: Element,
@@ -6002,11 +6809,17 @@ Base_Table_VT :: struct {
 	using t_parent_element: ^Parent_Element_Trait(Base_Table),
 	using t_interactive_element: ^Interactive_Element_Trait(Base_Table),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Table),
+	// Sets the table's accessible name.
 	accessibility_label: proc(e: Base_Table, label: string) -> Base_Table,
+	// Sets the total number of columns, including columns outside the rendered range.
 	column_count: proc(e: Base_Table, count: int) -> Base_Table,
+	// Sets the total number of rows, including rows outside the rendered range. Assistive technology
+	// needs this to announce "row 5 of 200" for a virtualized table whose rendered rows are only a
+	// window onto the data.
 	row_count: proc(e: Base_Table, count: int) -> Base_Table,
 }
 
+// Create an unstyled semantic table root.
 base_table :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Table {
 	use_base_table()
 	e := Base_Table{new_node(393, loc), &base_table_vt}
@@ -6041,6 +6854,8 @@ base_table_vt := Base_Table_VT {
 	},
 }
 
+// An unstyled table body group.
+//
 // Base_Table_Body is gpui_kit::base::TableBody.
 Base_Table_Body :: struct {
 	using el: Element,
@@ -6056,6 +6871,7 @@ Base_Table_Body_VT :: struct {
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Table_Body),
 }
 
+// Create An unstyled table body group.
 base_table_body :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Body {
 	use_base_table()
 	e := Base_Table_Body{new_node(394, loc), &base_table_body_vt}
@@ -6075,6 +6891,8 @@ base_table_body_vt := Base_Table_Body_VT {
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Base_Table_Body))&stateful_interactive_element_any,
 }
 
+// An unstyled table caption slot.
+//
 // Base_Table_Caption is gpui_kit::base::TableCaption.
 Base_Table_Caption :: struct {
 	using el: Element,
@@ -6090,6 +6908,7 @@ Base_Table_Caption_VT :: struct {
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Table_Caption),
 }
 
+// Create an unstyled table caption slot.
 base_table_caption :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Caption {
 	use_base_table()
 	e := Base_Table_Caption{new_node(395, loc), &base_table_caption_vt}
@@ -6109,6 +6928,8 @@ base_table_caption_vt := Base_Table_Caption_VT {
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Base_Table_Caption))&stateful_interactive_element_any,
 }
 
+// An unstyled table data cell.
+//
 // Base_Table_Cell is gpui_kit::base::TableCell.
 Base_Table_Cell :: struct {
 	using el: Element,
@@ -6124,6 +6945,7 @@ Base_Table_Cell_VT :: struct {
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Table_Cell),
 }
 
+// Create An unstyled table data cell. with a one-based accessibility index.
 base_table_cell :: proc(id: Id, column_index: int, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Cell {
 	use_base_table()
 	e := Base_Table_Cell{new_node(396, loc), &base_table_cell_vt}
@@ -6144,6 +6966,8 @@ base_table_cell_vt := Base_Table_Cell_VT {
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Base_Table_Cell))&stateful_interactive_element_any,
 }
 
+// An unstyled table column header.
+//
 // Base_Table_Head is gpui_kit::base::TableHead.
 Base_Table_Head :: struct {
 	using el: Element,
@@ -6159,6 +6983,7 @@ Base_Table_Head_VT :: struct {
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Table_Head),
 }
 
+// Create An unstyled table column header. with a one-based accessibility index.
 base_table_head :: proc(id: Id, column_index: int, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Head {
 	use_base_table()
 	e := Base_Table_Head{new_node(397, loc), &base_table_head_vt}
@@ -6179,6 +7004,8 @@ base_table_head_vt := Base_Table_Head_VT {
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Base_Table_Head))&stateful_interactive_element_any,
 }
 
+// An unstyled table header group.
+//
 // Base_Table_Header is gpui_kit::base::TableHeader.
 Base_Table_Header :: struct {
 	using el: Element,
@@ -6194,6 +7021,7 @@ Base_Table_Header_VT :: struct {
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Table_Header),
 }
 
+// Create An unstyled table header group.
 base_table_header :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Header {
 	use_base_table()
 	e := Base_Table_Header{new_node(398, loc), &base_table_header_vt}
@@ -6213,6 +7041,8 @@ base_table_header_vt := Base_Table_Header_VT {
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Base_Table_Header))&stateful_interactive_element_any,
 }
 
+// An unstyled semantic table row.
+//
 // Base_Table_Row is gpui_kit::base::TableRow.
 Base_Table_Row :: struct {
 	using el: Element,
@@ -6228,6 +7058,7 @@ Base_Table_Row_VT :: struct {
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Table_Row),
 }
 
+// Create an unstyled semantic table row with a one-based accessibility index.
 base_table_row :: proc(id: Id, row_index: int, flags: ..Style_Flag, loc := #caller_location) -> Base_Table_Row {
 	use_base_table()
 	e := Base_Table_Row{new_node(399, loc), &base_table_row_vt}
@@ -6248,6 +7079,11 @@ base_table_row_vt := Base_Table_Row_VT {
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Base_Table_Row))&stateful_interactive_element_any,
 }
 
+// An unstyled collection root for `Base_Tab` elements.
+//
+// Controlled selection and activation are expressed directly by its child tabs. The root supplies
+// collection accessibility without introducing a context hierarchy or new keyboard behavior.
+//
 // Tabs is gpui_kit::base::Tabs.
 Tabs :: struct {
 	using el: Element,
@@ -6282,6 +7118,24 @@ tabs_vt := Tabs_VT {
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Tabs))&stateful_interactive_element_any,
 }
 
+// A text view that can render Markdown or HTML.
+//
+// Goals:
+// - Provide a rich text rendering component for such as Markdown or HTML, used to display rich
+//   text in GPUI application (e.g., Help messages, Release notes)
+// - Support Markdown GFM and HTML (Simple HTML like Safari Reader Mode) for showing most common
+//   used markups.
+// - Support Heading, Paragraph, Bold, Italic, StrikeThrough, Code, Link, Image, Blockquote,
+//   List, Table, HorizontalRule, CodeBlock ...
+//
+// Not Goals:
+// - Customization of the complex style (some simple styles will be supported)
+// - As a Markdown editor or viewer (If you want to like this, you must fork your version).
+// - As a HTML viewer, we not support CSS, we only support basic HTML tags for used to as a
+//   content reader.
+//
+// See also `MarkdownElement`, `HtmlElement`
+//
 // Base_Text_View is gpui_kit::base::TextView.
 Base_Text_View :: struct {
 	using el: Element,
@@ -6371,29 +7225,112 @@ Base_Text_View_VT :: struct {
 	text_size: proc(e: Base_Text_View, size: Length) -> Base_Text_View,
 	top: proc(e: Base_Text_View, length: Length) -> Base_Text_View,
 	w: proc(e: Base_Text_View, length: Length) -> Base_Text_View,
+	// Refines blockquotes over the resolved style. See `->with_blockquote_style` for where it applies.
+	// Unspecified properties are inherited.
 	blockquote_style: proc(e: Base_Text_View, style: Style_Refinement) -> Base_Text_View,
+	// Set custom block actions for code blocks.
+	//
+	// The closure receives the `Base_Code_Block`, and returns an element to display.
 	code_block_actions: proc(e: Base_Text_View, f: Row_Source) -> Base_Text_View, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, code_block: Code_Block) -> Element)
+	// Adds opt-in syntax highlighting for fenced code blocks.
+	//
+	// Returned byte ranges are relative to `code`. Invalid ranges are discarded. Without this
+	// callback, code is unhighlighted.
 	code_block_highlighter: proc(e: Base_Text_View, highlighter: Ask(Code_Block, []Tuple_Range_Highlight_Style)) -> Base_Text_View,
+	// Overrides the source of every document image, including embedded data URLs.
+	//
+	// Used for both rendering and intrinsic-size measurement. The returned source is authoritative:
+	// pending or failed loads never fall back to the document URL. Without this override, images use
+	// Base's default URI and data URL handling.
 	image_source: proc(e: Base_Text_View, resolver: Ask(Temp_String, string)) -> Base_Text_View,
+	// Refines inline code typography, background, border, radius, and padding over the resolved style.
+	// See `->with_inline_code_style` for the supported properties. Unspecified properties are
+	// inherited.
 	inline_code_style: proc(e: Base_Text_View, style: Style_Refinement) -> Base_Text_View,
+	// Show a tooltip that follows the pointer while it is over a link.
+	//
+	// The builder receives the link's URL. The view caches the tooltip until a different destination
+	// is shown.
 	link_tooltip: proc(e: Base_Text_View, builder: Row_Source) -> Base_Text_View,
+	// Refines list markers over the resolved style. See `->with_list_style` for where it applies.
+	// Unspecified properties are inherited.
 	list_style: proc(e: Base_Text_View, style: Style_Refinement) -> Base_Text_View,
+	// Register a renderer for a custom block-level Markdown node name.
 	markdown_block_renderer: proc(e: Base_Text_View, name: string, renderer: Row_Source) -> Base_Text_View, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, markdown_node_read: Markdown_Node_Read) -> Element)
+	// Replace the Markdown extension registry.
 	markdown_extensions: proc(e: Base_Text_View, extensions: Markdown_Extensions) -> Base_Text_View,
+	// Enable MDX JSX/expression parsing.
+	//
+	// This disables raw HTML parsing because `markdown-rs` gives HTML priority over MDX when both are
+	// enabled.
 	markdown_mdx: proc(e: Base_Text_View) -> Base_Text_View,
+	// Clamp the rendered content to at most `n` lines of body text.
+	//
+	// The view's height is capped at `n` × the base line height, and a line of glyphs is never cut in
+	// half: a line that would straddle the bottom of the box is left out whole, across paragraphs,
+	// lists, headings, code blocks and tables. Nothing is shown with less than a line of itself to
+	// show, so the border and padding a table row leads with never strands at the bottom; whatever has
+	// more than that is cut on the box edge and keeps the part that fits, rather than disappearing and
+	// leaving blank space behind.
+	//
+	// Check `gk.text_view_state_is_clamped` (which answers for the frame that was last painted) to
+	// decide whether to show an "expand" affordance.
+	//
+	// `n` counts lines of body text, so paragraph spacing and taller lines mean fewer of them fit
+	// inside the capped height. A line taller than the whole budget keeps the part that fits rather
+	// than emptying the box. Ignored when `->scrollable` is set.
 	max_lines: proc(e: Base_Text_View, max_lines: int) -> Base_Text_View,
+	// Set the motion policy; see `Text_View_Motion`. Without one, the state's own policy applies,
+	// which plays no motion by default.
 	motion: proc(e: Base_Text_View, motion: Text_View_Motion) -> Base_Text_View,
+	// Handle pointer events on rendered links.
+	//
+	// The handler receives the resolved URL and the original GPUI click event. Without a handler,
+	// links open through App::open_url.
 	on_link_click: proc(e: Base_Text_View, handler: Handler) -> Base_Text_View,
+	// Scroll a container that does not follow scroll requests to the line of
+	// `gk.text_view_state_reveal_range`.
+	//
+	// A `gpui::list` scrolls to that line by itself; a `div` with `overflow_y_scroll`, for one, does
+	// not. After a frame in which the line was laid out but not visible, the handler receives its
+	// bounds in window coordinates, to scroll the container, e.g. through its `ScrollHandle`, until
+	// the line is visible.
 	on_reveal: proc(e: Base_Text_View, handler: Handler) -> Base_Text_View,
+	// Make the checkboxes of Markdown task list items (`-  `, `- `x``) clickable.
+	//
+	// The handler receives a `Task_Toggle_Event` with the checked state the item should now have and
+	// where the item and its ` ` / ``x`` marker are in the source text. The view does not change its
+	// text: the caller owns the source, replaces the marker and sets the new text. Without a handler,
+	// the checkboxes are not interactive.
 	on_task_toggle: proc(e: Base_Text_View, handler: Handler) -> Base_Text_View,
+	// Apply a reusable text view plugin.
 	plugin: proc(e: Base_Text_View, plugin: Markdown_Plugin_Any) -> Base_Text_View,
+	// Set the text view to be scrollable, default is false.
+	//
+	// If true for `scrollable`:
+	// The `scrollable` mode used for large content, will show scrollbar, but requires the parent to
+	// have a fixed height, and use `list` to render the content in a virtualized way.
+	//
+	// If false to fit content:
+	// The TextView will expand to fit all content, no scrollbar. This mode is suitable for small
+	// content, such as a few lines of text, a label, etc.
 	scrollable: proc(e: Base_Text_View, scrollable: bool) -> Base_Text_View,
+	// Set whether the text view is selectable, default is true.
 	selectable: proc(e: Base_Text_View, selectable: bool) -> Base_Text_View,
+	// Set the `SelectionFormat`, default is `Plain`.
+	//
+	// With `Source`, selecting inside `**bold**` yields `**bold**` (the Markdown source) rather than
+	// `bold`.
 	selection_format: proc(e: Base_Text_View, selection_format: Selection_Format) -> Base_Text_View,
+	// Set `Base_Text_View_Style`.
 	style: proc(e: Base_Text_View, style: Base_Text_View_Style) -> Base_Text_View,
+	// Set custom actions to be rendered below each Markdown table.
+	//
+	// The closure receives the `TableData`, and returns an element to display.
 	table_actions: proc(e: Base_Text_View, f: Row_Source) -> Base_Text_View, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, table_data: Table_Data) -> Element)
 }
 
+// Create a new html text view with code location as id.
 base_html :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
 	use_base_text()
 	e := Base_Text_View{new_node(408, loc), &base_text_view_vt}
@@ -6403,6 +7340,7 @@ base_html :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) 
 	return e
 }
 
+// Create a new markdown text view with code location as id.
 base_markdown :: proc(source: string, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
 	use_base_text()
 	e := Base_Text_View{new_node(409, loc), &base_text_view_vt}
@@ -6412,6 +7350,7 @@ base_markdown :: proc(source: string, flags: ..Style_Flag, loc := #caller_locati
 	return e
 }
 
+// Create new TextView with managed state.
 base_text_view :: proc(state: Text_View_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
 	use_base_text()
 	e := Base_Text_View{new_node(407, loc), &base_text_view_vt}
@@ -6421,6 +7360,7 @@ base_text_view :: proc(state: Text_View_State, flags: ..Style_Flag, loc := #call
 	return e
 }
 
+// Create a new html text view.
 base_text_view_html :: proc(id: Id, html: string, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
 	use_base_text()
 	e := Base_Text_View{new_node(405, loc), &base_text_view_vt}
@@ -6431,6 +7371,7 @@ base_text_view_html :: proc(id: Id, html: string, flags: ..Style_Flag, loc := #c
 	return e
 }
 
+// Create a new markdown text view.
 base_text_view_markdown :: proc(id: Id, markdown: string, flags: ..Style_Flag, loc := #caller_location) -> Base_Text_View {
 	use_base_text()
 	e := Base_Text_View{new_node(406, loc), &base_text_view_vt}
@@ -6642,6 +7583,9 @@ base_text_view_vt := Base_Text_View_VT {
 	},
 }
 
+// Motion policy of a text view. Base plays it; every duration defaults to zero, so an unstyled
+// view adopts new content at once.
+//
 // Text_View_Motion is gpui_kit::base::TextViewMotion.
 Text_View_Motion :: struct {
 	using nd: Value,
@@ -6649,8 +7593,13 @@ Text_View_Motion :: struct {
 }
 
 Text_View_Motion_VT :: struct {
+	// How long the text an update appends takes to reach full color.
 	with_stream_fade: proc(e: Text_View_Motion, duration: time.Duration) -> Text_View_Motion,
+	// The curve the appended text fades in along.
 	with_stream_fade_easing: proc(e: Text_View_Motion, easing: Easing) -> Text_View_Motion,
+	// How much later each further word of one update starts fading than the word before it; zero fades
+	// the update as one chunk. A long update is compressed so its last word starts within one
+	// `stream_fade`.
 	with_stream_fade_stagger: proc(e: Text_View_Motion, stagger: time.Duration) -> Text_View_Motion,
 }
 
@@ -6678,6 +7627,12 @@ text_view_motion_vt := Text_View_Motion_VT {
 	},
 }
 
+// TextViewStyle used to customize the style for `Base_Text_View`.
+//
+// The fields are private because this type crosses the `gpui-base` seam: build one with the
+// `with_*` methods and read it back through the accessors of the same name, so a later field is an
+// additive change rather than a breaking one.
+//
 // Base_Text_View_Style is gpui_kit::base::TextViewStyle.
 Base_Text_View_Style :: struct {
 	using nd: Value,
@@ -6685,23 +7640,83 @@ Base_Text_View_Style :: struct {
 }
 
 Base_Text_View_Style_VT :: struct {
+	// Refines the blockquote container.
+	//
+	// Applied after its defaults: the muted text color, a 2px left border in the border color, and a
+	// left padding of 0.9 times the body font size. Border widths and color style the quote bar; text
+	// properties, background, padding, and corner radii style the quote and its contents. Child blocks
+	// keep properties they set explicitly, including heading and table font sizes. Unspecified
+	// properties keep the existing defaults, and explicit refinements also take precedence on inverted
+	// surfaces.
 	with_blockquote_style: proc(e: Base_Text_View_Style, style: Style_Refinement) -> Base_Text_View_Style,
+	// Sets the color of borders and horizontal rules.
 	with_border: proc(e: Base_Text_View_Style, color: Color) -> Base_Text_View_Style,
+	// Sets the background of fenced code blocks and table header rows.
 	with_code_background: proc(e: Base_Text_View_Style, color: Color) -> Base_Text_View_Style,
+	// Sets the style refinement for code blocks.
+	//
+	// Set `overflow.y` to `Overflow::Scroll` together with a max height to scroll long code inside the
+	// block: it gets its own scrollbar, and wheel input over it no longer scrolls an ancestor list
+	// until the code reaches its edge.
 	with_code_block: proc(e: Base_Text_View_Style, style: Style_Refinement) -> Base_Text_View_Style,
+	// Sets whether content-specific assets should use their dark variant.
 	with_dark: proc(e: Base_Text_View_Style, is_dark: bool) -> Base_Text_View_Style,
+	// Sets the default body-text color.
 	with_foreground: proc(e: Base_Text_View_Style, color: Color) -> Base_Text_View_Style,
+	// Sets the style refinement for headings, selected by heading level (1-6).
 	with_heading: proc(e: Base_Text_View_Style, heading: []Style_Refinement) -> Base_Text_View_Style,
+	// Sets the highlight style for inline code spans.
+	//
+	// When `background_color` is `None`, the neutral code background is used, which keeps `default`
+	// usable without a theme.
 	with_inline_code: proc(e: Base_Text_View_Style, style: Highlight_Style) -> Base_Text_View_Style,
+	// Overrides inline code typography and its box presentation.
+	//
+	// Supports font family, size, features, fallbacks, weight, style, color, underline and
+	// strikethrough, background, border widths/color/style, corner radii, and padding. Sizes and
+	// padding resolve pixels/rem against the window. Unspecified properties keep the existing
+	// defaults. Box layout, margin, positioning, overflow, and interaction properties are not used.
+	// Line height remains owned by the paragraph. Non-finite or non-positive font sizes are ignored.
+	// Explicit refinements also take precedence on inverted surfaces.
 	with_inline_code_style: proc(e: Base_Text_View_Style, style: Style_Refinement) -> Base_Text_View_Style,
+	// Sets the link text color.
 	with_link: proc(e: Base_Text_View_Style, color: Color) -> Base_Text_View_Style,
+	// Refines the marker of a bullet or numbered list item.
+	//
+	// Applied to the marker column after its defaults: the muted text color, a minimum width of the
+	// list indent, right-aligned text, and a right padding of 0.3 times that indent. Text properties
+	// such as color, font family, size, and weight style the bullet or number. The text color also
+	// outlines an unchecked task-list checkbox; a checked one keeps the link color. Unspecified
+	// properties keep the existing defaults, and explicit refinements also take precedence on inverted
+	// surfaces.
 	with_list_style: proc(e: Base_Text_View_Style, style: Style_Refinement) -> Base_Text_View_Style,
+	// Sets the secondary text color.
 	with_muted_foreground: proc(e: Base_Text_View_Style, color: Color) -> Base_Text_View_Style,
+	// Sets the gap between paragraphs. Defaults to 0.75 rem.
 	with_paragraph_gap: proc(e: Base_Text_View_Style, gap: f32) -> Base_Text_View_Style,
+	// Sets the background painted behind selected text.
+	//
+	// Selection quads are painted under the glyphs, so this is normally a translucent wash rather than
+	// a solid fill.
 	with_selection: proc(e: Base_Text_View_Style, color: Color) -> Base_Text_View_Style,
+	// Sets the style refinement for the table container (the bordered wrapper in wrap mode, the scroll
+	// viewport in horizontal-scroll mode).
+	//
+	// Set `overflow_x: scroll` on the refinement for adaptive table layout: columns fit their content
+	// when space allows, shrink (wrapping cell text) down to a per-column floor when the frame is
+	// narrower, and below that the table scrolls horizontally instead of squeezing further.
 	with_table: proc(e: Base_Text_View_Style, style: Style_Refinement) -> Base_Text_View_Style,
+	// Sets the style refinement for each table cell.
+	//
+	// With the scroll table layout, `white_space: nowrap` here keeps cells on a single line — columns
+	// then never shrink and the table scrolls as soon as the content is wider than the frame.
 	with_table_cell: proc(e: Base_Text_View_Style, style: Style_Refinement) -> Base_Text_View_Style,
+	// Sets the style refinement for the header row (the first row) of a table, applied on top of the
+	// header background and foreground.
 	with_table_head: proc(e: Base_Text_View_Style, style: Style_Refinement) -> Base_Text_View_Style,
+	// Sets the background of a table body row while the pointer is over it.
+	//
+	// The header row does not highlight. Without this, table rows have no hover highlight.
 	with_table_row_hover: proc(e: Base_Text_View_Style, color: Color) -> Base_Text_View_Style,
 }
 
@@ -6710,6 +7725,7 @@ base_text_view_style_default :: proc(loc := #caller_location) -> Base_Text_View_
 	return e
 }
 
+// Derives rich-text colors from Base semantic theme tokens.
 base_text_view_style_from_theme :: proc(theme: Base_Theme, loc := #caller_location) -> Base_Text_View_Style {
 	e := Base_Text_View_Style{new_value(824, loc), &base_text_view_style_vt}
 	o := node_args()
@@ -6814,6 +7830,8 @@ base_text_view_style_vt := Base_Text_View_Style_VT {
 	},
 }
 
+// An unstyled ordinary multi-line text input.
+//
 // Base_Textarea is gpui_kit::base::Textarea.
 Base_Textarea :: struct {
 	using el: Element,
@@ -6821,8 +7839,11 @@ Base_Textarea :: struct {
 }
 
 Base_Textarea_VT :: struct {
+	// Open a reference after a completed, unconsumed token click.
 	on_token_click: proc(e: Base_Textarea, listener: Handler) -> Base_Textarea,
+	// Report pointer presence over a token; hover never selects or edits.
 	on_token_hover: proc(e: Base_Textarea, listener: Handler) -> Base_Textarea,
+	// The element each atomic token renders as; the input keeps editing and history.
 	token: proc(e: Base_Textarea, render: Row_Source) -> Base_Textarea, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, inline_token_context: Inline_Token_Context) -> Element)
 }
 
@@ -6853,6 +7874,12 @@ base_textarea_vt := Base_Textarea_VT {
 	},
 }
 
+// Unstyled segmented time editor.
+//
+// Base owns focus, the keyboard model and pointer segment selection; the presentation lays out and
+// decorates the field with `Styled` and each segment through `->render_segment`. A `:` separates
+// the numeric segments unless `->separator` says otherwise; the AM/PM segment follows without one.
+//
 // Base_Time_Field is gpui_kit::base::TimeField.
 Base_Time_Field :: struct {
 	using el: Element,
@@ -6863,7 +7890,10 @@ Base_Time_Field_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Time_Field),
 	using t_styled: ^Styled_Trait(Base_Time_Field),
 	disabled: proc(e: Base_Time_Field, disabled: bool) -> Base_Time_Field,
+	// Decorate each segment. The segment already carries its label: two digits, or `AM`/`PM`.
 	render_segment: proc(e: Base_Time_Field, render: Row_Source) -> Base_Time_Field, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, time_field_segment: Time_Field_Segment, time_field_segment_state: Time_Field_Segment_State) -> Element)
+	// What stands between the field's segments (`:` by default), as a caller showing a time in its own
+	// locale may need.
 	separator: proc(e: Base_Time_Field, separator: string) -> Base_Time_Field,
 }
 
@@ -6898,6 +7928,8 @@ base_time_field_vt := Base_Time_Field_VT {
 	},
 }
 
+// An unstyled, pre-wired segment passed to the `Base_Time_Field` segment slot.
+//
 // Time_Field_Segment is gpui_kit::base::TimeFieldSegment.
 Time_Field_Segment :: struct {
 	using el: Element,
@@ -6911,6 +7943,7 @@ Time_Field_Segment_VT :: struct {
 	using t_styled: ^Styled_Trait(Time_Field_Segment),
 	using t_interactive_element: ^Interactive_Element_Trait(Time_Field_Segment),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Time_Field_Segment),
+	// Remove the default label so a styled facade can provide custom content.
 	clear_children: proc(e: Time_Field_Segment) -> Time_Field_Segment,
 }
 
@@ -6982,6 +8015,8 @@ timing_vt := Timing_VT {
 	},
 }
 
+// An unstyled semantic toast root. Applications own all presentation and motion.
+//
 // Toast is gpui_kit::base::Toast.
 Toast :: struct {
 	using el: Element,
@@ -6995,9 +8030,11 @@ Toast_VT :: struct {
 	using t_parent_element: ^Parent_Element_Trait(Toast),
 	using t_interactive_element: ^Interactive_Element_Trait(Toast),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Toast),
+	// Set the lifecycle phase used by application-owned toast presentation.
 	transition_status: proc(e: Toast, status: Toast_Transition_Status) -> Toast,
 }
 
+// Create an unstyled semantic toast in the starting transition phase.
 toast :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Toast {
 	use_base_toast()
 	e := Toast{new_node(416, loc), &toast_vt}
@@ -7022,6 +8059,8 @@ toast_vt := Toast_VT {
 	},
 }
 
+// A deep toast-stack element that owns measurement, overlap, and expansion motion.
+//
 // Toast_Stack is gpui_kit::base::ToastStack.
 Toast_Stack :: struct {
 	using el: Element,
@@ -7035,12 +8074,17 @@ Toast_Stack_VT :: struct {
 	using t_parent_element: ^Parent_Element_Trait(Toast_Stack),
 	using t_interactive_element: ^Interactive_Element_Trait(Toast_Stack),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Toast_Stack),
+	// Set the focus scope that expands the stack and pauses auto-hide timers.
 	focus_handle: proc(e: Toast_Stack, focus_handle: Focus_Handle) -> Toast_Stack,
+	// Add a stably keyed toast item to the stack.
 	item: proc(e: Toast_Stack, id: Id, child: Element) -> Toast_Stack,
+	// Set the stack motion tokens.
 	motion: proc(e: Toast_Stack, motion: Toast_Motion) -> Toast_Stack,
+	// Set the viewport edge used to anchor stack geometry.
 	placement: proc(e: Toast_Stack, placement: Anchor) -> Toast_Stack,
 }
 
+// Create a toast stack with Base UI-compatible motion.
 toast_stack :: proc(id: Id, state: Toast_Stack_State, flags: ..Style_Flag, loc := #caller_location) -> Toast_Stack {
 	use_base_toast()
 	e := Toast_Stack{new_node(825, loc), &toast_stack_vt}
@@ -7082,6 +8126,11 @@ toast_stack_vt := Toast_Stack_VT {
 	},
 }
 
+// An unstyled, controlled toggle button.
+//
+// This primitive owns activation, focus, and accessibility behavior. The application owns all
+// layout, visual states, sizes, and variants.
+//
 // Base_Toggle is gpui_kit::base::Toggle.
 Base_Toggle :: struct {
 	using el: Element,
@@ -7136,8 +8185,10 @@ Base_Toggle_VT :: struct {
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Toggle),
 	accessibility_label: proc(e: Base_Toggle, label: string) -> Base_Toggle,
 	disabled: proc(e: Base_Toggle, disabled: bool) -> Base_Toggle,
+	// Handles a request to change the controlled pressed state.
 	on_change: proc(e: Base_Toggle, handler: Handler) -> Base_Toggle,
 	pressed: proc(e: Base_Toggle, pressed: bool) -> Base_Toggle,
+	// Configures application-owned styles for the toggle's semantic states.
 	styles: proc(e: Base_Toggle, build: Toggle_Styles) -> Base_Toggle,
 	tab_index: proc(e: Base_Toggle, tab_index: int) -> Base_Toggle,
 	tab_stop: proc(e: Base_Toggle, tab_stop: bool) -> Base_Toggle,
@@ -7242,6 +8293,8 @@ base_toggle_vt := Base_Toggle_VT {
 	},
 }
 
+// An unstyled container for a set of toggle elements.
+//
 // Base_Toggle_Group is gpui_kit::base::ToggleGroup.
 Base_Toggle_Group :: struct {
 	using el: Element,
@@ -7255,6 +8308,7 @@ Base_Toggle_Group_VT :: struct {
 	using t_parent_element: ^Parent_Element_Trait(Base_Toggle_Group),
 	using t_interactive_element: ^Interactive_Element_Trait(Base_Toggle_Group),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Toggle_Group),
+	// Sets the semantic axis of the group.
 	axis: proc(e: Base_Toggle_Group, axis: Axis) -> Base_Toggle_Group,
 }
 
@@ -7282,6 +8336,8 @@ base_toggle_group_vt := Base_Toggle_Group_VT {
 	},
 }
 
+// Semantic root styles supported by `Base_Toggle`.
+//
 // Toggle_Styles is gpui_kit::base::ToggleStyles.
 Toggle_Styles :: struct {
 	using nd: Value,
@@ -7312,6 +8368,29 @@ toggle_styles_vt := Toggle_Styles_VT {
 	},
 }
 
+// An unstyled container that groups a set of controls and owns roving keyboard focus among them.
+//
+// This is the behavior primitive behind a styled toolbar. The container exposes `Toolbar`
+// semantics to assistive technology (`Role::Toolbar` with an orientation) and moves focus between
+// its focusable descendants with the arrow keys, so applications do not have to reimplement the
+// roving-focus contract per toolbar. It works with any focusable children — buttons, menu
+// triggers, inputs — because traversal walks the rendered tab stops and constrains them to this
+// subtree, mirroring how `Root` constrains focus-trap cycling.
+//
+// Keyboard contract:
+// - Left and Right move focus to the previous or next focusable descendant, wrapping around at
+//   either end (the same default as Base UI's `loopFocus`). A vertical toolbar (`->axis`) uses Up
+//   and Down instead and reports a vertical orientation.
+// - When `disabled`, the arrow keys do nothing. Hosted controls must be disabled by their owner;
+//   the flag only suppresses the toolbar's own navigation.
+//
+// The container is not itself a tab stop, so ordinary `Tab` traversal enters and leaves the
+// toolbar through its items, matching the ARIA toolbar pattern.
+//
+// An input hosted inside the toolbar keeps its own arrow-key behavior: text inputs consume the
+// arrow keys for caret movement before the toolbar sees them. Place inputs at the trailing end of
+// a horizontal toolbar, as the Base UI Toolbar recommends.
+//
 // Base_Toolbar is gpui_kit::base::Toolbar.
 Base_Toolbar :: struct {
 	using el: Element,
@@ -7325,7 +8404,10 @@ Base_Toolbar_VT :: struct {
 	using t_parent_element: ^Parent_Element_Trait(Base_Toolbar),
 	using t_interactive_element: ^Interactive_Element_Trait(Base_Toolbar),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Toolbar),
+	// The direction the items run: horizontal (Left/Right, the default) or vertical (Up/Down).
+	// Assistive technology hears the same orientation.
 	axis: proc(e: Base_Toolbar, axis: Axis) -> Base_Toolbar,
+	// Disables the toolbar's own keyboard navigation. Hosted controls are not automatically disabled.
 	disabled: proc(e: Base_Toolbar, disabled: bool) -> Base_Toolbar,
 }
 
@@ -7358,6 +8440,19 @@ base_toolbar_vt := Base_Toolbar_VT {
 	},
 }
 
+// A semantic subgroup of items within a `Base_Toolbar`.
+//
+// The group carries no behavior or styling of its own: the surrounding toolbar's roving arrow-key
+// focus traverses its items exactly like the toolbar's direct children, because containment
+// follows the element tree. Its value is structure — assistive technology announces the group and
+// its accessible name, so a run of related controls reads as one unit ("Undo", "Redo" inside a
+// "History" group).
+//
+// Unlike Base UI's `Toolbar.Group`, the group cannot disable its children. That API propagates
+// through React context into Base UI's own button primitives; GPUI composition offers no
+// equivalent for arbitrary children, and the platform a11y layer exposes no disabled state for a
+// container node. Disabling the hosted controls is the group owner's job.
+//
 // Base_Toolbar_Group is gpui_kit::base::ToolbarGroup.
 Base_Toolbar_Group :: struct {
 	using el: Element,
@@ -7371,6 +8466,7 @@ Base_Toolbar_Group_VT :: struct {
 	using t_parent_element: ^Parent_Element_Trait(Base_Toolbar_Group),
 	using t_interactive_element: ^Interactive_Element_Trait(Base_Toolbar_Group),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Base_Toolbar_Group),
+	// Sets the accessible name announced for the group, e.g. "History".
 	label: proc(e: Base_Toolbar_Group, label: string) -> Base_Toolbar_Group,
 }
 
@@ -7398,6 +8494,11 @@ base_toolbar_group_vt := Base_Toolbar_Group_VT {
 	},
 }
 
+// An unstyled tooltip popup.
+//
+// This corresponds to Base UI's `Tooltip.Popup`: it owns the accessible tooltip role and accepts
+// application-owned content and presentation.
+//
 // Base_Tooltip is gpui_kit::base::Tooltip.
 Base_Tooltip :: struct {
 	using el: Element,
@@ -7428,6 +8529,11 @@ base_tooltip_vt := Base_Tooltip_VT {
 	t_parent_element = cast(^Parent_Element_Trait(Base_Tooltip))&parent_element_any,
 }
 
+// An unstyled tooltip positioner with viewport-aware flipping and clamping.
+//
+// This is a tooltip-named view of `Positioner`'s side placement. It adds no element of its own;
+// the shared positioner is what gets rendered.
+//
 // Tooltip_Positioner is gpui_kit::base::TooltipPositioner.
 Tooltip_Positioner :: struct {
 	using el: Element,
@@ -7459,6 +8565,8 @@ tooltip_positioner_vt := Tooltip_Positioner_VT {
 	},
 }
 
+// Content requested by a tooltip trigger.
+//
 // Tooltip_Request is gpui_kit::base::TooltipRequest.
 Tooltip_Request :: struct {
 	using nd: Value,
@@ -7466,7 +8574,9 @@ Tooltip_Request :: struct {
 }
 
 Tooltip_Request_VT :: struct {
+	// Prefers a side for the tooltip, falling back when it does not fit.
 	with_placement: proc(e: Tooltip_Request, placement: Placement) -> Tooltip_Request,
+	// Overrides `gk.tooltip_defaults_show_delay` for this trigger.
 	with_show_delay: proc(e: Tooltip_Request, delay: time.Duration) -> Tooltip_Request,
 }
 
@@ -7504,6 +8614,8 @@ tooltip_request_vt := Tooltip_Request_VT {
 	},
 }
 
+// The touch handles a participant laid out for a frame, with their hitboxes.
+//
 // Touch_Handle_Layout is gpui_kit::base::TouchHandleLayout.
 Touch_Handle_Layout :: struct {
 	using nd: Value,
@@ -7522,6 +8634,12 @@ touch_handle_layout_default :: proc(loc := #caller_location) -> Touch_Handle_Lay
 touch_handle_layout_vt := Touch_Handle_Layout_VT {
 }
 
+// CSS-like timing policy for a target-value transition.
+//
+// This type is intentionally separate from `Transition`, whose legacy interface applies concrete
+// fade, slide, and size effects to an element. A value transition never chooses a visual property
+// for the caller.
+//
 // Transition is gpui_kit::base::Transition.
 Transition :: struct {
 	using nd: Value,
@@ -7532,6 +8650,11 @@ Transition_VT :: struct {
 	delay: proc(e: Transition, delay: Signed_Duration_Into) -> Transition,
 	ease: proc(e: Transition, easing: string) -> Transition,
 	easing: proc(e: Transition, easing: Easing) -> Transition,
+	// Select reduced-motion behavior for this transition only. The application's preference and other
+	// motion channels are unchanged.
+	//
+	// `->transition`, `transition_with_status` and `gk.transition_state_sample` read it. `Presence`
+	// still finishes at once under reduced motion.
 	reduced_motion: proc(e: Transition, behavior: Reduced_Motion) -> Transition,
 }
 
@@ -7566,6 +8689,13 @@ transition_vt := Transition_VT {
 	},
 }
 
+// An unstyled, virtualized tree element.
+//
+// A click on an entry, a press and release on that same entry, selects it and expands or collapses
+// it when it is a folder. Click handlers in the content from `->item` run first, so they still see
+// the previous selection. To drag entries, use `on_drag` on that content: a press that starts a
+// drag is not a click.
+//
 // Base_Tree is gpui_kit::base::Tree.
 Base_Tree :: struct {
 	using el: Element,
@@ -7575,7 +8705,9 @@ Base_Tree :: struct {
 Base_Tree_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Tree),
 	using t_styled: ^Styled_Trait(Base_Tree),
+	// Supplies the application-owned content for each visible entry.
 	item: proc(e: Base_Tree, render_item: Row_Source) -> Base_Tree, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, v0: int, tree_entry_reads: Tree_Entry_Reads, base_tree_entry_state: Base_Tree_Entry_State) -> Element)
+	// Applies caller-owned presentation to the internal virtual list.
 	list_style: proc(e: Base_Tree, style: Style_Refinement) -> Base_Tree,
 }
 
@@ -7604,6 +8736,8 @@ base_tree_vt := Base_Tree_VT {
 	},
 }
 
+// A tree item with a stable id, display label, children, and shared state.
+//
 // Tree_Item is gpui_kit::base::TreeItem.
 Tree_Item :: struct {
 	using nd: Value,

@@ -9,6 +9,8 @@ type RatingEl struct{ n *node }
 
 func (e RatingEl) node() *node { return e.n }
 
+// Create a new Rating with an `ElementId`.
+//
 // Rating is <gpui_kit::component::rating::Rating>::new.
 func Rating(id ID, st ...Style) RatingEl {
 	useComponentRating()
@@ -19,6 +21,8 @@ func Rating(id ID, st ...Style) RatingEl {
 	return RatingEl{n}
 }
 
+// Set active color, default will use `yellow` from theme colors.
+//
 // Color is <gpui_kit::component::rating::Rating>::color.
 func (e RatingEl) Color(color Color) RatingEl {
 	o := op(e.n, 256)
@@ -26,6 +30,8 @@ func (e RatingEl) Color(color Color) RatingEl {
 	return e
 }
 
+// Disable interaction.
+//
 // Disabled is <gpui_kit::component::rating::Rating>::disabled.
 func (e RatingEl) Disabled(disabled bool) RatingEl {
 	o := op(e.n, 257)
@@ -33,6 +39,8 @@ func (e RatingEl) Disabled(disabled bool) RatingEl {
 	return e
 }
 
+// Set maximum number of stars.
+//
 // Max is <gpui_kit::component::rating::Rating>::max.
 func (e RatingEl) Max(max_ int) RatingEl {
 	o := op(e.n, 258)
@@ -40,6 +48,10 @@ func (e RatingEl) Max(max_ int) RatingEl {
 	return e
 }
 
+// Add on_click handler when the rating changes.
+//
+// The `&usize` parameter is the new rating value.
+//
 // OnClick is <gpui_kit::component::rating::Rating>::on_click.
 func (e RatingEl) OnClick(handler func(cx *Cx, e int)) RatingEl {
 	o := op(e.n, 259)
@@ -47,6 +59,8 @@ func (e RatingEl) OnClick(handler func(cx *Cx, e int)) RatingEl {
 	return e
 }
 
+// Set initial value (0..=max).
+//
 // Value is <gpui_kit::component::rating::Rating>::value.
 func (e RatingEl) Value(value int) RatingEl {
 	o := op(e.n, 260)
@@ -54,6 +68,8 @@ func (e RatingEl) Value(value int) RatingEl {
 	return e
 }
 
+// Set the star size.
+//
 // WithSize is <gpui_kit::component::rating::Rating>::with_size.
 func (e RatingEl) WithSize(size SizeInto) RatingEl {
 	o := op(e.n, 261)
@@ -61,7 +77,19 @@ func (e RatingEl) WithSize(size SizeInto) RatingEl {
 	return e
 }
 
-func (e RatingEl) PopoverStyle() RatingEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e RatingEl) PopoverStyle() RatingEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e RatingEl) RoundedFullStyle() RatingEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e RatingEl) CornerRadii(radius Corners) RatingEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -70,19 +98,32 @@ func (e RatingEl) DebugFocused(focusHandle FocusHandle) RatingEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e RatingEl) DebugGreen() RatingEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e RatingEl) DebugPink() RatingEl                  { tStyledExtDebugPink(e.n); return e }
-func (e RatingEl) DebugRed() RatingEl                   { tStyledExtDebugRed(e.n); return e }
-func (e RatingEl) DebugYellow() RatingEl                { tStyledExtDebugYellow(e.n); return e }
-func (e RatingEl) FontBlack() RatingEl                  { tStyledExtFontBlack(e.n); return e }
-func (e RatingEl) FontBold() RatingEl                   { tStyledExtFontBold(e.n); return e }
-func (e RatingEl) FontExtrabold() RatingEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e RatingEl) FontExtralight() RatingEl             { tStyledExtFontExtralight(e.n); return e }
-func (e RatingEl) FontLight() RatingEl                  { tStyledExtFontLight(e.n); return e }
-func (e RatingEl) FontMedium() RatingEl                 { tStyledExtFontMedium(e.n); return e }
-func (e RatingEl) FontNormal() RatingEl                 { tStyledExtFontNormal(e.n); return e }
-func (e RatingEl) FontSemibold() RatingEl               { tStyledExtFontSemibold(e.n); return e }
-func (e RatingEl) FontThin() RatingEl                   { tStyledExtFontThin(e.n); return e }
+func (e RatingEl) DebugGreen() RatingEl     { tStyledExtDebugGreen(e.n); return e }
+func (e RatingEl) DebugPink() RatingEl      { tStyledExtDebugPink(e.n); return e }
+func (e RatingEl) DebugRed() RatingEl       { tStyledExtDebugRed(e.n); return e }
+func (e RatingEl) DebugYellow() RatingEl    { tStyledExtDebugYellow(e.n); return e }
+func (e RatingEl) FontBlack() RatingEl      { tStyledExtFontBlack(e.n); return e }
+func (e RatingEl) FontBold() RatingEl       { tStyledExtFontBold(e.n); return e }
+func (e RatingEl) FontExtrabold() RatingEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e RatingEl) FontExtralight() RatingEl { tStyledExtFontExtralight(e.n); return e }
+func (e RatingEl) FontLight() RatingEl      { tStyledExtFontLight(e.n); return e }
+func (e RatingEl) FontMedium() RatingEl     { tStyledExtFontMedium(e.n); return e }
+func (e RatingEl) FontNormal() RatingEl     { tStyledExtFontNormal(e.n); return e }
+func (e RatingEl) FontSemibold() RatingEl   { tStyledExtFontSemibold(e.n); return e }
+func (e RatingEl) FontThin() RatingEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e RatingEl) HFlex() RatingEl                      { tStyledExtHFlex(e.n); return e }
 func (e RatingEl) Margins(margins EdgesInto) RatingEl   { tStyledExtMargins(e.n, margins); return e }
 func (e RatingEl) Paddings(paddings EdgesInto) RatingEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -90,122 +131,339 @@ func (e RatingEl) RefineStyle(style StyleRefinement) RatingEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e RatingEl) VFlex() RatingEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e RatingEl) Style(st ...Style) RatingEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e RatingEl) AspectRatio(ratio float32) RatingEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e RatingEl) Bg(fill Fill) RatingEl              { tStyledBg(e.n, fill); return e }
-func (e RatingEl) Border(length Length) RatingEl      { tStyledBorder(e.n, length); return e }
-func (e RatingEl) BorderB(length Length) RatingEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e RatingEl) Bg(fill Fill) RatingEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e RatingEl) Border(length Length) RatingEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RatingEl) BorderB(length Length) RatingEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e RatingEl) BorderColor(borderColor Color) RatingEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e RatingEl) BorderL(length Length) RatingEl     { tStyledBorderL(e.n, length); return e }
-func (e RatingEl) BorderR(length Length) RatingEl     { tStyledBorderR(e.n, length); return e }
-func (e RatingEl) BorderT(length Length) RatingEl     { tStyledBorderT(e.n, length); return e }
-func (e RatingEl) BorderX(length Length) RatingEl     { tStyledBorderX(e.n, length); return e }
-func (e RatingEl) BorderY(length Length) RatingEl     { tStyledBorderY(e.n, length); return e }
-func (e RatingEl) Bottom(length Length) RatingEl      { tStyledBottom(e.n, length); return e }
-func (e RatingEl) ColEnd(end int16) RatingEl          { tStyledColEnd(e.n, end); return e }
-func (e RatingEl) ColSpan(span uint16) RatingEl       { tStyledColSpan(e.n, span); return e }
-func (e RatingEl) ColStart(start int16) RatingEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RatingEl) BorderL(length Length) RatingEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RatingEl) BorderR(length Length) RatingEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e RatingEl) BorderT(length Length) RatingEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e RatingEl) BorderX(length Length) RatingEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e RatingEl) BorderY(length Length) RatingEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RatingEl) Bottom(length Length) RatingEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e RatingEl) ColEnd(end int16) RatingEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e RatingEl) ColSpan(span uint16) RatingEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e RatingEl) ColStart(start int16) RatingEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e RatingEl) Cursor(cursor CursorStyle) RatingEl { tStyledCursor(e.n, cursor); return e }
-func (e RatingEl) FlexBasis(basis Length) RatingEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e RatingEl) FlexGrow(grow float32) RatingEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e RatingEl) FlexBasis(basis Length) RatingEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e RatingEl) FlexGrow(grow float32) RatingEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e RatingEl) FlexShrink(shrink float32) RatingEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e RatingEl) FontFamily(familyName string) RatingEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e RatingEl) FontFeatures(features FontFeatures) RatingEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e RatingEl) FontWeight(weight FontWeight) RatingEl { tStyledFontWeight(e.n, weight); return e }
-func (e RatingEl) Gap(length Length) RatingEl            { tStyledGap(e.n, length); return e }
-func (e RatingEl) GapX(length Length) RatingEl           { tStyledGapX(e.n, length); return e }
-func (e RatingEl) GapY(length Length) RatingEl           { tStyledGapY(e.n, length); return e }
-func (e RatingEl) GridCols(cols uint16) RatingEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e RatingEl) Gap(length Length) RatingEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e RatingEl) GapX(length Length) RatingEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e RatingEl) GapY(length Length) RatingEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e RatingEl) GridCols(cols uint16) RatingEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e RatingEl) GridColsMaxContent(cols uint16) RatingEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e RatingEl) GridColsMinContent(cols uint16) RatingEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e RatingEl) GridRows(rows uint16) RatingEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e RatingEl) GridRowsMaxContent(rows uint16) RatingEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e RatingEl) GridRowsMinContent(rows uint16) RatingEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e RatingEl) H(length Length) RatingEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e RatingEl) H(length Length) RatingEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e RatingEl) Inset(length Length) RatingEl { tStyledInset(e.n, length); return e }
-func (e RatingEl) Left(length Length) RatingEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RatingEl) Left(length Length) RatingEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e RatingEl) LineClamp(lines int) RatingEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e RatingEl) LineHeight(lineHeight Length) RatingEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e RatingEl) M(length Length) RatingEl             { tStyledM(e.n, length); return e }
-func (e RatingEl) MaxH(length Length) RatingEl          { tStyledMaxH(e.n, length); return e }
-func (e RatingEl) MaxSize(length Length) RatingEl       { tStyledMaxSize(e.n, length); return e }
-func (e RatingEl) MaxW(length Length) RatingEl          { tStyledMaxW(e.n, length); return e }
-func (e RatingEl) Mb(length Length) RatingEl            { tStyledMb(e.n, length); return e }
-func (e RatingEl) MinH(length Length) RatingEl          { tStyledMinH(e.n, length); return e }
-func (e RatingEl) MinSize(length Length) RatingEl       { tStyledMinSize(e.n, length); return e }
-func (e RatingEl) MinW(length Length) RatingEl          { tStyledMinW(e.n, length); return e }
-func (e RatingEl) Ml(length Length) RatingEl            { tStyledMl(e.n, length); return e }
-func (e RatingEl) Mr(length Length) RatingEl            { tStyledMr(e.n, length); return e }
-func (e RatingEl) Mt(length Length) RatingEl            { tStyledMt(e.n, length); return e }
-func (e RatingEl) Mx(length Length) RatingEl            { tStyledMx(e.n, length); return e }
-func (e RatingEl) My(length Length) RatingEl            { tStyledMy(e.n, length); return e }
-func (e RatingEl) Opacity(opacity float32) RatingEl     { tStyledOpacity(e.n, opacity); return e }
-func (e RatingEl) P(length Length) RatingEl             { tStyledP(e.n, length); return e }
-func (e RatingEl) Pb(length Length) RatingEl            { tStyledPb(e.n, length); return e }
-func (e RatingEl) Pl(length Length) RatingEl            { tStyledPl(e.n, length); return e }
-func (e RatingEl) Pr(length Length) RatingEl            { tStyledPr(e.n, length); return e }
-func (e RatingEl) Pt(length Length) RatingEl            { tStyledPt(e.n, length); return e }
-func (e RatingEl) Px(length Length) RatingEl            { tStyledPx(e.n, length); return e }
-func (e RatingEl) Py(length Length) RatingEl            { tStyledPy(e.n, length); return e }
-func (e RatingEl) Right(length Length) RatingEl         { tStyledRight(e.n, length); return e }
-func (e RatingEl) Rounded(length Length) RatingEl       { tStyledRounded(e.n, length); return e }
-func (e RatingEl) RoundedB(length Length) RatingEl      { tStyledRoundedB(e.n, length); return e }
-func (e RatingEl) RoundedBl(length Length) RatingEl     { tStyledRoundedBl(e.n, length); return e }
-func (e RatingEl) RoundedBr(length Length) RatingEl     { tStyledRoundedBr(e.n, length); return e }
-func (e RatingEl) RoundedL(length Length) RatingEl      { tStyledRoundedL(e.n, length); return e }
-func (e RatingEl) RoundedR(length Length) RatingEl      { tStyledRoundedR(e.n, length); return e }
-func (e RatingEl) RoundedT(length Length) RatingEl      { tStyledRoundedT(e.n, length); return e }
-func (e RatingEl) RoundedTl(length Length) RatingEl     { tStyledRoundedTl(e.n, length); return e }
-func (e RatingEl) RoundedTr(length Length) RatingEl     { tStyledRoundedTr(e.n, length); return e }
-func (e RatingEl) RowEnd(end int16) RatingEl            { tStyledRowEnd(e.n, end); return e }
-func (e RatingEl) RowSpan(span uint16) RatingEl         { tStyledRowSpan(e.n, span); return e }
-func (e RatingEl) RowStart(start int16) RatingEl        { tStyledRowStart(e.n, start); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e RatingEl) M(length Length) RatingEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e RatingEl) MaxH(length Length) RatingEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e RatingEl) MaxSize(length Length) RatingEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e RatingEl) MaxW(length Length) RatingEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RatingEl) Mb(length Length) RatingEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e RatingEl) MinH(length Length) RatingEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e RatingEl) MinSize(length Length) RatingEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e RatingEl) MinW(length Length) RatingEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RatingEl) Ml(length Length) RatingEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RatingEl) Mr(length Length) RatingEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e RatingEl) Mt(length Length) RatingEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e RatingEl) Mx(length Length) RatingEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e RatingEl) My(length Length) RatingEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e RatingEl) Opacity(opacity float32) RatingEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e RatingEl) P(length Length) RatingEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RatingEl) Pb(length Length) RatingEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RatingEl) Pl(length Length) RatingEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RatingEl) Pr(length Length) RatingEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e RatingEl) Pt(length Length) RatingEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e RatingEl) Px(length Length) RatingEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e RatingEl) Py(length Length) RatingEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RatingEl) Right(length Length) RatingEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e RatingEl) Rounded(length Length) RatingEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RatingEl) RoundedB(length Length) RatingEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e RatingEl) RoundedBl(length Length) RatingEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e RatingEl) RoundedBr(length Length) RatingEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RatingEl) RoundedL(length Length) RatingEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RatingEl) RoundedR(length Length) RatingEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e RatingEl) RoundedT(length Length) RatingEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e RatingEl) RoundedTl(length Length) RatingEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e RatingEl) RoundedTr(length Length) RatingEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e RatingEl) RowEnd(end int16) RatingEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e RatingEl) RowSpan(span uint16) RatingEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e RatingEl) RowStart(start int16) RatingEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e RatingEl) ScrollbarWidth(width Length) RatingEl { tStyledScrollbarWidth(e.n, width); return e }
-func (e RatingEl) Shadow(shadows []BoxShadow) RatingEl  { tStyledShadow(e.n, shadows); return e }
-func (e RatingEl) Size(length Length) RatingEl          { tStyledSize(e.n, length); return e }
-func (e RatingEl) TextAlign(align TextAlign) RatingEl   { tStyledTextAlign(e.n, align); return e }
-func (e RatingEl) TextBg(bg Color) RatingEl             { tStyledTextBg(e.n, bg); return e }
-func (e RatingEl) TextColor(color Color) RatingEl       { tStyledTextColor(e.n, color); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e RatingEl) Shadow(shadows []BoxShadow) RatingEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e RatingEl) Size(length Length) RatingEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e RatingEl) TextAlign(align TextAlign) RatingEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e RatingEl) TextBg(bg Color) RatingEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e RatingEl) TextColor(color Color) RatingEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e RatingEl) TextDecorationColor(color Color) RatingEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e RatingEl) TextOverflow(overflow TextOverflow) RatingEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e RatingEl) TextSize(size Length) RatingEl { tStyledTextSize(e.n, size); return e }
-func (e RatingEl) Top(length Length) RatingEl    { tStyledTop(e.n, length); return e }
-func (e RatingEl) W(length Length) RatingEl      { tStyledW(e.n, length); return e }
 
-func (e RatingEl) Large() RatingEl  { tSizableLarge(e.n); return e }
-func (e RatingEl) Small() RatingEl  { tSizableSmall(e.n); return e }
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e RatingEl) TextSize(size Length) RatingEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e RatingEl) Top(length Length) RatingEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e RatingEl) W(length Length) RatingEl { tStyledW(e.n, length); return e }
+
+// Set to Size::Large
+func (e RatingEl) Large() RatingEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e RatingEl) Small() RatingEl { tSizableSmall(e.n); return e }
+
+// Set to Size::XSmall
 func (e RatingEl) Xsmall() RatingEl { tSizableXsmall(e.n); return e }

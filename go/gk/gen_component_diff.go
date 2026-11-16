@@ -19,6 +19,11 @@ func Diff(state DiffState, st ...Style) DiffEl {
 	return DiffEl{n}
 }
 
+// Supplies annotations with stable identities and targets.
+//
+// Rows re-measure when annotations are added, removed or replaced, and whenever they are visible,
+// so annotation content may change height freely.
+//
 // Annotations is <gpui_kit::component::diff::Diff>::annotations.
 func (e DiffEl) Annotations(annotations []DiffAnnotation) DiffEl {
 	o := op(e.n, 266)
@@ -29,6 +34,8 @@ func (e DiffEl) Annotations(annotations []DiffAnnotation) DiffEl {
 	return e
 }
 
+// Tints changed lines. Default is true. Inline changes stay emphasized.
+//
 // ChangeBackground is <gpui_kit::component::diff::Diff>::change_background.
 func (e DiffEl) ChangeBackground(value bool) DiffEl {
 	o := op(e.n, 256)
@@ -36,6 +43,8 @@ func (e DiffEl) ChangeBackground(value bool) DiffEl {
 	return e
 }
 
+// Marks changed lines beside the code. Default is `Signs`.
+//
 // ChangeIndicator is <gpui_kit::component::diff::Diff>::change_indicator.
 func (e DiffEl) ChangeIndicator(indicator DiffChangeIndicator) DiffEl {
 	o := op(e.n, 257)
@@ -43,6 +52,9 @@ func (e DiffEl) ChangeIndicator(indicator DiffChangeIndicator) DiffEl {
 	return e
 }
 
+// Supplies line backgrounds that mark source ranges, such as diagnostics or references, without
+// changing the selection.
+//
 // Decorations is <gpui_kit::component::diff::Diff>::decorations.
 func (e DiffEl) Decorations(decorations []DiffDecoration) DiffEl {
 	o := op(e.n, 258)
@@ -53,6 +65,11 @@ func (e DiffEl) Decorations(decorations []DiffDecoration) DiffEl {
 	return e
 }
 
+// Supplies markers for the marker lane, shown once both markers and `RenderGutterMarker` are set.
+//
+// The lane holds one marker per line; when several target the same line, the first supplied is
+// shown.
+//
 // GutterMarkers is <gpui_kit::component::diff::Diff>::gutter_markers.
 func (e DiffEl) GutterMarkers(markers []DiffGutterMarker) DiffEl {
 	o := op(e.n, 259)
@@ -63,6 +80,8 @@ func (e DiffEl) GutterMarkers(markers []DiffGutterMarker) DiffEl {
 	return e
 }
 
+// Shows a header above each file. Default is true.
+//
 // HeaderVisible is <gpui_kit::component::diff::Diff>::header_visible.
 func (e DiffEl) HeaderVisible(visible bool) DiffEl {
 	o := op(e.n, 260)
@@ -70,6 +89,8 @@ func (e DiffEl) HeaderVisible(visible bool) DiffEl {
 	return e
 }
 
+// Emphasizes the line, its number, or both under the pointer. Default is none.
+//
 // HoverHighlight is <gpui_kit::component::diff::Diff>::hover_highlight.
 func (e DiffEl) HoverHighlight(highlight DiffHoverHighlight) DiffEl {
 	o := op(e.n, 261)
@@ -77,6 +98,8 @@ func (e DiffEl) HoverHighlight(highlight DiffHoverHighlight) DiffEl {
 	return e
 }
 
+// Marks the start of each hunk. Default is `Metadata`.
+//
 // HunkSeparator is <gpui_kit::component::diff::Diff>::hunk_separator.
 func (e DiffEl) HunkSeparator(separator DiffHunkSeparator) DiffEl {
 	o := op(e.n, 262)
@@ -84,6 +107,8 @@ func (e DiffEl) HunkSeparator(separator DiffHunkSeparator) DiffEl {
 	return e
 }
 
+// Shows the original and modified line-number lanes. Default is true.
+//
 // LineNumber is <gpui_kit::component::diff::Diff>::line_number.
 func (e DiffEl) LineNumber(value bool) DiffEl {
 	o := op(e.n, 263)
@@ -91,6 +116,9 @@ func (e DiffEl) LineNumber(value bool) DiffEl {
 	return e
 }
 
+// Shows an add button beside the hovered line and at the end of the selected lines. The handler
+// receives the selected range when the line is part of it, or that line alone.
+//
 // OnAddAnnotation is <gpui_kit::component::diff::Diff>::on_add_annotation.
 func (e DiffEl) OnAddAnnotation(handler func(cx *Cx, e DiffLineRangeRead)) DiffEl {
 	o := op(e.n, 269)
@@ -98,6 +126,8 @@ func (e DiffEl) OnAddAnnotation(handler func(cx *Cx, e DiffLineRangeRead)) DiffE
 	return e
 }
 
+// Handles a click on a line's code, outside a text-selection drag.
+//
 // OnLineClick is <gpui_kit::component::diff::Diff>::on_line_click.
 func (e DiffEl) OnLineClick(handler func(cx *Cx, e Event108)) DiffEl {
 	o := op(e.n, 267)
@@ -105,6 +135,8 @@ func (e DiffEl) OnLineClick(handler func(cx *Cx, e Event108)) DiffEl {
 	return e
 }
 
+// Reports the line under the pointer, or `None` when the pointer leaves it.
+//
 // OnLineHover is <gpui_kit::component::diff::Diff>::on_line_hover.
 func (e DiffEl) OnLineHover(handler func(cx *Cx, e Option[DiffLinePosition])) DiffEl {
 	o := op(e.n, 268)
@@ -112,6 +144,8 @@ func (e DiffEl) OnLineHover(handler func(cx *Cx, e Option[DiffLinePosition])) Di
 	return e
 }
 
+// Wraps long lines at the column width instead of scrolling horizontally. Default is false.
+//
 // SoftWrap is <gpui_kit::component::diff::Diff>::soft_wrap.
 func (e DiffEl) SoftWrap(value bool) DiffEl {
 	o := op(e.n, 264)
@@ -119,6 +153,8 @@ func (e DiffEl) SoftWrap(value bool) DiffEl {
 	return e
 }
 
+// Emphasizes syntax once the state has prepared it. Default is true.
+//
 // SyntaxHighlight is <gpui_kit::component::diff::Diff>::syntax_highlight.
 func (e DiffEl) SyntaxHighlight(value bool) DiffEl {
 	o := op(e.n, 265)
@@ -126,7 +162,19 @@ func (e DiffEl) SyntaxHighlight(value bool) DiffEl {
 	return e
 }
 
-func (e DiffEl) PopoverStyle() DiffEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e DiffEl) PopoverStyle() DiffEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e DiffEl) RoundedFullStyle() DiffEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e DiffEl) CornerRadii(radius Corners) DiffEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -135,19 +183,32 @@ func (e DiffEl) DebugFocused(focusHandle FocusHandle) DiffEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e DiffEl) DebugGreen() DiffEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e DiffEl) DebugPink() DiffEl                  { tStyledExtDebugPink(e.n); return e }
-func (e DiffEl) DebugRed() DiffEl                   { tStyledExtDebugRed(e.n); return e }
-func (e DiffEl) DebugYellow() DiffEl                { tStyledExtDebugYellow(e.n); return e }
-func (e DiffEl) FontBlack() DiffEl                  { tStyledExtFontBlack(e.n); return e }
-func (e DiffEl) FontBold() DiffEl                   { tStyledExtFontBold(e.n); return e }
-func (e DiffEl) FontExtrabold() DiffEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e DiffEl) FontExtralight() DiffEl             { tStyledExtFontExtralight(e.n); return e }
-func (e DiffEl) FontLight() DiffEl                  { tStyledExtFontLight(e.n); return e }
-func (e DiffEl) FontMedium() DiffEl                 { tStyledExtFontMedium(e.n); return e }
-func (e DiffEl) FontNormal() DiffEl                 { tStyledExtFontNormal(e.n); return e }
-func (e DiffEl) FontSemibold() DiffEl               { tStyledExtFontSemibold(e.n); return e }
-func (e DiffEl) FontThin() DiffEl                   { tStyledExtFontThin(e.n); return e }
+func (e DiffEl) DebugGreen() DiffEl     { tStyledExtDebugGreen(e.n); return e }
+func (e DiffEl) DebugPink() DiffEl      { tStyledExtDebugPink(e.n); return e }
+func (e DiffEl) DebugRed() DiffEl       { tStyledExtDebugRed(e.n); return e }
+func (e DiffEl) DebugYellow() DiffEl    { tStyledExtDebugYellow(e.n); return e }
+func (e DiffEl) FontBlack() DiffEl      { tStyledExtFontBlack(e.n); return e }
+func (e DiffEl) FontBold() DiffEl       { tStyledExtFontBold(e.n); return e }
+func (e DiffEl) FontExtrabold() DiffEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e DiffEl) FontExtralight() DiffEl { tStyledExtFontExtralight(e.n); return e }
+func (e DiffEl) FontLight() DiffEl      { tStyledExtFontLight(e.n); return e }
+func (e DiffEl) FontMedium() DiffEl     { tStyledExtFontMedium(e.n); return e }
+func (e DiffEl) FontNormal() DiffEl     { tStyledExtFontNormal(e.n); return e }
+func (e DiffEl) FontSemibold() DiffEl   { tStyledExtFontSemibold(e.n); return e }
+func (e DiffEl) FontThin() DiffEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e DiffEl) HFlex() DiffEl                      { tStyledExtHFlex(e.n); return e }
 func (e DiffEl) Margins(margins EdgesInto) DiffEl   { tStyledExtMargins(e.n, margins); return e }
 func (e DiffEl) Paddings(paddings EdgesInto) DiffEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -155,118 +216,335 @@ func (e DiffEl) RefineStyle(style StyleRefinement) DiffEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e DiffEl) VFlex() DiffEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e DiffEl) Style(st ...Style) DiffEl { tokens(e.n, st); return e }
 
-func (e DiffEl) AspectRatio(ratio float32) DiffEl     { tStyledAspectRatio(e.n, ratio); return e }
-func (e DiffEl) Bg(fill Fill) DiffEl                  { tStyledBg(e.n, fill); return e }
-func (e DiffEl) Border(length Length) DiffEl          { tStyledBorder(e.n, length); return e }
-func (e DiffEl) BorderB(length Length) DiffEl         { tStyledBorderB(e.n, length); return e }
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+func (e DiffEl) AspectRatio(ratio float32) DiffEl { tStyledAspectRatio(e.n, ratio); return e }
+
+// Sets the background color of the element.
+func (e DiffEl) Bg(fill Fill) DiffEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e DiffEl) Border(length Length) DiffEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DiffEl) BorderB(length Length) DiffEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e DiffEl) BorderColor(borderColor Color) DiffEl { tStyledBorderColor(e.n, borderColor); return e }
-func (e DiffEl) BorderL(length Length) DiffEl         { tStyledBorderL(e.n, length); return e }
-func (e DiffEl) BorderR(length Length) DiffEl         { tStyledBorderR(e.n, length); return e }
-func (e DiffEl) BorderT(length Length) DiffEl         { tStyledBorderT(e.n, length); return e }
-func (e DiffEl) BorderX(length Length) DiffEl         { tStyledBorderX(e.n, length); return e }
-func (e DiffEl) BorderY(length Length) DiffEl         { tStyledBorderY(e.n, length); return e }
-func (e DiffEl) Bottom(length Length) DiffEl          { tStyledBottom(e.n, length); return e }
-func (e DiffEl) ColEnd(end int16) DiffEl              { tStyledColEnd(e.n, end); return e }
-func (e DiffEl) ColSpan(span uint16) DiffEl           { tStyledColSpan(e.n, span); return e }
-func (e DiffEl) ColStart(start int16) DiffEl          { tStyledColStart(e.n, start); return e }
-func (e DiffEl) Cursor(cursor CursorStyle) DiffEl     { tStyledCursor(e.n, cursor); return e }
-func (e DiffEl) FlexBasis(basis Length) DiffEl        { tStyledFlexBasis(e.n, basis); return e }
-func (e DiffEl) FlexGrow(grow float32) DiffEl         { tStyledFlexGrow(e.n, grow); return e }
-func (e DiffEl) FlexShrink(shrink float32) DiffEl     { tStyledFlexShrink(e.n, shrink); return e }
-func (e DiffEl) FontFamily(familyName string) DiffEl  { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DiffEl) BorderL(length Length) DiffEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DiffEl) BorderR(length Length) DiffEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DiffEl) BorderT(length Length) DiffEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e DiffEl) BorderX(length Length) DiffEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e DiffEl) BorderY(length Length) DiffEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DiffEl) Bottom(length Length) DiffEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e DiffEl) ColEnd(end int16) DiffEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e DiffEl) ColSpan(span uint16) DiffEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e DiffEl) ColStart(start int16) DiffEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e DiffEl) Cursor(cursor CursorStyle) DiffEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e DiffEl) FlexBasis(basis Length) DiffEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e DiffEl) FlexGrow(grow float32) DiffEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e DiffEl) FlexShrink(shrink float32) DiffEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
+func (e DiffEl) FontFamily(familyName string) DiffEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e DiffEl) FontFeatures(features FontFeatures) DiffEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e DiffEl) FontWeight(weight FontWeight) DiffEl { tStyledFontWeight(e.n, weight); return e }
-func (e DiffEl) Gap(length Length) DiffEl            { tStyledGap(e.n, length); return e }
-func (e DiffEl) GapX(length Length) DiffEl           { tStyledGapX(e.n, length); return e }
-func (e DiffEl) GapY(length Length) DiffEl           { tStyledGapY(e.n, length); return e }
-func (e DiffEl) GridCols(cols uint16) DiffEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e DiffEl) Gap(length Length) DiffEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DiffEl) GapX(length Length) DiffEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DiffEl) GapY(length Length) DiffEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e DiffEl) GridCols(cols uint16) DiffEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e DiffEl) GridColsMaxContent(cols uint16) DiffEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e DiffEl) GridColsMinContent(cols uint16) DiffEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e DiffEl) GridRows(rows uint16) DiffEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e DiffEl) GridRowsMaxContent(rows uint16) DiffEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e DiffEl) GridRowsMinContent(rows uint16) DiffEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e DiffEl) H(length Length) DiffEl              { tStyledH(e.n, length); return e }
-func (e DiffEl) Inset(length Length) DiffEl          { tStyledInset(e.n, length); return e }
-func (e DiffEl) Left(length Length) DiffEl           { tStyledLeft(e.n, length); return e }
-func (e DiffEl) LineClamp(lines int) DiffEl          { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e DiffEl) H(length Length) DiffEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DiffEl) Inset(length Length) DiffEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DiffEl) Left(length Length) DiffEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e DiffEl) LineClamp(lines int) DiffEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e DiffEl) LineHeight(lineHeight Length) DiffEl { tStyledLineHeight(e.n, lineHeight); return e }
-func (e DiffEl) M(length Length) DiffEl              { tStyledM(e.n, length); return e }
-func (e DiffEl) MaxH(length Length) DiffEl           { tStyledMaxH(e.n, length); return e }
-func (e DiffEl) MaxSize(length Length) DiffEl        { tStyledMaxSize(e.n, length); return e }
-func (e DiffEl) MaxW(length Length) DiffEl           { tStyledMaxW(e.n, length); return e }
-func (e DiffEl) Mb(length Length) DiffEl             { tStyledMb(e.n, length); return e }
-func (e DiffEl) MinH(length Length) DiffEl           { tStyledMinH(e.n, length); return e }
-func (e DiffEl) MinSize(length Length) DiffEl        { tStyledMinSize(e.n, length); return e }
-func (e DiffEl) MinW(length Length) DiffEl           { tStyledMinW(e.n, length); return e }
-func (e DiffEl) Ml(length Length) DiffEl             { tStyledMl(e.n, length); return e }
-func (e DiffEl) Mr(length Length) DiffEl             { tStyledMr(e.n, length); return e }
-func (e DiffEl) Mt(length Length) DiffEl             { tStyledMt(e.n, length); return e }
-func (e DiffEl) Mx(length Length) DiffEl             { tStyledMx(e.n, length); return e }
-func (e DiffEl) My(length Length) DiffEl             { tStyledMy(e.n, length); return e }
-func (e DiffEl) Opacity(opacity float32) DiffEl      { tStyledOpacity(e.n, opacity); return e }
-func (e DiffEl) P(length Length) DiffEl              { tStyledP(e.n, length); return e }
-func (e DiffEl) Pb(length Length) DiffEl             { tStyledPb(e.n, length); return e }
-func (e DiffEl) Pl(length Length) DiffEl             { tStyledPl(e.n, length); return e }
-func (e DiffEl) Pr(length Length) DiffEl             { tStyledPr(e.n, length); return e }
-func (e DiffEl) Pt(length Length) DiffEl             { tStyledPt(e.n, length); return e }
-func (e DiffEl) Px(length Length) DiffEl             { tStyledPx(e.n, length); return e }
-func (e DiffEl) Py(length Length) DiffEl             { tStyledPy(e.n, length); return e }
-func (e DiffEl) Right(length Length) DiffEl          { tStyledRight(e.n, length); return e }
-func (e DiffEl) Rounded(length Length) DiffEl        { tStyledRounded(e.n, length); return e }
-func (e DiffEl) RoundedB(length Length) DiffEl       { tStyledRoundedB(e.n, length); return e }
-func (e DiffEl) RoundedBl(length Length) DiffEl      { tStyledRoundedBl(e.n, length); return e }
-func (e DiffEl) RoundedBr(length Length) DiffEl      { tStyledRoundedBr(e.n, length); return e }
-func (e DiffEl) RoundedL(length Length) DiffEl       { tStyledRoundedL(e.n, length); return e }
-func (e DiffEl) RoundedR(length Length) DiffEl       { tStyledRoundedR(e.n, length); return e }
-func (e DiffEl) RoundedT(length Length) DiffEl       { tStyledRoundedT(e.n, length); return e }
-func (e DiffEl) RoundedTl(length Length) DiffEl      { tStyledRoundedTl(e.n, length); return e }
-func (e DiffEl) RoundedTr(length Length) DiffEl      { tStyledRoundedTr(e.n, length); return e }
-func (e DiffEl) RowEnd(end int16) DiffEl             { tStyledRowEnd(e.n, end); return e }
-func (e DiffEl) RowSpan(span uint16) DiffEl          { tStyledRowSpan(e.n, span); return e }
-func (e DiffEl) RowStart(start int16) DiffEl         { tStyledRowStart(e.n, start); return e }
-func (e DiffEl) ScrollbarWidth(width Length) DiffEl  { tStyledScrollbarWidth(e.n, width); return e }
-func (e DiffEl) Shadow(shadows []BoxShadow) DiffEl   { tStyledShadow(e.n, shadows); return e }
-func (e DiffEl) Size(length Length) DiffEl           { tStyledSize(e.n, length); return e }
-func (e DiffEl) TextAlign(align TextAlign) DiffEl    { tStyledTextAlign(e.n, align); return e }
-func (e DiffEl) TextBg(bg Color) DiffEl              { tStyledTextBg(e.n, bg); return e }
-func (e DiffEl) TextColor(color Color) DiffEl        { tStyledTextColor(e.n, color); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e DiffEl) M(length Length) DiffEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e DiffEl) MaxH(length Length) DiffEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e DiffEl) MaxSize(length Length) DiffEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e DiffEl) MaxW(length Length) DiffEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DiffEl) Mb(length Length) DiffEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e DiffEl) MinH(length Length) DiffEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e DiffEl) MinSize(length Length) DiffEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e DiffEl) MinW(length Length) DiffEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DiffEl) Ml(length Length) DiffEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DiffEl) Mr(length Length) DiffEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DiffEl) Mt(length Length) DiffEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e DiffEl) Mx(length Length) DiffEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e DiffEl) My(length Length) DiffEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e DiffEl) Opacity(opacity float32) DiffEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e DiffEl) P(length Length) DiffEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DiffEl) Pb(length Length) DiffEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DiffEl) Pl(length Length) DiffEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DiffEl) Pr(length Length) DiffEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DiffEl) Pt(length Length) DiffEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e DiffEl) Px(length Length) DiffEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e DiffEl) Py(length Length) DiffEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DiffEl) Right(length Length) DiffEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e DiffEl) Rounded(length Length) DiffEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DiffEl) RoundedB(length Length) DiffEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DiffEl) RoundedBl(length Length) DiffEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DiffEl) RoundedBr(length Length) DiffEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DiffEl) RoundedL(length Length) DiffEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DiffEl) RoundedR(length Length) DiffEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DiffEl) RoundedT(length Length) DiffEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DiffEl) RoundedTl(length Length) DiffEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DiffEl) RoundedTr(length Length) DiffEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e DiffEl) RowEnd(end int16) DiffEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e DiffEl) RowSpan(span uint16) DiffEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e DiffEl) RowStart(start int16) DiffEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e DiffEl) ScrollbarWidth(width Length) DiffEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e DiffEl) Shadow(shadows []BoxShadow) DiffEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e DiffEl) Size(length Length) DiffEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e DiffEl) TextAlign(align TextAlign) DiffEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e DiffEl) TextBg(bg Color) DiffEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e DiffEl) TextColor(color Color) DiffEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e DiffEl) TextDecorationColor(color Color) DiffEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e DiffEl) TextOverflow(overflow TextOverflow) DiffEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e DiffEl) TextSize(size Length) DiffEl { tStyledTextSize(e.n, size); return e }
-func (e DiffEl) Top(length Length) DiffEl    { tStyledTop(e.n, length); return e }
-func (e DiffEl) W(length Length) DiffEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DiffEl) Top(length Length) DiffEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e DiffEl) W(length Length) DiffEl { tStyledW(e.n, length); return e }
 
 // DiffDecoration is gpui_kit::component::diff::DiffDecoration.
 type DiffDecoration struct{ n *node }
 
 func (e DiffDecoration) valueNode() *node { return e.n }
 
+// Marks the lines of `range`.
+//
+// A range that ends on the other side covers its start side from `start` onwards and its end side
+// up to `end`.
+//
 // NewDiffDecoration is <gpui_kit::component::diff::DiffDecoration>::new.
 func NewDiffDecoration(range_ DiffLineRange) DiffDecoration {
 	n := newValue(645)
@@ -275,6 +553,8 @@ func NewDiffDecoration(range_ DiffLineRange) DiffDecoration {
 	return DiffDecoration{n}
 }
 
+// Sets the background, which defaults to a translucent warning color.
+//
 // WithBackground is <gpui_kit::component::diff::DiffDecoration>::with_background.
 func (e DiffDecoration) WithBackground(background Color) DiffDecoration {
 	o := op(e.n, 256)
@@ -306,6 +586,9 @@ func NewDiffFileParseWithAt(patch string, options DiffParseOptions, index int) D
 	return DiffFile{n}
 }
 
+// A file shown in full, for reference, without changes. It appears as a single column in every
+// display mode.
+//
 // NewDiffFileUnchanged is <gpui_kit::component::diff::DiffFile>::unchanged.
 func NewDiffFileUnchanged(path string, text string) DiffFile {
 	n := newValue(646)
@@ -315,6 +598,9 @@ func NewDiffFileUnchanged(path string, text string) DiffFile {
 	return DiffFile{n}
 }
 
+// Overrides the syntax language detected from the path, using a highlighter language name such as
+// `rust` or `javascript`.
+//
 // WithLanguage is <gpui_kit::component::diff::DiffFile>::with_language.
 func (e DiffFile) WithLanguage(language string) DiffFile {
 	o := op(e.n, 256)
@@ -327,6 +613,8 @@ type DiffGutterMarker struct{ n *node }
 
 func (e DiffGutterMarker) valueNode() *node { return e.n }
 
+// Places a marker beside a source line.
+//
 // NewDiffGutterMarker is <gpui_kit::component::diff::DiffGutterMarker>::new.
 func NewDiffGutterMarker(id ID, position DiffLinePosition) DiffGutterMarker {
 	n := newValue(827)
@@ -336,6 +624,8 @@ func NewDiffGutterMarker(id ID, position DiffLinePosition) DiffGutterMarker {
 	return DiffGutterMarker{n}
 }
 
+// Sets the accessible label that the rendered marker should announce.
+//
 // WithLabel is <gpui_kit::component::diff::DiffGutterMarker>::with_label.
 func (e DiffGutterMarker) WithLabel(label string) DiffGutterMarker {
 	o := op(e.n, 256)
@@ -348,6 +638,8 @@ type DiffLineRange struct{ n *node }
 
 func (e DiffLineRange) valueNode() *node { return e.n }
 
+// Creates a range on one side, clamping the lines to at least one.
+//
 // NewDiffLineRange is <gpui_kit::component::diff::DiffLineRange>::new.
 func NewDiffLineRange(path string, side DiffSide, start int, end int) DiffLineRange {
 	n := newValue(647)
@@ -359,6 +651,8 @@ func NewDiffLineRange(path string, side DiffSide, start int, end int) DiffLineRa
 	return DiffLineRange{n}
 }
 
+// Ends the range on `side`, keeping `end` as its line on that side.
+//
 // WithEndSide is <gpui_kit::component::diff::DiffLineRange>::with_end_side.
 func (e DiffLineRange) WithEndSide(side DiffSide) DiffLineRange {
 	o := op(e.n, 256)
@@ -383,6 +677,10 @@ func NewDiffParseOptionsDefault() DiffParseOptions {
 	return DiffParseOptions{n}
 }
 
+// Accept hunks that end before their declared line counts, as in a patch cut at a size limit, and
+// count each from the lines present. Declared counts still bound a hunk, so a line beyond them
+// remains an error.
+//
 // TruncatedHunks is <gpui_kit::component::diff::DiffParseOptions>::truncated_hunks.
 func (e DiffParseOptions) TruncatedHunks(truncatedHunks bool) DiffParseOptions {
 	o := op(e.n, 256)

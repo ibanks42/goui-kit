@@ -3,6 +3,8 @@ package gk
 
 import "core:time"
 
+// A Button element.
+//
 // Button is gpui_kit::component::button::Button.
 Button :: struct {
 	using el: Element,
@@ -142,26 +144,71 @@ Button_VT :: struct {
 	on_scroll: proc(e: Button, listener: Handler) -> Button,
 	tab_group: proc(e: Button) -> Button,
 	window_control_area: proc(e: Button, area: Window_Control_Area) -> Button,
+	// Set the developer-assigned identifier exposed to accessibility clients.
 	accessibility_id: proc(e: Button, id: string) -> Button,
+	// Set the name a screen reader announces, when the visible content is not it.
+	//
+	// A button's name comes from its `->label` by default, which is right for the ordinary case and
+	// wrong for two: an icon-only button has no label to read, and a button whose content is a row of
+	// cells — a table row that is also a control — would be read out cell by cell with no statement of
+	// what pressing it does. Setting this replaces the announced name without adding anything to the
+	// screen.
 	accessibility_label: proc(e: Button, label: string) -> Button,
+	// Set the button to compact mode, then padding will be reduced.
 	compact: proc(e: Button) -> Button,
+	// Set to show a dropdown caret icon at the end of the button.
 	dropdown_caret: proc(e: Button, dropdown_caret: bool) -> Button,
+	// Set the icon of the button, if the Button have no label, the button well in Icon Button mode.
 	icon: proc(e: Button, icon: Icon_Name) -> Button,
+	// Set label to the Button, if no label is set, the button will be in Icon Button mode.
 	label: proc(e: Button, label: string) -> Button,
+	// Set true to show the loading indicator.
 	loading: proc(e: Button, loading: bool) -> Button,
+	// Set the loading icon of the button, it will be used when loading is true.
+	//
+	// Default is a spinner icon.
 	loading_icon: proc(e: Button, icon: Icon_Name) -> Button,
+	// Add click handler.
 	on_click: proc(e: Button, handler: Handler) -> Button,
+	// Add hover handler, the bool parameter indicates whether the mouse is hovering.
 	on_hover: proc(e: Button, handler: Handler) -> Button,
+	// Set the outline style of the Button.
 	outline: proc(e: Button) -> Button,
 	role: proc(e: Button, role: Role_Override) -> Button,
+	// Set the border radius of the Button.
 	rounded: proc(e: Button, rounded: Button_Rounded_Into) -> Button,
+	// Set the tab index of the button, it will be used to focus the button by tab key.
+	//
+	// Default is 0.
 	tab_index: proc(e: Button, tab_index: int) -> Button,
+	// Set the tab stop of the button, if true, the button will be focusable by tab key.
+	//
+	// Default is true.
 	tab_stop: proc(e: Button, tab_stop: bool) -> Button,
+	// Expose this button as a toggle button to assistive technology, with `toggled` as its pressed
+	// state.
+	//
+	// Only affects accessibility metadata. Use `selected` for the selected styling, and call this in
+	// addition when the button really is a toggle, otherwise the button stays an ordinary push button.
 	toggled: proc(e: Button, toggled: bool) -> Button,
+	// Set the tooltip of the button.
 	tooltip: proc(e: Button, tooltip: string) -> Button,
+	// Prefer a side for the tooltip, falling back when it does not fit.
+	//
+	// Applies to `->tooltip` and `->tooltip_with_action`. Omitting placement keeps automatic
+	// positioning.
 	tooltip_placement: proc(e: Button, placement: Placement) -> Button,
+	// Overrides how long the pointer must rest before the tooltip shows.
+	//
+	// Defaults to `show_delay`.
 	tooltip_show_delay: proc(e: Button, delay: time.Duration) -> Button,
+	// Set the tooltip of the button with action to show keybinding.
 	tooltip_with_action: proc(e: Button, tooltip: string, action: Action, context_: Maybe(string)) -> Button,
+	// Use a caller-owned focus handle instead of the one the button keeps for itself, so the
+	// application can focus the button and restore focus to it.
+	//
+	// The handle drives the focus ring, Enter and Space activation and the accessibility focus state
+	// alike.
 	track_focus: proc(e: Button, focus_handle: Focus_Handle) -> Button,
 }
 
@@ -427,10 +474,15 @@ Button_Custom_Variant :: struct {
 }
 
 Button_Custom_Variant_VT :: struct {
+	// Set active background color, default is transparent.
 	active: proc(e: Button_Custom_Variant, color: Color) -> Button_Custom_Variant,
+	// Set background color, default is transparent.
 	color: proc(e: Button_Custom_Variant, color: Color) -> Button_Custom_Variant,
+	// Set foreground color, default is theme foreground.
 	foreground: proc(e: Button_Custom_Variant, color: Color) -> Button_Custom_Variant,
+	// Set hover background color, default is transparent.
 	hover: proc(e: Button_Custom_Variant, color: Color) -> Button_Custom_Variant,
+	// Set shadow, default is false.
 	shadow: proc(e: Button_Custom_Variant, shadow: bool) -> Button_Custom_Variant,
 }
 
@@ -468,6 +520,8 @@ button_custom_variant_vt := Button_Custom_Variant_VT {
 	},
 }
 
+// A ButtonGroup element, to wrap multiple buttons in a group.
+//
 // Button_Group is gpui_kit::component::button::ButtonGroup.
 Button_Group :: struct {
 	using el: Element,
@@ -481,15 +535,32 @@ Button_Group_VT :: struct {
 	using t_sizable: ^Sizable_Trait(Button_Group),
 	using t_styled: ^Styled_Trait(Button_Group),
 	using t_button_variants: ^Button_Variants_Trait(Button_Group),
+	// Adds a button as a child to the ButtonGroup.
 	child: proc(e: Button_Group, child: Button) -> Button_Group,
+	// Adds multiple buttons as children to the ButtonGroup.
 	children: proc(e: Button_Group, children: []Button) -> Button_Group,
+	// With the compact mode for the ButtonGroup.
+	//
+	// See also: `->compact`
 	compact: proc(e: Button_Group) -> Button_Group,
+	// Set the layout of the button group. Default is `Axis::Horizontal`.
 	layout: proc(e: Button_Group, layout: Axis) -> Button_Group,
+	// With the multiple selection mode, default is false (single selection).
 	multiple: proc(e: Button_Group, multiple: bool) -> Button_Group,
+	// Sets the on_click handler for the ButtonGroup.
+	//
+	// The handler first argument is a vector of the selected button indices.
+	//
+	// The `&Vec<usize>` is the indices of the clicked (selected in `multiple` mode) buttons. For
+	// example: `0, 2, 3` is means the first, third and fourth buttons are clicked.
 	on_click: proc(e: Button_Group, handler: Handler) -> Button_Group,
+	// With the outline mode for the ButtonGroup.
+	//
+	// See also: `->outline`
 	outline: proc(e: Button_Group) -> Button_Group,
 }
 
+// Creates a new ButtonGroup.
 button_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Button_Group {
 	use_component_button()
 	e := Button_Group{new_node(607, loc), &button_group_vt}
@@ -545,6 +616,12 @@ button_group_vt := Button_Group_VT {
 	},
 }
 
+// A split button: an action button with an attached menu trigger.
+//
+// The two halves stay visually joined. A `ghost` split is transparent at rest; hovering either
+// half surfaces the whole control with the hovered half emphasized, and it stays surfaced while
+// the menu is open, so the pair reads as one control rather than two buttons.
+//
 // Dropdown_Button is gpui_kit::component::button::DropdownButton.
 Dropdown_Button :: struct {
 	using el: Element,
@@ -559,13 +636,29 @@ Dropdown_Button_VT :: struct {
 	using t_sizable: ^Sizable_Trait(Dropdown_Button),
 	using t_button_variants: ^Button_Variants_Trait(Dropdown_Button),
 	using t_selectable: ^Selectable_Trait(Dropdown_Button),
+	// Set the left button of the dropdown button.
+	//
+	// The button keeps its own label, icon, tooltip and click handler. A variant or size set on the
+	// `Dropdown_Button` applies to both halves and overrides the one set here. When either outer value
+	// is unset, this button's value becomes the shared value for both halves.
 	button: proc(e: Dropdown_Button, button: Button) -> Dropdown_Button,
+	// Set the dropdown menu of the button.
 	dropdown_menu: proc(e: Dropdown_Button, menu: Popup_Menu) -> Dropdown_Button,
+	// Set the dropdown menu of the button with anchor corner.
 	dropdown_menu_with_anchor: proc(e: Dropdown_Button, anchor: Anchor, menu: Popup_Menu) -> Dropdown_Button,
+	// Set the name a screen reader announces for the menu trigger. Defaults to the localized "More
+	// options".
+	//
+	// The trigger shows only a caret, so it has no visible label to read. The inner `Button` names the
+	// action half.
 	menu_accessibility_label: proc(e: Dropdown_Button, label: string) -> Dropdown_Button,
+	// Set the button to outline style.
+	//
+	// See also: `->outline`
 	outline: proc(e: Dropdown_Button) -> Dropdown_Button,
 }
 
+// Create a new DropdownButton.
 dropdown_button :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Dropdown_Button {
 	use_component_button()
 	e := Dropdown_Button{new_node(608, loc), &dropdown_button_vt}
@@ -627,14 +720,25 @@ Toggle_VT :: struct {
 	using t_disableable: ^Disableable_Trait(Toggle),
 	using t_sizable: ^Sizable_Trait(Toggle),
 	using t_styled: ^Styled_Trait(Toggle),
+	// Set the checked state of the toggle, default: false
 	checked: proc(e: Toggle, checked: bool) -> Toggle,
+	// Add icon to the toggle.
 	icon: proc(e: Toggle, icon: Icon_Name) -> Toggle,
+	// Add a label to the toggle.
 	label: proc(e: Toggle, label: string) -> Toggle,
+	// Set the callback to be called when the toggle is clicked.
+	//
+	// The `&bool` parameter represents the new checked state of the toggle.
 	on_click: proc(e: Toggle, handler: Handler) -> Toggle,
+	// Set tooltip text for the toggle.
 	tooltip: proc(e: Toggle, tooltip: string) -> Toggle,
+	// Overrides how long the pointer must rest before the tooltip shows.
+	//
+	// Defaults to `show_delay`.
 	tooltip_show_delay: proc(e: Toggle, delay: time.Duration) -> Toggle,
 }
 
+// Create a new Toggle element.
 toggle :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Toggle {
 	use_component_button()
 	e := Toggle{new_node(609, loc), &toggle_vt}
@@ -687,6 +791,8 @@ toggle_vt := Toggle_VT {
 	},
 }
 
+// A group of toggles.
+//
 // Toggle_Group is gpui_kit::component::button::ToggleGroup.
 Toggle_Group :: struct {
 	using el: Element,
@@ -700,13 +806,29 @@ Toggle_Group_VT :: struct {
 	using t_toggle_variants: ^Toggle_Variants_Trait(Toggle_Group),
 	using t_disableable: ^Disableable_Trait(Toggle_Group),
 	using t_styled: ^Styled_Trait(Toggle_Group),
+	// Add a child `Toggle` to the group.
 	child: proc(e: Toggle_Group, toggle: Toggle) -> Toggle_Group,
+	// Add multiple `Toggle`s to the group.
 	children: proc(e: Toggle_Group, children: []Toggle) -> Toggle_Group,
+	// Set the callback to be called when the toggle group changes.
+	//
+	// The `&Vec<bool>` parameter represents the new check state of each `Toggle` in the group. In a
+	// `->single` group at most one of them is `true`.
 	on_click: proc(e: Toggle_Group, on_click: Handler) -> Toggle_Group,
+	// Render the group as a connected segmented control.
+	//
+	// This only changes the look: it removes the default gap and joins adjacent item borders into a
+	// single segmented outline. Pair it with `->single` for an exclusive choice.
 	segmented: proc(e: Toggle_Group) -> Toggle_Group,
+	// Let at most one item be checked at a time.
+	//
+	// A click on an unchecked item checks it and clears the others. A click on the checked item clears
+	// it, so the group can also hold no selection. The caller keeps at most one item `checked`; the
+	// group does not reconcile a state in which several are.
 	single: proc(e: Toggle_Group) -> Toggle_Group,
 }
 
+// Create a new ToggleGroup element.
 toggle_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Toggle_Group {
 	use_component_button()
 	e := Toggle_Group{new_node(610, loc), &toggle_group_vt}

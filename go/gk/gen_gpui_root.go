@@ -13,6 +13,8 @@ type DivEl struct{ n *node }
 
 func (e DivEl) node() *node { return e.n }
 
+// Construct a new `DivEl` element
+//
 // Div is gpui_kit::div.
 func Div(st ...Style) DivEl {
 	n := newNode(258)
@@ -20,6 +22,10 @@ func Div(st ...Style) DivEl {
 	return DivEl{n}
 }
 
+// A row that centers its children on the cross axis.
+//
+// See `HFlex` for the cross-axis rule, which is not symmetric with `gk.VFlex`.
+//
 // HFlex is gpui_kit::base::h_flex.
 func HFlex(st ...Style) DivEl {
 	n := newNode(256)
@@ -27,6 +33,10 @@ func HFlex(st ...Style) DivEl {
 	return DivEl{n}
 }
 
+// A column whose children stretch across the cross axis.
+//
+// See `VFlex` for the cross-axis rule, which is not symmetric with `gk.HFlex`.
+//
 // VFlex is gpui_kit::base::v_flex.
 func VFlex(st ...Style) DivEl {
 	n := newNode(257)
@@ -34,6 +44,9 @@ func VFlex(st ...Style) DivEl {
 	return DivEl{n}
 }
 
+// Add a listener to be called when the children of this `Div` are prepainted. This allows you to
+// store the `Bounds` of the children for later use.
+//
 // OnChildrenPrepainted is <gpui_kit::Div>::on_children_prepainted.
 func (e DivEl) OnChildrenPrepainted(listener func(cx *Cx, e []Bounds)) DivEl {
 	o := op(e.n, 256)
@@ -95,233 +108,626 @@ func (e DivEl) OverflowYScrollbar() ScrollableDivEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e DivEl) Style(st ...Style) DivEl { tokens(e.n, st); return e }
 
-func (e DivEl) AspectRatio(ratio float32) DivEl     { tStyledAspectRatio(e.n, ratio); return e }
-func (e DivEl) Bg(fill Fill) DivEl                  { tStyledBg(e.n, fill); return e }
-func (e DivEl) Border(length Length) DivEl          { tStyledBorder(e.n, length); return e }
-func (e DivEl) BorderB(length Length) DivEl         { tStyledBorderB(e.n, length); return e }
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+func (e DivEl) AspectRatio(ratio float32) DivEl { tStyledAspectRatio(e.n, ratio); return e }
+
+// Sets the background color of the element.
+func (e DivEl) Bg(fill Fill) DivEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e DivEl) Border(length Length) DivEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DivEl) BorderB(length Length) DivEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e DivEl) BorderColor(borderColor Color) DivEl { tStyledBorderColor(e.n, borderColor); return e }
-func (e DivEl) BorderL(length Length) DivEl         { tStyledBorderL(e.n, length); return e }
-func (e DivEl) BorderR(length Length) DivEl         { tStyledBorderR(e.n, length); return e }
-func (e DivEl) BorderT(length Length) DivEl         { tStyledBorderT(e.n, length); return e }
-func (e DivEl) BorderX(length Length) DivEl         { tStyledBorderX(e.n, length); return e }
-func (e DivEl) BorderY(length Length) DivEl         { tStyledBorderY(e.n, length); return e }
-func (e DivEl) Bottom(length Length) DivEl          { tStyledBottom(e.n, length); return e }
-func (e DivEl) ColEnd(end int16) DivEl              { tStyledColEnd(e.n, end); return e }
-func (e DivEl) ColSpan(span uint16) DivEl           { tStyledColSpan(e.n, span); return e }
-func (e DivEl) ColStart(start int16) DivEl          { tStyledColStart(e.n, start); return e }
-func (e DivEl) Cursor(cursor CursorStyle) DivEl     { tStyledCursor(e.n, cursor); return e }
-func (e DivEl) FlexBasis(basis Length) DivEl        { tStyledFlexBasis(e.n, basis); return e }
-func (e DivEl) FlexGrow(grow float32) DivEl         { tStyledFlexGrow(e.n, grow); return e }
-func (e DivEl) FlexShrink(shrink float32) DivEl     { tStyledFlexShrink(e.n, shrink); return e }
-func (e DivEl) FontFamily(familyName string) DivEl  { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DivEl) BorderL(length Length) DivEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DivEl) BorderR(length Length) DivEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DivEl) BorderT(length Length) DivEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e DivEl) BorderX(length Length) DivEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e DivEl) BorderY(length Length) DivEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DivEl) Bottom(length Length) DivEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e DivEl) ColEnd(end int16) DivEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e DivEl) ColSpan(span uint16) DivEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e DivEl) ColStart(start int16) DivEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e DivEl) Cursor(cursor CursorStyle) DivEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e DivEl) FlexBasis(basis Length) DivEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e DivEl) FlexGrow(grow float32) DivEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e DivEl) FlexShrink(shrink float32) DivEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
+func (e DivEl) FontFamily(familyName string) DivEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e DivEl) FontFeatures(features FontFeatures) DivEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
-func (e DivEl) FontWeight(weight FontWeight) DivEl   { tStyledFontWeight(e.n, weight); return e }
-func (e DivEl) Gap(length Length) DivEl              { tStyledGap(e.n, length); return e }
-func (e DivEl) GapX(length Length) DivEl             { tStyledGapX(e.n, length); return e }
-func (e DivEl) GapY(length Length) DivEl             { tStyledGapY(e.n, length); return e }
-func (e DivEl) GridCols(cols uint16) DivEl           { tStyledGridCols(e.n, cols); return e }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
+func (e DivEl) FontWeight(weight FontWeight) DivEl { tStyledFontWeight(e.n, weight); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e DivEl) Gap(length Length) DivEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DivEl) GapX(length Length) DivEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DivEl) GapY(length Length) DivEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e DivEl) GridCols(cols uint16) DivEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e DivEl) GridColsMaxContent(cols uint16) DivEl { tStyledGridColsMaxContent(e.n, cols); return e }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e DivEl) GridColsMinContent(cols uint16) DivEl { tStyledGridColsMinContent(e.n, cols); return e }
-func (e DivEl) GridRows(rows uint16) DivEl           { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows of this element.
+func (e DivEl) GridRows(rows uint16) DivEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e DivEl) GridRowsMaxContent(rows uint16) DivEl { tStyledGridRowsMaxContent(e.n, rows); return e }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e DivEl) GridRowsMinContent(rows uint16) DivEl { tStyledGridRowsMinContent(e.n, rows); return e }
-func (e DivEl) H(length Length) DivEl                { tStyledH(e.n, length); return e }
-func (e DivEl) Inset(length Length) DivEl            { tStyledInset(e.n, length); return e }
-func (e DivEl) Left(length Length) DivEl             { tStyledLeft(e.n, length); return e }
-func (e DivEl) LineClamp(lines int) DivEl            { tStyledLineClamp(e.n, lines); return e }
-func (e DivEl) LineHeight(lineHeight Length) DivEl   { tStyledLineHeight(e.n, lineHeight); return e }
-func (e DivEl) M(length Length) DivEl                { tStyledM(e.n, length); return e }
-func (e DivEl) MaxH(length Length) DivEl             { tStyledMaxH(e.n, length); return e }
-func (e DivEl) MaxSize(length Length) DivEl          { tStyledMaxSize(e.n, length); return e }
-func (e DivEl) MaxW(length Length) DivEl             { tStyledMaxW(e.n, length); return e }
-func (e DivEl) Mb(length Length) DivEl               { tStyledMb(e.n, length); return e }
-func (e DivEl) MinH(length Length) DivEl             { tStyledMinH(e.n, length); return e }
-func (e DivEl) MinSize(length Length) DivEl          { tStyledMinSize(e.n, length); return e }
-func (e DivEl) MinW(length Length) DivEl             { tStyledMinW(e.n, length); return e }
-func (e DivEl) Ml(length Length) DivEl               { tStyledMl(e.n, length); return e }
-func (e DivEl) Mr(length Length) DivEl               { tStyledMr(e.n, length); return e }
-func (e DivEl) Mt(length Length) DivEl               { tStyledMt(e.n, length); return e }
-func (e DivEl) Mx(length Length) DivEl               { tStyledMx(e.n, length); return e }
-func (e DivEl) My(length Length) DivEl               { tStyledMy(e.n, length); return e }
-func (e DivEl) Opacity(opacity float32) DivEl        { tStyledOpacity(e.n, opacity); return e }
-func (e DivEl) P(length Length) DivEl                { tStyledP(e.n, length); return e }
-func (e DivEl) Pb(length Length) DivEl               { tStyledPb(e.n, length); return e }
-func (e DivEl) Pl(length Length) DivEl               { tStyledPl(e.n, length); return e }
-func (e DivEl) Pr(length Length) DivEl               { tStyledPr(e.n, length); return e }
-func (e DivEl) Pt(length Length) DivEl               { tStyledPt(e.n, length); return e }
-func (e DivEl) Px(length Length) DivEl               { tStyledPx(e.n, length); return e }
-func (e DivEl) Py(length Length) DivEl               { tStyledPy(e.n, length); return e }
-func (e DivEl) Right(length Length) DivEl            { tStyledRight(e.n, length); return e }
-func (e DivEl) Rounded(length Length) DivEl          { tStyledRounded(e.n, length); return e }
-func (e DivEl) RoundedB(length Length) DivEl         { tStyledRoundedB(e.n, length); return e }
-func (e DivEl) RoundedBl(length Length) DivEl        { tStyledRoundedBl(e.n, length); return e }
-func (e DivEl) RoundedBr(length Length) DivEl        { tStyledRoundedBr(e.n, length); return e }
-func (e DivEl) RoundedL(length Length) DivEl         { tStyledRoundedL(e.n, length); return e }
-func (e DivEl) RoundedR(length Length) DivEl         { tStyledRoundedR(e.n, length); return e }
-func (e DivEl) RoundedT(length Length) DivEl         { tStyledRoundedT(e.n, length); return e }
-func (e DivEl) RoundedTl(length Length) DivEl        { tStyledRoundedTl(e.n, length); return e }
-func (e DivEl) RoundedTr(length Length) DivEl        { tStyledRoundedTr(e.n, length); return e }
-func (e DivEl) RowEnd(end int16) DivEl               { tStyledRowEnd(e.n, end); return e }
-func (e DivEl) RowSpan(span uint16) DivEl            { tStyledRowSpan(e.n, span); return e }
-func (e DivEl) RowStart(start int16) DivEl           { tStyledRowStart(e.n, start); return e }
-func (e DivEl) ScrollbarWidth(width Length) DivEl    { tStyledScrollbarWidth(e.n, width); return e }
-func (e DivEl) Shadow(shadows []BoxShadow) DivEl     { tStyledShadow(e.n, shadows); return e }
-func (e DivEl) Size(length Length) DivEl             { tStyledSize(e.n, length); return e }
-func (e DivEl) TextAlign(align TextAlign) DivEl      { tStyledTextAlign(e.n, align); return e }
-func (e DivEl) TextBg(bg Color) DivEl                { tStyledTextBg(e.n, bg); return e }
-func (e DivEl) TextColor(color Color) DivEl          { tStyledTextColor(e.n, color); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e DivEl) H(length Length) DivEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DivEl) Inset(length Length) DivEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DivEl) Left(length Length) DivEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e DivEl) LineClamp(lines int) DivEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
+func (e DivEl) LineHeight(lineHeight Length) DivEl { tStyledLineHeight(e.n, lineHeight); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e DivEl) M(length Length) DivEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e DivEl) MaxH(length Length) DivEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e DivEl) MaxSize(length Length) DivEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e DivEl) MaxW(length Length) DivEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DivEl) Mb(length Length) DivEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e DivEl) MinH(length Length) DivEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e DivEl) MinSize(length Length) DivEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e DivEl) MinW(length Length) DivEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DivEl) Ml(length Length) DivEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DivEl) Mr(length Length) DivEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DivEl) Mt(length Length) DivEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e DivEl) Mx(length Length) DivEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e DivEl) My(length Length) DivEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e DivEl) Opacity(opacity float32) DivEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e DivEl) P(length Length) DivEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DivEl) Pb(length Length) DivEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DivEl) Pl(length Length) DivEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DivEl) Pr(length Length) DivEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DivEl) Pt(length Length) DivEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e DivEl) Px(length Length) DivEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e DivEl) Py(length Length) DivEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DivEl) Right(length Length) DivEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e DivEl) Rounded(length Length) DivEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DivEl) RoundedB(length Length) DivEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DivEl) RoundedBl(length Length) DivEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DivEl) RoundedBr(length Length) DivEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DivEl) RoundedL(length Length) DivEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DivEl) RoundedR(length Length) DivEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DivEl) RoundedT(length Length) DivEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DivEl) RoundedTl(length Length) DivEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DivEl) RoundedTr(length Length) DivEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e DivEl) RowEnd(end int16) DivEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e DivEl) RowSpan(span uint16) DivEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e DivEl) RowStart(start int16) DivEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e DivEl) ScrollbarWidth(width Length) DivEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e DivEl) Shadow(shadows []BoxShadow) DivEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e DivEl) Size(length Length) DivEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e DivEl) TextAlign(align TextAlign) DivEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e DivEl) TextBg(bg Color) DivEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e DivEl) TextColor(color Color) DivEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e DivEl) TextDecorationColor(color Color) DivEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e DivEl) TextOverflow(overflow TextOverflow) DivEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e DivEl) TextSize(size Length) DivEl { tStyledTextSize(e.n, size); return e }
-func (e DivEl) Top(length Length) DivEl    { tStyledTop(e.n, length); return e }
-func (e DivEl) W(length Length) DivEl      { tStyledW(e.n, length); return e }
 
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e DivEl) TextSize(size Length) DivEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DivEl) Top(length Length) DivEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e DivEl) W(length Length) DivEl { tStyledW(e.n, length); return e }
+
+// Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
+// equivalent to `block_mouse_except_scroll`.
+//
+// See `is_hovered` for details.
 func (e DivEl) BlockMouseExceptScroll() DivEl {
 	tInteractiveElementBlockMouseExceptScroll(e.n)
 	return e
 }
+
+// Use the given predicate to determine whether or not a drop event should be dispatched to this
+// element. The fluent API equivalent to `can_drop`.
 func (e DivEl) CanDrop(predicate DropAccept) DivEl {
 	tInteractiveElementCanDrop(e.n, predicate)
 	return e
 }
+
+// Capture the given action, before normal action dispatch can fire. The fluent API equivalent to
+// `capture_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) CaptureAction(listener ActionHandler) DivEl {
 	tInteractiveElementCaptureAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementCaptureAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementCaptureAnyMouseUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the capture phase. The fluent API equivalent
+// to `capture_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) DivEl {
 	tInteractiveElementCaptureKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the capture phase. The fluent API equivalent to
+// `capture_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) DivEl {
 	tInteractiveElementCaptureKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the capture phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) DivEl {
 	tInteractiveElementCaptureMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the capture phase. The fluent API
+// equivalent to `capture_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) DivEl {
 	tInteractiveElementCapturePinch(e.n, listener)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element
 func (e DivEl) DragOver(f StyleRefinement) DivEl { tInteractiveElementDragOver(e.n, f); return e }
-func (e DivEl) Focus(f StyleRefinement) DivEl    { tInteractiveElementFocus(e.n, f); return e }
+
+// Set the given styles to be applied when this element, specifically, is focused. Requires that
+// the element is focusable. Elements can be made focusable using `TrackFocus`.
+func (e DivEl) Focus(f StyleRefinement) DivEl { tInteractiveElementFocus(e.n, f); return e }
+
+// Set the given styles to be applied when this element is focused via keyboard navigation. This is
+// similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
+// the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
+// Elements can be made focusable using `TrackFocus`.
 func (e DivEl) FocusVisible(f StyleRefinement) DivEl {
 	tInteractiveElementFocusVisible(e.n, f)
 	return e
 }
+
+// Assign this element to a group of elements that can be styled together
 func (e DivEl) Group(group string) DivEl { tInteractiveElementGroup(e.n, group); return e }
+
+// Apply the given style when the given data type is dragged over this element's group
 func (e DivEl) GroupDragOver(groupName string, f StyleRefinement) DivEl {
 	tInteractiveElementGroupDragOver(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over a group member
 func (e DivEl) GroupHover(groupName string, f StyleRefinement) DivEl {
 	tInteractiveElementGroupHover(e.n, groupName, f)
 	return e
 }
-func (e DivEl) Hover(f StyleRefinement) DivEl   { tInteractiveElementHover(e.n, f); return e }
+
+// Apply the given style to this element when the mouse hovers over it
+func (e DivEl) Hover(f StyleRefinement) DivEl { tInteractiveElementHover(e.n, f); return e }
+
+// Set the given styles to be applied when this element is inside another element that is focused.
+// Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e DivEl) InFocus(f StyleRefinement) DivEl { tInteractiveElementInFocus(e.n, f); return e }
+
+// Set the keymap context for this element. This will be used to determine which action to dispatch
+// from the keymap.
 func (e DivEl) KeyContext(keyContext string) DivEl {
 	tInteractiveElementKeyContext(e.n, keyContext)
 	return e
 }
+
+// Block the mouse from all interactions with elements behind this element's hitbox. Typically
+// `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
 func (e DivEl) Occlude() DivEl { tInteractiveElementOcclude(e.n); return e }
+
+// Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
+// to `on_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnAction(listener ActionHandler) DivEl {
 	tInteractiveElementOnAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `on_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to back-navigation gestures that start over this element, such as the
+// iOS swipe from the leading screen edge. The innermost element with a back listener claims the
+// gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) DivEl {
 	tInteractiveElementOnBackGesture(e.n, listener)
 	return e
 }
+
+// Bind the given callback to an action dispatch, based on a dynamic action parameter instead of a
+// type parameter. Useful for component libraries that want to expose action bindings to their
+// users. The fluent API equivalent to `on_boxed_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) DivEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
 	return e
 }
+
+// Bind the given callback to drop events of the given type, whether or not the drag started on
+// this element. The fluent API equivalent to `on_drop`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnDrop(listener func(cx *Cx, e DragValue)) DivEl {
 	tInteractiveElementOnDrop(e.n, listener)
 	return e
 }
+
+// Bind the given callback to `Exited` when a platform file drag leaves this element's window while
+// the element is hovered.
+//
+// This is a window-local exit event, not notification that the platform drag session ended. The
+// fluent API equivalent to `on_file_drop_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) DivEl {
 	tInteractiveElementOnFileDropExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the bubble phase. The fluent API equivalent to
+// `on_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) DivEl {
 	tInteractiveElementOnKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the bubble phase. The fluent API equivalent to
+// `on_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) DivEl {
 	tInteractiveElementOnKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to modifiers changing events. The fluent API equivalent to
+// `on_modifiers_changed`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) DivEl {
 	tInteractiveElementOnModifiersChanged(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for the given mouse button. The fluent API
+// equivalent to `on_mouse_down`.
+//
+// See `listener` to get access to the view state from this callback.
 func (e DivEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseDown(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event, on any button, during the capture phase, when
+// the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_down_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseDownOut(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse exit event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) DivEl {
 	tInteractiveElementOnMouseExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse move event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_move`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseMove(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the bubble phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) DivEl {
 	tInteractiveElementOnMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for the given button, during the bubble phase. The
+// fluent API equivalent to `on_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseUp(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event, for the given button, during the capture phase,
+// when the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_up_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) DivEl {
 	tInteractiveElementOnMouseUpOut(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the bubble phase. The fluent API
+// equivalent to `on_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnPinch(listener func(cx *Cx, e PinchEvent)) DivEl {
 	tInteractiveElementOnPinch(e.n, listener)
 	return e
 }
+
+// Bind the given callback to scroll events during the bubble phase. The fluent API equivalent to
+// `on_scroll`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e DivEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) DivEl {
 	tInteractiveElementOnScroll(e.n, listener)
 	return e
 }
-func (e DivEl) TabGroup() DivEl            { tInteractiveElementTabGroup(e.n); return e }
-func (e DivEl) TabIndex(index int) DivEl   { tInteractiveElementTabIndex(e.n, index); return e }
+
+// Designate this div as a "tab group". Tab groups have their own location in the tab-index order,
+// but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
+// the order of tab stops within the group, without having to renumber all the tab stops in the
+// whole application.
+func (e DivEl) TabGroup() DivEl { tInteractiveElementTabGroup(e.n); return e }
+
+// Set index of the tab stop order, and set this node as a tab stop. This will default the element
+// to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
+// with `tab_group` in order to not interfere with the tab index of other elements.
+func (e DivEl) TabIndex(index int) DivEl { tInteractiveElementTabIndex(e.n, index); return e }
+
+// Set whether this element is a tab stop.
+//
+// When false, the element remains in tab-index order but cannot be reached via keyboard
+// navigation. Should only be used with `tab_index`.
 func (e DivEl) TabStop(tabStop bool) DivEl { tInteractiveElementTabStop(e.n, tabStop); return e }
+
+// Track the focus state of the given focus handle on this element. If the focus handle is focused
+// by the application, this element will apply its focused styles.
 func (e DivEl) TrackFocus(focusHandle FocusHandle) DivEl {
 	tInteractiveElementTrackFocus(e.n, focusHandle)
 	return e
 }
+
+// Set the bounds of this element as a window control area for the platform window. The fluent API
+// equivalent to `window_control_area`.
 func (e DivEl) WindowControlArea(area WindowControlArea) DivEl {
 	tInteractiveElementWindowControlArea(e.n, area)
 	return e
@@ -332,20 +738,28 @@ func (e DivEl) Text(s string) DivEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e DivEl) ChildView(v View) DivEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e DivEl) Child(child Element) DivEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e DivEl) Children(children ...Element) DivEl {
 	tParentElementChildren(e.n, children...)
 	return e
 }
 
+// Adds a horizontal scrollbar to the element.
 func (e DivEl) HorizontalScrollbar(scrollHandle ScrollHandle) DivEl {
 	tScrollableElementHorizontalScrollbar(e.n, scrollHandle)
 	return e
 }
+
+// Adds a scrollbar to the element.
 func (e DivEl) Scrollbar(scrollHandle ScrollHandle, axis ScrollbarAxisInto) DivEl {
 	tScrollableElementScrollbar(e.n, scrollHandle, axis)
 	return e
 }
+
+// Adds a vertical scrollbar to the element.
 func (e DivEl) VerticalScrollbar(scrollHandle ScrollHandle) DivEl {
 	tScrollableElementVerticalScrollbar(e.n, scrollHandle)
 	return e
@@ -356,6 +770,8 @@ type ImgEl struct{ n *node }
 
 func (e ImgEl) node() *node { return e.n }
 
+// Create a new image element.
+//
 // Img is gpui_kit::img.
 func Img(source ImageSourceInto, st ...Style) ImgEl {
 	n := newNode(259)
@@ -368,361 +784,881 @@ func Img(source ImageSourceInto, st ...Style) ImgEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e ImgEl) Style(st ...Style) ImgEl { tokens(e.n, st); return e }
 
-func (e ImgEl) AspectRatio(ratio float32) ImgEl     { tStyledAspectRatio(e.n, ratio); return e }
-func (e ImgEl) Bg(fill Fill) ImgEl                  { tStyledBg(e.n, fill); return e }
-func (e ImgEl) Border(length Length) ImgEl          { tStyledBorder(e.n, length); return e }
-func (e ImgEl) BorderB(length Length) ImgEl         { tStyledBorderB(e.n, length); return e }
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+func (e ImgEl) AspectRatio(ratio float32) ImgEl { tStyledAspectRatio(e.n, ratio); return e }
+
+// Sets the background color of the element.
+func (e ImgEl) Bg(fill Fill) ImgEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e ImgEl) Border(length Length) ImgEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ImgEl) BorderB(length Length) ImgEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e ImgEl) BorderColor(borderColor Color) ImgEl { tStyledBorderColor(e.n, borderColor); return e }
-func (e ImgEl) BorderL(length Length) ImgEl         { tStyledBorderL(e.n, length); return e }
-func (e ImgEl) BorderR(length Length) ImgEl         { tStyledBorderR(e.n, length); return e }
-func (e ImgEl) BorderT(length Length) ImgEl         { tStyledBorderT(e.n, length); return e }
-func (e ImgEl) BorderX(length Length) ImgEl         { tStyledBorderX(e.n, length); return e }
-func (e ImgEl) BorderY(length Length) ImgEl         { tStyledBorderY(e.n, length); return e }
-func (e ImgEl) Bottom(length Length) ImgEl          { tStyledBottom(e.n, length); return e }
-func (e ImgEl) ColEnd(end int16) ImgEl              { tStyledColEnd(e.n, end); return e }
-func (e ImgEl) ColSpan(span uint16) ImgEl           { tStyledColSpan(e.n, span); return e }
-func (e ImgEl) ColStart(start int16) ImgEl          { tStyledColStart(e.n, start); return e }
-func (e ImgEl) Cursor(cursor CursorStyle) ImgEl     { tStyledCursor(e.n, cursor); return e }
-func (e ImgEl) FlexBasis(basis Length) ImgEl        { tStyledFlexBasis(e.n, basis); return e }
-func (e ImgEl) FlexGrow(grow float32) ImgEl         { tStyledFlexGrow(e.n, grow); return e }
-func (e ImgEl) FlexShrink(shrink float32) ImgEl     { tStyledFlexShrink(e.n, shrink); return e }
-func (e ImgEl) FontFamily(familyName string) ImgEl  { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ImgEl) BorderL(length Length) ImgEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ImgEl) BorderR(length Length) ImgEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ImgEl) BorderT(length Length) ImgEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e ImgEl) BorderX(length Length) ImgEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e ImgEl) BorderY(length Length) ImgEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ImgEl) Bottom(length Length) ImgEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e ImgEl) ColEnd(end int16) ImgEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e ImgEl) ColSpan(span uint16) ImgEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e ImgEl) ColStart(start int16) ImgEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e ImgEl) Cursor(cursor CursorStyle) ImgEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e ImgEl) FlexBasis(basis Length) ImgEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e ImgEl) FlexGrow(grow float32) ImgEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e ImgEl) FlexShrink(shrink float32) ImgEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
+func (e ImgEl) FontFamily(familyName string) ImgEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e ImgEl) FontFeatures(features FontFeatures) ImgEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
-func (e ImgEl) FontWeight(weight FontWeight) ImgEl   { tStyledFontWeight(e.n, weight); return e }
-func (e ImgEl) Gap(length Length) ImgEl              { tStyledGap(e.n, length); return e }
-func (e ImgEl) GapX(length Length) ImgEl             { tStyledGapX(e.n, length); return e }
-func (e ImgEl) GapY(length Length) ImgEl             { tStyledGapY(e.n, length); return e }
-func (e ImgEl) GridCols(cols uint16) ImgEl           { tStyledGridCols(e.n, cols); return e }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
+func (e ImgEl) FontWeight(weight FontWeight) ImgEl { tStyledFontWeight(e.n, weight); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e ImgEl) Gap(length Length) ImgEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ImgEl) GapX(length Length) ImgEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ImgEl) GapY(length Length) ImgEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e ImgEl) GridCols(cols uint16) ImgEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e ImgEl) GridColsMaxContent(cols uint16) ImgEl { tStyledGridColsMaxContent(e.n, cols); return e }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e ImgEl) GridColsMinContent(cols uint16) ImgEl { tStyledGridColsMinContent(e.n, cols); return e }
-func (e ImgEl) GridRows(rows uint16) ImgEl           { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows of this element.
+func (e ImgEl) GridRows(rows uint16) ImgEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e ImgEl) GridRowsMaxContent(rows uint16) ImgEl { tStyledGridRowsMaxContent(e.n, rows); return e }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e ImgEl) GridRowsMinContent(rows uint16) ImgEl { tStyledGridRowsMinContent(e.n, rows); return e }
-func (e ImgEl) H(length Length) ImgEl                { tStyledH(e.n, length); return e }
-func (e ImgEl) Inset(length Length) ImgEl            { tStyledInset(e.n, length); return e }
-func (e ImgEl) Left(length Length) ImgEl             { tStyledLeft(e.n, length); return e }
-func (e ImgEl) LineClamp(lines int) ImgEl            { tStyledLineClamp(e.n, lines); return e }
-func (e ImgEl) LineHeight(lineHeight Length) ImgEl   { tStyledLineHeight(e.n, lineHeight); return e }
-func (e ImgEl) M(length Length) ImgEl                { tStyledM(e.n, length); return e }
-func (e ImgEl) MaxH(length Length) ImgEl             { tStyledMaxH(e.n, length); return e }
-func (e ImgEl) MaxSize(length Length) ImgEl          { tStyledMaxSize(e.n, length); return e }
-func (e ImgEl) MaxW(length Length) ImgEl             { tStyledMaxW(e.n, length); return e }
-func (e ImgEl) Mb(length Length) ImgEl               { tStyledMb(e.n, length); return e }
-func (e ImgEl) MinH(length Length) ImgEl             { tStyledMinH(e.n, length); return e }
-func (e ImgEl) MinSize(length Length) ImgEl          { tStyledMinSize(e.n, length); return e }
-func (e ImgEl) MinW(length Length) ImgEl             { tStyledMinW(e.n, length); return e }
-func (e ImgEl) Ml(length Length) ImgEl               { tStyledMl(e.n, length); return e }
-func (e ImgEl) Mr(length Length) ImgEl               { tStyledMr(e.n, length); return e }
-func (e ImgEl) Mt(length Length) ImgEl               { tStyledMt(e.n, length); return e }
-func (e ImgEl) Mx(length Length) ImgEl               { tStyledMx(e.n, length); return e }
-func (e ImgEl) My(length Length) ImgEl               { tStyledMy(e.n, length); return e }
-func (e ImgEl) Opacity(opacity float32) ImgEl        { tStyledOpacity(e.n, opacity); return e }
-func (e ImgEl) P(length Length) ImgEl                { tStyledP(e.n, length); return e }
-func (e ImgEl) Pb(length Length) ImgEl               { tStyledPb(e.n, length); return e }
-func (e ImgEl) Pl(length Length) ImgEl               { tStyledPl(e.n, length); return e }
-func (e ImgEl) Pr(length Length) ImgEl               { tStyledPr(e.n, length); return e }
-func (e ImgEl) Pt(length Length) ImgEl               { tStyledPt(e.n, length); return e }
-func (e ImgEl) Px(length Length) ImgEl               { tStyledPx(e.n, length); return e }
-func (e ImgEl) Py(length Length) ImgEl               { tStyledPy(e.n, length); return e }
-func (e ImgEl) Right(length Length) ImgEl            { tStyledRight(e.n, length); return e }
-func (e ImgEl) Rounded(length Length) ImgEl          { tStyledRounded(e.n, length); return e }
-func (e ImgEl) RoundedB(length Length) ImgEl         { tStyledRoundedB(e.n, length); return e }
-func (e ImgEl) RoundedBl(length Length) ImgEl        { tStyledRoundedBl(e.n, length); return e }
-func (e ImgEl) RoundedBr(length Length) ImgEl        { tStyledRoundedBr(e.n, length); return e }
-func (e ImgEl) RoundedL(length Length) ImgEl         { tStyledRoundedL(e.n, length); return e }
-func (e ImgEl) RoundedR(length Length) ImgEl         { tStyledRoundedR(e.n, length); return e }
-func (e ImgEl) RoundedT(length Length) ImgEl         { tStyledRoundedT(e.n, length); return e }
-func (e ImgEl) RoundedTl(length Length) ImgEl        { tStyledRoundedTl(e.n, length); return e }
-func (e ImgEl) RoundedTr(length Length) ImgEl        { tStyledRoundedTr(e.n, length); return e }
-func (e ImgEl) RowEnd(end int16) ImgEl               { tStyledRowEnd(e.n, end); return e }
-func (e ImgEl) RowSpan(span uint16) ImgEl            { tStyledRowSpan(e.n, span); return e }
-func (e ImgEl) RowStart(start int16) ImgEl           { tStyledRowStart(e.n, start); return e }
-func (e ImgEl) ScrollbarWidth(width Length) ImgEl    { tStyledScrollbarWidth(e.n, width); return e }
-func (e ImgEl) Shadow(shadows []BoxShadow) ImgEl     { tStyledShadow(e.n, shadows); return e }
-func (e ImgEl) Size(length Length) ImgEl             { tStyledSize(e.n, length); return e }
-func (e ImgEl) TextAlign(align TextAlign) ImgEl      { tStyledTextAlign(e.n, align); return e }
-func (e ImgEl) TextBg(bg Color) ImgEl                { tStyledTextBg(e.n, bg); return e }
-func (e ImgEl) TextColor(color Color) ImgEl          { tStyledTextColor(e.n, color); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e ImgEl) H(length Length) ImgEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ImgEl) Inset(length Length) ImgEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ImgEl) Left(length Length) ImgEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e ImgEl) LineClamp(lines int) ImgEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
+func (e ImgEl) LineHeight(lineHeight Length) ImgEl { tStyledLineHeight(e.n, lineHeight); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e ImgEl) M(length Length) ImgEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e ImgEl) MaxH(length Length) ImgEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e ImgEl) MaxSize(length Length) ImgEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e ImgEl) MaxW(length Length) ImgEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ImgEl) Mb(length Length) ImgEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e ImgEl) MinH(length Length) ImgEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e ImgEl) MinSize(length Length) ImgEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e ImgEl) MinW(length Length) ImgEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ImgEl) Ml(length Length) ImgEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ImgEl) Mr(length Length) ImgEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ImgEl) Mt(length Length) ImgEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e ImgEl) Mx(length Length) ImgEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e ImgEl) My(length Length) ImgEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e ImgEl) Opacity(opacity float32) ImgEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e ImgEl) P(length Length) ImgEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ImgEl) Pb(length Length) ImgEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ImgEl) Pl(length Length) ImgEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ImgEl) Pr(length Length) ImgEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ImgEl) Pt(length Length) ImgEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e ImgEl) Px(length Length) ImgEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e ImgEl) Py(length Length) ImgEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ImgEl) Right(length Length) ImgEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e ImgEl) Rounded(length Length) ImgEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ImgEl) RoundedB(length Length) ImgEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e ImgEl) RoundedBl(length Length) ImgEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e ImgEl) RoundedBr(length Length) ImgEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ImgEl) RoundedL(length Length) ImgEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ImgEl) RoundedR(length Length) ImgEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ImgEl) RoundedT(length Length) ImgEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e ImgEl) RoundedTl(length Length) ImgEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e ImgEl) RoundedTr(length Length) ImgEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e ImgEl) RowEnd(end int16) ImgEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e ImgEl) RowSpan(span uint16) ImgEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e ImgEl) RowStart(start int16) ImgEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e ImgEl) ScrollbarWidth(width Length) ImgEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e ImgEl) Shadow(shadows []BoxShadow) ImgEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e ImgEl) Size(length Length) ImgEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e ImgEl) TextAlign(align TextAlign) ImgEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e ImgEl) TextBg(bg Color) ImgEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e ImgEl) TextColor(color Color) ImgEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e ImgEl) TextDecorationColor(color Color) ImgEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e ImgEl) TextOverflow(overflow TextOverflow) ImgEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e ImgEl) TextSize(size Length) ImgEl { tStyledTextSize(e.n, size); return e }
-func (e ImgEl) Top(length Length) ImgEl    { tStyledTop(e.n, length); return e }
-func (e ImgEl) W(length Length) ImgEl      { tStyledW(e.n, length); return e }
 
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e ImgEl) TextSize(size Length) ImgEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ImgEl) Top(length Length) ImgEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e ImgEl) W(length Length) ImgEl { tStyledW(e.n, length); return e }
+
+// Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
+// equivalent to `block_mouse_except_scroll`.
+//
+// See `is_hovered` for details.
 func (e ImgEl) BlockMouseExceptScroll() ImgEl {
 	tInteractiveElementBlockMouseExceptScroll(e.n)
 	return e
 }
+
+// Use the given predicate to determine whether or not a drop event should be dispatched to this
+// element. The fluent API equivalent to `can_drop`.
 func (e ImgEl) CanDrop(predicate DropAccept) ImgEl {
 	tInteractiveElementCanDrop(e.n, predicate)
 	return e
 }
+
+// Capture the given action, before normal action dispatch can fire. The fluent API equivalent to
+// `capture_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) CaptureAction(listener ActionHandler) ImgEl {
 	tInteractiveElementCaptureAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementCaptureAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementCaptureAnyMouseUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the capture phase. The fluent API equivalent
+// to `capture_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) ImgEl {
 	tInteractiveElementCaptureKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the capture phase. The fluent API equivalent to
+// `capture_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) ImgEl {
 	tInteractiveElementCaptureKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the capture phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) ImgEl {
 	tInteractiveElementCaptureMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the capture phase. The fluent API
+// equivalent to `capture_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) ImgEl {
 	tInteractiveElementCapturePinch(e.n, listener)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element
 func (e ImgEl) DragOver(f StyleRefinement) ImgEl { tInteractiveElementDragOver(e.n, f); return e }
-func (e ImgEl) Focus(f StyleRefinement) ImgEl    { tInteractiveElementFocus(e.n, f); return e }
+
+// Set the given styles to be applied when this element, specifically, is focused. Requires that
+// the element is focusable. Elements can be made focusable using `TrackFocus`.
+func (e ImgEl) Focus(f StyleRefinement) ImgEl { tInteractiveElementFocus(e.n, f); return e }
+
+// Set the given styles to be applied when this element is focused via keyboard navigation. This is
+// similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
+// the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
+// Elements can be made focusable using `TrackFocus`.
 func (e ImgEl) FocusVisible(f StyleRefinement) ImgEl {
 	tInteractiveElementFocusVisible(e.n, f)
 	return e
 }
+
+// Assign this element to a group of elements that can be styled together
 func (e ImgEl) Group(group string) ImgEl { tInteractiveElementGroup(e.n, group); return e }
+
+// Apply the given style when the given data type is dragged over this element's group
 func (e ImgEl) GroupDragOver(groupName string, f StyleRefinement) ImgEl {
 	tInteractiveElementGroupDragOver(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over a group member
 func (e ImgEl) GroupHover(groupName string, f StyleRefinement) ImgEl {
 	tInteractiveElementGroupHover(e.n, groupName, f)
 	return e
 }
-func (e ImgEl) Hover(f StyleRefinement) ImgEl   { tInteractiveElementHover(e.n, f); return e }
+
+// Apply the given style to this element when the mouse hovers over it
+func (e ImgEl) Hover(f StyleRefinement) ImgEl { tInteractiveElementHover(e.n, f); return e }
+
+// Set the given styles to be applied when this element is inside another element that is focused.
+// Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e ImgEl) InFocus(f StyleRefinement) ImgEl { tInteractiveElementInFocus(e.n, f); return e }
+
+// Set the keymap context for this element. This will be used to determine which action to dispatch
+// from the keymap.
 func (e ImgEl) KeyContext(keyContext string) ImgEl {
 	tInteractiveElementKeyContext(e.n, keyContext)
 	return e
 }
+
+// Block the mouse from all interactions with elements behind this element's hitbox. Typically
+// `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
 func (e ImgEl) Occlude() ImgEl { tInteractiveElementOcclude(e.n); return e }
+
+// Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
+// to `on_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnAction(listener ActionHandler) ImgEl {
 	tInteractiveElementOnAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `on_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to back-navigation gestures that start over this element, such as the
+// iOS swipe from the leading screen edge. The innermost element with a back listener claims the
+// gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) ImgEl {
 	tInteractiveElementOnBackGesture(e.n, listener)
 	return e
 }
+
+// Bind the given callback to an action dispatch, based on a dynamic action parameter instead of a
+// type parameter. Useful for component libraries that want to expose action bindings to their
+// users. The fluent API equivalent to `on_boxed_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) ImgEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
 	return e
 }
+
+// Bind the given callback to drop events of the given type, whether or not the drag started on
+// this element. The fluent API equivalent to `on_drop`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnDrop(listener func(cx *Cx, e DragValue)) ImgEl {
 	tInteractiveElementOnDrop(e.n, listener)
 	return e
 }
+
+// Bind the given callback to `Exited` when a platform file drag leaves this element's window while
+// the element is hovered.
+//
+// This is a window-local exit event, not notification that the platform drag session ended. The
+// fluent API equivalent to `on_file_drop_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) ImgEl {
 	tInteractiveElementOnFileDropExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the bubble phase. The fluent API equivalent to
+// `on_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) ImgEl {
 	tInteractiveElementOnKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the bubble phase. The fluent API equivalent to
+// `on_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) ImgEl {
 	tInteractiveElementOnKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to modifiers changing events. The fluent API equivalent to
+// `on_modifiers_changed`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) ImgEl {
 	tInteractiveElementOnModifiersChanged(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for the given mouse button. The fluent API
+// equivalent to `on_mouse_down`.
+//
+// See `listener` to get access to the view state from this callback.
 func (e ImgEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseDown(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event, on any button, during the capture phase, when
+// the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_down_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseDownOut(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse exit event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) ImgEl {
 	tInteractiveElementOnMouseExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse move event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_move`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseMove(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the bubble phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) ImgEl {
 	tInteractiveElementOnMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for the given button, during the bubble phase. The
+// fluent API equivalent to `on_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseUp(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event, for the given button, during the capture phase,
+// when the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_up_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) ImgEl {
 	tInteractiveElementOnMouseUpOut(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the bubble phase. The fluent API
+// equivalent to `on_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnPinch(listener func(cx *Cx, e PinchEvent)) ImgEl {
 	tInteractiveElementOnPinch(e.n, listener)
 	return e
 }
+
+// Bind the given callback to scroll events during the bubble phase. The fluent API equivalent to
+// `on_scroll`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) ImgEl {
 	tInteractiveElementOnScroll(e.n, listener)
 	return e
 }
-func (e ImgEl) TabGroup() ImgEl            { tInteractiveElementTabGroup(e.n); return e }
-func (e ImgEl) TabIndex(index int) ImgEl   { tInteractiveElementTabIndex(e.n, index); return e }
+
+// Designate this div as a "tab group". Tab groups have their own location in the tab-index order,
+// but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
+// the order of tab stops within the group, without having to renumber all the tab stops in the
+// whole application.
+func (e ImgEl) TabGroup() ImgEl { tInteractiveElementTabGroup(e.n); return e }
+
+// Set index of the tab stop order, and set this node as a tab stop. This will default the element
+// to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
+// with `tab_group` in order to not interfere with the tab index of other elements.
+func (e ImgEl) TabIndex(index int) ImgEl { tInteractiveElementTabIndex(e.n, index); return e }
+
+// Set whether this element is a tab stop.
+//
+// When false, the element remains in tab-index order but cannot be reached via keyboard
+// navigation. Should only be used with `tab_index`.
 func (e ImgEl) TabStop(tabStop bool) ImgEl { tInteractiveElementTabStop(e.n, tabStop); return e }
+
+// Track the focus state of the given focus handle on this element. If the focus handle is focused
+// by the application, this element will apply its focused styles.
 func (e ImgEl) TrackFocus(focusHandle FocusHandle) ImgEl {
 	tInteractiveElementTrackFocus(e.n, focusHandle)
 	return e
 }
+
+// Set the bounds of this element as a window control area for the platform window. The fluent API
+// equivalent to `window_control_area`.
 func (e ImgEl) WindowControlArea(area WindowControlArea) ImgEl {
 	tInteractiveElementWindowControlArea(e.n, area)
 	return e
 }
 
+// Set the author-provided identifier exposed to accessibility clients.
+//
+// Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
+// within its accessibility tree. AccessKit maps it to platform identifiers where supported,
+// including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
+// Linux stacks whose deployed adapter exposes it.
 func (e ImgEl) AccessibilityID(id string) ImgEl {
 	tStatefulInteractiveElementAccessibilityID(e.n, id)
 	return e
 }
+
+// Set the given styles to be applied when this element is active.
 func (e ImgEl) Active(f StyleRefinement) ImgEl { tStatefulInteractiveElementActive(e.n, f); return e }
+
+// Report this element as the focused node in the accessibility tree, overriding the element that
+// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+//
+// This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
+// focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
+// selected child so assistive technology announces and highlights it as focused.
+//
+// The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
+// web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
+// when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
+// selected child — if the container isn't focused, the claim is ignored.
 func (e ImgEl) AriaActiveDescendant() ImgEl {
 	tStatefulInteractiveElementAriaActiveDescendant(e.n)
 	return e
 }
+
+// Set the column count for this element.
 func (e ImgEl) AriaColumnCount(count int) ImgEl {
 	tStatefulInteractiveElementAriaColumnCount(e.n, count)
 	return e
 }
+
+// Set the column index for this element.
 func (e ImgEl) AriaColumnIndex(index int) ImgEl {
 	tStatefulInteractiveElementAriaColumnIndex(e.n, index)
 	return e
 }
+
+// Set the accessible description for this element. Unlike the label (which names the element), the
+// description provides supplementary information that assistive technology announces after the
+// name, role, and value - for example a settings subtitle or a hint.
 func (e ImgEl) AriaDescription(description string) ImgEl {
 	tStatefulInteractiveElementAriaDescription(e.n, description)
 	return e
 }
+
+// Set the expanded state for this element.
 func (e ImgEl) AriaExpanded(expanded bool) ImgEl {
 	tStatefulInteractiveElementAriaExpanded(e.n, expanded)
 	return e
 }
+
+// Set the keyboard shortcut(s) that activate this element, announced by assistive technology (maps
+// to AccessKit's `keyboard_shortcut`).
+//
+// Note that this does not create a keymap. It simply instructs assistive technology what the
+// keymap is.
 func (e ImgEl) AriaKeyshortcuts(keyshortcuts string) ImgEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(e.n, keyshortcuts)
 	return e
 }
+
+// Set the accessible label for this element.
 func (e ImgEl) AriaLabel(label string) ImgEl {
 	tStatefulInteractiveElementAriaLabel(e.n, label)
 	return e
 }
+
+// Set the heading level of this element.
 func (e ImgEl) AriaLevel(level int) ImgEl { tStatefulInteractiveElementAriaLevel(e.n, level); return e }
+
+// Set the maximum numeric value for this element.
 func (e ImgEl) AriaMaxNumericValue(value float64) ImgEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(e.n, value)
 	return e
 }
+
+// Set the minimum numeric value for this element.
 func (e ImgEl) AriaMinNumericValue(value float64) ImgEl {
 	tStatefulInteractiveElementAriaMinNumericValue(e.n, value)
 	return e
 }
+
+// Set the numeric value for this element.
 func (e ImgEl) AriaNumericValue(value float64) ImgEl {
 	tStatefulInteractiveElementAriaNumericValue(e.n, value)
 	return e
 }
+
+// Set the step by which assistive technology should expect the numeric value of this element to
+// change (e.g. when incrementing a spin button).
 func (e ImgEl) AriaNumericValueStep(step float64) ImgEl {
 	tStatefulInteractiveElementAriaNumericValueStep(e.n, step)
 	return e
 }
+
+// Set the placeholder text reported to assistive technology for this element, shown when a text
+// input is empty.
 func (e ImgEl) AriaPlaceholder(placeholder string) ImgEl {
 	tStatefulInteractiveElementAriaPlaceholder(e.n, placeholder)
 	return e
 }
+
+// Set the position in set of this element.
 func (e ImgEl) AriaPositionInSet(position int) ImgEl {
 	tStatefulInteractiveElementAriaPositionInSet(e.n, position)
 	return e
 }
+
+// Set the row count for this element.
 func (e ImgEl) AriaRowCount(count int) ImgEl {
 	tStatefulInteractiveElementAriaRowCount(e.n, count)
 	return e
 }
+
+// Set the row index for this element.
 func (e ImgEl) AriaRowIndex(index int) ImgEl {
 	tStatefulInteractiveElementAriaRowIndex(e.n, index)
 	return e
 }
+
+// Set the selected state for this element.
 func (e ImgEl) AriaSelected(selected bool) ImgEl {
 	tStatefulInteractiveElementAriaSelected(e.n, selected)
 	return e
 }
+
+// Set the size of set for this element.
 func (e ImgEl) AriaSizeOfSet(size int) ImgEl {
 	tStatefulInteractiveElementAriaSizeOfSet(e.n, size)
 	return e
 }
+
+// Set the string value of this element, e.g. the text content of a simple text input.
 func (e ImgEl) AriaValue(value string) ImgEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
 	return e
 }
+
+// Set this element to focusable.
 func (e ImgEl) Focusable() ImgEl { tStatefulInteractiveElementFocusable(e.n); return e }
+
+// Set the given styles to be applied when this element's group is active.
 func (e ImgEl) GroupActive(groupName string, f StyleRefinement) ImgEl {
 	tStatefulInteractiveElementGroupActive(e.n, groupName, f)
 	return e
 }
+
+// Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
+// hover listener, not hover styles or tooltips. The fluent API equivalent to
+// `hover_listener_mode`.
 func (e ImgEl) HoverListenerMode(mode HoverListenerMode) ImgEl {
 	tStatefulInteractiveElementHoverListenerMode(e.n, mode)
 	return e
 }
+
+// Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
+// hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
+// equivalent to `hoverable_tooltip`.
 func (e ImgEl) HoverableTooltip(buildTooltip ViewOrTooltip) ImgEl {
 	tStatefulInteractiveElementHoverableTooltip(e.n, buildTooltip)
 	return e
 }
+
+// Bind the given callback to non-primary click events of this element. The fluent API equivalent
+// to `on_aux_click`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnAuxClick(listener func(cx *Cx, e ClickEvent)) ImgEl {
 	tStatefulInteractiveElementOnAuxClick(e.n, listener)
 	return e
 }
+
+// Bind the given callback to click events of this element. The fluent API equivalent to
+// `on_click`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnClick(listener func(cx *Cx, e ClickEvent)) ImgEl {
 	tStatefulInteractiveElementOnClick(e.n, listener)
 	return e
 }
+
+// On drag initiation, this callback will be used to create a new view to render the dragged value
+// for a drag and drop operation. This API should also be used as the equivalent of 'on drag start'
+// with the `OnDragMove` API. The callback also has access to the offset of triggering click from
+// the origin of parent element. The fluent API equivalent to `on_drag`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnDrag(value DragValue, constructor View) ImgEl {
 	tStatefulInteractiveElementOnDrag(e.n, value, constructor)
 	return e
 }
+
+// Bind the given callback on the hover start and end events of this element. Note that the boolean
+// passed to the callback is true when the hover starts and false when it ends. Transitions caused
+// by layout changes under a stationary mouse also invoke the callback.
+//
+// By default, keyboard input suppresses hover until the next mouse move, mouse down, or touch. Set
+// `InputModalityIndependent` with `HoverListenerMode` to continue hit-testing hover after keyboard
+// input. The fluent API equivalent to `on_hover`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e ImgEl) OnHover(listener func(cx *Cx, e bool)) ImgEl {
 	tStatefulInteractiveElementOnHover(e.n, listener)
 	return e
 }
-func (e ImgEl) OverflowScroll() ImgEl  { tStatefulInteractiveElementOverflowScroll(e.n); return e }
+
+// Set the overflow x and y to scroll.
+func (e ImgEl) OverflowScroll() ImgEl { tStatefulInteractiveElementOverflowScroll(e.n); return e }
+
+// Set the overflow x to scroll.
 func (e ImgEl) OverflowXScroll() ImgEl { tStatefulInteractiveElementOverflowXScroll(e.n); return e }
+
+// Set the overflow y to scroll.
 func (e ImgEl) OverflowYScroll() ImgEl { tStatefulInteractiveElementOverflowYScroll(e.n); return e }
+
+// Restrict scrolling of this element to the axis of the input gesture.
+//
+// See `restrict_scroll_to_axis` for details.
 func (e ImgEl) RestrictScrollToAxis() ImgEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(e.n)
 	return e
 }
+
+// Set the accessible role for this element.
+//
+// See the accessibility guide for an overview.
 func (e ImgEl) Role(role Role) ImgEl { tStatefulInteractiveElementRole(e.n, role); return e }
+
+// Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
+// `tooltip`.
 func (e ImgEl) Tooltip(buildTooltip ViewOrTooltip) ImgEl {
 	tStatefulInteractiveElementTooltip(e.n, buildTooltip)
 	return e
 }
+
+// Sets the delay before this element's tooltip is shown on hover.
+//
+// Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
+// equivalent to `tooltip_show_delay`.
 func (e ImgEl) TooltipShowDelay(delay time.Duration) ImgEl {
 	tStatefulInteractiveElementTooltipShowDelay(e.n, delay)
 	return e
 }
+
+// Track the scroll state of this element with the given handle.
 func (e ImgEl) TrackScroll(scrollHandle ScrollHandle) ImgEl {
 	tStatefulInteractiveElementTrackScroll(e.n, scrollHandle)
 	return e
@@ -733,6 +1669,9 @@ type StatefulDivEl struct{ n *node }
 
 func (e StatefulDivEl) node() *node { return e.n }
 
+// The part of an item the pointer moves it by, for an item built with `DragHandleOnly` — a card's
+// header, say.
+//
 // GridDragHandle is gpui_kit::base::grid_drag_handle.
 func GridDragHandle(state GridLayoutState, item string, st ...Style) StatefulDivEl {
 	n := newNode(260)
@@ -746,451 +1685,971 @@ func GridDragHandle(state GridLayoutState, item string, st ...Style) StatefulDiv
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e StatefulDivEl) Style(st ...Style) StatefulDivEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e StatefulDivEl) AspectRatio(ratio float32) StatefulDivEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e StatefulDivEl) Bg(fill Fill) StatefulDivEl          { tStyledBg(e.n, fill); return e }
-func (e StatefulDivEl) Border(length Length) StatefulDivEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e StatefulDivEl) Bg(fill Fill) StatefulDivEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e StatefulDivEl) Border(length Length) StatefulDivEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e StatefulDivEl) BorderB(length Length) StatefulDivEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e StatefulDivEl) BorderColor(borderColor Color) StatefulDivEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e StatefulDivEl) BorderL(length Length) StatefulDivEl     { tStyledBorderL(e.n, length); return e }
-func (e StatefulDivEl) BorderR(length Length) StatefulDivEl     { tStyledBorderR(e.n, length); return e }
-func (e StatefulDivEl) BorderT(length Length) StatefulDivEl     { tStyledBorderT(e.n, length); return e }
-func (e StatefulDivEl) BorderX(length Length) StatefulDivEl     { tStyledBorderX(e.n, length); return e }
-func (e StatefulDivEl) BorderY(length Length) StatefulDivEl     { tStyledBorderY(e.n, length); return e }
-func (e StatefulDivEl) Bottom(length Length) StatefulDivEl      { tStyledBottom(e.n, length); return e }
-func (e StatefulDivEl) ColEnd(end int16) StatefulDivEl          { tStyledColEnd(e.n, end); return e }
-func (e StatefulDivEl) ColSpan(span uint16) StatefulDivEl       { tStyledColSpan(e.n, span); return e }
-func (e StatefulDivEl) ColStart(start int16) StatefulDivEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e StatefulDivEl) BorderL(length Length) StatefulDivEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e StatefulDivEl) BorderR(length Length) StatefulDivEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e StatefulDivEl) BorderT(length Length) StatefulDivEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e StatefulDivEl) BorderX(length Length) StatefulDivEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e StatefulDivEl) BorderY(length Length) StatefulDivEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e StatefulDivEl) Bottom(length Length) StatefulDivEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e StatefulDivEl) ColEnd(end int16) StatefulDivEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e StatefulDivEl) ColSpan(span uint16) StatefulDivEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e StatefulDivEl) ColStart(start int16) StatefulDivEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e StatefulDivEl) Cursor(cursor CursorStyle) StatefulDivEl { tStyledCursor(e.n, cursor); return e }
-func (e StatefulDivEl) FlexBasis(basis Length) StatefulDivEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e StatefulDivEl) FlexGrow(grow float32) StatefulDivEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e StatefulDivEl) FlexBasis(basis Length) StatefulDivEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e StatefulDivEl) FlexGrow(grow float32) StatefulDivEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e StatefulDivEl) FlexShrink(shrink float32) StatefulDivEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e StatefulDivEl) FontFamily(familyName string) StatefulDivEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e StatefulDivEl) FontFeatures(features FontFeatures) StatefulDivEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e StatefulDivEl) FontWeight(weight FontWeight) StatefulDivEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e StatefulDivEl) Gap(length Length) StatefulDivEl    { tStyledGap(e.n, length); return e }
-func (e StatefulDivEl) GapX(length Length) StatefulDivEl   { tStyledGapX(e.n, length); return e }
-func (e StatefulDivEl) GapY(length Length) StatefulDivEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e StatefulDivEl) Gap(length Length) StatefulDivEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e StatefulDivEl) GapX(length Length) StatefulDivEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e StatefulDivEl) GapY(length Length) StatefulDivEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e StatefulDivEl) GridCols(cols uint16) StatefulDivEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e StatefulDivEl) GridColsMaxContent(cols uint16) StatefulDivEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e StatefulDivEl) GridColsMinContent(cols uint16) StatefulDivEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e StatefulDivEl) GridRows(rows uint16) StatefulDivEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e StatefulDivEl) GridRowsMaxContent(rows uint16) StatefulDivEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e StatefulDivEl) GridRowsMinContent(rows uint16) StatefulDivEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e StatefulDivEl) H(length Length) StatefulDivEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e StatefulDivEl) H(length Length) StatefulDivEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e StatefulDivEl) Inset(length Length) StatefulDivEl { tStyledInset(e.n, length); return e }
-func (e StatefulDivEl) Left(length Length) StatefulDivEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e StatefulDivEl) Left(length Length) StatefulDivEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e StatefulDivEl) LineClamp(lines int) StatefulDivEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e StatefulDivEl) LineHeight(lineHeight Length) StatefulDivEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e StatefulDivEl) M(length Length) StatefulDivEl         { tStyledM(e.n, length); return e }
-func (e StatefulDivEl) MaxH(length Length) StatefulDivEl      { tStyledMaxH(e.n, length); return e }
-func (e StatefulDivEl) MaxSize(length Length) StatefulDivEl   { tStyledMaxSize(e.n, length); return e }
-func (e StatefulDivEl) MaxW(length Length) StatefulDivEl      { tStyledMaxW(e.n, length); return e }
-func (e StatefulDivEl) Mb(length Length) StatefulDivEl        { tStyledMb(e.n, length); return e }
-func (e StatefulDivEl) MinH(length Length) StatefulDivEl      { tStyledMinH(e.n, length); return e }
-func (e StatefulDivEl) MinSize(length Length) StatefulDivEl   { tStyledMinSize(e.n, length); return e }
-func (e StatefulDivEl) MinW(length Length) StatefulDivEl      { tStyledMinW(e.n, length); return e }
-func (e StatefulDivEl) Ml(length Length) StatefulDivEl        { tStyledMl(e.n, length); return e }
-func (e StatefulDivEl) Mr(length Length) StatefulDivEl        { tStyledMr(e.n, length); return e }
-func (e StatefulDivEl) Mt(length Length) StatefulDivEl        { tStyledMt(e.n, length); return e }
-func (e StatefulDivEl) Mx(length Length) StatefulDivEl        { tStyledMx(e.n, length); return e }
-func (e StatefulDivEl) My(length Length) StatefulDivEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e StatefulDivEl) M(length Length) StatefulDivEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e StatefulDivEl) MaxH(length Length) StatefulDivEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e StatefulDivEl) MaxSize(length Length) StatefulDivEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e StatefulDivEl) MaxW(length Length) StatefulDivEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e StatefulDivEl) Mb(length Length) StatefulDivEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e StatefulDivEl) MinH(length Length) StatefulDivEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e StatefulDivEl) MinSize(length Length) StatefulDivEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e StatefulDivEl) MinW(length Length) StatefulDivEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e StatefulDivEl) Ml(length Length) StatefulDivEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e StatefulDivEl) Mr(length Length) StatefulDivEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e StatefulDivEl) Mt(length Length) StatefulDivEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e StatefulDivEl) Mx(length Length) StatefulDivEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e StatefulDivEl) My(length Length) StatefulDivEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e StatefulDivEl) Opacity(opacity float32) StatefulDivEl { tStyledOpacity(e.n, opacity); return e }
-func (e StatefulDivEl) P(length Length) StatefulDivEl         { tStyledP(e.n, length); return e }
-func (e StatefulDivEl) Pb(length Length) StatefulDivEl        { tStyledPb(e.n, length); return e }
-func (e StatefulDivEl) Pl(length Length) StatefulDivEl        { tStyledPl(e.n, length); return e }
-func (e StatefulDivEl) Pr(length Length) StatefulDivEl        { tStyledPr(e.n, length); return e }
-func (e StatefulDivEl) Pt(length Length) StatefulDivEl        { tStyledPt(e.n, length); return e }
-func (e StatefulDivEl) Px(length Length) StatefulDivEl        { tStyledPx(e.n, length); return e }
-func (e StatefulDivEl) Py(length Length) StatefulDivEl        { tStyledPy(e.n, length); return e }
-func (e StatefulDivEl) Right(length Length) StatefulDivEl     { tStyledRight(e.n, length); return e }
-func (e StatefulDivEl) Rounded(length Length) StatefulDivEl   { tStyledRounded(e.n, length); return e }
-func (e StatefulDivEl) RoundedB(length Length) StatefulDivEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e StatefulDivEl) P(length Length) StatefulDivEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e StatefulDivEl) Pb(length Length) StatefulDivEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e StatefulDivEl) Pl(length Length) StatefulDivEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e StatefulDivEl) Pr(length Length) StatefulDivEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e StatefulDivEl) Pt(length Length) StatefulDivEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e StatefulDivEl) Px(length Length) StatefulDivEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e StatefulDivEl) Py(length Length) StatefulDivEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e StatefulDivEl) Right(length Length) StatefulDivEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e StatefulDivEl) Rounded(length Length) StatefulDivEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e StatefulDivEl) RoundedB(length Length) StatefulDivEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e StatefulDivEl) RoundedBl(length Length) StatefulDivEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e StatefulDivEl) RoundedBr(length Length) StatefulDivEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e StatefulDivEl) RoundedL(length Length) StatefulDivEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e StatefulDivEl) RoundedR(length Length) StatefulDivEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e StatefulDivEl) RoundedT(length Length) StatefulDivEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e StatefulDivEl) RoundedTl(length Length) StatefulDivEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e StatefulDivEl) RoundedTr(length Length) StatefulDivEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e StatefulDivEl) RowEnd(end int16) StatefulDivEl     { tStyledRowEnd(e.n, end); return e }
-func (e StatefulDivEl) RowSpan(span uint16) StatefulDivEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e StatefulDivEl) RowEnd(end int16) StatefulDivEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e StatefulDivEl) RowSpan(span uint16) StatefulDivEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e StatefulDivEl) RowStart(start int16) StatefulDivEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e StatefulDivEl) ScrollbarWidth(width Length) StatefulDivEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e StatefulDivEl) Shadow(shadows []BoxShadow) StatefulDivEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e StatefulDivEl) Size(length Length) StatefulDivEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e StatefulDivEl) TextAlign(align TextAlign) StatefulDivEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e StatefulDivEl) TextBg(bg Color) StatefulDivEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e StatefulDivEl) TextBg(bg Color) StatefulDivEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e StatefulDivEl) TextColor(color Color) StatefulDivEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e StatefulDivEl) TextDecorationColor(color Color) StatefulDivEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e StatefulDivEl) TextOverflow(overflow TextOverflow) StatefulDivEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e StatefulDivEl) TextSize(size Length) StatefulDivEl { tStyledTextSize(e.n, size); return e }
-func (e StatefulDivEl) Top(length Length) StatefulDivEl    { tStyledTop(e.n, length); return e }
-func (e StatefulDivEl) W(length Length) StatefulDivEl      { tStyledW(e.n, length); return e }
 
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e StatefulDivEl) TextSize(size Length) StatefulDivEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e StatefulDivEl) Top(length Length) StatefulDivEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e StatefulDivEl) W(length Length) StatefulDivEl { tStyledW(e.n, length); return e }
+
+// Set the author-provided identifier exposed to accessibility clients.
+//
+// Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
+// within its accessibility tree. AccessKit maps it to platform identifiers where supported,
+// including UIA `AutomationId` on Windows, `AXIdentifier` on macOS, and AT-SPI `AccessibleId` on
+// Linux stacks whose deployed adapter exposes it.
 func (e StatefulDivEl) AccessibilityID(id string) StatefulDivEl {
 	tStatefulInteractiveElementAccessibilityID(e.n, id)
 	return e
 }
+
+// Set the given styles to be applied when this element is active.
 func (e StatefulDivEl) Active(f StyleRefinement) StatefulDivEl {
 	tStatefulInteractiveElementActive(e.n, f)
 	return e
 }
+
+// Report this element as the focused node in the accessibility tree, overriding the element that
+// holds real keyboard focus — but only while one of its ancestors actually holds focus.
+//
+// This implements the `aria-activedescendant` pattern for composite widgets that keep keyboard
+// focus on a container (e.g. a menu or listbox) while a child is "selected": set this on the
+// selected child so assistive technology announces and highlights it as focused.
+//
+// The element must also have a `Role` (and an id) so it produces an accessibility node. Unlike the
+// web's container-side `aria-activedescendant`, this is set on the descendant; GPUI honors it only
+// when a focused ancestor is present in the tree, so it is safe to set unconditionally on the
+// selected child — if the container isn't focused, the claim is ignored.
 func (e StatefulDivEl) AriaActiveDescendant() StatefulDivEl {
 	tStatefulInteractiveElementAriaActiveDescendant(e.n)
 	return e
 }
+
+// Set the column count for this element.
 func (e StatefulDivEl) AriaColumnCount(count int) StatefulDivEl {
 	tStatefulInteractiveElementAriaColumnCount(e.n, count)
 	return e
 }
+
+// Set the column index for this element.
 func (e StatefulDivEl) AriaColumnIndex(index int) StatefulDivEl {
 	tStatefulInteractiveElementAriaColumnIndex(e.n, index)
 	return e
 }
+
+// Set the accessible description for this element. Unlike the label (which names the element), the
+// description provides supplementary information that assistive technology announces after the
+// name, role, and value - for example a settings subtitle or a hint.
 func (e StatefulDivEl) AriaDescription(description string) StatefulDivEl {
 	tStatefulInteractiveElementAriaDescription(e.n, description)
 	return e
 }
+
+// Set the expanded state for this element.
 func (e StatefulDivEl) AriaExpanded(expanded bool) StatefulDivEl {
 	tStatefulInteractiveElementAriaExpanded(e.n, expanded)
 	return e
 }
+
+// Set the keyboard shortcut(s) that activate this element, announced by assistive technology (maps
+// to AccessKit's `keyboard_shortcut`).
+//
+// Note that this does not create a keymap. It simply instructs assistive technology what the
+// keymap is.
 func (e StatefulDivEl) AriaKeyshortcuts(keyshortcuts string) StatefulDivEl {
 	tStatefulInteractiveElementAriaKeyshortcuts(e.n, keyshortcuts)
 	return e
 }
+
+// Set the accessible label for this element.
 func (e StatefulDivEl) AriaLabel(label string) StatefulDivEl {
 	tStatefulInteractiveElementAriaLabel(e.n, label)
 	return e
 }
+
+// Set the heading level of this element.
 func (e StatefulDivEl) AriaLevel(level int) StatefulDivEl {
 	tStatefulInteractiveElementAriaLevel(e.n, level)
 	return e
 }
+
+// Set the maximum numeric value for this element.
 func (e StatefulDivEl) AriaMaxNumericValue(value float64) StatefulDivEl {
 	tStatefulInteractiveElementAriaMaxNumericValue(e.n, value)
 	return e
 }
+
+// Set the minimum numeric value for this element.
 func (e StatefulDivEl) AriaMinNumericValue(value float64) StatefulDivEl {
 	tStatefulInteractiveElementAriaMinNumericValue(e.n, value)
 	return e
 }
+
+// Set the numeric value for this element.
 func (e StatefulDivEl) AriaNumericValue(value float64) StatefulDivEl {
 	tStatefulInteractiveElementAriaNumericValue(e.n, value)
 	return e
 }
+
+// Set the step by which assistive technology should expect the numeric value of this element to
+// change (e.g. when incrementing a spin button).
 func (e StatefulDivEl) AriaNumericValueStep(step float64) StatefulDivEl {
 	tStatefulInteractiveElementAriaNumericValueStep(e.n, step)
 	return e
 }
+
+// Set the placeholder text reported to assistive technology for this element, shown when a text
+// input is empty.
 func (e StatefulDivEl) AriaPlaceholder(placeholder string) StatefulDivEl {
 	tStatefulInteractiveElementAriaPlaceholder(e.n, placeholder)
 	return e
 }
+
+// Set the position in set of this element.
 func (e StatefulDivEl) AriaPositionInSet(position int) StatefulDivEl {
 	tStatefulInteractiveElementAriaPositionInSet(e.n, position)
 	return e
 }
+
+// Set the row count for this element.
 func (e StatefulDivEl) AriaRowCount(count int) StatefulDivEl {
 	tStatefulInteractiveElementAriaRowCount(e.n, count)
 	return e
 }
+
+// Set the row index for this element.
 func (e StatefulDivEl) AriaRowIndex(index int) StatefulDivEl {
 	tStatefulInteractiveElementAriaRowIndex(e.n, index)
 	return e
 }
+
+// Set the selected state for this element.
 func (e StatefulDivEl) AriaSelected(selected bool) StatefulDivEl {
 	tStatefulInteractiveElementAriaSelected(e.n, selected)
 	return e
 }
+
+// Set the size of set for this element.
 func (e StatefulDivEl) AriaSizeOfSet(size int) StatefulDivEl {
 	tStatefulInteractiveElementAriaSizeOfSet(e.n, size)
 	return e
 }
+
+// Set the string value of this element, e.g. the text content of a simple text input.
 func (e StatefulDivEl) AriaValue(value string) StatefulDivEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
 	return e
 }
+
+// Set this element to focusable.
 func (e StatefulDivEl) Focusable() StatefulDivEl { tStatefulInteractiveElementFocusable(e.n); return e }
+
+// Set the given styles to be applied when this element's group is active.
 func (e StatefulDivEl) GroupActive(groupName string, f StyleRefinement) StatefulDivEl {
 	tStatefulInteractiveElementGroupActive(e.n, groupName, f)
 	return e
 }
+
+// Sets how `OnHover` responds to key presses while the mouse is stationary. This affects only the
+// hover listener, not hover styles or tooltips. The fluent API equivalent to
+// `hover_listener_mode`.
 func (e StatefulDivEl) HoverListenerMode(mode HoverListenerMode) StatefulDivEl {
 	tStatefulInteractiveElementHoverListenerMode(e.n, mode)
 	return e
 }
+
+// Constructs a tooltip when the element is hovered or long-pressed. The tooltip itself is also
+// hoverable and won't disappear when the user moves the mouse into the tooltip. The fluent API
+// equivalent to `hoverable_tooltip`.
 func (e StatefulDivEl) HoverableTooltip(buildTooltip ViewOrTooltip) StatefulDivEl {
 	tStatefulInteractiveElementHoverableTooltip(e.n, buildTooltip)
 	return e
 }
+
+// Bind the given callback to non-primary click events of this element. The fluent API equivalent
+// to `on_aux_click`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnAuxClick(listener func(cx *Cx, e ClickEvent)) StatefulDivEl {
 	tStatefulInteractiveElementOnAuxClick(e.n, listener)
 	return e
 }
+
+// Bind the given callback to click events of this element. The fluent API equivalent to
+// `on_click`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnClick(listener func(cx *Cx, e ClickEvent)) StatefulDivEl {
 	tStatefulInteractiveElementOnClick(e.n, listener)
 	return e
 }
+
+// On drag initiation, this callback will be used to create a new view to render the dragged value
+// for a drag and drop operation. This API should also be used as the equivalent of 'on drag start'
+// with the `OnDragMove` API. The callback also has access to the offset of triggering click from
+// the origin of parent element. The fluent API equivalent to `on_drag`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnDrag(value DragValue, constructor View) StatefulDivEl {
 	tStatefulInteractiveElementOnDrag(e.n, value, constructor)
 	return e
 }
+
+// Bind the given callback on the hover start and end events of this element. Note that the boolean
+// passed to the callback is true when the hover starts and false when it ends. Transitions caused
+// by layout changes under a stationary mouse also invoke the callback.
+//
+// By default, keyboard input suppresses hover until the next mouse move, mouse down, or touch. Set
+// `InputModalityIndependent` with `HoverListenerMode` to continue hit-testing hover after keyboard
+// input. The fluent API equivalent to `on_hover`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnHover(listener func(cx *Cx, e bool)) StatefulDivEl {
 	tStatefulInteractiveElementOnHover(e.n, listener)
 	return e
 }
+
+// Set the overflow x and y to scroll.
 func (e StatefulDivEl) OverflowScroll() StatefulDivEl {
 	tStatefulInteractiveElementOverflowScroll(e.n)
 	return e
 }
+
+// Set the overflow x to scroll.
 func (e StatefulDivEl) OverflowXScroll() StatefulDivEl {
 	tStatefulInteractiveElementOverflowXScroll(e.n)
 	return e
 }
+
+// Set the overflow y to scroll.
 func (e StatefulDivEl) OverflowYScroll() StatefulDivEl {
 	tStatefulInteractiveElementOverflowYScroll(e.n)
 	return e
 }
+
+// Restrict scrolling of this element to the axis of the input gesture.
+//
+// See `restrict_scroll_to_axis` for details.
 func (e StatefulDivEl) RestrictScrollToAxis() StatefulDivEl {
 	tStatefulInteractiveElementRestrictScrollToAxis(e.n)
 	return e
 }
+
+// Set the accessible role for this element.
+//
+// See the accessibility guide for an overview.
 func (e StatefulDivEl) Role(role Role) StatefulDivEl {
 	tStatefulInteractiveElementRole(e.n, role)
 	return e
 }
+
+// Constructs a tooltip when the element is hovered or long-pressed. The fluent API equivalent to
+// `tooltip`.
 func (e StatefulDivEl) Tooltip(buildTooltip ViewOrTooltip) StatefulDivEl {
 	tStatefulInteractiveElementTooltip(e.n, buildTooltip)
 	return e
 }
+
+// Sets the delay before this element's tooltip is shown on hover.
+//
+// Touch long presses show the tooltip immediately once the gesture is recognized. The fluent API
+// equivalent to `tooltip_show_delay`.
 func (e StatefulDivEl) TooltipShowDelay(delay time.Duration) StatefulDivEl {
 	tStatefulInteractiveElementTooltipShowDelay(e.n, delay)
 	return e
 }
+
+// Track the scroll state of this element with the given handle.
 func (e StatefulDivEl) TrackScroll(scrollHandle ScrollHandle) StatefulDivEl {
 	tStatefulInteractiveElementTrackScroll(e.n, scrollHandle)
 	return e
 }
 
+// Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
+// equivalent to `block_mouse_except_scroll`.
+//
+// See `is_hovered` for details.
 func (e StatefulDivEl) BlockMouseExceptScroll() StatefulDivEl {
 	tInteractiveElementBlockMouseExceptScroll(e.n)
 	return e
 }
+
+// Use the given predicate to determine whether or not a drop event should be dispatched to this
+// element. The fluent API equivalent to `can_drop`.
 func (e StatefulDivEl) CanDrop(predicate DropAccept) StatefulDivEl {
 	tInteractiveElementCanDrop(e.n, predicate)
 	return e
 }
+
+// Capture the given action, before normal action dispatch can fire. The fluent API equivalent to
+// `capture_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) CaptureAction(listener ActionHandler) StatefulDivEl {
 	tInteractiveElementCaptureAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementCaptureAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementCaptureAnyMouseUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the capture phase. The fluent API equivalent
+// to `capture_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) StatefulDivEl {
 	tInteractiveElementCaptureKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the capture phase. The fluent API equivalent to
+// `capture_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) StatefulDivEl {
 	tInteractiveElementCaptureKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the capture phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) StatefulDivEl {
 	tInteractiveElementCaptureMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the capture phase. The fluent API
+// equivalent to `capture_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) StatefulDivEl {
 	tInteractiveElementCapturePinch(e.n, listener)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element
 func (e StatefulDivEl) DragOver(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementDragOver(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element, specifically, is focused. Requires that
+// the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e StatefulDivEl) Focus(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementFocus(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element is focused via keyboard navigation. This is
+// similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
+// the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
+// Elements can be made focusable using `TrackFocus`.
 func (e StatefulDivEl) FocusVisible(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementFocusVisible(e.n, f)
 	return e
 }
+
+// Assign this element to a group of elements that can be styled together
 func (e StatefulDivEl) Group(group string) StatefulDivEl {
 	tInteractiveElementGroup(e.n, group)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element's group
 func (e StatefulDivEl) GroupDragOver(groupName string, f StyleRefinement) StatefulDivEl {
 	tInteractiveElementGroupDragOver(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over a group member
 func (e StatefulDivEl) GroupHover(groupName string, f StyleRefinement) StatefulDivEl {
 	tInteractiveElementGroupHover(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over it
 func (e StatefulDivEl) Hover(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementHover(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element is inside another element that is focused.
+// Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e StatefulDivEl) InFocus(f StyleRefinement) StatefulDivEl {
 	tInteractiveElementInFocus(e.n, f)
 	return e
 }
+
+// Set the keymap context for this element. This will be used to determine which action to dispatch
+// from the keymap.
 func (e StatefulDivEl) KeyContext(keyContext string) StatefulDivEl {
 	tInteractiveElementKeyContext(e.n, keyContext)
 	return e
 }
+
+// Block the mouse from all interactions with elements behind this element's hitbox. Typically
+// `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
 func (e StatefulDivEl) Occlude() StatefulDivEl { tInteractiveElementOcclude(e.n); return e }
+
+// Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
+// to `on_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnAction(listener ActionHandler) StatefulDivEl {
 	tInteractiveElementOnAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `on_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to back-navigation gestures that start over this element, such as the
+// iOS swipe from the leading screen edge. The innermost element with a back listener claims the
+// gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) StatefulDivEl {
 	tInteractiveElementOnBackGesture(e.n, listener)
 	return e
 }
+
+// Bind the given callback to an action dispatch, based on a dynamic action parameter instead of a
+// type parameter. Useful for component libraries that want to expose action bindings to their
+// users. The fluent API equivalent to `on_boxed_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) StatefulDivEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
 	return e
 }
+
+// Bind the given callback to drop events of the given type, whether or not the drag started on
+// this element. The fluent API equivalent to `on_drop`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnDrop(listener func(cx *Cx, e DragValue)) StatefulDivEl {
 	tInteractiveElementOnDrop(e.n, listener)
 	return e
 }
+
+// Bind the given callback to `Exited` when a platform file drag leaves this element's window while
+// the element is hovered.
+//
+// This is a window-local exit event, not notification that the platform drag session ended. The
+// fluent API equivalent to `on_file_drop_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) StatefulDivEl {
 	tInteractiveElementOnFileDropExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the bubble phase. The fluent API equivalent to
+// `on_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) StatefulDivEl {
 	tInteractiveElementOnKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the bubble phase. The fluent API equivalent to
+// `on_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) StatefulDivEl {
 	tInteractiveElementOnKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to modifiers changing events. The fluent API equivalent to
+// `on_modifiers_changed`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) StatefulDivEl {
 	tInteractiveElementOnModifiersChanged(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for the given mouse button. The fluent API
+// equivalent to `on_mouse_down`.
+//
+// See `listener` to get access to the view state from this callback.
 func (e StatefulDivEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseDown(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event, on any button, during the capture phase, when
+// the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_down_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseDownOut(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse exit event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse move event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_move`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseMove(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the bubble phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) StatefulDivEl {
 	tInteractiveElementOnMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for the given button, during the bubble phase. The
+// fluent API equivalent to `on_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseUp(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event, for the given button, during the capture phase,
+// when the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_up_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) StatefulDivEl {
 	tInteractiveElementOnMouseUpOut(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the bubble phase. The fluent API
+// equivalent to `on_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnPinch(listener func(cx *Cx, e PinchEvent)) StatefulDivEl {
 	tInteractiveElementOnPinch(e.n, listener)
 	return e
 }
+
+// Bind the given callback to scroll events during the bubble phase. The fluent API equivalent to
+// `on_scroll`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e StatefulDivEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) StatefulDivEl {
 	tInteractiveElementOnScroll(e.n, listener)
 	return e
 }
+
+// Designate this div as a "tab group". Tab groups have their own location in the tab-index order,
+// but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
+// the order of tab stops within the group, without having to renumber all the tab stops in the
+// whole application.
 func (e StatefulDivEl) TabGroup() StatefulDivEl { tInteractiveElementTabGroup(e.n); return e }
+
+// Set index of the tab stop order, and set this node as a tab stop. This will default the element
+// to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
+// with `tab_group` in order to not interfere with the tab index of other elements.
 func (e StatefulDivEl) TabIndex(index int) StatefulDivEl {
 	tInteractiveElementTabIndex(e.n, index)
 	return e
 }
+
+// Set whether this element is a tab stop.
+//
+// When false, the element remains in tab-index order but cannot be reached via keyboard
+// navigation. Should only be used with `tab_index`.
 func (e StatefulDivEl) TabStop(tabStop bool) StatefulDivEl {
 	tInteractiveElementTabStop(e.n, tabStop)
 	return e
 }
+
+// Track the focus state of the given focus handle on this element. If the focus handle is focused
+// by the application, this element will apply its focused styles.
 func (e StatefulDivEl) TrackFocus(focusHandle FocusHandle) StatefulDivEl {
 	tInteractiveElementTrackFocus(e.n, focusHandle)
 	return e
 }
+
+// Set the bounds of this element as a window control area for the platform window. The fluent API
+// equivalent to `window_control_area`.
 func (e StatefulDivEl) WindowControlArea(area WindowControlArea) StatefulDivEl {
 	tInteractiveElementWindowControlArea(e.n, area)
 	return e
@@ -1201,7 +2660,10 @@ func (e StatefulDivEl) Text(s string) StatefulDivEl { putText(e.n, s); return e 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e StatefulDivEl) ChildView(v View) StatefulDivEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e StatefulDivEl) Child(child Element) StatefulDivEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e StatefulDivEl) Children(children ...Element) StatefulDivEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1222,203 +2684,412 @@ func NewStyleRefinementDefault(st ...Style) StyleRefinement {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e StyleRefinement) Style(st ...Style) StyleRefinement { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e StyleRefinement) AspectRatio(ratio float32) StyleRefinement {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e StyleRefinement) Bg(fill Fill) StyleRefinement         { tStyledBg(e.n, fill); return e }
+
+// Sets the background color of the element.
+func (e StyleRefinement) Bg(fill Fill) StyleRefinement { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e StyleRefinement) Border(length Length) StyleRefinement { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e StyleRefinement) BorderB(length Length) StyleRefinement {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e StyleRefinement) BorderColor(borderColor Color) StyleRefinement {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e StyleRefinement) BorderL(length Length) StyleRefinement {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e StyleRefinement) BorderR(length Length) StyleRefinement {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e StyleRefinement) BorderT(length Length) StyleRefinement {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e StyleRefinement) BorderX(length Length) StyleRefinement {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e StyleRefinement) BorderY(length Length) StyleRefinement {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e StyleRefinement) Bottom(length Length) StyleRefinement { tStyledBottom(e.n, length); return e }
-func (e StyleRefinement) ColEnd(end int16) StyleRefinement     { tStyledColEnd(e.n, end); return e }
-func (e StyleRefinement) ColSpan(span uint16) StyleRefinement  { tStyledColSpan(e.n, span); return e }
+
+// Sets the column end of this element.
+func (e StyleRefinement) ColEnd(end int16) StyleRefinement { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e StyleRefinement) ColSpan(span uint16) StyleRefinement { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e StyleRefinement) ColStart(start int16) StyleRefinement { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e StyleRefinement) Cursor(cursor CursorStyle) StyleRefinement {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e StyleRefinement) FlexBasis(basis Length) StyleRefinement {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e StyleRefinement) FlexGrow(grow float32) StyleRefinement { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e StyleRefinement) FlexShrink(shrink float32) StyleRefinement {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e StyleRefinement) FontFamily(familyName string) StyleRefinement {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e StyleRefinement) FontFeatures(features FontFeatures) StyleRefinement {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e StyleRefinement) FontWeight(weight FontWeight) StyleRefinement {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e StyleRefinement) Gap(length Length) StyleRefinement    { tStyledGap(e.n, length); return e }
-func (e StyleRefinement) GapX(length Length) StyleRefinement   { tStyledGapX(e.n, length); return e }
-func (e StyleRefinement) GapY(length Length) StyleRefinement   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e StyleRefinement) Gap(length Length) StyleRefinement { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e StyleRefinement) GapX(length Length) StyleRefinement { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e StyleRefinement) GapY(length Length) StyleRefinement { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e StyleRefinement) GridCols(cols uint16) StyleRefinement { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e StyleRefinement) GridColsMaxContent(cols uint16) StyleRefinement {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e StyleRefinement) GridColsMinContent(cols uint16) StyleRefinement {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e StyleRefinement) GridRows(rows uint16) StyleRefinement { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e StyleRefinement) GridRowsMaxContent(rows uint16) StyleRefinement {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e StyleRefinement) GridRowsMinContent(rows uint16) StyleRefinement {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e StyleRefinement) H(length Length) StyleRefinement     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e StyleRefinement) H(length Length) StyleRefinement { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e StyleRefinement) Inset(length Length) StyleRefinement { tStyledInset(e.n, length); return e }
-func (e StyleRefinement) Left(length Length) StyleRefinement  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e StyleRefinement) Left(length Length) StyleRefinement { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e StyleRefinement) LineClamp(lines int) StyleRefinement { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e StyleRefinement) LineHeight(lineHeight Length) StyleRefinement {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e StyleRefinement) M(length Length) StyleRefinement    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e StyleRefinement) M(length Length) StyleRefinement { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e StyleRefinement) MaxH(length Length) StyleRefinement { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e StyleRefinement) MaxSize(length Length) StyleRefinement {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e StyleRefinement) MaxW(length Length) StyleRefinement { tStyledMaxW(e.n, length); return e }
-func (e StyleRefinement) Mb(length Length) StyleRefinement   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e StyleRefinement) Mb(length Length) StyleRefinement { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e StyleRefinement) MinH(length Length) StyleRefinement { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e StyleRefinement) MinSize(length Length) StyleRefinement {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e StyleRefinement) MinW(length Length) StyleRefinement { tStyledMinW(e.n, length); return e }
-func (e StyleRefinement) Ml(length Length) StyleRefinement   { tStyledMl(e.n, length); return e }
-func (e StyleRefinement) Mr(length Length) StyleRefinement   { tStyledMr(e.n, length); return e }
-func (e StyleRefinement) Mt(length Length) StyleRefinement   { tStyledMt(e.n, length); return e }
-func (e StyleRefinement) Mx(length Length) StyleRefinement   { tStyledMx(e.n, length); return e }
-func (e StyleRefinement) My(length Length) StyleRefinement   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e StyleRefinement) Ml(length Length) StyleRefinement { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e StyleRefinement) Mr(length Length) StyleRefinement { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e StyleRefinement) Mt(length Length) StyleRefinement { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e StyleRefinement) Mx(length Length) StyleRefinement { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e StyleRefinement) My(length Length) StyleRefinement { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e StyleRefinement) Opacity(opacity float32) StyleRefinement {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e StyleRefinement) P(length Length) StyleRefinement     { tStyledP(e.n, length); return e }
-func (e StyleRefinement) Pb(length Length) StyleRefinement    { tStyledPb(e.n, length); return e }
-func (e StyleRefinement) Pl(length Length) StyleRefinement    { tStyledPl(e.n, length); return e }
-func (e StyleRefinement) Pr(length Length) StyleRefinement    { tStyledPr(e.n, length); return e }
-func (e StyleRefinement) Pt(length Length) StyleRefinement    { tStyledPt(e.n, length); return e }
-func (e StyleRefinement) Px(length Length) StyleRefinement    { tStyledPx(e.n, length); return e }
-func (e StyleRefinement) Py(length Length) StyleRefinement    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e StyleRefinement) P(length Length) StyleRefinement { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e StyleRefinement) Pb(length Length) StyleRefinement { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e StyleRefinement) Pl(length Length) StyleRefinement { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e StyleRefinement) Pr(length Length) StyleRefinement { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e StyleRefinement) Pt(length Length) StyleRefinement { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e StyleRefinement) Px(length Length) StyleRefinement { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e StyleRefinement) Py(length Length) StyleRefinement { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e StyleRefinement) Right(length Length) StyleRefinement { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e StyleRefinement) Rounded(length Length) StyleRefinement {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e StyleRefinement) RoundedB(length Length) StyleRefinement {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e StyleRefinement) RoundedBl(length Length) StyleRefinement {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e StyleRefinement) RoundedBr(length Length) StyleRefinement {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e StyleRefinement) RoundedL(length Length) StyleRefinement {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e StyleRefinement) RoundedR(length Length) StyleRefinement {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e StyleRefinement) RoundedT(length Length) StyleRefinement {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e StyleRefinement) RoundedTl(length Length) StyleRefinement {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e StyleRefinement) RoundedTr(length Length) StyleRefinement {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e StyleRefinement) RowEnd(end int16) StyleRefinement     { tStyledRowEnd(e.n, end); return e }
-func (e StyleRefinement) RowSpan(span uint16) StyleRefinement  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e StyleRefinement) RowEnd(end int16) StyleRefinement { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e StyleRefinement) RowSpan(span uint16) StyleRefinement { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e StyleRefinement) RowStart(start int16) StyleRefinement { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e StyleRefinement) ScrollbarWidth(width Length) StyleRefinement {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e StyleRefinement) Shadow(shadows []BoxShadow) StyleRefinement {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e StyleRefinement) Size(length Length) StyleRefinement { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e StyleRefinement) TextAlign(align TextAlign) StyleRefinement {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e StyleRefinement) TextBg(bg Color) StyleRefinement { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e StyleRefinement) TextColor(color Color) StyleRefinement {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e StyleRefinement) TextDecorationColor(color Color) StyleRefinement {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e StyleRefinement) TextOverflow(overflow TextOverflow) StyleRefinement {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e StyleRefinement) TextSize(size Length) StyleRefinement { tStyledTextSize(e.n, size); return e }
-func (e StyleRefinement) Top(length Length) StyleRefinement    { tStyledTop(e.n, length); return e }
-func (e StyleRefinement) W(length Length) StyleRefinement      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e StyleRefinement) Top(length Length) StyleRefinement { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e StyleRefinement) W(length Length) StyleRefinement { tStyledW(e.n, length); return e }
 
 // SVGEl is gpui_kit::Svg.
 type SVGEl struct{ n *node }
 
 func (e SVGEl) node() *node { return e.n }
 
+// Create a new SVG element.
+//
 // SVG is gpui_kit::svg.
 func SVG(st ...Style) SVGEl {
 	n := newNode(262)
@@ -1426,6 +3097,9 @@ func SVG(st ...Style) SVGEl {
 	return SVGEl{n}
 }
 
+// Set the raw SVG data for this element. The SVG will be rendered directly from the provided
+// bytes.
+//
 // Data is <gpui_kit::Svg>::data.
 func (e SVGEl) Data(data []uint8) SVGEl {
 	o := op(e.n, 256)
@@ -1436,6 +3110,8 @@ func (e SVGEl) Data(data []uint8) SVGEl {
 	return e
 }
 
+// Set the path to the SVG file for this element.
+//
 // ExternalPath is <gpui_kit::Svg>::external_path.
 func (e SVGEl) ExternalPath(path string) SVGEl {
 	o := op(e.n, 257)
@@ -1443,6 +3119,8 @@ func (e SVGEl) ExternalPath(path string) SVGEl {
 	return e
 }
 
+// Set the path to the SVG file for this element.
+//
 // Path is <gpui_kit::Svg>::path.
 func (e SVGEl) Path(path string) SVGEl {
 	o := op(e.n, 258)
@@ -1453,233 +3131,626 @@ func (e SVGEl) Path(path string) SVGEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SVGEl) Style(st ...Style) SVGEl { tokens(e.n, st); return e }
 
-func (e SVGEl) AspectRatio(ratio float32) SVGEl     { tStyledAspectRatio(e.n, ratio); return e }
-func (e SVGEl) Bg(fill Fill) SVGEl                  { tStyledBg(e.n, fill); return e }
-func (e SVGEl) Border(length Length) SVGEl          { tStyledBorder(e.n, length); return e }
-func (e SVGEl) BorderB(length Length) SVGEl         { tStyledBorderB(e.n, length); return e }
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
+func (e SVGEl) AspectRatio(ratio float32) SVGEl { tStyledAspectRatio(e.n, ratio); return e }
+
+// Sets the background color of the element.
+func (e SVGEl) Bg(fill Fill) SVGEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e SVGEl) Border(length Length) SVGEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SVGEl) BorderB(length Length) SVGEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e SVGEl) BorderColor(borderColor Color) SVGEl { tStyledBorderColor(e.n, borderColor); return e }
-func (e SVGEl) BorderL(length Length) SVGEl         { tStyledBorderL(e.n, length); return e }
-func (e SVGEl) BorderR(length Length) SVGEl         { tStyledBorderR(e.n, length); return e }
-func (e SVGEl) BorderT(length Length) SVGEl         { tStyledBorderT(e.n, length); return e }
-func (e SVGEl) BorderX(length Length) SVGEl         { tStyledBorderX(e.n, length); return e }
-func (e SVGEl) BorderY(length Length) SVGEl         { tStyledBorderY(e.n, length); return e }
-func (e SVGEl) Bottom(length Length) SVGEl          { tStyledBottom(e.n, length); return e }
-func (e SVGEl) ColEnd(end int16) SVGEl              { tStyledColEnd(e.n, end); return e }
-func (e SVGEl) ColSpan(span uint16) SVGEl           { tStyledColSpan(e.n, span); return e }
-func (e SVGEl) ColStart(start int16) SVGEl          { tStyledColStart(e.n, start); return e }
-func (e SVGEl) Cursor(cursor CursorStyle) SVGEl     { tStyledCursor(e.n, cursor); return e }
-func (e SVGEl) FlexBasis(basis Length) SVGEl        { tStyledFlexBasis(e.n, basis); return e }
-func (e SVGEl) FlexGrow(grow float32) SVGEl         { tStyledFlexGrow(e.n, grow); return e }
-func (e SVGEl) FlexShrink(shrink float32) SVGEl     { tStyledFlexShrink(e.n, shrink); return e }
-func (e SVGEl) FontFamily(familyName string) SVGEl  { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SVGEl) BorderL(length Length) SVGEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SVGEl) BorderR(length Length) SVGEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SVGEl) BorderT(length Length) SVGEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SVGEl) BorderX(length Length) SVGEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SVGEl) BorderY(length Length) SVGEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SVGEl) Bottom(length Length) SVGEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e SVGEl) ColEnd(end int16) SVGEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e SVGEl) ColSpan(span uint16) SVGEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e SVGEl) ColStart(start int16) SVGEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e SVGEl) Cursor(cursor CursorStyle) SVGEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e SVGEl) FlexBasis(basis Length) SVGEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e SVGEl) FlexGrow(grow float32) SVGEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e SVGEl) FlexShrink(shrink float32) SVGEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
+func (e SVGEl) FontFamily(familyName string) SVGEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e SVGEl) FontFeatures(features FontFeatures) SVGEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
-func (e SVGEl) FontWeight(weight FontWeight) SVGEl   { tStyledFontWeight(e.n, weight); return e }
-func (e SVGEl) Gap(length Length) SVGEl              { tStyledGap(e.n, length); return e }
-func (e SVGEl) GapX(length Length) SVGEl             { tStyledGapX(e.n, length); return e }
-func (e SVGEl) GapY(length Length) SVGEl             { tStyledGapY(e.n, length); return e }
-func (e SVGEl) GridCols(cols uint16) SVGEl           { tStyledGridCols(e.n, cols); return e }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
+func (e SVGEl) FontWeight(weight FontWeight) SVGEl { tStyledFontWeight(e.n, weight); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SVGEl) Gap(length Length) SVGEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SVGEl) GapX(length Length) SVGEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SVGEl) GapY(length Length) SVGEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e SVGEl) GridCols(cols uint16) SVGEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SVGEl) GridColsMaxContent(cols uint16) SVGEl { tStyledGridColsMaxContent(e.n, cols); return e }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SVGEl) GridColsMinContent(cols uint16) SVGEl { tStyledGridColsMinContent(e.n, cols); return e }
-func (e SVGEl) GridRows(rows uint16) SVGEl           { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows of this element.
+func (e SVGEl) GridRows(rows uint16) SVGEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SVGEl) GridRowsMaxContent(rows uint16) SVGEl { tStyledGridRowsMaxContent(e.n, rows); return e }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SVGEl) GridRowsMinContent(rows uint16) SVGEl { tStyledGridRowsMinContent(e.n, rows); return e }
-func (e SVGEl) H(length Length) SVGEl                { tStyledH(e.n, length); return e }
-func (e SVGEl) Inset(length Length) SVGEl            { tStyledInset(e.n, length); return e }
-func (e SVGEl) Left(length Length) SVGEl             { tStyledLeft(e.n, length); return e }
-func (e SVGEl) LineClamp(lines int) SVGEl            { tStyledLineClamp(e.n, lines); return e }
-func (e SVGEl) LineHeight(lineHeight Length) SVGEl   { tStyledLineHeight(e.n, lineHeight); return e }
-func (e SVGEl) M(length Length) SVGEl                { tStyledM(e.n, length); return e }
-func (e SVGEl) MaxH(length Length) SVGEl             { tStyledMaxH(e.n, length); return e }
-func (e SVGEl) MaxSize(length Length) SVGEl          { tStyledMaxSize(e.n, length); return e }
-func (e SVGEl) MaxW(length Length) SVGEl             { tStyledMaxW(e.n, length); return e }
-func (e SVGEl) Mb(length Length) SVGEl               { tStyledMb(e.n, length); return e }
-func (e SVGEl) MinH(length Length) SVGEl             { tStyledMinH(e.n, length); return e }
-func (e SVGEl) MinSize(length Length) SVGEl          { tStyledMinSize(e.n, length); return e }
-func (e SVGEl) MinW(length Length) SVGEl             { tStyledMinW(e.n, length); return e }
-func (e SVGEl) Ml(length Length) SVGEl               { tStyledMl(e.n, length); return e }
-func (e SVGEl) Mr(length Length) SVGEl               { tStyledMr(e.n, length); return e }
-func (e SVGEl) Mt(length Length) SVGEl               { tStyledMt(e.n, length); return e }
-func (e SVGEl) Mx(length Length) SVGEl               { tStyledMx(e.n, length); return e }
-func (e SVGEl) My(length Length) SVGEl               { tStyledMy(e.n, length); return e }
-func (e SVGEl) Opacity(opacity float32) SVGEl        { tStyledOpacity(e.n, opacity); return e }
-func (e SVGEl) P(length Length) SVGEl                { tStyledP(e.n, length); return e }
-func (e SVGEl) Pb(length Length) SVGEl               { tStyledPb(e.n, length); return e }
-func (e SVGEl) Pl(length Length) SVGEl               { tStyledPl(e.n, length); return e }
-func (e SVGEl) Pr(length Length) SVGEl               { tStyledPr(e.n, length); return e }
-func (e SVGEl) Pt(length Length) SVGEl               { tStyledPt(e.n, length); return e }
-func (e SVGEl) Px(length Length) SVGEl               { tStyledPx(e.n, length); return e }
-func (e SVGEl) Py(length Length) SVGEl               { tStyledPy(e.n, length); return e }
-func (e SVGEl) Right(length Length) SVGEl            { tStyledRight(e.n, length); return e }
-func (e SVGEl) Rounded(length Length) SVGEl          { tStyledRounded(e.n, length); return e }
-func (e SVGEl) RoundedB(length Length) SVGEl         { tStyledRoundedB(e.n, length); return e }
-func (e SVGEl) RoundedBl(length Length) SVGEl        { tStyledRoundedBl(e.n, length); return e }
-func (e SVGEl) RoundedBr(length Length) SVGEl        { tStyledRoundedBr(e.n, length); return e }
-func (e SVGEl) RoundedL(length Length) SVGEl         { tStyledRoundedL(e.n, length); return e }
-func (e SVGEl) RoundedR(length Length) SVGEl         { tStyledRoundedR(e.n, length); return e }
-func (e SVGEl) RoundedT(length Length) SVGEl         { tStyledRoundedT(e.n, length); return e }
-func (e SVGEl) RoundedTl(length Length) SVGEl        { tStyledRoundedTl(e.n, length); return e }
-func (e SVGEl) RoundedTr(length Length) SVGEl        { tStyledRoundedTr(e.n, length); return e }
-func (e SVGEl) RowEnd(end int16) SVGEl               { tStyledRowEnd(e.n, end); return e }
-func (e SVGEl) RowSpan(span uint16) SVGEl            { tStyledRowSpan(e.n, span); return e }
-func (e SVGEl) RowStart(start int16) SVGEl           { tStyledRowStart(e.n, start); return e }
-func (e SVGEl) ScrollbarWidth(width Length) SVGEl    { tStyledScrollbarWidth(e.n, width); return e }
-func (e SVGEl) Shadow(shadows []BoxShadow) SVGEl     { tStyledShadow(e.n, shadows); return e }
-func (e SVGEl) Size(length Length) SVGEl             { tStyledSize(e.n, length); return e }
-func (e SVGEl) TextAlign(align TextAlign) SVGEl      { tStyledTextAlign(e.n, align); return e }
-func (e SVGEl) TextBg(bg Color) SVGEl                { tStyledTextBg(e.n, bg); return e }
-func (e SVGEl) TextColor(color Color) SVGEl          { tStyledTextColor(e.n, color); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SVGEl) H(length Length) SVGEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SVGEl) Inset(length Length) SVGEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SVGEl) Left(length Length) SVGEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e SVGEl) LineClamp(lines int) SVGEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
+func (e SVGEl) LineHeight(lineHeight Length) SVGEl { tStyledLineHeight(e.n, lineHeight); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SVGEl) M(length Length) SVGEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e SVGEl) MaxH(length Length) SVGEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e SVGEl) MaxSize(length Length) SVGEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e SVGEl) MaxW(length Length) SVGEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SVGEl) Mb(length Length) SVGEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e SVGEl) MinH(length Length) SVGEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e SVGEl) MinSize(length Length) SVGEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e SVGEl) MinW(length Length) SVGEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SVGEl) Ml(length Length) SVGEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SVGEl) Mr(length Length) SVGEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SVGEl) Mt(length Length) SVGEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SVGEl) Mx(length Length) SVGEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SVGEl) My(length Length) SVGEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e SVGEl) Opacity(opacity float32) SVGEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SVGEl) P(length Length) SVGEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SVGEl) Pb(length Length) SVGEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SVGEl) Pl(length Length) SVGEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SVGEl) Pr(length Length) SVGEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SVGEl) Pt(length Length) SVGEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SVGEl) Px(length Length) SVGEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SVGEl) Py(length Length) SVGEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SVGEl) Right(length Length) SVGEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e SVGEl) Rounded(length Length) SVGEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SVGEl) RoundedB(length Length) SVGEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SVGEl) RoundedBl(length Length) SVGEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SVGEl) RoundedBr(length Length) SVGEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SVGEl) RoundedL(length Length) SVGEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SVGEl) RoundedR(length Length) SVGEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SVGEl) RoundedT(length Length) SVGEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SVGEl) RoundedTl(length Length) SVGEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SVGEl) RoundedTr(length Length) SVGEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e SVGEl) RowEnd(end int16) SVGEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e SVGEl) RowSpan(span uint16) SVGEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e SVGEl) RowStart(start int16) SVGEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e SVGEl) ScrollbarWidth(width Length) SVGEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e SVGEl) Shadow(shadows []BoxShadow) SVGEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e SVGEl) Size(length Length) SVGEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e SVGEl) TextAlign(align TextAlign) SVGEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e SVGEl) TextBg(bg Color) SVGEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e SVGEl) TextColor(color Color) SVGEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e SVGEl) TextDecorationColor(color Color) SVGEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SVGEl) TextOverflow(overflow TextOverflow) SVGEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e SVGEl) TextSize(size Length) SVGEl { tStyledTextSize(e.n, size); return e }
-func (e SVGEl) Top(length Length) SVGEl    { tStyledTop(e.n, length); return e }
-func (e SVGEl) W(length Length) SVGEl      { tStyledW(e.n, length); return e }
 
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e SVGEl) TextSize(size Length) SVGEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SVGEl) Top(length Length) SVGEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SVGEl) W(length Length) SVGEl { tStyledW(e.n, length); return e }
+
+// Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
+// equivalent to `block_mouse_except_scroll`.
+//
+// See `is_hovered` for details.
 func (e SVGEl) BlockMouseExceptScroll() SVGEl {
 	tInteractiveElementBlockMouseExceptScroll(e.n)
 	return e
 }
+
+// Use the given predicate to determine whether or not a drop event should be dispatched to this
+// element. The fluent API equivalent to `can_drop`.
 func (e SVGEl) CanDrop(predicate DropAccept) SVGEl {
 	tInteractiveElementCanDrop(e.n, predicate)
 	return e
 }
+
+// Capture the given action, before normal action dispatch can fire. The fluent API equivalent to
+// `capture_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) CaptureAction(listener ActionHandler) SVGEl {
 	tInteractiveElementCaptureAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementCaptureAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementCaptureAnyMouseUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the capture phase. The fluent API equivalent
+// to `capture_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) SVGEl {
 	tInteractiveElementCaptureKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the capture phase. The fluent API equivalent to
+// `capture_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) SVGEl {
 	tInteractiveElementCaptureKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the capture phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) SVGEl {
 	tInteractiveElementCaptureMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the capture phase. The fluent API
+// equivalent to `capture_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) SVGEl {
 	tInteractiveElementCapturePinch(e.n, listener)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element
 func (e SVGEl) DragOver(f StyleRefinement) SVGEl { tInteractiveElementDragOver(e.n, f); return e }
-func (e SVGEl) Focus(f StyleRefinement) SVGEl    { tInteractiveElementFocus(e.n, f); return e }
+
+// Set the given styles to be applied when this element, specifically, is focused. Requires that
+// the element is focusable. Elements can be made focusable using `TrackFocus`.
+func (e SVGEl) Focus(f StyleRefinement) SVGEl { tInteractiveElementFocus(e.n, f); return e }
+
+// Set the given styles to be applied when this element is focused via keyboard navigation. This is
+// similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
+// the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
+// Elements can be made focusable using `TrackFocus`.
 func (e SVGEl) FocusVisible(f StyleRefinement) SVGEl {
 	tInteractiveElementFocusVisible(e.n, f)
 	return e
 }
+
+// Assign this element to a group of elements that can be styled together
 func (e SVGEl) Group(group string) SVGEl { tInteractiveElementGroup(e.n, group); return e }
+
+// Apply the given style when the given data type is dragged over this element's group
 func (e SVGEl) GroupDragOver(groupName string, f StyleRefinement) SVGEl {
 	tInteractiveElementGroupDragOver(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over a group member
 func (e SVGEl) GroupHover(groupName string, f StyleRefinement) SVGEl {
 	tInteractiveElementGroupHover(e.n, groupName, f)
 	return e
 }
-func (e SVGEl) Hover(f StyleRefinement) SVGEl   { tInteractiveElementHover(e.n, f); return e }
+
+// Apply the given style to this element when the mouse hovers over it
+func (e SVGEl) Hover(f StyleRefinement) SVGEl { tInteractiveElementHover(e.n, f); return e }
+
+// Set the given styles to be applied when this element is inside another element that is focused.
+// Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e SVGEl) InFocus(f StyleRefinement) SVGEl { tInteractiveElementInFocus(e.n, f); return e }
+
+// Set the keymap context for this element. This will be used to determine which action to dispatch
+// from the keymap.
 func (e SVGEl) KeyContext(keyContext string) SVGEl {
 	tInteractiveElementKeyContext(e.n, keyContext)
 	return e
 }
+
+// Block the mouse from all interactions with elements behind this element's hitbox. Typically
+// `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
 func (e SVGEl) Occlude() SVGEl { tInteractiveElementOcclude(e.n); return e }
+
+// Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
+// to `on_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnAction(listener ActionHandler) SVGEl {
 	tInteractiveElementOnAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `on_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to back-navigation gestures that start over this element, such as the
+// iOS swipe from the leading screen edge. The innermost element with a back listener claims the
+// gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) SVGEl {
 	tInteractiveElementOnBackGesture(e.n, listener)
 	return e
 }
+
+// Bind the given callback to an action dispatch, based on a dynamic action parameter instead of a
+// type parameter. Useful for component libraries that want to expose action bindings to their
+// users. The fluent API equivalent to `on_boxed_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) SVGEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
 	return e
 }
+
+// Bind the given callback to drop events of the given type, whether or not the drag started on
+// this element. The fluent API equivalent to `on_drop`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnDrop(listener func(cx *Cx, e DragValue)) SVGEl {
 	tInteractiveElementOnDrop(e.n, listener)
 	return e
 }
+
+// Bind the given callback to `Exited` when a platform file drag leaves this element's window while
+// the element is hovered.
+//
+// This is a window-local exit event, not notification that the platform drag session ended. The
+// fluent API equivalent to `on_file_drop_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) SVGEl {
 	tInteractiveElementOnFileDropExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the bubble phase. The fluent API equivalent to
+// `on_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) SVGEl {
 	tInteractiveElementOnKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the bubble phase. The fluent API equivalent to
+// `on_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) SVGEl {
 	tInteractiveElementOnKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to modifiers changing events. The fluent API equivalent to
+// `on_modifiers_changed`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) SVGEl {
 	tInteractiveElementOnModifiersChanged(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for the given mouse button. The fluent API
+// equivalent to `on_mouse_down`.
+//
+// See `listener` to get access to the view state from this callback.
 func (e SVGEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseDown(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event, on any button, during the capture phase, when
+// the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_down_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseDownOut(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse exit event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) SVGEl {
 	tInteractiveElementOnMouseExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse move event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_move`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseMove(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the bubble phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) SVGEl {
 	tInteractiveElementOnMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for the given button, during the bubble phase. The
+// fluent API equivalent to `on_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseUp(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event, for the given button, during the capture phase,
+// when the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_up_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) SVGEl {
 	tInteractiveElementOnMouseUpOut(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the bubble phase. The fluent API
+// equivalent to `on_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnPinch(listener func(cx *Cx, e PinchEvent)) SVGEl {
 	tInteractiveElementOnPinch(e.n, listener)
 	return e
 }
+
+// Bind the given callback to scroll events during the bubble phase. The fluent API equivalent to
+// `on_scroll`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) SVGEl {
 	tInteractiveElementOnScroll(e.n, listener)
 	return e
 }
-func (e SVGEl) TabGroup() SVGEl            { tInteractiveElementTabGroup(e.n); return e }
-func (e SVGEl) TabIndex(index int) SVGEl   { tInteractiveElementTabIndex(e.n, index); return e }
+
+// Designate this div as a "tab group". Tab groups have their own location in the tab-index order,
+// but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
+// the order of tab stops within the group, without having to renumber all the tab stops in the
+// whole application.
+func (e SVGEl) TabGroup() SVGEl { tInteractiveElementTabGroup(e.n); return e }
+
+// Set index of the tab stop order, and set this node as a tab stop. This will default the element
+// to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
+// with `tab_group` in order to not interfere with the tab index of other elements.
+func (e SVGEl) TabIndex(index int) SVGEl { tInteractiveElementTabIndex(e.n, index); return e }
+
+// Set whether this element is a tab stop.
+//
+// When false, the element remains in tab-index order but cannot be reached via keyboard
+// navigation. Should only be used with `tab_index`.
 func (e SVGEl) TabStop(tabStop bool) SVGEl { tInteractiveElementTabStop(e.n, tabStop); return e }
+
+// Track the focus state of the given focus handle on this element. If the focus handle is focused
+// by the application, this element will apply its focused styles.
 func (e SVGEl) TrackFocus(focusHandle FocusHandle) SVGEl {
 	tInteractiveElementTrackFocus(e.n, focusHandle)
 	return e
 }
+
+// Set the bounds of this element as a window control area for the platform window. The fluent API
+// equivalent to `window_control_area`.
 func (e SVGEl) WindowControlArea(area WindowControlArea) SVGEl {
 	tInteractiveElementWindowControlArea(e.n, area)
 	return e

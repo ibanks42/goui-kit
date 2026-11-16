@@ -3,6 +3,8 @@ package gk
 
 import "core:time"
 
+// The List element.
+//
 // List is gpui_kit::component::list::List<crate::shim_rows::GkListDelegate>.
 List :: struct {
 	using el: Element,
@@ -14,11 +16,16 @@ List_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(List),
 	using t_styled: ^Styled_Trait(List),
 	using t_sizable: ^Sizable_Trait(List),
+	// Bounce at the vertical boundaries. On by default on iOS, Android and macOS, off elsewhere;
+	// reduced motion disables displacement.
 	scroll_bounce: proc(e: List, enabled: bool) -> List,
+	// Set whether the scrollbar is visible, default is `true`.
 	scrollbar_visible: proc(e: List, visible: bool) -> List,
+	// Sets the placeholder text for the search input.
 	search_placeholder: proc(e: List, placeholder: string) -> List,
 }
 
+// Create a new List element with the given ListState entity.
 list :: proc(state: List_State, flags: ..Style_Flag, loc := #caller_location) -> List {
 	use_component_list()
 	e := List{new_node(804, loc), &list_vt}
@@ -147,15 +154,24 @@ List_Item_VT :: struct {
 	tooltip: proc(e: List_Item, build_tooltip: View_Or_Tooltip) -> List_Item,
 	tooltip_show_delay: proc(e: List_Item, delay: time.Duration) -> List_Item,
 	track_scroll: proc(e: List_Item, scroll_handle: Scroll_Handle) -> List_Item,
+	// Set the accessibility label of the list item.
+	//
+	// Without this, list rows are exposed to assistive technology without a name — the visible
+	// children do not become the item's accessible name.
 	accessibility_label: proc(e: List_Item, label: string) -> List_Item,
+	// Set to show check icon, default is None.
 	check_icon: proc(e: List_Item, icon: Icon_Name) -> List_Item,
+	// Set ListItem as the confirmed item style, it will show a check icon.
 	confirmed: proc(e: List_Item, confirmed: bool) -> List_Item,
 	disabled: proc(e: List_Item, disabled: bool) -> List_Item,
 	on_click: proc(e: List_Item, handler: Handler) -> List_Item,
 	on_mouse_down: proc(e: List_Item, button: Mouse_Button, handler: Handler) -> List_Item,
 	on_mouse_enter: proc(e: List_Item, handler: Handler) -> List_Item,
+	// Set ListItem as the selected item style.
 	selected: proc(e: List_Item, selected: bool) -> List_Item,
+	// Set this list item to as a separator, it not able to be selected.
 	separator: proc(e: List_Item) -> List_Item,
+	// Set the suffix element of the input field, for example a clear button.
 	suffix: proc(e: List_Item, builder: Element) -> List_Item,
 }
 

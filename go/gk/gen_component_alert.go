@@ -9,6 +9,8 @@ type AlertEl struct{ n *node }
 
 func (e AlertEl) node() *node { return e.n }
 
+// Create a new alert with the given message.
+//
 // Alert is <gpui_kit::component::alert::Alert>::new.
 func Alert(id ID, message TextInto, st ...Style) AlertEl {
 	useComponentAlert()
@@ -20,6 +22,8 @@ func Alert(id ID, message TextInto, st ...Style) AlertEl {
 	return AlertEl{n}
 }
 
+// Create a new `Error` alert with the given message.
+//
 // AlertError is <gpui_kit::component::alert::Alert>::error.
 func AlertError(id ID, message TextInto, st ...Style) AlertEl {
 	useComponentAlert()
@@ -31,6 +35,8 @@ func AlertError(id ID, message TextInto, st ...Style) AlertEl {
 	return AlertEl{n}
 }
 
+// Create a new info `Info` with the given message.
+//
 // AlertInfo is <gpui_kit::component::alert::Alert>::info.
 func AlertInfo(id ID, message TextInto, st ...Style) AlertEl {
 	useComponentAlert()
@@ -42,6 +48,8 @@ func AlertInfo(id ID, message TextInto, st ...Style) AlertEl {
 	return AlertEl{n}
 }
 
+// Create a new `Success` alert with the given message.
+//
 // AlertSuccess is <gpui_kit::component::alert::Alert>::success.
 func AlertSuccess(id ID, message TextInto, st ...Style) AlertEl {
 	useComponentAlert()
@@ -53,6 +61,8 @@ func AlertSuccess(id ID, message TextInto, st ...Style) AlertEl {
 	return AlertEl{n}
 }
 
+// Create a new `Warning` alert with the given message.
+//
 // AlertWarning is <gpui_kit::component::alert::Alert>::warning.
 func AlertWarning(id ID, message TextInto, st ...Style) AlertEl {
 	useComponentAlert()
@@ -64,12 +74,19 @@ func AlertWarning(id ID, message TextInto, st ...Style) AlertEl {
 	return AlertEl{n}
 }
 
+// Set alert as banner style.
+//
+// The `banner` style will make the alert take the full width of the container and not border and
+// radius. This mode will not display `title`.
+//
 // Banner is <gpui_kit::component::alert::Alert>::banner.
 func (e AlertEl) Banner() AlertEl {
 	op(e.n, 256)
 	return e
 }
 
+// Set the icon for the alert.
+//
 // Icon is <gpui_kit::component::alert::Alert>::icon.
 func (e AlertEl) Icon(icon IconName) AlertEl {
 	o := op(e.n, 261)
@@ -77,6 +94,8 @@ func (e AlertEl) Icon(icon IconName) AlertEl {
 	return e
 }
 
+// Set alert as closable, true will show Close icon.
+//
 // OnClose is <gpui_kit::component::alert::Alert>::on_close.
 func (e AlertEl) OnClose(onClose func(cx *Cx, e ClickEvent)) AlertEl {
 	o := op(e.n, 257)
@@ -84,6 +103,8 @@ func (e AlertEl) OnClose(onClose func(cx *Cx, e ClickEvent)) AlertEl {
 	return e
 }
 
+// Set the title for the alert.
+//
 // Title is <gpui_kit::component::alert::Alert>::title.
 func (e AlertEl) Title(title string) AlertEl {
 	o := op(e.n, 258)
@@ -91,6 +112,8 @@ func (e AlertEl) Title(title string) AlertEl {
 	return e
 }
 
+// Set the visibility of the alert.
+//
 // Visible is <gpui_kit::component::alert::Alert>::visible.
 func (e AlertEl) Visible(visible bool) AlertEl {
 	o := op(e.n, 259)
@@ -98,6 +121,8 @@ func (e AlertEl) Visible(visible bool) AlertEl {
 	return e
 }
 
+// Sets the `AlertVariant` of the alert.
+//
 // WithVariant is <gpui_kit::component::alert::Alert>::with_variant.
 func (e AlertEl) WithVariant(variant AlertVariant) AlertEl {
 	o := op(e.n, 260)
@@ -105,7 +130,19 @@ func (e AlertEl) WithVariant(variant AlertVariant) AlertEl {
 	return e
 }
 
-func (e AlertEl) PopoverStyle() AlertEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e AlertEl) PopoverStyle() AlertEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e AlertEl) RoundedFullStyle() AlertEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e AlertEl) CornerRadii(radius Corners) AlertEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -114,19 +151,32 @@ func (e AlertEl) DebugFocused(focusHandle FocusHandle) AlertEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e AlertEl) DebugGreen() AlertEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e AlertEl) DebugPink() AlertEl                  { tStyledExtDebugPink(e.n); return e }
-func (e AlertEl) DebugRed() AlertEl                   { tStyledExtDebugRed(e.n); return e }
-func (e AlertEl) DebugYellow() AlertEl                { tStyledExtDebugYellow(e.n); return e }
-func (e AlertEl) FontBlack() AlertEl                  { tStyledExtFontBlack(e.n); return e }
-func (e AlertEl) FontBold() AlertEl                   { tStyledExtFontBold(e.n); return e }
-func (e AlertEl) FontExtrabold() AlertEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e AlertEl) FontExtralight() AlertEl             { tStyledExtFontExtralight(e.n); return e }
-func (e AlertEl) FontLight() AlertEl                  { tStyledExtFontLight(e.n); return e }
-func (e AlertEl) FontMedium() AlertEl                 { tStyledExtFontMedium(e.n); return e }
-func (e AlertEl) FontNormal() AlertEl                 { tStyledExtFontNormal(e.n); return e }
-func (e AlertEl) FontSemibold() AlertEl               { tStyledExtFontSemibold(e.n); return e }
-func (e AlertEl) FontThin() AlertEl                   { tStyledExtFontThin(e.n); return e }
+func (e AlertEl) DebugGreen() AlertEl     { tStyledExtDebugGreen(e.n); return e }
+func (e AlertEl) DebugPink() AlertEl      { tStyledExtDebugPink(e.n); return e }
+func (e AlertEl) DebugRed() AlertEl       { tStyledExtDebugRed(e.n); return e }
+func (e AlertEl) DebugYellow() AlertEl    { tStyledExtDebugYellow(e.n); return e }
+func (e AlertEl) FontBlack() AlertEl      { tStyledExtFontBlack(e.n); return e }
+func (e AlertEl) FontBold() AlertEl       { tStyledExtFontBold(e.n); return e }
+func (e AlertEl) FontExtrabold() AlertEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e AlertEl) FontExtralight() AlertEl { tStyledExtFontExtralight(e.n); return e }
+func (e AlertEl) FontLight() AlertEl      { tStyledExtFontLight(e.n); return e }
+func (e AlertEl) FontMedium() AlertEl     { tStyledExtFontMedium(e.n); return e }
+func (e AlertEl) FontNormal() AlertEl     { tStyledExtFontNormal(e.n); return e }
+func (e AlertEl) FontSemibold() AlertEl   { tStyledExtFontSemibold(e.n); return e }
+func (e AlertEl) FontThin() AlertEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e AlertEl) HFlex() AlertEl                      { tStyledExtHFlex(e.n); return e }
 func (e AlertEl) Margins(margins EdgesInto) AlertEl   { tStyledExtMargins(e.n, margins); return e }
 func (e AlertEl) Paddings(paddings EdgesInto) AlertEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -134,117 +184,339 @@ func (e AlertEl) RefineStyle(style StyleRefinement) AlertEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e AlertEl) VFlex() AlertEl { tStyledExtVFlex(e.n); return e }
 
-func (e AlertEl) Large() AlertEl                 { tSizableLarge(e.n); return e }
-func (e AlertEl) Small() AlertEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e AlertEl) Large() AlertEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e AlertEl) Small() AlertEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e AlertEl) WithSize(size SizeInto) AlertEl { tSizableWithSize(e.n, size); return e }
-func (e AlertEl) Xsmall() AlertEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e AlertEl) Xsmall() AlertEl { tSizableXsmall(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e AlertEl) Style(st ...Style) AlertEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e AlertEl) AspectRatio(ratio float32) AlertEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e AlertEl) Bg(fill Fill) AlertEl              { tStyledBg(e.n, fill); return e }
-func (e AlertEl) Border(length Length) AlertEl      { tStyledBorder(e.n, length); return e }
-func (e AlertEl) BorderB(length Length) AlertEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e AlertEl) Bg(fill Fill) AlertEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e AlertEl) Border(length Length) AlertEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AlertEl) BorderB(length Length) AlertEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e AlertEl) BorderColor(borderColor Color) AlertEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e AlertEl) BorderL(length Length) AlertEl        { tStyledBorderL(e.n, length); return e }
-func (e AlertEl) BorderR(length Length) AlertEl        { tStyledBorderR(e.n, length); return e }
-func (e AlertEl) BorderT(length Length) AlertEl        { tStyledBorderT(e.n, length); return e }
-func (e AlertEl) BorderX(length Length) AlertEl        { tStyledBorderX(e.n, length); return e }
-func (e AlertEl) BorderY(length Length) AlertEl        { tStyledBorderY(e.n, length); return e }
-func (e AlertEl) Bottom(length Length) AlertEl         { tStyledBottom(e.n, length); return e }
-func (e AlertEl) ColEnd(end int16) AlertEl             { tStyledColEnd(e.n, end); return e }
-func (e AlertEl) ColSpan(span uint16) AlertEl          { tStyledColSpan(e.n, span); return e }
-func (e AlertEl) ColStart(start int16) AlertEl         { tStyledColStart(e.n, start); return e }
-func (e AlertEl) Cursor(cursor CursorStyle) AlertEl    { tStyledCursor(e.n, cursor); return e }
-func (e AlertEl) FlexBasis(basis Length) AlertEl       { tStyledFlexBasis(e.n, basis); return e }
-func (e AlertEl) FlexGrow(grow float32) AlertEl        { tStyledFlexGrow(e.n, grow); return e }
-func (e AlertEl) FlexShrink(shrink float32) AlertEl    { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AlertEl) BorderL(length Length) AlertEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AlertEl) BorderR(length Length) AlertEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AlertEl) BorderT(length Length) AlertEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e AlertEl) BorderX(length Length) AlertEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e AlertEl) BorderY(length Length) AlertEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AlertEl) Bottom(length Length) AlertEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e AlertEl) ColEnd(end int16) AlertEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e AlertEl) ColSpan(span uint16) AlertEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e AlertEl) ColStart(start int16) AlertEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e AlertEl) Cursor(cursor CursorStyle) AlertEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e AlertEl) FlexBasis(basis Length) AlertEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e AlertEl) FlexGrow(grow float32) AlertEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e AlertEl) FlexShrink(shrink float32) AlertEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e AlertEl) FontFamily(familyName string) AlertEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e AlertEl) FontFeatures(features FontFeatures) AlertEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e AlertEl) FontWeight(weight FontWeight) AlertEl { tStyledFontWeight(e.n, weight); return e }
-func (e AlertEl) Gap(length Length) AlertEl            { tStyledGap(e.n, length); return e }
-func (e AlertEl) GapX(length Length) AlertEl           { tStyledGapX(e.n, length); return e }
-func (e AlertEl) GapY(length Length) AlertEl           { tStyledGapY(e.n, length); return e }
-func (e AlertEl) GridCols(cols uint16) AlertEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e AlertEl) Gap(length Length) AlertEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e AlertEl) GapX(length Length) AlertEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e AlertEl) GapY(length Length) AlertEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e AlertEl) GridCols(cols uint16) AlertEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e AlertEl) GridColsMaxContent(cols uint16) AlertEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e AlertEl) GridColsMinContent(cols uint16) AlertEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e AlertEl) GridRows(rows uint16) AlertEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e AlertEl) GridRowsMaxContent(rows uint16) AlertEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e AlertEl) GridRowsMinContent(rows uint16) AlertEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e AlertEl) H(length Length) AlertEl              { tStyledH(e.n, length); return e }
-func (e AlertEl) Inset(length Length) AlertEl          { tStyledInset(e.n, length); return e }
-func (e AlertEl) Left(length Length) AlertEl           { tStyledLeft(e.n, length); return e }
-func (e AlertEl) LineClamp(lines int) AlertEl          { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e AlertEl) H(length Length) AlertEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AlertEl) Inset(length Length) AlertEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AlertEl) Left(length Length) AlertEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e AlertEl) LineClamp(lines int) AlertEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e AlertEl) LineHeight(lineHeight Length) AlertEl { tStyledLineHeight(e.n, lineHeight); return e }
-func (e AlertEl) M(length Length) AlertEl              { tStyledM(e.n, length); return e }
-func (e AlertEl) MaxH(length Length) AlertEl           { tStyledMaxH(e.n, length); return e }
-func (e AlertEl) MaxSize(length Length) AlertEl        { tStyledMaxSize(e.n, length); return e }
-func (e AlertEl) MaxW(length Length) AlertEl           { tStyledMaxW(e.n, length); return e }
-func (e AlertEl) Mb(length Length) AlertEl             { tStyledMb(e.n, length); return e }
-func (e AlertEl) MinH(length Length) AlertEl           { tStyledMinH(e.n, length); return e }
-func (e AlertEl) MinSize(length Length) AlertEl        { tStyledMinSize(e.n, length); return e }
-func (e AlertEl) MinW(length Length) AlertEl           { tStyledMinW(e.n, length); return e }
-func (e AlertEl) Ml(length Length) AlertEl             { tStyledMl(e.n, length); return e }
-func (e AlertEl) Mr(length Length) AlertEl             { tStyledMr(e.n, length); return e }
-func (e AlertEl) Mt(length Length) AlertEl             { tStyledMt(e.n, length); return e }
-func (e AlertEl) Mx(length Length) AlertEl             { tStyledMx(e.n, length); return e }
-func (e AlertEl) My(length Length) AlertEl             { tStyledMy(e.n, length); return e }
-func (e AlertEl) Opacity(opacity float32) AlertEl      { tStyledOpacity(e.n, opacity); return e }
-func (e AlertEl) P(length Length) AlertEl              { tStyledP(e.n, length); return e }
-func (e AlertEl) Pb(length Length) AlertEl             { tStyledPb(e.n, length); return e }
-func (e AlertEl) Pl(length Length) AlertEl             { tStyledPl(e.n, length); return e }
-func (e AlertEl) Pr(length Length) AlertEl             { tStyledPr(e.n, length); return e }
-func (e AlertEl) Pt(length Length) AlertEl             { tStyledPt(e.n, length); return e }
-func (e AlertEl) Px(length Length) AlertEl             { tStyledPx(e.n, length); return e }
-func (e AlertEl) Py(length Length) AlertEl             { tStyledPy(e.n, length); return e }
-func (e AlertEl) Right(length Length) AlertEl          { tStyledRight(e.n, length); return e }
-func (e AlertEl) Rounded(length Length) AlertEl        { tStyledRounded(e.n, length); return e }
-func (e AlertEl) RoundedB(length Length) AlertEl       { tStyledRoundedB(e.n, length); return e }
-func (e AlertEl) RoundedBl(length Length) AlertEl      { tStyledRoundedBl(e.n, length); return e }
-func (e AlertEl) RoundedBr(length Length) AlertEl      { tStyledRoundedBr(e.n, length); return e }
-func (e AlertEl) RoundedL(length Length) AlertEl       { tStyledRoundedL(e.n, length); return e }
-func (e AlertEl) RoundedR(length Length) AlertEl       { tStyledRoundedR(e.n, length); return e }
-func (e AlertEl) RoundedT(length Length) AlertEl       { tStyledRoundedT(e.n, length); return e }
-func (e AlertEl) RoundedTl(length Length) AlertEl      { tStyledRoundedTl(e.n, length); return e }
-func (e AlertEl) RoundedTr(length Length) AlertEl      { tStyledRoundedTr(e.n, length); return e }
-func (e AlertEl) RowEnd(end int16) AlertEl             { tStyledRowEnd(e.n, end); return e }
-func (e AlertEl) RowSpan(span uint16) AlertEl          { tStyledRowSpan(e.n, span); return e }
-func (e AlertEl) RowStart(start int16) AlertEl         { tStyledRowStart(e.n, start); return e }
-func (e AlertEl) ScrollbarWidth(width Length) AlertEl  { tStyledScrollbarWidth(e.n, width); return e }
-func (e AlertEl) Shadow(shadows []BoxShadow) AlertEl   { tStyledShadow(e.n, shadows); return e }
-func (e AlertEl) Size(length Length) AlertEl           { tStyledSize(e.n, length); return e }
-func (e AlertEl) TextAlign(align TextAlign) AlertEl    { tStyledTextAlign(e.n, align); return e }
-func (e AlertEl) TextBg(bg Color) AlertEl              { tStyledTextBg(e.n, bg); return e }
-func (e AlertEl) TextColor(color Color) AlertEl        { tStyledTextColor(e.n, color); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e AlertEl) M(length Length) AlertEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e AlertEl) MaxH(length Length) AlertEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e AlertEl) MaxSize(length Length) AlertEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e AlertEl) MaxW(length Length) AlertEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AlertEl) Mb(length Length) AlertEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e AlertEl) MinH(length Length) AlertEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e AlertEl) MinSize(length Length) AlertEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e AlertEl) MinW(length Length) AlertEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AlertEl) Ml(length Length) AlertEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AlertEl) Mr(length Length) AlertEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AlertEl) Mt(length Length) AlertEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e AlertEl) Mx(length Length) AlertEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e AlertEl) My(length Length) AlertEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e AlertEl) Opacity(opacity float32) AlertEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e AlertEl) P(length Length) AlertEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AlertEl) Pb(length Length) AlertEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AlertEl) Pl(length Length) AlertEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AlertEl) Pr(length Length) AlertEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AlertEl) Pt(length Length) AlertEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e AlertEl) Px(length Length) AlertEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e AlertEl) Py(length Length) AlertEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AlertEl) Right(length Length) AlertEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e AlertEl) Rounded(length Length) AlertEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e AlertEl) RoundedB(length Length) AlertEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e AlertEl) RoundedBl(length Length) AlertEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e AlertEl) RoundedBr(length Length) AlertEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e AlertEl) RoundedL(length Length) AlertEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e AlertEl) RoundedR(length Length) AlertEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e AlertEl) RoundedT(length Length) AlertEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e AlertEl) RoundedTl(length Length) AlertEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e AlertEl) RoundedTr(length Length) AlertEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e AlertEl) RowEnd(end int16) AlertEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e AlertEl) RowSpan(span uint16) AlertEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e AlertEl) RowStart(start int16) AlertEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e AlertEl) ScrollbarWidth(width Length) AlertEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e AlertEl) Shadow(shadows []BoxShadow) AlertEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e AlertEl) Size(length Length) AlertEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e AlertEl) TextAlign(align TextAlign) AlertEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e AlertEl) TextBg(bg Color) AlertEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e AlertEl) TextColor(color Color) AlertEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e AlertEl) TextDecorationColor(color Color) AlertEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e AlertEl) TextOverflow(overflow TextOverflow) AlertEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e AlertEl) TextSize(size Length) AlertEl { tStyledTextSize(e.n, size); return e }
-func (e AlertEl) Top(length Length) AlertEl    { tStyledTop(e.n, length); return e }
-func (e AlertEl) W(length Length) AlertEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AlertEl) Top(length Length) AlertEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e AlertEl) W(length Length) AlertEl { tStyledW(e.n, length); return e }

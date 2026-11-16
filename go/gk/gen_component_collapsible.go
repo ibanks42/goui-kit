@@ -9,6 +9,8 @@ type CollapsibleEl struct{ n *node }
 
 func (e CollapsibleEl) node() *node { return e.n }
 
+// Creates a new `Collapsible` instance.
+//
 // Collapsible is <gpui_kit::component::collapsible::Collapsible>::new.
 func Collapsible(st ...Style) CollapsibleEl {
 	useComponentCollapsible()
@@ -17,6 +19,10 @@ func Collapsible(st ...Style) CollapsibleEl {
 	return CollapsibleEl{n}
 }
 
+// Sets the content of the collapsible.
+//
+// If `open` is false, content will be hidden.
+//
 // Content is <gpui_kit::component::collapsible::Collapsible>::content.
 func (e CollapsibleEl) Content(content Element) CollapsibleEl {
 	o := op(e.n, 256)
@@ -24,6 +30,8 @@ func (e CollapsibleEl) Content(content Element) CollapsibleEl {
 	return e
 }
 
+// Enables a reversible measured reveal under a stable identity.
+//
 // MotionID is <gpui_kit::component::collapsible::Collapsible>::motion_id.
 func (e CollapsibleEl) MotionID(id ID) CollapsibleEl {
 	o := op(e.n, 257)
@@ -31,6 +39,8 @@ func (e CollapsibleEl) MotionID(id ID) CollapsibleEl {
 	return e
 }
 
+// Sets whether the collapsible is open. default is false.
+//
 // Open is <gpui_kit::component::collapsible::Collapsible>::open.
 func (e CollapsibleEl) Open(open bool) CollapsibleEl {
 	o := op(e.n, 258)
@@ -38,14 +48,40 @@ func (e CollapsibleEl) Open(open bool) CollapsibleEl {
 	return e
 }
 
-func (e CollapsibleEl) PopoverStyle() CollapsibleEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e CollapsibleEl) PopoverStyle() CollapsibleEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e CollapsibleEl) RoundedFullStyle() CollapsibleEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e CollapsibleEl) FocusRingStyle() CollapsibleEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CollapsibleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CollapsibleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -73,7 +109,20 @@ func (e CollapsibleEl) FontMedium() CollapsibleEl     { tStyledExtFontMedium(e.n
 func (e CollapsibleEl) FontNormal() CollapsibleEl     { tStyledExtFontNormal(e.n); return e }
 func (e CollapsibleEl) FontSemibold() CollapsibleEl   { tStyledExtFontSemibold(e.n); return e }
 func (e CollapsibleEl) FontThin() CollapsibleEl       { tStyledExtFontThin(e.n); return e }
-func (e CollapsibleEl) HFlex() CollapsibleEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e CollapsibleEl) HFlex() CollapsibleEl { tStyledExtHFlex(e.n); return e }
 func (e CollapsibleEl) Margins(margins EdgesInto) CollapsibleEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -86,158 +135,373 @@ func (e CollapsibleEl) RefineStyle(style StyleRefinement) CollapsibleEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e CollapsibleEl) VFlex() CollapsibleEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e CollapsibleEl) Style(st ...Style) CollapsibleEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e CollapsibleEl) AspectRatio(ratio float32) CollapsibleEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e CollapsibleEl) Bg(fill Fill) CollapsibleEl          { tStyledBg(e.n, fill); return e }
-func (e CollapsibleEl) Border(length Length) CollapsibleEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e CollapsibleEl) Bg(fill Fill) CollapsibleEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e CollapsibleEl) Border(length Length) CollapsibleEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e CollapsibleEl) BorderB(length Length) CollapsibleEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e CollapsibleEl) BorderColor(borderColor Color) CollapsibleEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e CollapsibleEl) BorderL(length Length) CollapsibleEl     { tStyledBorderL(e.n, length); return e }
-func (e CollapsibleEl) BorderR(length Length) CollapsibleEl     { tStyledBorderR(e.n, length); return e }
-func (e CollapsibleEl) BorderT(length Length) CollapsibleEl     { tStyledBorderT(e.n, length); return e }
-func (e CollapsibleEl) BorderX(length Length) CollapsibleEl     { tStyledBorderX(e.n, length); return e }
-func (e CollapsibleEl) BorderY(length Length) CollapsibleEl     { tStyledBorderY(e.n, length); return e }
-func (e CollapsibleEl) Bottom(length Length) CollapsibleEl      { tStyledBottom(e.n, length); return e }
-func (e CollapsibleEl) ColEnd(end int16) CollapsibleEl          { tStyledColEnd(e.n, end); return e }
-func (e CollapsibleEl) ColSpan(span uint16) CollapsibleEl       { tStyledColSpan(e.n, span); return e }
-func (e CollapsibleEl) ColStart(start int16) CollapsibleEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CollapsibleEl) BorderL(length Length) CollapsibleEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CollapsibleEl) BorderR(length Length) CollapsibleEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e CollapsibleEl) BorderT(length Length) CollapsibleEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e CollapsibleEl) BorderX(length Length) CollapsibleEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e CollapsibleEl) BorderY(length Length) CollapsibleEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CollapsibleEl) Bottom(length Length) CollapsibleEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e CollapsibleEl) ColEnd(end int16) CollapsibleEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e CollapsibleEl) ColSpan(span uint16) CollapsibleEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e CollapsibleEl) ColStart(start int16) CollapsibleEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e CollapsibleEl) Cursor(cursor CursorStyle) CollapsibleEl { tStyledCursor(e.n, cursor); return e }
-func (e CollapsibleEl) FlexBasis(basis Length) CollapsibleEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e CollapsibleEl) FlexGrow(grow float32) CollapsibleEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e CollapsibleEl) FlexBasis(basis Length) CollapsibleEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e CollapsibleEl) FlexGrow(grow float32) CollapsibleEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CollapsibleEl) FlexShrink(shrink float32) CollapsibleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e CollapsibleEl) FontFamily(familyName string) CollapsibleEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e CollapsibleEl) FontFeatures(features FontFeatures) CollapsibleEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e CollapsibleEl) FontWeight(weight FontWeight) CollapsibleEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e CollapsibleEl) Gap(length Length) CollapsibleEl    { tStyledGap(e.n, length); return e }
-func (e CollapsibleEl) GapX(length Length) CollapsibleEl   { tStyledGapX(e.n, length); return e }
-func (e CollapsibleEl) GapY(length Length) CollapsibleEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e CollapsibleEl) Gap(length Length) CollapsibleEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CollapsibleEl) GapX(length Length) CollapsibleEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e CollapsibleEl) GapY(length Length) CollapsibleEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e CollapsibleEl) GridCols(cols uint16) CollapsibleEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e CollapsibleEl) GridColsMaxContent(cols uint16) CollapsibleEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e CollapsibleEl) GridColsMinContent(cols uint16) CollapsibleEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e CollapsibleEl) GridRows(rows uint16) CollapsibleEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e CollapsibleEl) GridRowsMaxContent(rows uint16) CollapsibleEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e CollapsibleEl) GridRowsMinContent(rows uint16) CollapsibleEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e CollapsibleEl) H(length Length) CollapsibleEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e CollapsibleEl) H(length Length) CollapsibleEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e CollapsibleEl) Inset(length Length) CollapsibleEl { tStyledInset(e.n, length); return e }
-func (e CollapsibleEl) Left(length Length) CollapsibleEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CollapsibleEl) Left(length Length) CollapsibleEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e CollapsibleEl) LineClamp(lines int) CollapsibleEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e CollapsibleEl) LineHeight(lineHeight Length) CollapsibleEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e CollapsibleEl) M(length Length) CollapsibleEl         { tStyledM(e.n, length); return e }
-func (e CollapsibleEl) MaxH(length Length) CollapsibleEl      { tStyledMaxH(e.n, length); return e }
-func (e CollapsibleEl) MaxSize(length Length) CollapsibleEl   { tStyledMaxSize(e.n, length); return e }
-func (e CollapsibleEl) MaxW(length Length) CollapsibleEl      { tStyledMaxW(e.n, length); return e }
-func (e CollapsibleEl) Mb(length Length) CollapsibleEl        { tStyledMb(e.n, length); return e }
-func (e CollapsibleEl) MinH(length Length) CollapsibleEl      { tStyledMinH(e.n, length); return e }
-func (e CollapsibleEl) MinSize(length Length) CollapsibleEl   { tStyledMinSize(e.n, length); return e }
-func (e CollapsibleEl) MinW(length Length) CollapsibleEl      { tStyledMinW(e.n, length); return e }
-func (e CollapsibleEl) Ml(length Length) CollapsibleEl        { tStyledMl(e.n, length); return e }
-func (e CollapsibleEl) Mr(length Length) CollapsibleEl        { tStyledMr(e.n, length); return e }
-func (e CollapsibleEl) Mt(length Length) CollapsibleEl        { tStyledMt(e.n, length); return e }
-func (e CollapsibleEl) Mx(length Length) CollapsibleEl        { tStyledMx(e.n, length); return e }
-func (e CollapsibleEl) My(length Length) CollapsibleEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e CollapsibleEl) M(length Length) CollapsibleEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e CollapsibleEl) MaxH(length Length) CollapsibleEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e CollapsibleEl) MaxSize(length Length) CollapsibleEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e CollapsibleEl) MaxW(length Length) CollapsibleEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CollapsibleEl) Mb(length Length) CollapsibleEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e CollapsibleEl) MinH(length Length) CollapsibleEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e CollapsibleEl) MinSize(length Length) CollapsibleEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e CollapsibleEl) MinW(length Length) CollapsibleEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CollapsibleEl) Ml(length Length) CollapsibleEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CollapsibleEl) Mr(length Length) CollapsibleEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e CollapsibleEl) Mt(length Length) CollapsibleEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e CollapsibleEl) Mx(length Length) CollapsibleEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e CollapsibleEl) My(length Length) CollapsibleEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e CollapsibleEl) Opacity(opacity float32) CollapsibleEl { tStyledOpacity(e.n, opacity); return e }
-func (e CollapsibleEl) P(length Length) CollapsibleEl         { tStyledP(e.n, length); return e }
-func (e CollapsibleEl) Pb(length Length) CollapsibleEl        { tStyledPb(e.n, length); return e }
-func (e CollapsibleEl) Pl(length Length) CollapsibleEl        { tStyledPl(e.n, length); return e }
-func (e CollapsibleEl) Pr(length Length) CollapsibleEl        { tStyledPr(e.n, length); return e }
-func (e CollapsibleEl) Pt(length Length) CollapsibleEl        { tStyledPt(e.n, length); return e }
-func (e CollapsibleEl) Px(length Length) CollapsibleEl        { tStyledPx(e.n, length); return e }
-func (e CollapsibleEl) Py(length Length) CollapsibleEl        { tStyledPy(e.n, length); return e }
-func (e CollapsibleEl) Right(length Length) CollapsibleEl     { tStyledRight(e.n, length); return e }
-func (e CollapsibleEl) Rounded(length Length) CollapsibleEl   { tStyledRounded(e.n, length); return e }
-func (e CollapsibleEl) RoundedB(length Length) CollapsibleEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e CollapsibleEl) P(length Length) CollapsibleEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CollapsibleEl) Pb(length Length) CollapsibleEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CollapsibleEl) Pl(length Length) CollapsibleEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CollapsibleEl) Pr(length Length) CollapsibleEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e CollapsibleEl) Pt(length Length) CollapsibleEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e CollapsibleEl) Px(length Length) CollapsibleEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e CollapsibleEl) Py(length Length) CollapsibleEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CollapsibleEl) Right(length Length) CollapsibleEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e CollapsibleEl) Rounded(length Length) CollapsibleEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e CollapsibleEl) RoundedB(length Length) CollapsibleEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CollapsibleEl) RoundedBl(length Length) CollapsibleEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CollapsibleEl) RoundedBr(length Length) CollapsibleEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CollapsibleEl) RoundedL(length Length) CollapsibleEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CollapsibleEl) RoundedR(length Length) CollapsibleEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e CollapsibleEl) RoundedT(length Length) CollapsibleEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CollapsibleEl) RoundedTl(length Length) CollapsibleEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e CollapsibleEl) RoundedTr(length Length) CollapsibleEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e CollapsibleEl) RowEnd(end int16) CollapsibleEl     { tStyledRowEnd(e.n, end); return e }
-func (e CollapsibleEl) RowSpan(span uint16) CollapsibleEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e CollapsibleEl) RowEnd(end int16) CollapsibleEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e CollapsibleEl) RowSpan(span uint16) CollapsibleEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e CollapsibleEl) RowStart(start int16) CollapsibleEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e CollapsibleEl) ScrollbarWidth(width Length) CollapsibleEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e CollapsibleEl) Shadow(shadows []BoxShadow) CollapsibleEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e CollapsibleEl) Size(length Length) CollapsibleEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e CollapsibleEl) TextAlign(align TextAlign) CollapsibleEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e CollapsibleEl) TextBg(bg Color) CollapsibleEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e CollapsibleEl) TextBg(bg Color) CollapsibleEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e CollapsibleEl) TextColor(color Color) CollapsibleEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e CollapsibleEl) TextDecorationColor(color Color) CollapsibleEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e CollapsibleEl) TextOverflow(overflow TextOverflow) CollapsibleEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e CollapsibleEl) TextSize(size Length) CollapsibleEl { tStyledTextSize(e.n, size); return e }
-func (e CollapsibleEl) Top(length Length) CollapsibleEl    { tStyledTop(e.n, length); return e }
-func (e CollapsibleEl) W(length Length) CollapsibleEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e CollapsibleEl) Top(length Length) CollapsibleEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e CollapsibleEl) W(length Length) CollapsibleEl { tStyledW(e.n, length); return e }
 
 func (e CollapsibleEl) Text(s string) CollapsibleEl { putText(e.n, s); return e }
 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e CollapsibleEl) ChildView(v View) CollapsibleEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e CollapsibleEl) Child(child Element) CollapsibleEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e CollapsibleEl) Children(children ...Element) CollapsibleEl {
 	tParentElementChildren(e.n, children...)
 	return e

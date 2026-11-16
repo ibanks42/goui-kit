@@ -44,13 +44,26 @@ OURS = ("gpui", "gpui_base", "gpui_component", "gpui_kit")
 
 def strip(src):
     """rustdoc JSON -> api/rustdoc/NAME.json.gz: docs, spans and links removed, and the impls
-    nothing reads (auto traits, blanket and std-trait impls of third-party traits)."""
+    nothing reads (auto traits, blanket and std-trait impls of third-party traits); the docs and
+    their links -> api/rustdoc/docs.json.gz."""
     dst = os.path.join(API, "rustdoc")
     os.makedirs(dst, exist_ok=True)
+    docs = {}
     for n in OURS:
         d = json.load(open(os.path.join(src, n + ".json")))
         idx, drop = d["index"], set()
         names = {k: v["name"] for k, v in d["external_crates"].items()}
+        # The doc comments go to docs.json.gz (gen/gk_doc.py writes them into the bindings): per
+        # documented item its text and intra-doc links, and the full path of every linked id.
+        mine, linked = {}, {}
+        for k, it in idx.items():
+            if it.get("docs"):
+                mine[k] = {"d": it["docs"], "l": it.get("links") or {}}
+                for i in (it.get("links") or {}).values():
+                    p = d["paths"].get(str(i))
+                    if p:
+                        linked[str(i)] = "::".join(p["path"])
+        docs[n] = {"items": mine, "paths": linked}
         for k, it in idx.items():
             for f in ("docs", "links", "span"):
                 it.pop(f, None)
@@ -78,6 +91,10 @@ def strip(src):
         with open(os.path.join(dst, n + ".json.gz"), "wb") as raw:
             with gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
                 f.write(b)
+    b = json.dumps(docs, separators=(",", ":"), sort_keys=True).encode()
+    with open(os.path.join(dst, "docs.json.gz"), "wb") as raw:
+        with gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as f:
+            f.write(b)
         print(f"strip: {n}: {len(b) >> 10} KiB of JSON, {os.path.getsize(os.path.join(dst, n + '.json.gz')) >> 10} KiB packed")
 
 
@@ -421,7 +438,10 @@ def gen(argv):
     rs = gk_rust.Rust(m, rust_out)
     where = rs.emit()
     json.dump(where, open(os.path.join(OUT, "rust-lines.json"), "w"))
+    import gk_doc  # noqa: PLC0415 (GPUI-kit's doc comments, translated into both languages)
+    docs, doc_names = gk_doc.Docs(), gk_doc.resolver(m)
     od = gk_odin.Odin(m, odin_out)
+    od.docs, od.doc_names = docs, doc_names
     spans = od.emit()
     rs.fam.odin_link(odin_out, spans)  # each family linked only when the program calls into it (gen/gk_fam.py)
     sm = Sample(m, od)
@@ -457,7 +477,11 @@ def gen(argv):
         os.remove(os.path.join(OUT, "no-rule.md"))
     import gk_go  # noqa: PLC0415 (the Go front end, docs/GO.md: from the same model, after the Odin names)
     go = gk_go.Go(m, od, go_out)
+    go.docs, go.doc_names = docs, doc_names
     go.emit()
+    n = docs.report()
+    print(f"gen: docs: {len(docs.found):,} of {len(docs.asked):,} upstream items have a doc comment, carried into "
+          f"both languages; {n} sentences left out as Rust-only (gen/out/doc-rust-only.md)")
     rs.fam.go_link(go_out)  # each family linked only when the program calls into it (gen/gk_fam.py)
     rows, tot = go.report(os.path.join(OUT, "go-report.md"), family)
     print(f"gen: go: {tot[1]:,} of {tot[0]:,} bound or bridged functions generated into {os.path.relpath(go_out, REPO)} "

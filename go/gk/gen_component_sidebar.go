@@ -9,6 +9,8 @@ type GroupedSidebarEl struct{ n *node }
 
 func (e GroupedSidebarEl) node() *node { return e.n }
 
+// Create a new Sidebar with the given ID.
+//
 // GroupedSidebar is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::new.
 func GroupedSidebar(id ID, st ...Style) GroupedSidebarEl {
 	useComponentSidebar()
@@ -19,6 +21,8 @@ func GroupedSidebar(id ID, st ...Style) GroupedSidebarEl {
 	return GroupedSidebarEl{n}
 }
 
+// Add a child element to the sidebar, the child must implement `Collapsible`
+//
 // Child is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::child.
 func (e GroupedSidebarEl) Child(child SidebarGroup) GroupedSidebarEl {
 	o := op(e.n, 256)
@@ -26,6 +30,8 @@ func (e GroupedSidebarEl) Child(child SidebarGroup) GroupedSidebarEl {
 	return e
 }
 
+// Add multiple children to the sidebar, the children must implement `Collapsible`
+//
 // Children is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::children.
 func (e GroupedSidebarEl) Children(children []SidebarGroup) GroupedSidebarEl {
 	o := op(e.n, 257)
@@ -36,6 +42,8 @@ func (e GroupedSidebarEl) Children(children []SidebarGroup) GroupedSidebarEl {
 	return e
 }
 
+// Set the sidebar to be collapsed
+//
 // Collapsed is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::collapsed.
 func (e GroupedSidebarEl) Collapsed(collapsed bool) GroupedSidebarEl {
 	o := op(e.n, 258)
@@ -43,6 +51,10 @@ func (e GroupedSidebarEl) Collapsed(collapsed bool) GroupedSidebarEl {
 	return e
 }
 
+// Set how the sidebar collapses.
+//
+// Passing `true` keeps the previous behavior and maps to `Icon`. Passing `false` maps to `None`.
+//
 // Collapsible is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::collapsible.
 func (e GroupedSidebarEl) Collapsible(collapsible SidebarCollapsibleInto) GroupedSidebarEl {
 	o := op(e.n, 259)
@@ -50,6 +62,8 @@ func (e GroupedSidebarEl) Collapsible(collapsible SidebarCollapsibleInto) Groupe
 	return e
 }
 
+// Set the footer of the sidebar.
+//
 // Footer is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::footer.
 func (e GroupedSidebarEl) Footer(footer Element) GroupedSidebarEl {
 	o := op(e.n, 260)
@@ -57,6 +71,8 @@ func (e GroupedSidebarEl) Footer(footer Element) GroupedSidebarEl {
 	return e
 }
 
+// Set the header of the sidebar.
+//
 // Header is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::header.
 func (e GroupedSidebarEl) Header(header Element) GroupedSidebarEl {
 	o := op(e.n, 261)
@@ -64,6 +80,10 @@ func (e GroupedSidebarEl) Header(header Element) GroupedSidebarEl {
 	return e
 }
 
+// Set the side of the sidebar.
+//
+// Default is `Side::Left`.
+//
 // Side is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>>::side.
 func (e GroupedSidebarEl) Side(side Side) GroupedSidebarEl {
 	o := op(e.n, 262)
@@ -71,7 +91,19 @@ func (e GroupedSidebarEl) Side(side Side) GroupedSidebarEl {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e GroupedSidebarEl) PopoverStyle() GroupedSidebarEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e GroupedSidebarEl) RoundedFullStyle() GroupedSidebarEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -99,7 +131,20 @@ func (e GroupedSidebarEl) FontMedium() GroupedSidebarEl     { tStyledExtFontMedi
 func (e GroupedSidebarEl) FontNormal() GroupedSidebarEl     { tStyledExtFontNormal(e.n); return e }
 func (e GroupedSidebarEl) FontSemibold() GroupedSidebarEl   { tStyledExtFontSemibold(e.n); return e }
 func (e GroupedSidebarEl) FontThin() GroupedSidebarEl       { tStyledExtFontThin(e.n); return e }
-func (e GroupedSidebarEl) HFlex() GroupedSidebarEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e GroupedSidebarEl) HFlex() GroupedSidebarEl { tStyledExtHFlex(e.n); return e }
 func (e GroupedSidebarEl) Margins(margins EdgesInto) GroupedSidebarEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -112,235 +157,449 @@ func (e GroupedSidebarEl) RefineStyle(style StyleRefinement) GroupedSidebarEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e GroupedSidebarEl) VFlex() GroupedSidebarEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e GroupedSidebarEl) Style(st ...Style) GroupedSidebarEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e GroupedSidebarEl) AspectRatio(ratio float32) GroupedSidebarEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e GroupedSidebarEl) Bg(fill Fill) GroupedSidebarEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e GroupedSidebarEl) Border(length Length) GroupedSidebarEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e GroupedSidebarEl) BorderB(length Length) GroupedSidebarEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e GroupedSidebarEl) BorderColor(borderColor Color) GroupedSidebarEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e GroupedSidebarEl) BorderL(length Length) GroupedSidebarEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e GroupedSidebarEl) BorderR(length Length) GroupedSidebarEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e GroupedSidebarEl) BorderT(length Length) GroupedSidebarEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e GroupedSidebarEl) BorderX(length Length) GroupedSidebarEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e GroupedSidebarEl) BorderY(length Length) GroupedSidebarEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e GroupedSidebarEl) Bottom(length Length) GroupedSidebarEl {
 	tStyledBottom(e.n, length)
 	return e
 }
-func (e GroupedSidebarEl) ColEnd(end int16) GroupedSidebarEl    { tStyledColEnd(e.n, end); return e }
+
+// Sets the column end of this element.
+func (e GroupedSidebarEl) ColEnd(end int16) GroupedSidebarEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e GroupedSidebarEl) ColSpan(span uint16) GroupedSidebarEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e GroupedSidebarEl) ColStart(start int16) GroupedSidebarEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e GroupedSidebarEl) Cursor(cursor CursorStyle) GroupedSidebarEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e GroupedSidebarEl) FlexBasis(basis Length) GroupedSidebarEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e GroupedSidebarEl) FlexGrow(grow float32) GroupedSidebarEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e GroupedSidebarEl) FlexShrink(shrink float32) GroupedSidebarEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e GroupedSidebarEl) FontFamily(familyName string) GroupedSidebarEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e GroupedSidebarEl) FontFeatures(features FontFeatures) GroupedSidebarEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e GroupedSidebarEl) FontWeight(weight FontWeight) GroupedSidebarEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e GroupedSidebarEl) Gap(length Length) GroupedSidebarEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e GroupedSidebarEl) Gap(length Length) GroupedSidebarEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e GroupedSidebarEl) GapX(length Length) GroupedSidebarEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e GroupedSidebarEl) GapY(length Length) GroupedSidebarEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e GroupedSidebarEl) GridCols(cols uint16) GroupedSidebarEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e GroupedSidebarEl) GridColsMaxContent(cols uint16) GroupedSidebarEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e GroupedSidebarEl) GridColsMinContent(cols uint16) GroupedSidebarEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e GroupedSidebarEl) GridRows(rows uint16) GroupedSidebarEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e GroupedSidebarEl) GridRowsMaxContent(rows uint16) GroupedSidebarEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e GroupedSidebarEl) GridRowsMinContent(rows uint16) GroupedSidebarEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e GroupedSidebarEl) H(length Length) GroupedSidebarEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e GroupedSidebarEl) H(length Length) GroupedSidebarEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e GroupedSidebarEl) Inset(length Length) GroupedSidebarEl { tStyledInset(e.n, length); return e }
-func (e GroupedSidebarEl) Left(length Length) GroupedSidebarEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e GroupedSidebarEl) Left(length Length) GroupedSidebarEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e GroupedSidebarEl) LineClamp(lines int) GroupedSidebarEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e GroupedSidebarEl) LineHeight(lineHeight Length) GroupedSidebarEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e GroupedSidebarEl) M(length Length) GroupedSidebarEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e GroupedSidebarEl) M(length Length) GroupedSidebarEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e GroupedSidebarEl) MaxH(length Length) GroupedSidebarEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e GroupedSidebarEl) MaxSize(length Length) GroupedSidebarEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e GroupedSidebarEl) MaxW(length Length) GroupedSidebarEl { tStyledMaxW(e.n, length); return e }
-func (e GroupedSidebarEl) Mb(length Length) GroupedSidebarEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e GroupedSidebarEl) Mb(length Length) GroupedSidebarEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e GroupedSidebarEl) MinH(length Length) GroupedSidebarEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e GroupedSidebarEl) MinSize(length Length) GroupedSidebarEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e GroupedSidebarEl) MinW(length Length) GroupedSidebarEl { tStyledMinW(e.n, length); return e }
-func (e GroupedSidebarEl) Ml(length Length) GroupedSidebarEl   { tStyledMl(e.n, length); return e }
-func (e GroupedSidebarEl) Mr(length Length) GroupedSidebarEl   { tStyledMr(e.n, length); return e }
-func (e GroupedSidebarEl) Mt(length Length) GroupedSidebarEl   { tStyledMt(e.n, length); return e }
-func (e GroupedSidebarEl) Mx(length Length) GroupedSidebarEl   { tStyledMx(e.n, length); return e }
-func (e GroupedSidebarEl) My(length Length) GroupedSidebarEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e GroupedSidebarEl) Ml(length Length) GroupedSidebarEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e GroupedSidebarEl) Mr(length Length) GroupedSidebarEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e GroupedSidebarEl) Mt(length Length) GroupedSidebarEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e GroupedSidebarEl) Mx(length Length) GroupedSidebarEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e GroupedSidebarEl) My(length Length) GroupedSidebarEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e GroupedSidebarEl) Opacity(opacity float32) GroupedSidebarEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e GroupedSidebarEl) P(length Length) GroupedSidebarEl     { tStyledP(e.n, length); return e }
-func (e GroupedSidebarEl) Pb(length Length) GroupedSidebarEl    { tStyledPb(e.n, length); return e }
-func (e GroupedSidebarEl) Pl(length Length) GroupedSidebarEl    { tStyledPl(e.n, length); return e }
-func (e GroupedSidebarEl) Pr(length Length) GroupedSidebarEl    { tStyledPr(e.n, length); return e }
-func (e GroupedSidebarEl) Pt(length Length) GroupedSidebarEl    { tStyledPt(e.n, length); return e }
-func (e GroupedSidebarEl) Px(length Length) GroupedSidebarEl    { tStyledPx(e.n, length); return e }
-func (e GroupedSidebarEl) Py(length Length) GroupedSidebarEl    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e GroupedSidebarEl) P(length Length) GroupedSidebarEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e GroupedSidebarEl) Pb(length Length) GroupedSidebarEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e GroupedSidebarEl) Pl(length Length) GroupedSidebarEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e GroupedSidebarEl) Pr(length Length) GroupedSidebarEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e GroupedSidebarEl) Pt(length Length) GroupedSidebarEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e GroupedSidebarEl) Px(length Length) GroupedSidebarEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e GroupedSidebarEl) Py(length Length) GroupedSidebarEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e GroupedSidebarEl) Right(length Length) GroupedSidebarEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e GroupedSidebarEl) Rounded(length Length) GroupedSidebarEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e GroupedSidebarEl) RoundedB(length Length) GroupedSidebarEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e GroupedSidebarEl) RoundedBl(length Length) GroupedSidebarEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e GroupedSidebarEl) RoundedBr(length Length) GroupedSidebarEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e GroupedSidebarEl) RoundedL(length Length) GroupedSidebarEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e GroupedSidebarEl) RoundedR(length Length) GroupedSidebarEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e GroupedSidebarEl) RoundedT(length Length) GroupedSidebarEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e GroupedSidebarEl) RoundedTl(length Length) GroupedSidebarEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e GroupedSidebarEl) RoundedTr(length Length) GroupedSidebarEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e GroupedSidebarEl) RowEnd(end int16) GroupedSidebarEl    { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row end of this element.
+func (e GroupedSidebarEl) RowEnd(end int16) GroupedSidebarEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e GroupedSidebarEl) RowSpan(span uint16) GroupedSidebarEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e GroupedSidebarEl) RowStart(start int16) GroupedSidebarEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e GroupedSidebarEl) ScrollbarWidth(width Length) GroupedSidebarEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e GroupedSidebarEl) Shadow(shadows []BoxShadow) GroupedSidebarEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e GroupedSidebarEl) Size(length Length) GroupedSidebarEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e GroupedSidebarEl) TextAlign(align TextAlign) GroupedSidebarEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e GroupedSidebarEl) TextBg(bg Color) GroupedSidebarEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e GroupedSidebarEl) TextColor(color Color) GroupedSidebarEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e GroupedSidebarEl) TextDecorationColor(color Color) GroupedSidebarEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e GroupedSidebarEl) TextOverflow(overflow TextOverflow) GroupedSidebarEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e GroupedSidebarEl) TextSize(size Length) GroupedSidebarEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e GroupedSidebarEl) Top(length Length) GroupedSidebarEl { tStyledTop(e.n, length); return e }
-func (e GroupedSidebarEl) W(length Length) GroupedSidebarEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e GroupedSidebarEl) W(length Length) GroupedSidebarEl { tStyledW(e.n, length); return e }
 
 // SidebarEl is gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>.
 type SidebarEl struct{ n *node }
 
 func (e SidebarEl) node() *node { return e.n }
 
+// Create a new Sidebar with the given ID.
+//
 // Sidebar is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::new.
 func Sidebar(id ID, st ...Style) SidebarEl {
 	useComponentSidebar()
@@ -351,6 +610,8 @@ func Sidebar(id ID, st ...Style) SidebarEl {
 	return SidebarEl{n}
 }
 
+// Add a child element to the sidebar, the child must implement `Collapsible`
+//
 // Child is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::child.
 func (e SidebarEl) Child(child SidebarMenu) SidebarEl {
 	o := op(e.n, 256)
@@ -358,6 +619,8 @@ func (e SidebarEl) Child(child SidebarMenu) SidebarEl {
 	return e
 }
 
+// Add multiple children to the sidebar, the children must implement `Collapsible`
+//
 // Children is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::children.
 func (e SidebarEl) Children(children []SidebarMenu) SidebarEl {
 	o := op(e.n, 257)
@@ -368,6 +631,8 @@ func (e SidebarEl) Children(children []SidebarMenu) SidebarEl {
 	return e
 }
 
+// Set the sidebar to be collapsed
+//
 // Collapsed is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::collapsed.
 func (e SidebarEl) Collapsed(collapsed bool) SidebarEl {
 	o := op(e.n, 258)
@@ -375,6 +640,10 @@ func (e SidebarEl) Collapsed(collapsed bool) SidebarEl {
 	return e
 }
 
+// Set how the sidebar collapses.
+//
+// Passing `true` keeps the previous behavior and maps to `Icon`. Passing `false` maps to `None`.
+//
 // Collapsible is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::collapsible.
 func (e SidebarEl) Collapsible(collapsible SidebarCollapsibleInto) SidebarEl {
 	o := op(e.n, 259)
@@ -382,6 +651,8 @@ func (e SidebarEl) Collapsible(collapsible SidebarCollapsibleInto) SidebarEl {
 	return e
 }
 
+// Set the footer of the sidebar.
+//
 // Footer is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::footer.
 func (e SidebarEl) Footer(footer Element) SidebarEl {
 	o := op(e.n, 260)
@@ -389,6 +660,8 @@ func (e SidebarEl) Footer(footer Element) SidebarEl {
 	return e
 }
 
+// Set the header of the sidebar.
+//
 // Header is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::header.
 func (e SidebarEl) Header(header Element) SidebarEl {
 	o := op(e.n, 261)
@@ -396,6 +669,10 @@ func (e SidebarEl) Header(header Element) SidebarEl {
 	return e
 }
 
+// Set the side of the sidebar.
+//
+// Default is `Side::Left`.
+//
 // Side is <gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>>::side.
 func (e SidebarEl) Side(side Side) SidebarEl {
 	o := op(e.n, 262)
@@ -403,7 +680,19 @@ func (e SidebarEl) Side(side Side) SidebarEl {
 	return e
 }
 
-func (e SidebarEl) PopoverStyle() SidebarEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e SidebarEl) PopoverStyle() SidebarEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SidebarEl) RoundedFullStyle() SidebarEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e SidebarEl) CornerRadii(radius Corners) SidebarEl {
@@ -415,19 +704,32 @@ func (e SidebarEl) DebugFocused(focusHandle FocusHandle) SidebarEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e SidebarEl) DebugGreen() SidebarEl               { tStyledExtDebugGreen(e.n); return e }
-func (e SidebarEl) DebugPink() SidebarEl                { tStyledExtDebugPink(e.n); return e }
-func (e SidebarEl) DebugRed() SidebarEl                 { tStyledExtDebugRed(e.n); return e }
-func (e SidebarEl) DebugYellow() SidebarEl              { tStyledExtDebugYellow(e.n); return e }
-func (e SidebarEl) FontBlack() SidebarEl                { tStyledExtFontBlack(e.n); return e }
-func (e SidebarEl) FontBold() SidebarEl                 { tStyledExtFontBold(e.n); return e }
-func (e SidebarEl) FontExtrabold() SidebarEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e SidebarEl) FontExtralight() SidebarEl           { tStyledExtFontExtralight(e.n); return e }
-func (e SidebarEl) FontLight() SidebarEl                { tStyledExtFontLight(e.n); return e }
-func (e SidebarEl) FontMedium() SidebarEl               { tStyledExtFontMedium(e.n); return e }
-func (e SidebarEl) FontNormal() SidebarEl               { tStyledExtFontNormal(e.n); return e }
-func (e SidebarEl) FontSemibold() SidebarEl             { tStyledExtFontSemibold(e.n); return e }
-func (e SidebarEl) FontThin() SidebarEl                 { tStyledExtFontThin(e.n); return e }
+func (e SidebarEl) DebugGreen() SidebarEl     { tStyledExtDebugGreen(e.n); return e }
+func (e SidebarEl) DebugPink() SidebarEl      { tStyledExtDebugPink(e.n); return e }
+func (e SidebarEl) DebugRed() SidebarEl       { tStyledExtDebugRed(e.n); return e }
+func (e SidebarEl) DebugYellow() SidebarEl    { tStyledExtDebugYellow(e.n); return e }
+func (e SidebarEl) FontBlack() SidebarEl      { tStyledExtFontBlack(e.n); return e }
+func (e SidebarEl) FontBold() SidebarEl       { tStyledExtFontBold(e.n); return e }
+func (e SidebarEl) FontExtrabold() SidebarEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e SidebarEl) FontExtralight() SidebarEl { tStyledExtFontExtralight(e.n); return e }
+func (e SidebarEl) FontLight() SidebarEl      { tStyledExtFontLight(e.n); return e }
+func (e SidebarEl) FontMedium() SidebarEl     { tStyledExtFontMedium(e.n); return e }
+func (e SidebarEl) FontNormal() SidebarEl     { tStyledExtFontNormal(e.n); return e }
+func (e SidebarEl) FontSemibold() SidebarEl   { tStyledExtFontSemibold(e.n); return e }
+func (e SidebarEl) FontThin() SidebarEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e SidebarEl) HFlex() SidebarEl                    { tStyledExtHFlex(e.n); return e }
 func (e SidebarEl) Margins(margins EdgesInto) SidebarEl { tStyledExtMargins(e.n, margins); return e }
 func (e SidebarEl) Paddings(paddings EdgesInto) SidebarEl {
@@ -438,130 +740,344 @@ func (e SidebarEl) RefineStyle(style StyleRefinement) SidebarEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SidebarEl) VFlex() SidebarEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SidebarEl) Style(st ...Style) SidebarEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SidebarEl) AspectRatio(ratio float32) SidebarEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e SidebarEl) Bg(fill Fill) SidebarEl              { tStyledBg(e.n, fill); return e }
-func (e SidebarEl) Border(length Length) SidebarEl      { tStyledBorder(e.n, length); return e }
-func (e SidebarEl) BorderB(length Length) SidebarEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e SidebarEl) Bg(fill Fill) SidebarEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e SidebarEl) Border(length Length) SidebarEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SidebarEl) BorderB(length Length) SidebarEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e SidebarEl) BorderColor(borderColor Color) SidebarEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e SidebarEl) BorderL(length Length) SidebarEl     { tStyledBorderL(e.n, length); return e }
-func (e SidebarEl) BorderR(length Length) SidebarEl     { tStyledBorderR(e.n, length); return e }
-func (e SidebarEl) BorderT(length Length) SidebarEl     { tStyledBorderT(e.n, length); return e }
-func (e SidebarEl) BorderX(length Length) SidebarEl     { tStyledBorderX(e.n, length); return e }
-func (e SidebarEl) BorderY(length Length) SidebarEl     { tStyledBorderY(e.n, length); return e }
-func (e SidebarEl) Bottom(length Length) SidebarEl      { tStyledBottom(e.n, length); return e }
-func (e SidebarEl) ColEnd(end int16) SidebarEl          { tStyledColEnd(e.n, end); return e }
-func (e SidebarEl) ColSpan(span uint16) SidebarEl       { tStyledColSpan(e.n, span); return e }
-func (e SidebarEl) ColStart(start int16) SidebarEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SidebarEl) BorderL(length Length) SidebarEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SidebarEl) BorderR(length Length) SidebarEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SidebarEl) BorderT(length Length) SidebarEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SidebarEl) BorderX(length Length) SidebarEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SidebarEl) BorderY(length Length) SidebarEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarEl) Bottom(length Length) SidebarEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e SidebarEl) ColEnd(end int16) SidebarEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e SidebarEl) ColSpan(span uint16) SidebarEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e SidebarEl) ColStart(start int16) SidebarEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e SidebarEl) Cursor(cursor CursorStyle) SidebarEl { tStyledCursor(e.n, cursor); return e }
-func (e SidebarEl) FlexBasis(basis Length) SidebarEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e SidebarEl) FlexGrow(grow float32) SidebarEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e SidebarEl) FlexBasis(basis Length) SidebarEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e SidebarEl) FlexGrow(grow float32) SidebarEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SidebarEl) FlexShrink(shrink float32) SidebarEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e SidebarEl) FontFamily(familyName string) SidebarEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SidebarEl) FontFeatures(features FontFeatures) SidebarEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SidebarEl) FontWeight(weight FontWeight) SidebarEl { tStyledFontWeight(e.n, weight); return e }
-func (e SidebarEl) Gap(length Length) SidebarEl            { tStyledGap(e.n, length); return e }
-func (e SidebarEl) GapX(length Length) SidebarEl           { tStyledGapX(e.n, length); return e }
-func (e SidebarEl) GapY(length Length) SidebarEl           { tStyledGapY(e.n, length); return e }
-func (e SidebarEl) GridCols(cols uint16) SidebarEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SidebarEl) Gap(length Length) SidebarEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarEl) GapX(length Length) SidebarEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarEl) GapY(length Length) SidebarEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e SidebarEl) GridCols(cols uint16) SidebarEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SidebarEl) GridColsMaxContent(cols uint16) SidebarEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SidebarEl) GridColsMinContent(cols uint16) SidebarEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SidebarEl) GridRows(rows uint16) SidebarEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SidebarEl) GridRowsMaxContent(rows uint16) SidebarEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SidebarEl) GridRowsMinContent(rows uint16) SidebarEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SidebarEl) H(length Length) SidebarEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SidebarEl) H(length Length) SidebarEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarEl) Inset(length Length) SidebarEl { tStyledInset(e.n, length); return e }
-func (e SidebarEl) Left(length Length) SidebarEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarEl) Left(length Length) SidebarEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SidebarEl) LineClamp(lines int) SidebarEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e SidebarEl) LineHeight(lineHeight Length) SidebarEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SidebarEl) M(length Length) SidebarEl         { tStyledM(e.n, length); return e }
-func (e SidebarEl) MaxH(length Length) SidebarEl      { tStyledMaxH(e.n, length); return e }
-func (e SidebarEl) MaxSize(length Length) SidebarEl   { tStyledMaxSize(e.n, length); return e }
-func (e SidebarEl) MaxW(length Length) SidebarEl      { tStyledMaxW(e.n, length); return e }
-func (e SidebarEl) Mb(length Length) SidebarEl        { tStyledMb(e.n, length); return e }
-func (e SidebarEl) MinH(length Length) SidebarEl      { tStyledMinH(e.n, length); return e }
-func (e SidebarEl) MinSize(length Length) SidebarEl   { tStyledMinSize(e.n, length); return e }
-func (e SidebarEl) MinW(length Length) SidebarEl      { tStyledMinW(e.n, length); return e }
-func (e SidebarEl) Ml(length Length) SidebarEl        { tStyledMl(e.n, length); return e }
-func (e SidebarEl) Mr(length Length) SidebarEl        { tStyledMr(e.n, length); return e }
-func (e SidebarEl) Mt(length Length) SidebarEl        { tStyledMt(e.n, length); return e }
-func (e SidebarEl) Mx(length Length) SidebarEl        { tStyledMx(e.n, length); return e }
-func (e SidebarEl) My(length Length) SidebarEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SidebarEl) M(length Length) SidebarEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e SidebarEl) MaxH(length Length) SidebarEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e SidebarEl) MaxSize(length Length) SidebarEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e SidebarEl) MaxW(length Length) SidebarEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarEl) Mb(length Length) SidebarEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e SidebarEl) MinH(length Length) SidebarEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e SidebarEl) MinSize(length Length) SidebarEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e SidebarEl) MinW(length Length) SidebarEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarEl) Ml(length Length) SidebarEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarEl) Mr(length Length) SidebarEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarEl) Mt(length Length) SidebarEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SidebarEl) Mx(length Length) SidebarEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SidebarEl) My(length Length) SidebarEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e SidebarEl) Opacity(opacity float32) SidebarEl { tStyledOpacity(e.n, opacity); return e }
-func (e SidebarEl) P(length Length) SidebarEl         { tStyledP(e.n, length); return e }
-func (e SidebarEl) Pb(length Length) SidebarEl        { tStyledPb(e.n, length); return e }
-func (e SidebarEl) Pl(length Length) SidebarEl        { tStyledPl(e.n, length); return e }
-func (e SidebarEl) Pr(length Length) SidebarEl        { tStyledPr(e.n, length); return e }
-func (e SidebarEl) Pt(length Length) SidebarEl        { tStyledPt(e.n, length); return e }
-func (e SidebarEl) Px(length Length) SidebarEl        { tStyledPx(e.n, length); return e }
-func (e SidebarEl) Py(length Length) SidebarEl        { tStyledPy(e.n, length); return e }
-func (e SidebarEl) Right(length Length) SidebarEl     { tStyledRight(e.n, length); return e }
-func (e SidebarEl) Rounded(length Length) SidebarEl   { tStyledRounded(e.n, length); return e }
-func (e SidebarEl) RoundedB(length Length) SidebarEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SidebarEl) P(length Length) SidebarEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarEl) Pb(length Length) SidebarEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarEl) Pl(length Length) SidebarEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarEl) Pr(length Length) SidebarEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarEl) Pt(length Length) SidebarEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SidebarEl) Px(length Length) SidebarEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SidebarEl) Py(length Length) SidebarEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarEl) Right(length Length) SidebarEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e SidebarEl) Rounded(length Length) SidebarEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SidebarEl) RoundedB(length Length) SidebarEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarEl) RoundedBl(length Length) SidebarEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarEl) RoundedBr(length Length) SidebarEl { tStyledRoundedBr(e.n, length); return e }
-func (e SidebarEl) RoundedL(length Length) SidebarEl  { tStyledRoundedL(e.n, length); return e }
-func (e SidebarEl) RoundedR(length Length) SidebarEl  { tStyledRoundedR(e.n, length); return e }
-func (e SidebarEl) RoundedT(length Length) SidebarEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SidebarEl) RoundedL(length Length) SidebarEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SidebarEl) RoundedR(length Length) SidebarEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SidebarEl) RoundedT(length Length) SidebarEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarEl) RoundedTl(length Length) SidebarEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarEl) RoundedTr(length Length) SidebarEl { tStyledRoundedTr(e.n, length); return e }
-func (e SidebarEl) RowEnd(end int16) SidebarEl        { tStyledRowEnd(e.n, end); return e }
-func (e SidebarEl) RowSpan(span uint16) SidebarEl     { tStyledRowSpan(e.n, span); return e }
-func (e SidebarEl) RowStart(start int16) SidebarEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e SidebarEl) RowEnd(end int16) SidebarEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e SidebarEl) RowSpan(span uint16) SidebarEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e SidebarEl) RowStart(start int16) SidebarEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SidebarEl) ScrollbarWidth(width Length) SidebarEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SidebarEl) Shadow(shadows []BoxShadow) SidebarEl { tStyledShadow(e.n, shadows); return e }
-func (e SidebarEl) Size(length Length) SidebarEl         { tStyledSize(e.n, length); return e }
-func (e SidebarEl) TextAlign(align TextAlign) SidebarEl  { tStyledTextAlign(e.n, align); return e }
-func (e SidebarEl) TextBg(bg Color) SidebarEl            { tStyledTextBg(e.n, bg); return e }
-func (e SidebarEl) TextColor(color Color) SidebarEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e SidebarEl) Size(length Length) SidebarEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e SidebarEl) TextAlign(align TextAlign) SidebarEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e SidebarEl) TextBg(bg Color) SidebarEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e SidebarEl) TextColor(color Color) SidebarEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e SidebarEl) TextDecorationColor(color Color) SidebarEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SidebarEl) TextOverflow(overflow TextOverflow) SidebarEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SidebarEl) TextSize(size Length) SidebarEl { tStyledTextSize(e.n, size); return e }
-func (e SidebarEl) Top(length Length) SidebarEl    { tStyledTop(e.n, length); return e }
-func (e SidebarEl) W(length Length) SidebarEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarEl) Top(length Length) SidebarEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SidebarEl) W(length Length) SidebarEl { tStyledW(e.n, length); return e }
 
 // SidebarFooterEl is gpui_kit::component::sidebar::SidebarFooter.
 type SidebarFooterEl struct{ n *node }
 
 func (e SidebarFooterEl) node() *node { return e.n }
 
+// Create a new `SidebarFooterEl`.
+//
 // SidebarFooter is <gpui_kit::component::sidebar::SidebarFooter>::new.
 func SidebarFooter(st ...Style) SidebarFooterEl {
 	useComponentSidebar()
@@ -570,17 +1086,43 @@ func SidebarFooter(st ...Style) SidebarFooterEl {
 	return SidebarFooterEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e SidebarFooterEl) PopoverStyle() SidebarFooterEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SidebarFooterEl) RoundedFullStyle() SidebarFooterEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e SidebarFooterEl) FocusRingStyle() SidebarFooterEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e SidebarFooterEl) OnPrepaint(callback func(cx *Cx, e Bounds)) SidebarFooterEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -608,7 +1150,20 @@ func (e SidebarFooterEl) FontMedium() SidebarFooterEl     { tStyledExtFontMedium
 func (e SidebarFooterEl) FontNormal() SidebarFooterEl     { tStyledExtFontNormal(e.n); return e }
 func (e SidebarFooterEl) FontSemibold() SidebarFooterEl   { tStyledExtFontSemibold(e.n); return e }
 func (e SidebarFooterEl) FontThin() SidebarFooterEl       { tStyledExtFontThin(e.n); return e }
-func (e SidebarFooterEl) HFlex() SidebarFooterEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e SidebarFooterEl) HFlex() SidebarFooterEl { tStyledExtHFlex(e.n); return e }
 func (e SidebarFooterEl) Margins(margins EdgesInto) SidebarFooterEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -621,8 +1176,17 @@ func (e SidebarFooterEl) RefineStyle(style StyleRefinement) SidebarFooterEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SidebarFooterEl) VFlex() SidebarFooterEl { tStyledExtVFlex(e.n); return e }
 
+// Sets the open state a popover, menu or dropdown holds on its trigger while it is open.
+//
+// Defaults to `selected`, so a trigger only overrides this when its selected state means something
+// other than "my popup is open".
 func (e SidebarFooterEl) Open(open bool) SidebarFooterEl { tSelectableOpen(e.n, open); return e }
 func (e SidebarFooterEl) SecondarySelected(arg0 bool) SidebarFooterEl {
 	tSelectableSecondarySelected(e.n, arg0)
@@ -643,10 +1207,13 @@ func (e SidebarFooterEl) Text(s string) SidebarFooterEl { putText(e.n, s); retur
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e SidebarFooterEl) ChildView(v View) SidebarFooterEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e SidebarFooterEl) Child(child Element) SidebarFooterEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e SidebarFooterEl) Children(children ...Element) SidebarFooterEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -655,356 +1222,749 @@ func (e SidebarFooterEl) Children(children ...Element) SidebarFooterEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SidebarFooterEl) Style(st ...Style) SidebarFooterEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SidebarFooterEl) AspectRatio(ratio float32) SidebarFooterEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e SidebarFooterEl) Bg(fill Fill) SidebarFooterEl         { tStyledBg(e.n, fill); return e }
+
+// Sets the background color of the element.
+func (e SidebarFooterEl) Bg(fill Fill) SidebarFooterEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e SidebarFooterEl) Border(length Length) SidebarFooterEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarFooterEl) BorderB(length Length) SidebarFooterEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e SidebarFooterEl) BorderColor(borderColor Color) SidebarFooterEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarFooterEl) BorderL(length Length) SidebarFooterEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarFooterEl) BorderR(length Length) SidebarFooterEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarFooterEl) BorderT(length Length) SidebarFooterEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SidebarFooterEl) BorderX(length Length) SidebarFooterEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SidebarFooterEl) BorderY(length Length) SidebarFooterEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarFooterEl) Bottom(length Length) SidebarFooterEl { tStyledBottom(e.n, length); return e }
-func (e SidebarFooterEl) ColEnd(end int16) SidebarFooterEl     { tStyledColEnd(e.n, end); return e }
-func (e SidebarFooterEl) ColSpan(span uint16) SidebarFooterEl  { tStyledColSpan(e.n, span); return e }
+
+// Sets the column end of this element.
+func (e SidebarFooterEl) ColEnd(end int16) SidebarFooterEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e SidebarFooterEl) ColSpan(span uint16) SidebarFooterEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e SidebarFooterEl) ColStart(start int16) SidebarFooterEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e SidebarFooterEl) Cursor(cursor CursorStyle) SidebarFooterEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e SidebarFooterEl) FlexBasis(basis Length) SidebarFooterEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e SidebarFooterEl) FlexGrow(grow float32) SidebarFooterEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SidebarFooterEl) FlexShrink(shrink float32) SidebarFooterEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e SidebarFooterEl) FontFamily(familyName string) SidebarFooterEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SidebarFooterEl) FontFeatures(features FontFeatures) SidebarFooterEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SidebarFooterEl) FontWeight(weight FontWeight) SidebarFooterEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e SidebarFooterEl) Gap(length Length) SidebarFooterEl    { tStyledGap(e.n, length); return e }
-func (e SidebarFooterEl) GapX(length Length) SidebarFooterEl   { tStyledGapX(e.n, length); return e }
-func (e SidebarFooterEl) GapY(length Length) SidebarFooterEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SidebarFooterEl) Gap(length Length) SidebarFooterEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarFooterEl) GapX(length Length) SidebarFooterEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarFooterEl) GapY(length Length) SidebarFooterEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e SidebarFooterEl) GridCols(cols uint16) SidebarFooterEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SidebarFooterEl) GridColsMaxContent(cols uint16) SidebarFooterEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SidebarFooterEl) GridColsMinContent(cols uint16) SidebarFooterEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SidebarFooterEl) GridRows(rows uint16) SidebarFooterEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SidebarFooterEl) GridRowsMaxContent(rows uint16) SidebarFooterEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SidebarFooterEl) GridRowsMinContent(rows uint16) SidebarFooterEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SidebarFooterEl) H(length Length) SidebarFooterEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SidebarFooterEl) H(length Length) SidebarFooterEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarFooterEl) Inset(length Length) SidebarFooterEl { tStyledInset(e.n, length); return e }
-func (e SidebarFooterEl) Left(length Length) SidebarFooterEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarFooterEl) Left(length Length) SidebarFooterEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SidebarFooterEl) LineClamp(lines int) SidebarFooterEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e SidebarFooterEl) LineHeight(lineHeight Length) SidebarFooterEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SidebarFooterEl) M(length Length) SidebarFooterEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SidebarFooterEl) M(length Length) SidebarFooterEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e SidebarFooterEl) MaxH(length Length) SidebarFooterEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e SidebarFooterEl) MaxSize(length Length) SidebarFooterEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e SidebarFooterEl) MaxW(length Length) SidebarFooterEl { tStyledMaxW(e.n, length); return e }
-func (e SidebarFooterEl) Mb(length Length) SidebarFooterEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarFooterEl) Mb(length Length) SidebarFooterEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e SidebarFooterEl) MinH(length Length) SidebarFooterEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e SidebarFooterEl) MinSize(length Length) SidebarFooterEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e SidebarFooterEl) MinW(length Length) SidebarFooterEl { tStyledMinW(e.n, length); return e }
-func (e SidebarFooterEl) Ml(length Length) SidebarFooterEl   { tStyledMl(e.n, length); return e }
-func (e SidebarFooterEl) Mr(length Length) SidebarFooterEl   { tStyledMr(e.n, length); return e }
-func (e SidebarFooterEl) Mt(length Length) SidebarFooterEl   { tStyledMt(e.n, length); return e }
-func (e SidebarFooterEl) Mx(length Length) SidebarFooterEl   { tStyledMx(e.n, length); return e }
-func (e SidebarFooterEl) My(length Length) SidebarFooterEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarFooterEl) Ml(length Length) SidebarFooterEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarFooterEl) Mr(length Length) SidebarFooterEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarFooterEl) Mt(length Length) SidebarFooterEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SidebarFooterEl) Mx(length Length) SidebarFooterEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SidebarFooterEl) My(length Length) SidebarFooterEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e SidebarFooterEl) Opacity(opacity float32) SidebarFooterEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e SidebarFooterEl) P(length Length) SidebarFooterEl     { tStyledP(e.n, length); return e }
-func (e SidebarFooterEl) Pb(length Length) SidebarFooterEl    { tStyledPb(e.n, length); return e }
-func (e SidebarFooterEl) Pl(length Length) SidebarFooterEl    { tStyledPl(e.n, length); return e }
-func (e SidebarFooterEl) Pr(length Length) SidebarFooterEl    { tStyledPr(e.n, length); return e }
-func (e SidebarFooterEl) Pt(length Length) SidebarFooterEl    { tStyledPt(e.n, length); return e }
-func (e SidebarFooterEl) Px(length Length) SidebarFooterEl    { tStyledPx(e.n, length); return e }
-func (e SidebarFooterEl) Py(length Length) SidebarFooterEl    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SidebarFooterEl) P(length Length) SidebarFooterEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarFooterEl) Pb(length Length) SidebarFooterEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarFooterEl) Pl(length Length) SidebarFooterEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarFooterEl) Pr(length Length) SidebarFooterEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarFooterEl) Pt(length Length) SidebarFooterEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SidebarFooterEl) Px(length Length) SidebarFooterEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SidebarFooterEl) Py(length Length) SidebarFooterEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarFooterEl) Right(length Length) SidebarFooterEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e SidebarFooterEl) Rounded(length Length) SidebarFooterEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarFooterEl) RoundedB(length Length) SidebarFooterEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarFooterEl) RoundedBl(length Length) SidebarFooterEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarFooterEl) RoundedBr(length Length) SidebarFooterEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarFooterEl) RoundedL(length Length) SidebarFooterEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarFooterEl) RoundedR(length Length) SidebarFooterEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarFooterEl) RoundedT(length Length) SidebarFooterEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarFooterEl) RoundedTl(length Length) SidebarFooterEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarFooterEl) RoundedTr(length Length) SidebarFooterEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e SidebarFooterEl) RowEnd(end int16) SidebarFooterEl     { tStyledRowEnd(e.n, end); return e }
-func (e SidebarFooterEl) RowSpan(span uint16) SidebarFooterEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e SidebarFooterEl) RowEnd(end int16) SidebarFooterEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e SidebarFooterEl) RowSpan(span uint16) SidebarFooterEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e SidebarFooterEl) RowStart(start int16) SidebarFooterEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SidebarFooterEl) ScrollbarWidth(width Length) SidebarFooterEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SidebarFooterEl) Shadow(shadows []BoxShadow) SidebarFooterEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e SidebarFooterEl) Size(length Length) SidebarFooterEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e SidebarFooterEl) TextAlign(align TextAlign) SidebarFooterEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e SidebarFooterEl) TextBg(bg Color) SidebarFooterEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e SidebarFooterEl) TextColor(color Color) SidebarFooterEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e SidebarFooterEl) TextDecorationColor(color Color) SidebarFooterEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SidebarFooterEl) TextOverflow(overflow TextOverflow) SidebarFooterEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e SidebarFooterEl) TextSize(size Length) SidebarFooterEl { tStyledTextSize(e.n, size); return e }
-func (e SidebarFooterEl) Top(length Length) SidebarFooterEl    { tStyledTop(e.n, length); return e }
-func (e SidebarFooterEl) W(length Length) SidebarFooterEl      { tStyledW(e.n, length); return e }
 
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e SidebarFooterEl) TextSize(size Length) SidebarFooterEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarFooterEl) Top(length Length) SidebarFooterEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SidebarFooterEl) W(length Length) SidebarFooterEl { tStyledW(e.n, length); return e }
+
+// Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
+// equivalent to `block_mouse_except_scroll`.
+//
+// See `is_hovered` for details.
 func (e SidebarFooterEl) BlockMouseExceptScroll() SidebarFooterEl {
 	tInteractiveElementBlockMouseExceptScroll(e.n)
 	return e
 }
+
+// Use the given predicate to determine whether or not a drop event should be dispatched to this
+// element. The fluent API equivalent to `can_drop`.
 func (e SidebarFooterEl) CanDrop(predicate DropAccept) SidebarFooterEl {
 	tInteractiveElementCanDrop(e.n, predicate)
 	return e
 }
+
+// Capture the given action, before normal action dispatch can fire. The fluent API equivalent to
+// `capture_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) CaptureAction(listener ActionHandler) SidebarFooterEl {
 	tInteractiveElementCaptureAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureAnyMouseUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the capture phase. The fluent API equivalent
+// to `capture_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the capture phase. The fluent API equivalent to
+// `capture_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the capture phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the capture phase. The fluent API
+// equivalent to `capture_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) SidebarFooterEl {
 	tInteractiveElementCapturePinch(e.n, listener)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element
 func (e SidebarFooterEl) DragOver(f StyleRefinement) SidebarFooterEl {
 	tInteractiveElementDragOver(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element, specifically, is focused. Requires that
+// the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e SidebarFooterEl) Focus(f StyleRefinement) SidebarFooterEl {
 	tInteractiveElementFocus(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element is focused via keyboard navigation. This is
+// similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
+// the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
+// Elements can be made focusable using `TrackFocus`.
 func (e SidebarFooterEl) FocusVisible(f StyleRefinement) SidebarFooterEl {
 	tInteractiveElementFocusVisible(e.n, f)
 	return e
 }
+
+// Assign this element to a group of elements that can be styled together
 func (e SidebarFooterEl) Group(group string) SidebarFooterEl {
 	tInteractiveElementGroup(e.n, group)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element's group
 func (e SidebarFooterEl) GroupDragOver(groupName string, f StyleRefinement) SidebarFooterEl {
 	tInteractiveElementGroupDragOver(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over a group member
 func (e SidebarFooterEl) GroupHover(groupName string, f StyleRefinement) SidebarFooterEl {
 	tInteractiveElementGroupHover(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over it
 func (e SidebarFooterEl) Hover(f StyleRefinement) SidebarFooterEl {
 	tInteractiveElementHover(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element is inside another element that is focused.
+// Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e SidebarFooterEl) InFocus(f StyleRefinement) SidebarFooterEl {
 	tInteractiveElementInFocus(e.n, f)
 	return e
 }
+
+// Set the keymap context for this element. This will be used to determine which action to dispatch
+// from the keymap.
 func (e SidebarFooterEl) KeyContext(keyContext string) SidebarFooterEl {
 	tInteractiveElementKeyContext(e.n, keyContext)
 	return e
 }
+
+// Block the mouse from all interactions with elements behind this element's hitbox. Typically
+// `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
 func (e SidebarFooterEl) Occlude() SidebarFooterEl { tInteractiveElementOcclude(e.n); return e }
+
+// Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
+// to `on_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnAction(listener ActionHandler) SidebarFooterEl {
 	tInteractiveElementOnAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `on_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to back-navigation gestures that start over this element, such as the
+// iOS swipe from the leading screen edge. The innermost element with a back listener claims the
+// gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) SidebarFooterEl {
 	tInteractiveElementOnBackGesture(e.n, listener)
 	return e
 }
+
+// Bind the given callback to an action dispatch, based on a dynamic action parameter instead of a
+// type parameter. Useful for component libraries that want to expose action bindings to their
+// users. The fluent API equivalent to `on_boxed_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) SidebarFooterEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
 	return e
 }
+
+// Bind the given callback to drop events of the given type, whether or not the drag started on
+// this element. The fluent API equivalent to `on_drop`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnDrop(listener func(cx *Cx, e DragValue)) SidebarFooterEl {
 	tInteractiveElementOnDrop(e.n, listener)
 	return e
 }
+
+// Bind the given callback to `Exited` when a platform file drag leaves this element's window while
+// the element is hovered.
+//
+// This is a window-local exit event, not notification that the platform drag session ended. The
+// fluent API equivalent to `on_file_drop_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) SidebarFooterEl {
 	tInteractiveElementOnFileDropExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the bubble phase. The fluent API equivalent to
+// `on_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) SidebarFooterEl {
 	tInteractiveElementOnKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the bubble phase. The fluent API equivalent to
+// `on_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) SidebarFooterEl {
 	tInteractiveElementOnKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to modifiers changing events. The fluent API equivalent to
+// `on_modifiers_changed`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) SidebarFooterEl {
 	tInteractiveElementOnModifiersChanged(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for the given mouse button. The fluent API
+// equivalent to `on_mouse_down`.
+//
+// See `listener` to get access to the view state from this callback.
 func (e SidebarFooterEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseDown(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event, on any button, during the capture phase, when
+// the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_down_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseDownOut(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse exit event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse move event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_move`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseMove(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the bubble phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) SidebarFooterEl {
 	tInteractiveElementOnMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for the given button, during the bubble phase. The
+// fluent API equivalent to `on_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseUp(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event, for the given button, during the capture phase,
+// when the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_up_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseUpOut(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the bubble phase. The fluent API
+// equivalent to `on_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnPinch(listener func(cx *Cx, e PinchEvent)) SidebarFooterEl {
 	tInteractiveElementOnPinch(e.n, listener)
 	return e
 }
+
+// Bind the given callback to scroll events during the bubble phase. The fluent API equivalent to
+// `on_scroll`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) SidebarFooterEl {
 	tInteractiveElementOnScroll(e.n, listener)
 	return e
 }
+
+// Designate this div as a "tab group". Tab groups have their own location in the tab-index order,
+// but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
+// the order of tab stops within the group, without having to renumber all the tab stops in the
+// whole application.
 func (e SidebarFooterEl) TabGroup() SidebarFooterEl { tInteractiveElementTabGroup(e.n); return e }
+
+// Set index of the tab stop order, and set this node as a tab stop. This will default the element
+// to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
+// with `tab_group` in order to not interfere with the tab index of other elements.
 func (e SidebarFooterEl) TabIndex(index int) SidebarFooterEl {
 	tInteractiveElementTabIndex(e.n, index)
 	return e
 }
+
+// Set whether this element is a tab stop.
+//
+// When false, the element remains in tab-index order but cannot be reached via keyboard
+// navigation. Should only be used with `tab_index`.
 func (e SidebarFooterEl) TabStop(tabStop bool) SidebarFooterEl {
 	tInteractiveElementTabStop(e.n, tabStop)
 	return e
 }
+
+// Track the focus state of the given focus handle on this element. If the focus handle is focused
+// by the application, this element will apply its focused styles.
 func (e SidebarFooterEl) TrackFocus(focusHandle FocusHandle) SidebarFooterEl {
 	tInteractiveElementTrackFocus(e.n, focusHandle)
 	return e
 }
+
+// Set the bounds of this element as a window control area for the platform window. The fluent API
+// equivalent to `window_control_area`.
 func (e SidebarFooterEl) WindowControlArea(area WindowControlArea) SidebarFooterEl {
 	tInteractiveElementWindowControlArea(e.n, area)
 	return e
@@ -1015,6 +1975,8 @@ type SidebarGroup struct{ n *node }
 
 func (e SidebarGroup) valueNode() *node { return e.n }
 
+// Create a new `SidebarGroup` with the given label.
+//
 // NewSidebarGroup is <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::new.
 func NewSidebarGroup(label string) SidebarGroup {
 	n := newValue(874)
@@ -1023,6 +1985,8 @@ func NewSidebarGroup(label string) SidebarGroup {
 	return SidebarGroup{n}
 }
 
+// Add a child to the sidebar group, the child should implement `SidebarItem`.
+//
 // Child is <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::child.
 func (e SidebarGroup) Child(child SidebarMenu) SidebarGroup {
 	o := op(e.n, 256)
@@ -1030,6 +1994,10 @@ func (e SidebarGroup) Child(child SidebarMenu) SidebarGroup {
 	return e
 }
 
+// Add multiple children to the sidebar group.
+//
+// See also `Child`.
+//
 // Children is <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::children.
 func (e SidebarGroup) Children(children []SidebarMenu) SidebarGroup {
 	o := op(e.n, 257)
@@ -1050,6 +2018,8 @@ type SidebarHeaderEl struct{ n *node }
 
 func (e SidebarHeaderEl) node() *node { return e.n }
 
+// Create a new `SidebarHeaderEl`.
+//
 // SidebarHeader is <gpui_kit::component::sidebar::SidebarHeader>::new.
 func SidebarHeader(st ...Style) SidebarHeaderEl {
 	useComponentSidebar()
@@ -1066,17 +2036,43 @@ func SidebarHeaderDefault(st ...Style) SidebarHeaderEl {
 	return SidebarHeaderEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e SidebarHeaderEl) PopoverStyle() SidebarHeaderEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SidebarHeaderEl) RoundedFullStyle() SidebarHeaderEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e SidebarHeaderEl) FocusRingStyle() SidebarHeaderEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e SidebarHeaderEl) OnPrepaint(callback func(cx *Cx, e Bounds)) SidebarHeaderEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1104,7 +2100,20 @@ func (e SidebarHeaderEl) FontMedium() SidebarHeaderEl     { tStyledExtFontMedium
 func (e SidebarHeaderEl) FontNormal() SidebarHeaderEl     { tStyledExtFontNormal(e.n); return e }
 func (e SidebarHeaderEl) FontSemibold() SidebarHeaderEl   { tStyledExtFontSemibold(e.n); return e }
 func (e SidebarHeaderEl) FontThin() SidebarHeaderEl       { tStyledExtFontThin(e.n); return e }
-func (e SidebarHeaderEl) HFlex() SidebarHeaderEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e SidebarHeaderEl) HFlex() SidebarHeaderEl { tStyledExtHFlex(e.n); return e }
 func (e SidebarHeaderEl) Margins(margins EdgesInto) SidebarHeaderEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1117,8 +2126,17 @@ func (e SidebarHeaderEl) RefineStyle(style StyleRefinement) SidebarHeaderEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SidebarHeaderEl) VFlex() SidebarHeaderEl { tStyledExtVFlex(e.n); return e }
 
+// Sets the open state a popover, menu or dropdown holds on its trigger while it is open.
+//
+// Defaults to `selected`, so a trigger only overrides this when its selected state means something
+// other than "my popup is open".
 func (e SidebarHeaderEl) Open(open bool) SidebarHeaderEl { tSelectableOpen(e.n, open); return e }
 func (e SidebarHeaderEl) SecondarySelected(arg0 bool) SidebarHeaderEl {
 	tSelectableSecondarySelected(e.n, arg0)
@@ -1139,10 +2157,13 @@ func (e SidebarHeaderEl) Text(s string) SidebarHeaderEl { putText(e.n, s); retur
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e SidebarHeaderEl) ChildView(v View) SidebarHeaderEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e SidebarHeaderEl) Child(child Element) SidebarHeaderEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e SidebarHeaderEl) Children(children ...Element) SidebarHeaderEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1151,356 +2172,749 @@ func (e SidebarHeaderEl) Children(children ...Element) SidebarHeaderEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SidebarHeaderEl) Style(st ...Style) SidebarHeaderEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SidebarHeaderEl) AspectRatio(ratio float32) SidebarHeaderEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e SidebarHeaderEl) Bg(fill Fill) SidebarHeaderEl         { tStyledBg(e.n, fill); return e }
+
+// Sets the background color of the element.
+func (e SidebarHeaderEl) Bg(fill Fill) SidebarHeaderEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e SidebarHeaderEl) Border(length Length) SidebarHeaderEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarHeaderEl) BorderB(length Length) SidebarHeaderEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e SidebarHeaderEl) BorderColor(borderColor Color) SidebarHeaderEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarHeaderEl) BorderL(length Length) SidebarHeaderEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarHeaderEl) BorderR(length Length) SidebarHeaderEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarHeaderEl) BorderT(length Length) SidebarHeaderEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SidebarHeaderEl) BorderX(length Length) SidebarHeaderEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SidebarHeaderEl) BorderY(length Length) SidebarHeaderEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarHeaderEl) Bottom(length Length) SidebarHeaderEl { tStyledBottom(e.n, length); return e }
-func (e SidebarHeaderEl) ColEnd(end int16) SidebarHeaderEl     { tStyledColEnd(e.n, end); return e }
-func (e SidebarHeaderEl) ColSpan(span uint16) SidebarHeaderEl  { tStyledColSpan(e.n, span); return e }
+
+// Sets the column end of this element.
+func (e SidebarHeaderEl) ColEnd(end int16) SidebarHeaderEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e SidebarHeaderEl) ColSpan(span uint16) SidebarHeaderEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e SidebarHeaderEl) ColStart(start int16) SidebarHeaderEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e SidebarHeaderEl) Cursor(cursor CursorStyle) SidebarHeaderEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e SidebarHeaderEl) FlexBasis(basis Length) SidebarHeaderEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e SidebarHeaderEl) FlexGrow(grow float32) SidebarHeaderEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SidebarHeaderEl) FlexShrink(shrink float32) SidebarHeaderEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e SidebarHeaderEl) FontFamily(familyName string) SidebarHeaderEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SidebarHeaderEl) FontFeatures(features FontFeatures) SidebarHeaderEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SidebarHeaderEl) FontWeight(weight FontWeight) SidebarHeaderEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e SidebarHeaderEl) Gap(length Length) SidebarHeaderEl    { tStyledGap(e.n, length); return e }
-func (e SidebarHeaderEl) GapX(length Length) SidebarHeaderEl   { tStyledGapX(e.n, length); return e }
-func (e SidebarHeaderEl) GapY(length Length) SidebarHeaderEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SidebarHeaderEl) Gap(length Length) SidebarHeaderEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarHeaderEl) GapX(length Length) SidebarHeaderEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarHeaderEl) GapY(length Length) SidebarHeaderEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e SidebarHeaderEl) GridCols(cols uint16) SidebarHeaderEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SidebarHeaderEl) GridColsMaxContent(cols uint16) SidebarHeaderEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SidebarHeaderEl) GridColsMinContent(cols uint16) SidebarHeaderEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SidebarHeaderEl) GridRows(rows uint16) SidebarHeaderEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SidebarHeaderEl) GridRowsMaxContent(rows uint16) SidebarHeaderEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SidebarHeaderEl) GridRowsMinContent(rows uint16) SidebarHeaderEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SidebarHeaderEl) H(length Length) SidebarHeaderEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SidebarHeaderEl) H(length Length) SidebarHeaderEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarHeaderEl) Inset(length Length) SidebarHeaderEl { tStyledInset(e.n, length); return e }
-func (e SidebarHeaderEl) Left(length Length) SidebarHeaderEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarHeaderEl) Left(length Length) SidebarHeaderEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SidebarHeaderEl) LineClamp(lines int) SidebarHeaderEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e SidebarHeaderEl) LineHeight(lineHeight Length) SidebarHeaderEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SidebarHeaderEl) M(length Length) SidebarHeaderEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SidebarHeaderEl) M(length Length) SidebarHeaderEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e SidebarHeaderEl) MaxH(length Length) SidebarHeaderEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e SidebarHeaderEl) MaxSize(length Length) SidebarHeaderEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e SidebarHeaderEl) MaxW(length Length) SidebarHeaderEl { tStyledMaxW(e.n, length); return e }
-func (e SidebarHeaderEl) Mb(length Length) SidebarHeaderEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarHeaderEl) Mb(length Length) SidebarHeaderEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e SidebarHeaderEl) MinH(length Length) SidebarHeaderEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e SidebarHeaderEl) MinSize(length Length) SidebarHeaderEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e SidebarHeaderEl) MinW(length Length) SidebarHeaderEl { tStyledMinW(e.n, length); return e }
-func (e SidebarHeaderEl) Ml(length Length) SidebarHeaderEl   { tStyledMl(e.n, length); return e }
-func (e SidebarHeaderEl) Mr(length Length) SidebarHeaderEl   { tStyledMr(e.n, length); return e }
-func (e SidebarHeaderEl) Mt(length Length) SidebarHeaderEl   { tStyledMt(e.n, length); return e }
-func (e SidebarHeaderEl) Mx(length Length) SidebarHeaderEl   { tStyledMx(e.n, length); return e }
-func (e SidebarHeaderEl) My(length Length) SidebarHeaderEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarHeaderEl) Ml(length Length) SidebarHeaderEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarHeaderEl) Mr(length Length) SidebarHeaderEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarHeaderEl) Mt(length Length) SidebarHeaderEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SidebarHeaderEl) Mx(length Length) SidebarHeaderEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SidebarHeaderEl) My(length Length) SidebarHeaderEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e SidebarHeaderEl) Opacity(opacity float32) SidebarHeaderEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e SidebarHeaderEl) P(length Length) SidebarHeaderEl     { tStyledP(e.n, length); return e }
-func (e SidebarHeaderEl) Pb(length Length) SidebarHeaderEl    { tStyledPb(e.n, length); return e }
-func (e SidebarHeaderEl) Pl(length Length) SidebarHeaderEl    { tStyledPl(e.n, length); return e }
-func (e SidebarHeaderEl) Pr(length Length) SidebarHeaderEl    { tStyledPr(e.n, length); return e }
-func (e SidebarHeaderEl) Pt(length Length) SidebarHeaderEl    { tStyledPt(e.n, length); return e }
-func (e SidebarHeaderEl) Px(length Length) SidebarHeaderEl    { tStyledPx(e.n, length); return e }
-func (e SidebarHeaderEl) Py(length Length) SidebarHeaderEl    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SidebarHeaderEl) P(length Length) SidebarHeaderEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarHeaderEl) Pb(length Length) SidebarHeaderEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarHeaderEl) Pl(length Length) SidebarHeaderEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarHeaderEl) Pr(length Length) SidebarHeaderEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarHeaderEl) Pt(length Length) SidebarHeaderEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SidebarHeaderEl) Px(length Length) SidebarHeaderEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SidebarHeaderEl) Py(length Length) SidebarHeaderEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarHeaderEl) Right(length Length) SidebarHeaderEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e SidebarHeaderEl) Rounded(length Length) SidebarHeaderEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarHeaderEl) RoundedB(length Length) SidebarHeaderEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarHeaderEl) RoundedBl(length Length) SidebarHeaderEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarHeaderEl) RoundedBr(length Length) SidebarHeaderEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarHeaderEl) RoundedL(length Length) SidebarHeaderEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarHeaderEl) RoundedR(length Length) SidebarHeaderEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarHeaderEl) RoundedT(length Length) SidebarHeaderEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarHeaderEl) RoundedTl(length Length) SidebarHeaderEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarHeaderEl) RoundedTr(length Length) SidebarHeaderEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e SidebarHeaderEl) RowEnd(end int16) SidebarHeaderEl     { tStyledRowEnd(e.n, end); return e }
-func (e SidebarHeaderEl) RowSpan(span uint16) SidebarHeaderEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e SidebarHeaderEl) RowEnd(end int16) SidebarHeaderEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e SidebarHeaderEl) RowSpan(span uint16) SidebarHeaderEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e SidebarHeaderEl) RowStart(start int16) SidebarHeaderEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SidebarHeaderEl) ScrollbarWidth(width Length) SidebarHeaderEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SidebarHeaderEl) Shadow(shadows []BoxShadow) SidebarHeaderEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e SidebarHeaderEl) Size(length Length) SidebarHeaderEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e SidebarHeaderEl) TextAlign(align TextAlign) SidebarHeaderEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e SidebarHeaderEl) TextBg(bg Color) SidebarHeaderEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e SidebarHeaderEl) TextColor(color Color) SidebarHeaderEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e SidebarHeaderEl) TextDecorationColor(color Color) SidebarHeaderEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SidebarHeaderEl) TextOverflow(overflow TextOverflow) SidebarHeaderEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e SidebarHeaderEl) TextSize(size Length) SidebarHeaderEl { tStyledTextSize(e.n, size); return e }
-func (e SidebarHeaderEl) Top(length Length) SidebarHeaderEl    { tStyledTop(e.n, length); return e }
-func (e SidebarHeaderEl) W(length Length) SidebarHeaderEl      { tStyledW(e.n, length); return e }
 
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e SidebarHeaderEl) TextSize(size Length) SidebarHeaderEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarHeaderEl) Top(length Length) SidebarHeaderEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SidebarHeaderEl) W(length Length) SidebarHeaderEl { tStyledW(e.n, length); return e }
+
+// Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
+// equivalent to `block_mouse_except_scroll`.
+//
+// See `is_hovered` for details.
 func (e SidebarHeaderEl) BlockMouseExceptScroll() SidebarHeaderEl {
 	tInteractiveElementBlockMouseExceptScroll(e.n)
 	return e
 }
+
+// Use the given predicate to determine whether or not a drop event should be dispatched to this
+// element. The fluent API equivalent to `can_drop`.
 func (e SidebarHeaderEl) CanDrop(predicate DropAccept) SidebarHeaderEl {
 	tInteractiveElementCanDrop(e.n, predicate)
 	return e
 }
+
+// Capture the given action, before normal action dispatch can fire. The fluent API equivalent to
+// `capture_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) CaptureAction(listener ActionHandler) SidebarHeaderEl {
 	tInteractiveElementCaptureAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) CaptureAnyMouseDown(listener func(cx *Cx, e MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for any button, during the capture phase. The
+// fluent API equivalent to `capture_any_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) CaptureAnyMouseUp(listener func(cx *Cx, e MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureAnyMouseUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the capture phase. The fluent API equivalent
+// to `capture_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) CaptureKeyDown(listener func(cx *Cx, e KeyEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the capture phase. The fluent API equivalent to
+// `capture_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) CaptureKeyUp(listener func(cx *Cx, e KeyEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the capture phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) CaptureMousePressure(listener func(cx *Cx, e MousePressureEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the capture phase. The fluent API
+// equivalent to `capture_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) CapturePinch(listener func(cx *Cx, e PinchEvent)) SidebarHeaderEl {
 	tInteractiveElementCapturePinch(e.n, listener)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element
 func (e SidebarHeaderEl) DragOver(f StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementDragOver(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element, specifically, is focused. Requires that
+// the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e SidebarHeaderEl) Focus(f StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementFocus(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element is focused via keyboard navigation. This is
+// similar to CSS's `:focus-visible` pseudo-class - it only applies when the element is focused AND
+// the user is navigating via keyboard (not mouse clicks). Requires that the element is focusable.
+// Elements can be made focusable using `TrackFocus`.
 func (e SidebarHeaderEl) FocusVisible(f StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementFocusVisible(e.n, f)
 	return e
 }
+
+// Assign this element to a group of elements that can be styled together
 func (e SidebarHeaderEl) Group(group string) SidebarHeaderEl {
 	tInteractiveElementGroup(e.n, group)
 	return e
 }
+
+// Apply the given style when the given data type is dragged over this element's group
 func (e SidebarHeaderEl) GroupDragOver(groupName string, f StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementGroupDragOver(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over a group member
 func (e SidebarHeaderEl) GroupHover(groupName string, f StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementGroupHover(e.n, groupName, f)
 	return e
 }
+
+// Apply the given style to this element when the mouse hovers over it
 func (e SidebarHeaderEl) Hover(f StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementHover(e.n, f)
 	return e
 }
+
+// Set the given styles to be applied when this element is inside another element that is focused.
+// Requires that the element is focusable. Elements can be made focusable using `TrackFocus`.
 func (e SidebarHeaderEl) InFocus(f StyleRefinement) SidebarHeaderEl {
 	tInteractiveElementInFocus(e.n, f)
 	return e
 }
+
+// Set the keymap context for this element. This will be used to determine which action to dispatch
+// from the keymap.
 func (e SidebarHeaderEl) KeyContext(keyContext string) SidebarHeaderEl {
 	tInteractiveElementKeyContext(e.n, keyContext)
 	return e
 }
+
+// Block the mouse from all interactions with elements behind this element's hitbox. Typically
+// `block_mouse_except_scroll` should be preferred. The fluent API equivalent to `occlude_mouse`.
 func (e SidebarHeaderEl) Occlude() SidebarHeaderEl { tInteractiveElementOcclude(e.n); return e }
+
+// Bind the given callback to an action dispatch during the bubble phase. The fluent API equivalent
+// to `on_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnAction(listener ActionHandler) SidebarHeaderEl {
 	tInteractiveElementOnAction(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for any button, during the capture phase. The
+// fluent API equivalent to `on_any_mouse_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnAnyMouseDown(listener func(cx *Cx, e MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnAnyMouseDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to back-navigation gestures that start over this element, such as the
+// iOS swipe from the leading screen edge. The innermost element with a back listener claims the
+// gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) SidebarHeaderEl {
 	tInteractiveElementOnBackGesture(e.n, listener)
 	return e
 }
+
+// Bind the given callback to an action dispatch, based on a dynamic action parameter instead of a
+// type parameter. Useful for component libraries that want to expose action bindings to their
+// users. The fluent API equivalent to `on_boxed_action`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) SidebarHeaderEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
 	return e
 }
+
+// Bind the given callback to drop events of the given type, whether or not the drag started on
+// this element. The fluent API equivalent to `on_drop`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnDrop(listener func(cx *Cx, e DragValue)) SidebarHeaderEl {
 	tInteractiveElementOnDrop(e.n, listener)
 	return e
 }
+
+// Bind the given callback to `Exited` when a platform file drag leaves this element's window while
+// the element is hovered.
+//
+// This is a window-local exit event, not notification that the platform drag session ended. The
+// fluent API equivalent to `on_file_drop_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnFileDropExit(listener func(cx *Cx, e FileDropEvent)) SidebarHeaderEl {
 	tInteractiveElementOnFileDropExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key down events during the bubble phase. The fluent API equivalent to
+// `on_key_down`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnKeyDown(listener func(cx *Cx, e KeyEvent)) SidebarHeaderEl {
 	tInteractiveElementOnKeyDown(e.n, listener)
 	return e
 }
+
+// Bind the given callback to key up events during the bubble phase. The fluent API equivalent to
+// `on_key_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnKeyUp(listener func(cx *Cx, e KeyEvent)) SidebarHeaderEl {
 	tInteractiveElementOnKeyUp(e.n, listener)
 	return e
 }
+
+// Bind the given callback to modifiers changing events. The fluent API equivalent to
+// `on_modifiers_changed`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnModifiersChanged(listener func(cx *Cx, e ModifiersChangedEvent)) SidebarHeaderEl {
 	tInteractiveElementOnModifiersChanged(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event for the given mouse button. The fluent API
+// equivalent to `on_mouse_down`.
+//
+// See `listener` to get access to the view state from this callback.
 func (e SidebarHeaderEl) OnMouseDown(button MouseButton, listener func(cx *Cx, e MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseDown(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse down event, on any button, during the capture phase, when
+// the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_down_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnMouseDownOut(listener func(cx *Cx, e MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseDownOut(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse exit event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_exit`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnMouseExit(listener func(cx *Cx, e MouseExitEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseExit(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse move event, during the bubble phase. The fluent API
+// equivalent to `on_mouse_move`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnMouseMove(listener func(cx *Cx, e MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseMove(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse pressure event, during the bubble phase the fluent API
+// equivalent to `on_mouse_pressure`
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnMousePressure(listener func(cx *Cx, e MousePressureEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMousePressure(e.n, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event for the given button, during the bubble phase. The
+// fluent API equivalent to `on_mouse_up`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnMouseUp(button MouseButton, listener func(cx *Cx, e MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseUp(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to the mouse up event, for the given button, during the capture phase,
+// when the mouse is outside of the bounds of this element. The fluent API equivalent to
+// `on_mouse_up_out`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnMouseUpOut(button MouseButton, listener func(cx *Cx, e MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseUpOut(e.n, button, listener)
 	return e
 }
+
+// Bind the given callback to pinch gesture events during the bubble phase. The fluent API
+// equivalent to `on_pinch`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnPinch(listener func(cx *Cx, e PinchEvent)) SidebarHeaderEl {
 	tInteractiveElementOnPinch(e.n, listener)
 	return e
 }
+
+// Bind the given callback to scroll events during the bubble phase. The fluent API equivalent to
+// `on_scroll`.
+//
+// See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnScroll(listener func(cx *Cx, e ScrollEvent)) SidebarHeaderEl {
 	tInteractiveElementOnScroll(e.n, listener)
 	return e
 }
+
+// Designate this div as a "tab group". Tab groups have their own location in the tab-index order,
+// but for children of the tab group, the tab index is reset to 0. This can be useful for swapping
+// the order of tab stops within the group, without having to renumber all the tab stops in the
+// whole application.
 func (e SidebarHeaderEl) TabGroup() SidebarHeaderEl { tInteractiveElementTabGroup(e.n); return e }
+
+// Set index of the tab stop order, and set this node as a tab stop. This will default the element
+// to being a tab stop. See `TabStop` for more information. This should only be used in conjunction
+// with `tab_group` in order to not interfere with the tab index of other elements.
 func (e SidebarHeaderEl) TabIndex(index int) SidebarHeaderEl {
 	tInteractiveElementTabIndex(e.n, index)
 	return e
 }
+
+// Set whether this element is a tab stop.
+//
+// When false, the element remains in tab-index order but cannot be reached via keyboard
+// navigation. Should only be used with `tab_index`.
 func (e SidebarHeaderEl) TabStop(tabStop bool) SidebarHeaderEl {
 	tInteractiveElementTabStop(e.n, tabStop)
 	return e
 }
+
+// Track the focus state of the given focus handle on this element. If the focus handle is focused
+// by the application, this element will apply its focused styles.
 func (e SidebarHeaderEl) TrackFocus(focusHandle FocusHandle) SidebarHeaderEl {
 	tInteractiveElementTrackFocus(e.n, focusHandle)
 	return e
 }
+
+// Set the bounds of this element as a window control area for the platform window. The fluent API
+// equivalent to `window_control_area`.
 func (e SidebarHeaderEl) WindowControlArea(area WindowControlArea) SidebarHeaderEl {
 	tInteractiveElementWindowControlArea(e.n, area)
 	return e
@@ -1511,6 +2925,8 @@ type SidebarMenu struct{ n *node }
 
 func (e SidebarMenu) valueNode() *node { return e.n }
 
+// Create a new SidebarMenu
+//
 // NewSidebarMenu is <gpui_kit::component::sidebar::SidebarMenu>::new.
 func NewSidebarMenu(st ...Style) SidebarMenu {
 	n := newValue(756)
@@ -1518,6 +2934,10 @@ func NewSidebarMenu(st ...Style) SidebarMenu {
 	return SidebarMenu{n}
 }
 
+// Add a `SidebarMenuItem` child menu item to the sidebar menu.
+//
+// See also `Children`.
+//
 // Child is <gpui_kit::component::sidebar::SidebarMenu>::child.
 func (e SidebarMenu) Child(child SidebarMenuItem) SidebarMenu {
 	o := op(e.n, 256)
@@ -1525,6 +2945,8 @@ func (e SidebarMenu) Child(child SidebarMenuItem) SidebarMenu {
 	return e
 }
 
+// Add multiple `SidebarMenuItem` child menu items to the sidebar menu.
+//
 // Children is <gpui_kit::component::sidebar::SidebarMenu>::children.
 func (e SidebarMenu) Children(children []SidebarMenuItem) SidebarMenu {
 	o := op(e.n, 257)
@@ -1535,7 +2957,19 @@ func (e SidebarMenu) Children(children []SidebarMenuItem) SidebarMenu {
 	return e
 }
 
-func (e SidebarMenu) PopoverStyle() SidebarMenu     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e SidebarMenu) PopoverStyle() SidebarMenu { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SidebarMenu) RoundedFullStyle() SidebarMenu { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e SidebarMenu) CornerRadii(radius Corners) SidebarMenu {
@@ -1560,7 +2994,20 @@ func (e SidebarMenu) FontMedium() SidebarMenu     { tStyledExtFontMedium(e.n); r
 func (e SidebarMenu) FontNormal() SidebarMenu     { tStyledExtFontNormal(e.n); return e }
 func (e SidebarMenu) FontSemibold() SidebarMenu   { tStyledExtFontSemibold(e.n); return e }
 func (e SidebarMenu) FontThin() SidebarMenu       { tStyledExtFontThin(e.n); return e }
-func (e SidebarMenu) HFlex() SidebarMenu          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e SidebarMenu) HFlex() SidebarMenu { tStyledExtHFlex(e.n); return e }
 func (e SidebarMenu) Margins(margins EdgesInto) SidebarMenu {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1573,6 +3020,11 @@ func (e SidebarMenu) RefineStyle(style StyleRefinement) SidebarMenu {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SidebarMenu) VFlex() SidebarMenu { tStyledExtVFlex(e.n); return e }
 
 func (e SidebarMenu) Collapsed(collapsed bool) SidebarMenu {
@@ -1583,128 +3035,337 @@ func (e SidebarMenu) Collapsed(collapsed bool) SidebarMenu {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SidebarMenu) Style(st ...Style) SidebarMenu { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SidebarMenu) AspectRatio(ratio float32) SidebarMenu { tStyledAspectRatio(e.n, ratio); return e }
-func (e SidebarMenu) Bg(fill Fill) SidebarMenu              { tStyledBg(e.n, fill); return e }
-func (e SidebarMenu) Border(length Length) SidebarMenu      { tStyledBorder(e.n, length); return e }
-func (e SidebarMenu) BorderB(length Length) SidebarMenu     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e SidebarMenu) Bg(fill Fill) SidebarMenu { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e SidebarMenu) Border(length Length) SidebarMenu { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SidebarMenu) BorderB(length Length) SidebarMenu { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e SidebarMenu) BorderColor(borderColor Color) SidebarMenu {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e SidebarMenu) BorderL(length Length) SidebarMenu     { tStyledBorderL(e.n, length); return e }
-func (e SidebarMenu) BorderR(length Length) SidebarMenu     { tStyledBorderR(e.n, length); return e }
-func (e SidebarMenu) BorderT(length Length) SidebarMenu     { tStyledBorderT(e.n, length); return e }
-func (e SidebarMenu) BorderX(length Length) SidebarMenu     { tStyledBorderX(e.n, length); return e }
-func (e SidebarMenu) BorderY(length Length) SidebarMenu     { tStyledBorderY(e.n, length); return e }
-func (e SidebarMenu) Bottom(length Length) SidebarMenu      { tStyledBottom(e.n, length); return e }
-func (e SidebarMenu) ColEnd(end int16) SidebarMenu          { tStyledColEnd(e.n, end); return e }
-func (e SidebarMenu) ColSpan(span uint16) SidebarMenu       { tStyledColSpan(e.n, span); return e }
-func (e SidebarMenu) ColStart(start int16) SidebarMenu      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SidebarMenu) BorderL(length Length) SidebarMenu { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SidebarMenu) BorderR(length Length) SidebarMenu { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SidebarMenu) BorderT(length Length) SidebarMenu { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SidebarMenu) BorderX(length Length) SidebarMenu { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SidebarMenu) BorderY(length Length) SidebarMenu { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarMenu) Bottom(length Length) SidebarMenu { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e SidebarMenu) ColEnd(end int16) SidebarMenu { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e SidebarMenu) ColSpan(span uint16) SidebarMenu { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e SidebarMenu) ColStart(start int16) SidebarMenu { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e SidebarMenu) Cursor(cursor CursorStyle) SidebarMenu { tStyledCursor(e.n, cursor); return e }
-func (e SidebarMenu) FlexBasis(basis Length) SidebarMenu    { tStyledFlexBasis(e.n, basis); return e }
-func (e SidebarMenu) FlexGrow(grow float32) SidebarMenu     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e SidebarMenu) FlexBasis(basis Length) SidebarMenu { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e SidebarMenu) FlexGrow(grow float32) SidebarMenu { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SidebarMenu) FlexShrink(shrink float32) SidebarMenu { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e SidebarMenu) FontFamily(familyName string) SidebarMenu {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SidebarMenu) FontFeatures(features FontFeatures) SidebarMenu {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SidebarMenu) FontWeight(weight FontWeight) SidebarMenu {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e SidebarMenu) Gap(length Length) SidebarMenu    { tStyledGap(e.n, length); return e }
-func (e SidebarMenu) GapX(length Length) SidebarMenu   { tStyledGapX(e.n, length); return e }
-func (e SidebarMenu) GapY(length Length) SidebarMenu   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SidebarMenu) Gap(length Length) SidebarMenu { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarMenu) GapX(length Length) SidebarMenu { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarMenu) GapY(length Length) SidebarMenu { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e SidebarMenu) GridCols(cols uint16) SidebarMenu { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SidebarMenu) GridColsMaxContent(cols uint16) SidebarMenu {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SidebarMenu) GridColsMinContent(cols uint16) SidebarMenu {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SidebarMenu) GridRows(rows uint16) SidebarMenu { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SidebarMenu) GridRowsMaxContent(rows uint16) SidebarMenu {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SidebarMenu) GridRowsMinContent(rows uint16) SidebarMenu {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SidebarMenu) H(length Length) SidebarMenu     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SidebarMenu) H(length Length) SidebarMenu { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarMenu) Inset(length Length) SidebarMenu { tStyledInset(e.n, length); return e }
-func (e SidebarMenu) Left(length Length) SidebarMenu  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarMenu) Left(length Length) SidebarMenu { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SidebarMenu) LineClamp(lines int) SidebarMenu { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e SidebarMenu) LineHeight(lineHeight Length) SidebarMenu {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SidebarMenu) M(length Length) SidebarMenu         { tStyledM(e.n, length); return e }
-func (e SidebarMenu) MaxH(length Length) SidebarMenu      { tStyledMaxH(e.n, length); return e }
-func (e SidebarMenu) MaxSize(length Length) SidebarMenu   { tStyledMaxSize(e.n, length); return e }
-func (e SidebarMenu) MaxW(length Length) SidebarMenu      { tStyledMaxW(e.n, length); return e }
-func (e SidebarMenu) Mb(length Length) SidebarMenu        { tStyledMb(e.n, length); return e }
-func (e SidebarMenu) MinH(length Length) SidebarMenu      { tStyledMinH(e.n, length); return e }
-func (e SidebarMenu) MinSize(length Length) SidebarMenu   { tStyledMinSize(e.n, length); return e }
-func (e SidebarMenu) MinW(length Length) SidebarMenu      { tStyledMinW(e.n, length); return e }
-func (e SidebarMenu) Ml(length Length) SidebarMenu        { tStyledMl(e.n, length); return e }
-func (e SidebarMenu) Mr(length Length) SidebarMenu        { tStyledMr(e.n, length); return e }
-func (e SidebarMenu) Mt(length Length) SidebarMenu        { tStyledMt(e.n, length); return e }
-func (e SidebarMenu) Mx(length Length) SidebarMenu        { tStyledMx(e.n, length); return e }
-func (e SidebarMenu) My(length Length) SidebarMenu        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SidebarMenu) M(length Length) SidebarMenu { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e SidebarMenu) MaxH(length Length) SidebarMenu { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e SidebarMenu) MaxSize(length Length) SidebarMenu { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e SidebarMenu) MaxW(length Length) SidebarMenu { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarMenu) Mb(length Length) SidebarMenu { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e SidebarMenu) MinH(length Length) SidebarMenu { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e SidebarMenu) MinSize(length Length) SidebarMenu { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e SidebarMenu) MinW(length Length) SidebarMenu { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarMenu) Ml(length Length) SidebarMenu { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarMenu) Mr(length Length) SidebarMenu { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarMenu) Mt(length Length) SidebarMenu { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SidebarMenu) Mx(length Length) SidebarMenu { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SidebarMenu) My(length Length) SidebarMenu { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e SidebarMenu) Opacity(opacity float32) SidebarMenu { tStyledOpacity(e.n, opacity); return e }
-func (e SidebarMenu) P(length Length) SidebarMenu         { tStyledP(e.n, length); return e }
-func (e SidebarMenu) Pb(length Length) SidebarMenu        { tStyledPb(e.n, length); return e }
-func (e SidebarMenu) Pl(length Length) SidebarMenu        { tStyledPl(e.n, length); return e }
-func (e SidebarMenu) Pr(length Length) SidebarMenu        { tStyledPr(e.n, length); return e }
-func (e SidebarMenu) Pt(length Length) SidebarMenu        { tStyledPt(e.n, length); return e }
-func (e SidebarMenu) Px(length Length) SidebarMenu        { tStyledPx(e.n, length); return e }
-func (e SidebarMenu) Py(length Length) SidebarMenu        { tStyledPy(e.n, length); return e }
-func (e SidebarMenu) Right(length Length) SidebarMenu     { tStyledRight(e.n, length); return e }
-func (e SidebarMenu) Rounded(length Length) SidebarMenu   { tStyledRounded(e.n, length); return e }
-func (e SidebarMenu) RoundedB(length Length) SidebarMenu  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SidebarMenu) P(length Length) SidebarMenu { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarMenu) Pb(length Length) SidebarMenu { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarMenu) Pl(length Length) SidebarMenu { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarMenu) Pr(length Length) SidebarMenu { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarMenu) Pt(length Length) SidebarMenu { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SidebarMenu) Px(length Length) SidebarMenu { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SidebarMenu) Py(length Length) SidebarMenu { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarMenu) Right(length Length) SidebarMenu { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e SidebarMenu) Rounded(length Length) SidebarMenu { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SidebarMenu) RoundedB(length Length) SidebarMenu { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarMenu) RoundedBl(length Length) SidebarMenu { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarMenu) RoundedBr(length Length) SidebarMenu { tStyledRoundedBr(e.n, length); return e }
-func (e SidebarMenu) RoundedL(length Length) SidebarMenu  { tStyledRoundedL(e.n, length); return e }
-func (e SidebarMenu) RoundedR(length Length) SidebarMenu  { tStyledRoundedR(e.n, length); return e }
-func (e SidebarMenu) RoundedT(length Length) SidebarMenu  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SidebarMenu) RoundedL(length Length) SidebarMenu { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SidebarMenu) RoundedR(length Length) SidebarMenu { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SidebarMenu) RoundedT(length Length) SidebarMenu { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarMenu) RoundedTl(length Length) SidebarMenu { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarMenu) RoundedTr(length Length) SidebarMenu { tStyledRoundedTr(e.n, length); return e }
-func (e SidebarMenu) RowEnd(end int16) SidebarMenu        { tStyledRowEnd(e.n, end); return e }
-func (e SidebarMenu) RowSpan(span uint16) SidebarMenu     { tStyledRowSpan(e.n, span); return e }
-func (e SidebarMenu) RowStart(start int16) SidebarMenu    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e SidebarMenu) RowEnd(end int16) SidebarMenu { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e SidebarMenu) RowSpan(span uint16) SidebarMenu { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e SidebarMenu) RowStart(start int16) SidebarMenu { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SidebarMenu) ScrollbarWidth(width Length) SidebarMenu {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SidebarMenu) Shadow(shadows []BoxShadow) SidebarMenu { tStyledShadow(e.n, shadows); return e }
-func (e SidebarMenu) Size(length Length) SidebarMenu         { tStyledSize(e.n, length); return e }
-func (e SidebarMenu) TextAlign(align TextAlign) SidebarMenu  { tStyledTextAlign(e.n, align); return e }
-func (e SidebarMenu) TextBg(bg Color) SidebarMenu            { tStyledTextBg(e.n, bg); return e }
-func (e SidebarMenu) TextColor(color Color) SidebarMenu      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e SidebarMenu) Size(length Length) SidebarMenu { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e SidebarMenu) TextAlign(align TextAlign) SidebarMenu { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e SidebarMenu) TextBg(bg Color) SidebarMenu { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e SidebarMenu) TextColor(color Color) SidebarMenu { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e SidebarMenu) TextDecorationColor(color Color) SidebarMenu {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SidebarMenu) TextOverflow(overflow TextOverflow) SidebarMenu {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SidebarMenu) TextSize(size Length) SidebarMenu { tStyledTextSize(e.n, size); return e }
-func (e SidebarMenu) Top(length Length) SidebarMenu    { tStyledTop(e.n, length); return e }
-func (e SidebarMenu) W(length Length) SidebarMenu      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarMenu) Top(length Length) SidebarMenu { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SidebarMenu) W(length Length) SidebarMenu { tStyledW(e.n, length); return e }
 
 // SidebarMenuItem is gpui_kit::component::sidebar::SidebarMenuItem.
 type SidebarMenuItem struct{ n *node }
 
 func (e SidebarMenuItem) valueNode() *node { return e.n }
 
+// Create a new `SidebarMenuItem` with a label.
+//
 // NewSidebarMenuItem is <gpui_kit::component::sidebar::SidebarMenuItem>::new.
 func NewSidebarMenuItem(label string, st ...Style) SidebarMenuItem {
 	n := newValue(757)
@@ -1714,6 +3375,10 @@ func NewSidebarMenuItem(label string, st ...Style) SidebarMenuItem {
 	return SidebarMenuItem{n}
 }
 
+// Set the accessibility label of the item row.
+//
+// Defaults to the visible label text.
+//
 // AccessibilityLabel is <gpui_kit::component::sidebar::SidebarMenuItem>::accessibility_label.
 func (e SidebarMenuItem) AccessibilityLabel(label string) SidebarMenuItem {
 	o := op(e.n, 256)
@@ -1721,6 +3386,8 @@ func (e SidebarMenuItem) AccessibilityLabel(label string) SidebarMenuItem {
 	return e
 }
 
+// Set the active state of the menu item
+//
 // Active is <gpui_kit::component::sidebar::SidebarMenuItem>::active.
 func (e SidebarMenuItem) Active(active bool) SidebarMenuItem {
 	o := op(e.n, 257)
@@ -1738,6 +3405,12 @@ func (e SidebarMenuItem) Children(children []SidebarMenuItem) SidebarMenuItem {
 	return e
 }
 
+// Set whether clicking the menu item open the submenu.
+//
+// Default is `false`.
+//
+// If `false` we only handle open/close via the caret button.
+//
 // ClickToOpen is <gpui_kit::component::sidebar::SidebarMenuItem>::click_to_open.
 func (e SidebarMenuItem) ClickToOpen(clickToOpen bool) SidebarMenuItem {
 	o := op(e.n, 259)
@@ -1745,6 +3418,12 @@ func (e SidebarMenuItem) ClickToOpen(clickToOpen bool) SidebarMenuItem {
 	return e
 }
 
+// Set whether clicking the menu item toggles the submenu.
+//
+// If click_to_open is `true`, this has no effect.
+//
+// Default is `false`.
+//
 // ClickToToggle is <gpui_kit::component::sidebar::SidebarMenuItem>::click_to_toggle.
 func (e SidebarMenuItem) ClickToToggle(clickToToggle bool) SidebarMenuItem {
 	o := op(e.n, 260)
@@ -1752,6 +3431,8 @@ func (e SidebarMenuItem) ClickToToggle(clickToToggle bool) SidebarMenuItem {
 	return e
 }
 
+// Set the collapsed state of the menu item
+//
 // Collapsed is <gpui_kit::component::sidebar::SidebarMenuItem>::collapsed.
 func (e SidebarMenuItem) Collapsed(collapsed bool) SidebarMenuItem {
 	o := op(e.n, 261)
@@ -1759,6 +3440,8 @@ func (e SidebarMenuItem) Collapsed(collapsed bool) SidebarMenuItem {
 	return e
 }
 
+// Set the context menu for the menu item.
+//
 // ContextMenu is <gpui_kit::component::sidebar::SidebarMenuItem>::context_menu.
 func (e SidebarMenuItem) ContextMenu(f PopupMenu) SidebarMenuItem {
 	o := op(e.n, 267)
@@ -1766,6 +3449,10 @@ func (e SidebarMenuItem) ContextMenu(f PopupMenu) SidebarMenuItem {
 	return e
 }
 
+// Set the default open state of the Submenu, default is `false`.
+//
+// This only used on initial render, the internal state will be used afterwards.
+//
 // DefaultOpen is <gpui_kit::component::sidebar::SidebarMenuItem>::default_open.
 func (e SidebarMenuItem) DefaultOpen(open bool) SidebarMenuItem {
 	o := op(e.n, 262)
@@ -1773,6 +3460,8 @@ func (e SidebarMenuItem) DefaultOpen(open bool) SidebarMenuItem {
 	return e
 }
 
+// Set disabled flat for menu item.
+//
 // Disable is <gpui_kit::component::sidebar::SidebarMenuItem>::disable.
 func (e SidebarMenuItem) Disable(disable bool) SidebarMenuItem {
 	o := op(e.n, 263)
@@ -1780,6 +3469,8 @@ func (e SidebarMenuItem) Disable(disable bool) SidebarMenuItem {
 	return e
 }
 
+// Set the icon for the menu item
+//
 // Icon is <gpui_kit::component::sidebar::SidebarMenuItem>::icon.
 func (e SidebarMenuItem) Icon(icon IconName) SidebarMenuItem {
 	o := op(e.n, 268)
@@ -1787,6 +3478,8 @@ func (e SidebarMenuItem) Icon(icon IconName) SidebarMenuItem {
 	return e
 }
 
+// Set the style for the label
+//
 // LabelStyle is <gpui_kit::component::sidebar::SidebarMenuItem>::label_style.
 func (e SidebarMenuItem) LabelStyle(style StyleRefinement) SidebarMenuItem {
 	o := op(e.n, 264)
@@ -1794,6 +3487,8 @@ func (e SidebarMenuItem) LabelStyle(style StyleRefinement) SidebarMenuItem {
 	return e
 }
 
+// Add a click handler to the menu item
+//
 // OnClick is <gpui_kit::component::sidebar::SidebarMenuItem>::on_click.
 func (e SidebarMenuItem) OnClick(handler func(cx *Cx, e ClickEvent)) SidebarMenuItem {
 	o := op(e.n, 265)
@@ -1801,6 +3496,8 @@ func (e SidebarMenuItem) OnClick(handler func(cx *Cx, e ClickEvent)) SidebarMenu
 	return e
 }
 
+// Set the suffix for the menu item.
+//
 // Suffix is <gpui_kit::component::sidebar::SidebarMenuItem>::suffix.
 func (e SidebarMenuItem) Suffix(builder Element) SidebarMenuItem {
 	o := op(e.n, 266)
@@ -1808,7 +3505,19 @@ func (e SidebarMenuItem) Suffix(builder Element) SidebarMenuItem {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e SidebarMenuItem) PopoverStyle() SidebarMenuItem { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SidebarMenuItem) RoundedFullStyle() SidebarMenuItem {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -1836,7 +3545,20 @@ func (e SidebarMenuItem) FontMedium() SidebarMenuItem     { tStyledExtFontMedium
 func (e SidebarMenuItem) FontNormal() SidebarMenuItem     { tStyledExtFontNormal(e.n); return e }
 func (e SidebarMenuItem) FontSemibold() SidebarMenuItem   { tStyledExtFontSemibold(e.n); return e }
 func (e SidebarMenuItem) FontThin() SidebarMenuItem       { tStyledExtFontThin(e.n); return e }
-func (e SidebarMenuItem) HFlex() SidebarMenuItem          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e SidebarMenuItem) HFlex() SidebarMenuItem { tStyledExtHFlex(e.n); return e }
 func (e SidebarMenuItem) Margins(margins EdgesInto) SidebarMenuItem {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1849,208 +3571,422 @@ func (e SidebarMenuItem) RefineStyle(style StyleRefinement) SidebarMenuItem {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SidebarMenuItem) VFlex() SidebarMenuItem { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SidebarMenuItem) Style(st ...Style) SidebarMenuItem { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SidebarMenuItem) AspectRatio(ratio float32) SidebarMenuItem {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e SidebarMenuItem) Bg(fill Fill) SidebarMenuItem         { tStyledBg(e.n, fill); return e }
+
+// Sets the background color of the element.
+func (e SidebarMenuItem) Bg(fill Fill) SidebarMenuItem { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e SidebarMenuItem) Border(length Length) SidebarMenuItem { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarMenuItem) BorderB(length Length) SidebarMenuItem {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e SidebarMenuItem) BorderColor(borderColor Color) SidebarMenuItem {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarMenuItem) BorderL(length Length) SidebarMenuItem {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarMenuItem) BorderR(length Length) SidebarMenuItem {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e SidebarMenuItem) BorderT(length Length) SidebarMenuItem {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SidebarMenuItem) BorderX(length Length) SidebarMenuItem {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e SidebarMenuItem) BorderY(length Length) SidebarMenuItem {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarMenuItem) Bottom(length Length) SidebarMenuItem { tStyledBottom(e.n, length); return e }
-func (e SidebarMenuItem) ColEnd(end int16) SidebarMenuItem     { tStyledColEnd(e.n, end); return e }
-func (e SidebarMenuItem) ColSpan(span uint16) SidebarMenuItem  { tStyledColSpan(e.n, span); return e }
+
+// Sets the column end of this element.
+func (e SidebarMenuItem) ColEnd(end int16) SidebarMenuItem { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e SidebarMenuItem) ColSpan(span uint16) SidebarMenuItem { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e SidebarMenuItem) ColStart(start int16) SidebarMenuItem { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e SidebarMenuItem) Cursor(cursor CursorStyle) SidebarMenuItem {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e SidebarMenuItem) FlexBasis(basis Length) SidebarMenuItem {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e SidebarMenuItem) FlexGrow(grow float32) SidebarMenuItem { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SidebarMenuItem) FlexShrink(shrink float32) SidebarMenuItem {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e SidebarMenuItem) FontFamily(familyName string) SidebarMenuItem {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SidebarMenuItem) FontFeatures(features FontFeatures) SidebarMenuItem {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SidebarMenuItem) FontWeight(weight FontWeight) SidebarMenuItem {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e SidebarMenuItem) Gap(length Length) SidebarMenuItem    { tStyledGap(e.n, length); return e }
-func (e SidebarMenuItem) GapX(length Length) SidebarMenuItem   { tStyledGapX(e.n, length); return e }
-func (e SidebarMenuItem) GapY(length Length) SidebarMenuItem   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SidebarMenuItem) Gap(length Length) SidebarMenuItem { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarMenuItem) GapX(length Length) SidebarMenuItem { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SidebarMenuItem) GapY(length Length) SidebarMenuItem { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e SidebarMenuItem) GridCols(cols uint16) SidebarMenuItem { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SidebarMenuItem) GridColsMaxContent(cols uint16) SidebarMenuItem {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SidebarMenuItem) GridColsMinContent(cols uint16) SidebarMenuItem {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SidebarMenuItem) GridRows(rows uint16) SidebarMenuItem { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SidebarMenuItem) GridRowsMaxContent(rows uint16) SidebarMenuItem {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SidebarMenuItem) GridRowsMinContent(rows uint16) SidebarMenuItem {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SidebarMenuItem) H(length Length) SidebarMenuItem     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SidebarMenuItem) H(length Length) SidebarMenuItem { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarMenuItem) Inset(length Length) SidebarMenuItem { tStyledInset(e.n, length); return e }
-func (e SidebarMenuItem) Left(length Length) SidebarMenuItem  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarMenuItem) Left(length Length) SidebarMenuItem { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SidebarMenuItem) LineClamp(lines int) SidebarMenuItem { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e SidebarMenuItem) LineHeight(lineHeight Length) SidebarMenuItem {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SidebarMenuItem) M(length Length) SidebarMenuItem    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SidebarMenuItem) M(length Length) SidebarMenuItem { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e SidebarMenuItem) MaxH(length Length) SidebarMenuItem { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e SidebarMenuItem) MaxSize(length Length) SidebarMenuItem {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e SidebarMenuItem) MaxW(length Length) SidebarMenuItem { tStyledMaxW(e.n, length); return e }
-func (e SidebarMenuItem) Mb(length Length) SidebarMenuItem   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarMenuItem) Mb(length Length) SidebarMenuItem { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e SidebarMenuItem) MinH(length Length) SidebarMenuItem { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e SidebarMenuItem) MinSize(length Length) SidebarMenuItem {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e SidebarMenuItem) MinW(length Length) SidebarMenuItem { tStyledMinW(e.n, length); return e }
-func (e SidebarMenuItem) Ml(length Length) SidebarMenuItem   { tStyledMl(e.n, length); return e }
-func (e SidebarMenuItem) Mr(length Length) SidebarMenuItem   { tStyledMr(e.n, length); return e }
-func (e SidebarMenuItem) Mt(length Length) SidebarMenuItem   { tStyledMt(e.n, length); return e }
-func (e SidebarMenuItem) Mx(length Length) SidebarMenuItem   { tStyledMx(e.n, length); return e }
-func (e SidebarMenuItem) My(length Length) SidebarMenuItem   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarMenuItem) Ml(length Length) SidebarMenuItem { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarMenuItem) Mr(length Length) SidebarMenuItem { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SidebarMenuItem) Mt(length Length) SidebarMenuItem { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SidebarMenuItem) Mx(length Length) SidebarMenuItem { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SidebarMenuItem) My(length Length) SidebarMenuItem { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e SidebarMenuItem) Opacity(opacity float32) SidebarMenuItem {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e SidebarMenuItem) P(length Length) SidebarMenuItem     { tStyledP(e.n, length); return e }
-func (e SidebarMenuItem) Pb(length Length) SidebarMenuItem    { tStyledPb(e.n, length); return e }
-func (e SidebarMenuItem) Pl(length Length) SidebarMenuItem    { tStyledPl(e.n, length); return e }
-func (e SidebarMenuItem) Pr(length Length) SidebarMenuItem    { tStyledPr(e.n, length); return e }
-func (e SidebarMenuItem) Pt(length Length) SidebarMenuItem    { tStyledPt(e.n, length); return e }
-func (e SidebarMenuItem) Px(length Length) SidebarMenuItem    { tStyledPx(e.n, length); return e }
-func (e SidebarMenuItem) Py(length Length) SidebarMenuItem    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SidebarMenuItem) P(length Length) SidebarMenuItem { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarMenuItem) Pb(length Length) SidebarMenuItem { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarMenuItem) Pl(length Length) SidebarMenuItem { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarMenuItem) Pr(length Length) SidebarMenuItem { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SidebarMenuItem) Pt(length Length) SidebarMenuItem { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SidebarMenuItem) Px(length Length) SidebarMenuItem { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SidebarMenuItem) Py(length Length) SidebarMenuItem { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SidebarMenuItem) Right(length Length) SidebarMenuItem { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e SidebarMenuItem) Rounded(length Length) SidebarMenuItem {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarMenuItem) RoundedB(length Length) SidebarMenuItem {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarMenuItem) RoundedBl(length Length) SidebarMenuItem {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarMenuItem) RoundedBr(length Length) SidebarMenuItem {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarMenuItem) RoundedL(length Length) SidebarMenuItem {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarMenuItem) RoundedR(length Length) SidebarMenuItem {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e SidebarMenuItem) RoundedT(length Length) SidebarMenuItem {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarMenuItem) RoundedTl(length Length) SidebarMenuItem {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e SidebarMenuItem) RoundedTr(length Length) SidebarMenuItem {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e SidebarMenuItem) RowEnd(end int16) SidebarMenuItem     { tStyledRowEnd(e.n, end); return e }
-func (e SidebarMenuItem) RowSpan(span uint16) SidebarMenuItem  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e SidebarMenuItem) RowEnd(end int16) SidebarMenuItem { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e SidebarMenuItem) RowSpan(span uint16) SidebarMenuItem { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e SidebarMenuItem) RowStart(start int16) SidebarMenuItem { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SidebarMenuItem) ScrollbarWidth(width Length) SidebarMenuItem {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e SidebarMenuItem) Shadow(shadows []BoxShadow) SidebarMenuItem {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e SidebarMenuItem) Size(length Length) SidebarMenuItem { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e SidebarMenuItem) TextAlign(align TextAlign) SidebarMenuItem {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e SidebarMenuItem) TextBg(bg Color) SidebarMenuItem { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e SidebarMenuItem) TextColor(color Color) SidebarMenuItem {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e SidebarMenuItem) TextDecorationColor(color Color) SidebarMenuItem {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SidebarMenuItem) TextOverflow(overflow TextOverflow) SidebarMenuItem {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SidebarMenuItem) TextSize(size Length) SidebarMenuItem { tStyledTextSize(e.n, size); return e }
-func (e SidebarMenuItem) Top(length Length) SidebarMenuItem    { tStyledTop(e.n, length); return e }
-func (e SidebarMenuItem) W(length Length) SidebarMenuItem      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SidebarMenuItem) Top(length Length) SidebarMenuItem { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SidebarMenuItem) W(length Length) SidebarMenuItem { tStyledW(e.n, length); return e }
 
 // SidebarToggleButtonEl is gpui_kit::component::sidebar::SidebarToggleButton.
 type SidebarToggleButtonEl struct{ n *node }
 
 func (e SidebarToggleButtonEl) node() *node { return e.n }
 
+// Create a new SidebarToggleButton.
+//
 // SidebarToggleButton is <gpui_kit::component::sidebar::SidebarToggleButton>::new.
 func SidebarToggleButton() SidebarToggleButtonEl {
 	useComponentSidebar()
@@ -2058,6 +3994,10 @@ func SidebarToggleButton() SidebarToggleButtonEl {
 	return SidebarToggleButtonEl{n}
 }
 
+// Set the accessibility label of the toggle button.
+//
+// The default toggle is icon-only; without an explicit label it has no accessible name.
+//
 // AccessibilityLabel is <gpui_kit::component::sidebar::SidebarToggleButton>::accessibility_label.
 func (e SidebarToggleButtonEl) AccessibilityLabel(label string) SidebarToggleButtonEl {
 	o := op(e.n, 256)
@@ -2065,6 +4005,8 @@ func (e SidebarToggleButtonEl) AccessibilityLabel(label string) SidebarToggleBut
 	return e
 }
 
+// Set the collapsed state of the toggle button.
+//
 // Collapsed is <gpui_kit::component::sidebar::SidebarToggleButton>::collapsed.
 func (e SidebarToggleButtonEl) Collapsed(collapsed bool) SidebarToggleButtonEl {
 	o := op(e.n, 257)
@@ -2072,6 +4014,8 @@ func (e SidebarToggleButtonEl) Collapsed(collapsed bool) SidebarToggleButtonEl {
 	return e
 }
 
+// Add a click handler to the toggle button.
+//
 // OnClick is <gpui_kit::component::sidebar::SidebarToggleButton>::on_click.
 func (e SidebarToggleButtonEl) OnClick(onClick func(cx *Cx, e ClickEvent)) SidebarToggleButtonEl {
 	o := op(e.n, 258)
@@ -2079,6 +4023,10 @@ func (e SidebarToggleButtonEl) OnClick(onClick func(cx *Cx, e ClickEvent)) Sideb
 	return e
 }
 
+// Set the side of the toggle button.
+//
+// Default is `Side::Left`.
+//
 // Side is <gpui_kit::component::sidebar::SidebarToggleButton>::side.
 func (e SidebarToggleButtonEl) Side(side Side) SidebarToggleButtonEl {
 	o := op(e.n, 259)

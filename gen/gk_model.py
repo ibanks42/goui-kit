@@ -1278,6 +1278,8 @@ class Model:
         it = {"row": row["name"], "owner": owner, "name": f["name"], "sig": rdj.fn_sig(f["name"], fn),
               "trait": trait, "status": "todo", "reason": "", "kind": "", "args": [], "crate": fcrate}
         it["id"] = f"{owner}::{trait + '::' if trait else ''}{f['name']}"
+        if f.get("id") is not None:
+            it["doc"] = [fcrate, str(f["id"])]  # its doc comment in api/rustdoc/docs.json.gz (gen/gk_doc.py)
         self.items.append(it)
         row["items"].append(it)
         return it, fn
@@ -1406,6 +1408,7 @@ class Model:
         (&self), deferred writes (&mut self) and events (docs/PROTOCOLS.md section 5)."""
         st = {"key": tpath, "path": tpath, "name": f["name"], "crate": crate, "ctors": [], "builders": [],
               "reads": [], "writes": [], "calls": [], "events": []}
+        st["doc"] = [f["crate"], str(f["id"])]
         self.states[tpath] = st
         seen = set()
         for im in f["impls"]:
@@ -1602,6 +1605,7 @@ class Model:
         st = {"key": tpath, "path": tpath, "name": f["name"], "crate": crate, "ctors": [], "builders": [],
               "reads": [], "writes": [], "calls": [], "events": [], "globals": [], "statics": [], "obj": True,
               "glob": "Global" in f["traits"], "clone": f["clone"]}
+        st["doc"] = [f["crate"], str(f["id"])]
         self.states[tpath] = st
         self.objects[tpath] = st
         seen = set()

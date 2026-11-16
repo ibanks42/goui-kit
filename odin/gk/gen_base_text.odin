@@ -8,10 +8,14 @@ Base_Code_Block :: struct {
 }
 
 Base_Code_Block_VT :: struct {
+	// Marks this code block as a leaf of an external editor, like `->with_leaf_key`. Rekeying detaches
+	// runtime state from clones.
 	with_leaf_key: proc(e: Base_Code_Block, key: u64) -> Base_Code_Block,
+	// Sets the fence's info string after the language. It is kept for round trips and is not rendered.
 	with_meta: proc(e: Base_Code_Block, meta: Maybe(string)) -> Base_Code_Block,
 }
 
+// A code block of `code` in `lang`.
 base_code_block :: proc(code: string, lang: Maybe(string), span: Maybe(Span), loc := #caller_location) -> Base_Code_Block {
 	e := Base_Code_Block{new_value(802, loc), &base_code_block_vt}
 	o := node_args()
@@ -31,6 +35,10 @@ base_code_block :: proc(code: string, lang: Maybe(string), span: Maybe(Span), lo
 	return e
 }
 
+// Builds a code block that is not tied to a parsed document.
+//
+// `->code_block_highlighter` hands a `&CodeBlock` to the highlighter it is given, so anyone
+// writing one needs a way to build a block to exercise it against.
 base_code_block_from_code :: proc(code: string, lang: Maybe(string), loc := #caller_location) -> Base_Code_Block {
 	e := Base_Code_Block{new_value(544, loc), &base_code_block_vt}
 	o := node_args()
@@ -63,6 +71,10 @@ base_code_block_vt := Base_Code_Block_VT {
 	},
 }
 
+// Retained block interaction state, shared with its rendered element.
+//
+// Opaque: build one with `BlockState::default()` for a `Custom`.
+//
 // Block_State is gpui_kit::base::text::editor_host::BlockState.
 Block_State :: struct {
 	using nd: Value,
@@ -81,6 +93,9 @@ block_state_default :: proc(loc := #caller_location) -> Block_State {
 block_state_vt := Block_State_VT {
 }
 
+// Where a block stands in the flow it is rendered in, which decides the gaps around it: the first
+// block takes no gap above, the last none below, and a heading or rule counts the block before it.
+//
 // Flow_Position is gpui_kit::base::text::editor_host::FlowPosition.
 Flow_Position :: struct {
 	using nd: Value,
@@ -88,10 +103,15 @@ Flow_Position :: struct {
 }
 
 Flow_Position_VT :: struct {
+	// Overrides whether the block opens its flow, e.g. for a chunk of a long list rendered as a list
+	// of its own.
 	first: proc(e: Flow_Position, is_first: bool) -> Flow_Position,
+	// Overrides whether the block closes its flow.
 	last: proc(e: Flow_Position, is_last: bool) -> Flow_Position,
 }
 
+// The position of `blocks`ix`` among its siblings. Blocks that render nothing (definitions,
+// breaks) are skipped when looking for the block before it.
 flow_position_at :: proc(blocks: []Block_Node, ix: int, is_last: bool, loc := #caller_location) -> Flow_Position {
 	e := Flow_Position{new_value(546, loc), &flow_position_vt}
 	o := node_args()
@@ -118,6 +138,8 @@ flow_position_vt := Flow_Position_VT {
 	},
 }
 
+// One run of inline content in a `Paragraph`: marked text, an image or a custom inline node.
+//
 // Inline_Node is gpui_kit::base::text::editor_host::InlineNode.
 Inline_Node :: struct {
 	using nd: Value,
@@ -125,9 +147,11 @@ Inline_Node :: struct {
 }
 
 Inline_Node_VT :: struct {
+	// Sets the marks, each a byte range of the text and its style.
 	marks: proc(e: Inline_Node, marks: []Tuple_Range_Text_Mark) -> Inline_Node,
 }
 
+// A run of text with no marks.
 inline_node :: proc(text: string, loc := #caller_location) -> Inline_Node {
 	e := Inline_Node{new_value(549, loc), &inline_node_vt}
 	o := node_args()
@@ -140,6 +164,7 @@ inline_node_default :: proc(loc := #caller_location) -> Inline_Node {
 	return e
 }
 
+// An inline image, an atomic object in the flow.
 inline_node_image :: proc(image: Image_Node, loc := #caller_location) -> Inline_Node {
 	e := Inline_Node{new_value(826, loc), &inline_node_vt}
 	o := node_args()
@@ -160,6 +185,11 @@ inline_node_vt := Inline_Node_VT {
 	},
 }
 
+// The paragraph element, contains multiple text nodes.
+//
+// Unlike other Element, this is cloneable, because it is used in the Node AST. We are keep the
+// selection state inside this AST Nodes.
+//
 // Paragraph is gpui_kit::base::text::editor_host::Paragraph.
 Paragraph :: struct {
 	using nd: Value,
@@ -167,7 +197,11 @@ Paragraph :: struct {
 }
 
 Paragraph_VT :: struct {
+	// Appends an inline run.
 	push: proc(e: Paragraph, text: Inline_Node) -> Paragraph,
+	// Marks this paragraph as a leaf of an external editor: while a `->collect_leaf_geometry` scope is
+	// active, it reports its geometry under `key` and paints the decorations given for `key`. Rekeying
+	// detaches runtime state from clones.
 	with_leaf_key: proc(e: Paragraph, key: u64) -> Paragraph,
 }
 
@@ -190,6 +224,8 @@ paragraph_vt := Paragraph_VT {
 	},
 }
 
+// What `render` needs besides the node: the text style, code highlighter and Markdown extensions.
+//
 // Render_Context is gpui_kit::base::text::editor_host::RenderContext.
 Render_Context :: struct {
 	using nd: Value,
@@ -197,16 +233,38 @@ Render_Context :: struct {
 }
 
 Render_Context_VT :: struct {
+	// Handles link activation. Without a handler, links use App::open_url.
 	on_link_click: proc(e: Render_Context, handler: Handler) -> Render_Context,
+	// Sets the font size body text inherits, which the block gaps and heading sizes are relative to.
 	with_body_font_size: proc(e: Render_Context, size: f32) -> Render_Context,
+	// Replaces code highlighting for this context only.
 	with_code_block_highlighter: proc(e: Render_Context, highlighter: Ask(Code_Block, []Tuple_Range_Highlight_Style)) -> Render_Context,
+	// Supplies this render's foreground ranges for a keyed paragraph leaf, including a heading or
+	// table cell. Replaces any ranges for the same key.
+	//
+	// Ranges use the leaf's rendered UTF-8 bytes; images and custom inline objects occupy one U+FFFC
+	// (three bytes), as in `Leaf_Geometry`. Text ranges are clipped to each text fragment;
+	// non-character boundaries and empty or reversed ranges are ignored. An object's foreground
+	// changes only when a range covers its entire placeholder; images are unchanged.
+	//
+	// These colors override mark and link foregrounds; later ranges win overlaps. Other mark
+	// properties and link activation are preserved. Uncovered text inherits its ordinary foreground.
+	// Colors belong to this rendering context, never the document tree: supply current theme/surface
+	// colors on each render, or omit the ranges to restore inheritance.
 	with_foreground_ranges: proc(e: Render_Context, key: u64, ranges: []Tuple_Range_Color) -> Render_Context,
+	// Resolves document image URIs. The host owns resource access policy.
 	with_image_source: proc(e: Render_Context, resolver: Ask(Temp_String, string)) -> Render_Context,
+	// Registers a reference-link definition from the host's document. Supply definitions for the
+	// entire document, including virtualized blocks.
 	with_link_reference: proc(e: Render_Context, identifier: string, link: Link_Mark) -> Render_Context,
+	// Sets the Markdown extensions that render custom nodes.
 	with_markdown_extensions: proc(e: Render_Context, extensions: Markdown_Extensions_Arc) -> Render_Context,
+	// Replaces the text style.
 	with_style: proc(e: Render_Context, style: Base_Text_View_Style) -> Render_Context,
 }
 
+// Creates a local rendering context without reading application globals. The host supplies body
+// typography through its container or `with_body_font_size`.
 render_context :: proc(style: Base_Text_View_Style, loc := #caller_location) -> Render_Context {
 	e := Render_Context{new_value(552, loc), &render_context_vt}
 	o := node_args()
@@ -214,6 +272,8 @@ render_context :: proc(style: Base_Text_View_Style, loc := #caller_location) -> 
 	return e
 }
 
+// The context TextView would start from: the global `Text_View_Defaults` style and code-block
+// highlighter when set, else the theme's style.
 render_context_from_app :: proc(loc := #caller_location) -> Render_Context {
 	e := Render_Context{new_value(551, loc), &render_context_vt}
 	return e
@@ -278,6 +338,7 @@ Text_Mark :: struct {
 Text_Mark_VT :: struct {
 	bold: proc(e: Text_Mark) -> Text_Mark,
 	code: proc(e: Text_Mark) -> Text_Mark,
+	// Mark the text as highlighted (`<mark>`) with the given background color.
 	highlight: proc(e: Text_Mark, color: Color) -> Text_Mark,
 	italic: proc(e: Text_Mark) -> Text_Mark,
 	link: proc(e: Text_Mark, link: Link_Mark) -> Text_Mark,

@@ -9,6 +9,8 @@ type SliderEl struct{ n *node }
 
 func (e SliderEl) node() *node { return e.n }
 
+// Create a new `SliderEl` element bind to the `SliderState`.
+//
 // Slider is <gpui_kit::component::slider::Slider>::new.
 func Slider(state SliderState, st ...Style) SliderEl {
 	useComponentSlider()
@@ -19,6 +21,8 @@ func Slider(state SliderState, st ...Style) SliderEl {
 	return SliderEl{n}
 }
 
+// Sets the label exposed to accessibility clients.
+//
 // AccessibilityLabel is <gpui_kit::component::slider::Slider>::accessibility_label.
 func (e SliderEl) AccessibilityLabel(label string) SliderEl {
 	o := op(e.n, 256)
@@ -26,6 +30,8 @@ func (e SliderEl) AccessibilityLabel(label string) SliderEl {
 	return e
 }
 
+// Set the disabled state of the slider, default: false
+//
 // Disabled is <gpui_kit::component::slider::Slider>::disabled.
 func (e SliderEl) Disabled(disabled bool) SliderEl {
 	o := op(e.n, 257)
@@ -33,25 +39,50 @@ func (e SliderEl) Disabled(disabled bool) SliderEl {
 	return e
 }
 
+// As a horizontal slider.
+//
 // Horizontal is <gpui_kit::component::slider::Slider>::horizontal.
 func (e SliderEl) Horizontal() SliderEl {
 	op(e.n, 258)
 	return e
 }
 
+// Reverse the filled (highlighted) side of the track, default: false.
+//
+// By default the track is filled from the min end to the thumb. With `reverse`, the fill goes from
+// the thumb to the max end instead — useful when the slider represents a remaining amount (e.g.
+// time left).
+//
+// This only changes the visual fill; values, events and interactions are unaffected. It applies to
+// single-value sliders and is ignored for range sliders.
+//
 // Reverse is <gpui_kit::component::slider::Slider>::reverse.
 func (e SliderEl) Reverse() SliderEl {
 	op(e.n, 259)
 	return e
 }
 
+// As a vertical slider.
+//
 // Vertical is <gpui_kit::component::slider::Slider>::vertical.
 func (e SliderEl) Vertical() SliderEl {
 	op(e.n, 260)
 	return e
 }
 
-func (e SliderEl) PopoverStyle() SliderEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e SliderEl) PopoverStyle() SliderEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e SliderEl) RoundedFullStyle() SliderEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e SliderEl) CornerRadii(radius Corners) SliderEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -60,19 +91,32 @@ func (e SliderEl) DebugFocused(focusHandle FocusHandle) SliderEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e SliderEl) DebugGreen() SliderEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e SliderEl) DebugPink() SliderEl                  { tStyledExtDebugPink(e.n); return e }
-func (e SliderEl) DebugRed() SliderEl                   { tStyledExtDebugRed(e.n); return e }
-func (e SliderEl) DebugYellow() SliderEl                { tStyledExtDebugYellow(e.n); return e }
-func (e SliderEl) FontBlack() SliderEl                  { tStyledExtFontBlack(e.n); return e }
-func (e SliderEl) FontBold() SliderEl                   { tStyledExtFontBold(e.n); return e }
-func (e SliderEl) FontExtrabold() SliderEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e SliderEl) FontExtralight() SliderEl             { tStyledExtFontExtralight(e.n); return e }
-func (e SliderEl) FontLight() SliderEl                  { tStyledExtFontLight(e.n); return e }
-func (e SliderEl) FontMedium() SliderEl                 { tStyledExtFontMedium(e.n); return e }
-func (e SliderEl) FontNormal() SliderEl                 { tStyledExtFontNormal(e.n); return e }
-func (e SliderEl) FontSemibold() SliderEl               { tStyledExtFontSemibold(e.n); return e }
-func (e SliderEl) FontThin() SliderEl                   { tStyledExtFontThin(e.n); return e }
+func (e SliderEl) DebugGreen() SliderEl     { tStyledExtDebugGreen(e.n); return e }
+func (e SliderEl) DebugPink() SliderEl      { tStyledExtDebugPink(e.n); return e }
+func (e SliderEl) DebugRed() SliderEl       { tStyledExtDebugRed(e.n); return e }
+func (e SliderEl) DebugYellow() SliderEl    { tStyledExtDebugYellow(e.n); return e }
+func (e SliderEl) FontBlack() SliderEl      { tStyledExtFontBlack(e.n); return e }
+func (e SliderEl) FontBold() SliderEl       { tStyledExtFontBold(e.n); return e }
+func (e SliderEl) FontExtrabold() SliderEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e SliderEl) FontExtralight() SliderEl { tStyledExtFontExtralight(e.n); return e }
+func (e SliderEl) FontLight() SliderEl      { tStyledExtFontLight(e.n); return e }
+func (e SliderEl) FontMedium() SliderEl     { tStyledExtFontMedium(e.n); return e }
+func (e SliderEl) FontNormal() SliderEl     { tStyledExtFontNormal(e.n); return e }
+func (e SliderEl) FontSemibold() SliderEl   { tStyledExtFontSemibold(e.n); return e }
+func (e SliderEl) FontThin() SliderEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e SliderEl) HFlex() SliderEl                      { tStyledExtHFlex(e.n); return e }
 func (e SliderEl) Margins(margins EdgesInto) SliderEl   { tStyledExtMargins(e.n, margins); return e }
 func (e SliderEl) Paddings(paddings EdgesInto) SliderEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -80,118 +124,330 @@ func (e SliderEl) RefineStyle(style StyleRefinement) SliderEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e SliderEl) VFlex() SliderEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SliderEl) Style(st ...Style) SliderEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e SliderEl) AspectRatio(ratio float32) SliderEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e SliderEl) Bg(fill Fill) SliderEl              { tStyledBg(e.n, fill); return e }
-func (e SliderEl) Border(length Length) SliderEl      { tStyledBorder(e.n, length); return e }
-func (e SliderEl) BorderB(length Length) SliderEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e SliderEl) Bg(fill Fill) SliderEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e SliderEl) Border(length Length) SliderEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SliderEl) BorderB(length Length) SliderEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e SliderEl) BorderColor(borderColor Color) SliderEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e SliderEl) BorderL(length Length) SliderEl     { tStyledBorderL(e.n, length); return e }
-func (e SliderEl) BorderR(length Length) SliderEl     { tStyledBorderR(e.n, length); return e }
-func (e SliderEl) BorderT(length Length) SliderEl     { tStyledBorderT(e.n, length); return e }
-func (e SliderEl) BorderX(length Length) SliderEl     { tStyledBorderX(e.n, length); return e }
-func (e SliderEl) BorderY(length Length) SliderEl     { tStyledBorderY(e.n, length); return e }
-func (e SliderEl) Bottom(length Length) SliderEl      { tStyledBottom(e.n, length); return e }
-func (e SliderEl) ColEnd(end int16) SliderEl          { tStyledColEnd(e.n, end); return e }
-func (e SliderEl) ColSpan(span uint16) SliderEl       { tStyledColSpan(e.n, span); return e }
-func (e SliderEl) ColStart(start int16) SliderEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SliderEl) BorderL(length Length) SliderEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SliderEl) BorderR(length Length) SliderEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e SliderEl) BorderT(length Length) SliderEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SliderEl) BorderX(length Length) SliderEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e SliderEl) BorderY(length Length) SliderEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SliderEl) Bottom(length Length) SliderEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e SliderEl) ColEnd(end int16) SliderEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e SliderEl) ColSpan(span uint16) SliderEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e SliderEl) ColStart(start int16) SliderEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e SliderEl) Cursor(cursor CursorStyle) SliderEl { tStyledCursor(e.n, cursor); return e }
-func (e SliderEl) FlexBasis(basis Length) SliderEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e SliderEl) FlexGrow(grow float32) SliderEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e SliderEl) FlexBasis(basis Length) SliderEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e SliderEl) FlexGrow(grow float32) SliderEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SliderEl) FlexShrink(shrink float32) SliderEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e SliderEl) FontFamily(familyName string) SliderEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e SliderEl) FontFeatures(features FontFeatures) SliderEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e SliderEl) FontWeight(weight FontWeight) SliderEl { tStyledFontWeight(e.n, weight); return e }
-func (e SliderEl) Gap(length Length) SliderEl            { tStyledGap(e.n, length); return e }
-func (e SliderEl) GapX(length Length) SliderEl           { tStyledGapX(e.n, length); return e }
-func (e SliderEl) GapY(length Length) SliderEl           { tStyledGapY(e.n, length); return e }
-func (e SliderEl) GridCols(cols uint16) SliderEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e SliderEl) Gap(length Length) SliderEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SliderEl) GapX(length Length) SliderEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e SliderEl) GapY(length Length) SliderEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e SliderEl) GridCols(cols uint16) SliderEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e SliderEl) GridColsMaxContent(cols uint16) SliderEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e SliderEl) GridColsMinContent(cols uint16) SliderEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e SliderEl) GridRows(rows uint16) SliderEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e SliderEl) GridRowsMaxContent(rows uint16) SliderEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e SliderEl) GridRowsMinContent(rows uint16) SliderEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e SliderEl) H(length Length) SliderEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e SliderEl) H(length Length) SliderEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e SliderEl) Inset(length Length) SliderEl { tStyledInset(e.n, length); return e }
-func (e SliderEl) Left(length Length) SliderEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SliderEl) Left(length Length) SliderEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e SliderEl) LineClamp(lines int) SliderEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e SliderEl) LineHeight(lineHeight Length) SliderEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e SliderEl) M(length Length) SliderEl             { tStyledM(e.n, length); return e }
-func (e SliderEl) MaxH(length Length) SliderEl          { tStyledMaxH(e.n, length); return e }
-func (e SliderEl) MaxSize(length Length) SliderEl       { tStyledMaxSize(e.n, length); return e }
-func (e SliderEl) MaxW(length Length) SliderEl          { tStyledMaxW(e.n, length); return e }
-func (e SliderEl) Mb(length Length) SliderEl            { tStyledMb(e.n, length); return e }
-func (e SliderEl) MinH(length Length) SliderEl          { tStyledMinH(e.n, length); return e }
-func (e SliderEl) MinSize(length Length) SliderEl       { tStyledMinSize(e.n, length); return e }
-func (e SliderEl) MinW(length Length) SliderEl          { tStyledMinW(e.n, length); return e }
-func (e SliderEl) Ml(length Length) SliderEl            { tStyledMl(e.n, length); return e }
-func (e SliderEl) Mr(length Length) SliderEl            { tStyledMr(e.n, length); return e }
-func (e SliderEl) Mt(length Length) SliderEl            { tStyledMt(e.n, length); return e }
-func (e SliderEl) Mx(length Length) SliderEl            { tStyledMx(e.n, length); return e }
-func (e SliderEl) My(length Length) SliderEl            { tStyledMy(e.n, length); return e }
-func (e SliderEl) Opacity(opacity float32) SliderEl     { tStyledOpacity(e.n, opacity); return e }
-func (e SliderEl) P(length Length) SliderEl             { tStyledP(e.n, length); return e }
-func (e SliderEl) Pb(length Length) SliderEl            { tStyledPb(e.n, length); return e }
-func (e SliderEl) Pl(length Length) SliderEl            { tStyledPl(e.n, length); return e }
-func (e SliderEl) Pr(length Length) SliderEl            { tStyledPr(e.n, length); return e }
-func (e SliderEl) Pt(length Length) SliderEl            { tStyledPt(e.n, length); return e }
-func (e SliderEl) Px(length Length) SliderEl            { tStyledPx(e.n, length); return e }
-func (e SliderEl) Py(length Length) SliderEl            { tStyledPy(e.n, length); return e }
-func (e SliderEl) Right(length Length) SliderEl         { tStyledRight(e.n, length); return e }
-func (e SliderEl) Rounded(length Length) SliderEl       { tStyledRounded(e.n, length); return e }
-func (e SliderEl) RoundedB(length Length) SliderEl      { tStyledRoundedB(e.n, length); return e }
-func (e SliderEl) RoundedBl(length Length) SliderEl     { tStyledRoundedBl(e.n, length); return e }
-func (e SliderEl) RoundedBr(length Length) SliderEl     { tStyledRoundedBr(e.n, length); return e }
-func (e SliderEl) RoundedL(length Length) SliderEl      { tStyledRoundedL(e.n, length); return e }
-func (e SliderEl) RoundedR(length Length) SliderEl      { tStyledRoundedR(e.n, length); return e }
-func (e SliderEl) RoundedT(length Length) SliderEl      { tStyledRoundedT(e.n, length); return e }
-func (e SliderEl) RoundedTl(length Length) SliderEl     { tStyledRoundedTl(e.n, length); return e }
-func (e SliderEl) RoundedTr(length Length) SliderEl     { tStyledRoundedTr(e.n, length); return e }
-func (e SliderEl) RowEnd(end int16) SliderEl            { tStyledRowEnd(e.n, end); return e }
-func (e SliderEl) RowSpan(span uint16) SliderEl         { tStyledRowSpan(e.n, span); return e }
-func (e SliderEl) RowStart(start int16) SliderEl        { tStyledRowStart(e.n, start); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e SliderEl) M(length Length) SliderEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e SliderEl) MaxH(length Length) SliderEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e SliderEl) MaxSize(length Length) SliderEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e SliderEl) MaxW(length Length) SliderEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SliderEl) Mb(length Length) SliderEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e SliderEl) MinH(length Length) SliderEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e SliderEl) MinSize(length Length) SliderEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e SliderEl) MinW(length Length) SliderEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SliderEl) Ml(length Length) SliderEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SliderEl) Mr(length Length) SliderEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e SliderEl) Mt(length Length) SliderEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e SliderEl) Mx(length Length) SliderEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e SliderEl) My(length Length) SliderEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e SliderEl) Opacity(opacity float32) SliderEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e SliderEl) P(length Length) SliderEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SliderEl) Pb(length Length) SliderEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SliderEl) Pl(length Length) SliderEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SliderEl) Pr(length Length) SliderEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e SliderEl) Pt(length Length) SliderEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e SliderEl) Px(length Length) SliderEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e SliderEl) Py(length Length) SliderEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SliderEl) Right(length Length) SliderEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e SliderEl) Rounded(length Length) SliderEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SliderEl) RoundedB(length Length) SliderEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SliderEl) RoundedBl(length Length) SliderEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SliderEl) RoundedBr(length Length) SliderEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SliderEl) RoundedL(length Length) SliderEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SliderEl) RoundedR(length Length) SliderEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e SliderEl) RoundedT(length Length) SliderEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SliderEl) RoundedTl(length Length) SliderEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e SliderEl) RoundedTr(length Length) SliderEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e SliderEl) RowEnd(end int16) SliderEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e SliderEl) RowSpan(span uint16) SliderEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e SliderEl) RowStart(start int16) SliderEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e SliderEl) ScrollbarWidth(width Length) SliderEl { tStyledScrollbarWidth(e.n, width); return e }
-func (e SliderEl) Shadow(shadows []BoxShadow) SliderEl  { tStyledShadow(e.n, shadows); return e }
-func (e SliderEl) Size(length Length) SliderEl          { tStyledSize(e.n, length); return e }
-func (e SliderEl) TextAlign(align TextAlign) SliderEl   { tStyledTextAlign(e.n, align); return e }
-func (e SliderEl) TextBg(bg Color) SliderEl             { tStyledTextBg(e.n, bg); return e }
-func (e SliderEl) TextColor(color Color) SliderEl       { tStyledTextColor(e.n, color); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e SliderEl) Shadow(shadows []BoxShadow) SliderEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e SliderEl) Size(length Length) SliderEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e SliderEl) TextAlign(align TextAlign) SliderEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e SliderEl) TextBg(bg Color) SliderEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e SliderEl) TextColor(color Color) SliderEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e SliderEl) TextDecorationColor(color Color) SliderEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e SliderEl) TextOverflow(overflow TextOverflow) SliderEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e SliderEl) TextSize(size Length) SliderEl { tStyledTextSize(e.n, size); return e }
-func (e SliderEl) Top(length Length) SliderEl    { tStyledTop(e.n, length); return e }
-func (e SliderEl) W(length Length) SliderEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e SliderEl) Top(length Length) SliderEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e SliderEl) W(length Length) SliderEl { tStyledW(e.n, length); return e }

@@ -3,6 +3,8 @@ package gk
 
 import "core:time"
 
+// An element that provides clipboard copy functionality.
+//
 // Clipboard is gpui_kit::component::clipboard::Clipboard.
 Clipboard :: struct {
 	using el: Element,
@@ -11,14 +13,28 @@ Clipboard :: struct {
 
 Clipboard_VT :: struct {
 	using t_sizable: ^Sizable_Trait(Clipboard),
+	// Set the name a screen reader announces. Defaults to the localized "Copy".
+	//
+	// The clipboard button shows only an icon, so it has no visible label to read, and its tooltip is
+	// a hint rather than a name.
 	accessibility_label: proc(e: Clipboard, label: string) -> Clipboard,
+	// Set a callback to be invoked when the content is copied to the clipboard.
 	on_copied: proc(e: Clipboard, handler: Handler) -> Clipboard,
+	// Set tooltip text for the clipboard button.
 	tooltip: proc(e: Clipboard, tooltip: string) -> Clipboard,
+	// Overrides how long the pointer must rest before the tooltip shows.
+	//
+	// Defaults to `show_delay`.
 	tooltip_show_delay: proc(e: Clipboard, delay: time.Duration) -> Clipboard,
+	// Set the value for copying to the clipboard. Default is an empty string.
 	value: proc(e: Clipboard, value: string) -> Clipboard,
+	// Set the value of the clipboard to the result of the given function. Default is None.
+	//
+	// When used this, the copy value will use the result of the function.
 	value_fn: proc(e: Clipboard, value: Handler) -> Clipboard,
 }
 
+// Create a new Clipboard element with the given ID.
 clipboard :: proc(id: Id, loc := #caller_location) -> Clipboard {
 	use_component_clipboard()
 	e := Clipboard{new_node(621, loc), &clipboard_vt}

@@ -9,6 +9,8 @@ type LabelEl struct{ n *node }
 
 func (e LabelEl) node() *node { return e.n }
 
+// Create a new label with the main label.
+//
 // Label is <gpui_kit::component::label::Label>::new.
 func Label(label string, st ...Style) LabelEl {
 	useComponentLabel()
@@ -19,6 +21,8 @@ func Label(label string, st ...Style) LabelEl {
 	return LabelEl{n}
 }
 
+// Set for matching text to highlight in the label.
+//
 // Highlights is <gpui_kit::component::label::Label>::highlights.
 func (e LabelEl) Highlights(text HighlightsMatchInto) LabelEl {
 	o := op(e.n, 256)
@@ -26,6 +30,8 @@ func (e LabelEl) Highlights(text HighlightsMatchInto) LabelEl {
 	return e
 }
 
+// Set whether to mask the label text.
+//
 // Masked is <gpui_kit::component::label::Label>::masked.
 func (e LabelEl) Masked(masked bool) LabelEl {
 	o := op(e.n, 257)
@@ -33,6 +39,9 @@ func (e LabelEl) Masked(masked bool) LabelEl {
 	return e
 }
 
+// Set the secondary text for the label, the secondary text will be displayed after the label text
+// with `muted` color.
+//
 // Secondary is <gpui_kit::component::label::Label>::secondary.
 func (e LabelEl) Secondary(secondary string) LabelEl {
 	o := op(e.n, 258)
@@ -40,7 +49,19 @@ func (e LabelEl) Secondary(secondary string) LabelEl {
 	return e
 }
 
-func (e LabelEl) PopoverStyle() LabelEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e LabelEl) PopoverStyle() LabelEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e LabelEl) RoundedFullStyle() LabelEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e LabelEl) CornerRadii(radius Corners) LabelEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -49,19 +70,32 @@ func (e LabelEl) DebugFocused(focusHandle FocusHandle) LabelEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e LabelEl) DebugGreen() LabelEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e LabelEl) DebugPink() LabelEl                  { tStyledExtDebugPink(e.n); return e }
-func (e LabelEl) DebugRed() LabelEl                   { tStyledExtDebugRed(e.n); return e }
-func (e LabelEl) DebugYellow() LabelEl                { tStyledExtDebugYellow(e.n); return e }
-func (e LabelEl) FontBlack() LabelEl                  { tStyledExtFontBlack(e.n); return e }
-func (e LabelEl) FontBold() LabelEl                   { tStyledExtFontBold(e.n); return e }
-func (e LabelEl) FontExtrabold() LabelEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e LabelEl) FontExtralight() LabelEl             { tStyledExtFontExtralight(e.n); return e }
-func (e LabelEl) FontLight() LabelEl                  { tStyledExtFontLight(e.n); return e }
-func (e LabelEl) FontMedium() LabelEl                 { tStyledExtFontMedium(e.n); return e }
-func (e LabelEl) FontNormal() LabelEl                 { tStyledExtFontNormal(e.n); return e }
-func (e LabelEl) FontSemibold() LabelEl               { tStyledExtFontSemibold(e.n); return e }
-func (e LabelEl) FontThin() LabelEl                   { tStyledExtFontThin(e.n); return e }
+func (e LabelEl) DebugGreen() LabelEl     { tStyledExtDebugGreen(e.n); return e }
+func (e LabelEl) DebugPink() LabelEl      { tStyledExtDebugPink(e.n); return e }
+func (e LabelEl) DebugRed() LabelEl       { tStyledExtDebugRed(e.n); return e }
+func (e LabelEl) DebugYellow() LabelEl    { tStyledExtDebugYellow(e.n); return e }
+func (e LabelEl) FontBlack() LabelEl      { tStyledExtFontBlack(e.n); return e }
+func (e LabelEl) FontBold() LabelEl       { tStyledExtFontBold(e.n); return e }
+func (e LabelEl) FontExtrabold() LabelEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e LabelEl) FontExtralight() LabelEl { tStyledExtFontExtralight(e.n); return e }
+func (e LabelEl) FontLight() LabelEl      { tStyledExtFontLight(e.n); return e }
+func (e LabelEl) FontMedium() LabelEl     { tStyledExtFontMedium(e.n); return e }
+func (e LabelEl) FontNormal() LabelEl     { tStyledExtFontNormal(e.n); return e }
+func (e LabelEl) FontSemibold() LabelEl   { tStyledExtFontSemibold(e.n); return e }
+func (e LabelEl) FontThin() LabelEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e LabelEl) HFlex() LabelEl                      { tStyledExtHFlex(e.n); return e }
 func (e LabelEl) Margins(margins EdgesInto) LabelEl   { tStyledExtMargins(e.n, margins); return e }
 func (e LabelEl) Paddings(paddings EdgesInto) LabelEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -69,112 +103,324 @@ func (e LabelEl) RefineStyle(style StyleRefinement) LabelEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e LabelEl) VFlex() LabelEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e LabelEl) Style(st ...Style) LabelEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e LabelEl) AspectRatio(ratio float32) LabelEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e LabelEl) Bg(fill Fill) LabelEl              { tStyledBg(e.n, fill); return e }
-func (e LabelEl) Border(length Length) LabelEl      { tStyledBorder(e.n, length); return e }
-func (e LabelEl) BorderB(length Length) LabelEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e LabelEl) Bg(fill Fill) LabelEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e LabelEl) Border(length Length) LabelEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e LabelEl) BorderB(length Length) LabelEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e LabelEl) BorderColor(borderColor Color) LabelEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e LabelEl) BorderL(length Length) LabelEl        { tStyledBorderL(e.n, length); return e }
-func (e LabelEl) BorderR(length Length) LabelEl        { tStyledBorderR(e.n, length); return e }
-func (e LabelEl) BorderT(length Length) LabelEl        { tStyledBorderT(e.n, length); return e }
-func (e LabelEl) BorderX(length Length) LabelEl        { tStyledBorderX(e.n, length); return e }
-func (e LabelEl) BorderY(length Length) LabelEl        { tStyledBorderY(e.n, length); return e }
-func (e LabelEl) Bottom(length Length) LabelEl         { tStyledBottom(e.n, length); return e }
-func (e LabelEl) ColEnd(end int16) LabelEl             { tStyledColEnd(e.n, end); return e }
-func (e LabelEl) ColSpan(span uint16) LabelEl          { tStyledColSpan(e.n, span); return e }
-func (e LabelEl) ColStart(start int16) LabelEl         { tStyledColStart(e.n, start); return e }
-func (e LabelEl) Cursor(cursor CursorStyle) LabelEl    { tStyledCursor(e.n, cursor); return e }
-func (e LabelEl) FlexBasis(basis Length) LabelEl       { tStyledFlexBasis(e.n, basis); return e }
-func (e LabelEl) FlexGrow(grow float32) LabelEl        { tStyledFlexGrow(e.n, grow); return e }
-func (e LabelEl) FlexShrink(shrink float32) LabelEl    { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e LabelEl) BorderL(length Length) LabelEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e LabelEl) BorderR(length Length) LabelEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e LabelEl) BorderT(length Length) LabelEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e LabelEl) BorderX(length Length) LabelEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e LabelEl) BorderY(length Length) LabelEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e LabelEl) Bottom(length Length) LabelEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e LabelEl) ColEnd(end int16) LabelEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e LabelEl) ColSpan(span uint16) LabelEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e LabelEl) ColStart(start int16) LabelEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e LabelEl) Cursor(cursor CursorStyle) LabelEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e LabelEl) FlexBasis(basis Length) LabelEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e LabelEl) FlexGrow(grow float32) LabelEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e LabelEl) FlexShrink(shrink float32) LabelEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e LabelEl) FontFamily(familyName string) LabelEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e LabelEl) FontFeatures(features FontFeatures) LabelEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e LabelEl) FontWeight(weight FontWeight) LabelEl { tStyledFontWeight(e.n, weight); return e }
-func (e LabelEl) Gap(length Length) LabelEl            { tStyledGap(e.n, length); return e }
-func (e LabelEl) GapX(length Length) LabelEl           { tStyledGapX(e.n, length); return e }
-func (e LabelEl) GapY(length Length) LabelEl           { tStyledGapY(e.n, length); return e }
-func (e LabelEl) GridCols(cols uint16) LabelEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e LabelEl) Gap(length Length) LabelEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e LabelEl) GapX(length Length) LabelEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e LabelEl) GapY(length Length) LabelEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e LabelEl) GridCols(cols uint16) LabelEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e LabelEl) GridColsMaxContent(cols uint16) LabelEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e LabelEl) GridColsMinContent(cols uint16) LabelEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e LabelEl) GridRows(rows uint16) LabelEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e LabelEl) GridRowsMaxContent(rows uint16) LabelEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e LabelEl) GridRowsMinContent(rows uint16) LabelEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e LabelEl) H(length Length) LabelEl              { tStyledH(e.n, length); return e }
-func (e LabelEl) Inset(length Length) LabelEl          { tStyledInset(e.n, length); return e }
-func (e LabelEl) Left(length Length) LabelEl           { tStyledLeft(e.n, length); return e }
-func (e LabelEl) LineClamp(lines int) LabelEl          { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e LabelEl) H(length Length) LabelEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e LabelEl) Inset(length Length) LabelEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e LabelEl) Left(length Length) LabelEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e LabelEl) LineClamp(lines int) LabelEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e LabelEl) LineHeight(lineHeight Length) LabelEl { tStyledLineHeight(e.n, lineHeight); return e }
-func (e LabelEl) M(length Length) LabelEl              { tStyledM(e.n, length); return e }
-func (e LabelEl) MaxH(length Length) LabelEl           { tStyledMaxH(e.n, length); return e }
-func (e LabelEl) MaxSize(length Length) LabelEl        { tStyledMaxSize(e.n, length); return e }
-func (e LabelEl) MaxW(length Length) LabelEl           { tStyledMaxW(e.n, length); return e }
-func (e LabelEl) Mb(length Length) LabelEl             { tStyledMb(e.n, length); return e }
-func (e LabelEl) MinH(length Length) LabelEl           { tStyledMinH(e.n, length); return e }
-func (e LabelEl) MinSize(length Length) LabelEl        { tStyledMinSize(e.n, length); return e }
-func (e LabelEl) MinW(length Length) LabelEl           { tStyledMinW(e.n, length); return e }
-func (e LabelEl) Ml(length Length) LabelEl             { tStyledMl(e.n, length); return e }
-func (e LabelEl) Mr(length Length) LabelEl             { tStyledMr(e.n, length); return e }
-func (e LabelEl) Mt(length Length) LabelEl             { tStyledMt(e.n, length); return e }
-func (e LabelEl) Mx(length Length) LabelEl             { tStyledMx(e.n, length); return e }
-func (e LabelEl) My(length Length) LabelEl             { tStyledMy(e.n, length); return e }
-func (e LabelEl) Opacity(opacity float32) LabelEl      { tStyledOpacity(e.n, opacity); return e }
-func (e LabelEl) P(length Length) LabelEl              { tStyledP(e.n, length); return e }
-func (e LabelEl) Pb(length Length) LabelEl             { tStyledPb(e.n, length); return e }
-func (e LabelEl) Pl(length Length) LabelEl             { tStyledPl(e.n, length); return e }
-func (e LabelEl) Pr(length Length) LabelEl             { tStyledPr(e.n, length); return e }
-func (e LabelEl) Pt(length Length) LabelEl             { tStyledPt(e.n, length); return e }
-func (e LabelEl) Px(length Length) LabelEl             { tStyledPx(e.n, length); return e }
-func (e LabelEl) Py(length Length) LabelEl             { tStyledPy(e.n, length); return e }
-func (e LabelEl) Right(length Length) LabelEl          { tStyledRight(e.n, length); return e }
-func (e LabelEl) Rounded(length Length) LabelEl        { tStyledRounded(e.n, length); return e }
-func (e LabelEl) RoundedB(length Length) LabelEl       { tStyledRoundedB(e.n, length); return e }
-func (e LabelEl) RoundedBl(length Length) LabelEl      { tStyledRoundedBl(e.n, length); return e }
-func (e LabelEl) RoundedBr(length Length) LabelEl      { tStyledRoundedBr(e.n, length); return e }
-func (e LabelEl) RoundedL(length Length) LabelEl       { tStyledRoundedL(e.n, length); return e }
-func (e LabelEl) RoundedR(length Length) LabelEl       { tStyledRoundedR(e.n, length); return e }
-func (e LabelEl) RoundedT(length Length) LabelEl       { tStyledRoundedT(e.n, length); return e }
-func (e LabelEl) RoundedTl(length Length) LabelEl      { tStyledRoundedTl(e.n, length); return e }
-func (e LabelEl) RoundedTr(length Length) LabelEl      { tStyledRoundedTr(e.n, length); return e }
-func (e LabelEl) RowEnd(end int16) LabelEl             { tStyledRowEnd(e.n, end); return e }
-func (e LabelEl) RowSpan(span uint16) LabelEl          { tStyledRowSpan(e.n, span); return e }
-func (e LabelEl) RowStart(start int16) LabelEl         { tStyledRowStart(e.n, start); return e }
-func (e LabelEl) ScrollbarWidth(width Length) LabelEl  { tStyledScrollbarWidth(e.n, width); return e }
-func (e LabelEl) Shadow(shadows []BoxShadow) LabelEl   { tStyledShadow(e.n, shadows); return e }
-func (e LabelEl) Size(length Length) LabelEl           { tStyledSize(e.n, length); return e }
-func (e LabelEl) TextAlign(align TextAlign) LabelEl    { tStyledTextAlign(e.n, align); return e }
-func (e LabelEl) TextBg(bg Color) LabelEl              { tStyledTextBg(e.n, bg); return e }
-func (e LabelEl) TextColor(color Color) LabelEl        { tStyledTextColor(e.n, color); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e LabelEl) M(length Length) LabelEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e LabelEl) MaxH(length Length) LabelEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e LabelEl) MaxSize(length Length) LabelEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e LabelEl) MaxW(length Length) LabelEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e LabelEl) Mb(length Length) LabelEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e LabelEl) MinH(length Length) LabelEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e LabelEl) MinSize(length Length) LabelEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e LabelEl) MinW(length Length) LabelEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e LabelEl) Ml(length Length) LabelEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e LabelEl) Mr(length Length) LabelEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e LabelEl) Mt(length Length) LabelEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e LabelEl) Mx(length Length) LabelEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e LabelEl) My(length Length) LabelEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e LabelEl) Opacity(opacity float32) LabelEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e LabelEl) P(length Length) LabelEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e LabelEl) Pb(length Length) LabelEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e LabelEl) Pl(length Length) LabelEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e LabelEl) Pr(length Length) LabelEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e LabelEl) Pt(length Length) LabelEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e LabelEl) Px(length Length) LabelEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e LabelEl) Py(length Length) LabelEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e LabelEl) Right(length Length) LabelEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e LabelEl) Rounded(length Length) LabelEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e LabelEl) RoundedB(length Length) LabelEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e LabelEl) RoundedBl(length Length) LabelEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e LabelEl) RoundedBr(length Length) LabelEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e LabelEl) RoundedL(length Length) LabelEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e LabelEl) RoundedR(length Length) LabelEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e LabelEl) RoundedT(length Length) LabelEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e LabelEl) RoundedTl(length Length) LabelEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e LabelEl) RoundedTr(length Length) LabelEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e LabelEl) RowEnd(end int16) LabelEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e LabelEl) RowSpan(span uint16) LabelEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e LabelEl) RowStart(start int16) LabelEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e LabelEl) ScrollbarWidth(width Length) LabelEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e LabelEl) Shadow(shadows []BoxShadow) LabelEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e LabelEl) Size(length Length) LabelEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e LabelEl) TextAlign(align TextAlign) LabelEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e LabelEl) TextBg(bg Color) LabelEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e LabelEl) TextColor(color Color) LabelEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e LabelEl) TextDecorationColor(color Color) LabelEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e LabelEl) TextOverflow(overflow TextOverflow) LabelEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e LabelEl) TextSize(size Length) LabelEl { tStyledTextSize(e.n, size); return e }
-func (e LabelEl) Top(length Length) LabelEl    { tStyledTop(e.n, length); return e }
-func (e LabelEl) W(length Length) LabelEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e LabelEl) Top(length Length) LabelEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e LabelEl) W(length Length) LabelEl { tStyledW(e.n, length); return e }

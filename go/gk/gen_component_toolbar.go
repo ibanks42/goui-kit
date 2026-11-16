@@ -9,6 +9,8 @@ type ToolbarEl struct{ n *node }
 
 func (e ToolbarEl) node() *node { return e.n }
 
+// Create a new, empty `ToolbarEl` at `Small`.
+//
 // Toolbar is <gpui_kit::component::toolbar::Toolbar>::new.
 func Toolbar(id ID, st ...Style) ToolbarEl {
 	useComponentToolbar()
@@ -19,6 +21,9 @@ func Toolbar(id ID, st ...Style) ToolbarEl {
 	return ToolbarEl{n}
 }
 
+// Append a sized control. The toolbar applies its final size when it renders, so builder call
+// order does not matter.
+//
 // Child is <gpui_kit::component::toolbar::Toolbar>::child.
 func (e ToolbarEl) Child(child SizableNode) ToolbarEl {
 	o := op(e.n, 259)
@@ -26,6 +31,8 @@ func (e ToolbarEl) Child(child SizableNode) ToolbarEl {
 	return e
 }
 
+// Append sized controls.
+//
 // Children is <gpui_kit::component::toolbar::Toolbar>::children.
 func (e ToolbarEl) Children(children []SizableNode) ToolbarEl {
 	o := op(e.n, 260)
@@ -36,6 +43,8 @@ func (e ToolbarEl) Children(children []SizableNode) ToolbarEl {
 	return e
 }
 
+// Append non-sized content.
+//
 // Content is <gpui_kit::component::toolbar::Toolbar>::content.
 func (e ToolbarEl) Content(content Element) ToolbarEl {
 	o := op(e.n, 256)
@@ -43,6 +52,8 @@ func (e ToolbarEl) Content(content Element) ToolbarEl {
 	return e
 }
 
+// Append non-sized content.
+//
 // Contents is <gpui_kit::component::toolbar::Toolbar>::contents.
 func (e ToolbarEl) Contents(contents []Element) ToolbarEl {
 	o := op(e.n, 257)
@@ -53,6 +64,9 @@ func (e ToolbarEl) Contents(contents []Element) ToolbarEl {
 	return e
 }
 
+// Disable the toolbar's roving keyboard navigation. Hosted controls must be disabled by their
+// owner.
+//
 // Disabled is <gpui_kit::component::toolbar::Toolbar>::disabled.
 func (e ToolbarEl) Disabled(disabled bool) ToolbarEl {
 	o := op(e.n, 258)
@@ -60,11 +74,37 @@ func (e ToolbarEl) Disabled(disabled bool) ToolbarEl {
 	return e
 }
 
-func (e ToolbarEl) PopoverStyle() ToolbarEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e ToolbarEl) PopoverStyle() ToolbarEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e ToolbarEl) RoundedFullStyle() ToolbarEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e ToolbarEl) FocusRingStyle() ToolbarEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e ToolbarEl) OnPrepaint(callback func(cx *Cx, e Bounds)) ToolbarEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -79,19 +119,32 @@ func (e ToolbarEl) DebugFocused(focusHandle FocusHandle) ToolbarEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e ToolbarEl) DebugGreen() ToolbarEl               { tStyledExtDebugGreen(e.n); return e }
-func (e ToolbarEl) DebugPink() ToolbarEl                { tStyledExtDebugPink(e.n); return e }
-func (e ToolbarEl) DebugRed() ToolbarEl                 { tStyledExtDebugRed(e.n); return e }
-func (e ToolbarEl) DebugYellow() ToolbarEl              { tStyledExtDebugYellow(e.n); return e }
-func (e ToolbarEl) FontBlack() ToolbarEl                { tStyledExtFontBlack(e.n); return e }
-func (e ToolbarEl) FontBold() ToolbarEl                 { tStyledExtFontBold(e.n); return e }
-func (e ToolbarEl) FontExtrabold() ToolbarEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e ToolbarEl) FontExtralight() ToolbarEl           { tStyledExtFontExtralight(e.n); return e }
-func (e ToolbarEl) FontLight() ToolbarEl                { tStyledExtFontLight(e.n); return e }
-func (e ToolbarEl) FontMedium() ToolbarEl               { tStyledExtFontMedium(e.n); return e }
-func (e ToolbarEl) FontNormal() ToolbarEl               { tStyledExtFontNormal(e.n); return e }
-func (e ToolbarEl) FontSemibold() ToolbarEl             { tStyledExtFontSemibold(e.n); return e }
-func (e ToolbarEl) FontThin() ToolbarEl                 { tStyledExtFontThin(e.n); return e }
+func (e ToolbarEl) DebugGreen() ToolbarEl     { tStyledExtDebugGreen(e.n); return e }
+func (e ToolbarEl) DebugPink() ToolbarEl      { tStyledExtDebugPink(e.n); return e }
+func (e ToolbarEl) DebugRed() ToolbarEl       { tStyledExtDebugRed(e.n); return e }
+func (e ToolbarEl) DebugYellow() ToolbarEl    { tStyledExtDebugYellow(e.n); return e }
+func (e ToolbarEl) FontBlack() ToolbarEl      { tStyledExtFontBlack(e.n); return e }
+func (e ToolbarEl) FontBold() ToolbarEl       { tStyledExtFontBold(e.n); return e }
+func (e ToolbarEl) FontExtrabold() ToolbarEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e ToolbarEl) FontExtralight() ToolbarEl { tStyledExtFontExtralight(e.n); return e }
+func (e ToolbarEl) FontLight() ToolbarEl      { tStyledExtFontLight(e.n); return e }
+func (e ToolbarEl) FontMedium() ToolbarEl     { tStyledExtFontMedium(e.n); return e }
+func (e ToolbarEl) FontNormal() ToolbarEl     { tStyledExtFontNormal(e.n); return e }
+func (e ToolbarEl) FontSemibold() ToolbarEl   { tStyledExtFontSemibold(e.n); return e }
+func (e ToolbarEl) FontThin() ToolbarEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e ToolbarEl) HFlex() ToolbarEl                    { tStyledExtHFlex(e.n); return e }
 func (e ToolbarEl) Margins(margins EdgesInto) ToolbarEl { tStyledExtMargins(e.n, margins); return e }
 func (e ToolbarEl) Paddings(paddings EdgesInto) ToolbarEl {
@@ -102,6 +155,11 @@ func (e ToolbarEl) RefineStyle(style StyleRefinement) ToolbarEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e ToolbarEl) VFlex() ToolbarEl { tStyledExtVFlex(e.n); return e }
 
 func (e ToolbarEl) Text(s string) ToolbarEl { putText(e.n, s); return e }
@@ -112,124 +170,341 @@ func (e ToolbarEl) ChildView(v View) ToolbarEl { slotView(e.n, v); return e }
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e ToolbarEl) Style(st ...Style) ToolbarEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e ToolbarEl) AspectRatio(ratio float32) ToolbarEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e ToolbarEl) Bg(fill Fill) ToolbarEl              { tStyledBg(e.n, fill); return e }
-func (e ToolbarEl) Border(length Length) ToolbarEl      { tStyledBorder(e.n, length); return e }
-func (e ToolbarEl) BorderB(length Length) ToolbarEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e ToolbarEl) Bg(fill Fill) ToolbarEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e ToolbarEl) Border(length Length) ToolbarEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ToolbarEl) BorderB(length Length) ToolbarEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e ToolbarEl) BorderColor(borderColor Color) ToolbarEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e ToolbarEl) BorderL(length Length) ToolbarEl     { tStyledBorderL(e.n, length); return e }
-func (e ToolbarEl) BorderR(length Length) ToolbarEl     { tStyledBorderR(e.n, length); return e }
-func (e ToolbarEl) BorderT(length Length) ToolbarEl     { tStyledBorderT(e.n, length); return e }
-func (e ToolbarEl) BorderX(length Length) ToolbarEl     { tStyledBorderX(e.n, length); return e }
-func (e ToolbarEl) BorderY(length Length) ToolbarEl     { tStyledBorderY(e.n, length); return e }
-func (e ToolbarEl) Bottom(length Length) ToolbarEl      { tStyledBottom(e.n, length); return e }
-func (e ToolbarEl) ColEnd(end int16) ToolbarEl          { tStyledColEnd(e.n, end); return e }
-func (e ToolbarEl) ColSpan(span uint16) ToolbarEl       { tStyledColSpan(e.n, span); return e }
-func (e ToolbarEl) ColStart(start int16) ToolbarEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ToolbarEl) BorderL(length Length) ToolbarEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ToolbarEl) BorderR(length Length) ToolbarEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e ToolbarEl) BorderT(length Length) ToolbarEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e ToolbarEl) BorderX(length Length) ToolbarEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e ToolbarEl) BorderY(length Length) ToolbarEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ToolbarEl) Bottom(length Length) ToolbarEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e ToolbarEl) ColEnd(end int16) ToolbarEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e ToolbarEl) ColSpan(span uint16) ToolbarEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e ToolbarEl) ColStart(start int16) ToolbarEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e ToolbarEl) Cursor(cursor CursorStyle) ToolbarEl { tStyledCursor(e.n, cursor); return e }
-func (e ToolbarEl) FlexBasis(basis Length) ToolbarEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e ToolbarEl) FlexGrow(grow float32) ToolbarEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e ToolbarEl) FlexBasis(basis Length) ToolbarEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e ToolbarEl) FlexGrow(grow float32) ToolbarEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ToolbarEl) FlexShrink(shrink float32) ToolbarEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e ToolbarEl) FontFamily(familyName string) ToolbarEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e ToolbarEl) FontFeatures(features FontFeatures) ToolbarEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e ToolbarEl) FontWeight(weight FontWeight) ToolbarEl { tStyledFontWeight(e.n, weight); return e }
-func (e ToolbarEl) Gap(length Length) ToolbarEl            { tStyledGap(e.n, length); return e }
-func (e ToolbarEl) GapX(length Length) ToolbarEl           { tStyledGapX(e.n, length); return e }
-func (e ToolbarEl) GapY(length Length) ToolbarEl           { tStyledGapY(e.n, length); return e }
-func (e ToolbarEl) GridCols(cols uint16) ToolbarEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e ToolbarEl) Gap(length Length) ToolbarEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ToolbarEl) GapX(length Length) ToolbarEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ToolbarEl) GapY(length Length) ToolbarEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e ToolbarEl) GridCols(cols uint16) ToolbarEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e ToolbarEl) GridColsMaxContent(cols uint16) ToolbarEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e ToolbarEl) GridColsMinContent(cols uint16) ToolbarEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e ToolbarEl) GridRows(rows uint16) ToolbarEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e ToolbarEl) GridRowsMaxContent(rows uint16) ToolbarEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e ToolbarEl) GridRowsMinContent(rows uint16) ToolbarEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e ToolbarEl) H(length Length) ToolbarEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e ToolbarEl) H(length Length) ToolbarEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e ToolbarEl) Inset(length Length) ToolbarEl { tStyledInset(e.n, length); return e }
-func (e ToolbarEl) Left(length Length) ToolbarEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ToolbarEl) Left(length Length) ToolbarEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e ToolbarEl) LineClamp(lines int) ToolbarEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e ToolbarEl) LineHeight(lineHeight Length) ToolbarEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e ToolbarEl) M(length Length) ToolbarEl         { tStyledM(e.n, length); return e }
-func (e ToolbarEl) MaxH(length Length) ToolbarEl      { tStyledMaxH(e.n, length); return e }
-func (e ToolbarEl) MaxSize(length Length) ToolbarEl   { tStyledMaxSize(e.n, length); return e }
-func (e ToolbarEl) MaxW(length Length) ToolbarEl      { tStyledMaxW(e.n, length); return e }
-func (e ToolbarEl) Mb(length Length) ToolbarEl        { tStyledMb(e.n, length); return e }
-func (e ToolbarEl) MinH(length Length) ToolbarEl      { tStyledMinH(e.n, length); return e }
-func (e ToolbarEl) MinSize(length Length) ToolbarEl   { tStyledMinSize(e.n, length); return e }
-func (e ToolbarEl) MinW(length Length) ToolbarEl      { tStyledMinW(e.n, length); return e }
-func (e ToolbarEl) Ml(length Length) ToolbarEl        { tStyledMl(e.n, length); return e }
-func (e ToolbarEl) Mr(length Length) ToolbarEl        { tStyledMr(e.n, length); return e }
-func (e ToolbarEl) Mt(length Length) ToolbarEl        { tStyledMt(e.n, length); return e }
-func (e ToolbarEl) Mx(length Length) ToolbarEl        { tStyledMx(e.n, length); return e }
-func (e ToolbarEl) My(length Length) ToolbarEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e ToolbarEl) M(length Length) ToolbarEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e ToolbarEl) MaxH(length Length) ToolbarEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e ToolbarEl) MaxSize(length Length) ToolbarEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e ToolbarEl) MaxW(length Length) ToolbarEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ToolbarEl) Mb(length Length) ToolbarEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e ToolbarEl) MinH(length Length) ToolbarEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e ToolbarEl) MinSize(length Length) ToolbarEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e ToolbarEl) MinW(length Length) ToolbarEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ToolbarEl) Ml(length Length) ToolbarEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ToolbarEl) Mr(length Length) ToolbarEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ToolbarEl) Mt(length Length) ToolbarEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e ToolbarEl) Mx(length Length) ToolbarEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e ToolbarEl) My(length Length) ToolbarEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e ToolbarEl) Opacity(opacity float32) ToolbarEl { tStyledOpacity(e.n, opacity); return e }
-func (e ToolbarEl) P(length Length) ToolbarEl         { tStyledP(e.n, length); return e }
-func (e ToolbarEl) Pb(length Length) ToolbarEl        { tStyledPb(e.n, length); return e }
-func (e ToolbarEl) Pl(length Length) ToolbarEl        { tStyledPl(e.n, length); return e }
-func (e ToolbarEl) Pr(length Length) ToolbarEl        { tStyledPr(e.n, length); return e }
-func (e ToolbarEl) Pt(length Length) ToolbarEl        { tStyledPt(e.n, length); return e }
-func (e ToolbarEl) Px(length Length) ToolbarEl        { tStyledPx(e.n, length); return e }
-func (e ToolbarEl) Py(length Length) ToolbarEl        { tStyledPy(e.n, length); return e }
-func (e ToolbarEl) Right(length Length) ToolbarEl     { tStyledRight(e.n, length); return e }
-func (e ToolbarEl) Rounded(length Length) ToolbarEl   { tStyledRounded(e.n, length); return e }
-func (e ToolbarEl) RoundedB(length Length) ToolbarEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e ToolbarEl) P(length Length) ToolbarEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ToolbarEl) Pb(length Length) ToolbarEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ToolbarEl) Pl(length Length) ToolbarEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ToolbarEl) Pr(length Length) ToolbarEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ToolbarEl) Pt(length Length) ToolbarEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e ToolbarEl) Px(length Length) ToolbarEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e ToolbarEl) Py(length Length) ToolbarEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ToolbarEl) Right(length Length) ToolbarEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e ToolbarEl) Rounded(length Length) ToolbarEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ToolbarEl) RoundedB(length Length) ToolbarEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ToolbarEl) RoundedBl(length Length) ToolbarEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ToolbarEl) RoundedBr(length Length) ToolbarEl { tStyledRoundedBr(e.n, length); return e }
-func (e ToolbarEl) RoundedL(length Length) ToolbarEl  { tStyledRoundedL(e.n, length); return e }
-func (e ToolbarEl) RoundedR(length Length) ToolbarEl  { tStyledRoundedR(e.n, length); return e }
-func (e ToolbarEl) RoundedT(length Length) ToolbarEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ToolbarEl) RoundedL(length Length) ToolbarEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ToolbarEl) RoundedR(length Length) ToolbarEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e ToolbarEl) RoundedT(length Length) ToolbarEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ToolbarEl) RoundedTl(length Length) ToolbarEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ToolbarEl) RoundedTr(length Length) ToolbarEl { tStyledRoundedTr(e.n, length); return e }
-func (e ToolbarEl) RowEnd(end int16) ToolbarEl        { tStyledRowEnd(e.n, end); return e }
-func (e ToolbarEl) RowSpan(span uint16) ToolbarEl     { tStyledRowSpan(e.n, span); return e }
-func (e ToolbarEl) RowStart(start int16) ToolbarEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e ToolbarEl) RowEnd(end int16) ToolbarEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e ToolbarEl) RowSpan(span uint16) ToolbarEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e ToolbarEl) RowStart(start int16) ToolbarEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e ToolbarEl) ScrollbarWidth(width Length) ToolbarEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e ToolbarEl) Shadow(shadows []BoxShadow) ToolbarEl { tStyledShadow(e.n, shadows); return e }
-func (e ToolbarEl) Size(length Length) ToolbarEl         { tStyledSize(e.n, length); return e }
-func (e ToolbarEl) TextAlign(align TextAlign) ToolbarEl  { tStyledTextAlign(e.n, align); return e }
-func (e ToolbarEl) TextBg(bg Color) ToolbarEl            { tStyledTextBg(e.n, bg); return e }
-func (e ToolbarEl) TextColor(color Color) ToolbarEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e ToolbarEl) Size(length Length) ToolbarEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e ToolbarEl) TextAlign(align TextAlign) ToolbarEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e ToolbarEl) TextBg(bg Color) ToolbarEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e ToolbarEl) TextColor(color Color) ToolbarEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e ToolbarEl) TextDecorationColor(color Color) ToolbarEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e ToolbarEl) TextOverflow(overflow TextOverflow) ToolbarEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e ToolbarEl) TextSize(size Length) ToolbarEl { tStyledTextSize(e.n, size); return e }
-func (e ToolbarEl) Top(length Length) ToolbarEl    { tStyledTop(e.n, length); return e }
-func (e ToolbarEl) W(length Length) ToolbarEl      { tStyledW(e.n, length); return e }
 
-func (e ToolbarEl) Large() ToolbarEl                 { tSizableLarge(e.n); return e }
-func (e ToolbarEl) Small() ToolbarEl                 { tSizableSmall(e.n); return e }
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e ToolbarEl) TextSize(size Length) ToolbarEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ToolbarEl) Top(length Length) ToolbarEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e ToolbarEl) W(length Length) ToolbarEl { tStyledW(e.n, length); return e }
+
+// Set to Size::Large
+func (e ToolbarEl) Large() ToolbarEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e ToolbarEl) Small() ToolbarEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e ToolbarEl) WithSize(size SizeInto) ToolbarEl { tSizableWithSize(e.n, size); return e }
-func (e ToolbarEl) Xsmall() ToolbarEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e ToolbarEl) Xsmall() ToolbarEl { tSizableXsmall(e.n); return e }
 
 // ToolbarGroupEl is gpui_kit::component::toolbar::ToolbarGroup.
 type ToolbarGroupEl struct{ n *node }
@@ -246,6 +521,8 @@ func ToolbarGroup(id ID, st ...Style) ToolbarGroupEl {
 	return ToolbarGroupEl{n}
 }
 
+// Append a control that inherits the group's final size.
+//
 // Child is <gpui_kit::component::toolbar::ToolbarGroup>::child.
 func (e ToolbarGroupEl) Child(child SizableNode) ToolbarGroupEl {
 	o := op(e.n, 258)
@@ -253,6 +530,8 @@ func (e ToolbarGroupEl) Child(child SizableNode) ToolbarGroupEl {
 	return e
 }
 
+// Append controls that inherit the group's final size.
+//
 // Children is <gpui_kit::component::toolbar::ToolbarGroup>::children.
 func (e ToolbarGroupEl) Children(children []SizableNode) ToolbarGroupEl {
 	o := op(e.n, 259)
@@ -263,6 +542,8 @@ func (e ToolbarGroupEl) Children(children []SizableNode) ToolbarGroupEl {
 	return e
 }
 
+// Append non-sized content to the group.
+//
 // Content is <gpui_kit::component::toolbar::ToolbarGroup>::content.
 func (e ToolbarGroupEl) Content(content Element) ToolbarGroupEl {
 	o := op(e.n, 256)
@@ -270,6 +551,8 @@ func (e ToolbarGroupEl) Content(content Element) ToolbarGroupEl {
 	return e
 }
 
+// Sets the accessible name announced for the group.
+//
 // Label is <gpui_kit::component::toolbar::ToolbarGroup>::label.
 func (e ToolbarGroupEl) Label(label string) ToolbarGroupEl {
 	o := op(e.n, 257)
@@ -277,17 +560,43 @@ func (e ToolbarGroupEl) Label(label string) ToolbarGroupEl {
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e ToolbarGroupEl) PopoverStyle() ToolbarGroupEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e ToolbarGroupEl) RoundedFullStyle() ToolbarGroupEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e ToolbarGroupEl) FocusRingStyle() ToolbarGroupEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e ToolbarGroupEl) OnPrepaint(callback func(cx *Cx, e Bounds)) ToolbarGroupEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -315,7 +624,20 @@ func (e ToolbarGroupEl) FontMedium() ToolbarGroupEl     { tStyledExtFontMedium(e
 func (e ToolbarGroupEl) FontNormal() ToolbarGroupEl     { tStyledExtFontNormal(e.n); return e }
 func (e ToolbarGroupEl) FontSemibold() ToolbarGroupEl   { tStyledExtFontSemibold(e.n); return e }
 func (e ToolbarGroupEl) FontThin() ToolbarGroupEl       { tStyledExtFontThin(e.n); return e }
-func (e ToolbarGroupEl) HFlex() ToolbarGroupEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e ToolbarGroupEl) HFlex() ToolbarGroupEl { tStyledExtHFlex(e.n); return e }
 func (e ToolbarGroupEl) Margins(margins EdgesInto) ToolbarGroupEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -328,6 +650,11 @@ func (e ToolbarGroupEl) RefineStyle(style StyleRefinement) ToolbarGroupEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e ToolbarGroupEl) VFlex() ToolbarGroupEl { tStyledExtVFlex(e.n); return e }
 
 func (e ToolbarGroupEl) Text(s string) ToolbarGroupEl { putText(e.n, s); return e }
@@ -338,169 +665,386 @@ func (e ToolbarGroupEl) ChildView(v View) ToolbarGroupEl { slotView(e.n, v); ret
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e ToolbarGroupEl) Style(st ...Style) ToolbarGroupEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e ToolbarGroupEl) AspectRatio(ratio float32) ToolbarGroupEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e ToolbarGroupEl) Bg(fill Fill) ToolbarGroupEl          { tStyledBg(e.n, fill); return e }
-func (e ToolbarGroupEl) Border(length Length) ToolbarGroupEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e ToolbarGroupEl) Bg(fill Fill) ToolbarGroupEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e ToolbarGroupEl) Border(length Length) ToolbarGroupEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e ToolbarGroupEl) BorderB(length Length) ToolbarGroupEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e ToolbarGroupEl) BorderColor(borderColor Color) ToolbarGroupEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e ToolbarGroupEl) BorderL(length Length) ToolbarGroupEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e ToolbarGroupEl) BorderR(length Length) ToolbarGroupEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e ToolbarGroupEl) BorderT(length Length) ToolbarGroupEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e ToolbarGroupEl) BorderX(length Length) ToolbarGroupEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e ToolbarGroupEl) BorderY(length Length) ToolbarGroupEl { tStyledBorderY(e.n, length); return e }
-func (e ToolbarGroupEl) Bottom(length Length) ToolbarGroupEl  { tStyledBottom(e.n, length); return e }
-func (e ToolbarGroupEl) ColEnd(end int16) ToolbarGroupEl      { tStyledColEnd(e.n, end); return e }
-func (e ToolbarGroupEl) ColSpan(span uint16) ToolbarGroupEl   { tStyledColSpan(e.n, span); return e }
-func (e ToolbarGroupEl) ColStart(start int16) ToolbarGroupEl  { tStyledColStart(e.n, start); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ToolbarGroupEl) Bottom(length Length) ToolbarGroupEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e ToolbarGroupEl) ColEnd(end int16) ToolbarGroupEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e ToolbarGroupEl) ColSpan(span uint16) ToolbarGroupEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e ToolbarGroupEl) ColStart(start int16) ToolbarGroupEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e ToolbarGroupEl) Cursor(cursor CursorStyle) ToolbarGroupEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e ToolbarGroupEl) FlexBasis(basis Length) ToolbarGroupEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e ToolbarGroupEl) FlexGrow(grow float32) ToolbarGroupEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ToolbarGroupEl) FlexShrink(shrink float32) ToolbarGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e ToolbarGroupEl) FontFamily(familyName string) ToolbarGroupEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e ToolbarGroupEl) FontFeatures(features FontFeatures) ToolbarGroupEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e ToolbarGroupEl) FontWeight(weight FontWeight) ToolbarGroupEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e ToolbarGroupEl) Gap(length Length) ToolbarGroupEl    { tStyledGap(e.n, length); return e }
-func (e ToolbarGroupEl) GapX(length Length) ToolbarGroupEl   { tStyledGapX(e.n, length); return e }
-func (e ToolbarGroupEl) GapY(length Length) ToolbarGroupEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e ToolbarGroupEl) Gap(length Length) ToolbarGroupEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ToolbarGroupEl) GapX(length Length) ToolbarGroupEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e ToolbarGroupEl) GapY(length Length) ToolbarGroupEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e ToolbarGroupEl) GridCols(cols uint16) ToolbarGroupEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e ToolbarGroupEl) GridColsMaxContent(cols uint16) ToolbarGroupEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e ToolbarGroupEl) GridColsMinContent(cols uint16) ToolbarGroupEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e ToolbarGroupEl) GridRows(rows uint16) ToolbarGroupEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e ToolbarGroupEl) GridRowsMaxContent(rows uint16) ToolbarGroupEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e ToolbarGroupEl) GridRowsMinContent(rows uint16) ToolbarGroupEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e ToolbarGroupEl) H(length Length) ToolbarGroupEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e ToolbarGroupEl) H(length Length) ToolbarGroupEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e ToolbarGroupEl) Inset(length Length) ToolbarGroupEl { tStyledInset(e.n, length); return e }
-func (e ToolbarGroupEl) Left(length Length) ToolbarGroupEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ToolbarGroupEl) Left(length Length) ToolbarGroupEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e ToolbarGroupEl) LineClamp(lines int) ToolbarGroupEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e ToolbarGroupEl) LineHeight(lineHeight Length) ToolbarGroupEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e ToolbarGroupEl) M(length Length) ToolbarGroupEl       { tStyledM(e.n, length); return e }
-func (e ToolbarGroupEl) MaxH(length Length) ToolbarGroupEl    { tStyledMaxH(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e ToolbarGroupEl) M(length Length) ToolbarGroupEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e ToolbarGroupEl) MaxH(length Length) ToolbarGroupEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e ToolbarGroupEl) MaxSize(length Length) ToolbarGroupEl { tStyledMaxSize(e.n, length); return e }
-func (e ToolbarGroupEl) MaxW(length Length) ToolbarGroupEl    { tStyledMaxW(e.n, length); return e }
-func (e ToolbarGroupEl) Mb(length Length) ToolbarGroupEl      { tStyledMb(e.n, length); return e }
-func (e ToolbarGroupEl) MinH(length Length) ToolbarGroupEl    { tStyledMinH(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e ToolbarGroupEl) MaxW(length Length) ToolbarGroupEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ToolbarGroupEl) Mb(length Length) ToolbarGroupEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e ToolbarGroupEl) MinH(length Length) ToolbarGroupEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e ToolbarGroupEl) MinSize(length Length) ToolbarGroupEl { tStyledMinSize(e.n, length); return e }
-func (e ToolbarGroupEl) MinW(length Length) ToolbarGroupEl    { tStyledMinW(e.n, length); return e }
-func (e ToolbarGroupEl) Ml(length Length) ToolbarGroupEl      { tStyledMl(e.n, length); return e }
-func (e ToolbarGroupEl) Mr(length Length) ToolbarGroupEl      { tStyledMr(e.n, length); return e }
-func (e ToolbarGroupEl) Mt(length Length) ToolbarGroupEl      { tStyledMt(e.n, length); return e }
-func (e ToolbarGroupEl) Mx(length Length) ToolbarGroupEl      { tStyledMx(e.n, length); return e }
-func (e ToolbarGroupEl) My(length Length) ToolbarGroupEl      { tStyledMy(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e ToolbarGroupEl) MinW(length Length) ToolbarGroupEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ToolbarGroupEl) Ml(length Length) ToolbarGroupEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ToolbarGroupEl) Mr(length Length) ToolbarGroupEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e ToolbarGroupEl) Mt(length Length) ToolbarGroupEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e ToolbarGroupEl) Mx(length Length) ToolbarGroupEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e ToolbarGroupEl) My(length Length) ToolbarGroupEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e ToolbarGroupEl) Opacity(opacity float32) ToolbarGroupEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e ToolbarGroupEl) P(length Length) ToolbarGroupEl       { tStyledP(e.n, length); return e }
-func (e ToolbarGroupEl) Pb(length Length) ToolbarGroupEl      { tStyledPb(e.n, length); return e }
-func (e ToolbarGroupEl) Pl(length Length) ToolbarGroupEl      { tStyledPl(e.n, length); return e }
-func (e ToolbarGroupEl) Pr(length Length) ToolbarGroupEl      { tStyledPr(e.n, length); return e }
-func (e ToolbarGroupEl) Pt(length Length) ToolbarGroupEl      { tStyledPt(e.n, length); return e }
-func (e ToolbarGroupEl) Px(length Length) ToolbarGroupEl      { tStyledPx(e.n, length); return e }
-func (e ToolbarGroupEl) Py(length Length) ToolbarGroupEl      { tStyledPy(e.n, length); return e }
-func (e ToolbarGroupEl) Right(length Length) ToolbarGroupEl   { tStyledRight(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e ToolbarGroupEl) P(length Length) ToolbarGroupEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ToolbarGroupEl) Pb(length Length) ToolbarGroupEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ToolbarGroupEl) Pl(length Length) ToolbarGroupEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ToolbarGroupEl) Pr(length Length) ToolbarGroupEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e ToolbarGroupEl) Pt(length Length) ToolbarGroupEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e ToolbarGroupEl) Px(length Length) ToolbarGroupEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e ToolbarGroupEl) Py(length Length) ToolbarGroupEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ToolbarGroupEl) Right(length Length) ToolbarGroupEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e ToolbarGroupEl) Rounded(length Length) ToolbarGroupEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e ToolbarGroupEl) RoundedB(length Length) ToolbarGroupEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ToolbarGroupEl) RoundedBl(length Length) ToolbarGroupEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ToolbarGroupEl) RoundedBr(length Length) ToolbarGroupEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e ToolbarGroupEl) RoundedL(length Length) ToolbarGroupEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e ToolbarGroupEl) RoundedR(length Length) ToolbarGroupEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e ToolbarGroupEl) RoundedT(length Length) ToolbarGroupEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ToolbarGroupEl) RoundedTl(length Length) ToolbarGroupEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e ToolbarGroupEl) RoundedTr(length Length) ToolbarGroupEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e ToolbarGroupEl) RowEnd(end int16) ToolbarGroupEl     { tStyledRowEnd(e.n, end); return e }
-func (e ToolbarGroupEl) RowSpan(span uint16) ToolbarGroupEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e ToolbarGroupEl) RowEnd(end int16) ToolbarGroupEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e ToolbarGroupEl) RowSpan(span uint16) ToolbarGroupEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e ToolbarGroupEl) RowStart(start int16) ToolbarGroupEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e ToolbarGroupEl) ScrollbarWidth(width Length) ToolbarGroupEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e ToolbarGroupEl) Shadow(shadows []BoxShadow) ToolbarGroupEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e ToolbarGroupEl) Size(length Length) ToolbarGroupEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e ToolbarGroupEl) TextAlign(align TextAlign) ToolbarGroupEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e ToolbarGroupEl) TextBg(bg Color) ToolbarGroupEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e ToolbarGroupEl) TextBg(bg Color) ToolbarGroupEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e ToolbarGroupEl) TextColor(color Color) ToolbarGroupEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e ToolbarGroupEl) TextDecorationColor(color Color) ToolbarGroupEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e ToolbarGroupEl) TextOverflow(overflow TextOverflow) ToolbarGroupEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e ToolbarGroupEl) TextSize(size Length) ToolbarGroupEl { tStyledTextSize(e.n, size); return e }
-func (e ToolbarGroupEl) Top(length Length) ToolbarGroupEl    { tStyledTop(e.n, length); return e }
-func (e ToolbarGroupEl) W(length Length) ToolbarGroupEl      { tStyledW(e.n, length); return e }
 
-func (e ToolbarGroupEl) Large() ToolbarGroupEl                 { tSizableLarge(e.n); return e }
-func (e ToolbarGroupEl) Small() ToolbarGroupEl                 { tSizableSmall(e.n); return e }
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e ToolbarGroupEl) TextSize(size Length) ToolbarGroupEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e ToolbarGroupEl) Top(length Length) ToolbarGroupEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e ToolbarGroupEl) W(length Length) ToolbarGroupEl { tStyledW(e.n, length); return e }
+
+// Set to Size::Large
+func (e ToolbarGroupEl) Large() ToolbarGroupEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e ToolbarGroupEl) Small() ToolbarGroupEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e ToolbarGroupEl) WithSize(size SizeInto) ToolbarGroupEl { tSizableWithSize(e.n, size); return e }
-func (e ToolbarGroupEl) Xsmall() ToolbarGroupEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e ToolbarGroupEl) Xsmall() ToolbarGroupEl { tSizableXsmall(e.n); return e }

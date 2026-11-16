@@ -9,6 +9,10 @@ type AlertDialogEl struct{ n *node }
 
 func (e AlertDialogEl) node() *node { return e.n }
 
+// Create a new AlertDialog.
+//
+// By default, the dialog is not overlay closable with a OK button.
+//
 // AlertDialog is <gpui_kit::component::dialog::AlertDialog>::new.
 func AlertDialog(st ...Style) AlertDialogEl {
 	useComponentDialog()
@@ -17,6 +21,13 @@ func AlertDialog(st ...Style) AlertDialogEl {
 	return AlertDialogEl{n}
 }
 
+// Set the button props of the alert dialog.
+//
+// Use this to configure button text, variants, and visibility in one value. It overrides only the
+// fields `button_props` sets, so the Cancel button `Confirm` asked for and callbacks set earlier
+// survive, whatever the call order. For a single property, prefer the direct builders — `OkText`,
+// `OkVariant`, `CancelText`, `CancelVariant`.
+//
 // ButtonProps is <gpui_kit::component::dialog::AlertDialog>::button_props.
 func (e AlertDialogEl) ButtonProps(buttonProps DialogButtonProps) AlertDialogEl {
 	o := op(e.n, 256)
@@ -24,6 +35,8 @@ func (e AlertDialogEl) ButtonProps(buttonProps DialogButtonProps) AlertDialogEl 
 	return e
 }
 
+// Sets the text of the Cancel button. Default is `Cancel`.
+//
 // CancelText is <gpui_kit::component::dialog::AlertDialog>::cancel_text.
 func (e AlertDialogEl) CancelText(cancelText string) AlertDialogEl {
 	o := op(e.n, 257)
@@ -31,6 +44,8 @@ func (e AlertDialogEl) CancelText(cancelText string) AlertDialogEl {
 	return e
 }
 
+// Sets the variant of the Cancel button. Default is `ButtonVariant::default()`.
+//
 // CancelVariant is <gpui_kit::component::dialog::AlertDialog>::cancel_variant.
 func (e AlertDialogEl) CancelVariant(cancelVariant ButtonVariant) AlertDialogEl {
 	o := op(e.n, 258)
@@ -38,12 +53,17 @@ func (e AlertDialogEl) CancelVariant(cancelVariant ButtonVariant) AlertDialogEl 
 	return e
 }
 
+// Centers the alert dialog vertically in the window, whatever its height, in place of the
+// `MarginTop` offset.
+//
 // Centered is <gpui_kit::component::dialog::AlertDialog>::centered.
 func (e AlertDialogEl) Centered() AlertDialogEl {
 	op(e.n, 259)
 	return e
 }
 
+// Set the close button of the alert dialog, defaults to `false`.
+//
 // CloseButton is <gpui_kit::component::dialog::AlertDialog>::close_button.
 func (e AlertDialogEl) CloseButton(closeButton bool) AlertDialogEl {
 	o := op(e.n, 260)
@@ -51,12 +71,23 @@ func (e AlertDialogEl) CloseButton(closeButton bool) AlertDialogEl {
 	return e
 }
 
+// Set to use confirm dialog, with OK and Cancel buttons.
+//
+// The default of `AlertDialogEl` has OK button.
+//
 // Confirm is <gpui_kit::component::dialog::AlertDialog>::confirm.
 func (e AlertDialogEl) Confirm() AlertDialogEl {
 	op(e.n, 261)
 	return e
 }
 
+// Sets the content builder for declarative API.
+//
+// When using this method, you define the dialog content using declarative components like
+// `DialogHeader`, `DialogTitle`, `DialogDescription`, and `DialogFooter`.
+//
+// This method is typically used together with `.trigger()` for a fully declarative API.
+//
 // Content is <gpui_kit::component::dialog::AlertDialog>::content.
 func (e AlertDialogEl) Content(builder DialogContentEl) AlertDialogEl {
 	o := op(e.n, 262)
@@ -64,6 +95,8 @@ func (e AlertDialogEl) Content(builder DialogContentEl) AlertDialogEl {
 	return e
 }
 
+// Sets the description of the alert dialog.
+//
 // Description is <gpui_kit::component::dialog::AlertDialog>::description.
 func (e AlertDialogEl) Description(description Element) AlertDialogEl {
 	o := op(e.n, 263)
@@ -71,6 +104,10 @@ func (e AlertDialogEl) Description(description Element) AlertDialogEl {
 	return e
 }
 
+// Sets how the alert dialog enters, defaulting to `SlideDown`.
+//
+// Shares the surface, backdrop, and reduced-motion policy of `Entrance`.
+//
 // Entrance is <gpui_kit::component::dialog::AlertDialog>::entrance.
 func (e AlertDialogEl) Entrance(entrance DialogEntrance) AlertDialogEl {
 	o := op(e.n, 264)
@@ -78,6 +115,12 @@ func (e AlertDialogEl) Entrance(entrance DialogEntrance) AlertDialogEl {
 	return e
 }
 
+// Sets the footer builder for declarative API.
+//
+// This is used to define the footer content using declarative components like `DialogFooter`.
+//
+// If not set, a default footer with OK and optional Cancel button will be used.
+//
 // Footer is <gpui_kit::component::dialog::AlertDialog>::footer.
 func (e AlertDialogEl) Footer(footer Element) AlertDialogEl {
 	o := op(e.n, 265)
@@ -85,6 +128,8 @@ func (e AlertDialogEl) Footer(footer Element) AlertDialogEl {
 	return e
 }
 
+// Sets the icon of the alert dialog, default is None.
+//
 // Icon is <gpui_kit::component::dialog::AlertDialog>::icon.
 func (e AlertDialogEl) Icon(icon Element) AlertDialogEl {
 	o := op(e.n, 266)
@@ -92,6 +137,8 @@ func (e AlertDialogEl) Icon(icon Element) AlertDialogEl {
 	return e
 }
 
+// Set whether to support keyboard esc to close the dialog, defaults to `true`.
+//
 // Keyboard is <gpui_kit::component::dialog::AlertDialog>::keyboard.
 func (e AlertDialogEl) Keyboard(keyboard bool) AlertDialogEl {
 	o := op(e.n, 267)
@@ -99,6 +146,12 @@ func (e AlertDialogEl) Keyboard(keyboard bool) AlertDialogEl {
 	return e
 }
 
+// Sets the top offset of the alert dialog.
+//
+// Without this, the surface keeps the `DialogEl` default: a tenth of the viewport height below the
+// top edge, which pins short alerts near the top of a tall window. Pass a larger offset to seat an
+// alert further down, e.g. in the vertical middle of the window.
+//
 // MarginTop is <gpui_kit::component::dialog::AlertDialog>::margin_top.
 func (e AlertDialogEl) MarginTop(marginTop float32) AlertDialogEl {
 	o := op(e.n, 268)
@@ -106,6 +159,8 @@ func (e AlertDialogEl) MarginTop(marginTop float32) AlertDialogEl {
 	return e
 }
 
+// Sets the text of the OK button. Default is `OK`.
+//
 // OkText is <gpui_kit::component::dialog::AlertDialog>::ok_text.
 func (e AlertDialogEl) OkText(okText string) AlertDialogEl {
 	o := op(e.n, 269)
@@ -113,6 +168,8 @@ func (e AlertDialogEl) OkText(okText string) AlertDialogEl {
 	return e
 }
 
+// Sets the variant of the OK button. Default is `ButtonVariant::Primary`.
+//
 // OkVariant is <gpui_kit::component::dialog::AlertDialog>::ok_variant.
 func (e AlertDialogEl) OkVariant(okVariant ButtonVariant) AlertDialogEl {
 	o := op(e.n, 270)
@@ -120,6 +177,11 @@ func (e AlertDialogEl) OkVariant(okVariant ButtonVariant) AlertDialogEl {
 	return e
 }
 
+// Sets the callback for when the alert dialog has been canceled.
+//
+// The callback should return `true` to close the dialog, if return `false` the dialog will not be
+// closed.
+//
 // OnCancel is <gpui_kit::component::dialog::AlertDialog>::on_cancel.
 func (e AlertDialogEl) OnCancel(onCancel func(cx *Cx, e ClickEvent) bool) AlertDialogEl {
 	o := op(e.n, 271)
@@ -127,6 +189,10 @@ func (e AlertDialogEl) OnCancel(onCancel func(cx *Cx, e ClickEvent) bool) AlertD
 	return e
 }
 
+// Sets the callback for when the alert dialog is closed.
+//
+// Called after `on_action` or `OnCancel` callback.
+//
 // OnClose is <gpui_kit::component::dialog::AlertDialog>::on_close.
 func (e AlertDialogEl) OnClose(onClose func(cx *Cx, e ClickEvent)) AlertDialogEl {
 	o := op(e.n, 272)
@@ -134,6 +200,11 @@ func (e AlertDialogEl) OnClose(onClose func(cx *Cx, e ClickEvent)) AlertDialogEl
 	return e
 }
 
+// Sets the callback for when the OK/action button is clicked.
+//
+// The callback should return `true` to close the dialog, if return `false` the dialog will not be
+// closed.
+//
 // OnOk is <gpui_kit::component::dialog::AlertDialog>::on_ok.
 func (e AlertDialogEl) OnOk(onOk func(cx *Cx, e ClickEvent) bool) AlertDialogEl {
 	o := op(e.n, 273)
@@ -141,6 +212,8 @@ func (e AlertDialogEl) OnOk(onOk func(cx *Cx, e ClickEvent) bool) AlertDialogEl 
 	return e
 }
 
+// Show cancel button. Default is false.
+//
 // ShowCancel is <gpui_kit::component::dialog::AlertDialog>::show_cancel.
 func (e AlertDialogEl) ShowCancel(showCancel bool) AlertDialogEl {
 	o := op(e.n, 274)
@@ -148,6 +221,8 @@ func (e AlertDialogEl) ShowCancel(showCancel bool) AlertDialogEl {
 	return e
 }
 
+// Sets the title of the alert dialog.
+//
 // Title is <gpui_kit::component::dialog::AlertDialog>::title.
 func (e AlertDialogEl) Title(title Element) AlertDialogEl {
 	o := op(e.n, 275)
@@ -155,6 +230,17 @@ func (e AlertDialogEl) Title(title Element) AlertDialogEl {
 	return e
 }
 
+// Sets the trigger element for the alert dialog.
+//
+// When a trigger is set, the dialog will render as a trigger element that opens the dialog when
+// clicked.
+//
+// **Note**: When using `.trigger()`, you should also use `.content()` to define the dialog content
+// declaratively instead of using `.title()`, `.description()`, etc.
+//
+// The `title`, `description`, `icon`, and `button_props` will be ignored when used together with
+// `.trigger()`.
+//
 // Trigger is <gpui_kit::component::dialog::AlertDialog>::trigger.
 func (e AlertDialogEl) Trigger(trigger Element) AlertDialogEl {
 	o := op(e.n, 276)
@@ -162,6 +248,8 @@ func (e AlertDialogEl) Trigger(trigger Element) AlertDialogEl {
 	return e
 }
 
+// Sets the width of the alert dialog, defaults to 420px.
+//
 // Width is <gpui_kit::component::dialog::AlertDialog>::width.
 func (e AlertDialogEl) Width(width float32) AlertDialogEl {
 	o := op(e.n, 277)
@@ -169,14 +257,40 @@ func (e AlertDialogEl) Width(width float32) AlertDialogEl {
 	return e
 }
 
-func (e AlertDialogEl) PopoverStyle() AlertDialogEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e AlertDialogEl) PopoverStyle() AlertDialogEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e AlertDialogEl) RoundedFullStyle() AlertDialogEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e AlertDialogEl) FocusRingStyle() AlertDialogEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AlertDialogEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AlertDialogEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -204,7 +318,20 @@ func (e AlertDialogEl) FontMedium() AlertDialogEl     { tStyledExtFontMedium(e.n
 func (e AlertDialogEl) FontNormal() AlertDialogEl     { tStyledExtFontNormal(e.n); return e }
 func (e AlertDialogEl) FontSemibold() AlertDialogEl   { tStyledExtFontSemibold(e.n); return e }
 func (e AlertDialogEl) FontThin() AlertDialogEl       { tStyledExtFontThin(e.n); return e }
-func (e AlertDialogEl) HFlex() AlertDialogEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e AlertDialogEl) HFlex() AlertDialogEl { tStyledExtHFlex(e.n); return e }
 func (e AlertDialogEl) Margins(margins EdgesInto) AlertDialogEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -217,158 +344,373 @@ func (e AlertDialogEl) RefineStyle(style StyleRefinement) AlertDialogEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e AlertDialogEl) VFlex() AlertDialogEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e AlertDialogEl) Style(st ...Style) AlertDialogEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e AlertDialogEl) AspectRatio(ratio float32) AlertDialogEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e AlertDialogEl) Bg(fill Fill) AlertDialogEl          { tStyledBg(e.n, fill); return e }
-func (e AlertDialogEl) Border(length Length) AlertDialogEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e AlertDialogEl) Bg(fill Fill) AlertDialogEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e AlertDialogEl) Border(length Length) AlertDialogEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e AlertDialogEl) BorderB(length Length) AlertDialogEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e AlertDialogEl) BorderColor(borderColor Color) AlertDialogEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e AlertDialogEl) BorderL(length Length) AlertDialogEl     { tStyledBorderL(e.n, length); return e }
-func (e AlertDialogEl) BorderR(length Length) AlertDialogEl     { tStyledBorderR(e.n, length); return e }
-func (e AlertDialogEl) BorderT(length Length) AlertDialogEl     { tStyledBorderT(e.n, length); return e }
-func (e AlertDialogEl) BorderX(length Length) AlertDialogEl     { tStyledBorderX(e.n, length); return e }
-func (e AlertDialogEl) BorderY(length Length) AlertDialogEl     { tStyledBorderY(e.n, length); return e }
-func (e AlertDialogEl) Bottom(length Length) AlertDialogEl      { tStyledBottom(e.n, length); return e }
-func (e AlertDialogEl) ColEnd(end int16) AlertDialogEl          { tStyledColEnd(e.n, end); return e }
-func (e AlertDialogEl) ColSpan(span uint16) AlertDialogEl       { tStyledColSpan(e.n, span); return e }
-func (e AlertDialogEl) ColStart(start int16) AlertDialogEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AlertDialogEl) BorderL(length Length) AlertDialogEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AlertDialogEl) BorderR(length Length) AlertDialogEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e AlertDialogEl) BorderT(length Length) AlertDialogEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e AlertDialogEl) BorderX(length Length) AlertDialogEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e AlertDialogEl) BorderY(length Length) AlertDialogEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AlertDialogEl) Bottom(length Length) AlertDialogEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e AlertDialogEl) ColEnd(end int16) AlertDialogEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e AlertDialogEl) ColSpan(span uint16) AlertDialogEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e AlertDialogEl) ColStart(start int16) AlertDialogEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e AlertDialogEl) Cursor(cursor CursorStyle) AlertDialogEl { tStyledCursor(e.n, cursor); return e }
-func (e AlertDialogEl) FlexBasis(basis Length) AlertDialogEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e AlertDialogEl) FlexGrow(grow float32) AlertDialogEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e AlertDialogEl) FlexBasis(basis Length) AlertDialogEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e AlertDialogEl) FlexGrow(grow float32) AlertDialogEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AlertDialogEl) FlexShrink(shrink float32) AlertDialogEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e AlertDialogEl) FontFamily(familyName string) AlertDialogEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e AlertDialogEl) FontFeatures(features FontFeatures) AlertDialogEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e AlertDialogEl) FontWeight(weight FontWeight) AlertDialogEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e AlertDialogEl) Gap(length Length) AlertDialogEl    { tStyledGap(e.n, length); return e }
-func (e AlertDialogEl) GapX(length Length) AlertDialogEl   { tStyledGapX(e.n, length); return e }
-func (e AlertDialogEl) GapY(length Length) AlertDialogEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e AlertDialogEl) Gap(length Length) AlertDialogEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e AlertDialogEl) GapX(length Length) AlertDialogEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e AlertDialogEl) GapY(length Length) AlertDialogEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e AlertDialogEl) GridCols(cols uint16) AlertDialogEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e AlertDialogEl) GridColsMaxContent(cols uint16) AlertDialogEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e AlertDialogEl) GridColsMinContent(cols uint16) AlertDialogEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e AlertDialogEl) GridRows(rows uint16) AlertDialogEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e AlertDialogEl) GridRowsMaxContent(rows uint16) AlertDialogEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e AlertDialogEl) GridRowsMinContent(rows uint16) AlertDialogEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e AlertDialogEl) H(length Length) AlertDialogEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e AlertDialogEl) H(length Length) AlertDialogEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e AlertDialogEl) Inset(length Length) AlertDialogEl { tStyledInset(e.n, length); return e }
-func (e AlertDialogEl) Left(length Length) AlertDialogEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AlertDialogEl) Left(length Length) AlertDialogEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e AlertDialogEl) LineClamp(lines int) AlertDialogEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e AlertDialogEl) LineHeight(lineHeight Length) AlertDialogEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e AlertDialogEl) M(length Length) AlertDialogEl         { tStyledM(e.n, length); return e }
-func (e AlertDialogEl) MaxH(length Length) AlertDialogEl      { tStyledMaxH(e.n, length); return e }
-func (e AlertDialogEl) MaxSize(length Length) AlertDialogEl   { tStyledMaxSize(e.n, length); return e }
-func (e AlertDialogEl) MaxW(length Length) AlertDialogEl      { tStyledMaxW(e.n, length); return e }
-func (e AlertDialogEl) Mb(length Length) AlertDialogEl        { tStyledMb(e.n, length); return e }
-func (e AlertDialogEl) MinH(length Length) AlertDialogEl      { tStyledMinH(e.n, length); return e }
-func (e AlertDialogEl) MinSize(length Length) AlertDialogEl   { tStyledMinSize(e.n, length); return e }
-func (e AlertDialogEl) MinW(length Length) AlertDialogEl      { tStyledMinW(e.n, length); return e }
-func (e AlertDialogEl) Ml(length Length) AlertDialogEl        { tStyledMl(e.n, length); return e }
-func (e AlertDialogEl) Mr(length Length) AlertDialogEl        { tStyledMr(e.n, length); return e }
-func (e AlertDialogEl) Mt(length Length) AlertDialogEl        { tStyledMt(e.n, length); return e }
-func (e AlertDialogEl) Mx(length Length) AlertDialogEl        { tStyledMx(e.n, length); return e }
-func (e AlertDialogEl) My(length Length) AlertDialogEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e AlertDialogEl) M(length Length) AlertDialogEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e AlertDialogEl) MaxH(length Length) AlertDialogEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e AlertDialogEl) MaxSize(length Length) AlertDialogEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e AlertDialogEl) MaxW(length Length) AlertDialogEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AlertDialogEl) Mb(length Length) AlertDialogEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e AlertDialogEl) MinH(length Length) AlertDialogEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e AlertDialogEl) MinSize(length Length) AlertDialogEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e AlertDialogEl) MinW(length Length) AlertDialogEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AlertDialogEl) Ml(length Length) AlertDialogEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AlertDialogEl) Mr(length Length) AlertDialogEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e AlertDialogEl) Mt(length Length) AlertDialogEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e AlertDialogEl) Mx(length Length) AlertDialogEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e AlertDialogEl) My(length Length) AlertDialogEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e AlertDialogEl) Opacity(opacity float32) AlertDialogEl { tStyledOpacity(e.n, opacity); return e }
-func (e AlertDialogEl) P(length Length) AlertDialogEl         { tStyledP(e.n, length); return e }
-func (e AlertDialogEl) Pb(length Length) AlertDialogEl        { tStyledPb(e.n, length); return e }
-func (e AlertDialogEl) Pl(length Length) AlertDialogEl        { tStyledPl(e.n, length); return e }
-func (e AlertDialogEl) Pr(length Length) AlertDialogEl        { tStyledPr(e.n, length); return e }
-func (e AlertDialogEl) Pt(length Length) AlertDialogEl        { tStyledPt(e.n, length); return e }
-func (e AlertDialogEl) Px(length Length) AlertDialogEl        { tStyledPx(e.n, length); return e }
-func (e AlertDialogEl) Py(length Length) AlertDialogEl        { tStyledPy(e.n, length); return e }
-func (e AlertDialogEl) Right(length Length) AlertDialogEl     { tStyledRight(e.n, length); return e }
-func (e AlertDialogEl) Rounded(length Length) AlertDialogEl   { tStyledRounded(e.n, length); return e }
-func (e AlertDialogEl) RoundedB(length Length) AlertDialogEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e AlertDialogEl) P(length Length) AlertDialogEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AlertDialogEl) Pb(length Length) AlertDialogEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AlertDialogEl) Pl(length Length) AlertDialogEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AlertDialogEl) Pr(length Length) AlertDialogEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e AlertDialogEl) Pt(length Length) AlertDialogEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e AlertDialogEl) Px(length Length) AlertDialogEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e AlertDialogEl) Py(length Length) AlertDialogEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AlertDialogEl) Right(length Length) AlertDialogEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e AlertDialogEl) Rounded(length Length) AlertDialogEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e AlertDialogEl) RoundedB(length Length) AlertDialogEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AlertDialogEl) RoundedBl(length Length) AlertDialogEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AlertDialogEl) RoundedBr(length Length) AlertDialogEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AlertDialogEl) RoundedL(length Length) AlertDialogEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AlertDialogEl) RoundedR(length Length) AlertDialogEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e AlertDialogEl) RoundedT(length Length) AlertDialogEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AlertDialogEl) RoundedTl(length Length) AlertDialogEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e AlertDialogEl) RoundedTr(length Length) AlertDialogEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e AlertDialogEl) RowEnd(end int16) AlertDialogEl     { tStyledRowEnd(e.n, end); return e }
-func (e AlertDialogEl) RowSpan(span uint16) AlertDialogEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e AlertDialogEl) RowEnd(end int16) AlertDialogEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e AlertDialogEl) RowSpan(span uint16) AlertDialogEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e AlertDialogEl) RowStart(start int16) AlertDialogEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e AlertDialogEl) ScrollbarWidth(width Length) AlertDialogEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e AlertDialogEl) Shadow(shadows []BoxShadow) AlertDialogEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e AlertDialogEl) Size(length Length) AlertDialogEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e AlertDialogEl) TextAlign(align TextAlign) AlertDialogEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e AlertDialogEl) TextBg(bg Color) AlertDialogEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e AlertDialogEl) TextBg(bg Color) AlertDialogEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e AlertDialogEl) TextColor(color Color) AlertDialogEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e AlertDialogEl) TextDecorationColor(color Color) AlertDialogEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e AlertDialogEl) TextOverflow(overflow TextOverflow) AlertDialogEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e AlertDialogEl) TextSize(size Length) AlertDialogEl { tStyledTextSize(e.n, size); return e }
-func (e AlertDialogEl) Top(length Length) AlertDialogEl    { tStyledTop(e.n, length); return e }
-func (e AlertDialogEl) W(length Length) AlertDialogEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e AlertDialogEl) Top(length Length) AlertDialogEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e AlertDialogEl) W(length Length) AlertDialogEl { tStyledW(e.n, length); return e }
 
 func (e AlertDialogEl) Text(s string) AlertDialogEl { putText(e.n, s); return e }
 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e AlertDialogEl) ChildView(v View) AlertDialogEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e AlertDialogEl) Child(child Element) AlertDialogEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e AlertDialogEl) Children(children ...Element) AlertDialogEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -379,6 +721,8 @@ type DialogEl struct{ n *node }
 
 func (e DialogEl) node() *node { return e.n }
 
+// Create a new dialog.
+//
 // Dialog is <gpui_kit::component::dialog::Dialog>::new.
 func Dialog(st ...Style) DialogEl {
 	useComponentDialog()
@@ -387,6 +731,15 @@ func Dialog(st ...Style) DialogEl {
 	return DialogEl{n}
 }
 
+// Set the button props of the dialog.
+//
+// This overrides only the fields `button_props` sets; the rest of the dialog's button
+// configuration is kept, so the call order does not matter.
+//
+// On a plain `Dialog` these props install the callbacks behind the `Confirm` and `Cancel` actions
+// and the labels an `AlertDialogEl` default footer would use; the dialog surface itself renders no
+// buttons from them, see `Footer`.
+//
 // ButtonProps is <gpui_kit::component::dialog::Dialog>::button_props.
 func (e DialogEl) ButtonProps(buttonProps DialogButtonProps) DialogEl {
 	o := op(e.n, 256)
@@ -394,12 +747,17 @@ func (e DialogEl) ButtonProps(buttonProps DialogButtonProps) DialogEl {
 	return e
 }
 
+// Centers the dialog vertically in the window, whatever its height, in place of the `MarginTop`
+// offset.
+//
 // Centered is <gpui_kit::component::dialog::Dialog>::centered.
 func (e DialogEl) Centered() DialogEl {
 	op(e.n, 257)
 	return e
 }
 
+// Sets the false to hide close icon, default: true
+//
 // CloseButton is <gpui_kit::component::dialog::Dialog>::close_button.
 func (e DialogEl) CloseButton(closeButton bool) DialogEl {
 	o := op(e.n, 258)
@@ -407,6 +765,8 @@ func (e DialogEl) CloseButton(closeButton bool) DialogEl {
 	return e
 }
 
+// Sets the content of the dialog.
+//
 // Content is <gpui_kit::component::dialog::Dialog>::content.
 func (e DialogEl) Content(builder DialogContentEl) DialogEl {
 	o := op(e.n, 259)
@@ -414,6 +774,11 @@ func (e DialogEl) Content(builder DialogContentEl) DialogEl {
 	return e
 }
 
+// Sets how the dialog enters, defaulting to `SlideDown`.
+//
+// This controls the surface and backdrop together, and closing animates both back out. Reduced
+// motion skips both and shows the final state immediately, as does `None`.
+//
 // Entrance is <gpui_kit::component::dialog::Dialog>::entrance.
 func (e DialogEl) Entrance(entrance DialogEntrance) DialogEl {
 	o := op(e.n, 260)
@@ -421,6 +786,14 @@ func (e DialogEl) Entrance(entrance DialogEntrance) DialogEl {
 	return e
 }
 
+// Sets the footer of the dialog, the footer will render at the bottom of the dialog, usually for
+// action buttons.
+//
+// A plain `Dialog` never renders buttons from `button_props`: the props only install the callbacks
+// behind the `Confirm` and `Cancel` actions. Compose the action buttons yourself — typically with
+// a `DialogFooterEl` — or use an `AlertDialogEl`, which builds a default footer from
+// `button_props` when no footer is set.
+//
 // Footer is <gpui_kit::component::dialog::Dialog>::footer.
 func (e DialogEl) Footer(footer Element) DialogEl {
 	o := op(e.n, 261)
@@ -428,6 +801,8 @@ func (e DialogEl) Footer(footer Element) DialogEl {
 	return e
 }
 
+// Set whether to support keyboard esc to close the dialog, defaults to `true`.
+//
 // Keyboard is <gpui_kit::component::dialog::Dialog>::keyboard.
 func (e DialogEl) Keyboard(keyboard bool) DialogEl {
 	o := op(e.n, 262)
@@ -435,6 +810,8 @@ func (e DialogEl) Keyboard(keyboard bool) DialogEl {
 	return e
 }
 
+// Set the top offset of the dialog, defaults to None, will use the 1/10 of the viewport height.
+//
 // MarginTop is <gpui_kit::component::dialog::Dialog>::margin_top.
 func (e DialogEl) MarginTop(marginTop float32) DialogEl {
 	o := op(e.n, 263)
@@ -442,6 +819,8 @@ func (e DialogEl) MarginTop(marginTop float32) DialogEl {
 	return e
 }
 
+// Set the maximum width of the dialog, defaults to `None`.
+//
 // MaxW is <gpui_kit::component::dialog::Dialog>::max_w.
 func (e DialogEl) MaxW(maxWidth float32) DialogEl {
 	o := op(e.n, 264)
@@ -449,6 +828,11 @@ func (e DialogEl) MaxW(maxWidth float32) DialogEl {
 	return e
 }
 
+// Sets the callback for when the dialog is has been canceled.
+//
+// The callback should return `true` to close the dialog, if return `false` the dialog will not be
+// closed.
+//
 // OnCancel is <gpui_kit::component::dialog::Dialog>::on_cancel.
 func (e DialogEl) OnCancel(onCancel func(cx *Cx, e ClickEvent) bool) DialogEl {
 	o := op(e.n, 265)
@@ -456,6 +840,10 @@ func (e DialogEl) OnCancel(onCancel func(cx *Cx, e ClickEvent) bool) DialogEl {
 	return e
 }
 
+// Sets the callback for when the dialog is closed.
+//
+// Called after `OnOk` or `OnCancel` callback.
+//
 // OnClose is <gpui_kit::component::dialog::Dialog>::on_close.
 func (e DialogEl) OnClose(onClose func(cx *Cx, e ClickEvent)) DialogEl {
 	o := op(e.n, 266)
@@ -463,6 +851,11 @@ func (e DialogEl) OnClose(onClose func(cx *Cx, e ClickEvent)) DialogEl {
 	return e
 }
 
+// Sets the callback for when the dialog is has been confirmed.
+//
+// The callback should return `true` to close the dialog, if return `false` the dialog will not be
+// closed.
+//
 // OnOk is <gpui_kit::component::dialog::Dialog>::on_ok.
 func (e DialogEl) OnOk(onOk func(cx *Cx, e ClickEvent) bool) DialogEl {
 	o := op(e.n, 267)
@@ -470,6 +863,8 @@ func (e DialogEl) OnOk(onOk func(cx *Cx, e ClickEvent) bool) DialogEl {
 	return e
 }
 
+// Set the overlay of the dialog, defaults to `true`.
+//
 // Overlay is <gpui_kit::component::dialog::Dialog>::overlay.
 func (e DialogEl) Overlay(overlay bool) DialogEl {
 	o := op(e.n, 268)
@@ -477,6 +872,10 @@ func (e DialogEl) Overlay(overlay bool) DialogEl {
 	return e
 }
 
+// Set the overlay closable of the dialog, defaults to `true`.
+//
+// When the overlay is clicked, the dialog will be closed.
+//
 // OverlayClosable is <gpui_kit::component::dialog::Dialog>::overlay_closable.
 func (e DialogEl) OverlayClosable(overlayClosable bool) DialogEl {
 	o := op(e.n, 269)
@@ -484,6 +883,8 @@ func (e DialogEl) OverlayClosable(overlayClosable bool) DialogEl {
 	return e
 }
 
+// Sets the title of the dialog.
+//
 // Title is <gpui_kit::component::dialog::Dialog>::title.
 func (e DialogEl) Title(title Element) DialogEl {
 	o := op(e.n, 270)
@@ -491,6 +892,11 @@ func (e DialogEl) Title(title Element) DialogEl {
 	return e
 }
 
+// Sets the trigger element for the dialog.
+//
+// When a trigger is set, the dialog will render as a trigger button that opens the dialog when
+// clicked.
+//
 // Trigger is <gpui_kit::component::dialog::Dialog>::trigger.
 func (e DialogEl) Trigger(trigger Element) DialogEl {
 	o := op(e.n, 271)
@@ -498,6 +904,12 @@ func (e DialogEl) Trigger(trigger Element) DialogEl {
 	return e
 }
 
+// Sets the width of the dialog, defaults to 448px.
+//
+// The dialog is never wider than the viewport minus a margin on each side.
+//
+// See also `Width`
+//
 // W is <gpui_kit::component::dialog::Dialog>::w.
 func (e DialogEl) W(width float32) DialogEl {
 	o := op(e.n, 272)
@@ -505,6 +917,10 @@ func (e DialogEl) W(width float32) DialogEl {
 	return e
 }
 
+// Sets the width of the dialog, defaults to 448px.
+//
+// The dialog is never wider than the viewport minus a margin on each side.
+//
 // Width is <gpui_kit::component::dialog::Dialog>::width.
 func (e DialogEl) Width(width float32) DialogEl {
 	o := op(e.n, 273)
@@ -512,11 +928,37 @@ func (e DialogEl) Width(width float32) DialogEl {
 	return e
 }
 
-func (e DialogEl) PopoverStyle() DialogEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e DialogEl) PopoverStyle() DialogEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e DialogEl) RoundedFullStyle() DialogEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e DialogEl) FocusRingStyle() DialogEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -528,19 +970,32 @@ func (e DialogEl) DebugFocused(focusHandle FocusHandle) DialogEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e DialogEl) DebugGreen() DialogEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e DialogEl) DebugPink() DialogEl                  { tStyledExtDebugPink(e.n); return e }
-func (e DialogEl) DebugRed() DialogEl                   { tStyledExtDebugRed(e.n); return e }
-func (e DialogEl) DebugYellow() DialogEl                { tStyledExtDebugYellow(e.n); return e }
-func (e DialogEl) FontBlack() DialogEl                  { tStyledExtFontBlack(e.n); return e }
-func (e DialogEl) FontBold() DialogEl                   { tStyledExtFontBold(e.n); return e }
-func (e DialogEl) FontExtrabold() DialogEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e DialogEl) FontExtralight() DialogEl             { tStyledExtFontExtralight(e.n); return e }
-func (e DialogEl) FontLight() DialogEl                  { tStyledExtFontLight(e.n); return e }
-func (e DialogEl) FontMedium() DialogEl                 { tStyledExtFontMedium(e.n); return e }
-func (e DialogEl) FontNormal() DialogEl                 { tStyledExtFontNormal(e.n); return e }
-func (e DialogEl) FontSemibold() DialogEl               { tStyledExtFontSemibold(e.n); return e }
-func (e DialogEl) FontThin() DialogEl                   { tStyledExtFontThin(e.n); return e }
+func (e DialogEl) DebugGreen() DialogEl     { tStyledExtDebugGreen(e.n); return e }
+func (e DialogEl) DebugPink() DialogEl      { tStyledExtDebugPink(e.n); return e }
+func (e DialogEl) DebugRed() DialogEl       { tStyledExtDebugRed(e.n); return e }
+func (e DialogEl) DebugYellow() DialogEl    { tStyledExtDebugYellow(e.n); return e }
+func (e DialogEl) FontBlack() DialogEl      { tStyledExtFontBlack(e.n); return e }
+func (e DialogEl) FontBold() DialogEl       { tStyledExtFontBold(e.n); return e }
+func (e DialogEl) FontExtrabold() DialogEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e DialogEl) FontExtralight() DialogEl { tStyledExtFontExtralight(e.n); return e }
+func (e DialogEl) FontLight() DialogEl      { tStyledExtFontLight(e.n); return e }
+func (e DialogEl) FontMedium() DialogEl     { tStyledExtFontMedium(e.n); return e }
+func (e DialogEl) FontNormal() DialogEl     { tStyledExtFontNormal(e.n); return e }
+func (e DialogEl) FontSemibold() DialogEl   { tStyledExtFontSemibold(e.n); return e }
+func (e DialogEl) FontThin() DialogEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e DialogEl) HFlex() DialogEl                      { tStyledExtHFlex(e.n); return e }
 func (e DialogEl) Margins(margins EdgesInto) DialogEl   { tStyledExtMargins(e.n, margins); return e }
 func (e DialogEl) Paddings(paddings EdgesInto) DialogEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -548,6 +1003,11 @@ func (e DialogEl) RefineStyle(style StyleRefinement) DialogEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e DialogEl) VFlex() DialogEl { tStyledExtVFlex(e.n); return e }
 
 func (e DialogEl) Text(s string) DialogEl { putText(e.n, s); return e }
@@ -555,7 +1015,10 @@ func (e DialogEl) Text(s string) DialogEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e DialogEl) ChildView(v View) DialogEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e DialogEl) Child(child Element) DialogEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e DialogEl) Children(children ...Element) DialogEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -564,114 +1027,317 @@ func (e DialogEl) Children(children ...Element) DialogEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e DialogEl) Style(st ...Style) DialogEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e DialogEl) AspectRatio(ratio float32) DialogEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e DialogEl) Bg(fill Fill) DialogEl              { tStyledBg(e.n, fill); return e }
-func (e DialogEl) Border(length Length) DialogEl      { tStyledBorder(e.n, length); return e }
-func (e DialogEl) BorderB(length Length) DialogEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e DialogEl) Bg(fill Fill) DialogEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e DialogEl) Border(length Length) DialogEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DialogEl) BorderB(length Length) DialogEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e DialogEl) BorderColor(borderColor Color) DialogEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e DialogEl) BorderL(length Length) DialogEl     { tStyledBorderL(e.n, length); return e }
-func (e DialogEl) BorderR(length Length) DialogEl     { tStyledBorderR(e.n, length); return e }
-func (e DialogEl) BorderT(length Length) DialogEl     { tStyledBorderT(e.n, length); return e }
-func (e DialogEl) BorderX(length Length) DialogEl     { tStyledBorderX(e.n, length); return e }
-func (e DialogEl) BorderY(length Length) DialogEl     { tStyledBorderY(e.n, length); return e }
-func (e DialogEl) Bottom(length Length) DialogEl      { tStyledBottom(e.n, length); return e }
-func (e DialogEl) ColEnd(end int16) DialogEl          { tStyledColEnd(e.n, end); return e }
-func (e DialogEl) ColSpan(span uint16) DialogEl       { tStyledColSpan(e.n, span); return e }
-func (e DialogEl) ColStart(start int16) DialogEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DialogEl) BorderL(length Length) DialogEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DialogEl) BorderR(length Length) DialogEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DialogEl) BorderT(length Length) DialogEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e DialogEl) BorderX(length Length) DialogEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e DialogEl) BorderY(length Length) DialogEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogEl) Bottom(length Length) DialogEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e DialogEl) ColEnd(end int16) DialogEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e DialogEl) ColSpan(span uint16) DialogEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e DialogEl) ColStart(start int16) DialogEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e DialogEl) Cursor(cursor CursorStyle) DialogEl { tStyledCursor(e.n, cursor); return e }
-func (e DialogEl) FlexBasis(basis Length) DialogEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e DialogEl) FlexGrow(grow float32) DialogEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e DialogEl) FlexBasis(basis Length) DialogEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e DialogEl) FlexGrow(grow float32) DialogEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e DialogEl) FlexShrink(shrink float32) DialogEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e DialogEl) FontFamily(familyName string) DialogEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e DialogEl) FontFeatures(features FontFeatures) DialogEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e DialogEl) FontWeight(weight FontWeight) DialogEl { tStyledFontWeight(e.n, weight); return e }
-func (e DialogEl) Gap(length Length) DialogEl            { tStyledGap(e.n, length); return e }
-func (e DialogEl) GapX(length Length) DialogEl           { tStyledGapX(e.n, length); return e }
-func (e DialogEl) GapY(length Length) DialogEl           { tStyledGapY(e.n, length); return e }
-func (e DialogEl) GridCols(cols uint16) DialogEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e DialogEl) Gap(length Length) DialogEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogEl) GapX(length Length) DialogEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogEl) GapY(length Length) DialogEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e DialogEl) GridCols(cols uint16) DialogEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e DialogEl) GridColsMaxContent(cols uint16) DialogEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e DialogEl) GridColsMinContent(cols uint16) DialogEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e DialogEl) GridRows(rows uint16) DialogEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e DialogEl) GridRowsMaxContent(rows uint16) DialogEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e DialogEl) GridRowsMinContent(rows uint16) DialogEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e DialogEl) H(length Length) DialogEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e DialogEl) H(length Length) DialogEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogEl) Inset(length Length) DialogEl { tStyledInset(e.n, length); return e }
-func (e DialogEl) Left(length Length) DialogEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogEl) Left(length Length) DialogEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e DialogEl) LineClamp(lines int) DialogEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e DialogEl) LineHeight(lineHeight Length) DialogEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e DialogEl) M(length Length) DialogEl             { tStyledM(e.n, length); return e }
-func (e DialogEl) MaxH(length Length) DialogEl          { tStyledMaxH(e.n, length); return e }
-func (e DialogEl) MaxSize(length Length) DialogEl       { tStyledMaxSize(e.n, length); return e }
-func (e DialogEl) Mb(length Length) DialogEl            { tStyledMb(e.n, length); return e }
-func (e DialogEl) MinH(length Length) DialogEl          { tStyledMinH(e.n, length); return e }
-func (e DialogEl) MinSize(length Length) DialogEl       { tStyledMinSize(e.n, length); return e }
-func (e DialogEl) MinW(length Length) DialogEl          { tStyledMinW(e.n, length); return e }
-func (e DialogEl) Ml(length Length) DialogEl            { tStyledMl(e.n, length); return e }
-func (e DialogEl) Mr(length Length) DialogEl            { tStyledMr(e.n, length); return e }
-func (e DialogEl) Mt(length Length) DialogEl            { tStyledMt(e.n, length); return e }
-func (e DialogEl) Mx(length Length) DialogEl            { tStyledMx(e.n, length); return e }
-func (e DialogEl) My(length Length) DialogEl            { tStyledMy(e.n, length); return e }
-func (e DialogEl) Opacity(opacity float32) DialogEl     { tStyledOpacity(e.n, opacity); return e }
-func (e DialogEl) P(length Length) DialogEl             { tStyledP(e.n, length); return e }
-func (e DialogEl) Pb(length Length) DialogEl            { tStyledPb(e.n, length); return e }
-func (e DialogEl) Pl(length Length) DialogEl            { tStyledPl(e.n, length); return e }
-func (e DialogEl) Pr(length Length) DialogEl            { tStyledPr(e.n, length); return e }
-func (e DialogEl) Pt(length Length) DialogEl            { tStyledPt(e.n, length); return e }
-func (e DialogEl) Px(length Length) DialogEl            { tStyledPx(e.n, length); return e }
-func (e DialogEl) Py(length Length) DialogEl            { tStyledPy(e.n, length); return e }
-func (e DialogEl) Right(length Length) DialogEl         { tStyledRight(e.n, length); return e }
-func (e DialogEl) Rounded(length Length) DialogEl       { tStyledRounded(e.n, length); return e }
-func (e DialogEl) RoundedB(length Length) DialogEl      { tStyledRoundedB(e.n, length); return e }
-func (e DialogEl) RoundedBl(length Length) DialogEl     { tStyledRoundedBl(e.n, length); return e }
-func (e DialogEl) RoundedBr(length Length) DialogEl     { tStyledRoundedBr(e.n, length); return e }
-func (e DialogEl) RoundedL(length Length) DialogEl      { tStyledRoundedL(e.n, length); return e }
-func (e DialogEl) RoundedR(length Length) DialogEl      { tStyledRoundedR(e.n, length); return e }
-func (e DialogEl) RoundedT(length Length) DialogEl      { tStyledRoundedT(e.n, length); return e }
-func (e DialogEl) RoundedTl(length Length) DialogEl     { tStyledRoundedTl(e.n, length); return e }
-func (e DialogEl) RoundedTr(length Length) DialogEl     { tStyledRoundedTr(e.n, length); return e }
-func (e DialogEl) RowEnd(end int16) DialogEl            { tStyledRowEnd(e.n, end); return e }
-func (e DialogEl) RowSpan(span uint16) DialogEl         { tStyledRowSpan(e.n, span); return e }
-func (e DialogEl) RowStart(start int16) DialogEl        { tStyledRowStart(e.n, start); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e DialogEl) M(length Length) DialogEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e DialogEl) MaxH(length Length) DialogEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e DialogEl) MaxSize(length Length) DialogEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogEl) Mb(length Length) DialogEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e DialogEl) MinH(length Length) DialogEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e DialogEl) MinSize(length Length) DialogEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e DialogEl) MinW(length Length) DialogEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogEl) Ml(length Length) DialogEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogEl) Mr(length Length) DialogEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogEl) Mt(length Length) DialogEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e DialogEl) Mx(length Length) DialogEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e DialogEl) My(length Length) DialogEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e DialogEl) Opacity(opacity float32) DialogEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e DialogEl) P(length Length) DialogEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogEl) Pb(length Length) DialogEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogEl) Pl(length Length) DialogEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogEl) Pr(length Length) DialogEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogEl) Pt(length Length) DialogEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e DialogEl) Px(length Length) DialogEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e DialogEl) Py(length Length) DialogEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogEl) Right(length Length) DialogEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e DialogEl) Rounded(length Length) DialogEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DialogEl) RoundedB(length Length) DialogEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DialogEl) RoundedBl(length Length) DialogEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DialogEl) RoundedBr(length Length) DialogEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DialogEl) RoundedL(length Length) DialogEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DialogEl) RoundedR(length Length) DialogEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DialogEl) RoundedT(length Length) DialogEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DialogEl) RoundedTl(length Length) DialogEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e DialogEl) RoundedTr(length Length) DialogEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e DialogEl) RowEnd(end int16) DialogEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e DialogEl) RowSpan(span uint16) DialogEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e DialogEl) RowStart(start int16) DialogEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e DialogEl) ScrollbarWidth(width Length) DialogEl { tStyledScrollbarWidth(e.n, width); return e }
-func (e DialogEl) Shadow(shadows []BoxShadow) DialogEl  { tStyledShadow(e.n, shadows); return e }
-func (e DialogEl) Size(length Length) DialogEl          { tStyledSize(e.n, length); return e }
-func (e DialogEl) TextAlign(align TextAlign) DialogEl   { tStyledTextAlign(e.n, align); return e }
-func (e DialogEl) TextBg(bg Color) DialogEl             { tStyledTextBg(e.n, bg); return e }
-func (e DialogEl) TextColor(color Color) DialogEl       { tStyledTextColor(e.n, color); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e DialogEl) Shadow(shadows []BoxShadow) DialogEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e DialogEl) Size(length Length) DialogEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e DialogEl) TextAlign(align TextAlign) DialogEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e DialogEl) TextBg(bg Color) DialogEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e DialogEl) TextColor(color Color) DialogEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e DialogEl) TextDecorationColor(color Color) DialogEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e DialogEl) TextOverflow(overflow TextOverflow) DialogEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e DialogEl) TextSize(size Length) DialogEl { tStyledTextSize(e.n, size); return e }
-func (e DialogEl) Top(length Length) DialogEl    { tStyledTop(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogEl) Top(length Length) DialogEl { tStyledTop(e.n, length); return e }
 
 // DialogActionEl is gpui_kit::component::dialog::DialogAction.
 type DialogActionEl struct{ n *node }
@@ -685,6 +1351,7 @@ func DialogAction() DialogActionEl {
 	return DialogActionEl{n}
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogActionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogActionEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -695,10 +1362,13 @@ func (e DialogActionEl) Text(s string) DialogActionEl { putText(e.n, s); return 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e DialogActionEl) ChildView(v View) DialogActionEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e DialogActionEl) Child(child Element) DialogActionEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e DialogActionEl) Children(children ...Element) DialogActionEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -715,6 +1385,8 @@ func NewDialogButtonPropsDefault() DialogButtonProps {
 	return DialogButtonProps{n}
 }
 
+// Sets the text of the Cancel button. Default is `Cancel`.
+//
 // CancelText is <gpui_kit::component::dialog::DialogButtonProps>::cancel_text.
 func (e DialogButtonProps) CancelText(cancelText string) DialogButtonProps {
 	o := op(e.n, 256)
@@ -722,6 +1394,8 @@ func (e DialogButtonProps) CancelText(cancelText string) DialogButtonProps {
 	return e
 }
 
+// Sets the variant of the Cancel button. Default is `ButtonVariant::default()`.
+//
 // CancelVariant is <gpui_kit::component::dialog::DialogButtonProps>::cancel_variant.
 func (e DialogButtonProps) CancelVariant(cancelVariant ButtonVariant) DialogButtonProps {
 	o := op(e.n, 257)
@@ -729,6 +1403,8 @@ func (e DialogButtonProps) CancelVariant(cancelVariant ButtonVariant) DialogButt
 	return e
 }
 
+// Sets the text of the OK button. Default is `OK`.
+//
 // OkText is <gpui_kit::component::dialog::DialogButtonProps>::ok_text.
 func (e DialogButtonProps) OkText(okText string) DialogButtonProps {
 	o := op(e.n, 258)
@@ -736,6 +1412,8 @@ func (e DialogButtonProps) OkText(okText string) DialogButtonProps {
 	return e
 }
 
+// Sets the variant of the OK button. Default is `ButtonVariant::Primary`.
+//
 // OkVariant is <gpui_kit::component::dialog::DialogButtonProps>::ok_variant.
 func (e DialogButtonProps) OkVariant(okVariant ButtonVariant) DialogButtonProps {
 	o := op(e.n, 259)
@@ -743,6 +1421,11 @@ func (e DialogButtonProps) OkVariant(okVariant ButtonVariant) DialogButtonProps 
 	return e
 }
 
+// Sets the callback for when the dialog is has been canceled.
+//
+// The callback should return `true` to close the dialog, if return `false` the dialog will not be
+// closed.
+//
 // OnCancel is <gpui_kit::component::dialog::DialogButtonProps>::on_cancel.
 func (e DialogButtonProps) OnCancel(onCancel func(cx *Cx, e ClickEvent) bool) DialogButtonProps {
 	o := op(e.n, 260)
@@ -750,6 +1433,11 @@ func (e DialogButtonProps) OnCancel(onCancel func(cx *Cx, e ClickEvent) bool) Di
 	return e
 }
 
+// Sets the callback for when the dialog is has been confirmed.
+//
+// The callback should return `true` to close the dialog, if return `false` the dialog will not be
+// closed.
+//
 // OnOk is <gpui_kit::component::dialog::DialogButtonProps>::on_ok.
 func (e DialogButtonProps) OnOk(onOk func(cx *Cx, e ClickEvent) bool) DialogButtonProps {
 	o := op(e.n, 261)
@@ -757,6 +1445,8 @@ func (e DialogButtonProps) OnOk(onOk func(cx *Cx, e ClickEvent) bool) DialogButt
 	return e
 }
 
+// Sets whether to show the Cancel button. Default is `false`.
+//
 // ShowCancel is <gpui_kit::component::dialog::DialogButtonProps>::show_cancel.
 func (e DialogButtonProps) ShowCancel(showCancel bool) DialogButtonProps {
 	o := op(e.n, 262)
@@ -776,6 +1466,8 @@ func DialogClose() DialogCloseEl {
 	return DialogCloseEl{n}
 }
 
+// Styles a close button whose accessibility and activation are owned by Base.
+//
 // Trigger is <gpui_kit::component::dialog::DialogClose>::trigger.
 func (e DialogCloseEl) Trigger(build ButtonEl) DialogCloseEl {
 	o := op(e.n, 256)
@@ -783,6 +1475,7 @@ func (e DialogCloseEl) Trigger(build ButtonEl) DialogCloseEl {
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogCloseEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogCloseEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -793,7 +1486,10 @@ func (e DialogCloseEl) Text(s string) DialogCloseEl { putText(e.n, s); return e 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e DialogCloseEl) ChildView(v View) DialogCloseEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e DialogCloseEl) Child(child Element) DialogCloseEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e DialogCloseEl) Children(children ...Element) DialogCloseEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -812,17 +1508,43 @@ func DialogContent(st ...Style) DialogContentEl {
 	return DialogContentEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e DialogContentEl) PopoverStyle() DialogContentEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e DialogContentEl) RoundedFullStyle() DialogContentEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e DialogContentEl) FocusRingStyle() DialogContentEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogContentEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -850,7 +1572,20 @@ func (e DialogContentEl) FontMedium() DialogContentEl     { tStyledExtFontMedium
 func (e DialogContentEl) FontNormal() DialogContentEl     { tStyledExtFontNormal(e.n); return e }
 func (e DialogContentEl) FontSemibold() DialogContentEl   { tStyledExtFontSemibold(e.n); return e }
 func (e DialogContentEl) FontThin() DialogContentEl       { tStyledExtFontThin(e.n); return e }
-func (e DialogContentEl) HFlex() DialogContentEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e DialogContentEl) HFlex() DialogContentEl { tStyledExtHFlex(e.n); return e }
 func (e DialogContentEl) Margins(margins EdgesInto) DialogContentEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -863,6 +1598,11 @@ func (e DialogContentEl) RefineStyle(style StyleRefinement) DialogContentEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e DialogContentEl) VFlex() DialogContentEl { tStyledExtVFlex(e.n); return e }
 
 func (e DialogContentEl) Text(s string) DialogContentEl { putText(e.n, s); return e }
@@ -870,10 +1610,13 @@ func (e DialogContentEl) Text(s string) DialogContentEl { putText(e.n, s); retur
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e DialogContentEl) ChildView(v View) DialogContentEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e DialogContentEl) Child(child Element) DialogContentEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e DialogContentEl) Children(children ...Element) DialogContentEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -882,197 +1625,404 @@ func (e DialogContentEl) Children(children ...Element) DialogContentEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e DialogContentEl) Style(st ...Style) DialogContentEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e DialogContentEl) AspectRatio(ratio float32) DialogContentEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e DialogContentEl) Bg(fill Fill) DialogContentEl         { tStyledBg(e.n, fill); return e }
+
+// Sets the background color of the element.
+func (e DialogContentEl) Bg(fill Fill) DialogContentEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e DialogContentEl) Border(length Length) DialogContentEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogContentEl) BorderB(length Length) DialogContentEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e DialogContentEl) BorderColor(borderColor Color) DialogContentEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogContentEl) BorderL(length Length) DialogContentEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogContentEl) BorderR(length Length) DialogContentEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogContentEl) BorderT(length Length) DialogContentEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e DialogContentEl) BorderX(length Length) DialogContentEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e DialogContentEl) BorderY(length Length) DialogContentEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogContentEl) Bottom(length Length) DialogContentEl { tStyledBottom(e.n, length); return e }
-func (e DialogContentEl) ColEnd(end int16) DialogContentEl     { tStyledColEnd(e.n, end); return e }
-func (e DialogContentEl) ColSpan(span uint16) DialogContentEl  { tStyledColSpan(e.n, span); return e }
+
+// Sets the column end of this element.
+func (e DialogContentEl) ColEnd(end int16) DialogContentEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e DialogContentEl) ColSpan(span uint16) DialogContentEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
 func (e DialogContentEl) ColStart(start int16) DialogContentEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e DialogContentEl) Cursor(cursor CursorStyle) DialogContentEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e DialogContentEl) FlexBasis(basis Length) DialogContentEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e DialogContentEl) FlexGrow(grow float32) DialogContentEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e DialogContentEl) FlexShrink(shrink float32) DialogContentEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e DialogContentEl) FontFamily(familyName string) DialogContentEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e DialogContentEl) FontFeatures(features FontFeatures) DialogContentEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e DialogContentEl) FontWeight(weight FontWeight) DialogContentEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e DialogContentEl) Gap(length Length) DialogContentEl    { tStyledGap(e.n, length); return e }
-func (e DialogContentEl) GapX(length Length) DialogContentEl   { tStyledGapX(e.n, length); return e }
-func (e DialogContentEl) GapY(length Length) DialogContentEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e DialogContentEl) Gap(length Length) DialogContentEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogContentEl) GapX(length Length) DialogContentEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogContentEl) GapY(length Length) DialogContentEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e DialogContentEl) GridCols(cols uint16) DialogContentEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e DialogContentEl) GridColsMaxContent(cols uint16) DialogContentEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e DialogContentEl) GridColsMinContent(cols uint16) DialogContentEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e DialogContentEl) GridRows(rows uint16) DialogContentEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e DialogContentEl) GridRowsMaxContent(rows uint16) DialogContentEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e DialogContentEl) GridRowsMinContent(rows uint16) DialogContentEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e DialogContentEl) H(length Length) DialogContentEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e DialogContentEl) H(length Length) DialogContentEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogContentEl) Inset(length Length) DialogContentEl { tStyledInset(e.n, length); return e }
-func (e DialogContentEl) Left(length Length) DialogContentEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogContentEl) Left(length Length) DialogContentEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e DialogContentEl) LineClamp(lines int) DialogContentEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e DialogContentEl) LineHeight(lineHeight Length) DialogContentEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e DialogContentEl) M(length Length) DialogContentEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e DialogContentEl) M(length Length) DialogContentEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e DialogContentEl) MaxH(length Length) DialogContentEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e DialogContentEl) MaxSize(length Length) DialogContentEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e DialogContentEl) MaxW(length Length) DialogContentEl { tStyledMaxW(e.n, length); return e }
-func (e DialogContentEl) Mb(length Length) DialogContentEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogContentEl) Mb(length Length) DialogContentEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e DialogContentEl) MinH(length Length) DialogContentEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e DialogContentEl) MinSize(length Length) DialogContentEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e DialogContentEl) MinW(length Length) DialogContentEl { tStyledMinW(e.n, length); return e }
-func (e DialogContentEl) Ml(length Length) DialogContentEl   { tStyledMl(e.n, length); return e }
-func (e DialogContentEl) Mr(length Length) DialogContentEl   { tStyledMr(e.n, length); return e }
-func (e DialogContentEl) Mt(length Length) DialogContentEl   { tStyledMt(e.n, length); return e }
-func (e DialogContentEl) Mx(length Length) DialogContentEl   { tStyledMx(e.n, length); return e }
-func (e DialogContentEl) My(length Length) DialogContentEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogContentEl) Ml(length Length) DialogContentEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogContentEl) Mr(length Length) DialogContentEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogContentEl) Mt(length Length) DialogContentEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e DialogContentEl) Mx(length Length) DialogContentEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e DialogContentEl) My(length Length) DialogContentEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e DialogContentEl) Opacity(opacity float32) DialogContentEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e DialogContentEl) P(length Length) DialogContentEl     { tStyledP(e.n, length); return e }
-func (e DialogContentEl) Pb(length Length) DialogContentEl    { tStyledPb(e.n, length); return e }
-func (e DialogContentEl) Pl(length Length) DialogContentEl    { tStyledPl(e.n, length); return e }
-func (e DialogContentEl) Pr(length Length) DialogContentEl    { tStyledPr(e.n, length); return e }
-func (e DialogContentEl) Pt(length Length) DialogContentEl    { tStyledPt(e.n, length); return e }
-func (e DialogContentEl) Px(length Length) DialogContentEl    { tStyledPx(e.n, length); return e }
-func (e DialogContentEl) Py(length Length) DialogContentEl    { tStyledPy(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e DialogContentEl) P(length Length) DialogContentEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogContentEl) Pb(length Length) DialogContentEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogContentEl) Pl(length Length) DialogContentEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogContentEl) Pr(length Length) DialogContentEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogContentEl) Pt(length Length) DialogContentEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e DialogContentEl) Px(length Length) DialogContentEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e DialogContentEl) Py(length Length) DialogContentEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogContentEl) Right(length Length) DialogContentEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e DialogContentEl) Rounded(length Length) DialogContentEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogContentEl) RoundedB(length Length) DialogContentEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogContentEl) RoundedBl(length Length) DialogContentEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogContentEl) RoundedBr(length Length) DialogContentEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogContentEl) RoundedL(length Length) DialogContentEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogContentEl) RoundedR(length Length) DialogContentEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogContentEl) RoundedT(length Length) DialogContentEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogContentEl) RoundedTl(length Length) DialogContentEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogContentEl) RoundedTr(length Length) DialogContentEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e DialogContentEl) RowEnd(end int16) DialogContentEl     { tStyledRowEnd(e.n, end); return e }
-func (e DialogContentEl) RowSpan(span uint16) DialogContentEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e DialogContentEl) RowEnd(end int16) DialogContentEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e DialogContentEl) RowSpan(span uint16) DialogContentEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e DialogContentEl) RowStart(start int16) DialogContentEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e DialogContentEl) ScrollbarWidth(width Length) DialogContentEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e DialogContentEl) Shadow(shadows []BoxShadow) DialogContentEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e DialogContentEl) Size(length Length) DialogContentEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e DialogContentEl) TextAlign(align TextAlign) DialogContentEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e DialogContentEl) TextBg(bg Color) DialogContentEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e DialogContentEl) TextColor(color Color) DialogContentEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e DialogContentEl) TextDecorationColor(color Color) DialogContentEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e DialogContentEl) TextOverflow(overflow TextOverflow) DialogContentEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e DialogContentEl) TextSize(size Length) DialogContentEl { tStyledTextSize(e.n, size); return e }
-func (e DialogContentEl) Top(length Length) DialogContentEl    { tStyledTop(e.n, length); return e }
-func (e DialogContentEl) W(length Length) DialogContentEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogContentEl) Top(length Length) DialogContentEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e DialogContentEl) W(length Length) DialogContentEl { tStyledW(e.n, length); return e }
 
 // DialogDescriptionEl is gpui_kit::component::dialog::DialogDescription.
 type DialogDescriptionEl struct{ n *node }
@@ -1087,20 +2037,46 @@ func DialogDescription(st ...Style) DialogDescriptionEl {
 	return DialogDescriptionEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e DialogDescriptionEl) PopoverStyle() DialogDescriptionEl {
 	tThemeStyledPopoverStyle(e.n)
 	return e
 }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e DialogDescriptionEl) RoundedFullStyle() DialogDescriptionEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e DialogDescriptionEl) FocusRingStyle() DialogDescriptionEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogDescriptionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogDescriptionEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1137,7 +2113,20 @@ func (e DialogDescriptionEl) FontSemibold() DialogDescriptionEl {
 	return e
 }
 func (e DialogDescriptionEl) FontThin() DialogDescriptionEl { tStyledExtFontThin(e.n); return e }
-func (e DialogDescriptionEl) HFlex() DialogDescriptionEl    { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e DialogDescriptionEl) HFlex() DialogDescriptionEl { tStyledExtHFlex(e.n); return e }
 func (e DialogDescriptionEl) Margins(margins EdgesInto) DialogDescriptionEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1150,6 +2139,11 @@ func (e DialogDescriptionEl) RefineStyle(style StyleRefinement) DialogDescriptio
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e DialogDescriptionEl) VFlex() DialogDescriptionEl { tStyledExtVFlex(e.n); return e }
 
 func (e DialogDescriptionEl) Text(s string) DialogDescriptionEl { putText(e.n, s); return e }
@@ -1157,10 +2151,13 @@ func (e DialogDescriptionEl) Text(s string) DialogDescriptionEl { putText(e.n, s
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e DialogDescriptionEl) ChildView(v View) DialogDescriptionEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e DialogDescriptionEl) Child(child Element) DialogDescriptionEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e DialogDescriptionEl) Children(children ...Element) DialogDescriptionEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1169,265 +2166,472 @@ func (e DialogDescriptionEl) Children(children ...Element) DialogDescriptionEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e DialogDescriptionEl) Style(st ...Style) DialogDescriptionEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e DialogDescriptionEl) AspectRatio(ratio float32) DialogDescriptionEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e DialogDescriptionEl) Bg(fill Fill) DialogDescriptionEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e DialogDescriptionEl) Border(length Length) DialogDescriptionEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogDescriptionEl) BorderB(length Length) DialogDescriptionEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e DialogDescriptionEl) BorderColor(borderColor Color) DialogDescriptionEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogDescriptionEl) BorderL(length Length) DialogDescriptionEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogDescriptionEl) BorderR(length Length) DialogDescriptionEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogDescriptionEl) BorderT(length Length) DialogDescriptionEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e DialogDescriptionEl) BorderX(length Length) DialogDescriptionEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e DialogDescriptionEl) BorderY(length Length) DialogDescriptionEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogDescriptionEl) Bottom(length Length) DialogDescriptionEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e DialogDescriptionEl) ColEnd(end int16) DialogDescriptionEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e DialogDescriptionEl) ColSpan(span uint16) DialogDescriptionEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e DialogDescriptionEl) ColStart(start int16) DialogDescriptionEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e DialogDescriptionEl) Cursor(cursor CursorStyle) DialogDescriptionEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e DialogDescriptionEl) FlexBasis(basis Length) DialogDescriptionEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e DialogDescriptionEl) FlexGrow(grow float32) DialogDescriptionEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e DialogDescriptionEl) FlexShrink(shrink float32) DialogDescriptionEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e DialogDescriptionEl) FontFamily(familyName string) DialogDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e DialogDescriptionEl) FontFeatures(features FontFeatures) DialogDescriptionEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e DialogDescriptionEl) FontWeight(weight FontWeight) DialogDescriptionEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
 func (e DialogDescriptionEl) Gap(length Length) DialogDescriptionEl {
 	tStyledGap(e.n, length)
 	return e
 }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e DialogDescriptionEl) GapX(length Length) DialogDescriptionEl {
 	tStyledGapX(e.n, length)
 	return e
 }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e DialogDescriptionEl) GapY(length Length) DialogDescriptionEl {
 	tStyledGapY(e.n, length)
 	return e
 }
+
+// Sets the grid columns of this element.
 func (e DialogDescriptionEl) GridCols(cols uint16) DialogDescriptionEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e DialogDescriptionEl) GridColsMaxContent(cols uint16) DialogDescriptionEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e DialogDescriptionEl) GridColsMinContent(cols uint16) DialogDescriptionEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e DialogDescriptionEl) GridRows(rows uint16) DialogDescriptionEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e DialogDescriptionEl) GridRowsMaxContent(rows uint16) DialogDescriptionEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e DialogDescriptionEl) GridRowsMinContent(rows uint16) DialogDescriptionEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e DialogDescriptionEl) H(length Length) DialogDescriptionEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogDescriptionEl) Inset(length Length) DialogDescriptionEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogDescriptionEl) Left(length Length) DialogDescriptionEl {
 	tStyledLeft(e.n, length)
 	return e
 }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e DialogDescriptionEl) LineClamp(lines int) DialogDescriptionEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e DialogDescriptionEl) LineHeight(lineHeight Length) DialogDescriptionEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
 func (e DialogDescriptionEl) M(length Length) DialogDescriptionEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e DialogDescriptionEl) MaxH(length Length) DialogDescriptionEl {
 	tStyledMaxH(e.n, length)
 	return e
 }
+
+// Sets the maximum width and height of the element.
 func (e DialogDescriptionEl) MaxSize(length Length) DialogDescriptionEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e DialogDescriptionEl) MaxW(length Length) DialogDescriptionEl {
 	tStyledMaxW(e.n, length)
 	return e
 }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e DialogDescriptionEl) Mb(length Length) DialogDescriptionEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e DialogDescriptionEl) MinH(length Length) DialogDescriptionEl {
 	tStyledMinH(e.n, length)
 	return e
 }
+
+// Sets the minimum width and height of the element.
 func (e DialogDescriptionEl) MinSize(length Length) DialogDescriptionEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e DialogDescriptionEl) MinW(length Length) DialogDescriptionEl {
 	tStyledMinW(e.n, length)
 	return e
 }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e DialogDescriptionEl) Ml(length Length) DialogDescriptionEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e DialogDescriptionEl) Mr(length Length) DialogDescriptionEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
 func (e DialogDescriptionEl) Mt(length Length) DialogDescriptionEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
 func (e DialogDescriptionEl) Mx(length Length) DialogDescriptionEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
 func (e DialogDescriptionEl) My(length Length) DialogDescriptionEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e DialogDescriptionEl) Opacity(opacity float32) DialogDescriptionEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e DialogDescriptionEl) P(length Length) DialogDescriptionEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e DialogDescriptionEl) P(length Length) DialogDescriptionEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e DialogDescriptionEl) Pb(length Length) DialogDescriptionEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e DialogDescriptionEl) Pl(length Length) DialogDescriptionEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e DialogDescriptionEl) Pr(length Length) DialogDescriptionEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e DialogDescriptionEl) Pt(length Length) DialogDescriptionEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e DialogDescriptionEl) Px(length Length) DialogDescriptionEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e DialogDescriptionEl) Py(length Length) DialogDescriptionEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogDescriptionEl) Right(length Length) DialogDescriptionEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e DialogDescriptionEl) Rounded(length Length) DialogDescriptionEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogDescriptionEl) RoundedB(length Length) DialogDescriptionEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogDescriptionEl) RoundedBl(length Length) DialogDescriptionEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogDescriptionEl) RoundedBr(length Length) DialogDescriptionEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogDescriptionEl) RoundedL(length Length) DialogDescriptionEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogDescriptionEl) RoundedR(length Length) DialogDescriptionEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogDescriptionEl) RoundedT(length Length) DialogDescriptionEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogDescriptionEl) RoundedTl(length Length) DialogDescriptionEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogDescriptionEl) RoundedTr(length Length) DialogDescriptionEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e DialogDescriptionEl) RowEnd(end int16) DialogDescriptionEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e DialogDescriptionEl) RowSpan(span uint16) DialogDescriptionEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e DialogDescriptionEl) RowStart(start int16) DialogDescriptionEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e DialogDescriptionEl) ScrollbarWidth(width Length) DialogDescriptionEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e DialogDescriptionEl) Shadow(shadows []BoxShadow) DialogDescriptionEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e DialogDescriptionEl) Size(length Length) DialogDescriptionEl {
 	tStyledSize(e.n, length)
 	return e
 }
+
+// Set the text alignment of the element.
 func (e DialogDescriptionEl) TextAlign(align TextAlign) DialogDescriptionEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e DialogDescriptionEl) TextBg(bg Color) DialogDescriptionEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e DialogDescriptionEl) TextColor(color Color) DialogDescriptionEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e DialogDescriptionEl) TextDecorationColor(color Color) DialogDescriptionEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e DialogDescriptionEl) TextOverflow(overflow TextOverflow) DialogDescriptionEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e DialogDescriptionEl) TextSize(size Length) DialogDescriptionEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogDescriptionEl) Top(length Length) DialogDescriptionEl {
 	tStyledTop(e.n, length)
 	return e
 }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e DialogDescriptionEl) W(length Length) DialogDescriptionEl { tStyledW(e.n, length); return e }
 
 // DialogFooterEl is gpui_kit::component::dialog::DialogFooter.
@@ -1443,17 +2647,43 @@ func DialogFooter(st ...Style) DialogFooterEl {
 	return DialogFooterEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e DialogFooterEl) PopoverStyle() DialogFooterEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e DialogFooterEl) RoundedFullStyle() DialogFooterEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e DialogFooterEl) FocusRingStyle() DialogFooterEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogFooterEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogFooterEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1481,7 +2711,20 @@ func (e DialogFooterEl) FontMedium() DialogFooterEl     { tStyledExtFontMedium(e
 func (e DialogFooterEl) FontNormal() DialogFooterEl     { tStyledExtFontNormal(e.n); return e }
 func (e DialogFooterEl) FontSemibold() DialogFooterEl   { tStyledExtFontSemibold(e.n); return e }
 func (e DialogFooterEl) FontThin() DialogFooterEl       { tStyledExtFontThin(e.n); return e }
-func (e DialogFooterEl) HFlex() DialogFooterEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e DialogFooterEl) HFlex() DialogFooterEl { tStyledExtHFlex(e.n); return e }
 func (e DialogFooterEl) Margins(margins EdgesInto) DialogFooterEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1494,6 +2737,11 @@ func (e DialogFooterEl) RefineStyle(style StyleRefinement) DialogFooterEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e DialogFooterEl) VFlex() DialogFooterEl { tStyledExtVFlex(e.n); return e }
 
 func (e DialogFooterEl) Text(s string) DialogFooterEl { putText(e.n, s); return e }
@@ -1501,10 +2749,13 @@ func (e DialogFooterEl) Text(s string) DialogFooterEl { putText(e.n, s); return 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e DialogFooterEl) ChildView(v View) DialogFooterEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e DialogFooterEl) Child(child Element) DialogFooterEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e DialogFooterEl) Children(children ...Element) DialogFooterEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1513,167 +2764,374 @@ func (e DialogFooterEl) Children(children ...Element) DialogFooterEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e DialogFooterEl) Style(st ...Style) DialogFooterEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e DialogFooterEl) AspectRatio(ratio float32) DialogFooterEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e DialogFooterEl) Bg(fill Fill) DialogFooterEl          { tStyledBg(e.n, fill); return e }
-func (e DialogFooterEl) Border(length Length) DialogFooterEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e DialogFooterEl) Bg(fill Fill) DialogFooterEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e DialogFooterEl) Border(length Length) DialogFooterEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogFooterEl) BorderB(length Length) DialogFooterEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e DialogFooterEl) BorderColor(borderColor Color) DialogFooterEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogFooterEl) BorderL(length Length) DialogFooterEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogFooterEl) BorderR(length Length) DialogFooterEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogFooterEl) BorderT(length Length) DialogFooterEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e DialogFooterEl) BorderX(length Length) DialogFooterEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e DialogFooterEl) BorderY(length Length) DialogFooterEl { tStyledBorderY(e.n, length); return e }
-func (e DialogFooterEl) Bottom(length Length) DialogFooterEl  { tStyledBottom(e.n, length); return e }
-func (e DialogFooterEl) ColEnd(end int16) DialogFooterEl      { tStyledColEnd(e.n, end); return e }
-func (e DialogFooterEl) ColSpan(span uint16) DialogFooterEl   { tStyledColSpan(e.n, span); return e }
-func (e DialogFooterEl) ColStart(start int16) DialogFooterEl  { tStyledColStart(e.n, start); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogFooterEl) Bottom(length Length) DialogFooterEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e DialogFooterEl) ColEnd(end int16) DialogFooterEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e DialogFooterEl) ColSpan(span uint16) DialogFooterEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e DialogFooterEl) ColStart(start int16) DialogFooterEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e DialogFooterEl) Cursor(cursor CursorStyle) DialogFooterEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e DialogFooterEl) FlexBasis(basis Length) DialogFooterEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e DialogFooterEl) FlexGrow(grow float32) DialogFooterEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e DialogFooterEl) FlexShrink(shrink float32) DialogFooterEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e DialogFooterEl) FontFamily(familyName string) DialogFooterEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e DialogFooterEl) FontFeatures(features FontFeatures) DialogFooterEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e DialogFooterEl) FontWeight(weight FontWeight) DialogFooterEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e DialogFooterEl) Gap(length Length) DialogFooterEl    { tStyledGap(e.n, length); return e }
-func (e DialogFooterEl) GapX(length Length) DialogFooterEl   { tStyledGapX(e.n, length); return e }
-func (e DialogFooterEl) GapY(length Length) DialogFooterEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e DialogFooterEl) Gap(length Length) DialogFooterEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogFooterEl) GapX(length Length) DialogFooterEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogFooterEl) GapY(length Length) DialogFooterEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e DialogFooterEl) GridCols(cols uint16) DialogFooterEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e DialogFooterEl) GridColsMaxContent(cols uint16) DialogFooterEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e DialogFooterEl) GridColsMinContent(cols uint16) DialogFooterEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e DialogFooterEl) GridRows(rows uint16) DialogFooterEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e DialogFooterEl) GridRowsMaxContent(rows uint16) DialogFooterEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e DialogFooterEl) GridRowsMinContent(rows uint16) DialogFooterEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e DialogFooterEl) H(length Length) DialogFooterEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e DialogFooterEl) H(length Length) DialogFooterEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogFooterEl) Inset(length Length) DialogFooterEl { tStyledInset(e.n, length); return e }
-func (e DialogFooterEl) Left(length Length) DialogFooterEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogFooterEl) Left(length Length) DialogFooterEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e DialogFooterEl) LineClamp(lines int) DialogFooterEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e DialogFooterEl) LineHeight(lineHeight Length) DialogFooterEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e DialogFooterEl) M(length Length) DialogFooterEl       { tStyledM(e.n, length); return e }
-func (e DialogFooterEl) MaxH(length Length) DialogFooterEl    { tStyledMaxH(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e DialogFooterEl) M(length Length) DialogFooterEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e DialogFooterEl) MaxH(length Length) DialogFooterEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e DialogFooterEl) MaxSize(length Length) DialogFooterEl { tStyledMaxSize(e.n, length); return e }
-func (e DialogFooterEl) MaxW(length Length) DialogFooterEl    { tStyledMaxW(e.n, length); return e }
-func (e DialogFooterEl) Mb(length Length) DialogFooterEl      { tStyledMb(e.n, length); return e }
-func (e DialogFooterEl) MinH(length Length) DialogFooterEl    { tStyledMinH(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e DialogFooterEl) MaxW(length Length) DialogFooterEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogFooterEl) Mb(length Length) DialogFooterEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e DialogFooterEl) MinH(length Length) DialogFooterEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e DialogFooterEl) MinSize(length Length) DialogFooterEl { tStyledMinSize(e.n, length); return e }
-func (e DialogFooterEl) MinW(length Length) DialogFooterEl    { tStyledMinW(e.n, length); return e }
-func (e DialogFooterEl) Ml(length Length) DialogFooterEl      { tStyledMl(e.n, length); return e }
-func (e DialogFooterEl) Mr(length Length) DialogFooterEl      { tStyledMr(e.n, length); return e }
-func (e DialogFooterEl) Mt(length Length) DialogFooterEl      { tStyledMt(e.n, length); return e }
-func (e DialogFooterEl) Mx(length Length) DialogFooterEl      { tStyledMx(e.n, length); return e }
-func (e DialogFooterEl) My(length Length) DialogFooterEl      { tStyledMy(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e DialogFooterEl) MinW(length Length) DialogFooterEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogFooterEl) Ml(length Length) DialogFooterEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogFooterEl) Mr(length Length) DialogFooterEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogFooterEl) Mt(length Length) DialogFooterEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e DialogFooterEl) Mx(length Length) DialogFooterEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e DialogFooterEl) My(length Length) DialogFooterEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e DialogFooterEl) Opacity(opacity float32) DialogFooterEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e DialogFooterEl) P(length Length) DialogFooterEl       { tStyledP(e.n, length); return e }
-func (e DialogFooterEl) Pb(length Length) DialogFooterEl      { tStyledPb(e.n, length); return e }
-func (e DialogFooterEl) Pl(length Length) DialogFooterEl      { tStyledPl(e.n, length); return e }
-func (e DialogFooterEl) Pr(length Length) DialogFooterEl      { tStyledPr(e.n, length); return e }
-func (e DialogFooterEl) Pt(length Length) DialogFooterEl      { tStyledPt(e.n, length); return e }
-func (e DialogFooterEl) Px(length Length) DialogFooterEl      { tStyledPx(e.n, length); return e }
-func (e DialogFooterEl) Py(length Length) DialogFooterEl      { tStyledPy(e.n, length); return e }
-func (e DialogFooterEl) Right(length Length) DialogFooterEl   { tStyledRight(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e DialogFooterEl) P(length Length) DialogFooterEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogFooterEl) Pb(length Length) DialogFooterEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogFooterEl) Pl(length Length) DialogFooterEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogFooterEl) Pr(length Length) DialogFooterEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogFooterEl) Pt(length Length) DialogFooterEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e DialogFooterEl) Px(length Length) DialogFooterEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e DialogFooterEl) Py(length Length) DialogFooterEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogFooterEl) Right(length Length) DialogFooterEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e DialogFooterEl) Rounded(length Length) DialogFooterEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogFooterEl) RoundedB(length Length) DialogFooterEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogFooterEl) RoundedBl(length Length) DialogFooterEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogFooterEl) RoundedBr(length Length) DialogFooterEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogFooterEl) RoundedL(length Length) DialogFooterEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogFooterEl) RoundedR(length Length) DialogFooterEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogFooterEl) RoundedT(length Length) DialogFooterEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogFooterEl) RoundedTl(length Length) DialogFooterEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogFooterEl) RoundedTr(length Length) DialogFooterEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e DialogFooterEl) RowEnd(end int16) DialogFooterEl     { tStyledRowEnd(e.n, end); return e }
-func (e DialogFooterEl) RowSpan(span uint16) DialogFooterEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e DialogFooterEl) RowEnd(end int16) DialogFooterEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e DialogFooterEl) RowSpan(span uint16) DialogFooterEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e DialogFooterEl) RowStart(start int16) DialogFooterEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e DialogFooterEl) ScrollbarWidth(width Length) DialogFooterEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e DialogFooterEl) Shadow(shadows []BoxShadow) DialogFooterEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e DialogFooterEl) Size(length Length) DialogFooterEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e DialogFooterEl) TextAlign(align TextAlign) DialogFooterEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e DialogFooterEl) TextBg(bg Color) DialogFooterEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e DialogFooterEl) TextBg(bg Color) DialogFooterEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e DialogFooterEl) TextColor(color Color) DialogFooterEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e DialogFooterEl) TextDecorationColor(color Color) DialogFooterEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e DialogFooterEl) TextOverflow(overflow TextOverflow) DialogFooterEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e DialogFooterEl) TextSize(size Length) DialogFooterEl { tStyledTextSize(e.n, size); return e }
-func (e DialogFooterEl) Top(length Length) DialogFooterEl    { tStyledTop(e.n, length); return e }
-func (e DialogFooterEl) W(length Length) DialogFooterEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogFooterEl) Top(length Length) DialogFooterEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e DialogFooterEl) W(length Length) DialogFooterEl { tStyledW(e.n, length); return e }
 
 // DialogHeaderEl is gpui_kit::component::dialog::DialogHeader.
 type DialogHeaderEl struct{ n *node }
@@ -1688,17 +3146,43 @@ func DialogHeader(st ...Style) DialogHeaderEl {
 	return DialogHeaderEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e DialogHeaderEl) PopoverStyle() DialogHeaderEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e DialogHeaderEl) RoundedFullStyle() DialogHeaderEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e DialogHeaderEl) FocusRingStyle() DialogHeaderEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogHeaderEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogHeaderEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1726,7 +3210,20 @@ func (e DialogHeaderEl) FontMedium() DialogHeaderEl     { tStyledExtFontMedium(e
 func (e DialogHeaderEl) FontNormal() DialogHeaderEl     { tStyledExtFontNormal(e.n); return e }
 func (e DialogHeaderEl) FontSemibold() DialogHeaderEl   { tStyledExtFontSemibold(e.n); return e }
 func (e DialogHeaderEl) FontThin() DialogHeaderEl       { tStyledExtFontThin(e.n); return e }
-func (e DialogHeaderEl) HFlex() DialogHeaderEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e DialogHeaderEl) HFlex() DialogHeaderEl { tStyledExtHFlex(e.n); return e }
 func (e DialogHeaderEl) Margins(margins EdgesInto) DialogHeaderEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1739,6 +3236,11 @@ func (e DialogHeaderEl) RefineStyle(style StyleRefinement) DialogHeaderEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e DialogHeaderEl) VFlex() DialogHeaderEl { tStyledExtVFlex(e.n); return e }
 
 func (e DialogHeaderEl) Text(s string) DialogHeaderEl { putText(e.n, s); return e }
@@ -1746,10 +3248,13 @@ func (e DialogHeaderEl) Text(s string) DialogHeaderEl { putText(e.n, s); return 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e DialogHeaderEl) ChildView(v View) DialogHeaderEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e DialogHeaderEl) Child(child Element) DialogHeaderEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e DialogHeaderEl) Children(children ...Element) DialogHeaderEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1758,167 +3263,374 @@ func (e DialogHeaderEl) Children(children ...Element) DialogHeaderEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e DialogHeaderEl) Style(st ...Style) DialogHeaderEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e DialogHeaderEl) AspectRatio(ratio float32) DialogHeaderEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e DialogHeaderEl) Bg(fill Fill) DialogHeaderEl          { tStyledBg(e.n, fill); return e }
-func (e DialogHeaderEl) Border(length Length) DialogHeaderEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e DialogHeaderEl) Bg(fill Fill) DialogHeaderEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e DialogHeaderEl) Border(length Length) DialogHeaderEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogHeaderEl) BorderB(length Length) DialogHeaderEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e DialogHeaderEl) BorderColor(borderColor Color) DialogHeaderEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogHeaderEl) BorderL(length Length) DialogHeaderEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogHeaderEl) BorderR(length Length) DialogHeaderEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogHeaderEl) BorderT(length Length) DialogHeaderEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e DialogHeaderEl) BorderX(length Length) DialogHeaderEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e DialogHeaderEl) BorderY(length Length) DialogHeaderEl { tStyledBorderY(e.n, length); return e }
-func (e DialogHeaderEl) Bottom(length Length) DialogHeaderEl  { tStyledBottom(e.n, length); return e }
-func (e DialogHeaderEl) ColEnd(end int16) DialogHeaderEl      { tStyledColEnd(e.n, end); return e }
-func (e DialogHeaderEl) ColSpan(span uint16) DialogHeaderEl   { tStyledColSpan(e.n, span); return e }
-func (e DialogHeaderEl) ColStart(start int16) DialogHeaderEl  { tStyledColStart(e.n, start); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogHeaderEl) Bottom(length Length) DialogHeaderEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e DialogHeaderEl) ColEnd(end int16) DialogHeaderEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e DialogHeaderEl) ColSpan(span uint16) DialogHeaderEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e DialogHeaderEl) ColStart(start int16) DialogHeaderEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e DialogHeaderEl) Cursor(cursor CursorStyle) DialogHeaderEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e DialogHeaderEl) FlexBasis(basis Length) DialogHeaderEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e DialogHeaderEl) FlexGrow(grow float32) DialogHeaderEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e DialogHeaderEl) FlexShrink(shrink float32) DialogHeaderEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e DialogHeaderEl) FontFamily(familyName string) DialogHeaderEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e DialogHeaderEl) FontFeatures(features FontFeatures) DialogHeaderEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e DialogHeaderEl) FontWeight(weight FontWeight) DialogHeaderEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e DialogHeaderEl) Gap(length Length) DialogHeaderEl    { tStyledGap(e.n, length); return e }
-func (e DialogHeaderEl) GapX(length Length) DialogHeaderEl   { tStyledGapX(e.n, length); return e }
-func (e DialogHeaderEl) GapY(length Length) DialogHeaderEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e DialogHeaderEl) Gap(length Length) DialogHeaderEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogHeaderEl) GapX(length Length) DialogHeaderEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogHeaderEl) GapY(length Length) DialogHeaderEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e DialogHeaderEl) GridCols(cols uint16) DialogHeaderEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e DialogHeaderEl) GridColsMaxContent(cols uint16) DialogHeaderEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e DialogHeaderEl) GridColsMinContent(cols uint16) DialogHeaderEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e DialogHeaderEl) GridRows(rows uint16) DialogHeaderEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e DialogHeaderEl) GridRowsMaxContent(rows uint16) DialogHeaderEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e DialogHeaderEl) GridRowsMinContent(rows uint16) DialogHeaderEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e DialogHeaderEl) H(length Length) DialogHeaderEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e DialogHeaderEl) H(length Length) DialogHeaderEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogHeaderEl) Inset(length Length) DialogHeaderEl { tStyledInset(e.n, length); return e }
-func (e DialogHeaderEl) Left(length Length) DialogHeaderEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogHeaderEl) Left(length Length) DialogHeaderEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e DialogHeaderEl) LineClamp(lines int) DialogHeaderEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e DialogHeaderEl) LineHeight(lineHeight Length) DialogHeaderEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e DialogHeaderEl) M(length Length) DialogHeaderEl       { tStyledM(e.n, length); return e }
-func (e DialogHeaderEl) MaxH(length Length) DialogHeaderEl    { tStyledMaxH(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e DialogHeaderEl) M(length Length) DialogHeaderEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e DialogHeaderEl) MaxH(length Length) DialogHeaderEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e DialogHeaderEl) MaxSize(length Length) DialogHeaderEl { tStyledMaxSize(e.n, length); return e }
-func (e DialogHeaderEl) MaxW(length Length) DialogHeaderEl    { tStyledMaxW(e.n, length); return e }
-func (e DialogHeaderEl) Mb(length Length) DialogHeaderEl      { tStyledMb(e.n, length); return e }
-func (e DialogHeaderEl) MinH(length Length) DialogHeaderEl    { tStyledMinH(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e DialogHeaderEl) MaxW(length Length) DialogHeaderEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogHeaderEl) Mb(length Length) DialogHeaderEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e DialogHeaderEl) MinH(length Length) DialogHeaderEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e DialogHeaderEl) MinSize(length Length) DialogHeaderEl { tStyledMinSize(e.n, length); return e }
-func (e DialogHeaderEl) MinW(length Length) DialogHeaderEl    { tStyledMinW(e.n, length); return e }
-func (e DialogHeaderEl) Ml(length Length) DialogHeaderEl      { tStyledMl(e.n, length); return e }
-func (e DialogHeaderEl) Mr(length Length) DialogHeaderEl      { tStyledMr(e.n, length); return e }
-func (e DialogHeaderEl) Mt(length Length) DialogHeaderEl      { tStyledMt(e.n, length); return e }
-func (e DialogHeaderEl) Mx(length Length) DialogHeaderEl      { tStyledMx(e.n, length); return e }
-func (e DialogHeaderEl) My(length Length) DialogHeaderEl      { tStyledMy(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e DialogHeaderEl) MinW(length Length) DialogHeaderEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogHeaderEl) Ml(length Length) DialogHeaderEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogHeaderEl) Mr(length Length) DialogHeaderEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogHeaderEl) Mt(length Length) DialogHeaderEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e DialogHeaderEl) Mx(length Length) DialogHeaderEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e DialogHeaderEl) My(length Length) DialogHeaderEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e DialogHeaderEl) Opacity(opacity float32) DialogHeaderEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e DialogHeaderEl) P(length Length) DialogHeaderEl       { tStyledP(e.n, length); return e }
-func (e DialogHeaderEl) Pb(length Length) DialogHeaderEl      { tStyledPb(e.n, length); return e }
-func (e DialogHeaderEl) Pl(length Length) DialogHeaderEl      { tStyledPl(e.n, length); return e }
-func (e DialogHeaderEl) Pr(length Length) DialogHeaderEl      { tStyledPr(e.n, length); return e }
-func (e DialogHeaderEl) Pt(length Length) DialogHeaderEl      { tStyledPt(e.n, length); return e }
-func (e DialogHeaderEl) Px(length Length) DialogHeaderEl      { tStyledPx(e.n, length); return e }
-func (e DialogHeaderEl) Py(length Length) DialogHeaderEl      { tStyledPy(e.n, length); return e }
-func (e DialogHeaderEl) Right(length Length) DialogHeaderEl   { tStyledRight(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e DialogHeaderEl) P(length Length) DialogHeaderEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogHeaderEl) Pb(length Length) DialogHeaderEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogHeaderEl) Pl(length Length) DialogHeaderEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogHeaderEl) Pr(length Length) DialogHeaderEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogHeaderEl) Pt(length Length) DialogHeaderEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e DialogHeaderEl) Px(length Length) DialogHeaderEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e DialogHeaderEl) Py(length Length) DialogHeaderEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogHeaderEl) Right(length Length) DialogHeaderEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e DialogHeaderEl) Rounded(length Length) DialogHeaderEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogHeaderEl) RoundedB(length Length) DialogHeaderEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogHeaderEl) RoundedBl(length Length) DialogHeaderEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogHeaderEl) RoundedBr(length Length) DialogHeaderEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogHeaderEl) RoundedL(length Length) DialogHeaderEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogHeaderEl) RoundedR(length Length) DialogHeaderEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogHeaderEl) RoundedT(length Length) DialogHeaderEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogHeaderEl) RoundedTl(length Length) DialogHeaderEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogHeaderEl) RoundedTr(length Length) DialogHeaderEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e DialogHeaderEl) RowEnd(end int16) DialogHeaderEl     { tStyledRowEnd(e.n, end); return e }
-func (e DialogHeaderEl) RowSpan(span uint16) DialogHeaderEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e DialogHeaderEl) RowEnd(end int16) DialogHeaderEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e DialogHeaderEl) RowSpan(span uint16) DialogHeaderEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e DialogHeaderEl) RowStart(start int16) DialogHeaderEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e DialogHeaderEl) ScrollbarWidth(width Length) DialogHeaderEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e DialogHeaderEl) Shadow(shadows []BoxShadow) DialogHeaderEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e DialogHeaderEl) Size(length Length) DialogHeaderEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e DialogHeaderEl) TextAlign(align TextAlign) DialogHeaderEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e DialogHeaderEl) TextBg(bg Color) DialogHeaderEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e DialogHeaderEl) TextBg(bg Color) DialogHeaderEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e DialogHeaderEl) TextColor(color Color) DialogHeaderEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e DialogHeaderEl) TextDecorationColor(color Color) DialogHeaderEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e DialogHeaderEl) TextOverflow(overflow TextOverflow) DialogHeaderEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e DialogHeaderEl) TextSize(size Length) DialogHeaderEl { tStyledTextSize(e.n, size); return e }
-func (e DialogHeaderEl) Top(length Length) DialogHeaderEl    { tStyledTop(e.n, length); return e }
-func (e DialogHeaderEl) W(length Length) DialogHeaderEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogHeaderEl) Top(length Length) DialogHeaderEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e DialogHeaderEl) W(length Length) DialogHeaderEl { tStyledW(e.n, length); return e }
 
 // DialogTitleEl is gpui_kit::component::dialog::DialogTitle.
 type DialogTitleEl struct{ n *node }
@@ -1933,14 +3645,40 @@ func DialogTitle(st ...Style) DialogTitleEl {
 	return DialogTitleEl{n}
 }
 
-func (e DialogTitleEl) PopoverStyle() DialogTitleEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e DialogTitleEl) PopoverStyle() DialogTitleEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e DialogTitleEl) RoundedFullStyle() DialogTitleEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e DialogTitleEl) FocusRingStyle() DialogTitleEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogTitleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogTitleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1968,7 +3706,20 @@ func (e DialogTitleEl) FontMedium() DialogTitleEl     { tStyledExtFontMedium(e.n
 func (e DialogTitleEl) FontNormal() DialogTitleEl     { tStyledExtFontNormal(e.n); return e }
 func (e DialogTitleEl) FontSemibold() DialogTitleEl   { tStyledExtFontSemibold(e.n); return e }
 func (e DialogTitleEl) FontThin() DialogTitleEl       { tStyledExtFontThin(e.n); return e }
-func (e DialogTitleEl) HFlex() DialogTitleEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e DialogTitleEl) HFlex() DialogTitleEl { tStyledExtHFlex(e.n); return e }
 func (e DialogTitleEl) Margins(margins EdgesInto) DialogTitleEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1981,6 +3732,11 @@ func (e DialogTitleEl) RefineStyle(style StyleRefinement) DialogTitleEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e DialogTitleEl) VFlex() DialogTitleEl { tStyledExtVFlex(e.n); return e }
 
 func (e DialogTitleEl) Text(s string) DialogTitleEl { putText(e.n, s); return e }
@@ -1988,7 +3744,10 @@ func (e DialogTitleEl) Text(s string) DialogTitleEl { putText(e.n, s); return e 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e DialogTitleEl) ChildView(v View) DialogTitleEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e DialogTitleEl) Child(child Element) DialogTitleEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e DialogTitleEl) Children(children ...Element) DialogTitleEl {
 	tParentElementChildren(e.n, children...)
 	return e
@@ -1997,143 +3756,350 @@ func (e DialogTitleEl) Children(children ...Element) DialogTitleEl {
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e DialogTitleEl) Style(st ...Style) DialogTitleEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e DialogTitleEl) AspectRatio(ratio float32) DialogTitleEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e DialogTitleEl) Bg(fill Fill) DialogTitleEl          { tStyledBg(e.n, fill); return e }
-func (e DialogTitleEl) Border(length Length) DialogTitleEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e DialogTitleEl) Bg(fill Fill) DialogTitleEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e DialogTitleEl) Border(length Length) DialogTitleEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e DialogTitleEl) BorderB(length Length) DialogTitleEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e DialogTitleEl) BorderColor(borderColor Color) DialogTitleEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e DialogTitleEl) BorderL(length Length) DialogTitleEl     { tStyledBorderL(e.n, length); return e }
-func (e DialogTitleEl) BorderR(length Length) DialogTitleEl     { tStyledBorderR(e.n, length); return e }
-func (e DialogTitleEl) BorderT(length Length) DialogTitleEl     { tStyledBorderT(e.n, length); return e }
-func (e DialogTitleEl) BorderX(length Length) DialogTitleEl     { tStyledBorderX(e.n, length); return e }
-func (e DialogTitleEl) BorderY(length Length) DialogTitleEl     { tStyledBorderY(e.n, length); return e }
-func (e DialogTitleEl) Bottom(length Length) DialogTitleEl      { tStyledBottom(e.n, length); return e }
-func (e DialogTitleEl) ColEnd(end int16) DialogTitleEl          { tStyledColEnd(e.n, end); return e }
-func (e DialogTitleEl) ColSpan(span uint16) DialogTitleEl       { tStyledColSpan(e.n, span); return e }
-func (e DialogTitleEl) ColStart(start int16) DialogTitleEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DialogTitleEl) BorderL(length Length) DialogTitleEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DialogTitleEl) BorderR(length Length) DialogTitleEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e DialogTitleEl) BorderT(length Length) DialogTitleEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e DialogTitleEl) BorderX(length Length) DialogTitleEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e DialogTitleEl) BorderY(length Length) DialogTitleEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogTitleEl) Bottom(length Length) DialogTitleEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e DialogTitleEl) ColEnd(end int16) DialogTitleEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e DialogTitleEl) ColSpan(span uint16) DialogTitleEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e DialogTitleEl) ColStart(start int16) DialogTitleEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e DialogTitleEl) Cursor(cursor CursorStyle) DialogTitleEl { tStyledCursor(e.n, cursor); return e }
-func (e DialogTitleEl) FlexBasis(basis Length) DialogTitleEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e DialogTitleEl) FlexGrow(grow float32) DialogTitleEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e DialogTitleEl) FlexBasis(basis Length) DialogTitleEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e DialogTitleEl) FlexGrow(grow float32) DialogTitleEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e DialogTitleEl) FlexShrink(shrink float32) DialogTitleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e DialogTitleEl) FontFamily(familyName string) DialogTitleEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e DialogTitleEl) FontFeatures(features FontFeatures) DialogTitleEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e DialogTitleEl) FontWeight(weight FontWeight) DialogTitleEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e DialogTitleEl) Gap(length Length) DialogTitleEl    { tStyledGap(e.n, length); return e }
-func (e DialogTitleEl) GapX(length Length) DialogTitleEl   { tStyledGapX(e.n, length); return e }
-func (e DialogTitleEl) GapY(length Length) DialogTitleEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e DialogTitleEl) Gap(length Length) DialogTitleEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogTitleEl) GapX(length Length) DialogTitleEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e DialogTitleEl) GapY(length Length) DialogTitleEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e DialogTitleEl) GridCols(cols uint16) DialogTitleEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e DialogTitleEl) GridColsMaxContent(cols uint16) DialogTitleEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e DialogTitleEl) GridColsMinContent(cols uint16) DialogTitleEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e DialogTitleEl) GridRows(rows uint16) DialogTitleEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e DialogTitleEl) GridRowsMaxContent(rows uint16) DialogTitleEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e DialogTitleEl) GridRowsMinContent(rows uint16) DialogTitleEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e DialogTitleEl) H(length Length) DialogTitleEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e DialogTitleEl) H(length Length) DialogTitleEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e DialogTitleEl) Inset(length Length) DialogTitleEl { tStyledInset(e.n, length); return e }
-func (e DialogTitleEl) Left(length Length) DialogTitleEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogTitleEl) Left(length Length) DialogTitleEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e DialogTitleEl) LineClamp(lines int) DialogTitleEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e DialogTitleEl) LineHeight(lineHeight Length) DialogTitleEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e DialogTitleEl) M(length Length) DialogTitleEl         { tStyledM(e.n, length); return e }
-func (e DialogTitleEl) MaxH(length Length) DialogTitleEl      { tStyledMaxH(e.n, length); return e }
-func (e DialogTitleEl) MaxSize(length Length) DialogTitleEl   { tStyledMaxSize(e.n, length); return e }
-func (e DialogTitleEl) MaxW(length Length) DialogTitleEl      { tStyledMaxW(e.n, length); return e }
-func (e DialogTitleEl) Mb(length Length) DialogTitleEl        { tStyledMb(e.n, length); return e }
-func (e DialogTitleEl) MinH(length Length) DialogTitleEl      { tStyledMinH(e.n, length); return e }
-func (e DialogTitleEl) MinSize(length Length) DialogTitleEl   { tStyledMinSize(e.n, length); return e }
-func (e DialogTitleEl) MinW(length Length) DialogTitleEl      { tStyledMinW(e.n, length); return e }
-func (e DialogTitleEl) Ml(length Length) DialogTitleEl        { tStyledMl(e.n, length); return e }
-func (e DialogTitleEl) Mr(length Length) DialogTitleEl        { tStyledMr(e.n, length); return e }
-func (e DialogTitleEl) Mt(length Length) DialogTitleEl        { tStyledMt(e.n, length); return e }
-func (e DialogTitleEl) Mx(length Length) DialogTitleEl        { tStyledMx(e.n, length); return e }
-func (e DialogTitleEl) My(length Length) DialogTitleEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e DialogTitleEl) M(length Length) DialogTitleEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e DialogTitleEl) MaxH(length Length) DialogTitleEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e DialogTitleEl) MaxSize(length Length) DialogTitleEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e DialogTitleEl) MaxW(length Length) DialogTitleEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogTitleEl) Mb(length Length) DialogTitleEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e DialogTitleEl) MinH(length Length) DialogTitleEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e DialogTitleEl) MinSize(length Length) DialogTitleEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e DialogTitleEl) MinW(length Length) DialogTitleEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogTitleEl) Ml(length Length) DialogTitleEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogTitleEl) Mr(length Length) DialogTitleEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e DialogTitleEl) Mt(length Length) DialogTitleEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e DialogTitleEl) Mx(length Length) DialogTitleEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e DialogTitleEl) My(length Length) DialogTitleEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e DialogTitleEl) Opacity(opacity float32) DialogTitleEl { tStyledOpacity(e.n, opacity); return e }
-func (e DialogTitleEl) P(length Length) DialogTitleEl         { tStyledP(e.n, length); return e }
-func (e DialogTitleEl) Pb(length Length) DialogTitleEl        { tStyledPb(e.n, length); return e }
-func (e DialogTitleEl) Pl(length Length) DialogTitleEl        { tStyledPl(e.n, length); return e }
-func (e DialogTitleEl) Pr(length Length) DialogTitleEl        { tStyledPr(e.n, length); return e }
-func (e DialogTitleEl) Pt(length Length) DialogTitleEl        { tStyledPt(e.n, length); return e }
-func (e DialogTitleEl) Px(length Length) DialogTitleEl        { tStyledPx(e.n, length); return e }
-func (e DialogTitleEl) Py(length Length) DialogTitleEl        { tStyledPy(e.n, length); return e }
-func (e DialogTitleEl) Right(length Length) DialogTitleEl     { tStyledRight(e.n, length); return e }
-func (e DialogTitleEl) Rounded(length Length) DialogTitleEl   { tStyledRounded(e.n, length); return e }
-func (e DialogTitleEl) RoundedB(length Length) DialogTitleEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e DialogTitleEl) P(length Length) DialogTitleEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogTitleEl) Pb(length Length) DialogTitleEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogTitleEl) Pl(length Length) DialogTitleEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogTitleEl) Pr(length Length) DialogTitleEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e DialogTitleEl) Pt(length Length) DialogTitleEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e DialogTitleEl) Px(length Length) DialogTitleEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e DialogTitleEl) Py(length Length) DialogTitleEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogTitleEl) Right(length Length) DialogTitleEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e DialogTitleEl) Rounded(length Length) DialogTitleEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e DialogTitleEl) RoundedB(length Length) DialogTitleEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogTitleEl) RoundedBl(length Length) DialogTitleEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogTitleEl) RoundedBr(length Length) DialogTitleEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogTitleEl) RoundedL(length Length) DialogTitleEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogTitleEl) RoundedR(length Length) DialogTitleEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e DialogTitleEl) RoundedT(length Length) DialogTitleEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogTitleEl) RoundedTl(length Length) DialogTitleEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e DialogTitleEl) RoundedTr(length Length) DialogTitleEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e DialogTitleEl) RowEnd(end int16) DialogTitleEl     { tStyledRowEnd(e.n, end); return e }
-func (e DialogTitleEl) RowSpan(span uint16) DialogTitleEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e DialogTitleEl) RowEnd(end int16) DialogTitleEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e DialogTitleEl) RowSpan(span uint16) DialogTitleEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e DialogTitleEl) RowStart(start int16) DialogTitleEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e DialogTitleEl) ScrollbarWidth(width Length) DialogTitleEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e DialogTitleEl) Shadow(shadows []BoxShadow) DialogTitleEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e DialogTitleEl) Size(length Length) DialogTitleEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e DialogTitleEl) TextAlign(align TextAlign) DialogTitleEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e DialogTitleEl) TextBg(bg Color) DialogTitleEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e DialogTitleEl) TextBg(bg Color) DialogTitleEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e DialogTitleEl) TextColor(color Color) DialogTitleEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e DialogTitleEl) TextDecorationColor(color Color) DialogTitleEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e DialogTitleEl) TextOverflow(overflow TextOverflow) DialogTitleEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e DialogTitleEl) TextSize(size Length) DialogTitleEl { tStyledTextSize(e.n, size); return e }
-func (e DialogTitleEl) Top(length Length) DialogTitleEl    { tStyledTop(e.n, length); return e }
-func (e DialogTitleEl) W(length Length) DialogTitleEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e DialogTitleEl) Top(length Length) DialogTitleEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e DialogTitleEl) W(length Length) DialogTitleEl { tStyledW(e.n, length); return e }

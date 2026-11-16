@@ -3,6 +3,9 @@ package gk
 
 import "core:time"
 
+// A band that resizes along one axis when it is dragged, carrying a `T` that the drag renders as
+// an `E`. See `gk.resize_handle`.
+//
 // Resize_Handle is gpui_kit::base::ResizeHandle<crate::values::Drag, crate::rt::GkView>.
 Resize_Handle :: struct {
 	using el: Element,
@@ -52,11 +55,23 @@ Resize_Handle_VT :: struct {
 	track_scroll: proc(e: Resize_Handle, scroll_handle: Scroll_Handle) -> Resize_Handle,
 	using t_interactive_element_ext: ^Interactive_Element_Ext_Trait(Resize_Handle),
 	using t_interactive_element_ext_stateful_interactive_element: ^Interactive_Element_Ext_Stateful_Interactive_Element_Trait(Resize_Handle),
+	// Keep the whole handle inside its container, hugging `edge`, instead of straddling the boundary
+	// it resizes.
 	inside: proc(e: Resize_Handle, edge: Handle_Edge) -> Resize_Handle,
+	// Start a drag carrying `value` when the band is pressed and moved.
+	//
+	// A band takes one drag, and this is it: use this rather than `on_drag`, which it shadows.
+	//
+	// GPUI tells drags apart by the type of their payload, so the drag carries `value` itself, and a
+	// caller following it with `on_drag_move` listens for a `T`.
 	on_drag: proc(e: Resize_Handle, value: Drag_Value, f: View) -> Resize_Handle,
+	// Hand the painted part of this handle to `appearance`.
 	with_appearance: proc(e: Resize_Handle, appearance: Resize_Handle_Renderer) -> Resize_Handle,
 }
 
+// Create a standalone `ResizeHandle` wearing this design system's divider, for an edge no
+// `ResizablePanelGroup` owns -- an application's sidebar, say. What the drag resizes is the
+// caller's; see `resize_handle`.
 kit_resize_handle :: proc(id: Id, axis: Axis, loc := #caller_location) -> Resize_Handle {
 	use_base_resizable()
 	e := Resize_Handle{new_node(870, loc), &resize_handle_vt}
@@ -66,6 +81,22 @@ kit_resize_handle :: proc(id: Id, axis: Axis, loc := #caller_location) -> Resize
 	return e
 }
 
+// Create a resize handle: a band that resizes whatever it edges when it is dragged.
+//
+// Base owns the band -- where it sits, how wide it is, its cursor, and the Idle → Hovered →
+// Pressed → Dragging progression its appearance is told about. What a drag resizes is the
+// caller's. Give the handle a payload with `->on_drag` and follow that payload with
+// `on_drag_move`, the way a slider thumb does; any other listener -- a double click that restores
+// a default size, a hover that a surrounding drawer has to count as its own -- goes on the handle
+// through the interactive element traits.
+//
+// The band occludes. While the pointer is on it nothing behind it reads as hovered, its own
+// container included, so a container that has to know the pointer is still over it listens on the
+// handle as well.
+//
+// The band's element id, its `"handle"` group, its occlusion and its drag are base's: an `id`,
+// `group`, hitbox behavior or `on_drag` set through the interactive element traits is replaced
+// when the band is laid out.
 resize_handle :: proc(id: Id, axis: Axis, loc := #caller_location) -> Resize_Handle {
 	use_base_resizable()
 	e := Resize_Handle{new_node(869, loc), &resize_handle_vt}

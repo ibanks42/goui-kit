@@ -12,9 +12,21 @@ Icon_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Icon),
 	using t_styled: ^Styled_Trait(Icon),
 	using t_sizable: ^Sizable_Trait(Icon),
+	// Set raw SVG bytes without registering an asset path.
+	//
+	// Copies the bytes into shared storage; the input need not be static. Cloning the icon shares
+	// those bytes. Replaces any previously set path or data. Parsing and rendering follow GPUI's SVG
+	// behavior.
 	data: proc(e: Icon, data: []u8) -> Icon,
+	// Set the icon path of the Assets bundle
+	//
+	// For example: `icons/foo.svg` Replaces any previously set path or SVG data.
 	path: proc(e: Icon, path: string) -> Icon,
+	// Rotate the icon by the given angle
+	//
+	// Replaces any previous transformation or rotation.
 	rotate: proc(e: Icon, radians: Radians_Into) -> Icon,
+	// Set the SVG transformation, replacing any previous transformation or rotation.
 	transform: proc(e: Icon, transformation: Transformation) -> Icon,
 }
 
@@ -72,6 +84,8 @@ icon_vt := Icon_VT {
 	},
 }
 
+// Semantic motion policy shared by styled components.
+//
 // Motion_Tokens is gpui_kit::component::MotionTokens.
 Motion_Tokens :: struct {
 	using nd: Value,
@@ -108,6 +122,8 @@ semantic_theme_config_default :: proc(loc := #caller_location) -> Semantic_Theme
 semantic_theme_config_vt := Semantic_Theme_Config_VT {
 }
 
+// Theme colors used throughout the UI components.
+//
 // Kit_Theme_Color is gpui_kit::component::ThemeColor.
 Kit_Theme_Color :: struct {
 	using nd: Value,
@@ -144,6 +160,10 @@ theme_config_default :: proc(loc := #caller_location) -> Theme_Config {
 theme_config_vt := Theme_Config_VT {
 }
 
+// TitleBar used to customize the appearance of the title bar.
+//
+// We can put some elements inside the title bar.
+//
 // Title_Bar is gpui_kit::component::TitleBar.
 Title_Bar :: struct {
 	using el: Element,
@@ -157,9 +177,11 @@ Title_Bar_VT :: struct {
 	using t_styled_ext: ^Styled_Ext_Trait(Title_Bar),
 	using t_styled: ^Styled_Trait(Title_Bar),
 	using t_parent_element: ^Parent_Element_Trait(Title_Bar),
+	// Linux only, this will do nothing on other platforms.
 	on_close_window: proc(e: Title_Bar, f: Handler) -> Title_Bar,
 }
 
+// Create a new TitleBar.
 title_bar :: proc(flags: ..Style_Flag, loc := #caller_location) -> Title_Bar {
 	use_component_title_bar()
 	e := Title_Bar{new_node(569, loc), &title_bar_vt}
@@ -182,6 +204,8 @@ title_bar_vt := Title_Bar_VT {
 	},
 }
 
+// Renders a custom window border and shadow on Linux.
+//
 // Window_Border is gpui_kit::component::WindowBorder.
 Window_Border :: struct {
 	using el: Element,
@@ -191,10 +215,17 @@ Window_Border :: struct {
 Window_Border_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Window_Border),
 	using t_parent_element: ^Parent_Element_Trait(Window_Border),
+	// Set the resize hit band half-width around the visible inner frame edge.
+	//
+	// Default: `RESIZE_HIT_SIZE`
 	resize_hit_size: proc(e: Window_Border, size: f32) -> Window_Border,
+	// Set the shadow size for typical Linux client-side decorations.
+	//
+	// Default: `SHADOW_SIZE`
 	shadow_size: proc(e: Window_Border, size: f32) -> Window_Border,
 }
 
+// Create a new window border.
 kit_window_border :: proc(loc := #caller_location) -> Window_Border {
 	use_component_window_border()
 	e := Window_Border{new_node(573, loc), &window_border_vt}

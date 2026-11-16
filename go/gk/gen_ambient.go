@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Amber is gpui_kit::component::amber.
 func Amber(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -17,6 +23,17 @@ func Amber(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Reads the operating system's reduced-motion preference into `set_reduce_motion`.
+//
+// `gpui_base::init` calls this once. Call it again to re-read the preference on a platform Base
+// does not follow live — macOS and Windows post no notification Base can subscribe to without a
+// window, so a change made while the application runs reaches it only through this call.
+//
+// The application wins over the system: when the flag no longer holds what Base last wrote, the
+// application set it, and this call leaves it alone. Where the platform cannot say (wasm, an
+// unsupported desktop, a Linux session without the portal) the flag is left as it is, and under
+// GPUI's test scheduler the platform is not asked at all.
+//
 // BaseApplySystemReduceMotion is gpui_kit::base::apply_system_reduce_motion.
 func BaseApplySystemReduceMotion(cx *Cx) {
 	useBaseRoot()
@@ -24,6 +41,12 @@ func BaseApplySystemReduceMotion(cx *Cx) {
 	ambientCall(cx, o, false)
 }
 
+// The space below (or above) an x-axis line that tick labels of `font_size` need: the gap
+// `PlotAxis` leaves between the line and the labels, the labels themselves, and a trailing gap.
+//
+// A chart reserves this much of its height for the axis. With the default `TEXT_SIZE` it is 18px;
+// a styled layer drawing larger labels passes its own size so the plot shrinks to fit them.
+//
 // BaseAxisGutter is gpui_kit::base::plot::axis_gutter.
 func BaseAxisGutter(cx *Cx, fontSize float32) float32 {
 	useBasePlot()
@@ -46,6 +69,14 @@ func BaseBoxShadow(cx *Cx, x float32, y float32, blur float32, spread float32, c
 	return rdBoxShadow(r)
 }
 
+// Clamp a size into the range this dock may occupy: never below `PANEL_MIN_SIZE`, and never so
+// large it would squeeze the opposite dock (if any) below `PANEL_MIN_SIZE` either. The
+// `.max(PANEL_MIN_SIZE)` on the computed maximum matters when the area itself is narrower than
+// both minimums combined — it keeps the clamp range non-empty.
+//
+// `DockPlacement::Center` constrains nothing, so it hands the size back unchanged. See
+// `SizeFromPointer` for why that variant is answered rather than rejected.
+//
 // BaseDockSizingClamp is (|value: gpui_kit::base::dock::DockSizing, size| <gpui_kit::base::dock::DockSizing>::clamp(&value, size)).
 func BaseDockSizingClamp(cx *Cx, value DockSizing, size float32) float32 {
 	useBaseDock()
@@ -56,6 +87,14 @@ func BaseDockSizingClamp(cx *Cx, value DockSizing, size float32) float32 {
 	return r.f32()
 }
 
+// The dock size the pointer implies, before clamping.
+//
+// `DockPlacement::Center` names the canvas, which has no edge to measure from and no dock size, so
+// it answers zero. Both this and `gk.BaseDockSizingClamp` are public and take a `pub` enum, so a
+// caller can name that variant; a base-layer arithmetic helper must not panic a desktop
+// application over it. `axis` resolves the same variant the same way, silently rather than by
+// panicking.
+//
 // BaseDockSizingSizeFromPointer is (|value: gpui_kit::base::dock::DockSizing, pointer| <gpui_kit::base::dock::DockSizing>::size_from_pointer(&value, pointer)).
 func BaseDockSizingSizeFromPointer(cx *Cx, value DockSizing, pointer GpuiPoint) float32 {
 	useBaseDock()
@@ -66,6 +105,8 @@ func BaseDockSizingSizeFromPointer(cx *Cx, value DockSizing, pointer GpuiPoint) 
 	return r.f32()
 }
 
+// Cubic ease-in — slow start, fast end. Good for exit animations.
+//
 // BaseEaseInCubic is gpui_kit::base::animation::ease_in_cubic.
 func BaseEaseInCubic(cx *Cx, t float32) float32 {
 	useBaseAnimation()
@@ -75,6 +116,8 @@ func BaseEaseInCubic(cx *Cx, t float32) float32 {
 	return r.f32()
 }
 
+// Cubic ease-in-out — slow start and end. Good for position transitions.
+//
 // BaseEaseInOutCubic is gpui_kit::base::animation::ease_in_out_cubic.
 func BaseEaseInOutCubic(cx *Cx, t float32) float32 {
 	useBaseAnimation()
@@ -84,6 +127,8 @@ func BaseEaseInOutCubic(cx *Cx, t float32) float32 {
 	return r.f32()
 }
 
+// Cubic ease-out — fast start, slow end. Good for enter animations.
+//
 // BaseEaseOutCubic is gpui_kit::base::animation::ease_out_cubic.
 func BaseEaseOutCubic(cx *Cx, t float32) float32 {
 	useBaseAnimation()
@@ -93,6 +138,9 @@ func BaseEaseOutCubic(cx *Cx, t float32) float32 {
 	return r.f32()
 }
 
+// Whether scroll areas bounce on this platform unless told otherwise: on iOS, Android and macOS,
+// whose own scroll views do.
+//
 // BaseEnabledByDefault is gpui_kit::base::ScrollBounce::enabled_by_default.
 func BaseEnabledByDefault(cx *Cx) bool {
 	useBaseScrollBounce()
@@ -101,6 +149,8 @@ func BaseEnabledByDefault(cx *Cx) bool {
 	return r.bool()
 }
 
+// A list of all format extensions currently supported by this img element
+//
 // BaseExtensions is gpui_kit::Img::extensions.
 func BaseExtensions(cx *Cx) []string {
 	o := newReq(1173)
@@ -108,6 +158,11 @@ func BaseExtensions(cx *Cx) []string {
 	return rdList(r, func(r *reader) string { return r.str() })
 }
 
+// Routes a key press to the questionnaire's behavior and reports whether it was consumed. The skin
+// installs it on the root; the contract — arrows move between answers and items, Enter confirms a
+// filled answer, a bare letter or digit activates a shortcut — lives here so a different skin
+// keeps it.
+//
 // BaseHandleKeyDown is gpui_kit::base::questionnaire::handle_key_down.
 func BaseHandleKeyDown(cx *Cx, state QuestionnaireState, event KeyDownEvent) {
 	useBaseQuestionnaire()
@@ -117,6 +172,10 @@ func BaseHandleKeyDown(cx *Cx, state QuestionnaireState, event KeyDownEvent) {
 	ambientCall(cx, o, false)
 }
 
+// Returns whether the application is compiled for iOS or Android.
+//
+// This is a compile-time platform check, not a screen-size or input-device check.
+//
 // BaseIsMobile is gpui_kit::base::is_mobile.
 func BaseIsMobile(cx *Cx) bool {
 	useBaseRoot()
@@ -125,6 +184,14 @@ func BaseIsMobile(cx *Cx) bool {
 	return r.bool()
 }
 
+// The last scroll step a horizontal `ScrollableMaskEl` used to move its content, i.e. one that
+// changed the clamped offset rather than pushing against an edge.
+//
+// Hosts that put their own pan gesture over GPUI content (e.g. a swipe that opens a side drawer on
+// mobile) use it to let a horizontal strip such as a markdown table scroll first: while the strip
+// still has room in the swipe's direction it claims the swipe; once it reaches that edge the
+// claims stop and the host may take over. Read on the thread that dispatches input.
+//
 // BaseLastHorizontalScrollClaim is gpui_kit::base::last_horizontal_scroll_claim.
 func BaseLastHorizontalScrollClaim(cx *Cx) Option[HorizontalScrollClaim] {
 	useBaseRoot()
@@ -133,6 +200,9 @@ func BaseLastHorizontalScrollClaim(cx *Cx) Option[HorizontalScrollClaim] {
 	return rdOpt(r, func(r *reader) HorizontalScrollClaim { return HorizontalScrollClaim{h: r.u64()} })
 }
 
+// Returns the rendered width of `text` at `font_size` using the window's current text style. Used
+// for layout calculations that need to reserve space for labels before the scale ranges are fixed.
+//
 // BaseMeasureTextWidth is gpui_kit::base::plot::label::measure_text_width.
 func BaseMeasureTextWidth(cx *Cx, text string, fontSize float32) float32 {
 	useBasePlot()
@@ -153,6 +223,12 @@ func BaseResolvedCorner(cx *Cx, anchor Anchor, triggerBounds Bounds) GpuiPoint {
 	return rdGpuiPoint(r)
 }
 
+// Complete the layout for a graph produced by `Topology`, avoiding a second topology pass when the
+// extent only becomes known after measuring against the column structure (e.g. label margins).
+//
+// The topological fields are extent-independent; the horizontal and vertical positions are
+// recomputed for this generator's extent.
+//
 // BaseSankeyLayoutFrom is (|value: gpui_kit::base::plot::shape::Sankey, graph| <gpui_kit::base::plot::shape::Sankey>::layout_from(&value, graph)).
 func BaseSankeyLayoutFrom(cx *Cx, value Sankey, graph SankeyGraph) SankeyGraph {
 	useBasePlot()
@@ -163,6 +239,11 @@ func BaseSankeyLayoutFrom(cx *Cx, value Sankey, graph SankeyGraph) SankeyGraph {
 	return SankeyGraph{h: r.u64()}
 }
 
+// Replace a language's editing configuration for this application. Existing editors read the
+// replacement on their next edit. Aliases follow the installed language provider; Base alone
+// treats names case-insensitively. This does not change `auto_close` or `smart_indent`
+// preferences.
+//
 // BaseSetLanguageConfig is gpui_kit::base::input::set_language_config.
 func BaseSetLanguageConfig(cx *Cx, language string, config LanguageConfig) {
 	useBaseInput()
@@ -172,6 +253,10 @@ func BaseSetLanguageConfig(cx *Cx, language string, config LanguageConfig) {
 	ambientCall(cx, o, false)
 }
 
+// Install the application's language service. Existing editors use the new service on their next
+// editing operation, without waiting for a render. Registered configurations are retained and
+// resolved through the new service.
+//
 // BaseSetLanguageProvider is gpui_kit::base::input::set_language_provider.
 func BaseSetLanguageProvider(cx *Cx, provider RowSource) {
 	useBaseInput()
@@ -180,6 +265,8 @@ func BaseSetLanguageProvider(cx *Cx, provider RowSource) {
 	ambientCall(cx, o, false)
 }
 
+// Step a numeric string while preserving decimal precision and range direction.
+//
 // BaseStepValue is gpui_kit::base::step_value.
 func BaseStepValue(cx *Cx, value string, action StepAction, step float64, min_ Option[float64], max_ Option[float64]) Option[string] {
 	useBaseRoot()
@@ -213,6 +300,11 @@ func BaseTimingSample(cx *Cx, value Timing, elapsed time.Duration) TimingSample 
 	return rdTimingSample(r)
 }
 
+// Truncate `text` with a trailing ellipsis so it fits within `max_width` at `font_size`. Returns
+// `text` unchanged when it already fits; returns just the ellipsis when not even one character
+// fits. `max_width <= 0` is treated as "no budget" and returns `text` unchanged (the caller has no
+// room to reason about).
+//
 // BaseTruncateTextToWidth is gpui_kit::base::plot::label::truncate_text_to_width.
 func BaseTruncateTextToWidth(cx *Cx, text string, fontSize float32, maxWidth float32) string {
 	useBasePlot()
@@ -224,6 +316,12 @@ func BaseTruncateTextToWidth(cx *Cx, text string, fontSize float32, maxWidth flo
 	return r.str()
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Blue is gpui_kit::component::blue.
 func Blue(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -233,6 +331,8 @@ func Blue(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Clears all notifications.
+//
 // ClearNotifications is <gpui_kit::Window as gpui_kit::component::WindowExt>::clear_notifications.
 func ClearNotifications(cx *Cx) {
 	useComponentWindowExt()
@@ -240,6 +340,8 @@ func ClearNotifications(cx *Cx) {
 	ambientCall(cx, o, false)
 }
 
+// Closes all active Dialogs.
+//
 // CloseAllDialogs is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_all_dialogs.
 func CloseAllDialogs(cx *Cx) {
 	useComponentWindowExt()
@@ -247,6 +349,8 @@ func CloseAllDialogs(cx *Cx) {
 	ambientCall(cx, o, false)
 }
 
+// Closes the last active Dialog.
+//
 // CloseDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_dialog.
 func CloseDialog(cx *Cx) {
 	useComponentWindowExt()
@@ -254,6 +358,8 @@ func CloseDialog(cx *Cx) {
 	ambientCall(cx, o, false)
 }
 
+// Closes the active Sheet.
+//
 // CloseSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::close_sheet.
 func CloseSheet(cx *Cx) {
 	useComponentWindowExt()
@@ -261,6 +367,12 @@ func CloseSheet(cx *Cx) {
 	ambientCall(cx, o, false)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Cyan is gpui_kit::component::cyan.
 func Cyan(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -270,6 +382,8 @@ func Cyan(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Get the default dark theme colors.
+//
 // Dark is gpui_kit::component::ThemeColor::dark.
 func Dark(cx *Cx) ThemeColorArc {
 	useComponentTheme()
@@ -297,6 +411,12 @@ func DiffFileParseWithError(cx *Cx, patch string, options DiffParseOptions) Opti
 	return rdOpt(r, func(r *reader) DiffParseError { return DiffParseError{h: r.u64()} })
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Emerald is gpui_kit::component::emerald.
 func Emerald(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -306,6 +426,12 @@ func Emerald(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Return the currently focused input state.
+//
+// Covers `Input`, `Textarea`, `Editor` and `OtpInput`, use `as_input` and friends to get the
+// concrete state. A registration whose focus handle is no longer focused (e.g. the input was
+// removed from the tree while focused) is treated as `None`.
+//
 // FocusedInput is <gpui_kit::Window as gpui_kit::component::WindowExt>::focused_input.
 func FocusedInput(cx *Cx) Option[AnyInputState] {
 	useComponentWindowExt()
@@ -314,6 +440,11 @@ func FocusedInput(cx *Cx) Option[AnyInputState] {
 	return rdOpt(r, func(r *reader) AnyInputState { return rdAnyInputState(r) })
 }
 
+// Return the Platform specific keybinding string by KeyStroke
+//
+// macOS: https://support.apple.com/en-us/HT201236 Windows:
+// https://support.microsoft.com/en-us/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec
+//
 // Format is gpui_kit::component::kbd::Kbd::format.
 func Format(cx *Cx, key Keystroke) string {
 	useComponentKbd()
@@ -323,6 +454,12 @@ func Format(cx *Cx, key Keystroke) string {
 	return r.str()
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Fuchsia is gpui_kit::component::fuchsia.
 func Fuchsia(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -332,6 +469,12 @@ func Fuchsia(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Gray is gpui_kit::component::gray.
 func Gray(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -341,6 +484,12 @@ func Gray(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Green is gpui_kit::component::green.
 func Green(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -350,6 +499,11 @@ func Green(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Return true, if there is an active Dialog.
+//
+// A dialog that is playing its exit transition is no longer active: it accepts no input and will
+// unmount when the transition finishes.
+//
 // HasActiveDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_dialog.
 func HasActiveDialog(cx *Cx) bool {
 	useComponentWindowExt()
@@ -358,6 +512,8 @@ func HasActiveDialog(cx *Cx) bool {
 	return r.bool()
 }
 
+// Return true, if there is an active Sheet.
+//
 // HasActiveSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_active_sheet.
 func HasActiveSheet(cx *Cx) bool {
 	useComponentWindowExt()
@@ -366,6 +522,8 @@ func HasActiveSheet(cx *Cx) bool {
 	return r.bool()
 }
 
+// Returns true if there is a focused Input entity.
+//
 // HasFocusedInput is <gpui_kit::Window as gpui_kit::component::WindowExt>::has_focused_input.
 func HasFocusedInput(cx *Cx) bool {
 	useComponentWindowExt()
@@ -374,6 +532,12 @@ func HasFocusedInput(cx *Cx) bool {
 	return r.bool()
 }
 
+// Create a `Hsla` color.
+//
+// - h: 0..360.0
+// - s: 0.0..100.0
+// - l: 0.0..100.0
+//
 // Hsl is gpui_kit::component::hsl.
 func Hsl(cx *Cx, h float32, s_ float32, l float32) Hsla {
 	useComponentRoot()
@@ -385,6 +549,12 @@ func Hsl(cx *Cx, h float32, s_ float32, l float32) Hsla {
 	return rdHsla(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Indigo is gpui_kit::component::indigo.
 func Indigo(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -402,6 +572,8 @@ func KitTheme(cx *Cx) Theme {
 	return Theme{h: r.u64()}
 }
 
+// Get the default light theme colors.
+//
 // Light is gpui_kit::component::ThemeColor::light.
 func Light(cx *Cx) ThemeColorArc {
 	useComponentTheme()
@@ -410,6 +582,12 @@ func Light(cx *Cx) ThemeColorArc {
 	return ThemeColorArc{h: r.u64()}
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Lime is gpui_kit::component::lime.
 func Lime(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -427,6 +605,12 @@ func Locale(cx *Cx) string {
 	return r.str()
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Neutral is gpui_kit::component::neutral.
 func Neutral(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -436,6 +620,8 @@ func Neutral(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Returns number of notifications.
+//
 // Notifications is <gpui_kit::Window as gpui_kit::component::WindowExt>::notifications.
 func Notifications(cx *Cx) []Notification {
 	useComponentWindowExt()
@@ -444,6 +630,16 @@ func Notifications(cx *Cx) []Notification {
 	return rdList(r, func(r *reader) Notification { return Notification{h: r.u64()} })
 }
 
+// Builds a color from OkLCH, the cylindrical form of the perceptually uniform Oklab color space.
+//
+// Unlike HSL, rotating `hue` while holding `lightness` and `chroma` keeps the perceived brightness
+// and vividness of every hue equal, so a generated color ring reads as one family instead of a raw
+// rainbow.
+//
+// `lightness` is `0.0 .. 1.0`, `chroma` is an absolute Oklab distance (roughly `0.0 .. 0.37`), and
+// `hue` is in degrees. A request outside the sRGB gamut is clipped per channel, which costs a
+// little chroma but not the hue.
+//
 // Oklch is gpui_kit::component::oklch.
 func Oklch(cx *Cx, lightness float32, chroma float32, hue float32) Hsla {
 	useComponentRoot()
@@ -455,6 +651,15 @@ func Oklch(cx *Cx, lightness float32, chroma float32, hue float32) Hsla {
 	return rdHsla(r)
 }
 
+// Opens an AlertDialog.
+//
+// This is a convenience method for opening an alert dialog with opinionated defaults. The footer
+// buttons are center-aligned and include an icon based on the variant.
+//
+// The builder follows the same rendering contract as `OpenDialog`: it may run again when the
+// dialog layer is rebuilt. Keep it cheap and create persistent entities before opening, not inside
+// the builder.
+//
 // OpenAlertDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_alert_dialog.
 func OpenAlertDialog(cx *Cx, build Built[AlertDialogEl]) {
 	useComponentWindowExt()
@@ -463,6 +668,20 @@ func OpenAlertDialog(cx *Cx, build Built[AlertDialogEl]) {
 	ambientCall(cx, o, false)
 }
 
+// Opens a Dialog.
+//
+// The builder is a render closure, not a one-shot constructor. It may run again when the dialog
+// layer is rebuilt while the dialog is open. View caching means a displayed frame need not rebuild
+// the layer; the builder is not a periodic update callback. Keep it cheap and idempotent.
+//
+// Create persistent entities, such as an `InputState` or a child view, before opening and capture
+// their handles in the builder.
+//
+// `open_dialog` initially focuses the dialog shell, replacing any focus set before the call. To
+// choose initial content focus, set it only on the builder's first invocation, with a guard
+// captured separately for each opening. Never focus unconditionally on subsequent rebuilds: that
+// would steal focus from another control or a nested dialog.
+//
 // OpenDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_dialog.
 func OpenDialog(cx *Cx, build Built[DialogEl]) {
 	useComponentWindowExt()
@@ -471,6 +690,12 @@ func OpenDialog(cx *Cx, build Built[DialogEl]) {
 	ambientCall(cx, o, false)
 }
 
+// Opens a Sheet at right placement.
+//
+// The builder follows the same rendering contract as `gk.OpenDialog`: it may run again when the
+// sheet layer is rebuilt. Keep it cheap and create persistent entities before opening, not inside
+// the builder.
+//
 // OpenSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet.
 func OpenSheet(cx *Cx, build Built[SheetEl]) {
 	useComponentWindowExt()
@@ -479,6 +704,12 @@ func OpenSheet(cx *Cx, build Built[SheetEl]) {
 	ambientCall(cx, o, false)
 }
 
+// Opens a Sheet at the given placement.
+//
+// The builder follows the same rendering contract as `gk.OpenDialog`: it may run again when the
+// sheet layer is rebuilt. Keep it cheap and create persistent entities before opening, not inside
+// the builder.
+//
 // OpenSheetAt is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet_at.
 func OpenSheetAt(cx *Cx, placement Placement, build Built[SheetEl]) {
 	useComponentWindowExt()
@@ -488,6 +719,12 @@ func OpenSheetAt(cx *Cx, placement Placement, build Built[SheetEl]) {
 	ambientCall(cx, o, false)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Orange is gpui_kit::component::orange.
 func Orange(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -497,6 +734,12 @@ func Orange(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Pink is gpui_kit::component::pink.
 func Pink(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -506,6 +749,12 @@ func Pink(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Purple is gpui_kit::component::purple.
 func Purple(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -515,6 +764,8 @@ func Purple(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Pushes a notification to the notification list.
+//
 // PushNotification is <gpui_kit::Window as gpui_kit::component::WindowExt>::push_notification.
 func PushNotification(cx *Cx, note string) {
 	useComponentWindowExt()
@@ -523,6 +774,12 @@ func PushNotification(cx *Cx, note string) {
 	ambientCall(cx, o, false)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Red is gpui_kit::component::red.
 func Red(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -532,6 +789,9 @@ func Red(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Return the path to draw for the icon at `path`: the answer of the resolver set with
+// `SetIconResolver`, or `path` itself.
+//
 // ResolveIconPath is gpui_kit::component::resolve_icon_path.
 func ResolveIconPath(cx *Cx, path string) string {
 	useComponentRoot()
@@ -541,6 +801,12 @@ func ResolveIconPath(cx *Cx, path string) string {
 	return r.str()
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Rose is gpui_kit::component::rose.
 func Rose(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -558,6 +824,14 @@ func SetLocale(cx *Cx, locale string) {
 	ambientCall(cx, o, false)
 }
 
+// Let the platform draw the touch selection UI of a focused `InputEl`: the selection handles and
+// the edit menu a long press leaves behind.
+//
+// Use it on a host that already shows its own text UI over the window, such as Android's floating
+// toolbar and drag handles. The long press still selects a word; the platform follows that
+// selection and drives it back through the window's input handler. Selections in plain text,
+// outside an input, keep the handles and menu drawn here.
+//
 // SetNativeTouchSelection is gpui_kit::component::input::set_native_touch_selection.
 func SetNativeTouchSelection(cx *Cx, enabled bool) {
 	useComponentInput()
@@ -566,6 +840,12 @@ func SetNativeTouchSelection(cx *Cx, enabled bool) {
 	ambientCall(cx, o, false)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Sky is gpui_kit::component::sky.
 func Sky(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -575,6 +855,12 @@ func Sky(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Slate is gpui_kit::component::slate.
 func Slate(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -584,6 +870,12 @@ func Slate(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Stone is gpui_kit::component::stone.
 func Stone(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -593,6 +885,12 @@ func Stone(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Teal is gpui_kit::component::teal.
 func Teal(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -602,6 +900,8 @@ func Teal(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Returns the default title bar options for compatible with the `TitleBarEl`.
+//
 // TitleBarOptions is gpui_kit::component::TitleBar::title_bar_options.
 func TitleBarOptions(cx *Cx) TitlebarOptions {
 	useComponentTitleBar()
@@ -610,6 +910,12 @@ func TitleBarOptions(cx *Cx) TitlebarOptions {
 	return rdTitlebarOptions(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Violet is gpui_kit::component::violet.
 func Violet(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -619,6 +925,14 @@ func Violet(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// The window's current corner radii: the theme's `window.radius` (`window_radius`) for every
+// corner of a client-decorated window that isn't next to a tiled edge, zero otherwise.
+//
+// GPUI clips overflowing children to a rectangular content mask, so a non-zero radius only rounds
+// the frame itself. Elements with a background that touch a window corner (the root surface,
+// `TitleBarEl`, an application's bottom bar) must round that corner too, for example
+// `div().rounded_bl(radii.bottom_left)`. The default stays square.
+//
 // WindowCornerRadii is gpui_kit::component::window_corner_radii.
 func WindowCornerRadii(cx *Cx) Corners {
 	useComponentRoot()
@@ -627,6 +941,8 @@ func WindowCornerRadii(cx *Cx) Corners {
 	return rdCorners(r)
 }
 
+// Get the window paddings.
+//
 // WindowPaddings is gpui_kit::component::window_paddings.
 func WindowPaddings(cx *Cx) GpuiEdges {
 	useComponentRoot()
@@ -635,6 +951,12 @@ func WindowPaddings(cx *Cx) GpuiEdges {
 	return rdGpuiEdges(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Yellow is gpui_kit::component::yellow.
 func Yellow(cx *Cx, scale int) Hsla {
 	useComponentRoot()
@@ -644,6 +966,12 @@ func Yellow(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Get color by scale number.
+//
+// The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
+//
+// If the scale number is not found, it will return black color.
+//
 // Zinc is gpui_kit::component::zinc.
 func Zinc(cx *Cx, scale int) Hsla {
 	useComponentRoot()

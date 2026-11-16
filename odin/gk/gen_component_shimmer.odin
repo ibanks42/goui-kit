@@ -3,6 +3,12 @@ package gk
 
 import "core:time"
 
+// The appearance and timing of a reusable text shimmer.
+//
+// By default, the highlight's half-width spans 30% of the text width and completes one
+// left-to-right sweep every two seconds. Its color follows the current text color and active
+// theme.
+//
 // Shimmer_Style is gpui_kit::component::shimmer::ShimmerStyle.
 Shimmer_Style :: struct {
 	using nd: Value,
@@ -10,13 +16,25 @@ Shimmer_Style :: struct {
 }
 
 Shimmer_Style_VT :: struct {
+	// Set the duration of one complete sweep.
+	//
+	// A zero duration is clamped to one millisecond.
 	duration: proc(e: Shimmer_Style, duration: time.Duration) -> Shimmer_Style,
+	// Replace the theme-aware highlight with an explicit color.
 	highlight_color: proc(e: Shimmer_Style, color: Color) -> Shimmer_Style,
+	// Set whether the highlight should complete one sweep instead of looping.
 	once: proc(e: Shimmer_Style, once: bool) -> Shimmer_Style,
+	// Set whether the highlight should move from right to left.
 	reverse: proc(e: Shimmer_Style, reverse: bool) -> Shimmer_Style,
+	// Set the highlight half-width.
+	//
+	// An `f32` is a fraction of the text width; finite values are clamped to the inclusive
+	// `0.05..=1.0` range and the default is `0.3`. A `Pixels` value is an absolute half-width with a
+	// one-pixel minimum. Non-finite values leave the existing spread unchanged.
 	spread: proc(e: Shimmer_Style, spread: Shimmer_Spread_Into) -> Shimmer_Style,
 }
 
+// Create a theme-aware shimmer with the default timing and spread.
 shimmer_style :: proc(loc := #caller_location) -> Shimmer_Style {
 	e := Shimmer_Style{new_value(751, loc), &shimmer_style_vt}
 	return e
@@ -56,6 +74,12 @@ shimmer_style_vt := Shimmer_Style_VT {
 	},
 }
 
+// Text with a smooth, theme-aware loading highlight.
+//
+// Font, color, weight, wrapping, and truncation are inherited from the parent unless overridden
+// through `Styled`. When the system requests reduced motion, the text stays visible without
+// requesting animation frames.
+//
 // Shimmer_Text is gpui_kit::component::shimmer::ShimmerText.
 Shimmer_Text :: struct {
 	using el: Element,
@@ -66,15 +90,23 @@ Shimmer_Text_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Shimmer_Text),
 	using t_styled_ext: ^Styled_Ext_Trait(Shimmer_Text),
 	using t_styled: ^Styled_Trait(Shimmer_Text),
+	// Set the duration of one complete sweep.
 	duration: proc(e: Shimmer_Text, duration: time.Duration) -> Shimmer_Text,
+	// Replace the theme-aware highlight with an explicit color.
 	highlight_color: proc(e: Shimmer_Text, color: Color) -> Shimmer_Text,
+	// Set an explicit animation identity when sibling labels are identical.
 	id: proc(e: Shimmer_Text, id: Id) -> Shimmer_Text,
+	// Set whether the highlight should complete one sweep instead of looping.
 	once: proc(e: Shimmer_Text, once: bool) -> Shimmer_Text,
+	// Set whether the highlight should move from right to left.
 	reverse: proc(e: Shimmer_Text, reverse: bool) -> Shimmer_Text,
+	// Set the relative or absolute highlight half-width; the default is `0.3`.
 	spread: proc(e: Shimmer_Text, spread: Shimmer_Spread_Into) -> Shimmer_Text,
+	// Apply a reusable shimmer appearance and timing configuration.
 	with_shimmer_style: proc(e: Shimmer_Text, style: Shimmer_Style) -> Shimmer_Text,
 }
 
+// Create animated text with the default theme-aware shimmer.
 shimmer_text :: proc(text: string, flags: ..Style_Flag, loc := #caller_location) -> Shimmer_Text {
 	use_component_shimmer()
 	e := Shimmer_Text{new_node(752, loc), &shimmer_text_vt}

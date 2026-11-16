@@ -9,6 +9,8 @@ type Column struct{ n *node }
 
 func (e Column) valueNode() *node { return e.n }
 
+// Create a new column with the given key and name.
+//
 // NewColumn is <gpui_kit::component::table::Column>::new.
 func NewColumn(key string, name string) Column {
 	n := newValue(773)
@@ -24,18 +26,24 @@ func NewColumnDefault() Column {
 	return Column{n}
 }
 
+// Set whether the column is sort with ascending order.
+//
 // Ascending is <gpui_kit::component::table::Column>::ascending.
 func (e Column) Ascending() Column {
 	op(e.n, 256)
 	return e
 }
 
+// Set whether the column is sort with descending order.
+//
 // Descending is <gpui_kit::component::table::Column>::descending.
 func (e Column) Descending() Column {
 	op(e.n, 257)
 	return e
 }
 
+// Set whether the column is fixed, default is false.
+//
 // Fixed is <gpui_kit::component::table::Column>::fixed.
 func (e Column) Fixed(fixed ColumnFixed) Column {
 	o := op(e.n, 258)
@@ -43,18 +51,29 @@ func (e Column) Fixed(fixed ColumnFixed) Column {
 	return e
 }
 
+// Set whether the column is fixed on left side, default is false.
+//
 // FixedLeft is <gpui_kit::component::table::Column>::fixed_left.
 func (e Column) FixedLeft() Column {
 	op(e.n, 259)
 	return e
 }
 
+// Set whether the column is fixed on right side, default is false.
+//
+// Right-fixed columns must be the last columns of the table.
+//
 // FixedRight is <gpui_kit::component::table::Column>::fixed_right.
 func (e Column) FixedRight() Column {
 	op(e.n, 260)
 	return e
 }
 
+// Set the maximum width when resizing the column, default is 1200px.
+//
+// The default protects against oversized columns during resizing. Set a larger maximum explicitly
+// when wider columns are needed. It does not limit an initial width set afterwards with `Width`.
+//
 // MaxWidth is <gpui_kit::component::table::Column>::max_width.
 func (e Column) MaxWidth(maxWidth float32) Column {
 	o := op(e.n, 261)
@@ -62,6 +81,8 @@ func (e Column) MaxWidth(maxWidth float32) Column {
 	return e
 }
 
+// Set the minimum width of the column, default is 20px
+//
 // MinWidth is <gpui_kit::component::table::Column>::min_width.
 func (e Column) MinWidth(minWidth float32) Column {
 	o := op(e.n, 262)
@@ -69,6 +90,8 @@ func (e Column) MinWidth(minWidth float32) Column {
 	return e
 }
 
+// Set whether the column is movable, default is true.
+//
 // Movable is <gpui_kit::component::table::Column>::movable.
 func (e Column) Movable(movable bool) Column {
 	o := op(e.n, 263)
@@ -76,12 +99,16 @@ func (e Column) Movable(movable bool) Column {
 	return e
 }
 
+// Set the padding of the column to 0px.
+//
 // P0 is <gpui_kit::component::table::Column>::p_0.
 func (e Column) P0() Column {
 	op(e.n, 264)
 	return e
 }
 
+// Set the padding of the column, default is None.
+//
 // Paddings is <gpui_kit::component::table::Column>::paddings.
 func (e Column) Paddings(paddings EdgesInto) Column {
 	o := op(e.n, 265)
@@ -89,6 +116,8 @@ func (e Column) Paddings(paddings EdgesInto) Column {
 	return e
 }
 
+// Set whether the column is resizable, default is true.
+//
 // Resizable is <gpui_kit::component::table::Column>::resizable.
 func (e Column) Resizable(resizable bool) Column {
 	o := op(e.n, 266)
@@ -96,6 +125,15 @@ func (e Column) Resizable(resizable bool) Column {
 	return e
 }
 
+// Set whether the column is selectable, default is true.
+//
+// When `false`, this column and its cells will not participate in selection: - In column selection
+// mode: The column header cannot be clicked to select - In cell selection mode: Cells in this
+// column cannot be selected
+//
+// This is useful for action columns (e.g., with buttons or checkboxes) that should not be part of
+// the selection system.
+//
 // Selectable is <gpui_kit::component::table::Column>::selectable.
 func (e Column) Selectable(selectable bool) Column {
 	o := op(e.n, 267)
@@ -103,6 +141,10 @@ func (e Column) Selectable(selectable bool) Column {
 	return e
 }
 
+// Set the column to be sortable with custom sort function, default is None (not sortable).
+//
+// See also `Sortable` to enable sorting with default.
+//
 // Sort is <gpui_kit::component::table::Column>::sort.
 func (e Column) Sort(sort ColumnSort) Column {
 	o := op(e.n, 268)
@@ -110,24 +152,40 @@ func (e Column) Sort(sort ColumnSort) Column {
 	return e
 }
 
+// Set whether the column is sortable, default is true.
+//
+// See also `Sort`.
+//
 // Sortable is <gpui_kit::component::table::Column>::sortable.
 func (e Column) Sortable() Column {
 	op(e.n, 269)
 	return e
 }
 
+// Center the column's text, in its header and in its cells.
+//
+// The table aligns text; a cell that renders its own layout, such as a flex row, aligns that
+// layout itself.
+//
 // TextCenter is <gpui_kit::component::table::Column>::text_center.
 func (e Column) TextCenter() Column {
 	op(e.n, 270)
 	return e
 }
 
+// Right-align the column's text, in its header and in its cells. The default is left.
+//
+// The table aligns text; a cell that renders its own layout, such as a flex row, aligns that
+// layout itself.
+//
 // TextRight is <gpui_kit::component::table::Column>::text_right.
 func (e Column) TextRight() Column {
 	op(e.n, 271)
 	return e
 }
 
+// Set the width of the column, default is 100px.
+//
 // Width is <gpui_kit::component::table::Column>::width.
 func (e Column) Width(width float32) Column {
 	o := op(e.n, 272)
@@ -140,6 +198,8 @@ type DataTableEl struct{ n *node }
 
 func (e DataTableEl) node() *node { return e.n }
 
+// Create a new DataTable element with the given `TableState`.
+//
 // DataTable is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::new.
 func DataTable(state TableState) DataTableEl {
 	useComponentTable()
@@ -149,6 +209,8 @@ func DataTable(state TableState) DataTableEl {
 	return DataTableEl{n}
 }
 
+// Sets the label exposed to accessibility clients, the table's name.
+//
 // AccessibilityLabel is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::accessibility_label.
 func (e DataTableEl) AccessibilityLabel(label string) DataTableEl {
 	o := op(e.n, 256)
@@ -156,6 +218,8 @@ func (e DataTableEl) AccessibilityLabel(label string) DataTableEl {
 	return e
 }
 
+// Set to use border style of the table, default to true.
+//
 // Bordered is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::bordered.
 func (e DataTableEl) Bordered(bordered bool) DataTableEl {
 	o := op(e.n, 257)
@@ -163,6 +227,11 @@ func (e DataTableEl) Bordered(bordered bool) DataTableEl {
 	return e
 }
 
+// Set whether to draw the border on the inner edge of the fixed columns, the right edge of
+// left-fixed columns and the left edge of right-fixed columns, default to true.
+//
+// Turn it off when the fixed cells draw that edge themselves, so the boundary is not drawn twice.
+//
 // FixedColsBorder is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::fixed_cols_border.
 func (e DataTableEl) FixedColsBorder(fixedColsBorder bool) DataTableEl {
 	o := op(e.n, 258)
@@ -170,6 +239,12 @@ func (e DataTableEl) FixedColsBorder(fixedColsBorder bool) DataTableEl {
 	return e
 }
 
+// Set the height of each header row.
+//
+// Column-group rows use the same height, so the whole header is this height times the number of
+// header rows. Body rows keep the height from `table_row_height`. When this is unset, header rows
+// use that same height.
+//
 // HeaderRowHeight is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::header_row_height.
 func (e DataTableEl) HeaderRowHeight(height float32) DataTableEl {
 	o := op(e.n, 259)
@@ -177,6 +252,9 @@ func (e DataTableEl) HeaderRowHeight(height float32) DataTableEl {
 	return e
 }
 
+// Bounce the rows at the vertical boundaries, keeping headers and scrollbars fixed. On by default
+// on iOS, Android and macOS, off elsewhere.
+//
 // ScrollBounce is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::scroll_bounce.
 func (e DataTableEl) ScrollBounce(enabled bool) DataTableEl {
 	o := op(e.n, 260)
@@ -184,6 +262,8 @@ func (e DataTableEl) ScrollBounce(enabled bool) DataTableEl {
 	return e
 }
 
+// Set scrollbar visibility.
+//
 // ScrollbarVisible is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::scrollbar_visible.
 func (e DataTableEl) ScrollbarVisible(vertical bool, horizontal bool) DataTableEl {
 	o := op(e.n, 261)
@@ -192,6 +272,8 @@ func (e DataTableEl) ScrollbarVisible(vertical bool, horizontal bool) DataTableE
 	return e
 }
 
+// Set to use stripe style of the table, default to false.
+//
 // Stripe is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::stripe.
 func (e DataTableEl) Stripe(stripe bool) DataTableEl {
 	o := op(e.n, 262)
@@ -199,10 +281,20 @@ func (e DataTableEl) Stripe(stripe bool) DataTableEl {
 	return e
 }
 
-func (e DataTableEl) Large() DataTableEl                 { tSizableLarge(e.n); return e }
-func (e DataTableEl) Small() DataTableEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e DataTableEl) Large() DataTableEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e DataTableEl) Small() DataTableEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e DataTableEl) WithSize(size SizeInto) DataTableEl { tSizableWithSize(e.n, size); return e }
-func (e DataTableEl) Xsmall() DataTableEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e DataTableEl) Xsmall() DataTableEl { tSizableXsmall(e.n); return e }
 
 func (e DataTableEl) FocusRing(enabled bool) DataTableEl {
 	tFocusableExtFocusRing(e.n, enabled)
@@ -222,6 +314,11 @@ func Table(st ...Style) TableEl {
 	return TableEl{n}
 }
 
+// Set the name a screen reader announces for the table.
+//
+// A `TableCaptionEl` is visible descriptive content and is not used automatically as the table's
+// accessible name.
+//
 // AccessibilityLabel is <gpui_kit::component::table::Table>::accessibility_label.
 func (e TableEl) AccessibilityLabel(label string) TableEl {
 	o := op(e.n, 256)
@@ -246,7 +343,19 @@ func (e TableEl) Children(children []ChildElementNode) TableEl {
 	return e
 }
 
-func (e TableEl) PopoverStyle() TableEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TableEl) PopoverStyle() TableEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TableEl) RoundedFullStyle() TableEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e TableEl) CornerRadii(radius Corners) TableEl { tStyledExtCornerRadii(e.n, radius); return e }
@@ -255,19 +364,32 @@ func (e TableEl) DebugFocused(focusHandle FocusHandle) TableEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e TableEl) DebugGreen() TableEl                 { tStyledExtDebugGreen(e.n); return e }
-func (e TableEl) DebugPink() TableEl                  { tStyledExtDebugPink(e.n); return e }
-func (e TableEl) DebugRed() TableEl                   { tStyledExtDebugRed(e.n); return e }
-func (e TableEl) DebugYellow() TableEl                { tStyledExtDebugYellow(e.n); return e }
-func (e TableEl) FontBlack() TableEl                  { tStyledExtFontBlack(e.n); return e }
-func (e TableEl) FontBold() TableEl                   { tStyledExtFontBold(e.n); return e }
-func (e TableEl) FontExtrabold() TableEl              { tStyledExtFontExtrabold(e.n); return e }
-func (e TableEl) FontExtralight() TableEl             { tStyledExtFontExtralight(e.n); return e }
-func (e TableEl) FontLight() TableEl                  { tStyledExtFontLight(e.n); return e }
-func (e TableEl) FontMedium() TableEl                 { tStyledExtFontMedium(e.n); return e }
-func (e TableEl) FontNormal() TableEl                 { tStyledExtFontNormal(e.n); return e }
-func (e TableEl) FontSemibold() TableEl               { tStyledExtFontSemibold(e.n); return e }
-func (e TableEl) FontThin() TableEl                   { tStyledExtFontThin(e.n); return e }
+func (e TableEl) DebugGreen() TableEl     { tStyledExtDebugGreen(e.n); return e }
+func (e TableEl) DebugPink() TableEl      { tStyledExtDebugPink(e.n); return e }
+func (e TableEl) DebugRed() TableEl       { tStyledExtDebugRed(e.n); return e }
+func (e TableEl) DebugYellow() TableEl    { tStyledExtDebugYellow(e.n); return e }
+func (e TableEl) FontBlack() TableEl      { tStyledExtFontBlack(e.n); return e }
+func (e TableEl) FontBold() TableEl       { tStyledExtFontBold(e.n); return e }
+func (e TableEl) FontExtrabold() TableEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e TableEl) FontExtralight() TableEl { tStyledExtFontExtralight(e.n); return e }
+func (e TableEl) FontLight() TableEl      { tStyledExtFontLight(e.n); return e }
+func (e TableEl) FontMedium() TableEl     { tStyledExtFontMedium(e.n); return e }
+func (e TableEl) FontNormal() TableEl     { tStyledExtFontNormal(e.n); return e }
+func (e TableEl) FontSemibold() TableEl   { tStyledExtFontSemibold(e.n); return e }
+func (e TableEl) FontThin() TableEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e TableEl) HFlex() TableEl                      { tStyledExtHFlex(e.n); return e }
 func (e TableEl) Margins(margins EdgesInto) TableEl   { tStyledExtMargins(e.n, margins); return e }
 func (e TableEl) Paddings(paddings EdgesInto) TableEl { tStyledExtPaddings(e.n, paddings); return e }
@@ -275,120 +397,342 @@ func (e TableEl) RefineStyle(style StyleRefinement) TableEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TableEl) VFlex() TableEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TableEl) Style(st ...Style) TableEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TableEl) AspectRatio(ratio float32) TableEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e TableEl) Bg(fill Fill) TableEl              { tStyledBg(e.n, fill); return e }
-func (e TableEl) Border(length Length) TableEl      { tStyledBorder(e.n, length); return e }
-func (e TableEl) BorderB(length Length) TableEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TableEl) Bg(fill Fill) TableEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TableEl) Border(length Length) TableEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableEl) BorderB(length Length) TableEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TableEl) BorderColor(borderColor Color) TableEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TableEl) BorderL(length Length) TableEl        { tStyledBorderL(e.n, length); return e }
-func (e TableEl) BorderR(length Length) TableEl        { tStyledBorderR(e.n, length); return e }
-func (e TableEl) BorderT(length Length) TableEl        { tStyledBorderT(e.n, length); return e }
-func (e TableEl) BorderX(length Length) TableEl        { tStyledBorderX(e.n, length); return e }
-func (e TableEl) BorderY(length Length) TableEl        { tStyledBorderY(e.n, length); return e }
-func (e TableEl) Bottom(length Length) TableEl         { tStyledBottom(e.n, length); return e }
-func (e TableEl) ColEnd(end int16) TableEl             { tStyledColEnd(e.n, end); return e }
-func (e TableEl) ColSpan(span uint16) TableEl          { tStyledColSpan(e.n, span); return e }
-func (e TableEl) ColStart(start int16) TableEl         { tStyledColStart(e.n, start); return e }
-func (e TableEl) Cursor(cursor CursorStyle) TableEl    { tStyledCursor(e.n, cursor); return e }
-func (e TableEl) FlexBasis(basis Length) TableEl       { tStyledFlexBasis(e.n, basis); return e }
-func (e TableEl) FlexGrow(grow float32) TableEl        { tStyledFlexGrow(e.n, grow); return e }
-func (e TableEl) FlexShrink(shrink float32) TableEl    { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableEl) BorderL(length Length) TableEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableEl) BorderR(length Length) TableEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableEl) BorderT(length Length) TableEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableEl) BorderX(length Length) TableEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableEl) BorderY(length Length) TableEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableEl) Bottom(length Length) TableEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TableEl) ColEnd(end int16) TableEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TableEl) ColSpan(span uint16) TableEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TableEl) ColStart(start int16) TableEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
+func (e TableEl) Cursor(cursor CursorStyle) TableEl { tStyledCursor(e.n, cursor); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TableEl) FlexBasis(basis Length) TableEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TableEl) FlexGrow(grow float32) TableEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
+func (e TableEl) FlexShrink(shrink float32) TableEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e TableEl) FontFamily(familyName string) TableEl { tStyledFontFamily(e.n, familyName); return e }
+
+// Sets the font features of this element and its children.
 func (e TableEl) FontFeatures(features FontFeatures) TableEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TableEl) FontWeight(weight FontWeight) TableEl { tStyledFontWeight(e.n, weight); return e }
-func (e TableEl) Gap(length Length) TableEl            { tStyledGap(e.n, length); return e }
-func (e TableEl) GapX(length Length) TableEl           { tStyledGapX(e.n, length); return e }
-func (e TableEl) GapY(length Length) TableEl           { tStyledGapY(e.n, length); return e }
-func (e TableEl) GridCols(cols uint16) TableEl         { tStyledGridCols(e.n, cols); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TableEl) Gap(length Length) TableEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableEl) GapX(length Length) TableEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableEl) GapY(length Length) TableEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
+func (e TableEl) GridCols(cols uint16) TableEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TableEl) GridColsMaxContent(cols uint16) TableEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TableEl) GridColsMinContent(cols uint16) TableEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TableEl) GridRows(rows uint16) TableEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TableEl) GridRowsMaxContent(rows uint16) TableEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TableEl) GridRowsMinContent(rows uint16) TableEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TableEl) H(length Length) TableEl              { tStyledH(e.n, length); return e }
-func (e TableEl) Inset(length Length) TableEl          { tStyledInset(e.n, length); return e }
-func (e TableEl) Left(length Length) TableEl           { tStyledLeft(e.n, length); return e }
-func (e TableEl) LineClamp(lines int) TableEl          { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TableEl) H(length Length) TableEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableEl) Inset(length Length) TableEl { tStyledInset(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableEl) Left(length Length) TableEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
+func (e TableEl) LineClamp(lines int) TableEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TableEl) LineHeight(lineHeight Length) TableEl { tStyledLineHeight(e.n, lineHeight); return e }
-func (e TableEl) M(length Length) TableEl              { tStyledM(e.n, length); return e }
-func (e TableEl) MaxH(length Length) TableEl           { tStyledMaxH(e.n, length); return e }
-func (e TableEl) MaxSize(length Length) TableEl        { tStyledMaxSize(e.n, length); return e }
-func (e TableEl) MaxW(length Length) TableEl           { tStyledMaxW(e.n, length); return e }
-func (e TableEl) Mb(length Length) TableEl             { tStyledMb(e.n, length); return e }
-func (e TableEl) MinH(length Length) TableEl           { tStyledMinH(e.n, length); return e }
-func (e TableEl) MinSize(length Length) TableEl        { tStyledMinSize(e.n, length); return e }
-func (e TableEl) MinW(length Length) TableEl           { tStyledMinW(e.n, length); return e }
-func (e TableEl) Ml(length Length) TableEl             { tStyledMl(e.n, length); return e }
-func (e TableEl) Mr(length Length) TableEl             { tStyledMr(e.n, length); return e }
-func (e TableEl) Mt(length Length) TableEl             { tStyledMt(e.n, length); return e }
-func (e TableEl) Mx(length Length) TableEl             { tStyledMx(e.n, length); return e }
-func (e TableEl) My(length Length) TableEl             { tStyledMy(e.n, length); return e }
-func (e TableEl) Opacity(opacity float32) TableEl      { tStyledOpacity(e.n, opacity); return e }
-func (e TableEl) P(length Length) TableEl              { tStyledP(e.n, length); return e }
-func (e TableEl) Pb(length Length) TableEl             { tStyledPb(e.n, length); return e }
-func (e TableEl) Pl(length Length) TableEl             { tStyledPl(e.n, length); return e }
-func (e TableEl) Pr(length Length) TableEl             { tStyledPr(e.n, length); return e }
-func (e TableEl) Pt(length Length) TableEl             { tStyledPt(e.n, length); return e }
-func (e TableEl) Px(length Length) TableEl             { tStyledPx(e.n, length); return e }
-func (e TableEl) Py(length Length) TableEl             { tStyledPy(e.n, length); return e }
-func (e TableEl) Right(length Length) TableEl          { tStyledRight(e.n, length); return e }
-func (e TableEl) Rounded(length Length) TableEl        { tStyledRounded(e.n, length); return e }
-func (e TableEl) RoundedB(length Length) TableEl       { tStyledRoundedB(e.n, length); return e }
-func (e TableEl) RoundedBl(length Length) TableEl      { tStyledRoundedBl(e.n, length); return e }
-func (e TableEl) RoundedBr(length Length) TableEl      { tStyledRoundedBr(e.n, length); return e }
-func (e TableEl) RoundedL(length Length) TableEl       { tStyledRoundedL(e.n, length); return e }
-func (e TableEl) RoundedR(length Length) TableEl       { tStyledRoundedR(e.n, length); return e }
-func (e TableEl) RoundedT(length Length) TableEl       { tStyledRoundedT(e.n, length); return e }
-func (e TableEl) RoundedTl(length Length) TableEl      { tStyledRoundedTl(e.n, length); return e }
-func (e TableEl) RoundedTr(length Length) TableEl      { tStyledRoundedTr(e.n, length); return e }
-func (e TableEl) RowEnd(end int16) TableEl             { tStyledRowEnd(e.n, end); return e }
-func (e TableEl) RowSpan(span uint16) TableEl          { tStyledRowSpan(e.n, span); return e }
-func (e TableEl) RowStart(start int16) TableEl         { tStyledRowStart(e.n, start); return e }
-func (e TableEl) ScrollbarWidth(width Length) TableEl  { tStyledScrollbarWidth(e.n, width); return e }
-func (e TableEl) Shadow(shadows []BoxShadow) TableEl   { tStyledShadow(e.n, shadows); return e }
-func (e TableEl) Size(length Length) TableEl           { tStyledSize(e.n, length); return e }
-func (e TableEl) TextAlign(align TextAlign) TableEl    { tStyledTextAlign(e.n, align); return e }
-func (e TableEl) TextBg(bg Color) TableEl              { tStyledTextBg(e.n, bg); return e }
-func (e TableEl) TextColor(color Color) TableEl        { tStyledTextColor(e.n, color); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TableEl) M(length Length) TableEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TableEl) MaxH(length Length) TableEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TableEl) MaxSize(length Length) TableEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TableEl) MaxW(length Length) TableEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableEl) Mb(length Length) TableEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TableEl) MinH(length Length) TableEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TableEl) MinSize(length Length) TableEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TableEl) MinW(length Length) TableEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableEl) Ml(length Length) TableEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableEl) Mr(length Length) TableEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableEl) Mt(length Length) TableEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TableEl) Mx(length Length) TableEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TableEl) My(length Length) TableEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
+func (e TableEl) Opacity(opacity float32) TableEl { tStyledOpacity(e.n, opacity); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TableEl) P(length Length) TableEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableEl) Pb(length Length) TableEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableEl) Pl(length Length) TableEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableEl) Pr(length Length) TableEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableEl) Pt(length Length) TableEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TableEl) Px(length Length) TableEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TableEl) Py(length Length) TableEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableEl) Right(length Length) TableEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TableEl) Rounded(length Length) TableEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableEl) RoundedB(length Length) TableEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TableEl) RoundedBl(length Length) TableEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TableEl) RoundedBr(length Length) TableEl { tStyledRoundedBr(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableEl) RoundedL(length Length) TableEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableEl) RoundedR(length Length) TableEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableEl) RoundedT(length Length) TableEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TableEl) RoundedTl(length Length) TableEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
+func (e TableEl) RoundedTr(length Length) TableEl { tStyledRoundedTr(e.n, length); return e }
+
+// Sets the row end of this element.
+func (e TableEl) RowEnd(end int16) TableEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TableEl) RowSpan(span uint16) TableEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TableEl) RowStart(start int16) TableEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
+func (e TableEl) ScrollbarWidth(width Length) TableEl { tStyledScrollbarWidth(e.n, width); return e }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
+func (e TableEl) Shadow(shadows []BoxShadow) TableEl { tStyledShadow(e.n, shadows); return e }
+
+// Sets the width and height of the element.
+func (e TableEl) Size(length Length) TableEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TableEl) TextAlign(align TextAlign) TableEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TableEl) TextBg(bg Color) TableEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TableEl) TextColor(color Color) TableEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TableEl) TextDecorationColor(color Color) TableEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TableEl) TextOverflow(overflow TextOverflow) TableEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e TableEl) TextSize(size Length) TableEl { tStyledTextSize(e.n, size); return e }
-func (e TableEl) Top(length Length) TableEl    { tStyledTop(e.n, length); return e }
-func (e TableEl) W(length Length) TableEl      { tStyledW(e.n, length); return e }
 
-func (e TableEl) Large() TableEl                 { tSizableLarge(e.n); return e }
-func (e TableEl) Small() TableEl                 { tSizableSmall(e.n); return e }
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e TableEl) TextSize(size Length) TableEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableEl) Top(length Length) TableEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TableEl) W(length Length) TableEl { tStyledW(e.n, length); return e }
+
+// Set to Size::Large
+func (e TableEl) Large() TableEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TableEl) Small() TableEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TableEl) WithSize(size SizeInto) TableEl { tSizableWithSize(e.n, size); return e }
-func (e TableEl) Xsmall() TableEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TableEl) Xsmall() TableEl { tSizableXsmall(e.n); return e }
 
 func (e TableEl) WithIx(ix int) TableEl { tChildElementWithIx(e.n, ix); return e }
 
@@ -422,7 +766,19 @@ func (e TableBodyEl) Children(children []ChildElementNode) TableBodyEl {
 	return e
 }
 
-func (e TableBodyEl) PopoverStyle() TableBodyEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TableBodyEl) PopoverStyle() TableBodyEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TableBodyEl) RoundedFullStyle() TableBodyEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e TableBodyEl) CornerRadii(radius Corners) TableBodyEl {
@@ -447,7 +803,20 @@ func (e TableBodyEl) FontMedium() TableBodyEl     { tStyledExtFontMedium(e.n); r
 func (e TableBodyEl) FontNormal() TableBodyEl     { tStyledExtFontNormal(e.n); return e }
 func (e TableBodyEl) FontSemibold() TableBodyEl   { tStyledExtFontSemibold(e.n); return e }
 func (e TableBodyEl) FontThin() TableBodyEl       { tStyledExtFontThin(e.n); return e }
-func (e TableBodyEl) HFlex() TableBodyEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e TableBodyEl) HFlex() TableBodyEl { tStyledExtHFlex(e.n); return e }
 func (e TableBodyEl) Margins(margins EdgesInto) TableBodyEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -460,132 +829,354 @@ func (e TableBodyEl) RefineStyle(style StyleRefinement) TableBodyEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TableBodyEl) VFlex() TableBodyEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TableBodyEl) Style(st ...Style) TableBodyEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TableBodyEl) AspectRatio(ratio float32) TableBodyEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e TableBodyEl) Bg(fill Fill) TableBodyEl              { tStyledBg(e.n, fill); return e }
-func (e TableBodyEl) Border(length Length) TableBodyEl      { tStyledBorder(e.n, length); return e }
-func (e TableBodyEl) BorderB(length Length) TableBodyEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TableBodyEl) Bg(fill Fill) TableBodyEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TableBodyEl) Border(length Length) TableBodyEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableBodyEl) BorderB(length Length) TableBodyEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TableBodyEl) BorderColor(borderColor Color) TableBodyEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TableBodyEl) BorderL(length Length) TableBodyEl     { tStyledBorderL(e.n, length); return e }
-func (e TableBodyEl) BorderR(length Length) TableBodyEl     { tStyledBorderR(e.n, length); return e }
-func (e TableBodyEl) BorderT(length Length) TableBodyEl     { tStyledBorderT(e.n, length); return e }
-func (e TableBodyEl) BorderX(length Length) TableBodyEl     { tStyledBorderX(e.n, length); return e }
-func (e TableBodyEl) BorderY(length Length) TableBodyEl     { tStyledBorderY(e.n, length); return e }
-func (e TableBodyEl) Bottom(length Length) TableBodyEl      { tStyledBottom(e.n, length); return e }
-func (e TableBodyEl) ColEnd(end int16) TableBodyEl          { tStyledColEnd(e.n, end); return e }
-func (e TableBodyEl) ColSpan(span uint16) TableBodyEl       { tStyledColSpan(e.n, span); return e }
-func (e TableBodyEl) ColStart(start int16) TableBodyEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableBodyEl) BorderL(length Length) TableBodyEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableBodyEl) BorderR(length Length) TableBodyEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableBodyEl) BorderT(length Length) TableBodyEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableBodyEl) BorderX(length Length) TableBodyEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableBodyEl) BorderY(length Length) TableBodyEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableBodyEl) Bottom(length Length) TableBodyEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TableBodyEl) ColEnd(end int16) TableBodyEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TableBodyEl) ColSpan(span uint16) TableBodyEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TableBodyEl) ColStart(start int16) TableBodyEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TableBodyEl) Cursor(cursor CursorStyle) TableBodyEl { tStyledCursor(e.n, cursor); return e }
-func (e TableBodyEl) FlexBasis(basis Length) TableBodyEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e TableBodyEl) FlexGrow(grow float32) TableBodyEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TableBodyEl) FlexBasis(basis Length) TableBodyEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TableBodyEl) FlexGrow(grow float32) TableBodyEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableBodyEl) FlexShrink(shrink float32) TableBodyEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e TableBodyEl) FontFamily(familyName string) TableBodyEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TableBodyEl) FontFeatures(features FontFeatures) TableBodyEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TableBodyEl) FontWeight(weight FontWeight) TableBodyEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e TableBodyEl) Gap(length Length) TableBodyEl    { tStyledGap(e.n, length); return e }
-func (e TableBodyEl) GapX(length Length) TableBodyEl   { tStyledGapX(e.n, length); return e }
-func (e TableBodyEl) GapY(length Length) TableBodyEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TableBodyEl) Gap(length Length) TableBodyEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableBodyEl) GapX(length Length) TableBodyEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableBodyEl) GapY(length Length) TableBodyEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e TableBodyEl) GridCols(cols uint16) TableBodyEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TableBodyEl) GridColsMaxContent(cols uint16) TableBodyEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TableBodyEl) GridColsMinContent(cols uint16) TableBodyEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TableBodyEl) GridRows(rows uint16) TableBodyEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TableBodyEl) GridRowsMaxContent(rows uint16) TableBodyEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TableBodyEl) GridRowsMinContent(rows uint16) TableBodyEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TableBodyEl) H(length Length) TableBodyEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TableBodyEl) H(length Length) TableBodyEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TableBodyEl) Inset(length Length) TableBodyEl { tStyledInset(e.n, length); return e }
-func (e TableBodyEl) Left(length Length) TableBodyEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableBodyEl) Left(length Length) TableBodyEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TableBodyEl) LineClamp(lines int) TableBodyEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TableBodyEl) LineHeight(lineHeight Length) TableBodyEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TableBodyEl) M(length Length) TableBodyEl         { tStyledM(e.n, length); return e }
-func (e TableBodyEl) MaxH(length Length) TableBodyEl      { tStyledMaxH(e.n, length); return e }
-func (e TableBodyEl) MaxSize(length Length) TableBodyEl   { tStyledMaxSize(e.n, length); return e }
-func (e TableBodyEl) MaxW(length Length) TableBodyEl      { tStyledMaxW(e.n, length); return e }
-func (e TableBodyEl) Mb(length Length) TableBodyEl        { tStyledMb(e.n, length); return e }
-func (e TableBodyEl) MinH(length Length) TableBodyEl      { tStyledMinH(e.n, length); return e }
-func (e TableBodyEl) MinSize(length Length) TableBodyEl   { tStyledMinSize(e.n, length); return e }
-func (e TableBodyEl) MinW(length Length) TableBodyEl      { tStyledMinW(e.n, length); return e }
-func (e TableBodyEl) Ml(length Length) TableBodyEl        { tStyledMl(e.n, length); return e }
-func (e TableBodyEl) Mr(length Length) TableBodyEl        { tStyledMr(e.n, length); return e }
-func (e TableBodyEl) Mt(length Length) TableBodyEl        { tStyledMt(e.n, length); return e }
-func (e TableBodyEl) Mx(length Length) TableBodyEl        { tStyledMx(e.n, length); return e }
-func (e TableBodyEl) My(length Length) TableBodyEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TableBodyEl) M(length Length) TableBodyEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TableBodyEl) MaxH(length Length) TableBodyEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TableBodyEl) MaxSize(length Length) TableBodyEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TableBodyEl) MaxW(length Length) TableBodyEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableBodyEl) Mb(length Length) TableBodyEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TableBodyEl) MinH(length Length) TableBodyEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TableBodyEl) MinSize(length Length) TableBodyEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TableBodyEl) MinW(length Length) TableBodyEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableBodyEl) Ml(length Length) TableBodyEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableBodyEl) Mr(length Length) TableBodyEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableBodyEl) Mt(length Length) TableBodyEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TableBodyEl) Mx(length Length) TableBodyEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TableBodyEl) My(length Length) TableBodyEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TableBodyEl) Opacity(opacity float32) TableBodyEl { tStyledOpacity(e.n, opacity); return e }
-func (e TableBodyEl) P(length Length) TableBodyEl         { tStyledP(e.n, length); return e }
-func (e TableBodyEl) Pb(length Length) TableBodyEl        { tStyledPb(e.n, length); return e }
-func (e TableBodyEl) Pl(length Length) TableBodyEl        { tStyledPl(e.n, length); return e }
-func (e TableBodyEl) Pr(length Length) TableBodyEl        { tStyledPr(e.n, length); return e }
-func (e TableBodyEl) Pt(length Length) TableBodyEl        { tStyledPt(e.n, length); return e }
-func (e TableBodyEl) Px(length Length) TableBodyEl        { tStyledPx(e.n, length); return e }
-func (e TableBodyEl) Py(length Length) TableBodyEl        { tStyledPy(e.n, length); return e }
-func (e TableBodyEl) Right(length Length) TableBodyEl     { tStyledRight(e.n, length); return e }
-func (e TableBodyEl) Rounded(length Length) TableBodyEl   { tStyledRounded(e.n, length); return e }
-func (e TableBodyEl) RoundedB(length Length) TableBodyEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TableBodyEl) P(length Length) TableBodyEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableBodyEl) Pb(length Length) TableBodyEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableBodyEl) Pl(length Length) TableBodyEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableBodyEl) Pr(length Length) TableBodyEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableBodyEl) Pt(length Length) TableBodyEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TableBodyEl) Px(length Length) TableBodyEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TableBodyEl) Py(length Length) TableBodyEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableBodyEl) Right(length Length) TableBodyEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TableBodyEl) Rounded(length Length) TableBodyEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableBodyEl) RoundedB(length Length) TableBodyEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableBodyEl) RoundedBl(length Length) TableBodyEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableBodyEl) RoundedBr(length Length) TableBodyEl { tStyledRoundedBr(e.n, length); return e }
-func (e TableBodyEl) RoundedL(length Length) TableBodyEl  { tStyledRoundedL(e.n, length); return e }
-func (e TableBodyEl) RoundedR(length Length) TableBodyEl  { tStyledRoundedR(e.n, length); return e }
-func (e TableBodyEl) RoundedT(length Length) TableBodyEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableBodyEl) RoundedL(length Length) TableBodyEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableBodyEl) RoundedR(length Length) TableBodyEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableBodyEl) RoundedT(length Length) TableBodyEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableBodyEl) RoundedTl(length Length) TableBodyEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableBodyEl) RoundedTr(length Length) TableBodyEl { tStyledRoundedTr(e.n, length); return e }
-func (e TableBodyEl) RowEnd(end int16) TableBodyEl        { tStyledRowEnd(e.n, end); return e }
-func (e TableBodyEl) RowSpan(span uint16) TableBodyEl     { tStyledRowSpan(e.n, span); return e }
-func (e TableBodyEl) RowStart(start int16) TableBodyEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e TableBodyEl) RowEnd(end int16) TableBodyEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TableBodyEl) RowSpan(span uint16) TableBodyEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TableBodyEl) RowStart(start int16) TableBodyEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TableBodyEl) ScrollbarWidth(width Length) TableBodyEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TableBodyEl) Shadow(shadows []BoxShadow) TableBodyEl { tStyledShadow(e.n, shadows); return e }
-func (e TableBodyEl) Size(length Length) TableBodyEl         { tStyledSize(e.n, length); return e }
-func (e TableBodyEl) TextAlign(align TextAlign) TableBodyEl  { tStyledTextAlign(e.n, align); return e }
-func (e TableBodyEl) TextBg(bg Color) TableBodyEl            { tStyledTextBg(e.n, bg); return e }
-func (e TableBodyEl) TextColor(color Color) TableBodyEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e TableBodyEl) Size(length Length) TableBodyEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TableBodyEl) TextAlign(align TextAlign) TableBodyEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TableBodyEl) TextBg(bg Color) TableBodyEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TableBodyEl) TextColor(color Color) TableBodyEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TableBodyEl) TextDecorationColor(color Color) TableBodyEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TableBodyEl) TextOverflow(overflow TextOverflow) TableBodyEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e TableBodyEl) TextSize(size Length) TableBodyEl { tStyledTextSize(e.n, size); return e }
-func (e TableBodyEl) Top(length Length) TableBodyEl    { tStyledTop(e.n, length); return e }
-func (e TableBodyEl) W(length Length) TableBodyEl      { tStyledW(e.n, length); return e }
 
-func (e TableBodyEl) Large() TableBodyEl                 { tSizableLarge(e.n); return e }
-func (e TableBodyEl) Small() TableBodyEl                 { tSizableSmall(e.n); return e }
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e TableBodyEl) TextSize(size Length) TableBodyEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableBodyEl) Top(length Length) TableBodyEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TableBodyEl) W(length Length) TableBodyEl { tStyledW(e.n, length); return e }
+
+// Set to Size::Large
+func (e TableBodyEl) Large() TableBodyEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TableBodyEl) Small() TableBodyEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TableBodyEl) WithSize(size SizeInto) TableBodyEl { tSizableWithSize(e.n, size); return e }
-func (e TableBodyEl) Xsmall() TableBodyEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TableBodyEl) Xsmall() TableBodyEl { tSizableXsmall(e.n); return e }
 
 func (e TableBodyEl) WithIx(ix int) TableBodyEl { tChildElementWithIx(e.n, ix); return e }
 
@@ -602,17 +1193,43 @@ func TableCaption(st ...Style) TableCaptionEl {
 	return TableCaptionEl{n}
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e TableCaptionEl) PopoverStyle() TableCaptionEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TableCaptionEl) RoundedFullStyle() TableCaptionEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e TableCaptionEl) FocusRingStyle() TableCaptionEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e TableCaptionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) TableCaptionEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -640,7 +1257,20 @@ func (e TableCaptionEl) FontMedium() TableCaptionEl     { tStyledExtFontMedium(e
 func (e TableCaptionEl) FontNormal() TableCaptionEl     { tStyledExtFontNormal(e.n); return e }
 func (e TableCaptionEl) FontSemibold() TableCaptionEl   { tStyledExtFontSemibold(e.n); return e }
 func (e TableCaptionEl) FontThin() TableCaptionEl       { tStyledExtFontThin(e.n); return e }
-func (e TableCaptionEl) HFlex() TableCaptionEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e TableCaptionEl) HFlex() TableCaptionEl { tStyledExtHFlex(e.n); return e }
 func (e TableCaptionEl) Margins(margins EdgesInto) TableCaptionEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -653,6 +1283,11 @@ func (e TableCaptionEl) RefineStyle(style StyleRefinement) TableCaptionEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TableCaptionEl) VFlex() TableCaptionEl { tStyledExtVFlex(e.n); return e }
 
 func (e TableCaptionEl) Text(s string) TableCaptionEl { putText(e.n, s); return e }
@@ -660,186 +1295,406 @@ func (e TableCaptionEl) Text(s string) TableCaptionEl { putText(e.n, s); return 
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e TableCaptionEl) ChildView(v View) TableCaptionEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e TableCaptionEl) Child(child Element) TableCaptionEl {
 	tParentElementChild(e.n, child)
 	return e
 }
+
+// Add multiple child elements to this element.
 func (e TableCaptionEl) Children(children ...Element) TableCaptionEl {
 	tParentElementChildren(e.n, children...)
 	return e
 }
 
-func (e TableCaptionEl) Large() TableCaptionEl                 { tSizableLarge(e.n); return e }
-func (e TableCaptionEl) Small() TableCaptionEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e TableCaptionEl) Large() TableCaptionEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TableCaptionEl) Small() TableCaptionEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TableCaptionEl) WithSize(size SizeInto) TableCaptionEl { tSizableWithSize(e.n, size); return e }
-func (e TableCaptionEl) Xsmall() TableCaptionEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TableCaptionEl) Xsmall() TableCaptionEl { tSizableXsmall(e.n); return e }
 
 func (e TableCaptionEl) WithIx(ix int) TableCaptionEl { tChildElementWithIx(e.n, ix); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TableCaptionEl) Style(st ...Style) TableCaptionEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TableCaptionEl) AspectRatio(ratio float32) TableCaptionEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e TableCaptionEl) Bg(fill Fill) TableCaptionEl          { tStyledBg(e.n, fill); return e }
-func (e TableCaptionEl) Border(length Length) TableCaptionEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TableCaptionEl) Bg(fill Fill) TableCaptionEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TableCaptionEl) Border(length Length) TableCaptionEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e TableCaptionEl) BorderB(length Length) TableCaptionEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TableCaptionEl) BorderColor(borderColor Color) TableCaptionEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e TableCaptionEl) BorderL(length Length) TableCaptionEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e TableCaptionEl) BorderR(length Length) TableCaptionEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e TableCaptionEl) BorderT(length Length) TableCaptionEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e TableCaptionEl) BorderX(length Length) TableCaptionEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e TableCaptionEl) BorderY(length Length) TableCaptionEl { tStyledBorderY(e.n, length); return e }
-func (e TableCaptionEl) Bottom(length Length) TableCaptionEl  { tStyledBottom(e.n, length); return e }
-func (e TableCaptionEl) ColEnd(end int16) TableCaptionEl      { tStyledColEnd(e.n, end); return e }
-func (e TableCaptionEl) ColSpan(span uint16) TableCaptionEl   { tStyledColSpan(e.n, span); return e }
-func (e TableCaptionEl) ColStart(start int16) TableCaptionEl  { tStyledColStart(e.n, start); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableCaptionEl) Bottom(length Length) TableCaptionEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TableCaptionEl) ColEnd(end int16) TableCaptionEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TableCaptionEl) ColSpan(span uint16) TableCaptionEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TableCaptionEl) ColStart(start int16) TableCaptionEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TableCaptionEl) Cursor(cursor CursorStyle) TableCaptionEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e TableCaptionEl) FlexBasis(basis Length) TableCaptionEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e TableCaptionEl) FlexGrow(grow float32) TableCaptionEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableCaptionEl) FlexShrink(shrink float32) TableCaptionEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e TableCaptionEl) FontFamily(familyName string) TableCaptionEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TableCaptionEl) FontFeatures(features FontFeatures) TableCaptionEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TableCaptionEl) FontWeight(weight FontWeight) TableCaptionEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e TableCaptionEl) Gap(length Length) TableCaptionEl    { tStyledGap(e.n, length); return e }
-func (e TableCaptionEl) GapX(length Length) TableCaptionEl   { tStyledGapX(e.n, length); return e }
-func (e TableCaptionEl) GapY(length Length) TableCaptionEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TableCaptionEl) Gap(length Length) TableCaptionEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableCaptionEl) GapX(length Length) TableCaptionEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableCaptionEl) GapY(length Length) TableCaptionEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e TableCaptionEl) GridCols(cols uint16) TableCaptionEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TableCaptionEl) GridColsMaxContent(cols uint16) TableCaptionEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TableCaptionEl) GridColsMinContent(cols uint16) TableCaptionEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TableCaptionEl) GridRows(rows uint16) TableCaptionEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TableCaptionEl) GridRowsMaxContent(rows uint16) TableCaptionEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TableCaptionEl) GridRowsMinContent(rows uint16) TableCaptionEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TableCaptionEl) H(length Length) TableCaptionEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TableCaptionEl) H(length Length) TableCaptionEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TableCaptionEl) Inset(length Length) TableCaptionEl { tStyledInset(e.n, length); return e }
-func (e TableCaptionEl) Left(length Length) TableCaptionEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableCaptionEl) Left(length Length) TableCaptionEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TableCaptionEl) LineClamp(lines int) TableCaptionEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TableCaptionEl) LineHeight(lineHeight Length) TableCaptionEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TableCaptionEl) M(length Length) TableCaptionEl       { tStyledM(e.n, length); return e }
-func (e TableCaptionEl) MaxH(length Length) TableCaptionEl    { tStyledMaxH(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TableCaptionEl) M(length Length) TableCaptionEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TableCaptionEl) MaxH(length Length) TableCaptionEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e TableCaptionEl) MaxSize(length Length) TableCaptionEl { tStyledMaxSize(e.n, length); return e }
-func (e TableCaptionEl) MaxW(length Length) TableCaptionEl    { tStyledMaxW(e.n, length); return e }
-func (e TableCaptionEl) Mb(length Length) TableCaptionEl      { tStyledMb(e.n, length); return e }
-func (e TableCaptionEl) MinH(length Length) TableCaptionEl    { tStyledMinH(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TableCaptionEl) MaxW(length Length) TableCaptionEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableCaptionEl) Mb(length Length) TableCaptionEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TableCaptionEl) MinH(length Length) TableCaptionEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e TableCaptionEl) MinSize(length Length) TableCaptionEl { tStyledMinSize(e.n, length); return e }
-func (e TableCaptionEl) MinW(length Length) TableCaptionEl    { tStyledMinW(e.n, length); return e }
-func (e TableCaptionEl) Ml(length Length) TableCaptionEl      { tStyledMl(e.n, length); return e }
-func (e TableCaptionEl) Mr(length Length) TableCaptionEl      { tStyledMr(e.n, length); return e }
-func (e TableCaptionEl) Mt(length Length) TableCaptionEl      { tStyledMt(e.n, length); return e }
-func (e TableCaptionEl) Mx(length Length) TableCaptionEl      { tStyledMx(e.n, length); return e }
-func (e TableCaptionEl) My(length Length) TableCaptionEl      { tStyledMy(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TableCaptionEl) MinW(length Length) TableCaptionEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableCaptionEl) Ml(length Length) TableCaptionEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableCaptionEl) Mr(length Length) TableCaptionEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableCaptionEl) Mt(length Length) TableCaptionEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TableCaptionEl) Mx(length Length) TableCaptionEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TableCaptionEl) My(length Length) TableCaptionEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TableCaptionEl) Opacity(opacity float32) TableCaptionEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e TableCaptionEl) P(length Length) TableCaptionEl       { tStyledP(e.n, length); return e }
-func (e TableCaptionEl) Pb(length Length) TableCaptionEl      { tStyledPb(e.n, length); return e }
-func (e TableCaptionEl) Pl(length Length) TableCaptionEl      { tStyledPl(e.n, length); return e }
-func (e TableCaptionEl) Pr(length Length) TableCaptionEl      { tStyledPr(e.n, length); return e }
-func (e TableCaptionEl) Pt(length Length) TableCaptionEl      { tStyledPt(e.n, length); return e }
-func (e TableCaptionEl) Px(length Length) TableCaptionEl      { tStyledPx(e.n, length); return e }
-func (e TableCaptionEl) Py(length Length) TableCaptionEl      { tStyledPy(e.n, length); return e }
-func (e TableCaptionEl) Right(length Length) TableCaptionEl   { tStyledRight(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TableCaptionEl) P(length Length) TableCaptionEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableCaptionEl) Pb(length Length) TableCaptionEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableCaptionEl) Pl(length Length) TableCaptionEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableCaptionEl) Pr(length Length) TableCaptionEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableCaptionEl) Pt(length Length) TableCaptionEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TableCaptionEl) Px(length Length) TableCaptionEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TableCaptionEl) Py(length Length) TableCaptionEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableCaptionEl) Right(length Length) TableCaptionEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e TableCaptionEl) Rounded(length Length) TableCaptionEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableCaptionEl) RoundedB(length Length) TableCaptionEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableCaptionEl) RoundedBl(length Length) TableCaptionEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableCaptionEl) RoundedBr(length Length) TableCaptionEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableCaptionEl) RoundedL(length Length) TableCaptionEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableCaptionEl) RoundedR(length Length) TableCaptionEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableCaptionEl) RoundedT(length Length) TableCaptionEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableCaptionEl) RoundedTl(length Length) TableCaptionEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableCaptionEl) RoundedTr(length Length) TableCaptionEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e TableCaptionEl) RowEnd(end int16) TableCaptionEl     { tStyledRowEnd(e.n, end); return e }
-func (e TableCaptionEl) RowSpan(span uint16) TableCaptionEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e TableCaptionEl) RowEnd(end int16) TableCaptionEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TableCaptionEl) RowSpan(span uint16) TableCaptionEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e TableCaptionEl) RowStart(start int16) TableCaptionEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TableCaptionEl) ScrollbarWidth(width Length) TableCaptionEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TableCaptionEl) Shadow(shadows []BoxShadow) TableCaptionEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e TableCaptionEl) Size(length Length) TableCaptionEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e TableCaptionEl) TextAlign(align TextAlign) TableCaptionEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e TableCaptionEl) TextBg(bg Color) TableCaptionEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TableCaptionEl) TextBg(bg Color) TableCaptionEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e TableCaptionEl) TextColor(color Color) TableCaptionEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TableCaptionEl) TextDecorationColor(color Color) TableCaptionEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TableCaptionEl) TextOverflow(overflow TextOverflow) TableCaptionEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e TableCaptionEl) TextSize(size Length) TableCaptionEl { tStyledTextSize(e.n, size); return e }
-func (e TableCaptionEl) Top(length Length) TableCaptionEl    { tStyledTop(e.n, length); return e }
-func (e TableCaptionEl) W(length Length) TableCaptionEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableCaptionEl) Top(length Length) TableCaptionEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TableCaptionEl) W(length Length) TableCaptionEl { tStyledW(e.n, length); return e }
 
 // TableCellEl is gpui_kit::component::table::TableCell.
 type TableCellEl struct{ n *node }
@@ -854,6 +1709,8 @@ func TableCell(st ...Style) TableCellEl {
 	return TableCellEl{n}
 }
 
+// Set the column span of this cell.
+//
 // ColSpan is <gpui_kit::component::table::TableCell>::col_span.
 func (e TableCellEl) ColSpan(span int) TableCellEl {
 	o := op(e.n, 256)
@@ -861,26 +1718,56 @@ func (e TableCellEl) ColSpan(span int) TableCellEl {
 	return e
 }
 
+// Set text alignment to center.
+//
 // TextCenter is <gpui_kit::component::table::TableCell>::text_center.
 func (e TableCellEl) TextCenter() TableCellEl {
 	op(e.n, 257)
 	return e
 }
 
+// Set text alignment to right.
+//
 // TextRight is <gpui_kit::component::table::TableCell>::text_right.
 func (e TableCellEl) TextRight() TableCellEl {
 	op(e.n, 258)
 	return e
 }
 
-func (e TableCellEl) PopoverStyle() TableCellEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TableCellEl) PopoverStyle() TableCellEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TableCellEl) RoundedFullStyle() TableCellEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e TableCellEl) FocusRingStyle() TableCellEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e TableCellEl) OnPrepaint(callback func(cx *Cx, e Bounds)) TableCellEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -908,7 +1795,20 @@ func (e TableCellEl) FontMedium() TableCellEl     { tStyledExtFontMedium(e.n); r
 func (e TableCellEl) FontNormal() TableCellEl     { tStyledExtFontNormal(e.n); return e }
 func (e TableCellEl) FontSemibold() TableCellEl   { tStyledExtFontSemibold(e.n); return e }
 func (e TableCellEl) FontThin() TableCellEl       { tStyledExtFontThin(e.n); return e }
-func (e TableCellEl) HFlex() TableCellEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e TableCellEl) HFlex() TableCellEl { tStyledExtHFlex(e.n); return e }
 func (e TableCellEl) Margins(margins EdgesInto) TableCellEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -921,6 +1821,11 @@ func (e TableCellEl) RefineStyle(style StyleRefinement) TableCellEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TableCellEl) VFlex() TableCellEl { tStyledExtVFlex(e.n); return e }
 
 func (e TableCellEl) Text(s string) TableCellEl { putText(e.n, s); return e }
@@ -928,137 +1833,355 @@ func (e TableCellEl) Text(s string) TableCellEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e TableCellEl) ChildView(v View) TableCellEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e TableCellEl) Child(child Element) TableCellEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e TableCellEl) Children(children ...Element) TableCellEl {
 	tParentElementChildren(e.n, children...)
 	return e
 }
 
-func (e TableCellEl) Large() TableCellEl                 { tSizableLarge(e.n); return e }
-func (e TableCellEl) Small() TableCellEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e TableCellEl) Large() TableCellEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TableCellEl) Small() TableCellEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TableCellEl) WithSize(size SizeInto) TableCellEl { tSizableWithSize(e.n, size); return e }
-func (e TableCellEl) Xsmall() TableCellEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TableCellEl) Xsmall() TableCellEl { tSizableXsmall(e.n); return e }
 
 func (e TableCellEl) WithIx(ix int) TableCellEl { tChildElementWithIx(e.n, ix); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TableCellEl) Style(st ...Style) TableCellEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TableCellEl) AspectRatio(ratio float32) TableCellEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e TableCellEl) Bg(fill Fill) TableCellEl              { tStyledBg(e.n, fill); return e }
-func (e TableCellEl) Border(length Length) TableCellEl      { tStyledBorder(e.n, length); return e }
-func (e TableCellEl) BorderB(length Length) TableCellEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TableCellEl) Bg(fill Fill) TableCellEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TableCellEl) Border(length Length) TableCellEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableCellEl) BorderB(length Length) TableCellEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TableCellEl) BorderColor(borderColor Color) TableCellEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TableCellEl) BorderL(length Length) TableCellEl     { tStyledBorderL(e.n, length); return e }
-func (e TableCellEl) BorderR(length Length) TableCellEl     { tStyledBorderR(e.n, length); return e }
-func (e TableCellEl) BorderT(length Length) TableCellEl     { tStyledBorderT(e.n, length); return e }
-func (e TableCellEl) BorderX(length Length) TableCellEl     { tStyledBorderX(e.n, length); return e }
-func (e TableCellEl) BorderY(length Length) TableCellEl     { tStyledBorderY(e.n, length); return e }
-func (e TableCellEl) Bottom(length Length) TableCellEl      { tStyledBottom(e.n, length); return e }
-func (e TableCellEl) ColEnd(end int16) TableCellEl          { tStyledColEnd(e.n, end); return e }
-func (e TableCellEl) ColStart(start int16) TableCellEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableCellEl) BorderL(length Length) TableCellEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableCellEl) BorderR(length Length) TableCellEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableCellEl) BorderT(length Length) TableCellEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableCellEl) BorderX(length Length) TableCellEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableCellEl) BorderY(length Length) TableCellEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableCellEl) Bottom(length Length) TableCellEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TableCellEl) ColEnd(end int16) TableCellEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column start of this element.
+func (e TableCellEl) ColStart(start int16) TableCellEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TableCellEl) Cursor(cursor CursorStyle) TableCellEl { tStyledCursor(e.n, cursor); return e }
-func (e TableCellEl) FlexBasis(basis Length) TableCellEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e TableCellEl) FlexGrow(grow float32) TableCellEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TableCellEl) FlexBasis(basis Length) TableCellEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TableCellEl) FlexGrow(grow float32) TableCellEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableCellEl) FlexShrink(shrink float32) TableCellEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e TableCellEl) FontFamily(familyName string) TableCellEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TableCellEl) FontFeatures(features FontFeatures) TableCellEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TableCellEl) FontWeight(weight FontWeight) TableCellEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e TableCellEl) Gap(length Length) TableCellEl    { tStyledGap(e.n, length); return e }
-func (e TableCellEl) GapX(length Length) TableCellEl   { tStyledGapX(e.n, length); return e }
-func (e TableCellEl) GapY(length Length) TableCellEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TableCellEl) Gap(length Length) TableCellEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableCellEl) GapX(length Length) TableCellEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableCellEl) GapY(length Length) TableCellEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e TableCellEl) GridCols(cols uint16) TableCellEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TableCellEl) GridColsMaxContent(cols uint16) TableCellEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TableCellEl) GridColsMinContent(cols uint16) TableCellEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TableCellEl) GridRows(rows uint16) TableCellEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TableCellEl) GridRowsMaxContent(rows uint16) TableCellEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TableCellEl) GridRowsMinContent(rows uint16) TableCellEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TableCellEl) H(length Length) TableCellEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TableCellEl) H(length Length) TableCellEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TableCellEl) Inset(length Length) TableCellEl { tStyledInset(e.n, length); return e }
-func (e TableCellEl) Left(length Length) TableCellEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableCellEl) Left(length Length) TableCellEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TableCellEl) LineClamp(lines int) TableCellEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TableCellEl) LineHeight(lineHeight Length) TableCellEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TableCellEl) M(length Length) TableCellEl         { tStyledM(e.n, length); return e }
-func (e TableCellEl) MaxH(length Length) TableCellEl      { tStyledMaxH(e.n, length); return e }
-func (e TableCellEl) MaxSize(length Length) TableCellEl   { tStyledMaxSize(e.n, length); return e }
-func (e TableCellEl) MaxW(length Length) TableCellEl      { tStyledMaxW(e.n, length); return e }
-func (e TableCellEl) Mb(length Length) TableCellEl        { tStyledMb(e.n, length); return e }
-func (e TableCellEl) MinH(length Length) TableCellEl      { tStyledMinH(e.n, length); return e }
-func (e TableCellEl) MinSize(length Length) TableCellEl   { tStyledMinSize(e.n, length); return e }
-func (e TableCellEl) MinW(length Length) TableCellEl      { tStyledMinW(e.n, length); return e }
-func (e TableCellEl) Ml(length Length) TableCellEl        { tStyledMl(e.n, length); return e }
-func (e TableCellEl) Mr(length Length) TableCellEl        { tStyledMr(e.n, length); return e }
-func (e TableCellEl) Mt(length Length) TableCellEl        { tStyledMt(e.n, length); return e }
-func (e TableCellEl) Mx(length Length) TableCellEl        { tStyledMx(e.n, length); return e }
-func (e TableCellEl) My(length Length) TableCellEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TableCellEl) M(length Length) TableCellEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TableCellEl) MaxH(length Length) TableCellEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TableCellEl) MaxSize(length Length) TableCellEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TableCellEl) MaxW(length Length) TableCellEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableCellEl) Mb(length Length) TableCellEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TableCellEl) MinH(length Length) TableCellEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TableCellEl) MinSize(length Length) TableCellEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TableCellEl) MinW(length Length) TableCellEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableCellEl) Ml(length Length) TableCellEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableCellEl) Mr(length Length) TableCellEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableCellEl) Mt(length Length) TableCellEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TableCellEl) Mx(length Length) TableCellEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TableCellEl) My(length Length) TableCellEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TableCellEl) Opacity(opacity float32) TableCellEl { tStyledOpacity(e.n, opacity); return e }
-func (e TableCellEl) P(length Length) TableCellEl         { tStyledP(e.n, length); return e }
-func (e TableCellEl) Pb(length Length) TableCellEl        { tStyledPb(e.n, length); return e }
-func (e TableCellEl) Pl(length Length) TableCellEl        { tStyledPl(e.n, length); return e }
-func (e TableCellEl) Pr(length Length) TableCellEl        { tStyledPr(e.n, length); return e }
-func (e TableCellEl) Pt(length Length) TableCellEl        { tStyledPt(e.n, length); return e }
-func (e TableCellEl) Px(length Length) TableCellEl        { tStyledPx(e.n, length); return e }
-func (e TableCellEl) Py(length Length) TableCellEl        { tStyledPy(e.n, length); return e }
-func (e TableCellEl) Right(length Length) TableCellEl     { tStyledRight(e.n, length); return e }
-func (e TableCellEl) Rounded(length Length) TableCellEl   { tStyledRounded(e.n, length); return e }
-func (e TableCellEl) RoundedB(length Length) TableCellEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TableCellEl) P(length Length) TableCellEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableCellEl) Pb(length Length) TableCellEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableCellEl) Pl(length Length) TableCellEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableCellEl) Pr(length Length) TableCellEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableCellEl) Pt(length Length) TableCellEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TableCellEl) Px(length Length) TableCellEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TableCellEl) Py(length Length) TableCellEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableCellEl) Right(length Length) TableCellEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TableCellEl) Rounded(length Length) TableCellEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableCellEl) RoundedB(length Length) TableCellEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableCellEl) RoundedBl(length Length) TableCellEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableCellEl) RoundedBr(length Length) TableCellEl { tStyledRoundedBr(e.n, length); return e }
-func (e TableCellEl) RoundedL(length Length) TableCellEl  { tStyledRoundedL(e.n, length); return e }
-func (e TableCellEl) RoundedR(length Length) TableCellEl  { tStyledRoundedR(e.n, length); return e }
-func (e TableCellEl) RoundedT(length Length) TableCellEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableCellEl) RoundedL(length Length) TableCellEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableCellEl) RoundedR(length Length) TableCellEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableCellEl) RoundedT(length Length) TableCellEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableCellEl) RoundedTl(length Length) TableCellEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableCellEl) RoundedTr(length Length) TableCellEl { tStyledRoundedTr(e.n, length); return e }
-func (e TableCellEl) RowEnd(end int16) TableCellEl        { tStyledRowEnd(e.n, end); return e }
-func (e TableCellEl) RowSpan(span uint16) TableCellEl     { tStyledRowSpan(e.n, span); return e }
-func (e TableCellEl) RowStart(start int16) TableCellEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e TableCellEl) RowEnd(end int16) TableCellEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TableCellEl) RowSpan(span uint16) TableCellEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TableCellEl) RowStart(start int16) TableCellEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TableCellEl) ScrollbarWidth(width Length) TableCellEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TableCellEl) Shadow(shadows []BoxShadow) TableCellEl { tStyledShadow(e.n, shadows); return e }
-func (e TableCellEl) Size(length Length) TableCellEl         { tStyledSize(e.n, length); return e }
-func (e TableCellEl) TextAlign(align TextAlign) TableCellEl  { tStyledTextAlign(e.n, align); return e }
-func (e TableCellEl) TextBg(bg Color) TableCellEl            { tStyledTextBg(e.n, bg); return e }
-func (e TableCellEl) TextColor(color Color) TableCellEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e TableCellEl) Size(length Length) TableCellEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TableCellEl) TextAlign(align TextAlign) TableCellEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TableCellEl) TextBg(bg Color) TableCellEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TableCellEl) TextColor(color Color) TableCellEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TableCellEl) TextDecorationColor(color Color) TableCellEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TableCellEl) TextOverflow(overflow TextOverflow) TableCellEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e TableCellEl) TextSize(size Length) TableCellEl { tStyledTextSize(e.n, size); return e }
-func (e TableCellEl) Top(length Length) TableCellEl    { tStyledTop(e.n, length); return e }
-func (e TableCellEl) W(length Length) TableCellEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableCellEl) Top(length Length) TableCellEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TableCellEl) W(length Length) TableCellEl { tStyledW(e.n, length); return e }
 
 // TableFooterEl is gpui_kit::component::table::TableFooter.
 type TableFooterEl struct{ n *node }
@@ -1090,7 +2213,19 @@ func (e TableFooterEl) Children(children []ChildElementNode) TableFooterEl {
 	return e
 }
 
-func (e TableFooterEl) PopoverStyle() TableFooterEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TableFooterEl) PopoverStyle() TableFooterEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TableFooterEl) RoundedFullStyle() TableFooterEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e TableFooterEl) CornerRadii(radius Corners) TableFooterEl {
@@ -1115,7 +2250,20 @@ func (e TableFooterEl) FontMedium() TableFooterEl     { tStyledExtFontMedium(e.n
 func (e TableFooterEl) FontNormal() TableFooterEl     { tStyledExtFontNormal(e.n); return e }
 func (e TableFooterEl) FontSemibold() TableFooterEl   { tStyledExtFontSemibold(e.n); return e }
 func (e TableFooterEl) FontThin() TableFooterEl       { tStyledExtFontThin(e.n); return e }
-func (e TableFooterEl) HFlex() TableFooterEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e TableFooterEl) HFlex() TableFooterEl { tStyledExtHFlex(e.n); return e }
 func (e TableFooterEl) Margins(margins EdgesInto) TableFooterEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1128,156 +2276,378 @@ func (e TableFooterEl) RefineStyle(style StyleRefinement) TableFooterEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TableFooterEl) VFlex() TableFooterEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TableFooterEl) Style(st ...Style) TableFooterEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TableFooterEl) AspectRatio(ratio float32) TableFooterEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e TableFooterEl) Bg(fill Fill) TableFooterEl          { tStyledBg(e.n, fill); return e }
-func (e TableFooterEl) Border(length Length) TableFooterEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TableFooterEl) Bg(fill Fill) TableFooterEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TableFooterEl) Border(length Length) TableFooterEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e TableFooterEl) BorderB(length Length) TableFooterEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TableFooterEl) BorderColor(borderColor Color) TableFooterEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TableFooterEl) BorderL(length Length) TableFooterEl     { tStyledBorderL(e.n, length); return e }
-func (e TableFooterEl) BorderR(length Length) TableFooterEl     { tStyledBorderR(e.n, length); return e }
-func (e TableFooterEl) BorderT(length Length) TableFooterEl     { tStyledBorderT(e.n, length); return e }
-func (e TableFooterEl) BorderX(length Length) TableFooterEl     { tStyledBorderX(e.n, length); return e }
-func (e TableFooterEl) BorderY(length Length) TableFooterEl     { tStyledBorderY(e.n, length); return e }
-func (e TableFooterEl) Bottom(length Length) TableFooterEl      { tStyledBottom(e.n, length); return e }
-func (e TableFooterEl) ColEnd(end int16) TableFooterEl          { tStyledColEnd(e.n, end); return e }
-func (e TableFooterEl) ColSpan(span uint16) TableFooterEl       { tStyledColSpan(e.n, span); return e }
-func (e TableFooterEl) ColStart(start int16) TableFooterEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableFooterEl) BorderL(length Length) TableFooterEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableFooterEl) BorderR(length Length) TableFooterEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableFooterEl) BorderT(length Length) TableFooterEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableFooterEl) BorderX(length Length) TableFooterEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableFooterEl) BorderY(length Length) TableFooterEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableFooterEl) Bottom(length Length) TableFooterEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TableFooterEl) ColEnd(end int16) TableFooterEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TableFooterEl) ColSpan(span uint16) TableFooterEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TableFooterEl) ColStart(start int16) TableFooterEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TableFooterEl) Cursor(cursor CursorStyle) TableFooterEl { tStyledCursor(e.n, cursor); return e }
-func (e TableFooterEl) FlexBasis(basis Length) TableFooterEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e TableFooterEl) FlexGrow(grow float32) TableFooterEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TableFooterEl) FlexBasis(basis Length) TableFooterEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TableFooterEl) FlexGrow(grow float32) TableFooterEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableFooterEl) FlexShrink(shrink float32) TableFooterEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e TableFooterEl) FontFamily(familyName string) TableFooterEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TableFooterEl) FontFeatures(features FontFeatures) TableFooterEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TableFooterEl) FontWeight(weight FontWeight) TableFooterEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e TableFooterEl) Gap(length Length) TableFooterEl    { tStyledGap(e.n, length); return e }
-func (e TableFooterEl) GapX(length Length) TableFooterEl   { tStyledGapX(e.n, length); return e }
-func (e TableFooterEl) GapY(length Length) TableFooterEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TableFooterEl) Gap(length Length) TableFooterEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableFooterEl) GapX(length Length) TableFooterEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableFooterEl) GapY(length Length) TableFooterEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e TableFooterEl) GridCols(cols uint16) TableFooterEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TableFooterEl) GridColsMaxContent(cols uint16) TableFooterEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TableFooterEl) GridColsMinContent(cols uint16) TableFooterEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TableFooterEl) GridRows(rows uint16) TableFooterEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TableFooterEl) GridRowsMaxContent(rows uint16) TableFooterEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TableFooterEl) GridRowsMinContent(rows uint16) TableFooterEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TableFooterEl) H(length Length) TableFooterEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TableFooterEl) H(length Length) TableFooterEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TableFooterEl) Inset(length Length) TableFooterEl { tStyledInset(e.n, length); return e }
-func (e TableFooterEl) Left(length Length) TableFooterEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableFooterEl) Left(length Length) TableFooterEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TableFooterEl) LineClamp(lines int) TableFooterEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TableFooterEl) LineHeight(lineHeight Length) TableFooterEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TableFooterEl) M(length Length) TableFooterEl         { tStyledM(e.n, length); return e }
-func (e TableFooterEl) MaxH(length Length) TableFooterEl      { tStyledMaxH(e.n, length); return e }
-func (e TableFooterEl) MaxSize(length Length) TableFooterEl   { tStyledMaxSize(e.n, length); return e }
-func (e TableFooterEl) MaxW(length Length) TableFooterEl      { tStyledMaxW(e.n, length); return e }
-func (e TableFooterEl) Mb(length Length) TableFooterEl        { tStyledMb(e.n, length); return e }
-func (e TableFooterEl) MinH(length Length) TableFooterEl      { tStyledMinH(e.n, length); return e }
-func (e TableFooterEl) MinSize(length Length) TableFooterEl   { tStyledMinSize(e.n, length); return e }
-func (e TableFooterEl) MinW(length Length) TableFooterEl      { tStyledMinW(e.n, length); return e }
-func (e TableFooterEl) Ml(length Length) TableFooterEl        { tStyledMl(e.n, length); return e }
-func (e TableFooterEl) Mr(length Length) TableFooterEl        { tStyledMr(e.n, length); return e }
-func (e TableFooterEl) Mt(length Length) TableFooterEl        { tStyledMt(e.n, length); return e }
-func (e TableFooterEl) Mx(length Length) TableFooterEl        { tStyledMx(e.n, length); return e }
-func (e TableFooterEl) My(length Length) TableFooterEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TableFooterEl) M(length Length) TableFooterEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TableFooterEl) MaxH(length Length) TableFooterEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TableFooterEl) MaxSize(length Length) TableFooterEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TableFooterEl) MaxW(length Length) TableFooterEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableFooterEl) Mb(length Length) TableFooterEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TableFooterEl) MinH(length Length) TableFooterEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TableFooterEl) MinSize(length Length) TableFooterEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TableFooterEl) MinW(length Length) TableFooterEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableFooterEl) Ml(length Length) TableFooterEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableFooterEl) Mr(length Length) TableFooterEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableFooterEl) Mt(length Length) TableFooterEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TableFooterEl) Mx(length Length) TableFooterEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TableFooterEl) My(length Length) TableFooterEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TableFooterEl) Opacity(opacity float32) TableFooterEl { tStyledOpacity(e.n, opacity); return e }
-func (e TableFooterEl) P(length Length) TableFooterEl         { tStyledP(e.n, length); return e }
-func (e TableFooterEl) Pb(length Length) TableFooterEl        { tStyledPb(e.n, length); return e }
-func (e TableFooterEl) Pl(length Length) TableFooterEl        { tStyledPl(e.n, length); return e }
-func (e TableFooterEl) Pr(length Length) TableFooterEl        { tStyledPr(e.n, length); return e }
-func (e TableFooterEl) Pt(length Length) TableFooterEl        { tStyledPt(e.n, length); return e }
-func (e TableFooterEl) Px(length Length) TableFooterEl        { tStyledPx(e.n, length); return e }
-func (e TableFooterEl) Py(length Length) TableFooterEl        { tStyledPy(e.n, length); return e }
-func (e TableFooterEl) Right(length Length) TableFooterEl     { tStyledRight(e.n, length); return e }
-func (e TableFooterEl) Rounded(length Length) TableFooterEl   { tStyledRounded(e.n, length); return e }
-func (e TableFooterEl) RoundedB(length Length) TableFooterEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TableFooterEl) P(length Length) TableFooterEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableFooterEl) Pb(length Length) TableFooterEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableFooterEl) Pl(length Length) TableFooterEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableFooterEl) Pr(length Length) TableFooterEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableFooterEl) Pt(length Length) TableFooterEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TableFooterEl) Px(length Length) TableFooterEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TableFooterEl) Py(length Length) TableFooterEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableFooterEl) Right(length Length) TableFooterEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TableFooterEl) Rounded(length Length) TableFooterEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableFooterEl) RoundedB(length Length) TableFooterEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableFooterEl) RoundedBl(length Length) TableFooterEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableFooterEl) RoundedBr(length Length) TableFooterEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableFooterEl) RoundedL(length Length) TableFooterEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableFooterEl) RoundedR(length Length) TableFooterEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableFooterEl) RoundedT(length Length) TableFooterEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableFooterEl) RoundedTl(length Length) TableFooterEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableFooterEl) RoundedTr(length Length) TableFooterEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e TableFooterEl) RowEnd(end int16) TableFooterEl     { tStyledRowEnd(e.n, end); return e }
-func (e TableFooterEl) RowSpan(span uint16) TableFooterEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e TableFooterEl) RowEnd(end int16) TableFooterEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TableFooterEl) RowSpan(span uint16) TableFooterEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e TableFooterEl) RowStart(start int16) TableFooterEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TableFooterEl) ScrollbarWidth(width Length) TableFooterEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TableFooterEl) Shadow(shadows []BoxShadow) TableFooterEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e TableFooterEl) Size(length Length) TableFooterEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e TableFooterEl) TextAlign(align TextAlign) TableFooterEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e TableFooterEl) TextBg(bg Color) TableFooterEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TableFooterEl) TextBg(bg Color) TableFooterEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e TableFooterEl) TextColor(color Color) TableFooterEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TableFooterEl) TextDecorationColor(color Color) TableFooterEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TableFooterEl) TextOverflow(overflow TextOverflow) TableFooterEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e TableFooterEl) TextSize(size Length) TableFooterEl { tStyledTextSize(e.n, size); return e }
-func (e TableFooterEl) Top(length Length) TableFooterEl    { tStyledTop(e.n, length); return e }
-func (e TableFooterEl) W(length Length) TableFooterEl      { tStyledW(e.n, length); return e }
 
-func (e TableFooterEl) Large() TableFooterEl                 { tSizableLarge(e.n); return e }
-func (e TableFooterEl) Small() TableFooterEl                 { tSizableSmall(e.n); return e }
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e TableFooterEl) TextSize(size Length) TableFooterEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableFooterEl) Top(length Length) TableFooterEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TableFooterEl) W(length Length) TableFooterEl { tStyledW(e.n, length); return e }
+
+// Set to Size::Large
+func (e TableFooterEl) Large() TableFooterEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TableFooterEl) Small() TableFooterEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TableFooterEl) WithSize(size SizeInto) TableFooterEl { tSizableWithSize(e.n, size); return e }
-func (e TableFooterEl) Xsmall() TableFooterEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TableFooterEl) Xsmall() TableFooterEl { tSizableXsmall(e.n); return e }
 
 func (e TableFooterEl) WithIx(ix int) TableFooterEl { tChildElementWithIx(e.n, ix); return e }
 
@@ -1294,6 +2664,8 @@ func TableHead(st ...Style) TableHeadEl {
 	return TableHeadEl{n}
 }
 
+// Set the column span of this header cell.
+//
 // ColSpan is <gpui_kit::component::table::TableHead>::col_span.
 func (e TableHeadEl) ColSpan(span int) TableHeadEl {
 	o := op(e.n, 256)
@@ -1301,26 +2673,56 @@ func (e TableHeadEl) ColSpan(span int) TableHeadEl {
 	return e
 }
 
+// Set text alignment to center.
+//
 // TextCenter is <gpui_kit::component::table::TableHead>::text_center.
 func (e TableHeadEl) TextCenter() TableHeadEl {
 	op(e.n, 257)
 	return e
 }
 
+// Set text alignment to right.
+//
 // TextRight is <gpui_kit::component::table::TableHead>::text_right.
 func (e TableHeadEl) TextRight() TableHeadEl {
 	op(e.n, 258)
 	return e
 }
 
-func (e TableHeadEl) PopoverStyle() TableHeadEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TableHeadEl) PopoverStyle() TableHeadEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TableHeadEl) RoundedFullStyle() TableHeadEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Give this element the focus appearance the framework's own controls use: its border tinted with
+// the focus colour, and the ring outside it.
+//
+// The ring is dropped when `focus_ring` is off, leaving the tinted border — an application whose
+// layout clips its containers can turn it off rather than finding room for the ring in each of
+// them. An element without a border draws a 1px line on its edge instead, so borderless controls
+// still show focus.
+//
+// Calling this turns the ring on; gate it with `when` for the conditions that decide whether the
+// control shows one at all — its focus state, `focus_ring`, appearance, and so on.
+//
+// The ring sits outside the element's border, so an ancestor that clips its content will cut it
+// off — leave it a few pixels of room, or don't clip.
 func (e TableHeadEl) FocusRingStyle() TableHeadEl {
 	tThemeStyledParentElementFocusRingStyle(e.n)
 	return e
 }
 
+// Invokes `callback` during prepaint with this element's resolved bounds.
 func (e TableHeadEl) OnPrepaint(callback func(cx *Cx, e Bounds)) TableHeadEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
@@ -1348,7 +2750,20 @@ func (e TableHeadEl) FontMedium() TableHeadEl     { tStyledExtFontMedium(e.n); r
 func (e TableHeadEl) FontNormal() TableHeadEl     { tStyledExtFontNormal(e.n); return e }
 func (e TableHeadEl) FontSemibold() TableHeadEl   { tStyledExtFontSemibold(e.n); return e }
 func (e TableHeadEl) FontThin() TableHeadEl       { tStyledExtFontThin(e.n); return e }
-func (e TableHeadEl) HFlex() TableHeadEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e TableHeadEl) HFlex() TableHeadEl { tStyledExtHFlex(e.n); return e }
 func (e TableHeadEl) Margins(margins EdgesInto) TableHeadEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1361,6 +2776,11 @@ func (e TableHeadEl) RefineStyle(style StyleRefinement) TableHeadEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TableHeadEl) VFlex() TableHeadEl { tStyledExtVFlex(e.n); return e }
 
 func (e TableHeadEl) Text(s string) TableHeadEl { putText(e.n, s); return e }
@@ -1368,137 +2788,355 @@ func (e TableHeadEl) Text(s string) TableHeadEl { putText(e.n, s); return e }
 // ChildView embeds a view: the parent's description does not change when the child is described again.
 func (e TableHeadEl) ChildView(v View) TableHeadEl { slotView(e.n, v); return e }
 
+// Add a single child element to this element.
 func (e TableHeadEl) Child(child Element) TableHeadEl { tParentElementChild(e.n, child); return e }
+
+// Add multiple child elements to this element.
 func (e TableHeadEl) Children(children ...Element) TableHeadEl {
 	tParentElementChildren(e.n, children...)
 	return e
 }
 
-func (e TableHeadEl) Large() TableHeadEl                 { tSizableLarge(e.n); return e }
-func (e TableHeadEl) Small() TableHeadEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e TableHeadEl) Large() TableHeadEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TableHeadEl) Small() TableHeadEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TableHeadEl) WithSize(size SizeInto) TableHeadEl { tSizableWithSize(e.n, size); return e }
-func (e TableHeadEl) Xsmall() TableHeadEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TableHeadEl) Xsmall() TableHeadEl { tSizableXsmall(e.n); return e }
 
 func (e TableHeadEl) WithIx(ix int) TableHeadEl { tChildElementWithIx(e.n, ix); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TableHeadEl) Style(st ...Style) TableHeadEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TableHeadEl) AspectRatio(ratio float32) TableHeadEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e TableHeadEl) Bg(fill Fill) TableHeadEl              { tStyledBg(e.n, fill); return e }
-func (e TableHeadEl) Border(length Length) TableHeadEl      { tStyledBorder(e.n, length); return e }
-func (e TableHeadEl) BorderB(length Length) TableHeadEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TableHeadEl) Bg(fill Fill) TableHeadEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TableHeadEl) Border(length Length) TableHeadEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableHeadEl) BorderB(length Length) TableHeadEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TableHeadEl) BorderColor(borderColor Color) TableHeadEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TableHeadEl) BorderL(length Length) TableHeadEl     { tStyledBorderL(e.n, length); return e }
-func (e TableHeadEl) BorderR(length Length) TableHeadEl     { tStyledBorderR(e.n, length); return e }
-func (e TableHeadEl) BorderT(length Length) TableHeadEl     { tStyledBorderT(e.n, length); return e }
-func (e TableHeadEl) BorderX(length Length) TableHeadEl     { tStyledBorderX(e.n, length); return e }
-func (e TableHeadEl) BorderY(length Length) TableHeadEl     { tStyledBorderY(e.n, length); return e }
-func (e TableHeadEl) Bottom(length Length) TableHeadEl      { tStyledBottom(e.n, length); return e }
-func (e TableHeadEl) ColEnd(end int16) TableHeadEl          { tStyledColEnd(e.n, end); return e }
-func (e TableHeadEl) ColStart(start int16) TableHeadEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableHeadEl) BorderL(length Length) TableHeadEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableHeadEl) BorderR(length Length) TableHeadEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableHeadEl) BorderT(length Length) TableHeadEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableHeadEl) BorderX(length Length) TableHeadEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableHeadEl) BorderY(length Length) TableHeadEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableHeadEl) Bottom(length Length) TableHeadEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TableHeadEl) ColEnd(end int16) TableHeadEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column start of this element.
+func (e TableHeadEl) ColStart(start int16) TableHeadEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TableHeadEl) Cursor(cursor CursorStyle) TableHeadEl { tStyledCursor(e.n, cursor); return e }
-func (e TableHeadEl) FlexBasis(basis Length) TableHeadEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e TableHeadEl) FlexGrow(grow float32) TableHeadEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TableHeadEl) FlexBasis(basis Length) TableHeadEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TableHeadEl) FlexGrow(grow float32) TableHeadEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableHeadEl) FlexShrink(shrink float32) TableHeadEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e TableHeadEl) FontFamily(familyName string) TableHeadEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TableHeadEl) FontFeatures(features FontFeatures) TableHeadEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TableHeadEl) FontWeight(weight FontWeight) TableHeadEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e TableHeadEl) Gap(length Length) TableHeadEl    { tStyledGap(e.n, length); return e }
-func (e TableHeadEl) GapX(length Length) TableHeadEl   { tStyledGapX(e.n, length); return e }
-func (e TableHeadEl) GapY(length Length) TableHeadEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TableHeadEl) Gap(length Length) TableHeadEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableHeadEl) GapX(length Length) TableHeadEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableHeadEl) GapY(length Length) TableHeadEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e TableHeadEl) GridCols(cols uint16) TableHeadEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TableHeadEl) GridColsMaxContent(cols uint16) TableHeadEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TableHeadEl) GridColsMinContent(cols uint16) TableHeadEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TableHeadEl) GridRows(rows uint16) TableHeadEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TableHeadEl) GridRowsMaxContent(rows uint16) TableHeadEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TableHeadEl) GridRowsMinContent(rows uint16) TableHeadEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TableHeadEl) H(length Length) TableHeadEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TableHeadEl) H(length Length) TableHeadEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TableHeadEl) Inset(length Length) TableHeadEl { tStyledInset(e.n, length); return e }
-func (e TableHeadEl) Left(length Length) TableHeadEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableHeadEl) Left(length Length) TableHeadEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TableHeadEl) LineClamp(lines int) TableHeadEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TableHeadEl) LineHeight(lineHeight Length) TableHeadEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TableHeadEl) M(length Length) TableHeadEl         { tStyledM(e.n, length); return e }
-func (e TableHeadEl) MaxH(length Length) TableHeadEl      { tStyledMaxH(e.n, length); return e }
-func (e TableHeadEl) MaxSize(length Length) TableHeadEl   { tStyledMaxSize(e.n, length); return e }
-func (e TableHeadEl) MaxW(length Length) TableHeadEl      { tStyledMaxW(e.n, length); return e }
-func (e TableHeadEl) Mb(length Length) TableHeadEl        { tStyledMb(e.n, length); return e }
-func (e TableHeadEl) MinH(length Length) TableHeadEl      { tStyledMinH(e.n, length); return e }
-func (e TableHeadEl) MinSize(length Length) TableHeadEl   { tStyledMinSize(e.n, length); return e }
-func (e TableHeadEl) MinW(length Length) TableHeadEl      { tStyledMinW(e.n, length); return e }
-func (e TableHeadEl) Ml(length Length) TableHeadEl        { tStyledMl(e.n, length); return e }
-func (e TableHeadEl) Mr(length Length) TableHeadEl        { tStyledMr(e.n, length); return e }
-func (e TableHeadEl) Mt(length Length) TableHeadEl        { tStyledMt(e.n, length); return e }
-func (e TableHeadEl) Mx(length Length) TableHeadEl        { tStyledMx(e.n, length); return e }
-func (e TableHeadEl) My(length Length) TableHeadEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TableHeadEl) M(length Length) TableHeadEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TableHeadEl) MaxH(length Length) TableHeadEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TableHeadEl) MaxSize(length Length) TableHeadEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TableHeadEl) MaxW(length Length) TableHeadEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableHeadEl) Mb(length Length) TableHeadEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TableHeadEl) MinH(length Length) TableHeadEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TableHeadEl) MinSize(length Length) TableHeadEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TableHeadEl) MinW(length Length) TableHeadEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableHeadEl) Ml(length Length) TableHeadEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableHeadEl) Mr(length Length) TableHeadEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableHeadEl) Mt(length Length) TableHeadEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TableHeadEl) Mx(length Length) TableHeadEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TableHeadEl) My(length Length) TableHeadEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TableHeadEl) Opacity(opacity float32) TableHeadEl { tStyledOpacity(e.n, opacity); return e }
-func (e TableHeadEl) P(length Length) TableHeadEl         { tStyledP(e.n, length); return e }
-func (e TableHeadEl) Pb(length Length) TableHeadEl        { tStyledPb(e.n, length); return e }
-func (e TableHeadEl) Pl(length Length) TableHeadEl        { tStyledPl(e.n, length); return e }
-func (e TableHeadEl) Pr(length Length) TableHeadEl        { tStyledPr(e.n, length); return e }
-func (e TableHeadEl) Pt(length Length) TableHeadEl        { tStyledPt(e.n, length); return e }
-func (e TableHeadEl) Px(length Length) TableHeadEl        { tStyledPx(e.n, length); return e }
-func (e TableHeadEl) Py(length Length) TableHeadEl        { tStyledPy(e.n, length); return e }
-func (e TableHeadEl) Right(length Length) TableHeadEl     { tStyledRight(e.n, length); return e }
-func (e TableHeadEl) Rounded(length Length) TableHeadEl   { tStyledRounded(e.n, length); return e }
-func (e TableHeadEl) RoundedB(length Length) TableHeadEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TableHeadEl) P(length Length) TableHeadEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableHeadEl) Pb(length Length) TableHeadEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableHeadEl) Pl(length Length) TableHeadEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableHeadEl) Pr(length Length) TableHeadEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableHeadEl) Pt(length Length) TableHeadEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TableHeadEl) Px(length Length) TableHeadEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TableHeadEl) Py(length Length) TableHeadEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableHeadEl) Right(length Length) TableHeadEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TableHeadEl) Rounded(length Length) TableHeadEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableHeadEl) RoundedB(length Length) TableHeadEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableHeadEl) RoundedBl(length Length) TableHeadEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableHeadEl) RoundedBr(length Length) TableHeadEl { tStyledRoundedBr(e.n, length); return e }
-func (e TableHeadEl) RoundedL(length Length) TableHeadEl  { tStyledRoundedL(e.n, length); return e }
-func (e TableHeadEl) RoundedR(length Length) TableHeadEl  { tStyledRoundedR(e.n, length); return e }
-func (e TableHeadEl) RoundedT(length Length) TableHeadEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableHeadEl) RoundedL(length Length) TableHeadEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableHeadEl) RoundedR(length Length) TableHeadEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableHeadEl) RoundedT(length Length) TableHeadEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableHeadEl) RoundedTl(length Length) TableHeadEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableHeadEl) RoundedTr(length Length) TableHeadEl { tStyledRoundedTr(e.n, length); return e }
-func (e TableHeadEl) RowEnd(end int16) TableHeadEl        { tStyledRowEnd(e.n, end); return e }
-func (e TableHeadEl) RowSpan(span uint16) TableHeadEl     { tStyledRowSpan(e.n, span); return e }
-func (e TableHeadEl) RowStart(start int16) TableHeadEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e TableHeadEl) RowEnd(end int16) TableHeadEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TableHeadEl) RowSpan(span uint16) TableHeadEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TableHeadEl) RowStart(start int16) TableHeadEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TableHeadEl) ScrollbarWidth(width Length) TableHeadEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TableHeadEl) Shadow(shadows []BoxShadow) TableHeadEl { tStyledShadow(e.n, shadows); return e }
-func (e TableHeadEl) Size(length Length) TableHeadEl         { tStyledSize(e.n, length); return e }
-func (e TableHeadEl) TextAlign(align TextAlign) TableHeadEl  { tStyledTextAlign(e.n, align); return e }
-func (e TableHeadEl) TextBg(bg Color) TableHeadEl            { tStyledTextBg(e.n, bg); return e }
-func (e TableHeadEl) TextColor(color Color) TableHeadEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e TableHeadEl) Size(length Length) TableHeadEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TableHeadEl) TextAlign(align TextAlign) TableHeadEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TableHeadEl) TextBg(bg Color) TableHeadEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TableHeadEl) TextColor(color Color) TableHeadEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TableHeadEl) TextDecorationColor(color Color) TableHeadEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TableHeadEl) TextOverflow(overflow TextOverflow) TableHeadEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e TableHeadEl) TextSize(size Length) TableHeadEl { tStyledTextSize(e.n, size); return e }
-func (e TableHeadEl) Top(length Length) TableHeadEl    { tStyledTop(e.n, length); return e }
-func (e TableHeadEl) W(length Length) TableHeadEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableHeadEl) Top(length Length) TableHeadEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TableHeadEl) W(length Length) TableHeadEl { tStyledW(e.n, length); return e }
 
 // TableHeaderEl is gpui_kit::component::table::TableHeader.
 type TableHeaderEl struct{ n *node }
@@ -1530,7 +3168,19 @@ func (e TableHeaderEl) Children(children []ChildElementNode) TableHeaderEl {
 	return e
 }
 
-func (e TableHeaderEl) PopoverStyle() TableHeaderEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TableHeaderEl) PopoverStyle() TableHeaderEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TableHeaderEl) RoundedFullStyle() TableHeaderEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e TableHeaderEl) CornerRadii(radius Corners) TableHeaderEl {
@@ -1555,7 +3205,20 @@ func (e TableHeaderEl) FontMedium() TableHeaderEl     { tStyledExtFontMedium(e.n
 func (e TableHeaderEl) FontNormal() TableHeaderEl     { tStyledExtFontNormal(e.n); return e }
 func (e TableHeaderEl) FontSemibold() TableHeaderEl   { tStyledExtFontSemibold(e.n); return e }
 func (e TableHeaderEl) FontThin() TableHeaderEl       { tStyledExtFontThin(e.n); return e }
-func (e TableHeaderEl) HFlex() TableHeaderEl          { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e TableHeaderEl) HFlex() TableHeaderEl { tStyledExtHFlex(e.n); return e }
 func (e TableHeaderEl) Margins(margins EdgesInto) TableHeaderEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -1568,158 +3231,380 @@ func (e TableHeaderEl) RefineStyle(style StyleRefinement) TableHeaderEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TableHeaderEl) VFlex() TableHeaderEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TableHeaderEl) Style(st ...Style) TableHeaderEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TableHeaderEl) AspectRatio(ratio float32) TableHeaderEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
-func (e TableHeaderEl) Bg(fill Fill) TableHeaderEl          { tStyledBg(e.n, fill); return e }
-func (e TableHeaderEl) Border(length Length) TableHeaderEl  { tStyledBorder(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TableHeaderEl) Bg(fill Fill) TableHeaderEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TableHeaderEl) Border(length Length) TableHeaderEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e TableHeaderEl) BorderB(length Length) TableHeaderEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TableHeaderEl) BorderColor(borderColor Color) TableHeaderEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TableHeaderEl) BorderL(length Length) TableHeaderEl     { tStyledBorderL(e.n, length); return e }
-func (e TableHeaderEl) BorderR(length Length) TableHeaderEl     { tStyledBorderR(e.n, length); return e }
-func (e TableHeaderEl) BorderT(length Length) TableHeaderEl     { tStyledBorderT(e.n, length); return e }
-func (e TableHeaderEl) BorderX(length Length) TableHeaderEl     { tStyledBorderX(e.n, length); return e }
-func (e TableHeaderEl) BorderY(length Length) TableHeaderEl     { tStyledBorderY(e.n, length); return e }
-func (e TableHeaderEl) Bottom(length Length) TableHeaderEl      { tStyledBottom(e.n, length); return e }
-func (e TableHeaderEl) ColEnd(end int16) TableHeaderEl          { tStyledColEnd(e.n, end); return e }
-func (e TableHeaderEl) ColSpan(span uint16) TableHeaderEl       { tStyledColSpan(e.n, span); return e }
-func (e TableHeaderEl) ColStart(start int16) TableHeaderEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableHeaderEl) BorderL(length Length) TableHeaderEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableHeaderEl) BorderR(length Length) TableHeaderEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableHeaderEl) BorderT(length Length) TableHeaderEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableHeaderEl) BorderX(length Length) TableHeaderEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableHeaderEl) BorderY(length Length) TableHeaderEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableHeaderEl) Bottom(length Length) TableHeaderEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TableHeaderEl) ColEnd(end int16) TableHeaderEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TableHeaderEl) ColSpan(span uint16) TableHeaderEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TableHeaderEl) ColStart(start int16) TableHeaderEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TableHeaderEl) Cursor(cursor CursorStyle) TableHeaderEl { tStyledCursor(e.n, cursor); return e }
-func (e TableHeaderEl) FlexBasis(basis Length) TableHeaderEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e TableHeaderEl) FlexGrow(grow float32) TableHeaderEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TableHeaderEl) FlexBasis(basis Length) TableHeaderEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TableHeaderEl) FlexGrow(grow float32) TableHeaderEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableHeaderEl) FlexShrink(shrink float32) TableHeaderEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e TableHeaderEl) FontFamily(familyName string) TableHeaderEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TableHeaderEl) FontFeatures(features FontFeatures) TableHeaderEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TableHeaderEl) FontWeight(weight FontWeight) TableHeaderEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e TableHeaderEl) Gap(length Length) TableHeaderEl    { tStyledGap(e.n, length); return e }
-func (e TableHeaderEl) GapX(length Length) TableHeaderEl   { tStyledGapX(e.n, length); return e }
-func (e TableHeaderEl) GapY(length Length) TableHeaderEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TableHeaderEl) Gap(length Length) TableHeaderEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableHeaderEl) GapX(length Length) TableHeaderEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableHeaderEl) GapY(length Length) TableHeaderEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e TableHeaderEl) GridCols(cols uint16) TableHeaderEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TableHeaderEl) GridColsMaxContent(cols uint16) TableHeaderEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TableHeaderEl) GridColsMinContent(cols uint16) TableHeaderEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TableHeaderEl) GridRows(rows uint16) TableHeaderEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TableHeaderEl) GridRowsMaxContent(rows uint16) TableHeaderEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TableHeaderEl) GridRowsMinContent(rows uint16) TableHeaderEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TableHeaderEl) H(length Length) TableHeaderEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TableHeaderEl) H(length Length) TableHeaderEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TableHeaderEl) Inset(length Length) TableHeaderEl { tStyledInset(e.n, length); return e }
-func (e TableHeaderEl) Left(length Length) TableHeaderEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableHeaderEl) Left(length Length) TableHeaderEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TableHeaderEl) LineClamp(lines int) TableHeaderEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TableHeaderEl) LineHeight(lineHeight Length) TableHeaderEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TableHeaderEl) M(length Length) TableHeaderEl         { tStyledM(e.n, length); return e }
-func (e TableHeaderEl) MaxH(length Length) TableHeaderEl      { tStyledMaxH(e.n, length); return e }
-func (e TableHeaderEl) MaxSize(length Length) TableHeaderEl   { tStyledMaxSize(e.n, length); return e }
-func (e TableHeaderEl) MaxW(length Length) TableHeaderEl      { tStyledMaxW(e.n, length); return e }
-func (e TableHeaderEl) Mb(length Length) TableHeaderEl        { tStyledMb(e.n, length); return e }
-func (e TableHeaderEl) MinH(length Length) TableHeaderEl      { tStyledMinH(e.n, length); return e }
-func (e TableHeaderEl) MinSize(length Length) TableHeaderEl   { tStyledMinSize(e.n, length); return e }
-func (e TableHeaderEl) MinW(length Length) TableHeaderEl      { tStyledMinW(e.n, length); return e }
-func (e TableHeaderEl) Ml(length Length) TableHeaderEl        { tStyledMl(e.n, length); return e }
-func (e TableHeaderEl) Mr(length Length) TableHeaderEl        { tStyledMr(e.n, length); return e }
-func (e TableHeaderEl) Mt(length Length) TableHeaderEl        { tStyledMt(e.n, length); return e }
-func (e TableHeaderEl) Mx(length Length) TableHeaderEl        { tStyledMx(e.n, length); return e }
-func (e TableHeaderEl) My(length Length) TableHeaderEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TableHeaderEl) M(length Length) TableHeaderEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TableHeaderEl) MaxH(length Length) TableHeaderEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TableHeaderEl) MaxSize(length Length) TableHeaderEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TableHeaderEl) MaxW(length Length) TableHeaderEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableHeaderEl) Mb(length Length) TableHeaderEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TableHeaderEl) MinH(length Length) TableHeaderEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TableHeaderEl) MinSize(length Length) TableHeaderEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TableHeaderEl) MinW(length Length) TableHeaderEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableHeaderEl) Ml(length Length) TableHeaderEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableHeaderEl) Mr(length Length) TableHeaderEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableHeaderEl) Mt(length Length) TableHeaderEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TableHeaderEl) Mx(length Length) TableHeaderEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TableHeaderEl) My(length Length) TableHeaderEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TableHeaderEl) Opacity(opacity float32) TableHeaderEl { tStyledOpacity(e.n, opacity); return e }
-func (e TableHeaderEl) P(length Length) TableHeaderEl         { tStyledP(e.n, length); return e }
-func (e TableHeaderEl) Pb(length Length) TableHeaderEl        { tStyledPb(e.n, length); return e }
-func (e TableHeaderEl) Pl(length Length) TableHeaderEl        { tStyledPl(e.n, length); return e }
-func (e TableHeaderEl) Pr(length Length) TableHeaderEl        { tStyledPr(e.n, length); return e }
-func (e TableHeaderEl) Pt(length Length) TableHeaderEl        { tStyledPt(e.n, length); return e }
-func (e TableHeaderEl) Px(length Length) TableHeaderEl        { tStyledPx(e.n, length); return e }
-func (e TableHeaderEl) Py(length Length) TableHeaderEl        { tStyledPy(e.n, length); return e }
-func (e TableHeaderEl) Right(length Length) TableHeaderEl     { tStyledRight(e.n, length); return e }
-func (e TableHeaderEl) Rounded(length Length) TableHeaderEl   { tStyledRounded(e.n, length); return e }
-func (e TableHeaderEl) RoundedB(length Length) TableHeaderEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TableHeaderEl) P(length Length) TableHeaderEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableHeaderEl) Pb(length Length) TableHeaderEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableHeaderEl) Pl(length Length) TableHeaderEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableHeaderEl) Pr(length Length) TableHeaderEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableHeaderEl) Pt(length Length) TableHeaderEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TableHeaderEl) Px(length Length) TableHeaderEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TableHeaderEl) Py(length Length) TableHeaderEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableHeaderEl) Right(length Length) TableHeaderEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TableHeaderEl) Rounded(length Length) TableHeaderEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableHeaderEl) RoundedB(length Length) TableHeaderEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableHeaderEl) RoundedBl(length Length) TableHeaderEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableHeaderEl) RoundedBr(length Length) TableHeaderEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableHeaderEl) RoundedL(length Length) TableHeaderEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableHeaderEl) RoundedR(length Length) TableHeaderEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e TableHeaderEl) RoundedT(length Length) TableHeaderEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableHeaderEl) RoundedTl(length Length) TableHeaderEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableHeaderEl) RoundedTr(length Length) TableHeaderEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
-func (e TableHeaderEl) RowEnd(end int16) TableHeaderEl     { tStyledRowEnd(e.n, end); return e }
-func (e TableHeaderEl) RowSpan(span uint16) TableHeaderEl  { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row end of this element.
+func (e TableHeaderEl) RowEnd(end int16) TableHeaderEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TableHeaderEl) RowSpan(span uint16) TableHeaderEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
 func (e TableHeaderEl) RowStart(start int16) TableHeaderEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TableHeaderEl) ScrollbarWidth(width Length) TableHeaderEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TableHeaderEl) Shadow(shadows []BoxShadow) TableHeaderEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e TableHeaderEl) Size(length Length) TableHeaderEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e TableHeaderEl) TextAlign(align TextAlign) TableHeaderEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
-func (e TableHeaderEl) TextBg(bg Color) TableHeaderEl       { tStyledTextBg(e.n, bg); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TableHeaderEl) TextBg(bg Color) TableHeaderEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e TableHeaderEl) TextColor(color Color) TableHeaderEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TableHeaderEl) TextDecorationColor(color Color) TableHeaderEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TableHeaderEl) TextOverflow(overflow TextOverflow) TableHeaderEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e TableHeaderEl) TextSize(size Length) TableHeaderEl { tStyledTextSize(e.n, size); return e }
-func (e TableHeaderEl) Top(length Length) TableHeaderEl    { tStyledTop(e.n, length); return e }
-func (e TableHeaderEl) W(length Length) TableHeaderEl      { tStyledW(e.n, length); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableHeaderEl) Top(length Length) TableHeaderEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TableHeaderEl) W(length Length) TableHeaderEl { tStyledW(e.n, length); return e }
 
 func (e TableHeaderEl) WithIx(ix int) TableHeaderEl { tChildElementWithIx(e.n, ix); return e }
 
-func (e TableHeaderEl) Large() TableHeaderEl                 { tSizableLarge(e.n); return e }
-func (e TableHeaderEl) Small() TableHeaderEl                 { tSizableSmall(e.n); return e }
+// Set to Size::Large
+func (e TableHeaderEl) Large() TableHeaderEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TableHeaderEl) Small() TableHeaderEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TableHeaderEl) WithSize(size SizeInto) TableHeaderEl { tSizableWithSize(e.n, size); return e }
-func (e TableHeaderEl) Xsmall() TableHeaderEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TableHeaderEl) Xsmall() TableHeaderEl { tSizableXsmall(e.n); return e }
 
 // TableRowEl is gpui_kit::component::table::TableRow.
 type TableRowEl struct{ n *node }
@@ -1751,7 +3636,19 @@ func (e TableRowEl) Children(children []ChildElementNode) TableRowEl {
 	return e
 }
 
-func (e TableRowEl) PopoverStyle() TableRowEl     { tThemeStyledPopoverStyle(e.n); return e }
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
+func (e TableRowEl) PopoverStyle() TableRowEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e TableRowEl) RoundedFullStyle() TableRowEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
 func (e TableRowEl) CornerRadii(radius Corners) TableRowEl {
@@ -1763,19 +3660,32 @@ func (e TableRowEl) DebugFocused(focusHandle FocusHandle) TableRowEl {
 	tStyledExtDebugFocused(e.n, focusHandle)
 	return e
 }
-func (e TableRowEl) DebugGreen() TableRowEl               { tStyledExtDebugGreen(e.n); return e }
-func (e TableRowEl) DebugPink() TableRowEl                { tStyledExtDebugPink(e.n); return e }
-func (e TableRowEl) DebugRed() TableRowEl                 { tStyledExtDebugRed(e.n); return e }
-func (e TableRowEl) DebugYellow() TableRowEl              { tStyledExtDebugYellow(e.n); return e }
-func (e TableRowEl) FontBlack() TableRowEl                { tStyledExtFontBlack(e.n); return e }
-func (e TableRowEl) FontBold() TableRowEl                 { tStyledExtFontBold(e.n); return e }
-func (e TableRowEl) FontExtrabold() TableRowEl            { tStyledExtFontExtrabold(e.n); return e }
-func (e TableRowEl) FontExtralight() TableRowEl           { tStyledExtFontExtralight(e.n); return e }
-func (e TableRowEl) FontLight() TableRowEl                { tStyledExtFontLight(e.n); return e }
-func (e TableRowEl) FontMedium() TableRowEl               { tStyledExtFontMedium(e.n); return e }
-func (e TableRowEl) FontNormal() TableRowEl               { tStyledExtFontNormal(e.n); return e }
-func (e TableRowEl) FontSemibold() TableRowEl             { tStyledExtFontSemibold(e.n); return e }
-func (e TableRowEl) FontThin() TableRowEl                 { tStyledExtFontThin(e.n); return e }
+func (e TableRowEl) DebugGreen() TableRowEl     { tStyledExtDebugGreen(e.n); return e }
+func (e TableRowEl) DebugPink() TableRowEl      { tStyledExtDebugPink(e.n); return e }
+func (e TableRowEl) DebugRed() TableRowEl       { tStyledExtDebugRed(e.n); return e }
+func (e TableRowEl) DebugYellow() TableRowEl    { tStyledExtDebugYellow(e.n); return e }
+func (e TableRowEl) FontBlack() TableRowEl      { tStyledExtFontBlack(e.n); return e }
+func (e TableRowEl) FontBold() TableRowEl       { tStyledExtFontBold(e.n); return e }
+func (e TableRowEl) FontExtrabold() TableRowEl  { tStyledExtFontExtrabold(e.n); return e }
+func (e TableRowEl) FontExtralight() TableRowEl { tStyledExtFontExtralight(e.n); return e }
+func (e TableRowEl) FontLight() TableRowEl      { tStyledExtFontLight(e.n); return e }
+func (e TableRowEl) FontMedium() TableRowEl     { tStyledExtFontMedium(e.n); return e }
+func (e TableRowEl) FontNormal() TableRowEl     { tStyledExtFontNormal(e.n); return e }
+func (e TableRowEl) FontSemibold() TableRowEl   { tStyledExtFontSemibold(e.n); return e }
+func (e TableRowEl) FontThin() TableRowEl       { tStyledExtFontThin(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
 func (e TableRowEl) HFlex() TableRowEl                    { tStyledExtHFlex(e.n); return e }
 func (e TableRowEl) Margins(margins EdgesInto) TableRowEl { tStyledExtMargins(e.n, margins); return e }
 func (e TableRowEl) Paddings(paddings EdgesInto) TableRowEl {
@@ -1786,131 +3696,353 @@ func (e TableRowEl) RefineStyle(style StyleRefinement) TableRowEl {
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e TableRowEl) VFlex() TableRowEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e TableRowEl) Style(st ...Style) TableRowEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e TableRowEl) AspectRatio(ratio float32) TableRowEl { tStyledAspectRatio(e.n, ratio); return e }
-func (e TableRowEl) Bg(fill Fill) TableRowEl              { tStyledBg(e.n, fill); return e }
-func (e TableRowEl) Border(length Length) TableRowEl      { tStyledBorder(e.n, length); return e }
-func (e TableRowEl) BorderB(length Length) TableRowEl     { tStyledBorderB(e.n, length); return e }
+
+// Sets the background color of the element.
+func (e TableRowEl) Bg(fill Fill) TableRowEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
+func (e TableRowEl) Border(length Length) TableRowEl { tStyledBorder(e.n, length); return e }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableRowEl) BorderB(length Length) TableRowEl { tStyledBorderB(e.n, length); return e }
+
+// Sets the border color of the element.
 func (e TableRowEl) BorderColor(borderColor Color) TableRowEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
-func (e TableRowEl) BorderL(length Length) TableRowEl     { tStyledBorderL(e.n, length); return e }
-func (e TableRowEl) BorderR(length Length) TableRowEl     { tStyledBorderR(e.n, length); return e }
-func (e TableRowEl) BorderT(length Length) TableRowEl     { tStyledBorderT(e.n, length); return e }
-func (e TableRowEl) BorderX(length Length) TableRowEl     { tStyledBorderX(e.n, length); return e }
-func (e TableRowEl) BorderY(length Length) TableRowEl     { tStyledBorderY(e.n, length); return e }
-func (e TableRowEl) Bottom(length Length) TableRowEl      { tStyledBottom(e.n, length); return e }
-func (e TableRowEl) ColEnd(end int16) TableRowEl          { tStyledColEnd(e.n, end); return e }
-func (e TableRowEl) ColSpan(span uint16) TableRowEl       { tStyledColSpan(e.n, span); return e }
-func (e TableRowEl) ColStart(start int16) TableRowEl      { tStyledColStart(e.n, start); return e }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableRowEl) BorderL(length Length) TableRowEl { tStyledBorderL(e.n, length); return e }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableRowEl) BorderR(length Length) TableRowEl { tStyledBorderR(e.n, length); return e }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
+func (e TableRowEl) BorderT(length Length) TableRowEl { tStyledBorderT(e.n, length); return e }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableRowEl) BorderX(length Length) TableRowEl { tStyledBorderX(e.n, length); return e }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
+func (e TableRowEl) BorderY(length Length) TableRowEl { tStyledBorderY(e.n, length); return e }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableRowEl) Bottom(length Length) TableRowEl { tStyledBottom(e.n, length); return e }
+
+// Sets the column end of this element.
+func (e TableRowEl) ColEnd(end int16) TableRowEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
+func (e TableRowEl) ColSpan(span uint16) TableRowEl { tStyledColSpan(e.n, span); return e }
+
+// Sets the column start of this element.
+func (e TableRowEl) ColStart(start int16) TableRowEl { tStyledColStart(e.n, start); return e }
+
+// Set the cursor style when hovering over this element
 func (e TableRowEl) Cursor(cursor CursorStyle) TableRowEl { tStyledCursor(e.n, cursor); return e }
-func (e TableRowEl) FlexBasis(basis Length) TableRowEl    { tStyledFlexBasis(e.n, basis); return e }
-func (e TableRowEl) FlexGrow(grow float32) TableRowEl     { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
+func (e TableRowEl) FlexBasis(basis Length) TableRowEl { tStyledFlexBasis(e.n, basis); return e }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
+func (e TableRowEl) FlexGrow(grow float32) TableRowEl { tStyledFlexGrow(e.n, grow); return e }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableRowEl) FlexShrink(shrink float32) TableRowEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font family of this element and its children.
 func (e TableRowEl) FontFamily(familyName string) TableRowEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e TableRowEl) FontFeatures(features FontFeatures) TableRowEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e TableRowEl) FontWeight(weight FontWeight) TableRowEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e TableRowEl) Gap(length Length) TableRowEl    { tStyledGap(e.n, length); return e }
-func (e TableRowEl) GapX(length Length) TableRowEl   { tStyledGapX(e.n, length); return e }
-func (e TableRowEl) GapY(length Length) TableRowEl   { tStyledGapY(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e TableRowEl) Gap(length Length) TableRowEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableRowEl) GapX(length Length) TableRowEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
+func (e TableRowEl) GapY(length Length) TableRowEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e TableRowEl) GridCols(cols uint16) TableRowEl { tStyledGridCols(e.n, cols); return e }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e TableRowEl) GridColsMaxContent(cols uint16) TableRowEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e TableRowEl) GridColsMinContent(cols uint16) TableRowEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e TableRowEl) GridRows(rows uint16) TableRowEl { tStyledGridRows(e.n, rows); return e }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e TableRowEl) GridRowsMaxContent(rows uint16) TableRowEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e TableRowEl) GridRowsMinContent(rows uint16) TableRowEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
-func (e TableRowEl) H(length Length) TableRowEl     { tStyledH(e.n, length); return e }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
+func (e TableRowEl) H(length Length) TableRowEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e TableRowEl) Inset(length Length) TableRowEl { tStyledInset(e.n, length); return e }
-func (e TableRowEl) Left(length Length) TableRowEl  { tStyledLeft(e.n, length); return e }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableRowEl) Left(length Length) TableRowEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e TableRowEl) LineClamp(lines int) TableRowEl { tStyledLineClamp(e.n, lines); return e }
+
+// Sets the line height of this element and its children.
 func (e TableRowEl) LineHeight(lineHeight Length) TableRowEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e TableRowEl) M(length Length) TableRowEl         { tStyledM(e.n, length); return e }
-func (e TableRowEl) MaxH(length Length) TableRowEl      { tStyledMaxH(e.n, length); return e }
-func (e TableRowEl) MaxSize(length Length) TableRowEl   { tStyledMaxSize(e.n, length); return e }
-func (e TableRowEl) MaxW(length Length) TableRowEl      { tStyledMaxW(e.n, length); return e }
-func (e TableRowEl) Mb(length Length) TableRowEl        { tStyledMb(e.n, length); return e }
-func (e TableRowEl) MinH(length Length) TableRowEl      { tStyledMinH(e.n, length); return e }
-func (e TableRowEl) MinSize(length Length) TableRowEl   { tStyledMinSize(e.n, length); return e }
-func (e TableRowEl) MinW(length Length) TableRowEl      { tStyledMinW(e.n, length); return e }
-func (e TableRowEl) Ml(length Length) TableRowEl        { tStyledMl(e.n, length); return e }
-func (e TableRowEl) Mr(length Length) TableRowEl        { tStyledMr(e.n, length); return e }
-func (e TableRowEl) Mt(length Length) TableRowEl        { tStyledMt(e.n, length); return e }
-func (e TableRowEl) Mx(length Length) TableRowEl        { tStyledMx(e.n, length); return e }
-func (e TableRowEl) My(length Length) TableRowEl        { tStyledMy(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e TableRowEl) M(length Length) TableRowEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
+func (e TableRowEl) MaxH(length Length) TableRowEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
+func (e TableRowEl) MaxSize(length Length) TableRowEl { tStyledMaxSize(e.n, length); return e }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
+func (e TableRowEl) MaxW(length Length) TableRowEl { tStyledMaxW(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableRowEl) Mb(length Length) TableRowEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
+func (e TableRowEl) MinH(length Length) TableRowEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
+func (e TableRowEl) MinSize(length Length) TableRowEl { tStyledMinSize(e.n, length); return e }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
+func (e TableRowEl) MinW(length Length) TableRowEl { tStyledMinW(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableRowEl) Ml(length Length) TableRowEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableRowEl) Mr(length Length) TableRowEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e TableRowEl) Mt(length Length) TableRowEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e TableRowEl) Mx(length Length) TableRowEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e TableRowEl) My(length Length) TableRowEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e TableRowEl) Opacity(opacity float32) TableRowEl { tStyledOpacity(e.n, opacity); return e }
-func (e TableRowEl) P(length Length) TableRowEl         { tStyledP(e.n, length); return e }
-func (e TableRowEl) Pb(length Length) TableRowEl        { tStyledPb(e.n, length); return e }
-func (e TableRowEl) Pl(length Length) TableRowEl        { tStyledPl(e.n, length); return e }
-func (e TableRowEl) Pr(length Length) TableRowEl        { tStyledPr(e.n, length); return e }
-func (e TableRowEl) Pt(length Length) TableRowEl        { tStyledPt(e.n, length); return e }
-func (e TableRowEl) Px(length Length) TableRowEl        { tStyledPx(e.n, length); return e }
-func (e TableRowEl) Py(length Length) TableRowEl        { tStyledPy(e.n, length); return e }
-func (e TableRowEl) Right(length Length) TableRowEl     { tStyledRight(e.n, length); return e }
-func (e TableRowEl) Rounded(length Length) TableRowEl   { tStyledRounded(e.n, length); return e }
-func (e TableRowEl) RoundedB(length Length) TableRowEl  { tStyledRoundedB(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e TableRowEl) P(length Length) TableRowEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableRowEl) Pb(length Length) TableRowEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableRowEl) Pl(length Length) TableRowEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableRowEl) Pr(length Length) TableRowEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
+func (e TableRowEl) Pt(length Length) TableRowEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
+func (e TableRowEl) Px(length Length) TableRowEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
+func (e TableRowEl) Py(length Length) TableRowEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableRowEl) Right(length Length) TableRowEl { tStyledRight(e.n, length); return e }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
+func (e TableRowEl) Rounded(length Length) TableRowEl { tStyledRounded(e.n, length); return e }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableRowEl) RoundedB(length Length) TableRowEl { tStyledRoundedB(e.n, length); return e }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableRowEl) RoundedBl(length Length) TableRowEl { tStyledRoundedBl(e.n, length); return e }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableRowEl) RoundedBr(length Length) TableRowEl { tStyledRoundedBr(e.n, length); return e }
-func (e TableRowEl) RoundedL(length Length) TableRowEl  { tStyledRoundedL(e.n, length); return e }
-func (e TableRowEl) RoundedR(length Length) TableRowEl  { tStyledRoundedR(e.n, length); return e }
-func (e TableRowEl) RoundedT(length Length) TableRowEl  { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableRowEl) RoundedL(length Length) TableRowEl { tStyledRoundedL(e.n, length); return e }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableRowEl) RoundedR(length Length) TableRowEl { tStyledRoundedR(e.n, length); return e }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
+func (e TableRowEl) RoundedT(length Length) TableRowEl { tStyledRoundedT(e.n, length); return e }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableRowEl) RoundedTl(length Length) TableRowEl { tStyledRoundedTl(e.n, length); return e }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e TableRowEl) RoundedTr(length Length) TableRowEl { tStyledRoundedTr(e.n, length); return e }
-func (e TableRowEl) RowEnd(end int16) TableRowEl        { tStyledRowEnd(e.n, end); return e }
-func (e TableRowEl) RowSpan(span uint16) TableRowEl     { tStyledRowSpan(e.n, span); return e }
-func (e TableRowEl) RowStart(start int16) TableRowEl    { tStyledRowStart(e.n, start); return e }
+
+// Sets the row end of this element.
+func (e TableRowEl) RowEnd(end int16) TableRowEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
+func (e TableRowEl) RowSpan(span uint16) TableRowEl { tStyledRowSpan(e.n, span); return e }
+
+// Sets the row start of this element.
+func (e TableRowEl) RowStart(start int16) TableRowEl { tStyledRowStart(e.n, start); return e }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e TableRowEl) ScrollbarWidth(width Length) TableRowEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e TableRowEl) Shadow(shadows []BoxShadow) TableRowEl { tStyledShadow(e.n, shadows); return e }
-func (e TableRowEl) Size(length Length) TableRowEl         { tStyledSize(e.n, length); return e }
-func (e TableRowEl) TextAlign(align TextAlign) TableRowEl  { tStyledTextAlign(e.n, align); return e }
-func (e TableRowEl) TextBg(bg Color) TableRowEl            { tStyledTextBg(e.n, bg); return e }
-func (e TableRowEl) TextColor(color Color) TableRowEl      { tStyledTextColor(e.n, color); return e }
+
+// Sets the width and height of the element.
+func (e TableRowEl) Size(length Length) TableRowEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
+func (e TableRowEl) TextAlign(align TextAlign) TableRowEl { tStyledTextAlign(e.n, align); return e }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
+func (e TableRowEl) TextBg(bg Color) TableRowEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
+func (e TableRowEl) TextColor(color Color) TableRowEl { tStyledTextColor(e.n, color); return e }
+
+// Sets the color for the underline on this element
 func (e TableRowEl) TextDecorationColor(color Color) TableRowEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e TableRowEl) TextOverflow(overflow TextOverflow) TableRowEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
-func (e TableRowEl) TextSize(size Length) TableRowEl { tStyledTextSize(e.n, size); return e }
-func (e TableRowEl) Top(length Length) TableRowEl    { tStyledTop(e.n, length); return e }
-func (e TableRowEl) W(length Length) TableRowEl      { tStyledW(e.n, length); return e }
 
-func (e TableRowEl) Large() TableRowEl                 { tSizableLarge(e.n); return e }
-func (e TableRowEl) Small() TableRowEl                 { tSizableSmall(e.n); return e }
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
+func (e TableRowEl) TextSize(size Length) TableRowEl { tStyledTextSize(e.n, size); return e }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
+func (e TableRowEl) Top(length Length) TableRowEl { tStyledTop(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e TableRowEl) W(length Length) TableRowEl { tStyledW(e.n, length); return e }
+
+// Set to Size::Large
+func (e TableRowEl) Large() TableRowEl { tSizableLarge(e.n); return e }
+
+// Set to Size::Small
+func (e TableRowEl) Small() TableRowEl { tSizableSmall(e.n); return e }
+
+// Set the ui::Size of this element.
+//
+// Also can receive a `ButtonSize` to convert to `IconSize`, Or a `Pixels` to set a custom size:
+// `px(30.)`
 func (e TableRowEl) WithSize(size SizeInto) TableRowEl { tSizableWithSize(e.n, size); return e }
-func (e TableRowEl) Xsmall() TableRowEl                { tSizableXsmall(e.n); return e }
+
+// Set to Size::XSmall
+func (e TableRowEl) Xsmall() TableRowEl { tSizableXsmall(e.n); return e }
 
 func (e TableRowEl) WithIx(ix int) TableRowEl { tChildElementWithIx(e.n, ix); return e }

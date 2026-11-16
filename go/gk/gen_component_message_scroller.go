@@ -13,6 +13,8 @@ type MessageScrollerEl struct{ n *node }
 
 func (e MessageScrollerEl) node() *node { return e.n }
 
+// Enable or disable the built-in jump-to-latest button.
+//
 // JumpButton is <gpui_kit::component::message_scroller::MessageScroller>::jump_button.
 func (e MessageScrollerEl) JumpButton(jumpButton bool) MessageScrollerEl {
 	o := op(e.n, 256)
@@ -20,6 +22,8 @@ func (e MessageScrollerEl) JumpButton(jumpButton bool) MessageScrollerEl {
 	return e
 }
 
+// Enable or disable the virtual-list scrollbar.
+//
 // Scrollbar is <gpui_kit::component::message_scroller::MessageScroller>::scrollbar.
 func (e MessageScrollerEl) Scrollbar(scrollbar bool) MessageScrollerEl {
 	o := op(e.n, 257)
@@ -27,6 +31,13 @@ func (e MessageScrollerEl) Scrollbar(scrollbar bool) MessageScrollerEl {
 	return e
 }
 
+// Fade the transcript's bottom edge into `color`.
+//
+// A partially visible row melts into the surface behind the scroller instead of clipping mid-line.
+// The fade shows only while the reader is away from the live edge — at the bottom nothing is
+// clipped. Pass the color of that surface; the fade is off by default and sits under the jump
+// button.
+//
 // WithBottomFade is <gpui_kit::component::message_scroller::MessageScroller>::with_bottom_fade.
 func (e MessageScrollerEl) WithBottomFade(color Color) MessageScrollerEl {
 	o := op(e.n, 258)
@@ -34,6 +45,8 @@ func (e MessageScrollerEl) WithBottomFade(color Color) MessageScrollerEl {
 	return e
 }
 
+// Refine the viewport that contains the list and scrollbar.
+//
 // WithContentStyle is <gpui_kit::component::message_scroller::MessageScroller>::with_content_style.
 func (e MessageScrollerEl) WithContentStyle(style StyleRefinement) MessageScrollerEl {
 	o := op(e.n, 259)
@@ -41,6 +54,8 @@ func (e MessageScrollerEl) WithContentStyle(style StyleRefinement) MessageScroll
 	return e
 }
 
+// Set the label used by the built-in jump-to-latest button.
+//
 // WithJumpButtonLabel is <gpui_kit::component::message_scroller::MessageScroller>::with_jump_button_label.
 func (e MessageScrollerEl) WithJumpButtonLabel(label string) MessageScrollerEl {
 	o := op(e.n, 260)
@@ -48,6 +63,8 @@ func (e MessageScrollerEl) WithJumpButtonLabel(label string) MessageScrollerEl {
 	return e
 }
 
+// Refine the built-in jump-to-latest button after its defaults.
+//
 // WithJumpButtonStyle is <gpui_kit::component::message_scroller::MessageScroller>::with_jump_button_style.
 func (e MessageScrollerEl) WithJumpButtonStyle(style StyleRefinement) MessageScrollerEl {
 	o := op(e.n, 261)
@@ -55,6 +72,11 @@ func (e MessageScrollerEl) WithJumpButtonStyle(style StyleRefinement) MessageScr
 	return e
 }
 
+// Set how long the built-in jump button takes to enter or leave.
+//
+// A zero duration disables its transition. Reduced-motion preferences always adopt the final state
+// immediately.
+//
 // WithJumpButtonTransition is <gpui_kit::component::message_scroller::MessageScroller>::with_jump_button_transition.
 func (e MessageScrollerEl) WithJumpButtonTransition(duration time.Duration) MessageScrollerEl {
 	o := op(e.n, 262)
@@ -62,6 +84,8 @@ func (e MessageScrollerEl) WithJumpButtonTransition(duration time.Duration) Mess
 	return e
 }
 
+// Refine the GPUI list element used to render rows.
+//
 // WithListStyle is <gpui_kit::component::message_scroller::MessageScroller>::with_list_style.
 func (e MessageScrollerEl) WithListStyle(style StyleRefinement) MessageScrollerEl {
 	o := op(e.n, 263)
@@ -69,6 +93,8 @@ func (e MessageScrollerEl) WithListStyle(style StyleRefinement) MessageScrollerE
 	return e
 }
 
+// Refine the full-width wrapper around every rendered row.
+//
 // WithRowStyle is <gpui_kit::component::message_scroller::MessageScroller>::with_row_style.
 func (e MessageScrollerEl) WithRowStyle(style StyleRefinement) MessageScrollerEl {
 	o := op(e.n, 264)
@@ -76,7 +102,19 @@ func (e MessageScrollerEl) WithRowStyle(style StyleRefinement) MessageScrollerEl
 	return e
 }
 
+// Give this element the surface, edge, shadow and radius of a popover.
+//
+// This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
+// and the editor's hover popovers — so they cannot drift apart. See `popover_shadow` for what the
+// shadow is modelled on.
 func (e MessageScrollerEl) PopoverStyle() MessageScrollerEl { tThemeStyledPopoverStyle(e.n); return e }
+
+// Round this element as far as its size allows — a circle if it is square, a pill if it is not —
+// unless the theme squares its corners.
+//
+// Use this instead of `rounded_full` on anything the theme owns. A hardcoded `rounded_full`
+// survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
+// a UI that is square everywhere else. See `RadiusFull`.
 func (e MessageScrollerEl) RoundedFullStyle() MessageScrollerEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
@@ -107,7 +145,20 @@ func (e MessageScrollerEl) FontMedium() MessageScrollerEl   { tStyledExtFontMedi
 func (e MessageScrollerEl) FontNormal() MessageScrollerEl   { tStyledExtFontNormal(e.n); return e }
 func (e MessageScrollerEl) FontSemibold() MessageScrollerEl { tStyledExtFontSemibold(e.n); return e }
 func (e MessageScrollerEl) FontThin() MessageScrollerEl     { tStyledExtFontThin(e.n); return e }
-func (e MessageScrollerEl) HFlex() MessageScrollerEl        { tStyledExtHFlex(e.n); return e }
+
+// Lays children out in a row, centered on the cross axis.
+//
+// The centering is the desktop default for a row of controls — an icon beside its label lines up
+// without either side asking for it — but it is **not** the mirror image of `VFlex`, which leaves
+// the cross axis stretching. A column placed in a row therefore does not take the row's height: it
+// takes its content's height and is centered inside the row. When its content is taller than the
+// row, it overflows equally above and below, so the column's header is pushed off the top edge and
+// clipped.
+//
+// Give a full-height column `h_full()` (or the row `items_start()` / `items_stretch()`) whenever
+// the child owns a header, a footer, or a scroll region that has to resolve against the row's
+// height.
+func (e MessageScrollerEl) HFlex() MessageScrollerEl { tStyledExtHFlex(e.n); return e }
 func (e MessageScrollerEl) Margins(margins EdgesInto) MessageScrollerEl {
 	tStyledExtMargins(e.n, margins)
 	return e
@@ -120,238 +171,450 @@ func (e MessageScrollerEl) RefineStyle(style StyleRefinement) MessageScrollerEl 
 	tStyledExtRefineStyle(e.n, style)
 	return e
 }
+
+// Lays children out in a column, stretching them across the cross axis.
+//
+// Unlike `HFlex` this installs no cross-axis alignment, so a child without a width fills the
+// column. See `h_flex` for the asymmetry.
 func (e MessageScrollerEl) VFlex() MessageScrollerEl { tStyledExtVFlex(e.n); return e }
 
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e MessageScrollerEl) Style(st ...Style) MessageScrollerEl { tokens(e.n, st); return e }
 
+// Sets the aspect ratio of the element. Docs (https://tailwindcss.com/docs/aspect-ratio)
 func (e MessageScrollerEl) AspectRatio(ratio float32) MessageScrollerEl {
 	tStyledAspectRatio(e.n, ratio)
 	return e
 }
+
+// Sets the background color of the element.
 func (e MessageScrollerEl) Bg(fill Fill) MessageScrollerEl { tStyledBg(e.n, fill); return e }
+
+// Sets the border width of the element. Docs (https://tailwindcss.com/docs/border-width)
 func (e MessageScrollerEl) Border(length Length) MessageScrollerEl {
 	tStyledBorder(e.n, length)
 	return e
 }
+
+// Sets the border width of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e MessageScrollerEl) BorderB(length Length) MessageScrollerEl {
 	tStyledBorderB(e.n, length)
 	return e
 }
+
+// Sets the border color of the element.
 func (e MessageScrollerEl) BorderColor(borderColor Color) MessageScrollerEl {
 	tStyledBorderColor(e.n, borderColor)
 	return e
 }
+
+// Sets the border width of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e MessageScrollerEl) BorderL(length Length) MessageScrollerEl {
 	tStyledBorderL(e.n, length)
 	return e
 }
+
+// Sets the border width of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e MessageScrollerEl) BorderR(length Length) MessageScrollerEl {
 	tStyledBorderR(e.n, length)
 	return e
 }
+
+// Sets the border width of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-width#individual-sides)
 func (e MessageScrollerEl) BorderT(length Length) MessageScrollerEl {
 	tStyledBorderT(e.n, length)
 	return e
 }
+
+// Sets the border width of the vertical sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e MessageScrollerEl) BorderX(length Length) MessageScrollerEl {
 	tStyledBorderX(e.n, length)
 	return e
 }
+
+// Sets the border width of the horizontal sides of the element. Docs
+// (https://tailwindcss.com/docs/border-width#horizontal-and-vertical-sides)
 func (e MessageScrollerEl) BorderY(length Length) MessageScrollerEl {
 	tStyledBorderY(e.n, length)
 	return e
 }
+
+// Sets the bottom value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e MessageScrollerEl) Bottom(length Length) MessageScrollerEl {
 	tStyledBottom(e.n, length)
 	return e
 }
+
+// Sets the column end of this element.
 func (e MessageScrollerEl) ColEnd(end int16) MessageScrollerEl { tStyledColEnd(e.n, end); return e }
+
+// Sets the column span of this element.
 func (e MessageScrollerEl) ColSpan(span uint16) MessageScrollerEl {
 	tStyledColSpan(e.n, span)
 	return e
 }
+
+// Sets the column start of this element.
 func (e MessageScrollerEl) ColStart(start int16) MessageScrollerEl {
 	tStyledColStart(e.n, start)
 	return e
 }
+
+// Set the cursor style when hovering over this element
 func (e MessageScrollerEl) Cursor(cursor CursorStyle) MessageScrollerEl {
 	tStyledCursor(e.n, cursor)
 	return e
 }
+
+// Sets the initial size of flex items for this element. Docs
+// (https://tailwindcss.com/docs/flex-basis)
 func (e MessageScrollerEl) FlexBasis(basis Length) MessageScrollerEl {
 	tStyledFlexBasis(e.n, basis)
 	return e
 }
+
+// Sets the flex item's grow factor. Docs (https://tailwindcss.com/docs/flex-grow)
 func (e MessageScrollerEl) FlexGrow(grow float32) MessageScrollerEl {
 	tStyledFlexGrow(e.n, grow)
 	return e
 }
+
+// Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e MessageScrollerEl) FlexShrink(shrink float32) MessageScrollerEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font family of this element and its children.
 func (e MessageScrollerEl) FontFamily(familyName string) MessageScrollerEl {
 	tStyledFontFamily(e.n, familyName)
 	return e
 }
+
+// Sets the font features of this element and its children.
 func (e MessageScrollerEl) FontFeatures(features FontFeatures) MessageScrollerEl {
 	tStyledFontFeatures(e.n, features)
 	return e
 }
+
+// Sets the font weight of this element
+//
+// This value cascades to its child elements.
 func (e MessageScrollerEl) FontWeight(weight FontWeight) MessageScrollerEl {
 	tStyledFontWeight(e.n, weight)
 	return e
 }
-func (e MessageScrollerEl) Gap(length Length) MessageScrollerEl  { tStyledGap(e.n, length); return e }
+
+// Sets the gap between rows and columns in flex layouts. Docs (https://tailwindcss.com/docs/gap)
+func (e MessageScrollerEl) Gap(length Length) MessageScrollerEl { tStyledGap(e.n, length); return e }
+
+// Sets the gap between columns in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e MessageScrollerEl) GapX(length Length) MessageScrollerEl { tStyledGapX(e.n, length); return e }
+
+// Sets the gap between rows in flex layouts. Docs
+// (https://tailwindcss.com/docs/gap#changing-row-and-column-gaps-independently)
 func (e MessageScrollerEl) GapY(length Length) MessageScrollerEl { tStyledGapY(e.n, length); return e }
+
+// Sets the grid columns of this element.
 func (e MessageScrollerEl) GridCols(cols uint16) MessageScrollerEl {
 	tStyledGridCols(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with max-content maximum sizing for content-based column widths.
 func (e MessageScrollerEl) GridColsMaxContent(cols uint16) MessageScrollerEl {
 	tStyledGridColsMaxContent(e.n, cols)
 	return e
 }
+
+// Sets the grid columns with min-content minimum sizing. Unlike grid_cols, it won't shrink to
+// width 0 in AvailableSpace::MinContent constraints.
 func (e MessageScrollerEl) GridColsMinContent(cols uint16) MessageScrollerEl {
 	tStyledGridColsMinContent(e.n, cols)
 	return e
 }
+
+// Sets the grid rows of this element.
 func (e MessageScrollerEl) GridRows(rows uint16) MessageScrollerEl {
 	tStyledGridRows(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with max-content maximum sizing for content-based row heights.
 func (e MessageScrollerEl) GridRowsMaxContent(rows uint16) MessageScrollerEl {
 	tStyledGridRowsMaxContent(e.n, rows)
 	return e
 }
+
+// Sets the grid rows with min-content minimum sizing. Unlike grid_rows, it won't shrink to height
+// 0 in AvailableSpace::MinContent constraints.
 func (e MessageScrollerEl) GridRowsMinContent(rows uint16) MessageScrollerEl {
 	tStyledGridRowsMinContent(e.n, rows)
 	return e
 }
+
+// Sets the height of the element. Docs (https://tailwindcss.com/docs/height)
 func (e MessageScrollerEl) H(length Length) MessageScrollerEl { tStyledH(e.n, length); return e }
+
+// Sets the top, right, bottom, and left values of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e MessageScrollerEl) Inset(length Length) MessageScrollerEl {
 	tStyledInset(e.n, length)
 	return e
 }
+
+// Sets the left value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e MessageScrollerEl) Left(length Length) MessageScrollerEl { tStyledLeft(e.n, length); return e }
+
+// Sets number of lines to show before truncating the text. Docs
+// (https://tailwindcss.com/docs/line-clamp)
 func (e MessageScrollerEl) LineClamp(lines int) MessageScrollerEl {
 	tStyledLineClamp(e.n, lines)
 	return e
 }
+
+// Sets the line height of this element and its children.
 func (e MessageScrollerEl) LineHeight(lineHeight Length) MessageScrollerEl {
 	tStyledLineHeight(e.n, lineHeight)
 	return e
 }
-func (e MessageScrollerEl) M(length Length) MessageScrollerEl    { tStyledM(e.n, length); return e }
+
+// Sets the margin of the element. Docs (https://tailwindcss.com/docs/margin)
+func (e MessageScrollerEl) M(length Length) MessageScrollerEl { tStyledM(e.n, length); return e }
+
+// Sets the maximum height of the element. Docs (https://tailwindcss.com/docs/max-height)
 func (e MessageScrollerEl) MaxH(length Length) MessageScrollerEl { tStyledMaxH(e.n, length); return e }
+
+// Sets the maximum width and height of the element.
 func (e MessageScrollerEl) MaxSize(length Length) MessageScrollerEl {
 	tStyledMaxSize(e.n, length)
 	return e
 }
+
+// Sets the maximum width of the element. Docs (https://tailwindcss.com/docs/max-width)
 func (e MessageScrollerEl) MaxW(length Length) MessageScrollerEl { tStyledMaxW(e.n, length); return e }
-func (e MessageScrollerEl) Mb(length Length) MessageScrollerEl   { tStyledMb(e.n, length); return e }
+
+// Sets the bottom margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e MessageScrollerEl) Mb(length Length) MessageScrollerEl { tStyledMb(e.n, length); return e }
+
+// Sets the minimum height of the element. Docs (https://tailwindcss.com/docs/min-height)
 func (e MessageScrollerEl) MinH(length Length) MessageScrollerEl { tStyledMinH(e.n, length); return e }
+
+// Sets the minimum width and height of the element.
 func (e MessageScrollerEl) MinSize(length Length) MessageScrollerEl {
 	tStyledMinSize(e.n, length)
 	return e
 }
+
+// Sets the minimum width of the element. Docs (https://tailwindcss.com/docs/min-width)
 func (e MessageScrollerEl) MinW(length Length) MessageScrollerEl { tStyledMinW(e.n, length); return e }
-func (e MessageScrollerEl) Ml(length Length) MessageScrollerEl   { tStyledMl(e.n, length); return e }
-func (e MessageScrollerEl) Mr(length Length) MessageScrollerEl   { tStyledMr(e.n, length); return e }
-func (e MessageScrollerEl) Mt(length Length) MessageScrollerEl   { tStyledMt(e.n, length); return e }
-func (e MessageScrollerEl) Mx(length Length) MessageScrollerEl   { tStyledMx(e.n, length); return e }
-func (e MessageScrollerEl) My(length Length) MessageScrollerEl   { tStyledMy(e.n, length); return e }
+
+// Sets the left margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e MessageScrollerEl) Ml(length Length) MessageScrollerEl { tStyledMl(e.n, length); return e }
+
+// Sets the right margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e MessageScrollerEl) Mr(length Length) MessageScrollerEl { tStyledMr(e.n, length); return e }
+
+// Sets the top margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-margin-to-a-single-side)
+func (e MessageScrollerEl) Mt(length Length) MessageScrollerEl { tStyledMt(e.n, length); return e }
+
+// Sets the horizontal margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-horizontal-margin)
+func (e MessageScrollerEl) Mx(length Length) MessageScrollerEl { tStyledMx(e.n, length); return e }
+
+// Sets the vertical margin of the element. Docs
+// (https://tailwindcss.com/docs/margin#add-vertical-margin)
+func (e MessageScrollerEl) My(length Length) MessageScrollerEl { tStyledMy(e.n, length); return e }
+
+// Sets the opacity of this element and its children.
 func (e MessageScrollerEl) Opacity(opacity float32) MessageScrollerEl {
 	tStyledOpacity(e.n, opacity)
 	return e
 }
-func (e MessageScrollerEl) P(length Length) MessageScrollerEl  { tStyledP(e.n, length); return e }
+
+// Sets the padding of the element. Docs (https://tailwindcss.com/docs/padding)
+func (e MessageScrollerEl) P(length Length) MessageScrollerEl { tStyledP(e.n, length); return e }
+
+// Sets the bottom padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e MessageScrollerEl) Pb(length Length) MessageScrollerEl { tStyledPb(e.n, length); return e }
+
+// Sets the left padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e MessageScrollerEl) Pl(length Length) MessageScrollerEl { tStyledPl(e.n, length); return e }
+
+// Sets the right padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e MessageScrollerEl) Pr(length Length) MessageScrollerEl { tStyledPr(e.n, length); return e }
+
+// Sets the top padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-padding-to-a-single-side)
 func (e MessageScrollerEl) Pt(length Length) MessageScrollerEl { tStyledPt(e.n, length); return e }
+
+// Sets the horizontal padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-horizontal-padding)
 func (e MessageScrollerEl) Px(length Length) MessageScrollerEl { tStyledPx(e.n, length); return e }
+
+// Sets the vertical padding of the element. Docs
+// (https://tailwindcss.com/docs/padding#add-vertical-padding)
 func (e MessageScrollerEl) Py(length Length) MessageScrollerEl { tStyledPy(e.n, length); return e }
+
+// Sets the right value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e MessageScrollerEl) Right(length Length) MessageScrollerEl {
 	tStyledRight(e.n, length)
 	return e
 }
+
+// Sets the border radius of the element. Docs (https://tailwindcss.com/docs/border-radius)
 func (e MessageScrollerEl) Rounded(length Length) MessageScrollerEl {
 	tStyledRounded(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e MessageScrollerEl) RoundedB(length Length) MessageScrollerEl {
 	tStyledRoundedB(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e MessageScrollerEl) RoundedBl(length Length) MessageScrollerEl {
 	tStyledRoundedBl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the bottom right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e MessageScrollerEl) RoundedBr(length Length) MessageScrollerEl {
 	tStyledRoundedBr(e.n, length)
 	return e
 }
+
+// Sets the border radius of the left side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e MessageScrollerEl) RoundedL(length Length) MessageScrollerEl {
 	tStyledRoundedL(e.n, length)
 	return e
 }
+
+// Sets the border radius of the right side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e MessageScrollerEl) RoundedR(length Length) MessageScrollerEl {
 	tStyledRoundedR(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top side of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-sides-separately)
 func (e MessageScrollerEl) RoundedT(length Length) MessageScrollerEl {
 	tStyledRoundedT(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top left corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e MessageScrollerEl) RoundedTl(length Length) MessageScrollerEl {
 	tStyledRoundedTl(e.n, length)
 	return e
 }
+
+// Sets the border radius of the top right corner of the element. Docs
+// (https://tailwindcss.com/docs/border-radius#rounding-corners-separately)
 func (e MessageScrollerEl) RoundedTr(length Length) MessageScrollerEl {
 	tStyledRoundedTr(e.n, length)
 	return e
 }
+
+// Sets the row end of this element.
 func (e MessageScrollerEl) RowEnd(end int16) MessageScrollerEl { tStyledRowEnd(e.n, end); return e }
+
+// Sets the row span of this element.
 func (e MessageScrollerEl) RowSpan(span uint16) MessageScrollerEl {
 	tStyledRowSpan(e.n, span)
 	return e
 }
+
+// Sets the row start of this element.
 func (e MessageScrollerEl) RowStart(start int16) MessageScrollerEl {
 	tStyledRowStart(e.n, start)
 	return e
 }
+
+// Set the space to be reserved for rendering the scrollbar.
+//
+// This will only affect the layout of the element when overflow for this element is set to
+// `Overflow::Scroll`.
 func (e MessageScrollerEl) ScrollbarWidth(width Length) MessageScrollerEl {
 	tStyledScrollbarWidth(e.n, width)
 	return e
 }
+
+// Sets the box shadow of the element. Docs (https://tailwindcss.com/docs/box-shadow)
 func (e MessageScrollerEl) Shadow(shadows []BoxShadow) MessageScrollerEl {
 	tStyledShadow(e.n, shadows)
 	return e
 }
+
+// Sets the width and height of the element.
 func (e MessageScrollerEl) Size(length Length) MessageScrollerEl { tStyledSize(e.n, length); return e }
+
+// Set the text alignment of the element.
 func (e MessageScrollerEl) TextAlign(align TextAlign) MessageScrollerEl {
 	tStyledTextAlign(e.n, align)
 	return e
 }
+
+// Sets the background color of this element.
+//
+// This value cascades to its child elements.
 func (e MessageScrollerEl) TextBg(bg Color) MessageScrollerEl { tStyledTextBg(e.n, bg); return e }
+
+// Sets the text color of this element.
+//
+// This value cascades to its child elements.
 func (e MessageScrollerEl) TextColor(color Color) MessageScrollerEl {
 	tStyledTextColor(e.n, color)
 	return e
 }
+
+// Sets the color for the underline on this element
 func (e MessageScrollerEl) TextDecorationColor(color Color) MessageScrollerEl {
 	tStyledTextDecorationColor(e.n, color)
 	return e
 }
+
+// Sets the text overflow behavior of the element.
 func (e MessageScrollerEl) TextOverflow(overflow TextOverflow) MessageScrollerEl {
 	tStyledTextOverflow(e.n, overflow)
 	return e
 }
+
+// Sets the text size of this element.
+//
+// This value cascades to its child elements.
 func (e MessageScrollerEl) TextSize(size Length) MessageScrollerEl {
 	tStyledTextSize(e.n, size)
 	return e
 }
+
+// Sets the top value of a positioned element. Docs
+// (https://tailwindcss.com/docs/top-right-bottom-left)
 func (e MessageScrollerEl) Top(length Length) MessageScrollerEl { tStyledTop(e.n, length); return e }
-func (e MessageScrollerEl) W(length Length) MessageScrollerEl   { tStyledW(e.n, length); return e }
+
+// Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
+func (e MessageScrollerEl) W(length Length) MessageScrollerEl { tStyledW(e.n, length); return e }
