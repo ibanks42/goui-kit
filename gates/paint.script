@@ -1,0 +1,7 @@
+# The paint app (gradient backgrounds, a plot of paths and quads; docs/PROTOCOLS.md 11.38, 12.17):
+# Rust (ref-paint --script), Odin and Go under the same script; gates/pixels.sh paint compares them.
+size 640 400
+frame
+frame
+shot 1-paint.png
+stat

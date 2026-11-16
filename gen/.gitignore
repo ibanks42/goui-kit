@@ -1,0 +1,5 @@
+out/bin/
+out/build.*
+out/rust-lines.json
+out/odin-lines.json
+__pycache__/

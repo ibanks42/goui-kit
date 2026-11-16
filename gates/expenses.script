@@ -1,0 +1,55 @@
+# The expenses example's scripted session (examples/odin/expenses against examples/go/expenses,
+# gates/go-apps.sh expenses): every image must be byte-identical between the two. Window
+# coordinates (the images are twice the size): What 146,92, Amount 430,92, the Category select
+# 714,92, Add expense 791,134 (lower once the fields show messages), the rows' delete buttons x 526.
+size 860 560
+frame
+frame
+advance 1000
+shot 01-start.png
+# Add with every field empty: three messages
+click 791 134
+advance 300
+shot 02-errors.png
+# typing in What clears its message
+click 146 92
+type Coffee
+advance 300
+shot 03-what-typed.png
+# an amount that is not a number
+click 430 92
+type abc
+advance 300
+shot 04-amount-bad.png
+key ctrl-a
+type 3.20
+advance 300
+shot 05-amount-ok.png
+click 714 92
+advance 300
+shot 06-select-open.png
+# the select's menu: Transport (626,164)
+click 626 164
+advance 300
+shot 07-category.png
+# Add: the fields clear, the list gets a row, the chart grows, a toast says so
+click 791 134
+advance 500
+shot 08-added.png
+# Enter in a field adds too: an amount of 0 is refused, then 9.90 goes in
+click 146 92
+type Lunch
+click 430 92
+type 0
+key enter
+advance 300
+shot 09-zero.png
+key ctrl-a
+type 9.90
+key enter
+advance 500
+shot 10-added-by-enter.png
+# the first row's delete button
+click 526 183
+advance 300
+shot 11-deleted.png

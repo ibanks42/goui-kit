@@ -1,0 +1,12 @@
+# The write-rule case: four frames, an image after each. Before every frame the app writes
+# "frame N" into the input; the input and the echo below it must show the same N.
+size 480 200
+frame
+shot 1.png
+frame
+shot 2.png
+frame
+shot 3.png
+frame
+shot 4.png
+stat

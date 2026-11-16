@@ -1,0 +1,12 @@
+# Build output
+/lib/
+/bin/
+/target/
+**/target/
+/dist/
+__pycache__/
+
+# Generator and gate output
+/gen-json/
+/gen/out/build.*/
+/gates/out/

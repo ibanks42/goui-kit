@@ -1,0 +1,23 @@
+{
+ "entries": {},
+ "rounds": [
+  {
+   "errors": 1,
+   "judge": "rust",
+   "moved": 1,
+   "unmapped": 0
+  },
+  {
+   "errors": 3,
+   "judge": "rust",
+   "moved": 3,
+   "unmapped": 0
+  },
+  {
+   "errors": 1,
+   "judge": "rust",
+   "moved": 1,
+   "unmapped": 0
+  }
+ ]
+}

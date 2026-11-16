@@ -1,0 +1,5 @@
+# actionlint (1.7.12 and older) does not know the GitHub-hosted label ubuntu-26.04 yet, which
+# actions/runner-images lists (Ubuntu 26.04, x64): declared here so the lint passes.
+self-hosted-runner:
+  labels:
+    - ubuntu-26.04

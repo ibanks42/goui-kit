@@ -1,0 +1,298 @@
+# The library and the download for Linux x86-64, macOS (universal: arm64 and x86_64) and Windows
+# x86-64, and the GitHub release apps download them from.
+#
+# Per platform, one path (tools/build-lib.sh: ship and diag, release): macOS and Windows
+# natively on the runner (macOS needs Xcode's SDK and Metal compiler, Windows needs MSVC and the
+# Windows SDK's fxc.exe, neither of which can be used off their own system; the Apple silicon
+# runner builds both macOS slices, aarch64-apple-darwin and x86_64-apple-darwin, and lipo joins
+# them into one universal libgpuikit.dylib); Linux linked by zig against glibc 2.28, so the
+# library loads on older distributions too (tools/zigbuild.sh holds the pinned zig,
+# cargo-zigbuild and link setup; the Rust of rust-toolchain.toml). Then the download
+# (tools/dist.sh), then what a newcomer does
+# first, from the unpacked download (tools/dist-test.sh): the hello example built in Odin and in
+# Go with the download's own build scripts and run offscreen against the diagnostic library
+# (30 frames; a screenshot on Linux, through wgpu on Mesa's lavapipe, and on macOS, where
+# gpui-fast has a Metal offscreen renderer; none on Windows, which has no offscreen renderer in
+# gpui-fast). On macOS also for the other architecture: x86_64 builds of hello in both languages,
+# run under Rosetta 2 when the runner has it, else built and linked only (the log says which).
+# Each platform's two archives are the artifact gpuikit-PLATFORM; the test output is
+# test-PLATFORM.
+#
+# Release: a pushed tag vVERSION (or a manual run with `release` set to VERSION) runs the job
+# `release` after all three platforms pass: tools/release-assets.sh checks the six archives'
+# names, that VERSION is the version tools/dist.sh wrote (Cargo.toml), that every VERSIONS states
+# the source's interface hash and the commit being released, and writes SHA256SUMS; then
+# `gh release create vVERSION` publishes the six archives and SHA256SUMS. A release that exists
+# already is never replaced.
+#
+# Needs no secrets: the Odin compiler is fetched from odin-lang/Odin's releases and the release
+# is made with the run's own token (contents: write in the release job only). Signing (Developer
+# ID on macOS, Azure Artifact Signing on Windows) is the app's release workflow's job, not this
+# one's.
+name: platforms
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Publish release vVERSION from this run: VERSION, as in Cargo.toml (empty: build only)'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: platforms-${{ github.ref }}-${{ github.event_name }}
+  # A newer push replaces a branch's run; a tag's run and a manual run (which may release) finish.
+  cancel-in-progress: ${{ github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/') || github.event_name == 'pull_request' }}
+
+env:
+  # Python reads and writes UTF-8 everywhere (Windows' default is cp1252, which
+  # cannot decode cargo metadata's crate descriptions).
+  PYTHONUTF8: '1'
+  # The Go and Odin releases the project is tested with (tools/install-odin.sh fetches the same Odin).
+  GO_VERSION: '1.27.3'
+  ODIN_RELEASE: dev-2026-11
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: '0'
+
+jobs:
+  download:
+    name: ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-26.04
+            platform: linux-x86_64
+            odin_asset: '*linux-amd64*'
+          - os: macos-latest          # Apple silicon; builds both slices of the universal library
+            platform: macos-universal
+            odin_asset: '*macos-arm64*'
+          - os: windows-latest
+            platform: windows-x86_64
+            odin_asset: '*windows-amd64*'
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      # What the link and the offscreen run need: the -dev packages of the system libraries the
+      # library links (tools/zigbuild.sh's link folder: freetype, fontconfig, xkbcommon,
+      # xkbcommon-x11, xcb) and the others a build script could look for; Mesa's Vulkan (lavapipe) and EGL for wgpu without a GPU; clang,
+      # which Odin links with.
+      - name: Linux packages
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends \
+            pkg-config libfreetype-dev libfontconfig-dev libxkbcommon-dev libxkbcommon-x11-dev \
+            libxcb1-dev libxcb-xkb-dev libx11-dev libwayland-dev \
+            mesa-vulkan-drivers libvulkan1 libegl1 libegl-mesa0 clang zstd binutils
+
+      # The pinned zig and cargo-zigbuild (versions and sha256 in tools/zigbuild.sh), kept between
+      # runs so ziglang.org is not asked every time.
+      - name: Cache zig and cargo-zigbuild
+        if: runner.os == 'Linux'
+        uses: actions/cache@v6.1.0
+        with:
+          path: ${{ runner.temp }}/zigbuild-tools
+          key: zigbuild-tools-${{ hashFiles('tools/zigbuild.sh') }}
+
+      - name: zig and cargo-zigbuild
+        if: runner.os == 'Linux'
+        run: |
+          dir=$RUNNER_TEMP/zigbuild-tools
+          zig=$(tools/zigbuild.sh fetch-zig "$dir")
+          bin=$(tools/zigbuild.sh fetch-cargo-zigbuild "$dir/bin")
+          echo "GK_ZIG=$zig" >> "$GITHUB_ENV"
+          echo "$bin" >> "$GITHUB_PATH"
+
+      # Go's cgo on Windows needs MinGW-w64 gcc, and tools/win-implib.sh a dlltool. The image's own
+      # MinGW is used when it has both; otherwise MSYS2's (preinstalled on the image) provides them.
+      - name: MinGW-w64 gcc and dlltool
+        if: runner.os == 'Windows'
+        run: |
+          if ! command -v gcc > /dev/null || ! command -v dlltool > /dev/null; then
+            C:/msys64/usr/bin/bash.exe -lc 'pacman -S --noconfirm --needed mingw-w64-ucrt-x86_64-gcc'
+            printf '%s\n' 'C:\msys64\ucrt64\bin' >> "$GITHUB_PATH"
+          fi
+
+      # gpui-fast-apple compiles its shaders with xcrun metal; newer Xcodes ship the Metal
+      # toolchain as a separate download.
+      - name: Metal toolchain
+        if: runner.os == 'macOS'
+        run: |
+          xcrun -f metal > /dev/null 2>&1 || xcodebuild -downloadComponent MetalToolchain
+          xcrun -f metal
+
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: |
+          channel=$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)
+          rustup toolchain install "$channel" --profile minimal
+          # macOS: the standard library of both slices (tools/build-lib.sh's GK_MAC_TARGETS).
+          if [ "$RUNNER_OS" = macOS ]; then
+            rustup target add --toolchain "$channel" aarch64-apple-darwin x86_64-apple-darwin
+          fi
+          rustc -vV
+
+      # Rosetta 2, so tools/dist-test.sh can run the x86_64 hello on the Apple silicon runner. Not
+      # every image has it, and installing may be refused: then the x86_64 builds are linked
+      # against the universal library but not run, which dist-test's log says.
+      - name: Rosetta 2
+        if: runner.os == 'macOS'
+        # A hung install costs only the x86_64 run, not the job.
+        timeout-minutes: 10
+        continue-on-error: true
+        run: |
+          if /usr/bin/arch -x86_64 /usr/bin/true 2> /dev/null; then
+            echo "Rosetta 2 is installed"
+          elif sudo softwareupdate --install-rosetta --agree-to-license && /usr/bin/arch -x86_64 /usr/bin/true; then
+            echo "Rosetta 2 installed"
+          else
+            echo "::warning::no Rosetta 2 on this runner: the x86_64 hello is built and linked, not run"
+          fi
+
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0
+        with:
+          shared-key: lib-${{ matrix.platform }}
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Library (ship and diag) and its licences
+        # Linux: linked against glibc 2.28 (GK_TARGET), so it loads on older distributions too.
+        run: |
+          [ "$RUNNER_OS" != Linux ] || export GK_TARGET=x86_64-unknown-linux-gnu.2.28
+          tools/build-lib.sh ship diag
+
+      - uses: actions/setup-go@v6.0.0
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
+
+      - name: Odin compiler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          dir=$RUNNER_TEMP/odin; mkdir -p "$dir"; cd "$dir"
+          gh release download "$ODIN_RELEASE" --repo odin-lang/Odin --pattern '${{ matrix.odin_asset }}'
+          # Some releases wrap the tarball in a zip: unpack until the compiler is there.
+          for _ in 1 2; do
+            for a in *.zip *.tar.gz; do
+              [ -f "$a" ] || continue
+              case $a in *.zip) unzip -q -o "$a" ;; *) tar xzf "$a" ;; esac
+              rm -f "$a"
+            done
+          done
+          odin=$(find "$dir" -type f \( -name odin -o -name odin.exe \) | head -1)
+          [ -n "$odin" ] || { echo "no odin binary in $(find "$dir" | head -40)"; exit 1; }
+          chmod +x "$odin"
+          if ! "$odin" version; then
+            # A macOS build linked against Homebrew's LLVM names the version it needs.
+            need=$(otool -L "$odin" 2>/dev/null | grep -o 'llvm@[0-9]*' | head -1)
+            [ -n "$need" ] && brew install "$need" && "$odin" version
+          fi
+          bindir=$(dirname "$odin")
+          if [ "$RUNNER_OS" = Windows ]; then bindir=$(cygpath -w "$bindir"); odin=$(cygpath -m "$odin"); fi
+          echo "$bindir" >> "$GITHUB_PATH"
+          echo "ODIN=$odin" >> "$GITHUB_ENV"
+
+      - name: Download (tools/dist.sh)
+        run: |
+          GK_PLATFORM=${{ matrix.platform }} tools/dist.sh
+          cat dist/gpuikit-*-${{ matrix.platform }}/VERSIONS
+
+      - name: Hello in Odin and Go, offscreen, from the download
+        run: |
+          ver=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
+          tools/dist-test.sh "dist/gpuikit-$ver-${{ matrix.platform }}"
+
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: gpuikit-${{ matrix.platform }}
+          path: |
+            dist/*.tar.zst
+            dist/*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: test-${{ matrix.platform }}
+          path: dist/test-*/
+          if-no-files-found: warn
+          retention-days: 30
+
+  release:
+    name: release
+    needs: download
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release != '')
+    runs-on: ubuntu-26.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      # From the tag (vVERSION), or the manual run's input. On a manual run the tag is made by
+      # the release, on this run's commit; a tag that exists already must name that commit.
+      - name: Version
+        env:
+          INPUT: ${{ inputs.release }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$GITHUB_REF_TYPE" = tag ]; then ver=${GITHUB_REF_NAME#v}; else ver=$INPUT; fi
+          [[ $ver =~ ^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$ ]] || { echo "release: '$ver' is not a version"; exit 1; }
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ -n "$INPUT" ] && [ "$INPUT" != "$ver" ]; then
+            echo "release: run on tag $GITHUB_REF_NAME with release=$INPUT"; exit 1
+          fi
+          # An API error stops here; only an empty answer means there is no such tag yet.
+          refs=$(gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/v$ver" --jq '.[].ref')
+          if printf '%s\n' "$refs" | grep -qx "refs/tags/v$ver"; then
+            at=$(gh api "repos/$GITHUB_REPOSITORY/commits/v$ver" --jq .sha)
+            [ "$at" = "$GITHUB_SHA" ] || { echo "release: tag v$ver names $at, this run built $GITHUB_SHA"; exit 1; }
+          fi
+          echo "VERSION=$ver" >> "$GITHUB_ENV"
+
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          pattern: gpuikit-*
+          path: release
+          merge-multiple: true
+
+      - name: Check the six archives, write SHA256SUMS
+        run: tools/release-assets.sh "$VERSION" release "$GITHUB_SHA"
+
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          hash=$(grep -m1 API_HASH odin/gk/ops.odin | grep -o '0x[0-9a-f]*')
+          {
+            echo "gpuikit $VERSION: the prebuilt library, the Odin package, the Go module, examples and guides,"
+            echo "for Linux x86-64 (glibc 2.28 or newer), macOS 11.0 or newer (universal: Apple silicon and Intel)"
+            echo "and Windows x86-64."
+            echo
+            echo "Built from $GITHUB_SHA by $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID;"
+            echo "interface hash $hash. Each -diag archive is the optional diagnostic library (offscreen"
+            echo "rendering and scripted input, for tests). SHA256SUMS lists every file's sha256."
+          } > notes.md
+          pre=(); case $VERSION in *-*) pre=(--prerelease) ;; esac   # 0.1.0-rc.1: not marked latest
+          gh release create "v$VERSION" release/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "gpuikit $VERSION" --notes-file notes.md "${pre[@]}"

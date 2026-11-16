@@ -1,0 +1,4723 @@
+{
+ "components": {
+  "gpui_kit [gpui functions]": {
+   "done": 3,
+   "failed": 0,
+   "group": "gpui",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::Div [gpui::Div]": {
+   "done": 3,
+   "failed": 0,
+   "group": "gpui",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::Img [gpui::Img]": {
+   "done": 2,
+   "failed": 0,
+   "group": "gpui",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::InteractiveElement [gpui::InteractiveElement]": {
+   "done": 44,
+   "failed": 0,
+   "group": "gpui",
+   "total": 47,
+   "verified": 13
+  },
+  "gpui_kit::ParentElement [gpui::ParentElement]": {
+   "done": 2,
+   "failed": 0,
+   "group": "gpui",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::StatefulInteractiveElement [gpui::StatefulInteractiveElement]": {
+   "done": 40,
+   "failed": 0,
+   "group": "gpui",
+   "total": 43,
+   "verified": 32
+  },
+  "gpui_kit::StyleRefinement [gpui::StyleRefinement]": {
+   "done": 0,
+   "failed": 0,
+   "group": "gpui",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::Styled [Styled (nullary methods, as style tokens)]": {
+   "done": 3130,
+   "failed": 0,
+   "group": "style",
+   "total": 3130,
+   "verified": 11
+  },
+  "gpui_kit::Styled [gpui::Styled (methods with arguments)]": {
+   "done": 81,
+   "failed": 0,
+   "group": "gpui",
+   "total": 85,
+   "verified": 76
+  },
+  "gpui_kit::Svg [gpui::Svg]": {
+   "done": 4,
+   "failed": 0,
+   "group": "gpui",
+   "total": 4,
+   "verified": 2
+  },
+  "gpui_kit::base::(root) [base::(root) functions]": {
+   "done": 19,
+   "failed": 0,
+   "group": "function",
+   "total": 24,
+   "verified": 9
+  },
+  "gpui_kit::base::Accordion [base::Accordion]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::AccordionHeader [base::AccordionHeader]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::AccordionItem [base::AccordionItem]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 3
+  },
+  "gpui_kit::base::AccordionPanel [base::AccordionPanel]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 4
+  },
+  "gpui_kit::base::AccordionTrigger [base::AccordionTrigger]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 3
+  },
+  "gpui_kit::base::AlertDialog [base::AlertDialog]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 0
+  },
+  "gpui_kit::base::AlertDialogAction [base::AlertDialogAction]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::AlertDialogBackdrop [base::AlertDialogBackdrop]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::AlertDialogCancel [base::AlertDialogCancel]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::AlertDialogClose [base::AlertDialogClose]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::AlertDialogDescription [base::AlertDialogDescription]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::AlertDialogPopup [base::AlertDialogPopup]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::AlertDialogTitle [base::AlertDialogTitle]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::AlertDialogTrigger [base::AlertDialogTrigger]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::base::AutoScroll [base::AutoScroll]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::Avatar [base::Avatar]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::base::AvatarFallback [base::AvatarFallback]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::AvatarImage [base::AvatarImage]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::AxisExt [base::AxisExt]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Button [base::Button]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 7
+  },
+  "gpui_kit::base::ButtonStyles [base::ButtonStyles]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Calendar [base::Calendar]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::CalendarItem [base::CalendarItem]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::CalendarItemState [base::CalendarItemState]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 12,
+   "verified": 0
+  },
+  "gpui_kit::base::CalendarState [base::CalendarState]": {
+   "done": 30,
+   "failed": 0,
+   "group": "state",
+   "total": 31,
+   "verified": 3
+  },
+  "gpui_kit::base::CalendarView [base::CalendarView]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::Checkbox [base::Checkbox]": {
+   "done": 12,
+   "failed": 0,
+   "group": "component",
+   "total": 12,
+   "verified": 8
+  },
+  "gpui_kit::base::CheckboxIndicator [base::CheckboxIndicator]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 4
+  },
+  "gpui_kit::base::CheckboxIndicatorStyles [base::CheckboxIndicatorStyles]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::CheckboxStyles [base::CheckboxStyles]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::Collapsible [base::Collapsible]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 4
+  },
+  "gpui_kit::base::ColorPicker [base::ColorPicker]": {
+   "done": 7,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 4
+  },
+  "gpui_kit::base::ColorPickerState [base::ColorPickerState]": {
+   "done": 21,
+   "failed": 0,
+   "group": "state",
+   "total": 21,
+   "verified": 0
+  },
+  "gpui_kit::base::ColorSwatch [base::ColorSwatch]": {
+   "done": 9,
+   "failed": 0,
+   "group": "component",
+   "total": 10,
+   "verified": 6
+  },
+  "gpui_kit::base::ColorTokens [base::ColorTokens]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Combobox [base::Combobox]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 3
+  },
+  "gpui_kit::base::Date [base::Date]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::base::DatePicker [base::DatePicker]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::Dialog [base::Dialog]": {
+   "done": 13,
+   "failed": 0,
+   "group": "component",
+   "total": 13,
+   "verified": 0
+  },
+  "gpui_kit::base::DialogBackdrop [base::DialogBackdrop]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::DialogClose [base::DialogClose]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::base::DialogDescription [base::DialogDescription]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::DialogHandle [base::DialogHandle]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::DialogPopup [base::DialogPopup]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::DialogTitle [base::DialogTitle]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::DialogTrigger [base::DialogTrigger]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::base::Disableable [base::Disableable]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::Discrete [base::Discrete]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::Easing [base::Easing]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::Edges [base::Edges]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::Editor [base::Editor]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::ElementExt [base::ElementExt]": {
+   "done": 2,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::base::FocusTrapElement [base::FocusTrapElement]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::FocusableExt [base::FocusableExt]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::base::GlobalState [base::GlobalState]": {
+   "done": 8,
+   "failed": 0,
+   "group": "state",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::base::GridArea [base::GridArea]": {
+   "done": 8,
+   "failed": 0,
+   "group": "builder",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::base::GridItem [base::GridItem]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::GridLayout [base::GridLayout]": {
+   "done": 12,
+   "failed": 0,
+   "group": "component",
+   "total": 12,
+   "verified": 0
+  },
+  "gpui_kit::base::GridLayoutState [base::GridLayoutState]": {
+   "done": 25,
+   "failed": 0,
+   "group": "state",
+   "total": 25,
+   "verified": 0
+  },
+  "gpui_kit::base::History [base::History]": {
+   "done": 14,
+   "failed": 0,
+   "group": "state",
+   "total": 14,
+   "verified": 0
+  },
+  "gpui_kit::base::HorizontalScrollClaim [base::HorizontalScrollClaim]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::HoverCard [base::HoverCard]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 5
+  },
+  "gpui_kit::base::HoverCardState [base::HoverCardState]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::HslaSliders [base::HslaSliders]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::IndexPath [base::IndexPath]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::InlineElement [base::InlineElement]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::InlineRenderContext [base::InlineRenderContext]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::Input [base::Input]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::InputBase [base::InputBase]": {
+   "done": 7,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 4
+  },
+  "gpui_kit::base::InputStyles [base::InputStyles]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::InteractiveElementExt [base::InteractiveElementExt]": {
+   "done": 2,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Interpolate [base::Interpolate]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::Keyframe [base::Keyframe]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Keyframes [base::Keyframes]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::LengthExt [base::LengthExt]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::LinearStop [base::LinearStop]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Link [base::Link]": {
+   "done": 9,
+   "failed": 0,
+   "group": "component",
+   "total": 9,
+   "verified": 6
+  },
+  "gpui_kit::base::LinkStyles [base::LinkStyles]": {
+   "done": 1,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::MarkdownExtensions [base::MarkdownExtensions]": {
+   "done": 6,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 2
+  },
+  "gpui_kit::base::MarkdownNode [base::MarkdownNode]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 10,
+   "verified": 0
+  },
+  "gpui_kit::base::MarkdownParseContext [base::MarkdownParseContext]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::MarkdownPlugin [base::MarkdownPlugin]": {
+   "done": 5,
+   "failed": 0,
+   "group": "trait",
+   "total": 5,
+   "verified": 5
+  },
+  "gpui_kit::base::Matcher [base::Matcher]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::Measure [base::Measure]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::MotionReveal [base::MotionReveal]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::MotionTransform [base::MotionTransform]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::NavPage [base::NavPage]": {
+   "done": 0,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::NavStack [base::NavStack]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::NavStackState [base::NavStackState]": {
+   "done": 12,
+   "failed": 0,
+   "group": "state",
+   "total": 12,
+   "verified": 0
+  },
+  "gpui_kit::base::NumberInput [base::NumberInput]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::base::NumberInputText [base::NumberInputText]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::NumberStep [base::NumberStep]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::OngoingScrollExt [base::OngoingScrollExt]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::OtpInput [base::OtpInput]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::OtpState [base::OtpState]": {
+   "done": 11,
+   "failed": 0,
+   "group": "state",
+   "total": 11,
+   "verified": 1
+  },
+  "gpui_kit::base::Pagination [base::Pagination]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::PaginationState [base::PaginationState]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 12,
+   "verified": 0
+  },
+  "gpui_kit::base::Placement [base::Placement]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::PlotMotion [base::PlotMotion]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::base::PlotTheme [base::PlotTheme]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::Popover [base::Popover]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 12,
+   "verified": 6
+  },
+  "gpui_kit::base::PopoverState [base::PopoverState]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::Popup [base::Popup]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 4
+  },
+  "gpui_kit::base::Positioner [base::Positioner]": {
+   "done": 9,
+   "failed": 0,
+   "group": "component",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::base::Presence [base::Presence]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::base::PresenceSample [base::PresenceSample]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::Progress [base::Progress]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 4
+  },
+  "gpui_kit::base::ProgressIndicator [base::ProgressIndicator]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::ProgressTrack [base::ProgressTrack]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::Radio [base::Radio]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 8
+  },
+  "gpui_kit::base::RadioGroup [base::RadioGroup]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::base::RadioStyles [base::RadioStyles]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::RangeHighlight [base::RangeHighlight]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::RenderedText [base::RenderedText]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::ResizablePanel [base::ResizablePanel]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 1
+  },
+  "gpui_kit::base::ResizablePanelGroup [base::ResizablePanelGroup]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 5
+  },
+  "gpui_kit::base::ResizableState [base::ResizableState]": {
+   "done": 7,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::base::ResizeHandle [base::ResizeHandle]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::base::ResizeHandleContext [base::ResizeHandleContext]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 1
+  },
+  "gpui_kit::base::ResizeHandleState [base::ResizeHandleState]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::RoleOverride [base::RoleOverride]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::Root [base::Root]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::RootPlugin [base::RootPlugin]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::RoundedFrameCover [base::RoundedFrameCover]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::base::ScrollBounce [base::ScrollBounce]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::ScrollBounceMotion [base::ScrollBounceMotion]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::ScrollableMask [base::ScrollableMask]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::Scrollbar [base::Scrollbar]": {
+   "done": 10,
+   "failed": 0,
+   "group": "component",
+   "total": 10,
+   "verified": 1
+  },
+  "gpui_kit::base::ScrollbarAxis [base::ScrollbarAxis]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::ScrollbarHandle [base::ScrollbarHandle]": {
+   "done": 6,
+   "failed": 0,
+   "group": "trait",
+   "total": 6,
+   "verified": 1
+  },
+  "gpui_kit::base::ScrollbarMotion [base::ScrollbarMotion]": {
+   "done": 6,
+   "failed": 0,
+   "group": "builder",
+   "total": 12,
+   "verified": 0
+  },
+  "gpui_kit::base::ScrollbarStyles [base::ScrollbarStyles]": {
+   "done": 6,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::ScrollbarTheme [base::ScrollbarTheme]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::base::ScrollbarThumbStyle [base::ScrollbarThumbStyle]": {
+   "done": 5,
+   "failed": 0,
+   "group": "builder",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::ScrollbarTrackStyle [base::ScrollbarTrackStyle]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::Select [base::Select]": {
+   "done": 10,
+   "failed": 0,
+   "group": "component",
+   "total": 10,
+   "verified": 5
+  },
+  "gpui_kit::base::Selectable [base::Selectable]": {
+   "done": 3,
+   "failed": 0,
+   "group": "trait",
+   "total": 5,
+   "verified": 3
+  },
+  "gpui_kit::base::SelectableText [base::SelectableText]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 3
+  },
+  "gpui_kit::base::SelectionEdge [base::SelectionEdge]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::Sequence [base::Sequence]": {
+   "done": 6,
+   "failed": 0,
+   "group": "state",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::SequenceSample [base::SequenceSample]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::SequenceStep [base::SequenceStep]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::ShadowTokens [base::ShadowTokens]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::Sheet [base::Sheet]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::Side [base::Side]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::SignedDuration [base::SignedDuration]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Slider [base::Slider]": {
+   "done": 7,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::base::SliderIndicator [base::SliderIndicator]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::SliderThumb [base::SliderThumb]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::SliderTrack [base::SliderTrack]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::Spring [base::Spring]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 2
+  },
+  "gpui_kit::base::Stagger [base::Stagger]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::StyledExt [base::StyledExt]": {
+   "done": 21,
+   "failed": 0,
+   "group": "trait",
+   "total": 21,
+   "verified": 16
+  },
+  "gpui_kit::base::Switch [base::Switch]": {
+   "done": 9,
+   "failed": 0,
+   "group": "component",
+   "total": 9,
+   "verified": 6
+  },
+  "gpui_kit::base::SwitchStyles [base::SwitchStyles]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::SwitchThumb [base::SwitchThumb]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::base::SwitchThumbStyles [base::SwitchThumbStyles]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::SwitchTrack [base::SwitchTrack]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 3
+  },
+  "gpui_kit::base::SwitchTrackStyles [base::SwitchTrackStyles]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Tab [base::Tab]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 6
+  },
+  "gpui_kit::base::TabStyles [base::TabStyles]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Table [base::Table]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 4
+  },
+  "gpui_kit::base::TableBody [base::TableBody]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::TableCaption [base::TableCaption]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::TableCell [base::TableCell]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::TableHead [base::TableHead]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::TableHeader [base::TableHeader]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::TableRow [base::TableRow]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::Tabs [base::Tabs]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::TaskToggleEvent [base::TaskToggleEvent]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::TestSupportExt [base::TestSupportExt]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::TestTextExt [base::TestTextExt]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Text [base::Text]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::TextSelection [base::TextSelection]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 15,
+   "verified": 0
+  },
+  "gpui_kit::base::TextSelectionContentKey [base::TextSelectionContentKey]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::TextSelectionEndpoint [base::TextSelectionEndpoint]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::TextSelectionHandle [base::TextSelectionHandle]": {
+   "done": 6,
+   "failed": 0,
+   "group": "state",
+   "total": 16,
+   "verified": 0
+  },
+  "gpui_kit::base::TextSelectionProjection [base::TextSelectionProjection]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::TextSelectionRegistration [base::TextSelectionRegistration]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 14,
+   "verified": 0
+  },
+  "gpui_kit::base::TextSelectionRun [base::TextSelectionRun]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::TextSelectionScopeId [base::TextSelectionScopeId]": {
+   "done": 1,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::TextSelectionSnapshot [base::TextSelectionSnapshot]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::TextSelectionWindowPoints [base::TextSelectionWindowPoints]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::TextView [base::TextView]": {
+   "done": 24,
+   "failed": 0,
+   "group": "component",
+   "total": 25,
+   "verified": 10
+  },
+  "gpui_kit::base::TextViewDefaults [base::TextViewDefaults]": {
+   "done": 8,
+   "failed": 0,
+   "group": "state",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::base::TextViewMotion [base::TextViewMotion]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::TextViewPlugin [base::TextViewPlugin]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::TextViewState [base::TextViewState]": {
+   "done": 22,
+   "failed": 0,
+   "group": "state",
+   "total": 22,
+   "verified": 0
+  },
+  "gpui_kit::base::TextViewStyle [base::TextViewStyle]": {
+   "done": 19,
+   "failed": 0,
+   "group": "builder",
+   "total": 37,
+   "verified": 1
+  },
+  "gpui_kit::base::Textarea [base::Textarea]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::Theme [base::Theme]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::TimeField [base::TimeField]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::TimeFieldSegment [base::TimeFieldSegment]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::TimeFieldSegmentState [base::TimeFieldSegmentState]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::TimeFieldState [base::TimeFieldState]": {
+   "done": 9,
+   "failed": 0,
+   "group": "state",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::base::TimePrecision [base::TimePrecision]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Timing [base::Timing]": {
+   "done": 6,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 1
+  },
+  "gpui_kit::base::Toast [base::Toast]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::base::ToastManager [base::ToastManager]": {
+   "done": 10,
+   "failed": 0,
+   "group": "state",
+   "total": 10,
+   "verified": 0
+  },
+  "gpui_kit::base::ToastMotion [base::ToastMotion]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::ToastStack [base::ToastStack]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::ToastStackState [base::ToastStackState]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::Toggle [base::Toggle]": {
+   "done": 9,
+   "failed": 0,
+   "group": "component",
+   "total": 9,
+   "verified": 6
+  },
+  "gpui_kit::base::ToggleGroup [base::ToggleGroup]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::base::ToggleStyles [base::ToggleStyles]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::Toolbar [base::Toolbar]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::base::ToolbarGroup [base::ToolbarGroup]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::base::Tooltip [base::Tooltip]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::TooltipDefaults [base::TooltipDefaults]": {
+   "done": 7,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::base::TooltipOverlay [base::TooltipOverlay]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::TooltipPositioner [base::TooltipPositioner]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::TooltipRequest [base::TooltipRequest]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::TouchHandle [base::TouchHandle]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::TouchSelectionSnapshot [base::TouchSelectionSnapshot]": {
+   "done": 8,
+   "failed": 0,
+   "group": "state",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::base::Transition [base::Transition]": {
+   "done": 5,
+   "failed": 0,
+   "group": "builder",
+   "total": 5,
+   "verified": 1
+  },
+  "gpui_kit::base::TransitionState [base::TransitionState]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::Tree [base::Tree]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::TreeEntry [base::TreeEntry]": {
+   "done": 7,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::base::TreeEntryState [base::TreeEntryState]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::TreeItem [base::TreeItem]": {
+   "done": 5,
+   "failed": 0,
+   "group": "builder",
+   "total": 9,
+   "verified": 3
+  },
+  "gpui_kit::base::TreeState [base::TreeState]": {
+   "done": 14,
+   "failed": 0,
+   "group": "state",
+   "total": 14,
+   "verified": 2
+  },
+  "gpui_kit::base::UndoHistory [base::UndoHistory]": {
+   "done": 13,
+   "failed": 0,
+   "group": "state",
+   "total": 13,
+   "verified": 0
+  },
+  "gpui_kit::base::VirtualList [base::VirtualList]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::VirtualListScrollHandle [base::VirtualListScrollHandle]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::animation [base::animation functions]": {
+   "done": 4,
+   "failed": 0,
+   "group": "function",
+   "total": 4,
+   "verified": 1
+  },
+  "gpui_kit::base::animation::EffectTransition [base::EffectTransition]": {
+   "done": 8,
+   "failed": 0,
+   "group": "builder",
+   "total": 8,
+   "verified": 5
+  },
+  "gpui_kit::base::animation::Lerp [base::Lerp]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::component_traits::Collapsible [base::Collapsible]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::base::dock [base::dock functions]": {
+   "done": 1,
+   "failed": 0,
+   "group": "function",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::AnyDrag [base::AnyDrag]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::Dock [base::Dock]": {
+   "done": 9,
+   "failed": 0,
+   "group": "state",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::DockArea [base::DockArea]": {
+   "done": 34,
+   "failed": 0,
+   "group": "state",
+   "total": 34,
+   "verified": 6
+  },
+  "gpui_kit::base::dock::DockAreaRenderer [base::DockAreaRenderer]": {
+   "done": 7,
+   "failed": 0,
+   "group": "trait",
+   "total": 7,
+   "verified": 3
+  },
+  "gpui_kit::base::dock::DockContext [base::DockContext]": {
+   "done": 7,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 2
+  },
+  "gpui_kit::base::dock::DockLayout [base::DockLayout]": {
+   "done": 7,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 2
+  },
+  "gpui_kit::base::dock::DockPlacement [base::DockPlacement]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::DockSizing [base::DockSizing]": {
+   "done": 7,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::DockState [base::DockState]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::DragPanel [base::DragPanel]": {
+   "done": 8,
+   "failed": 0,
+   "group": "state",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::DropIndicator [base::DropIndicator]": {
+   "done": 6,
+   "failed": 0,
+   "group": "state",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::DropPlaceholderBounds [base::DropPlaceholderBounds]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::DropTarget [base::DropTarget]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::EditResult [base::EditResult]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::NodeId [base::NodeId]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::PaneNode [base::PaneNode]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::PaneTree [base::PaneTree]": {
+   "done": 17,
+   "failed": 0,
+   "group": "state",
+   "total": 17,
+   "verified": 1
+  },
+  "gpui_kit::base::dock::Panel [base::Panel]": {
+   "done": 9,
+   "failed": 0,
+   "group": "trait",
+   "total": 9,
+   "verified": 1
+  },
+  "gpui_kit::base::dock::PanelBuildContext [base::PanelBuildContext]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::PanelBuilder [base::PanelBuilder]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::dock::PanelId [base::PanelId]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::PanelInfo [base::PanelInfo]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::PanelRegistry [base::PanelRegistry]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 1
+  },
+  "gpui_kit::base::dock::PanelSource [base::PanelSource]": {
+   "done": 3,
+   "failed": 0,
+   "group": "trait",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::PanelState [base::PanelState]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::PanelView [base::PanelView]": {
+   "done": 13,
+   "failed": 0,
+   "group": "trait",
+   "total": 13,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::TabGroup [base::TabGroup]": {
+   "done": 12,
+   "failed": 0,
+   "group": "state",
+   "total": 12,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::TabGroupConstraints [base::TabGroupConstraints]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::TabGroupContext [base::TabGroupContext]": {
+   "done": 18,
+   "failed": 0,
+   "group": "state",
+   "total": 18,
+   "verified": 0
+  },
+  "gpui_kit::base::dock::TabGroupRenderer [base::TabGroupRenderer]": {
+   "done": 6,
+   "failed": 0,
+   "group": "trait",
+   "total": 6,
+   "verified": 1
+  },
+  "gpui_kit::base::input [base::input functions]": {
+   "done": 5,
+   "failed": 0,
+   "group": "function",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::input::AutoClosingPair [base::AutoClosingPair]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::input::BracketPair [base::BracketPair]": {
+   "done": 1,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::BufferPoint [base::BufferPoint]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::CodeActionMenuState [base::CodeActionMenuState]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::CodeActionProvider [base::CodeActionProvider]": {
+   "done": 3,
+   "failed": 0,
+   "group": "trait",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::input::CompletionMenuState [base::CompletionMenuState]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::CompletionProvider [base::CompletionProvider]": {
+   "done": 5,
+   "failed": 0,
+   "group": "trait",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::input::CursorBlink [base::CursorBlink]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::input::DefinitionProvider [base::DefinitionProvider]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::Diagnostic [base::Diagnostic]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 4,
+   "verified": 1
+  },
+  "gpui_kit::base::input::DiagnosticSet [base::DiagnosticSet]": {
+   "done": 8,
+   "failed": 0,
+   "group": "state",
+   "total": 10,
+   "verified": 1
+  },
+  "gpui_kit::base::input::DisplayMap [base::DisplayMap]": {
+   "done": 25,
+   "failed": 0,
+   "group": "state",
+   "total": 30,
+   "verified": 0
+  },
+  "gpui_kit::base::input::DisplayPoint [base::DisplayPoint]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::DocumentColorProvider [base::DocumentColorProvider]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::DocumentRangeSemanticTokensProvider [base::DocumentRangeSemanticTokensProvider]": {
+   "done": 2,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::input::EditorScrollbarContext [base::EditorScrollbarContext]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::input::Enter [base::Enter]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::FoldRange [base::FoldRange]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::GutterDecoration [base::GutterDecoration]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::input::GutterDecorationCollection [base::GutterDecorationCollection]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::input::HighlightStyleResolver [base::HighlightStyleResolver]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::HoverProvider [base::HoverProvider]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::IndentationRules [base::IndentationRules]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InlineToken [base::InlineToken]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 5,
+   "verified": 2
+  },
+  "gpui_kit::base::input::InlineTokenClickEvent [base::InlineTokenClickEvent]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InlineTokenContext [base::InlineTokenContext]": {
+   "done": 7,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 4
+  },
+  "gpui_kit::base::input::InlineTokenHoverEvent [base::InlineTokenHoverEvent]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InlineTokenSpan [base::InlineTokenSpan]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InputAccessibility [base::InputAccessibility]": {
+   "done": 5,
+   "failed": 0,
+   "group": "builder",
+   "total": 10,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InputBaseState [base::InputBaseState]": {
+   "done": 149,
+   "failed": 0,
+   "group": "state",
+   "total": 155,
+   "verified": 18
+  },
+  "gpui_kit::base::input::InputContent [base::InputContent]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InputContextMenuCapabilities [base::InputContextMenuCapabilities]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 17,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InputEditorStyle [base::InputEditorStyle]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InputEditsEvent [base::InputEditsEvent]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InputExtras [base::InputExtras]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 11,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InputHighlighter [base::InputHighlighter]": {
+   "done": 6,
+   "failed": 0,
+   "group": "trait",
+   "total": 6,
+   "verified": 3
+  },
+  "gpui_kit::base::input::InputModeKind [base::InputModeKind]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 21,
+   "verified": 0
+  },
+  "gpui_kit::base::input::InputPresentation [base::InputPresentation]": {
+   "done": 11,
+   "failed": 0,
+   "group": "state",
+   "total": 11,
+   "verified": 0
+  },
+  "gpui_kit::base::input::LanguageProvider [base::LanguageProvider]": {
+   "done": 3,
+   "failed": 0,
+   "group": "trait",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::input::Lsp [base::Lsp]": {
+   "done": 1,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::input::MaskPattern [base::MaskPattern]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::base::input::NativeMenu [base::NativeMenu]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::input::OverviewRulerDecoration [base::OverviewRulerDecoration]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::input::OverviewRulerDecorationCollection [base::OverviewRulerDecorationCollection]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::input::Point [base::Point]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::RangeDecoration [base::RangeDecoration]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::input::RangeDecorationCollection [base::RangeDecorationCollection]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::input::RopeExt [base::RopeExt]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 20,
+   "verified": 0
+  },
+  "gpui_kit::base::input::RopeLines [base::RopeLines]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::SearchMatcher [base::SearchMatcher]": {
+   "done": 9,
+   "failed": 0,
+   "group": "state",
+   "total": 10,
+   "verified": 0
+  },
+  "gpui_kit::base::input::SearchSession [base::SearchSession]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::Selection [base::Selection]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::input::SyntaxContextProvider [base::SyntaxContextProvider]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::TabSize [base::TabSize]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::TextDecoration [base::TextDecoration]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::input::TextDecorationCollection [base::TextDecorationCollection]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::input::language_config::LanguageConfig [base::LanguageConfig]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::plot [base::plot functions]": {
+   "done": 4,
+   "failed": 0,
+   "group": "function",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::AxisText [base::AxisText]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::base::plot::Grid [base::Grid]": {
+   "done": 6,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 5
+  },
+  "gpui_kit::base::plot::PathCache [base::PathCache]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::PathCaches [base::PathCaches]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::Plot [base::Plot]": {
+   "done": 4,
+   "failed": 0,
+   "group": "trait",
+   "total": 9,
+   "verified": 1
+  },
+  "gpui_kit::base::plot::PlotAppear [base::PlotAppear]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::PlotAppearScope [base::PlotAppearScope]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::plot::PlotAxis [base::PlotAxis]": {
+   "done": 11,
+   "failed": 0,
+   "group": "builder",
+   "total": 11,
+   "verified": 5
+  },
+  "gpui_kit::base::plot::PlotElement [base::PlotElement]": {
+   "done": 0,
+   "failed": 0,
+   "group": "generic",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::PlotHover [base::PlotHover]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::PlotLabel [base::PlotLabel]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::ShapeKey [base::ShapeKey]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::TooltipState [base::TooltipState]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::label::Text [base::Text]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::scale::Scale [base::Scale]": {
+   "done": 2,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::base::plot::scale::ScaleBand [base::ScaleBand]": {
+   "done": 7,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::scale::ScaleLinear [base::ScaleLinear]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::scale::ScaleOrdinal [base::ScaleOrdinal]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::scale::ScalePoint [base::ScalePoint]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::shape::Arc [base::Arc]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::shape::ArcData [base::ArcData]": {
+   "done": 0,
+   "failed": 0,
+   "group": "generic",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::shape::Area [base::Area]": {
+   "done": 9,
+   "failed": 0,
+   "group": "builder",
+   "total": 10,
+   "verified": 9
+  },
+  "gpui_kit::base::plot::shape::Bar [base::Bar]": {
+   "done": 11,
+   "failed": 0,
+   "group": "builder",
+   "total": 11,
+   "verified": 10
+  },
+  "gpui_kit::base::plot::shape::BarAlignment [base::BarAlignment]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::shape::Line [base::Line]": {
+   "done": 12,
+   "failed": 0,
+   "group": "builder",
+   "total": 15,
+   "verified": 12
+  },
+  "gpui_kit::base::plot::shape::Pie [base::Pie]": {
+   "done": 6,
+   "failed": 0,
+   "group": "state",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::shape::RadialLine [base::RadialLine]": {
+   "done": 13,
+   "failed": 0,
+   "group": "builder",
+   "total": 15,
+   "verified": 13
+  },
+  "gpui_kit::base::plot::shape::Sankey [base::Sankey]": {
+   "done": 11,
+   "failed": 0,
+   "group": "builder",
+   "total": 11,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::shape::SankeyGraph [base::SankeyGraph]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::plot::shape::SankeyLink [base::SankeyLink]": {
+   "done": 1,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::base::plot::shape::Stack [base::Stack]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire [base::questionnaire functions]": {
+   "done": 1,
+   "failed": 0,
+   "group": "function",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireAnswer [base::QuestionnaireAnswer]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireAnswerChange [base::QuestionnaireAnswerChange]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireAnswers [base::QuestionnaireAnswers]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireChoiceControl [base::QuestionnaireChoiceControl]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireChoiceDefinition [base::QuestionnaireChoiceDefinition]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireChoiceState [base::QuestionnaireChoiceState]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireInputDefinition [base::QuestionnaireInputDefinition]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireItemDefinition [base::QuestionnaireItemDefinition]": {
+   "done": 9,
+   "failed": 0,
+   "group": "builder",
+   "total": 18,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireItemState [base::QuestionnaireItemState]": {
+   "done": 7,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireNavigationState [base::QuestionnaireNavigationState]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireProgressState [base::QuestionnaireProgressState]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireState [base::QuestionnaireState]": {
+   "done": 50,
+   "failed": 0,
+   "group": "state",
+   "total": 50,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireSubmission [base::QuestionnaireSubmission]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireSubmissionItem [base::QuestionnaireSubmissionItem]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireValidationContext [base::QuestionnaireValidationContext]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::questionnaire::QuestionnaireValidationError [base::QuestionnaireValidationError]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::slider::SliderScale [base::SliderScale]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::slider::SliderState [base::SliderState]": {
+   "done": 12,
+   "failed": 0,
+   "group": "state",
+   "total": 12,
+   "verified": 0
+  },
+  "gpui_kit::base::slider::SliderValue [base::SliderValue]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::base::text [base::text functions]": {
+   "done": 2,
+   "failed": 0,
+   "group": "function",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::base::text::CodeBlock [base::CodeBlock]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 2
+  },
+  "gpui_kit::base::text::editor_host::BlockNode [base::BlockNode]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::text::editor_host::Caret [base::Caret]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::base::text::editor_host::FlowPosition [base::FlowPosition]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::text::editor_host::ImageNode [base::ImageNode]": {
+   "done": 1,
+   "failed": 0,
+   "group": "state",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::base::text::editor_host::InlineNode [base::InlineNode]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 8,
+   "verified": 2
+  },
+  "gpui_kit::base::text::editor_host::LeafGeometry [base::LeafGeometry]": {
+   "done": 10,
+   "failed": 0,
+   "group": "state",
+   "total": 10,
+   "verified": 0
+  },
+  "gpui_kit::base::text::editor_host::Paragraph [base::Paragraph]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::base::text::editor_host::RenderContext [base::RenderContext]": {
+   "done": 10,
+   "failed": 0,
+   "group": "builder",
+   "total": 11,
+   "verified": 0
+  },
+  "gpui_kit::base::text::editor_host::Table [base::Table]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::base::text::editor_host::TextMark [base::TextMark]": {
+   "done": 8,
+   "failed": 0,
+   "group": "builder",
+   "total": 8,
+   "verified": 1
+  },
+  "gpui_kit::component::(root) [component::(root) functions]": {
+   "done": 281,
+   "failed": 0,
+   "group": "function",
+   "total": 283,
+   "verified": 4
+  },
+  "gpui_kit::component::ActiveTheme [component::ActiveTheme]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::AnyChildElement [component::AnyChildElement]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::ChildElement [component::ChildElement]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::ColorName [component::ColorName]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::Colorize [component::Colorize]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 14,
+   "verified": 0
+  },
+  "gpui_kit::component::DivInspector [component::DivInspector]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::Icon [component::Icon]": {
+   "done": 6,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::component::IconName [component::IconName]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::IconNameExt [component::IconNameExt]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::Sizable [component::Sizable]": {
+   "done": 4,
+   "failed": 0,
+   "group": "trait",
+   "total": 4,
+   "verified": 3
+  },
+  "gpui_kit::component::Size [component::Size]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 10,
+   "verified": 0
+  },
+  "gpui_kit::component::StyleSized [component::StyleSized]": {
+   "done": 13,
+   "failed": 0,
+   "group": "trait",
+   "total": 13,
+   "verified": 0
+  },
+  "gpui_kit::component::Theme [component::Theme]": {
+   "done": 26,
+   "failed": 0,
+   "group": "state",
+   "total": 27,
+   "verified": 2
+  },
+  "gpui_kit::component::ThemeColor [component::ThemeColor]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::ThemeMode [component::ThemeMode]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::ThemeRegistry [component::ThemeRegistry]": {
+   "done": 9,
+   "failed": 0,
+   "group": "state",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::component::ThemeStyled [component::ThemeStyled]": {
+   "done": 3,
+   "failed": 0,
+   "group": "trait",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::component::ThemeToken [component::ThemeToken]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::TitleBar [component::TitleBar]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 1
+  },
+  "gpui_kit::component::WindowBorder [component::WindowBorder]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::component::WindowExt [component::WindowExt]": {
+   "done": 14,
+   "failed": 0,
+   "group": "trait",
+   "total": 16,
+   "verified": 4
+  },
+  "gpui_kit::component::accordion::Accordion [component::Accordion]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 4
+  },
+  "gpui_kit::component::accordion::AccordionItem [component::AccordionItem]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 4
+  },
+  "gpui_kit::component::alert::Alert [component::Alert]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 8
+  },
+  "gpui_kit::component::attachment::Attachment [component::Attachment]": {
+   "done": 12,
+   "failed": 0,
+   "group": "component",
+   "total": 12,
+   "verified": 6
+  },
+  "gpui_kit::component::attachment::AttachmentActions [component::AttachmentActions]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::attachment::AttachmentContent [component::AttachmentContent]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::component::attachment::AttachmentDescription [component::AttachmentDescription]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::component::attachment::AttachmentGroup [component::AttachmentGroup]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::attachment::AttachmentMedia [component::AttachmentMedia]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::attachment::AttachmentStatus [component::AttachmentStatus]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::component::attachment::AttachmentTitle [component::AttachmentTitle]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::avatar::Avatar [component::Avatar]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 3
+  },
+  "gpui_kit::component::avatar::AvatarGroup [component::AvatarGroup]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 4
+  },
+  "gpui_kit::component::badge::Badge [component::Badge]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 5
+  },
+  "gpui_kit::component::breadcrumb::Breadcrumb [component::Breadcrumb]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::breadcrumb::BreadcrumbItem [component::BreadcrumbItem]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::bubble::Bubble [component::Bubble]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 3
+  },
+  "gpui_kit::component::bubble::BubbleContent [component::BubbleContent]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::bubble::BubbleGroup [component::BubbleGroup]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::bubble::BubbleReactions [component::BubbleReactions]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 3
+  },
+  "gpui_kit::component::button::Button [component::Button]": {
+   "done": 21,
+   "failed": 0,
+   "group": "component",
+   "total": 22,
+   "verified": 15
+  },
+  "gpui_kit::component::button::ButtonCustomVariant [component::ButtonCustomVariant]": {
+   "done": 6,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::component::button::ButtonGroup [component::ButtonGroup]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 5
+  },
+  "gpui_kit::component::button::ButtonVariant [component::ButtonVariant]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::component::button::ButtonVariants [component::ButtonVariants]": {
+   "done": 11,
+   "failed": 0,
+   "group": "trait",
+   "total": 11,
+   "verified": 9
+  },
+  "gpui_kit::component::button::DropdownButton [component::DropdownButton]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 3
+  },
+  "gpui_kit::component::button::Toggle [component::Toggle]": {
+   "done": 7,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 5
+  },
+  "gpui_kit::component::button::ToggleGroup [component::ToggleGroup]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 3
+  },
+  "gpui_kit::component::button::ToggleVariants [component::ToggleVariants]": {
+   "done": 3,
+   "failed": 0,
+   "group": "trait",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::component::calendar::Calendar [component::Calendar]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::component::carousel::Carousel [component::Carousel]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::carousel::CarouselContent [component::CarouselContent]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::carousel::CarouselItem [component::CarouselItem]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::carousel::CarouselNext [component::CarouselNext]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::carousel::CarouselPagination [component::CarouselPagination]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::component::carousel::CarouselPaginationItem [component::CarouselPaginationItem]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::carousel::CarouselPrevious [component::CarouselPrevious]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::carousel::CarouselState [component::CarouselState]": {
+   "done": 19,
+   "failed": 0,
+   "group": "state",
+   "total": 19,
+   "verified": 0
+  },
+  "gpui_kit::component::chart::AreaChart [component::AreaChart]": {
+   "done": 31,
+   "failed": 0,
+   "group": "component",
+   "total": 31,
+   "verified": 27
+  },
+  "gpui_kit::component::chart::BarChart [component::BarChart]": {
+   "done": 32,
+   "failed": 0,
+   "group": "component",
+   "total": 32,
+   "verified": 29
+  },
+  "gpui_kit::component::chart::CandlestickChart [component::CandlestickChart]": {
+   "done": 21,
+   "failed": 0,
+   "group": "component",
+   "total": 21,
+   "verified": 17
+  },
+  "gpui_kit::component::chart::LineChart [component::LineChart]": {
+   "done": 31,
+   "failed": 0,
+   "group": "component",
+   "total": 31,
+   "verified": 30
+  },
+  "gpui_kit::component::chart::PieChart [component::PieChart]": {
+   "done": 20,
+   "failed": 0,
+   "group": "component",
+   "total": 20,
+   "verified": 20
+  },
+  "gpui_kit::component::chart::RadarChart [component::RadarChart]": {
+   "done": 21,
+   "failed": 0,
+   "group": "component",
+   "total": 21,
+   "verified": 17
+  },
+  "gpui_kit::component::chart::SankeyChart [component::SankeyChart]": {
+   "done": 20,
+   "failed": 0,
+   "group": "component",
+   "total": 20,
+   "verified": 18
+  },
+  "gpui_kit::component::chart::SankeyLabel [component::SankeyLabel]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::component::checkbox::Checkbox [component::Checkbox]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 9
+  },
+  "gpui_kit::component::clipboard::Clipboard [component::Clipboard]": {
+   "done": 7,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 5
+  },
+  "gpui_kit::component::collapsible::Collapsible [component::Collapsible]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 4
+  },
+  "gpui_kit::component::color_picker::ColorPicker [component::ColorPicker]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::component::color_picker::ColorSelect [component::ColorSelect]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::component::combobox::Caret [component::Caret]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::combobox::Combobox [component::Combobox]": {
+   "done": 12,
+   "failed": 0,
+   "group": "component",
+   "total": 13,
+   "verified": 2
+  },
+  "gpui_kit::component::combobox::ComboboxState [component::ComboboxState]": {
+   "done": 15,
+   "failed": 0,
+   "group": "state",
+   "total": 15,
+   "verified": 0
+  },
+  "gpui_kit::component::combobox::ComboboxTriggerContext [component::ComboboxTriggerContext]": {
+   "done": 0,
+   "failed": 0,
+   "group": "generic",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::component::command::Command [component::Command]": {
+   "done": 15,
+   "failed": 0,
+   "group": "component",
+   "total": 18,
+   "verified": 0
+  },
+  "gpui_kit::component::command::CommandGroup [component::CommandGroup]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::component::command::CommandItem [component::CommandItem]": {
+   "done": 7,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::component::command::CommandState [component::CommandState]": {
+   "done": 9,
+   "failed": 0,
+   "group": "state",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::component::date_picker::DatePicker [component::DatePicker]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::component::date_picker::DatePickerState [component::DatePickerState]": {
+   "done": 14,
+   "failed": 0,
+   "group": "state",
+   "total": 14,
+   "verified": 0
+  },
+  "gpui_kit::component::date_picker::DateRangePreset [component::DateRangePreset]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::component::date_picker::DateTime [component::DateTime]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::component::description_list::DescriptionItem [component::DescriptionItem]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::component::description_list::DescriptionList [component::DescriptionList]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 9
+  },
+  "gpui_kit::component::dialog::AlertDialog [component::AlertDialog]": {
+   "done": 23,
+   "failed": 0,
+   "group": "component",
+   "total": 24,
+   "verified": 4
+  },
+  "gpui_kit::component::dialog::Dialog [component::Dialog]": {
+   "done": 19,
+   "failed": 0,
+   "group": "component",
+   "total": 19,
+   "verified": 3
+  },
+  "gpui_kit::component::dialog::DialogAction [component::DialogAction]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::dialog::DialogButtonProps [component::DialogButtonProps]": {
+   "done": 7,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::component::dialog::DialogClose [component::DialogClose]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::component::dialog::DialogContent [component::DialogContent]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::dialog::DialogDescription [component::DialogDescription]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::dialog::DialogFooter [component::DialogFooter]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::dialog::DialogFooterButton [component::DialogFooterButton]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::dialog::DialogHeader [component::DialogHeader]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::dialog::DialogTitle [component::DialogTitle]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::diff::Diff [component::Diff]": {
+   "done": 26,
+   "failed": 0,
+   "group": "component",
+   "total": 26,
+   "verified": 2
+  },
+  "gpui_kit::component::diff::DiffAnnotation [component::DiffAnnotation]": {
+   "done": 5,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::component::diff::DiffConflict [component::DiffConflict]": {
+   "done": 7,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::component::diff::DiffDecoration [component::DiffDecoration]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::component::diff::DiffFile [component::DiffFile]": {
+   "done": 5,
+   "failed": 0,
+   "group": "builder",
+   "total": 17,
+   "verified": 1
+  },
+  "gpui_kit::component::diff::DiffGutterMarker [component::DiffGutterMarker]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::component::diff::DiffLinePosition [component::DiffLinePosition]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::component::diff::DiffLineRange [component::DiffLineRange]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::component::diff::DiffParseError [component::DiffParseError]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::diff::DiffParseOptions [component::DiffParseOptions]": {
+   "done": 2,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::component::diff::DiffState [component::DiffState]": {
+   "done": 41,
+   "failed": 0,
+   "group": "state",
+   "total": 41,
+   "verified": 1
+  },
+  "gpui_kit::component::dock [component::dock functions]": {
+   "done": 1,
+   "failed": 0,
+   "group": "function",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::dock::DockSkin [component::DockSkin]": {
+   "done": 6,
+   "failed": 0,
+   "group": "state",
+   "total": 7,
+   "verified": 3
+  },
+  "gpui_kit::component::dock::DockToggleEvent [component::DockToggleEvent]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::dock::Panel [component::Panel]": {
+   "done": 9,
+   "failed": 0,
+   "group": "trait",
+   "total": 9,
+   "verified": 4
+  },
+  "gpui_kit::component::dock::PanelControl [component::PanelControl]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::dock::PanelHandle [component::PanelHandle]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 1
+  },
+  "gpui_kit::component::dock::PanelView [component::PanelView]": {
+   "done": 9,
+   "failed": 0,
+   "group": "trait",
+   "total": 9,
+   "verified": 0
+  },
+  "gpui_kit::component::empty::Empty [component::Empty]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::component::empty::EmptyContent [component::EmptyContent]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::empty::EmptyDescription [component::EmptyDescription]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::empty::EmptyHeader [component::EmptyHeader]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 1
+  },
+  "gpui_kit::component::empty::EmptyMedia [component::EmptyMedia]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::component::empty::EmptyTitle [component::EmptyTitle]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::form [component::form functions]": {
+   "done": 3,
+   "failed": 0,
+   "group": "function",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::component::form::Field [component::Field]": {
+   "done": 14,
+   "failed": 0,
+   "group": "component",
+   "total": 14,
+   "verified": 10
+  },
+  "gpui_kit::component::form::Form [component::Form]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 8
+  },
+  "gpui_kit::component::grid_layout [component::grid_layout functions]": {
+   "done": 1,
+   "failed": 0,
+   "group": "function",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::group_box::GroupBox [component::GroupBox]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 4
+  },
+  "gpui_kit::component::group_box::GroupBoxVariant [component::GroupBoxVariant]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::group_box::GroupBoxVariants [component::GroupBoxVariants]": {
+   "done": 4,
+   "failed": 0,
+   "group": "trait",
+   "total": 4,
+   "verified": 4
+  },
+  "gpui_kit::component::highlighter::HighlightTheme [component::HighlightTheme]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::highlighter::Language [component::Language]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::component::highlighter::LanguageConfig [component::LanguageConfig]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::highlighter::LanguageRegistry [component::LanguageRegistry]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::component::highlighter::StatusColors [component::StatusColors]": {
+   "done": 18,
+   "failed": 0,
+   "group": "state",
+   "total": 18,
+   "verified": 0
+  },
+  "gpui_kit::component::highlighter::SyntaxColors [component::SyntaxColors]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::highlighter::SyntaxHighlighter [component::SyntaxHighlighter]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::component::hover_card::HoverCard [component::HoverCard]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 9,
+   "verified": 6
+  },
+  "gpui_kit::component::input [component::input functions]": {
+   "done": 1,
+   "failed": 0,
+   "group": "function",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::input::AnyInputState [component::AnyInputState]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::component::input::Input [component::Input]": {
+   "done": 23,
+   "failed": 0,
+   "group": "component",
+   "total": 23,
+   "verified": 5
+  },
+  "gpui_kit::component::input::InputGroup [component::InputGroup]": {
+   "done": 7,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 5
+  },
+  "gpui_kit::component::input::InputGroupAddon [component::InputGroupAddon]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::component::input::InputGroupButton [component::InputGroupButton]": {
+   "done": 12,
+   "failed": 0,
+   "group": "component",
+   "total": 12,
+   "verified": 9
+  },
+  "gpui_kit::component::input::InputGroupText [component::InputGroupText]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::input::InputToken [component::InputToken]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::component::input::NumberInput [component::NumberInput]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 1
+  },
+  "gpui_kit::component::input::OtpInput [component::OtpInput]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::component::input::Textarea [component::Textarea]": {
+   "done": 15,
+   "failed": 0,
+   "group": "component",
+   "total": 15,
+   "verified": 1
+  },
+  "gpui_kit::component::kbd::Kbd [component::Kbd]": {
+   "done": 7,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 4
+  },
+  "gpui_kit::component::label::HighlightsMatch [component::HighlightsMatch]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::label::Label [component::Label]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 4
+  },
+  "gpui_kit::component::link::Link [component::Link]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 3
+  },
+  "gpui_kit::component::list::List [component::List]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 2
+  },
+  "gpui_kit::component::list::ListDelegate [component::ListDelegate]": {
+   "done": 17,
+   "failed": 0,
+   "group": "trait",
+   "total": 17,
+   "verified": 3
+  },
+  "gpui_kit::component::list::ListItem [component::ListItem]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 6
+  },
+  "gpui_kit::component::list::ListSeparatorItem [component::ListSeparatorItem]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::list::ListState [component::ListState]": {
+   "done": 17,
+   "failed": 0,
+   "group": "state",
+   "total": 17,
+   "verified": 0
+  },
+  "gpui_kit::component::marker::Marker [component::Marker]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 6
+  },
+  "gpui_kit::component::marker::MarkerContent [component::MarkerContent]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::component::marker::MarkerIcon [component::MarkerIcon]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::menu::AppMenuBar [component::AppMenuBar]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::menu::ContextMenu [component::ContextMenu]": {
+   "done": 0,
+   "failed": 0,
+   "group": "generic",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::menu::ContextMenuExt [component::ContextMenuExt]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::menu::DropdownMenu [component::DropdownMenu]": {
+   "done": 2,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::component::menu::PopupMenu [component::PopupMenu]": {
+   "done": 26,
+   "failed": 0,
+   "group": "builder",
+   "total": 29,
+   "verified": 8
+  },
+  "gpui_kit::component::menu::PopupMenuItem [component::PopupMenuItem]": {
+   "done": 10,
+   "failed": 0,
+   "group": "builder",
+   "total": 11,
+   "verified": 10
+  },
+  "gpui_kit::component::message::Message [component::Message]": {
+   "done": 10,
+   "failed": 0,
+   "group": "component",
+   "total": 10,
+   "verified": 4
+  },
+  "gpui_kit::component::message::MessageAvatar [component::MessageAvatar]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::message::MessageContent [component::MessageContent]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 1
+  },
+  "gpui_kit::component::message::MessageFooter [component::MessageFooter]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::component::message::MessageGroup [component::MessageGroup]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::message::MessageHeader [component::MessageHeader]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::component::message_scroller::MessageScroller [component::MessageScroller]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 0
+  },
+  "gpui_kit::component::message_scroller::MessageScrollerState [component::MessageScrollerState]": {
+   "done": 13,
+   "failed": 0,
+   "group": "state",
+   "total": 13,
+   "verified": 0
+  },
+  "gpui_kit::component::native_menu::NativeMenu [component::NativeMenu]": {
+   "done": 9,
+   "failed": 0,
+   "group": "builder",
+   "total": 11,
+   "verified": 0
+  },
+  "gpui_kit::component::notification::Notification [component::Notification]": {
+   "done": 17,
+   "failed": 0,
+   "group": "state",
+   "total": 21,
+   "verified": 0
+  },
+  "gpui_kit::component::notification::NotificationDelivery [component::NotificationDelivery]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::notification::NotificationList [component::NotificationList]": {
+   "done": 4,
+   "failed": 0,
+   "group": "state",
+   "total": 4,
+   "verified": 0
+  },
+  "gpui_kit::component::pagination::Pagination [component::Pagination]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 5
+  },
+  "gpui_kit::component::plot::tooltip::CrossLine [component::CrossLine]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::component::plot::tooltip::CrossLineAxis [component::CrossLineAxis]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::plot::tooltip::Dot [component::Dot]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::component::plot::tooltip::Tooltip [component::Tooltip]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 12,
+   "verified": 1
+  },
+  "gpui_kit::component::popover::Popover [component::Popover]": {
+   "done": 13,
+   "failed": 0,
+   "group": "component",
+   "total": 14,
+   "verified": 9
+  },
+  "gpui_kit::component::progress::Progress [component::Progress]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 5
+  },
+  "gpui_kit::component::progress::ProgressCircle [component::ProgressCircle]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 5
+  },
+  "gpui_kit::component::questionnaire::Questionnaire [component::Questionnaire]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireActions [component::QuestionnaireActions]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireChoice [component::QuestionnaireChoice]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireChoiceDescription [component::QuestionnaireChoiceDescription]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireChoices [component::QuestionnaireChoices]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireDescription [component::QuestionnaireDescription]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireError [component::QuestionnaireError]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireInput [component::QuestionnaireInput]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireItem [component::QuestionnaireItem]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireNext [component::QuestionnaireNext]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnairePrevious [component::QuestionnairePrevious]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireProgress [component::QuestionnaireProgress]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireSkip [component::QuestionnaireSkip]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireSubmit [component::QuestionnaireSubmit]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::questionnaire::QuestionnaireTitle [component::QuestionnaireTitle]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::radio::Radio [component::Radio]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 9
+  },
+  "gpui_kit::component::radio::RadioGroup [component::RadioGroup]": {
+   "done": 10,
+   "failed": 0,
+   "group": "component",
+   "total": 10,
+   "verified": 7
+  },
+  "gpui_kit::component::rating::Rating [component::Rating]": {
+   "done": 7,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 5
+  },
+  "gpui_kit::component::scroll::Scrollable [component::Scrollable]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::scroll::ScrollableElement [component::ScrollableElement]": {
+   "done": 6,
+   "failed": 0,
+   "group": "trait",
+   "total": 6,
+   "verified": 1
+  },
+  "gpui_kit::component::searchable_list::SearchableGroup [component::SearchableGroup]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::component::searchable_list::SearchableListDelegate [component::SearchableListDelegate]": {
+   "done": 11,
+   "failed": 0,
+   "group": "trait",
+   "total": 12,
+   "verified": 9
+  },
+  "gpui_kit::component::searchable_list::SearchableListItem [component::SearchableListItem]": {
+   "done": 6,
+   "failed": 0,
+   "group": "trait",
+   "total": 6,
+   "verified": 6
+  },
+  "gpui_kit::component::searchable_list::SearchableListItemElement [component::SearchableListItemElement]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::searchable_list::SearchableListState [component::SearchableListState]": {
+   "done": 0,
+   "failed": 0,
+   "group": "generic",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::component::searchable_list::SearchableVec [component::SearchableVec]": {
+   "done": 0,
+   "failed": 0,
+   "group": "generic",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::select::Select [component::Select]": {
+   "done": 14,
+   "failed": 0,
+   "group": "component",
+   "total": 14,
+   "verified": 3
+  },
+  "gpui_kit::component::select::SelectState [component::SelectState]": {
+   "done": 8,
+   "failed": 0,
+   "group": "state",
+   "total": 8,
+   "verified": 0
+  },
+  "gpui_kit::component::separator::Separator [component::Separator]": {
+   "done": 7,
+   "failed": 0,
+   "group": "component",
+   "total": 7,
+   "verified": 7
+  },
+  "gpui_kit::component::setting::AnySettingField [component::AnySettingField]": {
+   "done": 4,
+   "failed": 0,
+   "group": "trait",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::component::setting::RenderOptions [component::RenderOptions]": {
+   "done": 0,
+   "failed": 0,
+   "group": "builder",
+   "total": 15,
+   "verified": 0
+  },
+  "gpui_kit::component::setting::SettingField [component::SettingField]": {
+   "done": 10,
+   "failed": 0,
+   "group": "builder",
+   "total": 10,
+   "verified": 6
+  },
+  "gpui_kit::component::setting::SettingFieldElement [component::SettingFieldElement]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::setting::SettingGroup [component::SettingGroup]": {
+   "done": 7,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 3
+  },
+  "gpui_kit::component::setting::SettingItem [component::SettingItem]": {
+   "done": 7,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 2
+  },
+  "gpui_kit::component::setting::SettingPage [component::SettingPage]": {
+   "done": 10,
+   "failed": 0,
+   "group": "builder",
+   "total": 10,
+   "verified": 2
+  },
+  "gpui_kit::component::setting::Settings [component::Settings]": {
+   "done": 9,
+   "failed": 0,
+   "group": "component",
+   "total": 9,
+   "verified": 5
+  },
+  "gpui_kit::component::sheet::Sheet [component::Sheet]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 2
+  },
+  "gpui_kit::component::shimmer::ShimmerStyle [component::ShimmerStyle]": {
+   "done": 6,
+   "failed": 0,
+   "group": "builder",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::component::shimmer::ShimmerText [component::ShimmerText]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 6
+  },
+  "gpui_kit::component::sidebar::Sidebar [component::Sidebar]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 8
+  },
+  "gpui_kit::component::sidebar::SidebarFooter [component::SidebarFooter]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::sidebar::SidebarGroup [component::SidebarGroup]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::component::sidebar::SidebarHeader [component::SidebarHeader]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::sidebar::SidebarItem [component::SidebarItem]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::sidebar::SidebarMenu [component::SidebarMenu]": {
+   "done": 3,
+   "failed": 0,
+   "group": "builder",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::sidebar::SidebarMenuItem [component::SidebarMenuItem]": {
+   "done": 14,
+   "failed": 0,
+   "group": "builder",
+   "total": 14,
+   "verified": 2
+  },
+  "gpui_kit::component::sidebar::SidebarToggleButton [component::SidebarToggleButton]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 4
+  },
+  "gpui_kit::component::skeleton::Skeleton [component::Skeleton]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 2
+  },
+  "gpui_kit::component::slider::Slider [component::Slider]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::AudioFormat [component::AudioFormat]": {
+   "done": 3,
+   "failed": 0,
+   "group": "state",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::AudioInput [component::AudioInput]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::AudioSink [component::AudioSink]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::RecognitionSession [component::RecognitionSession]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::SpeechButton [component::SpeechButton]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::SpeechError [component::SpeechError]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::SpeechIndicator [component::SpeechIndicator]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::SpeechRecognizer [component::SpeechRecognizer]": {
+   "done": 0,
+   "failed": 0,
+   "group": "trait",
+   "total": 3,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::SpeechSink [component::SpeechSink]": {
+   "done": 0,
+   "failed": 0,
+   "group": "state",
+   "total": 5,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::SpeechState [component::SpeechState]": {
+   "done": 12,
+   "failed": 0,
+   "group": "state",
+   "total": 14,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::SpeechStatus [component::SpeechStatus]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::speech::SpeechWaveform [component::SpeechWaveform]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::spinner::Spinner [component::Spinner]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 2
+  },
+  "gpui_kit::component::status_bar::StatusBar [component::StatusBar]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 3
+  },
+  "gpui_kit::component::stepper::Stepper [component::Stepper]": {
+   "done": 9,
+   "failed": 0,
+   "group": "component",
+   "total": 9,
+   "verified": 6
+  },
+  "gpui_kit::component::stepper::StepperItem [component::StepperItem]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::switch::Switch [component::Switch]": {
+   "done": 11,
+   "failed": 0,
+   "group": "component",
+   "total": 11,
+   "verified": 10
+  },
+  "gpui_kit::component::tab::Tab [component::Tab]": {
+   "done": 14,
+   "failed": 0,
+   "group": "component",
+   "total": 14,
+   "verified": 12
+  },
+  "gpui_kit::component::tab::TabBar [component::TabBar]": {
+   "done": 17,
+   "failed": 0,
+   "group": "component",
+   "total": 17,
+   "verified": 13
+  },
+  "gpui_kit::component::table::Column [component::Column]": {
+   "done": 18,
+   "failed": 0,
+   "group": "builder",
+   "total": 18,
+   "verified": 2
+  },
+  "gpui_kit::component::table::ColumnGroup [component::ColumnGroup]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::table::DataTable [component::DataTable]": {
+   "done": 8,
+   "failed": 0,
+   "group": "component",
+   "total": 8,
+   "verified": 2
+  },
+  "gpui_kit::component::table::Table [component::Table]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 3
+  },
+  "gpui_kit::component::table::TableBody [component::TableBody]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::table::TableCaption [component::TableCaption]": {
+   "done": 1,
+   "failed": 0,
+   "group": "component",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::table::TableCell [component::TableCell]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 4
+  },
+  "gpui_kit::component::table::TableDelegate [component::TableDelegate]": {
+   "done": 25,
+   "failed": 0,
+   "group": "trait",
+   "total": 25,
+   "verified": 10
+  },
+  "gpui_kit::component::table::TableFooter [component::TableFooter]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 1
+  },
+  "gpui_kit::component::table::TableHead [component::TableHead]": {
+   "done": 4,
+   "failed": 0,
+   "group": "component",
+   "total": 4,
+   "verified": 4
+  },
+  "gpui_kit::component::table::TableHeader [component::TableHeader]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::table::TableRow [component::TableRow]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 2
+  },
+  "gpui_kit::component::table::TableState [component::TableState]": {
+   "done": 34,
+   "failed": 0,
+   "group": "state",
+   "total": 34,
+   "verified": 0
+  },
+  "gpui_kit::component::table::TableVisibleRange [component::TableVisibleRange]": {
+   "done": 2,
+   "failed": 0,
+   "group": "state",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::tag::Tag [component::Tag]": {
+   "done": 13,
+   "failed": 0,
+   "group": "component",
+   "total": 13,
+   "verified": 12
+  },
+  "gpui_kit::component::text [component::text functions]": {
+   "done": 2,
+   "failed": 0,
+   "group": "function",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::text::FrontmatterPlugin [component::FrontmatterPlugin]": {
+   "done": 1,
+   "failed": 0,
+   "group": "builder",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::text::Text [component::Text]": {
+   "done": 0,
+   "failed": 0,
+   "group": "data",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::text::TextView [component::TextView]": {
+   "done": 24,
+   "failed": 0,
+   "group": "component",
+   "total": 25,
+   "verified": 8
+  },
+  "gpui_kit::component::text::TextViewPlugin [component::TextViewPlugin]": {
+   "done": 1,
+   "failed": 0,
+   "group": "trait",
+   "total": 1,
+   "verified": 0
+  },
+  "gpui_kit::component::text::TextViewStyle [component::TextViewStyle]": {
+   "done": 7,
+   "failed": 0,
+   "group": "builder",
+   "total": 7,
+   "verified": 0
+  },
+  "gpui_kit::component::time_field::TimeField [component::TimeField]": {
+   "done": 2,
+   "failed": 0,
+   "group": "component",
+   "total": 2,
+   "verified": 0
+  },
+  "gpui_kit::component::toolbar::Toolbar [component::Toolbar]": {
+   "done": 6,
+   "failed": 0,
+   "group": "component",
+   "total": 6,
+   "verified": 5
+  },
+  "gpui_kit::component::toolbar::ToolbarGroup [component::ToolbarGroup]": {
+   "done": 5,
+   "failed": 0,
+   "group": "component",
+   "total": 5,
+   "verified": 3
+  },
+  "gpui_kit::component::tooltip::Tooltip [component::Tooltip]": {
+   "done": 4,
+   "failed": 0,
+   "group": "builder",
+   "total": 5,
+   "verified": 3
+  },
+  "gpui_kit::component::tree [component::tree functions]": {
+   "done": 1,
+   "failed": 0,
+   "group": "function",
+   "total": 1,
+   "verified": 1
+  },
+  "gpui_kit::component::tree::Tree [component::Tree]": {
+   "done": 3,
+   "failed": 0,
+   "group": "component",
+   "total": 3,
+   "verified": 1
+  }
+ },
+ "note": "written by gates/coverage-ratchet.py --accept; do not edit by hand"
+}

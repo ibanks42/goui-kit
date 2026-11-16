@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- The application manifest a Windows program on libgpuikit embeds (core/windows/gpuikit.rc):
+     per-monitor DPI awareness v2, common controls 6, Windows 10. gpui-fast's own manifest
+     (gpui-fast 0.1.14, resources/windows/gpui.manifest.xml, Apache-2.0), which the library does not
+     embed: gpui-kit selects gpui-fast's feature windows-manifest-provided-by-host, and only the
+     program's manifest counts for these settings. -->
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+    <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+        <security>
+            <requestedPrivileges>
+                <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+            </requestedPrivileges>
+        </security>
+    </trustInfo>
+    <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+        <application>
+            <!-- Windows 10 -->
+            <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+        </application>
+    </compatibility>
+    <application xmlns="urn:schemas-microsoft-com:asm.v3">
+        <windowsSettings>
+            <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+            <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+            <heapType xmlns="http://schemas.microsoft.com/SMI/2020/WindowsSettings">SegmentHeap</heapType>
+        </windowsSettings>
+    </application>
+    <dependency>
+        <dependentAssembly>
+            <assemblyIdentity
+                type='win32'
+                name='Microsoft.Windows.Common-Controls'
+                version='6.0.0.0'
+                processorArchitecture='*'
+                publicKeyToken='6595b64144ccf1df'
+            />
+        </dependentAssembly>
+    </dependency>
+</assembly>

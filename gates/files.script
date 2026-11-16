@@ -1,0 +1,62 @@
+# The files app's scripted session (examples/odin/files against ref/src/bin/files.rs, gates/pixels.sh
+# files): every image must be byte-identical between the two. Offscreen the platform is not asked: the
+# `answer` lines answer the app's file dialogs and its prompt (the library's scripted platform for the
+# Odin app, the twin's own queue for Rust). The clock moves only on `advance`, so the status line's
+# entrance animation is shot at fixed times.
+size 720 480
+frame
+advance 300
+frame
+shot 01-start.png
+# the kit's AppMenuBar: the File menu
+click 24 18
+frame
+shot 02-file-menu.png
+# its first item, Open…: the file dialog, answered by the script
+click 40 46
+frame
+shot 03-open-asked.png
+answer paths ../../../../files.sample.txt
+# the answer's DONE turn runs before the frame that follows it (the `answer` line's own frame), so
+# what its handler changed is in that frame, as in Rust (PROTOCOLS.md 11.32)
+shot 04-answered.png
+advance 100
+frame
+shot 05-opened-entering.png
+advance 300
+frame
+shot 06-opened.png
+# File > Save as…: a save dialog, answered with a file in the app's folder (it writes the text there)
+click 17 16
+frame
+click 40 77
+frame
+answer new-path saved.txt
+advance 400
+frame
+shot 07-saved.png
+# File > Quit: the window's prompt, answered with its second button (Stay)
+click 17 16
+frame
+click 40 113
+frame
+answer prompt 1
+advance 400
+frame
+shot 08-still-here.png
+# Help > Website: open_url (recorded offscreen, not opened)
+click 60 16
+frame
+shot 09-help-menu.png
+click 80 49
+frame
+advance 400
+frame
+shot 10-website.png
+# ctrl-o: the same action by its key binding; the dialog dismissed
+key ctrl-o
+frame
+answer cancel paths
+advance 400
+frame
+shot 11-open-cancelled.png

@@ -1,0 +1,77 @@
+# The todo example's scripted session (gates/todo.sh): no Rust twin; the images are looked at by eye
+# and gates/todo-check.py checks the state the session saved. Window coordinates (the images are twice
+# the size): the File button 30,24; the filters All 244,73, Active 292,73, Done 350,73; the search box
+# 596,73; the task rows y = 113, 146, 177 (checkboxes at x 248); the projects y = 99, 127, 155;
+# the new-project input 110,576; in the task dialog the title 450,121, the due date 450,165, High
+# 456,205, Save 555,249.
+size 900 600
+frame
+frame
+shot 01-start.png
+# tick "Buy milk": the row is not selected and no editor opens (gk.stop_propagation)
+click 248 113
+frame
+shot 02-ticked.png
+# ctrl-n: the new-task dialog; a title, a due date (today), High
+key ctrl-n
+frame
+type Water the plants
+click 450 165
+type 2026-11-12
+click 456 205
+frame
+shot 03-dialog.png
+click 555 249
+frame
+shot 04-added.png
+# the Active filter, then a search with ctrl-f
+click 292 73
+frame
+shot 05-active.png
+key ctrl-f
+type plumb
+frame
+shot 06-search.png
+key ctrl-a
+key backspace
+click 244 73
+frame
+# select "Call the plumber", delete it with the delete key and confirm
+click 600 146
+frame
+key delete
+frame
+shot 07-delete-dialog.png
+key enter
+frame
+shot 08-deleted.png
+# a double click on a title edits the task; escape closes the dialog
+dblclick 300 113
+frame
+shot 09-edit.png
+key escape
+frame
+# the Work project, then a new project through the input
+click 100 127
+frame
+shot 10-work.png
+click 110 576
+type Garden
+key enter
+frame
+shot 11-new-project.png
+# ctrl-t: the dark theme; the File menu
+key ctrl-t
+frame
+shot 12-dark.png
+click 30 24
+frame
+shot 13-menu.png
+key escape
+frame
+# the sync thread posts every 2 s from the start; its second post (4 s) adds a task to the Inbox
+sleep 4500
+frame
+click 100 99
+frame
+shot 14-synced.png

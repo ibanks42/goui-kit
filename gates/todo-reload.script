@@ -1,0 +1,8 @@
+# gates/todo.sh's second run: the app loads what the first run saved, and ctrl-t saves it again.
+size 900 600
+frame
+frame
+shot 15-reloaded.png
+key ctrl-t
+frame
+shot 16-light.png

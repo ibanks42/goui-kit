@@ -1,0 +1,14 @@
+# The counter app's scripted run: first frame, a click on "Add", text typed into the input.
+# Positions are window coordinates in logical pixels (the Add button and the input).
+size 640 480
+frame
+frame
+shot 1-start.png
+click 40 32
+frame
+shot 2-clicked.png
+click 250 32
+type Ada
+frame
+shot 3-typed.png
+stat

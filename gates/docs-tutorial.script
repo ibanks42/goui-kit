@@ -1,0 +1,43 @@
+# The tutorial's last step (docs/tutorial/09-background) driven offscreen by gates/docs.sh. Window
+# coordinates (the images are twice the size): the rows at y 120, 153, 186, 219, their checkboxes at
+# x 36 and delete buttons at x 482; the menu button 448,32. In the edit dialog: + at 184,157, Save at
+# 365,201. The offscreen clock moves only with `advance` (the toast slides in over it).
+size 520 560
+frame
+sleep 600
+frame
+advance 500
+shot 01-start.png
+# ctrl-n focuses the input; Enter adds the item, a thread looks up its price and a toast says so
+key ctrl-n
+type Eggs
+key enter
+sleep 600
+frame
+advance 500
+shot 02-added.png
+# a row's checkbox marks it bought; a row's delete button removes it (Bread)
+click 36 120
+advance 300
+click 482 153
+advance 300
+shot 03-bought-deleted.png
+# a click on a row opens the edit dialog; + raises the amount; Save
+click 250 120
+advance 400
+shot 04-dialog.png
+click 184 157
+advance 200
+shot 05-amount.png
+click 365 201
+advance 400
+shot 06-saved.png
+# the menu shows the shortcuts; ctrl-t switches the theme
+click 448 32
+advance 300
+shot 07-menu.png
+key escape
+advance 200
+key ctrl-t
+advance 400
+shot 08-dark.png

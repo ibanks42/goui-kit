@@ -1,0 +1,2 @@
+A text file the files app opens in its pixel gate (gates/files.script).
+Its second line.

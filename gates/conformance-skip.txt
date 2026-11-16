@@ -1,0 +1,9 @@
+# Conformance pages that are not generated, one per line: "page id | why". A page id is
+# Type.function as in ref/gallery/conf.txt; "odin:" before the id leaves out only the Odin
+# side. Lines of the form "id | panics in the reference: ..." are written by
+# gates/conformance-probe.sh: the element cannot be drawn on its own (it needs a parent or
+# state the generated page does not make) and wants a hand-written page in pages.txt.
+ResizablePanel.resizable_panel | panics in the reference: BUG: The `state` in ResizablePanel should be present.
+ResizablePanel.visible | panics in the reference: BUG: The `state` in ResizablePanel should be present.
+ResizablePanel.size | panics in the reference: BUG: The `state` in ResizablePanel should be present.
+ResizablePanel.fixed | panics in the reference: BUG: The `state` in ResizablePanel should be present.

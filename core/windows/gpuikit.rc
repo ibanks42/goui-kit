@@ -1,0 +1,13 @@
+/* gpuikit.rc: the resources a Windows program on libgpuikit embeds. gpui-fast leaves DPI
+ * awareness and the common controls to the program's manifest (without it the window is drawn
+ * at 96 dpi and scaled by Windows, blurred), and gives the window the program's icon 1.
+ *
+ * Go: compile it into a .syso in the main package's folder, which go build links by itself:
+ *     windres -O coff -i gpuikit.rc -o rsrc_windows_amd64.syso
+ * (windres comes with MinGW-w64, as gcc does). Odin: rc.exe gpuikit.rc, then pass gpuikit.res
+ * in -extra-linker-flags. */
+#define RT_MANIFEST 24
+1 RT_MANIFEST "gpuikit.manifest"
+/* The window's icon: uncomment and give an .ico.
+1 ICON "app.ico"
+*/

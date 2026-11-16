@@ -1,0 +1,23 @@
+# The Rust side of the binding: one library with a C interface (core, package gk-capi), the
+# meter that measures frames (core/meter) and the pure Rust reference apps the gates compare
+# against (ref). `make lib` builds them (tools/build-lib.sh). App developers never build this:
+# they get the prebuilt library in a download.
+[workspace]
+resolver = "3"
+members = ["core/meter", "core", "ref"]
+
+[workspace.package]
+version = "0.0.1"
+edition = "2024"
+publish = false
+
+[workspace.dependencies]
+# The rendering engine is chosen by each package's `gpui-fast` feature (on by default): with it,
+# gpui-kit runs on gpui-fast; built with --no-default-features it runs on upstream GPUI (gpui-pre).
+# Left out of the library to keep it small: tree-sitter grammars, speech, decimal.
+gpui-kit = { version = "=0.9.1", features = ["syntect"] }
+gk-meter = { path = "core/meter", default-features = false }
+
+[profile.release]
+strip = "symbols"
+panic = "unwind"

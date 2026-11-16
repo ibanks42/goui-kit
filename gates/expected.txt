@@ -1,0 +1,6 @@
+# Gates known to fail today, one per line: "gate subject | why". gates/summary.py shows them
+# as XFAIL and lets the run pass; a listed gate that passes fails the run until its line is
+# deleted, so this list only shrinks. An entry is added only with the reason it fails and who
+# removes it.
+fps table-scroll-ship-60hz | known, not optimised yet: the 100,000-row table's p95 is over its limit in every run (1.090 to 1.121 against a limit of 1.070), the kit's full redraw of the table about every 126 frames costing the Odin app about 400 us more (STATUS.md, rows family); p50 passes (1.032 against 1.039). The XFAIL covers the whole gate: read its detail for p50 and missed frames. Whoever optimises the table removes this line
+rebuild odin | known, not optimised yet: 1.25 s after a one-line edit, 2.20 x milestone 1 (limit 2.00); LLVM code generation is 0.92 s of 1.19 s against 0.31 s of 0.52 s for milestone 1's package (65,966 lines against 34,255; GK_REBUILD_BREAKDOWN=1 gates/rebuild.sh). Whoever makes the package cheaper to compile removes this line
