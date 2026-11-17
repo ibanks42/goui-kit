@@ -17,12 +17,18 @@
 # input) is not built here: it is for the repository's own tests (docs/CONTRIBUTING.md). Each
 # platform's archive is the artifact gpuikit-PLATFORM; the test output is test-PLATFORM.
 #
-# Release: a pushed tag vVERSION (or a manual run with `release` set to VERSION) runs the job
-# `release` after all three platforms pass: tools/release-assets.sh checks the three archives'
-# names, that VERSION is the version tools/dist.sh wrote (Cargo.toml), that every VERSIONS states
-# the source's interface hash and the commit being released, and writes SHA256SUMS; then
-# `gh release create vVERSION` publishes the three archives and SHA256SUMS. A release that exists
-# already is never replaced.
+# When it runs: on a pull request (built and tested, nothing published), and for a release. Nothing
+# on main builds otherwise: a push to main runs nothing.
+#
+# Release: a manual run on main with `release` set to VERSION (`gh workflow run platforms -f
+# release=VERSION`) runs the job `release` after all three platforms pass: tools/release-assets.sh
+# checks the three archives' names, that VERSION is the version tools/dist.sh wrote (Cargo.toml),
+# that every VERSIONS states the source's interface hash and the commit being released, and writes
+# SHA256SUMS; then `gh release create vVERSION` tags that commit and publishes the three archives
+# and SHA256SUMS. A release that exists already is never replaced. Releases run on main, not on a
+# pushed tag, because only a run on main saves the Rust cache other runs can use (GitHub scopes a
+# cache to the ref that saved it, and every ref may read the default branch's): a release saves it
+# for the next release, and a pull request reads it.
 #
 # Needs no secrets: the Odin compiler is fetched from odin-lang/Odin's releases and the release
 # is made with the run's own token (contents: write in the release job only). Signing (Developer
@@ -31,16 +37,12 @@
 name: platforms
 
 on:
-  push:
-    branches: [main]
-    tags: ['v*']
   pull_request:
   workflow_dispatch:
     inputs:
       release:
-        description: 'Publish release vVERSION from this run: VERSION, as in Cargo.toml (empty: build only)'
-        required: false
-        default: ''
+        description: 'Publish release vVERSION from this run (on main): VERSION, as in Cargo.toml'
+        required: true
         type: string
 
 permissions:
@@ -48,8 +50,8 @@ permissions:
 
 concurrency:
   group: platforms-${{ github.ref }}-${{ github.event_name }}
-  # A newer push replaces a branch's run; a tag's run and a manual run (which may release) finish.
-  cancel-in-progress: ${{ github.event_name == 'push' && !startsWith(github.ref, 'refs/tags/') || github.event_name == 'pull_request' }}
+  # A newer push to a pull request replaces its run; a release always finishes.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   # Python reads and writes UTF-8 everywhere (Windows' default is cp1252, which
@@ -247,7 +249,7 @@ jobs:
   release:
     name: release
     needs: download
-    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release != '')
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-26.04
     timeout-minutes: 20
     permissions:
@@ -260,18 +262,15 @@ jobs:
         with:
           persist-credentials: false
 
-      # From the tag (vVERSION), or the manual run's input. On a manual run the tag is made by
-      # the release, on this run's commit; a tag that exists already must name that commit.
+      # The manual run's input. The tag is made by the release, on this run's commit; a tag that
+      # exists already must name that commit.
       - name: Version
         env:
           INPUT: ${{ inputs.release }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ "$GITHUB_REF_TYPE" = tag ]; then ver=${GITHUB_REF_NAME#v}; else ver=$INPUT; fi
+          ver=$INPUT
           [[ $ver =~ ^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?$ ]] || { echo "release: '$ver' is not a version"; exit 1; }
-          if [ "$GITHUB_REF_TYPE" = tag ] && [ -n "$INPUT" ] && [ "$INPUT" != "$ver" ]; then
-            echo "release: run on tag $GITHUB_REF_NAME with release=$INPUT"; exit 1
-          fi
           # An API error stops here; only an empty answer means there is no such tag yet.
           refs=$(gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/v$ver" --jq '.[].ref')
           if printf '%s\n' "$refs" | grep -qx "refs/tags/v$ver"; then

@@ -913,9 +913,11 @@ and cargo-zigbuild). Windows is built natively with MSVC, because gpui-fast's bu
 compiles the release shaders with `fxc.exe` only on a Windows host. macOS builds both slices on
 one Apple silicon runner and joins them with `lipo`. `tools/dist.sh` assembles the download,
 `tools/dist-test.sh` builds the hello example in both languages from it and runs it
-offscreen, and a pushed tag `vVERSION` publishes a release once all three platforms pass
-(`tools/release-assets.sh` checks the archives and writes `SHA256SUMS`). A release is never
-replaced: a fix is a new version.
+offscreen, and a manual run on `main` with `release=VERSION` publishes release `vVERSION` once
+all three platforms pass (`tools/release-assets.sh` checks the archives and writes `SHA256SUMS`;
+the release makes the tag). CI runs for pull requests and releases only; releases run on `main`
+because only `main`'s Rust cache is shared with later runs. A release is never replaced: a fix is
+a new version.
 
 Licences: gpui-kit, gpui-fast and gpui-pre are Apache-2.0; the icon set is under the Lucide
 licence; `tools/licences.py` collects the licence texts of every crate linked in for each

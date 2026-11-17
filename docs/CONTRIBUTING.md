@@ -169,7 +169,10 @@ make dist
 This assembles what an app developer downloads (the library, the Odin package, the Go module,
 the examples, the guides and the licences) into `dist/`, for the platform you're on, from the
 library in `lib/`. The published releases are built by CI (`.github/workflows/platforms.yml`) on
-Linux, macOS and Windows and attached to a GitHub release when a `vVERSION` tag is pushed.
+Linux, macOS and Windows, which runs for pull requests and for releases only (a push to `main` builds
+nothing). To release, bump `version` in `Cargo.toml`, push it to `main`, then run
+`gh workflow run platforms -f release=VERSION` on `main`: the run builds and tests the three
+platforms, tags that commit `vVERSION` and publishes the release.
 
 ## Cleaning up
 
