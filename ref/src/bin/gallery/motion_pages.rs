@@ -42,6 +42,7 @@ pub struct MotionPages {
     focus: FocusHandle,
     // the elem-* pages
     cache: Entity<RetainAllImageCache>,
+    pic: Arc<RenderImage>, // made once, as the bindings' gk.render_image (one texture)
     scroll: ScrollHandle,
     anchor: ScrollAnchor,
     scope: TextSelectionScopeId,
@@ -63,6 +64,7 @@ impl MotionPages {
             state: TransitionState::default(),
             focus: cx.focus_handle(),
             cache: RetainAllImageCache::new(cx),
+            pic: checker(),
             anchor: ScrollAnchor::for_handle(scroll.clone()),
             scroll,
             scope: TextSelectionScopeId::new(),
@@ -261,9 +263,9 @@ fn elem_drop(g: &Gallery, cx: &mut Cx) -> AnyElement {
 }
 
 fn elem_image(m: &MotionPages) -> AnyElement {
-    // one image per use and per frame, as the library makes one each time it decodes the page's tape
-    let render = checker();
-    let custom = checker();
+    // one image made once and shown three times, as the bindings' page does (gk.render_image)
+    let render = m.pic.clone();
+    let custom = m.pic.clone();
     h_flex()
         .gap_2()
         .image_cache(retain_all("elem-images"))
@@ -275,7 +277,7 @@ fn elem_image(m: &MotionPages) -> AnyElement {
         )
         .child(img(ImageSource::Image(Arc::new(Image::from_bytes(ImageFormat::Png, ELEM_PNG.to_vec())))).size(px(32.)))
         .child(img(ImageSource::Resource(Resource::Path(Arc::from(Path::new(ELEM_PNG_PATH))))).size(px(32.)))
-        .child(div().image_cache(m.cache.clone()).child(Avatar::new().src(ImageSource::Render(checker()))))
+        .child(div().image_cache(m.cache.clone()).child(Avatar::new().src(ImageSource::Render(m.pic.clone()))))
         .into_any_element()
 }
 

@@ -116,7 +116,8 @@ pub fn apply_base_calendar(dx: &mut Dx, mut el: gpui_kit::base::Calendar, first:
             257 => { el = { let a0 = <chrono::Weekday as genapi::Unwire>::get(r); <gpui_kit::base::Calendar>::first_day_of_week(el, a0) }; }
             258 => { el = { let a0 = { let a = crate::shim_text::Ask::take(r.u64()); move |k0: gpui_kit::base::CalendarItemKind, k1: i32| -> gpui_kit::SharedString { a.get::<gpui_kit::SharedString, gpui_kit::SharedString>(crate::shim_text::key(&(&k0, &k1)), |r: &mut genapi::R, dx: &mut genapi::Dx| -> Option<gpui_kit::SharedString> { let _ = &dx; Some(gpui_kit::SharedString::new(r.str())) }, |v| v, Default::default) } }; <gpui_kit::base::Calendar>::label(el, a0) }; }
             259 => { el = { let a0 = { let src = r.u64(); move |k0: gpui_kit::base::CalendarItem, k1: gpui_kit::base::CalendarItemState, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&crate::items::Reads(&k1), &mut p); let b1 = { let mut b = Vec::new(); genapi::Wire::put(&crate::items::Reads(&k1), &mut b); b }; let h: Vec<Box<dyn std::any::Any>> = vec![Box::new(k0)]; crate::items::row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b1); }), h, window, cx, |dx, n| Some(dx.child(n)), |h| match crate::items::first::<gpui_kit::base::CalendarItem>(h) { Some(v) => gpui_kit::IntoElement::into_any_element(v), None => gpui_kit::IntoElement::into_any_element(gpui_kit::div()) }) } }; <gpui_kit::base::Calendar>::item(el, a0) }; }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Calendar", op),
@@ -144,7 +145,8 @@ pub fn apply_base_calendar_item(dx: &mut Dx, mut el: gpui_kit::base::CalendarIte
         match op {
             256 => { el = { <gpui_kit::base::CalendarItem>::clear_children(el) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }

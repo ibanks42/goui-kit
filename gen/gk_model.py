@@ -257,7 +257,9 @@ class Model:
             f["entity"] = True
         if it["name"] in self.ov.get("state", {}).get("objects", []):
             f["state"] = f["entity"] = False  # a value held as a library object ([state] objects, PROTOCOLS.md 13.31)
-        f["element"] = "IntoElement" in f["traits"]
+        # gpui-fast 0.1.16 on: an Element gets IntoElement from `impl<T: Element> IntoElement for T`, a
+        # blanket impl (rustdoc lists it apart), instead of each element's own impl.
+        f["element"] = "IntoElement" in f["traits"] or "IntoElement" in f["blanket"] and "Element" in f["traits"]
         # Clone, which the reduced extract drops: api/clone.json, read from the pinned sources
         # (tools/clone_scan.py). An object handed out of a borrow is copied (PROTOCOLS.md 13).
         f["clone"] = "Clone" in f["traits"] or it["name"] in self.clones.get(hc, ())

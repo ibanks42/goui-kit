@@ -33,7 +33,7 @@ pub fn apply_gpui_div(dx: &mut Dx, mut el: gpui_kit::Div, first: u32) -> gpui_ki
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
-            19072..=19199 => { el = tr_scrollable_element_65(el, op, r, dx); }
+            19072..=19199 => { el = tr_scrollable_element_66(el, op, r, dx); }
             _ => bad_op("Div", op),
         }
     }

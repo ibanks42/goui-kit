@@ -11,6 +11,7 @@ Setting_Field_Bool :: struct {
 
 Setting_Field_Bool_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Setting_Field_Bool),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Setting_Field_Bool),
 	using t_styled_ext: ^Styled_Ext_Trait(Setting_Field_Bool),
 	using t_styled: ^Styled_Trait(Setting_Field_Bool),
 	// Set the default value for this setting field, default is None.
@@ -57,6 +58,7 @@ setting_field_bool_switch :: proc(value: Cell(bool), set_value: Handler, flags: 
 @(private)
 setting_field_bool_vt := Setting_Field_Bool_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Setting_Field_Bool))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Setting_Field_Bool))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Setting_Field_Bool))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Setting_Field_Bool))&styled_any,
 	default_value = proc(e: Setting_Field_Bool, default_value: bool) -> Setting_Field_Bool {
@@ -82,6 +84,7 @@ Setting_Field_Number :: struct {
 
 Setting_Field_Number_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Setting_Field_Number),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Setting_Field_Number),
 	using t_styled_ext: ^Styled_Ext_Trait(Setting_Field_Number),
 	using t_styled: ^Styled_Trait(Setting_Field_Number),
 	// Set the default value for this setting field, default is None.
@@ -118,6 +121,7 @@ setting_field_number_number_input :: proc(options: Number_Field_Options, value: 
 @(private)
 setting_field_number_vt := Setting_Field_Number_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Setting_Field_Number))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Setting_Field_Number))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Setting_Field_Number))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Setting_Field_Number))&styled_any,
 	default_value = proc(e: Setting_Field_Number, default_value: f64) -> Setting_Field_Number {
@@ -143,6 +147,7 @@ Setting_Field_Text :: struct {
 
 Setting_Field_Text_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Setting_Field_Text),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Setting_Field_Text),
 	using t_styled_ext: ^Styled_Ext_Trait(Setting_Field_Text),
 	using t_styled: ^Styled_Trait(Setting_Field_Text),
 	// Set the default value for this setting field, default is None.
@@ -241,6 +246,7 @@ setting_field_text_scrollable_dropdown :: proc(options: []Tuple_String_String, v
 @(private)
 setting_field_text_vt := Setting_Field_Text_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Setting_Field_Text))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Setting_Field_Text))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Setting_Field_Text))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Setting_Field_Text))&styled_any,
 	default_value = proc(e: Setting_Field_Text, default_value: string) -> Setting_Field_Text {
@@ -266,6 +272,7 @@ Setting_Group :: struct {
 
 Setting_Group_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Setting_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Setting_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Setting_Group),
 	using t_styled: ^Styled_Trait(Setting_Group),
 	// Set the description of the setting group, default is None.
@@ -300,6 +307,7 @@ setting_group :: proc(flags: ..Style_Flag, loc := #caller_location) -> Setting_G
 @(private)
 setting_group_vt := Setting_Group_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Setting_Group))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Setting_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Setting_Group))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Setting_Group))&styled_any,
 	description = proc(e: Setting_Group, description: string) -> Setting_Group {

@@ -24,6 +24,7 @@ pub fn c_653(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = 
 pub fn c_654(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = { let a = r.u64() as usize; a..(r.u64() as usize) }; let bytes = genapi::state_call::<gpui_kit::component::message_scroller::MessageScrollerState>(h, c, move |s, window, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::message_scroller::MessageScrollerState>::remeasure_items(s, a0, cx), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_655(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u64() as usize; let bytes = genapi::state_call::<gpui_kit::component::message_scroller::MessageScrollerState>(h, c, move |s, window, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_item(s, a0, cx), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_656(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = { let a = r.u64() as usize; a..(r.u64() as usize) }; let a1 = r.u64() as usize; let bytes = genapi::state_call::<gpui_kit::component::message_scroller::MessageScrollerState>(h, c, move |s, window, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::message_scroller::MessageScrollerState>::splice(s, a0, a1, cx), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
+pub fn c_1776(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::decoded(rc_27_c(r))?; let bytes = genapi::state_call::<gpui_kit::component::message_scroller::MessageScrollerState>(h, c, move |s, window, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_offset(s, a0, cx), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn call__component_message_scroller(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<genapi::GkResult<()>> {
     Some(match op {
         380 => c_380(r, c),
@@ -39,6 +40,7 @@ pub fn call__component_message_scroller(op: u16, r: &mut R, c: &mut genapi::Call
         654 => c_654(r, c),
         655 => c_655(r, c),
         656 => c_656(r, c),
+        1776 => c_1776(r, c),
         _ => return None,
     })
 }
@@ -88,8 +90,9 @@ pub fn apply_component_message_scroller(dx: &mut Dx, mut el: gpui_kit::component
             263 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::message_scroller::MessageScroller>::with_list_style(el, a0) }; }
             264 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::message_scroller::MessageScroller>::with_row_style(el, a0) }; }
             265 => { el = { let Some((a0,)) = (|| Some(({ let s = if r.u8() != 0 { Some(build_gpui_style_refinement(dx, r.u32())?) } else { None }; let src = r.u64(); move |b: gpui_kit::component::button::Button| crate::editor_text::decorate(b, s, src) },)))() else { continue }; <gpui_kit::component::message_scroller::MessageScroller>::with_jump_button_renderer(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("MessageScroller", op),

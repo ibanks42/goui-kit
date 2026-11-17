@@ -13,6 +13,7 @@ Switch :: struct {
 
 Switch_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Switch),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Switch),
 	using t_styled_ext: ^Styled_Ext_Trait(Switch),
 	using t_styled: ^Styled_Trait(Switch),
 	using t_sizable: ^Sizable_Trait(Switch),
@@ -63,6 +64,7 @@ switch_ :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Switch 
 @(private)
 switch_vt := Switch_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Switch))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Switch))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Switch))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Switch))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Switch))&sizable_any,

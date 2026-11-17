@@ -8,6 +8,11 @@
 # Odin app answers `--list` with the ids it has, and the gate reports the others as not
 # bound. A step is a gk-meter script line (click X Y | type TEXT); a shot follows each.
 # The third column is what the conformance count credits when the page's pixels match.
+# The image page (round 6's elem-image) is walked first. gpui keeps every image in one texture atlas and
+# an image's edge samples its atlas neighbour, so the page's pixels depend on what earlier pages left
+# there; the two apps draw some pages from different parts (an input, markdown plugin rows as the
+# app's views), which leave different tiles. First, its pixels are Rust's.
+elem-image |  | img Div.image_cache Img.image_cache Avatar.src
 label-basic |  | Label.new style.text_xs Label.text_color Div.child v_flex style.gap_2
 div-style |  | div h_flex Div.child Div.w Div.h Div.bg style.rounded_sm style.p_2 style.p_1 style.gap_1 style.gap_3 style.flex_wrap style.w_full style.text_xs
 div-hover | click 60 110 | Div.hover
@@ -152,7 +157,6 @@ motion-keyframes | advance 150; advance 150; advance 400 | gpui_kit::base::anima
 motion-presence | click 60 96; advance 100; advance 300 | gpui_kit::base::Presence::sample Presence.new Presence.transition gpui_kit::base::TransitionState<f32>::sample
 motion-focus-trap |  | gpui_kit::base::FocusTrapElement::focus_trap
 elem-drop | drag 66 110 182 110; drag 66 110 298 110 | InteractiveElement.can_drop InteractiveElement.on_drag_move InteractiveElement.group_drag_over StatefulInteractiveElement.external_drag_payload
-elem-image |  | img Div.image_cache Img.image_cache Avatar.src
 elem-scope |  | gpui_kit::base::ElementExt::text_selection_scope gpui_kit::base::TextSelectionScopeId::new StatefulInteractiveElement.anchor_scroll StatefulInteractiveElement.a11y_synthetic_children Div.with_dynamic_prepaint_order
 elem-vlist |  | gpui_kit::base::v_virtual_list gpui_kit::base::h_virtual_list
 # The components track, round 6 (docs/PROTOCOLS.md 11.17 to 11.24, 12.16).

@@ -39,7 +39,7 @@ pub fn apply_base_scrollbar(dx: &mut Dx, mut el: gpui_kit::base::Scrollbar, firs
         match op {
             256 => { el = { let Some((a0,)) = (|| Some((in_11(r, dx)?,)))() else { continue }; <gpui_kit::base::Scrollbar>::axis(el, a0) }; }
             257 => { el = { let a0 = element_id(r); <gpui_kit::base::Scrollbar>::id(el, a0) }; }
-            258 => { el = { let a0 = en_55(r.u16()); <gpui_kit::base::Scrollbar>::mode(el, a0) }; }
+            258 => { el = { let a0 = en_57(r.u16()); <gpui_kit::base::Scrollbar>::mode(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some((rc_42(r, dx)?,)))() else { continue }; <gpui_kit::base::Scrollbar>::scroll_size(el, a0) }; }
             260 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::ScrollbarStyles| { let first = dx.node(n).2; apply_base_scrollbar_styles(dx, v, first) } }; <gpui_kit::base::Scrollbar>::styles(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some((rc_11(r, dx)?,)))() else { continue }; <gpui_kit::base::Scrollbar>::viewport_bounds(el, a0) }; }
@@ -68,11 +68,11 @@ pub fn apply_base_scrollbar_motion(dx: &mut Dx, mut el: gpui_kit::base::Scrollba
         let r = &mut r;
         match op {
             256 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::base::ScrollbarMotion>::with_enter(el, a0) }; }
-            257 => { el = { let a0 = en_54(r.u16()); <gpui_kit::base::ScrollbarMotion>::with_entrance(el, a0) }; }
+            257 => { el = { let a0 = en_56(r.u16()); <gpui_kit::base::ScrollbarMotion>::with_entrance(el, a0) }; }
             258 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::base::ScrollbarMotion>::with_exit(el, a0) }; }
             259 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::base::ScrollbarMotion>::with_expand(el, a0) }; }
             260 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::base::ScrollbarMotion>::with_idle(el, a0) }; }
-            261 => { el = { let a0 = en_54(r.u16()); <gpui_kit::base::ScrollbarMotion>::with_thumb_hover_entrance(el, a0) }; }
+            261 => { el = { let a0 = en_56(r.u16()); <gpui_kit::base::ScrollbarMotion>::with_thumb_hover_entrance(el, a0) }; }
             _ => bad_op("ScrollbarMotion", op),
         }
     }

@@ -11,7 +11,7 @@ pub fn sb_component_date_picker_state(s: gpui_kit::component::date_picker::DateP
         1 => { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::date_picker::DatePickerState>::date_format(s, a0) }
         2 => { let a0 = en_40(r.u16()); <gpui_kit::component::date_picker::DatePickerState>::hour_cycle(s, a0) }
         3 => { let a0 = r.u64() as usize; <gpui_kit::component::date_picker::DatePickerState>::number_of_months(s, a0) }
-        4 => { let a0 = en_63(r.u16()); <gpui_kit::component::date_picker::DatePickerState>::time_precision(s, a0) }
+        4 => { let a0 = en_65(r.u16()); <gpui_kit::component::date_picker::DatePickerState>::time_precision(s, a0) }
         5 => { let Some((a0,)) = (|| Some((in_7_c(r)?,)))() else { return s }; <gpui_kit::component::date_picker::DatePickerState>::disabled_matcher(s, a0) }
         6 => { let a0 = <chrono::NaiveTime as genapi::Unwire>::get(r); <gpui_kit::component::date_picker::DatePickerState>::default_time(s, a0) }
         7 => { let a0 = <chrono::Weekday as genapi::Unwire>::get(r); <gpui_kit::component::date_picker::DatePickerState>::first_day_of_week(s, a0) }
@@ -79,9 +79,10 @@ pub fn apply_component_calendar(dx: &mut Dx, mut el: gpui_kit::component::calend
         match op {
             256 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::calendar::Calendar>::number_of_months(el, a0) }; }
             257 => { el = { let a0 = <chrono::Weekday as genapi::Unwire>::get(r); <gpui_kit::component::calendar::Calendar>::first_day_of_week(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Calendar", op),
@@ -112,9 +113,10 @@ pub fn apply_component_date_picker(dx: &mut Dx, mut el: gpui_kit::component::dat
             258 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::date_picker::DatePicker>::number_of_months(el, a0) }; }
             259 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::date_picker::DatePicker>::placeholder(el, a0) }; }
             260 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_date_range_preset(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::date_picker::DatePicker>::presets(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             17024..=17151 => { el = tr_disableable_5(el, op, r, dx); }
@@ -168,9 +170,10 @@ pub fn apply_component_time_field(dx: &mut Dx, mut el: gpui_kit::component::time
         let r = &mut r;
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::time_field::TimeField>::invalid(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             17024..=17151 => { el = tr_disableable_5(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

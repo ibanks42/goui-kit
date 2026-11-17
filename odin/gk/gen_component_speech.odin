@@ -20,6 +20,7 @@ Speech_Button :: struct {
 
 Speech_Button_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Speech_Button),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Speech_Button),
 	using t_styled_ext: ^Styled_Ext_Trait(Speech_Button),
 	using t_sizable: ^Sizable_Trait(Speech_Button),
 	using t_styled: ^Styled_Trait(Speech_Button),
@@ -42,6 +43,7 @@ speech_button :: proc(state: Speech_State, flags: ..Style_Flag, loc := #caller_l
 @(private)
 speech_button_vt := Speech_Button_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Speech_Button))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Speech_Button))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Speech_Button))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Speech_Button))&sizable_any,
 	t_styled = cast(^Styled_Trait(Speech_Button))&styled_any,
@@ -112,6 +114,7 @@ Speech_Waveform :: struct {
 
 Speech_Waveform_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Speech_Waveform),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Speech_Waveform),
 	using t_styled_ext: ^Styled_Ext_Trait(Speech_Waveform),
 	using t_sizable: ^Sizable_Trait(Speech_Waveform),
 	using t_styled: ^Styled_Trait(Speech_Waveform),
@@ -142,6 +145,7 @@ speech_waveform :: proc(state: Speech_State, flags: ..Style_Flag, loc := #caller
 @(private)
 speech_waveform_vt := Speech_Waveform_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Speech_Waveform))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Speech_Waveform))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Speech_Waveform))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Speech_Waveform))&sizable_any,
 	t_styled = cast(^Styled_Trait(Speech_Waveform))&styled_any,

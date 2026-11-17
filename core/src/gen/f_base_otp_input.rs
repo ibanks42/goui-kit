@@ -74,7 +74,8 @@ pub fn apply_base_otp_input(dx: &mut Dx, mut el: gpui_kit::base::OtpInput, first
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::OtpInput>::disabled(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }

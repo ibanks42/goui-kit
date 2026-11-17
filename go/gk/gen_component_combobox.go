@@ -98,6 +98,18 @@ func (e ComboboxEl) Footer(f Element) ComboboxEl {
 	return e
 }
 
+// Highlight the part of each row that matches the search query, default is `false`.
+//
+// Rows render with `render_highlighted`; the default highlights the matched text of `title()` in
+// the theme's `list_highlight_foreground` color.
+//
+// HighlightMatches is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::highlight_matches.
+func (e ComboboxEl) HighlightMatches(highlight bool) ComboboxEl {
+	o := op(e.n, 268)
+	o.bool(highlight)
+	return e
+}
+
 // Override the trigger chevron icon.
 //
 // Icon is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::icon.
@@ -157,6 +169,63 @@ func (e ComboboxEl) PopoverStyle() ComboboxEl { tThemeStyledPopoverStyle(e.n); r
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e ComboboxEl) RoundedFullStyle() ComboboxEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e ComboboxEl) BorderE(width Length) ComboboxEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e ComboboxEl) BorderS(width Length) ComboboxEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e ComboboxEl) FlexRowDir() ComboboxEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e ComboboxEl) InsetE(length Length) ComboboxEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e ComboboxEl) InsetS(length Length) ComboboxEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e ComboboxEl) JustifyFlexEnd() ComboboxEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e ComboboxEl) JustifyFlexStart() ComboboxEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e ComboboxEl) Me(length Length) ComboboxEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e ComboboxEl) Ms(length Length) ComboboxEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e ComboboxEl) Pe(length Length) ComboboxEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e ComboboxEl) Ps(length Length) ComboboxEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e ComboboxEl) RoundedE(radius Length) ComboboxEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e ComboboxEl) RoundedS(radius Length) ComboboxEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e ComboboxEl) TextEnd() ComboboxEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e ComboboxEl) TextStart() ComboboxEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e ComboboxEl) CornerRadii(radius Corners) ComboboxEl {
 	tStyledExtCornerRadii(e.n, radius)

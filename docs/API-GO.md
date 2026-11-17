@@ -196,39 +196,39 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 <!-- index:begin (written by gen/gk_apidoc.py from go/gk/gen_*.go; do not edit) -->
 
-253 element types, 141 kit state types and 91 value types, in 76 upstream modules. Styling builders every element has (`.Bg`, `.W`, `.P`, `.BorderColor`, … and the style tokens) are not repeated per type.
+253 element types, 141 kit state types and 92 value types, in 76 upstream modules. Styling builders every element has (`.Bg`, `.W`, `.P`, `.BorderColor`, … and the style tokens) are not repeated per type.
 
 ### component
 
-- **`gk.IconEl`** (Icon, element): `gk.IconDefault()` or `gk.IconEmpty()` or `gk.Icon(icon)`; `.Small`, `.Large`, `.Data`, `.Path`, `.Rotate`, `.WithSize`, `.Xsmall`
-- **`gk.TitleBarEl`** (TitleBar, element): `gk.TitleBar()`; `.OnCloseWindow`
+- **`gk.IconEl`** (Icon, element): `gk.IconDefault()` or `gk.IconEmpty()` or `gk.Icon(icon)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.Data`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 14 more
+- **`gk.TitleBarEl`** (TitleBar, element): `gk.TitleBar()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
 - **`gk.WindowBorderEl`** (WindowBorder, element): `gk.KitWindowBorder()` or `gk.WindowBorder()` or `gk.WindowBorderDefault()`; `.ResizeHitSize`, `.ShadowSize`
 - **`gk.Theme`** (Theme, kit state): `gk.KitTheme(cx)` or `gk.ThemeGlobal(cx)` or `gk.ThemeGlobalMut(cx)`; reads `.ApplySemanticConfig`, `.ColorTokens`, `.Colors`, `.CursorBlink`, `.DarkTheme`, `.FocusRing`, `.FontFamily`, `.FontSize` and 30 more; writes `.ApplyConfig`, `.ApplySemanticTokens`, `.SetColors`, `.SetCursorBlink`, `.SetDarkTheme`, `.SetFocusRing`, `.SetFontFamily`, `.SetFontSize` and 14 more
 - **`gk.ThemeRegistry`** (ThemeRegistry, kit state): `gk.ThemeRegistryGlobal(cx)` or `gk.ThemeRegistryGlobalMut(cx)`; reads `.DefaultDarkTheme`, `.DefaultLightTheme`, `.DefaultThemes`, `.LoadThemesFromStr`, `.SortedThemes`, `.Themes`
 
 ### component::accordion
 
-- **`gk.AccordionEl`** (Accordion, element): `gk.Accordion(id)`; `.Small`, `.Large`, `.Disabled`, `.Bordered`, `.Item`, `.Multiple`, `.OnToggleClick`, `.WithSize` and 1 more
-- **`gk.AccordionItemEl`** (AccordionItem, element): `gk.AccordionItem()`; `.Title`, `.Icon`, `.Small`, `.Large`, `.Disabled`, `.ContentStyle`, `.Open`, `.TitleStyle` and 2 more
+- **`gk.AccordionEl`** (Accordion, element): `gk.Accordion(id)`; `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS`, `.Bordered`, `.FlexRowDir`, `.InsetE` and 16 more
+- **`gk.AccordionItemEl`** (AccordionItem, element): `gk.AccordionItem()`; `.Title`, `.Icon`, `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS`, `.ContentStyle` and 17 more
 
 ### component::alert
 
-- **`gk.AlertEl`** (Alert, element): `gk.Alert(id, message)` or `gk.AlertError(id, message)` or `gk.AlertInfo(id, message)` (and 2 more); `.Title`, `.Icon`, `.Small`, `.Large`, `.Banner`, `.OnClose`, `.Visible`, `.WithSize` and 2 more
+- **`gk.AlertEl`** (Alert, element): `gk.Alert(id, message)` or `gk.AlertError(id, message)` or `gk.AlertInfo(id, message)` (and 2 more); `.Title`, `.Icon`, `.Small`, `.Large`, `.Banner`, `.BorderE`, `.BorderS`, `.FlexRowDir` and 17 more
 
 ### component::attachment
 
-- **`gk.AttachmentActionsEl`** (AttachmentActions, element): `gk.AttachmentActions()` or `gk.AttachmentActionsDefault()`
-- **`gk.AttachmentContentEl`** (AttachmentContent, element): `gk.AttachmentContent()` or `gk.AttachmentContentDefault()`; `.Title`, `.Description`
-- **`gk.AttachmentDescriptionEl`** (AttachmentDescription, element): `gk.AttachmentDescription(text)`; `.Status`
-- **`gk.AttachmentEl`** (Attachment, element): `gk.Attachment()` or `gk.AttachmentDefault()`; `.OnClick`, `.Tooltip`, `.Content`, `.Small`, `.Large`, `.Actions`, `.Axis`, `.Media` and 6 more
-- **`gk.AttachmentGroupEl`** (AttachmentGroup, element): `gk.AttachmentGroup(id)`; `.WithEdgeFade`
-- **`gk.AttachmentMediaEl`** (AttachmentMedia, element): `gk.AttachmentMedia()` or `gk.AttachmentMediaDefault()`; `.Small`, `.Large`, `.Overlay`, `.Src`, `.WithSize`, `.Xsmall`
-- **`gk.AttachmentTitleEl`** (AttachmentTitle, element): `gk.AttachmentTitle(text)`; `.Status`, `.WithShimmerStyle`
+- **`gk.AttachmentActionsEl`** (AttachmentActions, element): `gk.AttachmentActions()` or `gk.AttachmentActionsDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.AttachmentContentEl`** (AttachmentContent, element): `gk.AttachmentContent()` or `gk.AttachmentContentDefault()`; `.Title`, `.Description`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
+- **`gk.AttachmentDescriptionEl`** (AttachmentDescription, element): `gk.AttachmentDescription(text)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
+- **`gk.AttachmentEl`** (Attachment, element): `gk.Attachment()` or `gk.AttachmentDefault()`; `.OnClick`, `.Tooltip`, `.Content`, `.Small`, `.Large`, `.Actions`, `.Axis`, `.BorderE` and 21 more
+- **`gk.AttachmentGroupEl`** (AttachmentGroup, element): `gk.AttachmentGroup(id)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
+- **`gk.AttachmentMediaEl`** (AttachmentMedia, element): `gk.AttachmentMedia()` or `gk.AttachmentMediaDefault()`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 13 more
+- **`gk.AttachmentTitleEl`** (AttachmentTitle, element): `gk.AttachmentTitle(text)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 9 more
 
 ### component::avatar
 
-- **`gk.AvatarEl`** (Avatar, element): `gk.Avatar()`; `.Placeholder`, `.Small`, `.Large`, `.Name`, `.Src`, `.WithSize`, `.Xsmall`
-- **`gk.AvatarGroupEl`** (AvatarGroup, element): `gk.AvatarGroup()`; `.Child`, `.Children`, `.Small`, `.Large`, `.Ellipsis`, `.Limit`, `.WithSize`, `.Xsmall`
+- **`gk.AvatarEl`** (Avatar, element): `gk.Avatar()`; `.Placeholder`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 14 more
+- **`gk.AvatarGroupEl`** (AvatarGroup, element): `gk.AvatarGroup()`; `.Child`, `.Children`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.Ellipsis`, `.FlexRowDir` and 15 more
 
 ### component::badge
 
@@ -236,38 +236,38 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::breadcrumb
 
-- **`gk.BreadcrumbEl`** (Breadcrumb, element): `gk.Breadcrumb()`; `.Child`, `.Children`
-- **`gk.BreadcrumbItemEl`** (BreadcrumbItem, element): `gk.BreadcrumbItem(label)`; `.OnClick`, `.Disabled`
+- **`gk.BreadcrumbEl`** (Breadcrumb, element): `gk.Breadcrumb()`; `.Child`, `.Children`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
+- **`gk.BreadcrumbItemEl`** (BreadcrumbItem, element): `gk.BreadcrumbItem(label)`; `.OnClick`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
 
 ### component::bubble
 
-- **`gk.BubbleContentEl`** (BubbleContent, element): `gk.BubbleContent()` or `gk.BubbleContentDefault()`
-- **`gk.BubbleEl`** (Bubble, element): `gk.Bubble()` or `gk.BubbleDefault()`; `.Content`, `.Alignment`, `.Reactions`, `.WithVariant`
-- **`gk.BubbleGroupEl`** (BubbleGroup, element): `gk.BubbleGroup()` or `gk.BubbleGroupDefault()`
-- **`gk.BubbleReactionsEl`** (BubbleReactions, element): `gk.BubbleReactions()` or `gk.BubbleReactionsDefault()`; `.Action`, `.Alignment`, `.Side`
+- **`gk.BubbleContentEl`** (BubbleContent, element): `gk.BubbleContent()` or `gk.BubbleContentDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BubbleEl`** (Bubble, element): `gk.Bubble()` or `gk.BubbleDefault()`; `.Content`, `.Alignment`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.BubbleGroupEl`** (BubbleGroup, element): `gk.BubbleGroup()` or `gk.BubbleGroupDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BubbleReactionsEl`** (BubbleReactions, element): `gk.BubbleReactions()` or `gk.BubbleReactionsDefault()`; `.Action`, `.Alignment`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 10 more
 
 ### component::button
 
-- **`gk.ButtonEl`** (Button, element): `gk.Button(id)`; `.Label`, `.Selected`, `.Icon`, `.OnClick`, `.Tooltip`, `.Primary`, `.Ghost`, `.Outline` and 22 more
-- **`gk.ButtonGroupEl`** (ButtonGroup, element): `gk.ButtonGroup(id)`; `.Child`, `.Children`, `.OnClick`, `.Primary`, `.Ghost`, `.Outline`, `.Small`, `.Large` and 14 more
-- **`gk.DropdownButtonEl`** (DropdownButton, element): `gk.DropdownButton(id)`; `.Selected`, `.Primary`, `.Ghost`, `.Outline`, `.Small`, `.Large`, `.Disabled`, `.Button` and 15 more
-- **`gk.ToggleEl`** (Toggle, element): `gk.Toggle(id)`; `.Label`, `.Checked`, `.Icon`, `.OnClick`, `.Tooltip`, `.Ghost`, `.Outline`, `.Small` and 5 more
-- **`gk.ToggleGroupEl`** (ToggleGroup, element): `gk.ToggleGroup(id)`; `.Child`, `.Children`, `.OnClick`, `.Ghost`, `.Outline`, `.Small`, `.Large`, `.Disabled` and 5 more
+- **`gk.ButtonEl`** (Button, element): `gk.Button(id)`; `.Label`, `.Selected`, `.Icon`, `.OnClick`, `.Tooltip`, `.Primary`, `.Ghost`, `.Outline` and 37 more
+- **`gk.ButtonGroupEl`** (ButtonGroup, element): `gk.ButtonGroup(id)`; `.Child`, `.Children`, `.OnClick`, `.Primary`, `.Ghost`, `.Outline`, `.Small`, `.Large` and 29 more
+- **`gk.DropdownButtonEl`** (DropdownButton, element): `gk.DropdownButton(id)`; `.Selected`, `.Primary`, `.Ghost`, `.Outline`, `.Small`, `.Large`, `.Disabled`, `.BorderE` and 30 more
+- **`gk.ToggleEl`** (Toggle, element): `gk.Toggle(id)`; `.Label`, `.Checked`, `.Icon`, `.OnClick`, `.Tooltip`, `.Ghost`, `.Outline`, `.Small` and 20 more
+- **`gk.ToggleGroupEl`** (ToggleGroup, element): `gk.ToggleGroup(id)`; `.Child`, `.Children`, `.OnClick`, `.Ghost`, `.Outline`, `.Small`, `.Large`, `.Disabled` and 20 more
 - **`gk.ButtonCustomVariant`** (ButtonCustomVariant, value): `gk.NewButtonCustomVariant()`; `.Active`, `.Color`, `.Foreground`, `.Hover`, `.Shadow`
 
 ### component::calendar
 
-- **`gk.CalendarEl`** (Calendar, element): `gk.Calendar(state)`; `.Small`, `.Large`, `.NumberOfMonths`, `.WithSize`, `.Xsmall`
+- **`gk.CalendarEl`** (Calendar, element): `gk.Calendar(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 12 more
 
 ### component::carousel
 
-- **`gk.CarouselContentEl`** (CarouselContent, element): `gk.CarouselContent(state)`; `.TrackStyle`
-- **`gk.CarouselEl`** (Carousel, element): `gk.Carousel(id, state)`
-- **`gk.CarouselItemEl`** (CarouselItem, element): `gk.CarouselItem(id, index, state)`
-- **`gk.CarouselNextEl`** (CarouselNext, element): `gk.CarouselNext(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.CarouselPaginationEl`** (CarouselPagination, element): `gk.CarouselPagination()`
-- **`gk.CarouselPaginationItemEl`** (CarouselPaginationItem, element): `gk.CarouselPaginationItem(id, index, state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.CarouselPreviousEl`** (CarouselPrevious, element): `gk.CarouselPrevious(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
+- **`gk.CarouselContentEl`** (CarouselContent, element): `gk.CarouselContent(state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
+- **`gk.CarouselEl`** (Carousel, element): `gk.Carousel(id, state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.CarouselItemEl`** (CarouselItem, element): `gk.CarouselItem(id, index, state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.CarouselNextEl`** (CarouselNext, element): `gk.CarouselNext(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.CarouselPaginationEl`** (CarouselPagination, element): `gk.CarouselPagination()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.CarouselPaginationItemEl`** (CarouselPaginationItem, element): `gk.CarouselPaginationItem(id, index, state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.CarouselPreviousEl`** (CarouselPrevious, element): `gk.CarouselPrevious(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
 - **`gk.CarouselState`** (CarouselState, kit state): `gk.NewCarouselState(cx, itemCount)….Build()`; shown by `gk.Carousel(state)`, `gk.CarouselContent(state)`, `gk.CarouselItem(state)`, `gk.CarouselNext(state)`, `gk.CarouselPaginationItem(state)`, `gk.CarouselPrevious(state)`; built with `.WithAxis`, `.WithLooping`, `.WithSelectedIndex`; reads `.Axis`, `.HasNext`, `.HasPrevious`, `.IsLooping`, `.ItemCount`, `.SelectFirst`, `.SelectIndex`, `.SelectLast` and 3 more; writes `.SetAxis`, `.SetItemCount`, `.SetLooping`, `.SetSelectedIndex`; events `.OnCarouselEvent(cx, f)`
 
 ### component::chart
@@ -283,37 +283,37 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::checkbox
 
-- **`gk.CheckboxEl`** (Checkbox, element): `gk.Checkbox(id)`; `.Label`, `.Checked`, `.Selected`, `.OnClick`, `.OnChange`, `.Tooltip`, `.Small`, `.Large` and 5 more
+- **`gk.CheckboxEl`** (Checkbox, element): `gk.Checkbox(id)`; `.Label`, `.Checked`, `.Selected`, `.OnClick`, `.OnChange`, `.Tooltip`, `.Small`, `.Large` and 21 more
 
 ### component::clipboard
 
-- **`gk.ClipboardEl`** (Clipboard, element): `gk.Clipboard(id)`; `.Value`, `.Tooltip`, `.Small`, `.Large`, `.OnCopied`, `.ValueFn`, `.WithSize`, `.Xsmall`
+- **`gk.ClipboardEl`** (Clipboard, element): `gk.Clipboard(id)`; `.Label`, `.Value`, `.Tooltip`, `.Small`, `.Large`, `.OnCopied`, `.ValueFn`, `.WithSize` and 1 more
 
 ### component::collapsible
 
-- **`gk.CollapsibleEl`** (Collapsible, element): `gk.Collapsible()`; `.Content`, `.MotionID`, `.Open`
+- **`gk.CollapsibleEl`** (Collapsible, element): `gk.Collapsible()`; `.Content`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 10 more
 
 ### component::color_picker
 
-- **`gk.ColorPickerEl`** (ColorPicker, element): `gk.ColorPicker(state)`; `.Label`, `.Icon`, `.Small`, `.Large`, `.Anchor`, `.FeaturedColors`, `.WithSize`, `.Xsmall`
-- **`gk.ColorSelectEl`** (ColorSelect, element): `gk.ColorSelect(state)`; `.Placeholder`, `.Small`, `.Large`, `.FeaturedColors`, `.WithSize`, `.Xsmall`
+- **`gk.ColorPickerEl`** (ColorPicker, element): `gk.ColorPicker(state)`; `.Label`, `.Icon`, `.Small`, `.Large`, `.Anchor`, `.BorderE`, `.BorderS`, `.FeaturedColors` and 15 more
+- **`gk.ColorSelectEl`** (ColorSelect, element): `gk.ColorSelect(state)`; `.Placeholder`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FeaturedColors`, `.FlexRowDir`, `.InsetE` and 13 more
 
 ### component::combobox
 
 - **`gk.CaretEl`** (Caret, element): `gk.Caret(size)`
-- **`gk.ComboboxEl`** (Combobox<GkSearchDelegate>, element): `gk.Combobox(state)`; `.Icon`, `.Placeholder`, `.Footer`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.CheckIcon` and 7 more
+- **`gk.ComboboxEl`** (Combobox<GkSearchDelegate>, element): `gk.Combobox(state)`; `.Icon`, `.Placeholder`, `.Footer`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE` and 23 more
 - **`gk.ComboboxState`** (ComboboxState<GkSearchDelegate>, kit state): `gk.NewComboboxState(cx, gk.NewSearchSource(cx, items), selectedIndices)….Build()`; shown by `gk.Combobox(state)`; built with `.Multiple`, `.Searchable`; reads `.AddSelectedIndex`, `.Query`, `.RemoveSelectedIndex`, `.SelectedValue`, `.SelectedValues`; writes `.ClearSelection`, `.Focus`, `.SetItems`, `.SetQuery`, `.SetSelectedIndices`, `.SetSelectedValues`; events `.OnComboboxEvent(cx, f)`
 
 ### component::command
 
-- **`gk.CommandEl`** (Command, element): `gk.Command(state)`; `.Placeholder`, `.OnSelect`, `.Bordered`, `.Filterable`, `.Item`, `.Items`, `.OnCancel`, `.OnConfirm` and 4 more
+- **`gk.CommandEl`** (Command, element): `gk.Command(state)`; `.Placeholder`, `.OnSelect`, `.BorderE`, `.BorderS`, `.Bordered`, `.Filterable`, `.FlexRowDir`, `.HighlightMatches` and 20 more
 - **`gk.CommandState`** (CommandState, kit state): `gk.NewCommandState(cx)`; shown by `gk.Command(state)`; reads `.IsLoading`, `.MatchedCount`, `.Query`, `.SelectedIndex`; writes `.Focus`, `.SetLoading`, `.SetQuery`, `.SetSelectedIndex`
 - **`gk.CommandGroup`** (CommandGroup, value): `gk.NewCommandGroup()`; `.Label`, `.Item`, `.Items`
 - **`gk.CommandItem`** (CommandItem, value): `gk.NewCommandItem()` or `gk.NewCommandItemDefault()`; `.Label`, `.Child`, `.Checked`, `.Icon`, `.Disabled`, `.Action`, `.Keywords`
 
 ### component::date_picker
 
-- **`gk.DatePickerEl`** (DatePicker, element): `gk.DatePicker(state)`; `.Placeholder`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.Cleanable`, `.NumberOfMonths`, `.Presets` and 2 more
+- **`gk.DatePickerEl`** (DatePicker, element): `gk.DatePicker(state)`; `.Placeholder`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE`, `.BorderS`, `.Cleanable` and 17 more
 - **`gk.DatePickerState`** (DatePickerState, kit state): `gk.NewDatePickerState(cx)….Build()` or `gk.NewDatePickerStateRange(cx)….Build()`; shown by `gk.DatePicker(state)`; built with `.DateFormat`, `.DisabledMatcher`, `.HourCycle`, `.NumberOfMonths`, `.TimePrecision`; reads `.Date`, `.DateTime`; writes `.SetDate`, `.SetDateTime`, `.SetYearRange`; events `.OnDatePickerEvent(cx, f)`
 - **`gk.DateRangePreset`** (DateRangePreset, value): `gk.NewDateRangePresetDateTime(label, value)`
 
@@ -323,20 +323,20 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::dialog
 
-- **`gk.AlertDialogEl`** (AlertDialog, element): `gk.AlertDialog()`; `.Title`, `.Icon`, `.Description`, `.Content`, `.Footer`, `.ButtonProps`, `.CancelText`, `.CancelVariant` and 14 more
+- **`gk.AlertDialogEl`** (AlertDialog, element): `gk.AlertDialog()`; `.Title`, `.Icon`, `.Description`, `.Content`, `.Footer`, `.BorderE`, `.BorderS`, `.ButtonProps` and 29 more
 - **`gk.DialogActionEl`** (DialogAction, element): `gk.DialogAction()`
 - **`gk.DialogCloseEl`** (DialogClose, element): `gk.DialogClose()`; `.Trigger`
-- **`gk.DialogContentEl`** (DialogContent, element): `gk.DialogContent()`
-- **`gk.DialogDescriptionEl`** (DialogDescription, element): `gk.DialogDescription()`
-- **`gk.DialogEl`** (Dialog, element): `gk.Dialog()`; `.Title`, `.Content`, `.Footer`, `.ButtonProps`, `.Centered`, `.CloseButton`, `.Entrance`, `.Keyboard` and 8 more
-- **`gk.DialogFooterEl`** (DialogFooter, element): `gk.DialogFooter()`
-- **`gk.DialogHeaderEl`** (DialogHeader, element): `gk.DialogHeader()`
-- **`gk.DialogTitleEl`** (DialogTitle, element): `gk.DialogTitle()`
+- **`gk.DialogContentEl`** (DialogContent, element): `gk.DialogContent()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.DialogDescriptionEl`** (DialogDescription, element): `gk.DialogDescription()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.DialogEl`** (Dialog, element): `gk.Dialog()`; `.Title`, `.Content`, `.Footer`, `.BorderE`, `.BorderS`, `.ButtonProps`, `.Centered`, `.CloseButton` and 23 more
+- **`gk.DialogFooterEl`** (DialogFooter, element): `gk.DialogFooter()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.DialogHeaderEl`** (DialogHeader, element): `gk.DialogHeader()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.DialogTitleEl`** (DialogTitle, element): `gk.DialogTitle()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`gk.DialogButtonProps`** (DialogButtonProps, value): `gk.NewDialogButtonPropsDefault()`; `.CancelText`, `.CancelVariant`, `.OkText`, `.OkVariant`, `.OnCancel`, `.OnOk`, `.ShowCancel`
 
 ### component::diff
 
-- **`gk.DiffEl`** (Diff, element): `gk.Diff(state)`; `.Annotations`, `.ChangeBackground`, `.ChangeIndicator`, `.Decorations`, `.GutterMarkers`, `.HeaderVisible`, `.HoverHighlight`, `.HunkSeparator` and 6 more
+- **`gk.DiffEl`** (Diff, element): `gk.Diff(state)`; `.Annotations`, `.BorderE`, `.BorderS`, `.ChangeBackground`, `.ChangeIndicator`, `.Decorations`, `.FlexRowDir`, `.GutterMarkers` and 22 more
 - **`gk.DiffAnnotation`** (DiffAnnotation, kit state): `gk.NewDiffAnnotationFile(cx, id, path)` or `gk.NewDiffAnnotationLine(cx, id, position)`; reads `.ID`, `.Path`, `.Position`
 - **`gk.DiffConflict`** (DiffConflict, kit state): handed out by the kit (no constructor); reads `.BaseLabel`, `.BaseLines`, `.CurrentLabel`, `.CurrentLines`, `.IncomingLabel`, `.IncomingLines`, `.Lines`
 - **`gk.DiffFileRead`** (DiffFile, kit state): handed out by the kit (no constructor); reads `.Additions`, `.Conflicts`, `.Deletions`, `.ExtendedHeaders`, `.HasChanges`, `.IsBinary`, `.IsTruncated`, `.Language` and 4 more
@@ -344,7 +344,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.DiffLinePosition`** (DiffLinePosition, kit state): `gk.NewDiffLinePosition(cx, path, side, line)`; shown by `gk.NewDiffGutterMarker(state)`; reads `.Line`, `.Path`, `.Side`
 - **`gk.DiffLineRangeRead`** (DiffLineRange, kit state): handed out by the kit (no constructor); reads `.End`, `.EndSide`, `.Path`, `.Side`, `.Start`
 - **`gk.DiffParseError`** (DiffParseError, kit state): handed out by the kit (no constructor); reads `.Line`, `.Message`
-- **`gk.DiffState`** (DiffState, kit state): `gk.NewDiffState(cx, files)….Build()`; shown by `gk.Diff(state)`; built with `.WithContextLines`, `.WithExpansionLines`, `.WithInlineMaxLineLength`, `.WithInlineUnit`, `.WithMinCollapsedLines`, `.WithMode`, `.WithSyntaxMaxLineLength`; reads `.ConflictResolution`, `.ContextLines`, `.ExpansionLines`, `.Files`, `.InlineMaxLineLength`, `.InlineUnit`, `.IsFileCollapsed`, `.MinCollapsedLines` and 5 more; writes `.ClearSyntaxHighlighter`, `.CollapseUnchanged`, `.ExpandUnchanged`, `.NextChange`, `.PreviousChange`, `.ResolveConflict`, `.ScrollToFile`, `.ScrollToLine` and 10 more; events `.OnDiffEvent(cx, f)`
+- **`gk.DiffState`** (DiffState, kit state): `gk.NewDiffState(cx, files)….Build()`; shown by `gk.Diff(state)`; built with `.WithContextLines`, `.WithExpansionLines`, `.WithInlineMaxLineLength`, `.WithInlineUnit`, `.WithMinCollapsedLines`, `.WithMode`, `.WithSyntaxMaxLineLength`; reads `.ConflictResolution`, `.ContextLines`, `.ExpansionLines`, `.Files`, `.InlineMaxLineLength`, `.InlineUnit`, `.IsFileCollapsed`, `.MinCollapsedLines` and 5 more; writes `.ClearSyntaxHighlighter`, `.CollapseUnchanged`, `.ExpandUnchanged`, `.NextChange`, `.PreviousChange`, `.ResolveConflict`, `.ScrollToFile`, `.ScrollToLine` and 12 more; events `.OnDiffEvent(cx, f)`
 - **`gk.DiffDecoration`** (DiffDecoration, value): `gk.NewDiffDecoration(range_)`; `.WithBackground`
 - **`gk.DiffFile`** (DiffFile, value): `gk.NewDiffFileParseAt(patch, index)` or `gk.NewDiffFileUnchanged(path, text)` or `gk.NewDiffFileParseWithAt(patch, options, index)`; `.WithLanguage`
 - **`gk.DiffGutterMarker`** (DiffGutterMarker, value): `gk.NewDiffGutterMarker(id, position)`; `.WithLabel`
@@ -357,21 +357,21 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::empty
 
-- **`gk.EmptyContentEl`** (EmptyContent, element): `gk.EmptyContent()` or `gk.EmptyContentDefault()`
-- **`gk.EmptyDescriptionEl`** (EmptyDescription, element): `gk.EmptyDescription()` or `gk.EmptyDescriptionDefault()`
-- **`gk.EmptyEl`** (Empty, element): `gk.Empty()` or `gk.EmptyDefault()`; `.Content`, `.Header`
-- **`gk.EmptyHeaderEl`** (EmptyHeader, element): `gk.EmptyHeader()` or `gk.EmptyHeaderDefault()`; `.Title`, `.Description`, `.Media`
-- **`gk.EmptyMediaEl`** (EmptyMedia, element): `gk.EmptyMedia()` or `gk.EmptyMediaDefault()`; `.WithVariant`
-- **`gk.EmptyTitleEl`** (EmptyTitle, element): `gk.EmptyTitle()` or `gk.EmptyTitleDefault()`
+- **`gk.EmptyContentEl`** (EmptyContent, element): `gk.EmptyContent()` or `gk.EmptyContentDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.EmptyDescriptionEl`** (EmptyDescription, element): `gk.EmptyDescription()` or `gk.EmptyDescriptionDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.EmptyEl`** (Empty, element): `gk.Empty()` or `gk.EmptyDefault()`; `.Content`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Header`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
+- **`gk.EmptyHeaderEl`** (EmptyHeader, element): `gk.EmptyHeader()` or `gk.EmptyHeaderDefault()`; `.Title`, `.Description`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 10 more
+- **`gk.EmptyMediaEl`** (EmptyMedia, element): `gk.EmptyMedia()` or `gk.EmptyMediaDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
+- **`gk.EmptyTitleEl`** (EmptyTitle, element): `gk.EmptyTitle()` or `gk.EmptyTitleDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 
 ### component::form
 
-- **`gk.FieldEl`** (Field, element): `gk.Field()` or `gk.KitField()`; `.Label`, `.Description`, `.DescriptionFn`, `.ItemsCenter`, `.ItemsEnd`, `.ItemsStart`, `.LabelFn`, `.LabelIndent` and 2 more
-- **`gk.FormEl`** (Form, element): `gk.Form()` or `gk.FormDefault()` or `gk.FormHorizontal()` (and 3 more); `.Child`, `.Children`, `.Footer`, `.Small`, `.Large`, `.Columns`, `.LabelLayout`, `.LabelTextSize` and 4 more
+- **`gk.FieldEl`** (Field, element): `gk.Field()` or `gk.KitField()`; `.Label`, `.Description`, `.BorderE`, `.BorderS`, `.DescriptionFn`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 17 more
+- **`gk.FormEl`** (Form, element): `gk.Form()` or `gk.FormDefault()` or `gk.FormHorizontal()` (and 3 more); `.Child`, `.Children`, `.Footer`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.Columns` and 19 more
 
 ### component::group_box
 
-- **`gk.GroupBoxEl`** (GroupBox, element): `gk.GroupBox()`; `.Title`, `.Footer`, `.Outline`, `.ContentStyle`, `.Fill`, `.Normal`, `.TitleStyle`, `.WithVariant`
+- **`gk.GroupBoxEl`** (GroupBox, element): `gk.GroupBox()`; `.Title`, `.Footer`, `.Outline`, `.BorderE`, `.BorderS`, `.ContentStyle`, `.Fill`, `.FlexRowDir` and 15 more
 
 ### component::highlighter
 
@@ -381,43 +381,43 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::hover_card
 
-- **`gk.HoverCardEl`** (HoverCard, element): `gk.HoverCard(id)`; `.Anchor`, `.Appearance`, `.CloseDelay`, `.OnOpenChange`, `.OpenDelay`, `.Trigger`, `.TriggerStyle`
+- **`gk.HoverCardEl`** (HoverCard, element): `gk.HoverCard(id)`; `.Anchor`, `.Appearance`, `.BorderE`, `.BorderS`, `.CloseDelay`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 14 more
 
 ### component::input
 
-- **`gk.InputEl`** (Input, element): `gk.Input(state)`; `.Selected`, `.Prefix`, `.Suffix`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.Bordered` and 13 more
-- **`gk.InputGroupAddonEl`** (InputGroupAddon, element): `gk.InputGroupAddon(id)`; `.Align`
-- **`gk.InputGroupButtonEl`** (InputGroupButton, element): `gk.InputGroupButton(id)`; `.Label`, `.Selected`, `.Icon`, `.OnClick`, `.Tooltip`, `.Primary`, `.Ghost`, `.Outline` and 18 more
-- **`gk.InputGroupEl`** (InputGroup, element): `gk.InputGroup(id)`; `.Small`, `.Large`, `.Disabled`, `.Addon`, `.Input`, `.Invalid`, `.Readonly`, `.WithSize` and 1 more
-- **`gk.InputGroupTextEl`** (InputGroupText, element): `gk.InputGroupText()` or `gk.InputGroupTextDefault()`
-- **`gk.InputTokenEl`** (InputToken, element): `gk.InputToken(context)`; `.Icon`
-- **`gk.NumberInputEl`** (NumberInput, element): `gk.NumberInput(state)`; `.Placeholder`, `.Prefix`, `.Suffix`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.WithSize` and 1 more
+- **`gk.InputEl`** (Input, element): `gk.Input(state)`; `.Selected`, `.Prefix`, `.Suffix`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE` and 28 more
+- **`gk.InputGroupAddonEl`** (InputGroupAddon, element): `gk.InputGroupAddon(id)`; `.Align`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.InputGroupButtonEl`** (InputGroupButton, element): `gk.InputGroupButton(id)`; `.Label`, `.Selected`, `.Icon`, `.OnClick`, `.Tooltip`, `.Primary`, `.Ghost`, `.Outline` and 33 more
+- **`gk.InputGroupEl`** (InputGroup, element): `gk.InputGroup(id)`; `.Small`, `.Large`, `.Disabled`, `.Addon`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Input` and 16 more
+- **`gk.InputGroupTextEl`** (InputGroupText, element): `gk.InputGroupText()` or `gk.InputGroupTextDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.InputTokenEl`** (InputToken, element): `gk.InputToken(context)`; `.Icon`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.NumberInputEl`** (NumberInput, element): `gk.NumberInput(state)`; `.Placeholder`, `.Prefix`, `.Suffix`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE` and 17 more
 - **`gk.OtpInputEl`** (OtpInput, element): `gk.OtpInput(state)`; `.Small`, `.Large`, `.Disabled`, `.Groups`, `.WithSize`, `.Xsmall`
-- **`gk.TextareaEl`** (Textarea, element): `gk.Textarea(state)`; `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.Bordered`, `.OnPaste`, `.OnTokenClick`, `.OnTokenHover` and 3 more
+- **`gk.TextareaEl`** (Textarea, element): `gk.Textarea(state)`; `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE`, `.BorderS`, `.Bordered`, `.FlexRowDir` and 18 more
 
 ### component::kbd
 
-- **`gk.KbdEl`** (Kbd, element): `gk.Kbd(stroke)`; `.Outline`, `.Appearance`
+- **`gk.KbdEl`** (Kbd, element): `gk.Kbd(stroke)`; `.Outline`, `.Appearance`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
 
 ### component::label
 
-- **`gk.LabelEl`** (Label, element): `gk.Label(label)`; `.Highlights`, `.Masked`, `.Secondary`
+- **`gk.LabelEl`** (Label, element): `gk.Label(label)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Highlights`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 10 more
 
 ### component::link
 
-- **`gk.LinkEl`** (Link, element): `gk.Link(id)`; `.OnClick`, `.Disabled`, `.Href`
+- **`gk.LinkEl`** (Link, element): `gk.Link(id)`; `.OnClick`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Href`, `.InsetE`, `.InsetS` and 10 more
 
 ### component::list
 
-- **`gk.ListEl`** (List<GkListDelegate>, element): `gk.List(state)`; `.Small`, `.Large`, `.ScrollBounce`, `.ScrollbarVisible`, `.SearchPlaceholder`, `.WithSize`, `.Xsmall`
-- **`gk.ListItemEl`** (ListItem, element): `gk.ListItem(id)`; `.Selected`, `.OnClick`, `.Suffix`, `.Disabled`, `.CheckIcon`, `.Confirmed`, `.OnMouseEnter`, `.Open` and 2 more
+- **`gk.ListEl`** (List<GkListDelegate>, element): `gk.List(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 14 more
+- **`gk.ListItemEl`** (ListItem, element): `gk.ListItem(id)`; `.Selected`, `.OnClick`, `.Suffix`, `.Disabled`, `.BorderE`, `.BorderS`, `.CheckIcon`, `.Confirmed` and 17 more
 - **`gk.ListState`** (ListState<GkListDelegate>, kit state): `gk.NewListState(cx, gk.NewListSource(cx, count, row))….Build()`; shown by `gk.List(state)`; built with `.Searchable`, `.Selectable`; reads `.Delegate`, `.DelegateMut`, `.RightClickedIndex`, `.ScrollHandle`, `.SelectedIndex`; writes `.Focus`, `.ScrollToItem`, `.ScrollToSelectedItem`, `.SetItemToMeasureIndex`, `.SetQuery`, `.SetRightClickedIndex`, `.SetSearchable`, `.SetSelectable` and 1 more; events `.OnListEvent(cx, f)`
 
 ### component::marker
 
-- **`gk.MarkerContentEl`** (MarkerContent, element): `gk.MarkerContent()` or `gk.MarkerContentDefault()`; `.Text`
-- **`gk.MarkerEl`** (Marker, element): `gk.Marker()` or `gk.MarkerDefault()`; `.Icon`, `.Content`, `.Alignment`, `.Loading`, `.SeparatorStyle`, `.WithLoadingStyle`, `.WithShimmerStyle`, `.WithVariant`
-- **`gk.MarkerIconEl`** (MarkerIcon, element): `gk.MarkerIcon()` or `gk.MarkerIconDefault()`
+- **`gk.MarkerContentEl`** (MarkerContent, element): `gk.MarkerContent()` or `gk.MarkerContentDefault()`; `.Text`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.MarkerEl`** (Marker, element): `gk.Marker()` or `gk.MarkerDefault()`; `.Icon`, `.Content`, `.Alignment`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 15 more
+- **`gk.MarkerIconEl`** (MarkerIcon, element): `gk.MarkerIcon()` or `gk.MarkerIconDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 
 ### component::menu
 
@@ -427,16 +427,16 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::message
 
-- **`gk.MessageAvatarEl`** (MessageAvatar, element): `gk.MessageAvatar()` or `gk.MessageAvatarDefault()`
-- **`gk.MessageContentEl`** (MessageContent, element): `gk.MessageContent()` or `gk.MessageContentDefault()`; `.Bubble`
-- **`gk.MessageEl`** (Message, element): `gk.Message()` or `gk.MessageDefault()`; `.Content`, `.Footer`, `.Alignment`, `.Avatar`, `.AvatarSlot`, `.Header`, `.WithStackStyle`
-- **`gk.MessageFooterEl`** (MessageFooter, element): `gk.MessageFooter()` or `gk.MessageFooterDefault()`; `.ContentInset`
-- **`gk.MessageGroupEl`** (MessageGroup, element): `gk.MessageGroup()` or `gk.MessageGroupDefault()`
-- **`gk.MessageHeaderEl`** (MessageHeader, element): `gk.MessageHeader()` or `gk.MessageHeaderDefault()`; `.ContentInset`
+- **`gk.MessageAvatarEl`** (MessageAvatar, element): `gk.MessageAvatar()` or `gk.MessageAvatarDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.MessageContentEl`** (MessageContent, element): `gk.MessageContent()` or `gk.MessageContentDefault()`; `.BorderE`, `.BorderS`, `.Bubble`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.MessageEl`** (Message, element): `gk.Message()` or `gk.MessageDefault()`; `.Content`, `.Footer`, `.Alignment`, `.Avatar`, `.AvatarSlot`, `.BorderE`, `.BorderS`, `.FlexRowDir` and 14 more
+- **`gk.MessageFooterEl`** (MessageFooter, element): `gk.MessageFooter()` or `gk.MessageFooterDefault()`; `.BorderE`, `.BorderS`, `.ContentInset`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.MessageGroupEl`** (MessageGroup, element): `gk.MessageGroup()` or `gk.MessageGroupDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.MessageHeaderEl`** (MessageHeader, element): `gk.MessageHeader()` or `gk.MessageHeaderDefault()`; `.BorderE`, `.BorderS`, `.ContentInset`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
 
 ### component::message_scroller
 
-- **`gk.MessageScrollerState`** (MessageScrollerState, kit state): `gk.NewMessageScrollerState(cx, itemCount)`; reads `.Append`, `.IsFollowingTail`, `.IsScrolledUp`, `.ItemCount`, `.LogicalScrollTop`, `.Prepend`, `.RemeasureItems`, `.ScrollToItem` and 1 more; writes `.Remeasure`, `.Reset`, `.ScrollToEnd`
+- **`gk.MessageScrollerState`** (MessageScrollerState, kit state): `gk.NewMessageScrollerState(cx, itemCount)`; reads `.Append`, `.IsFollowingTail`, `.IsScrolledUp`, `.ItemCount`, `.LogicalScrollTop`, `.Prepend`, `.RemeasureItems`, `.ScrollToItem` and 2 more; writes `.Remeasure`, `.Reset`, `.ScrollToEnd`
 
 ### component::native_menu
 
@@ -449,104 +449,104 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::pagination
 
-- **`gk.PaginationEl`** (Pagination, element): `gk.Pagination(id)`; `.OnClick`, `.Small`, `.Large`, `.Disabled`, `.Compact`, `.CurrentPage`, `.TotalPages`, `.VisiblePages` and 2 more
+- **`gk.PaginationEl`** (Pagination, element): `gk.Pagination(id)`; `.OnClick`, `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS`, `.Compact`, `.CurrentPage` and 17 more
 
 ### component::plot
 
 - **`gk.CrossLineEl`** (CrossLine, element): `gk.CrossLine(point)`; `.Band`, `.Both`, `.HSpan`, `.Height`, `.Horizontal`, `.Span`, `.Width`
 - **`gk.DotEl`** (Dot, element): `gk.Dot(point)`; `.Fill`, `.Halo`, `.Stroke`
-- **`gk.TooltipEl`** (Tooltip, element): `gk.Tooltip(cursor, within)`; `.Title`, `.Appearance`, `.CrossLine`, `.Dots`, `.Glide`, `.PlainRow`, `.Progress`, `.Row` and 1 more
+- **`gk.TooltipEl`** (Tooltip, element): `gk.Tooltip(cursor, within)`; `.Title`, `.Appearance`, `.BorderE`, `.BorderS`, `.CrossLine`, `.Dots`, `.FlexRowDir`, `.Glide` and 16 more
 
 ### component::popover
 
-- **`gk.PopoverEl`** (Popover, element): `gk.Popover(id)`; `.Anchor`, `.Appearance`, `.Arrow`, `.DefaultOpen`, `.MouseButton`, `.Offset`, `.OnOpenChange`, `.Open` and 3 more
+- **`gk.PopoverEl`** (Popover, element): `gk.Popover(id)`; `.Anchor`, `.Appearance`, `.Arrow`, `.BorderE`, `.BorderS`, `.DefaultOpen`, `.FlexRowDir`, `.InsetE` and 18 more
 
 ### component::progress
 
-- **`gk.ProgressCircleEl`** (ProgressCircle, element): `gk.ProgressCircle(id)`; `.Value`, `.Small`, `.Large`, `.Color`, `.Loading`, `.WithSize`, `.Xsmall`
-- **`gk.ProgressEl`** (Progress, element): `gk.Progress(id)`; `.Value`, `.Small`, `.Large`, `.Color`, `.Loading`, `.WithSize`, `.Xsmall`
+- **`gk.ProgressCircleEl`** (ProgressCircle, element): `gk.ProgressCircle(id)`; `.Value`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.Color`, `.FlexRowDir`, `.InsetE` and 14 more
+- **`gk.ProgressEl`** (Progress, element): `gk.Progress(id)`; `.Value`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.Color`, `.FlexRowDir`, `.InsetE` and 14 more
 
 ### component::questionnaire
 
-- **`gk.QuestionnaireActionsEl`** (QuestionnaireActions, element): `gk.QuestionnaireActions(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireChoiceDescriptionEl`** (QuestionnaireChoiceDescription, element): `gk.QuestionnaireChoiceDescription()` or `gk.QuestionnaireChoiceDescriptionDefault()`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireChoiceEl`** (QuestionnaireChoice, element): `gk.QuestionnaireChoice(state, item, value)`; `.Small`, `.Large`, `.ContentStyle`, `.IndicatorStyle`, `.ShortcutStyle`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireChoicesEl`** (QuestionnaireChoices, element): `gk.QuestionnaireChoices(state, item)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireDescriptionEl`** (QuestionnaireDescription, element): `gk.QuestionnaireDescription(state, item)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireEl`** (Questionnaire, element): `gk.Questionnaire(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireErrorEl`** (QuestionnaireError, element): `gk.QuestionnaireError(state, item)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireInputEl`** (QuestionnaireInput, element): `gk.QuestionnaireInput(state, item)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireItemEl`** (QuestionnaireItem, element): `gk.QuestionnaireItem(state, item)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireNextEl`** (QuestionnaireNext, element): `gk.QuestionnaireNext(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnairePreviousEl`** (QuestionnairePrevious, element): `gk.QuestionnairePrevious(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireProgressEl`** (QuestionnaireProgress, element): `gk.QuestionnaireProgress(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireSkipEl`** (QuestionnaireSkip, element): `gk.QuestionnaireSkip(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireSubmitEl`** (QuestionnaireSubmit, element): `gk.QuestionnaireSubmit(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.QuestionnaireTitleEl`** (QuestionnaireTitle, element): `gk.QuestionnaireTitle(state, item)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
+- **`gk.QuestionnaireActionsEl`** (QuestionnaireActions, element): `gk.QuestionnaireActions(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireChoiceDescriptionEl`** (QuestionnaireChoiceDescription, element): `gk.QuestionnaireChoiceDescription()` or `gk.QuestionnaireChoiceDescriptionDefault()`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireChoiceEl`** (QuestionnaireChoice, element): `gk.QuestionnaireChoice(state, item, value)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.ContentStyle`, `.FlexRowDir`, `.IndicatorStyle`, `.InsetE` and 14 more
+- **`gk.QuestionnaireChoicesEl`** (QuestionnaireChoices, element): `gk.QuestionnaireChoices(state, item)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireDescriptionEl`** (QuestionnaireDescription, element): `gk.QuestionnaireDescription(state, item)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireEl`** (Questionnaire, element): `gk.Questionnaire(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireErrorEl`** (QuestionnaireError, element): `gk.QuestionnaireError(state, item)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireInputEl`** (QuestionnaireInput, element): `gk.QuestionnaireInput(state, item)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireItemEl`** (QuestionnaireItem, element): `gk.QuestionnaireItem(state, item)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireNextEl`** (QuestionnaireNext, element): `gk.QuestionnaireNext(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnairePreviousEl`** (QuestionnairePrevious, element): `gk.QuestionnairePrevious(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireProgressEl`** (QuestionnaireProgress, element): `gk.QuestionnaireProgress(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireSkipEl`** (QuestionnaireSkip, element): `gk.QuestionnaireSkip(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireSubmitEl`** (QuestionnaireSubmit, element): `gk.QuestionnaireSubmit(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.QuestionnaireTitleEl`** (QuestionnaireTitle, element): `gk.QuestionnaireTitle(state, item)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
 
 ### component::radio
 
-- **`gk.RadioEl`** (Radio, element): `gk.Radio(id)`; `.Label`, `.Checked`, `.OnClick`, `.OnChange`, `.Tooltip`, `.Small`, `.Large`, `.Disabled` and 2 more
-- **`gk.RadioGroupEl`** (RadioGroup, element): `gk.RadioGroup(id)` or `gk.RadioGroupHorizontal(id)` or `gk.RadioGroupVertical(id)`; `.Child`, `.Children`, `.OnClick`, `.OnChange`, `.Disabled`, `.Layout`, `.SelectedIndex`
+- **`gk.RadioEl`** (Radio, element): `gk.Radio(id)`; `.Label`, `.Checked`, `.OnClick`, `.OnChange`, `.Tooltip`, `.Small`, `.Large`, `.Disabled` and 17 more
+- **`gk.RadioGroupEl`** (RadioGroup, element): `gk.RadioGroup(id)` or `gk.RadioGroupHorizontal(id)` or `gk.RadioGroupVertical(id)`; `.Child`, `.Children`, `.OnClick`, `.OnChange`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir` and 14 more
 
 ### component::rating
 
-- **`gk.RatingEl`** (Rating, element): `gk.Rating(id)`; `.Value`, `.OnClick`, `.Small`, `.Large`, `.Disabled`, `.Color`, `.Max`, `.WithSize` and 1 more
+- **`gk.RatingEl`** (Rating, element): `gk.Rating(id)`; `.Value`, `.OnClick`, `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS`, `.Color` and 16 more
 
 ### component::searchable_list
 
-- **`gk.SearchableListItemElementEl`** (SearchableListItemElement, element): `gk.SearchableListItemElement(ix)`; `.Checked`, `.Selected`, `.Small`, `.Large`, `.Disabled`, `.CheckIcon`, `.Open`, `.SecondarySelected` and 2 more
+- **`gk.SearchableListItemElementEl`** (SearchableListItemElement, element): `gk.SearchableListItemElement(ix)`; `.Checked`, `.Selected`, `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS`, `.CheckIcon` and 17 more
 
 ### component::select
 
-- **`gk.SelectEl`** (Select<GkSearchDelegate>, element): `gk.Select(state)`; `.Icon`, `.Placeholder`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.Cleanable`, `.Empty` and 7 more
+- **`gk.SelectEl`** (Select<GkSearchDelegate>, element): `gk.Select(state)`; `.Icon`, `.Placeholder`, `.Small`, `.Large`, `.Disabled`, `.Appearance`, `.BorderE`, `.BorderS` and 23 more
 - **`gk.SelectState`** (SelectState<GkSearchDelegate>, kit state): `gk.NewSelectState(cx, gk.NewSearchSource(cx, items), selectedIndex)….Build()`; shown by `gk.Select(state)`; built with `.Searchable`; reads `.SelectedIndex`, `.SelectedValue`; writes `.Focus`, `.SetItems`, `.SetSelectedIndex`, `.SetSelectedValue`; events `.OnSelectEvent(cx, f)`
 
 ### component::separator
 
-- **`gk.SeparatorEl`** (Separator, element): `gk.SeparatorHorizontal()` or `gk.SeparatorHorizontalDashed()` or `gk.SeparatorVertical()` (and 1 more); `.Label`, `.Color`, `.Dashed`
+- **`gk.SeparatorEl`** (Separator, element): `gk.SeparatorHorizontal()` or `gk.SeparatorHorizontalDashed()` or `gk.SeparatorVertical()` (and 1 more); `.Label`, `.BorderE`, `.BorderS`, `.Color`, `.Dashed`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 10 more
 
 ### component::setting
 
 - **`gk.SettingsEl`** (Settings, element): `gk.Settings(id)`; `.Small`, `.Large`, `.DefaultSelectedIndex`, `.HeaderStyle`, `.Page`, `.Pages`, `.SidebarSizeRange`, `.SidebarStyle` and 4 more
-- **`gk.SettingFieldText`** (SettingField<SharedString>, value): `gk.NewSettingFieldTextElement(element)` or `gk.NewSettingFieldTextRender(elementRender)`; `.DefaultValue`, `.Style`
-- **`gk.SettingGroup`** (SettingGroup, value): `gk.NewSettingGroup()`; `.Title`, `.Description`, `.Footer`, `.Item`, `.Items`, `.Style`, `.Variant`
+- **`gk.SettingFieldText`** (SettingField<SharedString>, value): `gk.NewSettingFieldTextElement(element)` or `gk.NewSettingFieldTextRender(elementRender)`; `.BorderE`, `.BorderS`, `.DefaultValue`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 9 more
+- **`gk.SettingGroup`** (SettingGroup, value): `gk.NewSettingGroup()`; `.Title`, `.Description`, `.Footer`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 14 more
 - **`gk.SettingItem`** (SettingItem, value): `gk.NewSettingItemRender(render)`; `.Description`, `.Disabled`, `.Keywords`, `.Layout`
 - **`gk.SettingPage`** (SettingPage, value): `gk.NewSettingPage(title)`; `.Title`, `.Icon`, `.Description`, `.DefaultOpen`, `.Group`, `.Groups`, `.HeaderStyle`, `.Resettable` and 1 more
 
 ### component::sheet
 
-- **`gk.SheetEl`** (Sheet, element): `gk.Sheet()`; `.Title`, `.Footer`, `.OnClose`, `.Overlay`, `.OverlayClosable`, `.Resizable`
+- **`gk.SheetEl`** (Sheet, element): `gk.Sheet()`; `.Title`, `.Footer`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 13 more
 
 ### component::shimmer
 
-- **`gk.ShimmerTextEl`** (ShimmerText, element): `gk.ShimmerText(text)`; `.Duration`, `.HighlightColor`, `.Once`, `.Reverse`, `.Spread`, `.WithShimmerStyle`
+- **`gk.ShimmerTextEl`** (ShimmerText, element): `gk.ShimmerText(text)`; `.BorderE`, `.BorderS`, `.Duration`, `.FlexRowDir`, `.HighlightColor`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 13 more
 - **`gk.ShimmerStyle`** (ShimmerStyle, value): `gk.NewShimmerStyle()` or `gk.NewShimmerStyleDefault()`; `.Duration`, `.HighlightColor`, `.Once`, `.Reverse`, `.Spread`
 
 ### component::sidebar
 
-- **`gk.GroupedSidebarEl`** (Sidebar<SidebarGroup<SidebarMenu>>, element): `gk.GroupedSidebar(id)`; `.Child`, `.Children`, `.Footer`, `.Collapsed`, `.Collapsible`, `.Header`, `.Side`
-- **`gk.SidebarEl`** (Sidebar<SidebarMenu>, element): `gk.Sidebar(id)`; `.Child`, `.Children`, `.Footer`, `.Collapsed`, `.Collapsible`, `.Header`, `.Side`
-- **`gk.SidebarFooterEl`** (SidebarFooter, element): `gk.SidebarFooter()`; `.Selected`, `.Collapsed`, `.Open`, `.SecondarySelected`
-- **`gk.SidebarHeaderEl`** (SidebarHeader, element): `gk.SidebarHeader()` or `gk.SidebarHeaderDefault()`; `.Selected`, `.Collapsed`, `.Open`, `.SecondarySelected`
+- **`gk.GroupedSidebarEl`** (Sidebar<SidebarGroup<SidebarMenu>>, element): `gk.GroupedSidebar(id)`; `.Child`, `.Children`, `.Footer`, `.BorderE`, `.BorderS`, `.Collapsed`, `.Collapsible`, `.FlexRowDir` and 14 more
+- **`gk.SidebarEl`** (Sidebar<SidebarMenu>, element): `gk.Sidebar(id)`; `.Child`, `.Children`, `.Footer`, `.BorderE`, `.BorderS`, `.Collapsed`, `.Collapsible`, `.FlexRowDir` and 14 more
+- **`gk.SidebarFooterEl`** (SidebarFooter, element): `gk.SidebarFooter()`; `.Selected`, `.BorderE`, `.BorderS`, `.Collapsed`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.SidebarHeaderEl`** (SidebarHeader, element): `gk.SidebarHeader()` or `gk.SidebarHeaderDefault()`; `.Selected`, `.BorderE`, `.BorderS`, `.Collapsed`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
 - **`gk.SidebarToggleButtonEl`** (SidebarToggleButton, element): `gk.SidebarToggleButton()`; `.OnClick`, `.Collapsed`, `.Side`
-- **`gk.SidebarGroup`** (SidebarGroup<SidebarMenu>, value): `gk.NewSidebarGroup(label)`; `.Child`, `.Children`, `.Collapsed`
-- **`gk.SidebarMenu`** (SidebarMenu, value): `gk.NewSidebarMenu()`; `.Child`, `.Children`, `.Collapsed`, `.Style`
-- **`gk.SidebarMenuItem`** (SidebarMenuItem, value): `gk.NewSidebarMenuItem(label)`; `.Children`, `.Icon`, `.OnClick`, `.Suffix`, `.AccessibilityLabel`, `.Active`, `.ClickToOpen`, `.ClickToToggle` and 6 more
+- **`gk.SidebarGroup`** (SidebarGroup<SidebarMenu>, value): `gk.NewSidebarGroup(label)`; `.Child`, `.Children`, `.Suffix`, `.Collapsed`
+- **`gk.SidebarMenu`** (SidebarMenu, value): `gk.NewSidebarMenu()`; `.Child`, `.Children`, `.BorderE`, `.BorderS`, `.Collapsed`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 11 more
+- **`gk.SidebarMenuItem`** (SidebarMenuItem, value): `gk.NewSidebarMenuItem(label)`; `.Children`, `.Icon`, `.OnClick`, `.Suffix`, `.AccessibilityLabel`, `.Active`, `.BorderE`, `.BorderS` and 21 more
 
 ### component::skeleton
 
-- **`gk.SkeletonEl`** (Skeleton, element): `gk.Skeleton()`; `.Secondary`
+- **`gk.SkeletonEl`** (Skeleton, element): `gk.Skeleton()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
 
 ### component::slider
 
-- **`gk.SliderEl`** (Slider, element): `gk.Slider(state)`; `.Disabled`, `.Horizontal`, `.Reverse`, `.Vertical`
+- **`gk.SliderEl`** (Slider, element): `gk.Slider(state)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Horizontal`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
 
 ### component::speech
 
-- **`gk.SpeechButtonEl`** (SpeechButton, element): `gk.SpeechButton(state)`; `.Small`, `.Large`, `.Disabled`, `.ShowWhenUnsupported`, `.WithSize`, `.Xsmall`
+- **`gk.SpeechButtonEl`** (SpeechButton, element): `gk.SpeechButton(state)`; `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 13 more
 - **`gk.SpeechIndicatorEl`** (SpeechIndicator, element): `gk.SpeechIndicator(state)`; `.Small`, `.Large`, `.WithSize`, `.Xsmall`
-- **`gk.SpeechWaveformEl`** (SpeechWaveform, element): `gk.SpeechWaveform(state)`; `.Small`, `.Large`, `.Liquid`, `.WithSize`, `.Xsmall`
+- **`gk.SpeechWaveformEl`** (SpeechWaveform, element): `gk.SpeechWaveform(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 12 more
 - **`gk.AudioFormat`** (AudioFormat, kit state): `gk.NewAudioFormat(cx, sampleRate, channels)`; reads `.Channels`, `.SampleRate`
 - **`gk.SpeechState`** (SpeechState, kit state): `gk.NewSpeechState(cx)….Build()`; shown by `gk.SpeechButton(state)`, `gk.SpeechIndicator(state)`, `gk.SpeechWaveform(state)`; built with `.StopTimeout`, `.SystemFallback`; reads `.HasRecognizer`, `.IsAvailable`, `.Levels`, `.Status`, `.Transcript`; writes `.Cancel`, `.Start`, `.Stop`, `.Toggle`; events `.OnSpeechEvent(cx, f)`
 
@@ -556,160 +556,160 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::status_bar
 
-- **`gk.StatusBarEl`** (StatusBar, element): `gk.StatusBar()`
+- **`gk.StatusBarEl`** (StatusBar, element): `gk.StatusBar()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 
 ### component::stepper
 
-- **`gk.StepperEl`** (Stepper, element): `gk.Stepper(id)`; `.OnClick`, `.Small`, `.Large`, `.Disabled`, `.Item`, `.Items`, `.Layout`, `.SelectedIndex` and 4 more
-- **`gk.StepperItemEl`** (StepperItem, element): `gk.StepperItem()`; `.Icon`, `.Small`, `.Large`, `.Disabled`, `.WithSize`, `.Xsmall`
+- **`gk.StepperEl`** (Stepper, element): `gk.Stepper(id)`; `.OnClick`, `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE` and 19 more
+- **`gk.StepperItemEl`** (StepperItem, element): `gk.StepperItem()`; `.Icon`, `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE` and 13 more
 
 ### component::switch
 
-- **`gk.SwitchEl`** (Switch, element): `gk.Switch(id)`; `.Label`, `.Checked`, `.OnClick`, `.OnChange`, `.Tooltip`, `.Small`, `.Large`, `.Disabled` and 3 more
+- **`gk.SwitchEl`** (Switch, element): `gk.Switch(id)`; `.Label`, `.Checked`, `.OnClick`, `.OnChange`, `.Tooltip`, `.Small`, `.Large`, `.Disabled` and 18 more
 
 ### component::tab
 
-- **`gk.TabBarEl`** (TabBar, element): `gk.TabBar(id)`; `.Child`, `.Children`, `.OnClick`, `.Prefix`, `.Suffix`, `.Outline`, `.Small`, `.Large` and 11 more
-- **`gk.TabEl`** (Tab, element): `gk.Tab()` or `gk.TabDefault()`; `.Label`, `.Selected`, `.Icon`, `.OnClick`, `.Prefix`, `.Suffix`, `.Outline`, `.Small` and 11 more
+- **`gk.TabBarEl`** (TabBar, element): `gk.TabBar(id)`; `.Child`, `.Children`, `.OnClick`, `.Prefix`, `.Suffix`, `.Outline`, `.Small`, `.Large` and 26 more
+- **`gk.TabEl`** (Tab, element): `gk.Tab()` or `gk.TabDefault()`; `.Label`, `.Selected`, `.Icon`, `.OnClick`, `.Prefix`, `.Suffix`, `.Outline`, `.Small` and 26 more
 
 ### component::table
 
-- **`gk.DataTableEl`** (DataTable<GkTableDelegate>, element): `gk.DataTable(state)`; `.Small`, `.Large`, `.Bordered`, `.FixedColsBorder`, `.HeaderRowHeight`, `.ScrollBounce`, `.ScrollbarVisible`, `.Stripe` and 2 more
-- **`gk.TableBodyEl`** (TableBody, element): `gk.TableBody()`; `.Child`, `.Children`, `.Small`, `.Large`, `.WithIx`, `.WithSize`, `.Xsmall`
-- **`gk.TableCaptionEl`** (TableCaption, element): `gk.TableCaption()`; `.Small`, `.Large`, `.WithIx`, `.WithSize`, `.Xsmall`
-- **`gk.TableCellEl`** (TableCell, element): `gk.TableCell()`; `.Small`, `.Large`, `.TextCenter`, `.TextRight`, `.WithIx`, `.WithSize`, `.Xsmall`
-- **`gk.TableEl`** (Table, element): `gk.Table()`; `.Child`, `.Children`, `.Small`, `.Large`, `.WithIx`, `.WithSize`, `.Xsmall`
-- **`gk.TableFooterEl`** (TableFooter, element): `gk.TableFooter()`; `.Child`, `.Children`, `.Small`, `.Large`, `.WithIx`, `.WithSize`, `.Xsmall`
-- **`gk.TableHeadEl`** (TableHead, element): `gk.TableHead()`; `.Small`, `.Large`, `.TextCenter`, `.TextRight`, `.WithIx`, `.WithSize`, `.Xsmall`
-- **`gk.TableHeaderEl`** (TableHeader, element): `gk.TableHeader()`; `.Child`, `.Children`, `.Small`, `.Large`, `.WithIx`, `.WithSize`, `.Xsmall`
-- **`gk.TableRowEl`** (TableRow, element): `gk.TableRow()`; `.Child`, `.Children`, `.Small`, `.Large`, `.WithIx`, `.WithSize`, `.Xsmall`
+- **`gk.DataTableEl`** (DataTable<GkTableDelegate>, element): `gk.DataTable(state)`; `.Small`, `.Large`, `.Bordered`, `.FixedColsBorder`, `.HeaderRowHeight`, `.ScrollBounce`, `.ScrollbarMode`, `.ScrollbarVisible` and 3 more
+- **`gk.TableBodyEl`** (TableBody, element): `gk.TableBody()`; `.Child`, `.Children`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE` and 14 more
+- **`gk.TableCaptionEl`** (TableCaption, element): `gk.TableCaption()`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 12 more
+- **`gk.TableCellEl`** (TableCell, element): `gk.TableCell()`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 14 more
+- **`gk.TableEl`** (Table, element): `gk.Table()`; `.Child`, `.Children`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE` and 14 more
+- **`gk.TableFooterEl`** (TableFooter, element): `gk.TableFooter()`; `.Child`, `.Children`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE` and 14 more
+- **`gk.TableHeadEl`** (TableHead, element): `gk.TableHead()`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 14 more
+- **`gk.TableHeaderEl`** (TableHeader, element): `gk.TableHeader()`; `.Child`, `.Children`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE` and 14 more
+- **`gk.TableRowEl`** (TableRow, element): `gk.TableRow()`; `.Child`, `.Children`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE` and 14 more
 - **`gk.TableState`** (TableState<GkTableDelegate>, kit state): `gk.NewTableState(cx, delegate)….Build()`; shown by `gk.DataTable(state)`; built with `.CellSelectable`, `.ColMovable`, `.ColResizable`, `.ColSelectable`, `.LoopSelection`, `.RowHeader`, `.RowSelectable`, `.SelectOnModifierClick` and 1 more; reads `.ColWidth`, `.Delegate`, `.DelegateMut`, `.Dump`, `.DumpRange`, `.FitCol`, `.Headers`, `.RightClickedCell` and 7 more; writes `.ClearSelection`, `.Refresh`, `.RefreshHeaderLayout`, `.ScrollToCol`, `.ScrollToRow`, `.SetRightClickedRow`, `.SetSelectedCell`, `.SetSelectedCol` and 2 more; events `.OnTableEvent(cx, f)`
 - **`gk.TableVisibleRange`** (TableVisibleRange, kit state): `gk.NewTableVisibleRangeDefault(cx)`; reads `.Cols`, `.Rows`
 - **`gk.Column`** (Column, value): `gk.NewColumnDefault()` or `gk.NewColumn(key, name)`; `.Ascending`, `.Descending`, `.Fixed`, `.FixedLeft`, `.FixedRight`, `.MaxWidth`, `.MinWidth`, `.Movable` and 9 more
 
 ### component::tag
 
-- **`gk.TagEl`** (Tag, element): `gk.Tag()` or `gk.TagDanger()` or `gk.TagInfo()` (and 6 more); `.Outline`, `.Small`, `.Large`, `.RoundedFull`, `.WithSize`, `.WithVariant`, `.Xsmall`
+- **`gk.TagEl`** (Tag, element): `gk.Tag()` or `gk.TagDanger()` or `gk.TagInfo()` (and 6 more); `.Outline`, `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 14 more
 
 ### component::text
 
-- **`gk.TextViewEl`** (TextView, element): `gk.HTML(source)` or `gk.Markdown(source)` or `gk.TextView(state)` (and 2 more); `.BlockquoteStyle`, `.InlineCodeStyle`, `.ListStyle`, `.MarkdownExtensions`, `.MarkdownMdx`, `.MaxLines`, `.Motion`, `.OnLinkClick` and 6 more
+- **`gk.TextViewEl`** (TextView, element): `gk.HTML(source)` or `gk.Markdown(source)` or `gk.TextView(state)` (and 2 more); `.BlockquoteStyle`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InlineCodeStyle`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 21 more
 - **`gk.FrontmatterPlugin`** (FrontmatterPlugin, value): `gk.NewFrontmatterPlugin()` or `gk.NewFrontmatterPluginDefault()`; `.Setup`
 - **`gk.TextViewStyle`** (TextViewStyle, value): `gk.NewTextViewStyleDefault()`; `.CodeBlock`, `.InlineCode`, `.ParagraphGap`, `.Table`, `.TableCell`, `.TableHead`
 
 ### component::time_field
 
-- **`gk.TimeFieldEl`** (TimeField, element): `gk.TimeField(state)`; `.Small`, `.Large`, `.Disabled`, `.Invalid`, `.WithSize`, `.Xsmall`
+- **`gk.TimeFieldEl`** (TimeField, element): `gk.TimeField(state)`; `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 13 more
 
 ### component::toolbar
 
-- **`gk.ToolbarEl`** (Toolbar, element): `gk.Toolbar(id)`; `.Child`, `.Children`, `.Content`, `.Small`, `.Large`, `.Disabled`, `.Contents`, `.WithSize` and 1 more
-- **`gk.ToolbarGroupEl`** (ToolbarGroup, element): `gk.ToolbarGroup(id)`; `.Label`, `.Child`, `.Children`, `.Content`, `.Small`, `.Large`, `.WithSize`, `.Xsmall`
+- **`gk.ToolbarEl`** (Toolbar, element): `gk.Toolbar(id)`; `.Child`, `.Children`, `.Content`, `.Small`, `.Large`, `.Disabled`, `.BorderE`, `.BorderS` and 16 more
+- **`gk.ToolbarGroupEl`** (ToolbarGroup, element): `gk.ToolbarGroup(id)`; `.Label`, `.Child`, `.Children`, `.Content`, `.Small`, `.Large`, `.BorderE`, `.BorderS` and 15 more
 
 ### component::tooltip
 
-- **`gk.KitTooltip`** (Tooltip, value): `gk.NewKitTooltip(text)` or `gk.NewKitTooltipElement(builder)`; `.Action`, `.KeyBinding`, `.Style`
+- **`gk.KitTooltip`** (Tooltip, value): `gk.NewKitTooltip(text)` or `gk.NewKitTooltipElement(builder)`; `.Action`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 10 more
 
 ### component::tree
 
-- **`gk.TreeEl`** (Tree, element): `gk.KitTree(state, renderItem)` or `gk.Tree(state, renderItem)`; `.ScrollBounce`
+- **`gk.TreeEl`** (Tree, element): `gk.KitTree(state, renderItem)` or `gk.Tree(state, renderItem)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
 
 ### base
 
-- **`gk.AccordionHeaderEl`** (AccordionHeader, element): `gk.AccordionHeader(trigger)`; `.Level`
-- **`gk.AccordionPanelEl`** (AccordionPanel, element): `gk.AccordionPanel()`; `.KeepMounted`, `.Open`
-- **`gk.AccordionTriggerEl`** (AccordionTrigger, element): `gk.AccordionTrigger(id)`; `.OnChange`, `.Disabled`, `.Open`
-- **`gk.AlertDialogActionEl`** (AlertDialogAction, element): `gk.AlertDialogAction()` or `gk.AlertDialogActionDefault()`
-- **`gk.AlertDialogBackdropEl`** (AlertDialogBackdrop, element): `gk.AlertDialogBackdrop()` or `gk.AlertDialogBackdropDefault()`
-- **`gk.AlertDialogCancelEl`** (AlertDialogCancel, element): `gk.AlertDialogCancel()` or `gk.AlertDialogCancelDefault()`
-- **`gk.AlertDialogCloseEl`** (AlertDialogClose, element): `gk.AlertDialogClose()` or `gk.AlertDialogCloseDefault()`
-- **`gk.AlertDialogDescriptionEl`** (AlertDialogDescription, element): `gk.AlertDialogDescription()` or `gk.AlertDialogDescriptionDefault()`
-- **`gk.AlertDialogPopupEl`** (AlertDialogPopup, element): `gk.AlertDialogPopup()` or `gk.AlertDialogPopupDefault()`
-- **`gk.AlertDialogTitleEl`** (AlertDialogTitle, element): `gk.AlertDialogTitle()` or `gk.AlertDialogTitleDefault()`
+- **`gk.AccordionHeaderEl`** (AccordionHeader, element): `gk.AccordionHeader(trigger)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Level` and 8 more
+- **`gk.AccordionPanelEl`** (AccordionPanel, element): `gk.AccordionPanel()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.KeepMounted` and 9 more
+- **`gk.AccordionTriggerEl`** (AccordionTrigger, element): `gk.AccordionTrigger(id)`; `.OnChange`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 10 more
+- **`gk.AlertDialogActionEl`** (AlertDialogAction, element): `gk.AlertDialogAction()` or `gk.AlertDialogActionDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.AlertDialogBackdropEl`** (AlertDialogBackdrop, element): `gk.AlertDialogBackdrop()` or `gk.AlertDialogBackdropDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.AlertDialogCancelEl`** (AlertDialogCancel, element): `gk.AlertDialogCancel()` or `gk.AlertDialogCancelDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.AlertDialogCloseEl`** (AlertDialogClose, element): `gk.AlertDialogClose()` or `gk.AlertDialogCloseDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.AlertDialogDescriptionEl`** (AlertDialogDescription, element): `gk.AlertDialogDescription()` or `gk.AlertDialogDescriptionDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.AlertDialogPopupEl`** (AlertDialogPopup, element): `gk.AlertDialogPopup()` or `gk.AlertDialogPopupDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.AlertDialogTitleEl`** (AlertDialogTitle, element): `gk.AlertDialogTitle()` or `gk.AlertDialogTitleDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`gk.AlertDialogTriggerEl`** (AlertDialogTrigger, element): `gk.AlertDialogTrigger(trigger)`; `.Handle`, `.OnOpen`
-- **`gk.AvatarFallbackEl`** (AvatarFallback, element): `gk.AvatarFallback()` or `gk.AvatarFallbackDefault()`
-- **`gk.AvatarImageEl`** (AvatarImage, element): `gk.AvatarImage(source)`
-- **`gk.BaseAccordionEl`** (Accordion, element): `gk.BaseAccordion(id)`
-- **`gk.BaseAccordionItemEl`** (AccordionItem, element): `gk.BaseAccordionItem()`; `.Disabled`, `.Header`, `.Open`, `.Panel`
-- **`gk.BaseAlertDialogEl`** (AlertDialog, element): `gk.BaseAlertDialog()`; `.Backdrop`, `.CloseOnEscape`, `.DismissBelowY`, `.Handle`, `.OnCancel`, `.OnClose`, `.OnOk`, `.OnOpenChange` and 2 more
-- **`gk.BaseAvatarEl`** (Avatar, element): `gk.BaseAvatar()` or `gk.BaseAvatarDefault()`; `.Fallback`, `.Image`
-- **`gk.BaseButtonEl`** (Button, element): `gk.BaseButton(id)`; `.Selected`, `.OnClick`, `.Disabled`, `.Open`, `.SecondarySelected`, `.Styles`
-- **`gk.BaseCalendarEl`** (Calendar, element): `gk.BaseCalendar(id, state)`; `.NumberOfMonths`
-- **`gk.BaseCheckboxEl`** (Checkbox, element): `gk.BaseCheckbox(id)`; `.Checked`, `.OnChange`, `.Disabled`, `.Indeterminate`, `.State`, `.Styles`
-- **`gk.BaseCollapsibleEl`** (Collapsible, element): `gk.BaseCollapsible()` or `gk.BaseCollapsibleDefault()`; `.Content`, `.Open`, `.Reveal`
-- **`gk.BaseColorPickerEl`** (ColorPicker, element): `gk.BaseColorPicker(id)`; `.Disabled`, `.OnOpenChange`, `.Open`
-- **`gk.BaseComboboxEl`** (Combobox, element): `gk.BaseCombobox(id)`; `.Disabled`, `.ContentFocusHandle`, `.FocusHandle`, `.OnConfirm`, `.OnDismiss`, `.OnOpenChange`, `.Open`
-- **`gk.BaseDatePickerEl`** (DatePicker, element): `gk.BaseDatePicker(id, focusHandle)`; `.Disabled`, `.OnOpenChange`, `.Open`
-- **`gk.BaseDialogCloseEl`** (DialogClose, element): `gk.BaseDialogClose()` or `gk.BaseDialogCloseDefault()`; `.Trigger`
-- **`gk.BaseDialogDescriptionEl`** (DialogDescription, element): `gk.BaseDialogDescription()` or `gk.BaseDialogDescriptionDefault()`
-- **`gk.BaseDialogEl`** (Dialog, element): `gk.BaseDialog()`; `.Backdrop`, `.CloseOnBackdropPress`, `.CloseOnEscape`, `.DismissBelowY`, `.Handle`, `.OnCancel`, `.OnClose`, `.OnOk` and 3 more
-- **`gk.BaseDialogTitleEl`** (DialogTitle, element): `gk.BaseDialogTitle()` or `gk.BaseDialogTitleDefault()`
-- **`gk.BaseHoverCardEl`** (HoverCard, element): `gk.BaseHoverCard(id)`; `.Anchor`, `.CloseDelay`, `.OnOpenChange`, `.OpenDelay`, `.Trigger`
+- **`gk.AvatarFallbackEl`** (AvatarFallback, element): `gk.AvatarFallback()` or `gk.AvatarFallbackDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.AvatarImageEl`** (AvatarImage, element): `gk.AvatarImage(source)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseAccordionEl`** (Accordion, element): `gk.BaseAccordion(id)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseAccordionItemEl`** (AccordionItem, element): `gk.BaseAccordionItem()`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Header`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.BaseAlertDialogEl`** (AlertDialog, element): `gk.BaseAlertDialog()`; `.Backdrop`, `.BorderE`, `.BorderS`, `.CloseOnEscape`, `.DismissBelowY`, `.FlexRowDir`, `.Handle`, `.InsetE` and 17 more
+- **`gk.BaseAvatarEl`** (Avatar, element): `gk.BaseAvatar()` or `gk.BaseAvatarDefault()`; `.BorderE`, `.BorderS`, `.Fallback`, `.FlexRowDir`, `.Image`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
+- **`gk.BaseButtonEl`** (Button, element): `gk.BaseButton(id)`; `.Selected`, `.OnClick`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 13 more
+- **`gk.BaseCalendarEl`** (Calendar, element): `gk.BaseCalendar(id, state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
+- **`gk.BaseCheckboxEl`** (Checkbox, element): `gk.BaseCheckbox(id)`; `.Checked`, `.OnChange`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Indeterminate`, `.InsetE` and 13 more
+- **`gk.BaseCollapsibleEl`** (Collapsible, element): `gk.BaseCollapsible()` or `gk.BaseCollapsibleDefault()`; `.Content`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 10 more
+- **`gk.BaseColorPickerEl`** (ColorPicker, element): `gk.BaseColorPicker(id)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 10 more
+- **`gk.BaseComboboxEl`** (Combobox, element): `gk.BaseCombobox(id)`; `.Disabled`, `.BorderE`, `.BorderS`, `.ContentFocusHandle`, `.FlexRowDir`, `.FocusHandle`, `.InsetE`, `.InsetS` and 14 more
+- **`gk.BaseDatePickerEl`** (DatePicker, element): `gk.BaseDatePicker(id, focusHandle)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 10 more
+- **`gk.BaseDialogCloseEl`** (DialogClose, element): `gk.BaseDialogClose()` or `gk.BaseDialogCloseDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
+- **`gk.BaseDialogDescriptionEl`** (DialogDescription, element): `gk.BaseDialogDescription()` or `gk.BaseDialogDescriptionDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseDialogEl`** (Dialog, element): `gk.BaseDialog()`; `.Backdrop`, `.BorderE`, `.BorderS`, `.CloseOnBackdropPress`, `.CloseOnEscape`, `.DismissBelowY`, `.FlexRowDir`, `.Handle` and 18 more
+- **`gk.BaseDialogTitleEl`** (DialogTitle, element): `gk.BaseDialogTitle()` or `gk.BaseDialogTitleDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseHoverCardEl`** (HoverCard, element): `gk.BaseHoverCard(id)`; `.Anchor`, `.BorderE`, `.BorderS`, `.CloseDelay`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 12 more
 - **`gk.BaseInputEl`** (Input, element): `gk.BaseInput(state)`; `.OnTokenClick`, `.OnTokenHover`
-- **`gk.BaseLinkEl`** (Link, element): `gk.BaseLink(id)`; `.Disabled`, `.Href`, `.OnActivate`, `.OpenWith`, `.Styles`
-- **`gk.BaseNumberInputEl`** (NumberInput, element): `gk.BaseNumberInput(state)`; `.Disabled`, `.ControlsRight`, `.Input`, `.OnStep`
-- **`gk.BaseOtpInputEl`** (OtpInput, element): `gk.BaseOtpInput(state)`; `.Disabled`
-- **`gk.BasePaginationEl`** (Pagination, element): `gk.BasePagination(id, state)`
-- **`gk.BasePopoverEl`** (Popover, element): `gk.BasePopover(id)`; `.Anchor`, `.DefaultOpen`, `.MouseButton`, `.Offset`, `.OnOpenChange`, `.OnPosition`, `.Open`, `.OverlayClosable` and 1 more
-- **`gk.BaseProgressEl`** (Progress, element): `gk.BaseProgress(id)`; `.Value`, `.Indeterminate`
-- **`gk.BaseRadioEl`** (Radio, element): `gk.BaseRadio(id)`; `.Checked`, `.OnChange`, `.Disabled`, `.SetPosition`, `.Styles`
-- **`gk.BaseRadioGroupEl`** (RadioGroup, element): `gk.BaseRadioGroup(id)`; `.Axis`
-- **`gk.BaseSelectEl`** (Select, element): `gk.BaseSelect(id)`; `.Disabled`, `.ContentFocusHandle`, `.FocusHandle`, `.OnConfirm`, `.OnDismiss`, `.OnOpenChange`, `.Open`
-- **`gk.BaseSheetEl`** (Sheet, element): `gk.BaseSheet()`; `.OnClose`, `.Overlay`, `.OverlayClosable`, `.Surface`
-- **`gk.BaseSliderEl`** (Slider, element): `gk.BaseSlider(state)`; `.Disabled`, `.Axis`, `.Horizontal`, `.Vertical`
-- **`gk.BaseSwitchEl`** (Switch, element): `gk.BaseSwitch(id)`; `.Checked`, `.OnChange`, `.Disabled`, `.Styles`
-- **`gk.BaseTabEl`** (Tab, element): `gk.BaseTab(id)`; `.Selected`, `.OnClick`, `.Disabled`, `.SetPosition`, `.Styles`
-- **`gk.BaseTableBodyEl`** (TableBody, element): `gk.BaseTableBody(id)`
-- **`gk.BaseTableCaptionEl`** (TableCaption, element): `gk.BaseTableCaption(id)`
-- **`gk.BaseTableCellEl`** (TableCell, element): `gk.BaseTableCell(id, columnIndex)`
-- **`gk.BaseTableEl`** (Table, element): `gk.BaseTable(id)`; `.ColumnCount`, `.RowCount`
-- **`gk.BaseTableHeadEl`** (TableHead, element): `gk.BaseTableHead(id, columnIndex)`
-- **`gk.BaseTableHeaderEl`** (TableHeader, element): `gk.BaseTableHeader(id)`
-- **`gk.BaseTableRowEl`** (TableRow, element): `gk.BaseTableRow(id, rowIndex)`
-- **`gk.BaseTextViewEl`** (TextView, element): `gk.BaseHTML(source)` or `gk.BaseMarkdown(source)` or `gk.BaseTextView(state)` (and 2 more); `.BlockquoteStyle`, `.InlineCodeStyle`, `.ListStyle`, `.MarkdownExtensions`, `.MarkdownMdx`, `.MaxLines`, `.Motion`, `.OnLinkClick` and 5 more
+- **`gk.BaseLinkEl`** (Link, element): `gk.BaseLink(id)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Href`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 12 more
+- **`gk.BaseNumberInputEl`** (NumberInput, element): `gk.BaseNumberInput(state)`; `.Disabled`, `.BorderE`, `.BorderS`, `.ControlsRight`, `.FlexRowDir`, `.Input`, `.InsetE`, `.InsetS` and 12 more
+- **`gk.BaseOtpInputEl`** (OtpInput, element): `gk.BaseOtpInput(state)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.BasePaginationEl`** (Pagination, element): `gk.BasePagination(id, state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BasePopoverEl`** (Popover, element): `gk.BasePopover(id)`; `.Anchor`, `.BorderE`, `.BorderS`, `.DefaultOpen`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 16 more
+- **`gk.BaseProgressEl`** (Progress, element): `gk.BaseProgress(id)`; `.Value`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Indeterminate`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
+- **`gk.BaseRadioEl`** (Radio, element): `gk.BaseRadio(id)`; `.Checked`, `.OnChange`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 12 more
+- **`gk.BaseRadioGroupEl`** (RadioGroup, element): `gk.BaseRadioGroup(id)`; `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.BaseSelectEl`** (Select, element): `gk.BaseSelect(id)`; `.Disabled`, `.BorderE`, `.BorderS`, `.ContentFocusHandle`, `.FlexRowDir`, `.FocusHandle`, `.InsetE`, `.InsetS` and 14 more
+- **`gk.BaseSheetEl`** (Sheet, element): `gk.BaseSheet()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 11 more
+- **`gk.BaseSliderEl`** (Slider, element): `gk.BaseSlider(state)`; `.Disabled`, `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Horizontal`, `.InsetE`, `.InsetS` and 11 more
+- **`gk.BaseSwitchEl`** (Switch, element): `gk.BaseSwitch(id)`; `.Checked`, `.OnChange`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 11 more
+- **`gk.BaseTabEl`** (Tab, element): `gk.BaseTab(id)`; `.Selected`, `.OnClick`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 12 more
+- **`gk.BaseTableBodyEl`** (TableBody, element): `gk.BaseTableBody(id)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseTableCaptionEl`** (TableCaption, element): `gk.BaseTableCaption(id)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseTableCellEl`** (TableCell, element): `gk.BaseTableCell(id, columnIndex)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseTableEl`** (Table, element): `gk.BaseTable(id)`; `.BorderE`, `.BorderS`, `.ColumnCount`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 9 more
+- **`gk.BaseTableHeadEl`** (TableHead, element): `gk.BaseTableHead(id, columnIndex)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseTableHeaderEl`** (TableHeader, element): `gk.BaseTableHeader(id)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseTableRowEl`** (TableRow, element): `gk.BaseTableRow(id, rowIndex)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseTextViewEl`** (TextView, element): `gk.BaseHTML(source)` or `gk.BaseMarkdown(source)` or `gk.BaseTextView(state)` (and 2 more); `.BlockquoteStyle`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InlineCodeStyle`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 21 more
 - **`gk.BaseTextareaEl`** (Textarea, element): `gk.BaseTextarea(state)`; `.OnTokenClick`, `.OnTokenHover`
-- **`gk.BaseTimeFieldEl`** (TimeField, element): `gk.BaseTimeField(id, state)`; `.Disabled`, `.Separator`
-- **`gk.BaseToggleEl`** (Toggle, element): `gk.BaseToggle(id)`; `.OnChange`, `.Disabled`, `.Pressed`, `.Styles`
-- **`gk.BaseToggleGroupEl`** (ToggleGroup, element): `gk.BaseToggleGroup(id)`; `.Axis`
-- **`gk.BaseToolbarEl`** (Toolbar, element): `gk.BaseToolbar(id)`; `.Disabled`, `.Axis`
-- **`gk.BaseToolbarGroupEl`** (ToolbarGroup, element): `gk.BaseToolbarGroup(id)`; `.Label`
-- **`gk.BaseTooltipEl`** (Tooltip, element): `gk.BaseTooltip(id)`
-- **`gk.BaseTreeEl`** (Tree, element): `gk.BaseTree(state)`; `.ListStyle`
-- **`gk.CalendarItemEl`** (CalendarItem, element): `gk.CalendarItemHanded(index)`; `.ClearChildren`
-- **`gk.CheckboxIndicatorEl`** (CheckboxIndicator, element): `gk.CheckboxIndicator()` or `gk.CheckboxIndicatorDefault()`; `.Checked`, `.Disabled`, `.State`, `.Styles`
-- **`gk.ColorSwatchEl`** (ColorSwatch, element): `gk.ColorSwatch(id, color)`; `.Selected`, `.OnClick`, `.Disabled`
-- **`gk.DialogBackdropEl`** (DialogBackdrop, element): `gk.DialogBackdrop()` or `gk.DialogBackdropDefault()`
-- **`gk.DialogPopupEl`** (DialogPopup, element): `gk.DialogPopup()` or `gk.DialogPopupDefault()`
+- **`gk.BaseTimeFieldEl`** (TimeField, element): `gk.BaseTimeField(id, state)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 9 more
+- **`gk.BaseToggleEl`** (Toggle, element): `gk.BaseToggle(id)`; `.OnChange`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.BaseToggleGroupEl`** (ToggleGroup, element): `gk.BaseToggleGroup(id)`; `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.BaseToolbarEl`** (Toolbar, element): `gk.BaseToolbar(id)`; `.Disabled`, `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
+- **`gk.BaseToolbarGroupEl`** (ToolbarGroup, element): `gk.BaseToolbarGroup(id)`; `.Label`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.BaseTooltipEl`** (Tooltip, element): `gk.BaseTooltip(id)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.BaseTreeEl`** (Tree, element): `gk.BaseTree(state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.ListStyle` and 8 more
+- **`gk.CalendarItemEl`** (CalendarItem, element): `gk.CalendarItemHanded(index)`; `.BorderE`, `.BorderS`, `.ClearChildren`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.CheckboxIndicatorEl`** (CheckboxIndicator, element): `gk.CheckboxIndicator()` or `gk.CheckboxIndicatorDefault()`; `.Checked`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
+- **`gk.ColorSwatchEl`** (ColorSwatch, element): `gk.ColorSwatch(id, color)`; `.Selected`, `.OnClick`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 10 more
+- **`gk.DialogBackdropEl`** (DialogBackdrop, element): `gk.DialogBackdrop()` or `gk.DialogBackdropDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.DialogPopupEl`** (DialogPopup, element): `gk.DialogPopup()` or `gk.DialogPopupDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`gk.DialogTriggerEl`** (DialogTrigger, element): `gk.DialogTrigger(trigger)`; `.Handle`, `.OnOpen`
 - **`gk.EditorEl`** (Editor, element): `gk.Editor(state)`
-- **`gk.GridLayoutEl`** (GridLayout, element): `gk.GridLayout(id, state)` or `gk.KitGridLayout(id, state)`; `.Placeholder`, `.DraggingItem`, `.FocusedItem`, `.Item`, `.Items`, `.Reflow`, `.ResizeHandle`, `.RowHeight` and 2 more
-- **`gk.InputBaseEl`** (InputBase, element): `gk.InputBase(id)`; `.Disabled`, `.Focused`, `.Styles`
+- **`gk.GridLayoutEl`** (GridLayout, element): `gk.GridLayout(id, state)` or `gk.KitGridLayout(id, state)`; `.Placeholder`, `.BorderE`, `.BorderS`, `.DraggingItem`, `.FlexRowDir`, `.FocusedItem`, `.InsetE`, `.InsetS` and 17 more
+- **`gk.InputBaseEl`** (InputBase, element): `gk.InputBase(id)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Focused`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 10 more
 - **`gk.MotionRevealEl`** (MotionReveal, element): `gk.MotionReveal(id, progress, child)`
-- **`gk.NavPageEl`** (NavPage, element): `gk.NavPageHanded(index)`
-- **`gk.NavStackEl`** (NavStack, element): `gk.NavStack(state)`; `.Transition`
-- **`gk.NumberInputTextEl`** (NumberInputText, element): `gk.NumberInputText()` or `gk.NumberInputTextDefault()`
-- **`gk.PopupEl`** (Popup, element): `gk.Popup(id, trigger)`; `.Content`, `.Anchor`, `.Offset`, `.OnPosition`
+- **`gk.NavPageEl`** (NavPage, element): `gk.NavPageHanded(index)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.NavStackEl`** (NavStack, element): `gk.NavStack(state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
+- **`gk.NumberInputTextEl`** (NumberInputText, element): `gk.NumberInputText()` or `gk.NumberInputTextDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.PopupEl`** (Popup, element): `gk.Popup(id, trigger)`; `.Content`, `.Anchor`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
 - **`gk.PositionerEl`** (Positioner, element): `gk.PositionerSide(triggerBounds)` or `gk.PositionerCorner(anchor, position)`; `.Align`, `.Margin`, `.Offset`, `.OnPosition`, `.Placement`, `.Position`
-- **`gk.ProgressIndicatorEl`** (ProgressIndicator, element): `gk.ProgressIndicator()`
-- **`gk.ProgressTrackEl`** (ProgressTrack, element): `gk.ProgressTrack()`
-- **`gk.ResizablePanelEl`** (ResizablePanel, element): `gk.ResizablePanel()`; `.Fixed`, `.SizeRange`, `.Visible`
+- **`gk.ProgressIndicatorEl`** (ProgressIndicator, element): `gk.ProgressIndicator()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.ProgressTrackEl`** (ProgressTrack, element): `gk.ProgressTrack()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.ResizablePanelEl`** (ResizablePanel, element): `gk.ResizablePanel()`; `.BorderE`, `.BorderS`, `.Fixed`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 10 more
 - **`gk.ResizablePanelGroupEl`** (ResizablePanelGroup, element): `gk.HResizable(id)` or `gk.KitHResizable(id)` or `gk.KitVResizable(id)` (and 2 more); `.Child`, `.Children`, `.Axis`, `.OnResize`, `.WithState`
 - **`gk.ResizeHandleEl`** (ResizeHandle<Drag, element): `gk.KitResizeHandle(id, axis)` or `gk.ResizeHandle(id, axis)`; `.Inside`, `.LockScrollAxis`, `.OnDoubleClick`
 - **`gk.RoundedFrameCoverEl`** (RoundedFrameCover, element): `gk.RoundedFrameCoverUniform(radius)`; `.Backdrop`, `.FrameBorder`
 - **`gk.ScrollBounceEl`** (ScrollBounce, element): `gk.ScrollBounce(id, handle, child)`; `.Enabled`, `.Motion`, `.ScrollWheel`
 - **`gk.ScrollableMaskEl`** (ScrollableMask<ScrollHandle>, element): `gk.ScrollableMaskVerticalWheel(scrollHandle)` or `gk.ScrollableMask(axis, scrollHandle)`; `.Debug`
 - **`gk.ScrollbarEl`** (Scrollbar, element): `gk.Scrollbar(scrollHandle)` or `gk.ScrollbarHorizontal(scrollHandle)` or `gk.ScrollbarVertical(scrollHandle)`; `.Axis`, `.Mode`, `.ScrollSize`, `.Styles`, `.ViewportBounds`, `.ViewportFromLayout`
-- **`gk.SelectableTextEl`** (SelectableText, element): `gk.SelectableText(id, text)` or `gk.SelectableTextWithHandle(id, handle, text)`; `.DocumentOrder`, `.SelectionColor`, `.TextStyle`
-- **`gk.SliderIndicatorEl`** (SliderIndicator, element): `gk.SliderIndicator(state)`
-- **`gk.SliderThumbEl`** (SliderThumb, element): `gk.SliderThumb(state)`; `.Disabled`, `.Axis`, `.Start`
-- **`gk.SliderTrackEl`** (SliderTrack, element): `gk.SliderTrack(state)`; `.Disabled`, `.Axis`
-- **`gk.SwitchThumbEl`** (SwitchThumb, element): `gk.SwitchThumb(checked)`; `.Disabled`, `.Styles`
-- **`gk.SwitchTrackEl`** (SwitchTrack, element): `gk.SwitchTrack(id)`; `.Checked`, `.Disabled`, `.Styles`
-- **`gk.TabsEl`** (Tabs, element): `gk.Tabs(id)`
-- **`gk.TimeFieldSegmentEl`** (TimeFieldSegment, element): `gk.TimeFieldSegmentHanded(index)`; `.ClearChildren`
-- **`gk.ToastEl`** (Toast, element): `gk.Toast(id)`; `.TransitionStatus`
-- **`gk.ToastStackEl`** (ToastStack, element): `gk.ToastStack(id, state)`; `.FocusHandle`, `.Item`, `.Motion`, `.Placement`
-- **`gk.TooltipPositionerEl`** (TooltipPositioner, element): `gk.TooltipPositioner(triggerBounds)`; `.Placement`
+- **`gk.SelectableTextEl`** (SelectableText, element): `gk.SelectableText(id, text)` or `gk.SelectableTextWithHandle(id, handle, text)`; `.DocumentOrder`, `.Highlights`, `.SelectionColor`, `.TextStyle`
+- **`gk.SliderIndicatorEl`** (SliderIndicator, element): `gk.SliderIndicator(state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
+- **`gk.SliderThumbEl`** (SliderThumb, element): `gk.SliderThumb(state)`; `.Disabled`, `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 10 more
+- **`gk.SliderTrackEl`** (SliderTrack, element): `gk.SliderTrack(state)`; `.Disabled`, `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
+- **`gk.SwitchThumbEl`** (SwitchThumb, element): `gk.SwitchThumb(checked)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 9 more
+- **`gk.SwitchTrackEl`** (SwitchTrack, element): `gk.SwitchTrack(id)`; `.Checked`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 10 more
+- **`gk.TabsEl`** (Tabs, element): `gk.Tabs(id)`; `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.TimeFieldSegmentEl`** (TimeFieldSegment, element): `gk.TimeFieldSegmentHanded(index)`; `.BorderE`, `.BorderS`, `.ClearChildren`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
+- **`gk.ToastEl`** (Toast, element): `gk.Toast(id)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
+- **`gk.ToastStackEl`** (ToastStack, element): `gk.ToastStack(id, state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.FocusHandle`, `.InsetE`, `.InsetS`, `.Item`, `.JustifyFlexEnd` and 11 more
+- **`gk.TooltipPositionerEl`** (TooltipPositioner, element): `gk.TooltipPositioner(triggerBounds)`; `.Offset`, `.Placement`
 - **`gk.AutoScroll`** (AutoScroll, kit state): `gk.NewAutoScrollDefault(cx)`; reads `.Delta`, `.IsActive`; writes `.Stop`
 - **`gk.BaseTheme`** (Theme, kit state): `gk.BaseThemeGlobalMut(cx)` or `gk.NewBaseThemeGlobal(cx)`; shown by `gk.NewBaseTextViewStyleFromTheme(state)`; reads `.Appearance`, `.CursorBlink`, `.Plot`, `.Resizable`, `.Scrollbar`, `.Tokens`; writes `.SetAppearance`, `.SetCursorBlink`, `.SetPlot`, `.SetResizable`, `.SetScrollbar`, `.SetTokens`
 - **`gk.BaseTreeEntry`** (TreeEntry, kit state): `gk.NewBaseTreeEntry(cx, item, depth)`; reads `.Depth`, `.IsDisabled`, `.IsExpanded`, `.IsFolder`, `.IsRoot`, `.Item`
@@ -761,10 +761,10 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.CheckboxIndicatorStyles`** (CheckboxIndicatorStyles, value): `gk.NewCheckboxIndicatorStylesDefault()`; `.Checked`, `.Disabled`, `.Indeterminate`
 - **`gk.CheckboxStyles`** (CheckboxStyles, value): `gk.NewCheckboxStylesDefault()`; `.Checked`, `.Disabled`, `.Indeterminate`
 - **`gk.GridArea`** (GridArea, value): `gk.NewGridArea(id)`; `.Col`, `.ColSpan`, `.Locked`, `.MaxSpan`, `.MinSpan`, `.Row`, `.RowSpan`
-- **`gk.GridItem`** (GridItem, value): `gk.NewGridItem(id)`; `.AccessibilityLabel`, `.DragHandleOnly`, `.Style`
+- **`gk.GridItem`** (GridItem, value): `gk.NewGridItem(id)`; `.AccessibilityLabel`, `.BorderE`, `.BorderS`, `.DragHandleOnly`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 10 more
 - **`gk.InputStyles`** (InputStyles, value): `gk.NewInputStylesDefault()`; `.Disabled`, `.Focused`
 - **`gk.LinkStyles`** (LinkStyles, value): `gk.NewLinkStylesDefault()`; `.Disabled`
-- **`gk.MarkdownExtensions`** (MarkdownExtensions, value): `gk.NewMarkdownExtensionsDefault()`; `.Frontmatter`, `.Mdx`, `.ParserRevision`
+- **`gk.MarkdownExtensions`** (MarkdownExtensions, value): `gk.NewMarkdownExtensionsDefault()`; `.Frontmatter`, `.Mdx`, `.ParserRevision`, `.RawHTML`
 - **`gk.PaginationState`** (PaginationState, value): `gk.NewPaginationState(currentPage, totalPages)`; `.OnChange`, `.Disabled`, `.VisiblePages`
 - **`gk.PlotMotion`** (PlotMotion, value): `gk.NewPlotMotionDefault()`; `.WithAppear`, `.WithEnter`, `.WithExit`, `.WithPointer`
 - **`gk.PlotTheme`** (PlotTheme, value): `gk.NewPlotTheme()` or `gk.NewPlotThemeDefault()`; `.WithMotion`
@@ -777,7 +777,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.ScrollbarThumbStyle`** (ScrollbarThumbStyle, value): `gk.NewScrollbarThumbStyleDefault()`; `.Bg`, `.Inset`, `.MinLength`, `.Radius`, `.Width`
 - **`gk.ScrollbarTrackStyle`** (ScrollbarTrackStyle, value): `gk.NewScrollbarTrackStyleDefault()`; `.Bg`, `.BorderColor`, `.Width`
 - **`gk.Spring`** (Spring, value): `gk.NewPointerSpring()` or `gk.NewSpring(response)`; `.WithDamping`, `.WithEpsilon`, `.WithTravel`
-- **`gk.StateStyle`** (StateStyle, value): `gk.NewStateStyleDefault()`; `.Style`
+- **`gk.StateStyle`** (StateStyle, value): `gk.NewStateStyleDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
 - **`gk.SwitchStyles`** (SwitchStyles, value): `gk.NewSwitchStylesDefault()`; `.Checked`, `.Disabled`
 - **`gk.SwitchThumbStyles`** (SwitchThumbStyles, value): `gk.NewSwitchThumbStylesDefault()`; `.Checked`, `.Disabled`
 - **`gk.SwitchTrackStyles`** (SwitchTrackStyles, value): `gk.NewSwitchTrackStylesDefault()`; `.Checked`, `.Disabled`
@@ -785,7 +785,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.TextViewMotion`** (TextViewMotion, value): `gk.NewTextViewMotionDefault()`; `.WithStreamFade`, `.WithStreamFadeEasing`, `.WithStreamFadeStagger`
 - **`gk.Timing`** (Timing, value): `gk.NewTiming(duration)`; `.Delay`, `.Direction`, `.Ease`, `.Iterations`
 - **`gk.ToggleStyles`** (ToggleStyles, value): `gk.NewToggleStylesDefault()`; `.Disabled`, `.Pressed`
-- **`gk.TooltipRequest`** (TooltipRequest, value): `gk.NewTooltipRequest(triggerBounds, build)`; `.WithPlacement`, `.WithShowDelay`
+- **`gk.TooltipRequest`** (TooltipRequest, value): `gk.NewTooltipRequest(triggerBounds, build)`; `.WithOffset`, `.WithPlacement`, `.WithShowDelay`
 - **`gk.Transition`** (Transition, value): `gk.NewTransition(duration)`; `.Delay`, `.Easing`, `.ReducedMotion`
 - **`gk.TreeItem`** (TreeItem, value): `gk.NewTreeItem(id, label)`; `.Child`, `.Children`, `.Disabled`, `.Expanded`
 
@@ -819,7 +819,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.DiagnosticSet`** (DiagnosticSet, kit state): handed out by the kit (no constructor); reads `.ForOffset`, `.IsEmpty`, `.Iter`, `.Len`, `.Range`; writes `.Clear`, `.Extend`, `.Push`
 - **`gk.DisplayMap`** (DisplayMap, kit state): handed out by the kit (no constructor); reads `.Text`, `.BufferLineCount`, `.BufferLineToDisplayRow`, `.BufferLineToDisplayRowRange`, `.BufferPosToDisplayPos`, `.DisplayPosToBufferPos`, `.DisplayRowCount`, `.DisplayRowToBufferLine` and 9 more; writes `.ClearFolds`, `.OnLayoutChanged`, `.SetFoldCandidates`, `.SetFolded`, `.SetWrappingIndent`, `.ToggleFold`
 - **`gk.EditorScrollbarContext`** (EditorScrollbarContext, kit state): handed out by the kit (no constructor); reads `.Axis`, `.ScrollViewportSize`
-- **`gk.EditorState`** (EditorState, kit state): `gk.NewEditorState(cx)….Build()`; shown by `gk.Editor(state)`; built with `.Placeholder`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue`, `.GutterDecorationsWidth` and 6 more; reads `.Text`, `.Value`, `.ContextMenuCapabilities`, `.CreateDecorationsCollection`, `.CreateGutterDecorationsCollection`, `.CreateOverviewRulerDecorationsCollection`, `.CreateRangeDecorationsCollection`, `.Cursor` and 52 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.ClearDiagnosticPopover`, `.ClearHoverState`, `.CloseEditMenu`, `.CloseSearch` and 54 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
+- **`gk.EditorState`** (EditorState, kit state): `gk.NewEditorState(cx)….Build()`; shown by `gk.Editor(state)`; built with `.Placeholder`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue`, `.GutterDecorationsWidth` and 6 more; reads `.Text`, `.Value`, `.ContextMenuCapabilities`, `.ContextMenuOffset`, `.CreateDecorationsCollection`, `.CreateGutterDecorationsCollection`, `.CreateOverviewRulerDecorationsCollection`, `.CreateRangeDecorationsCollection` and 54 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.ClearDiagnosticPopover`, `.ClearHoverState`, `.CloseEditMenu`, `.CloseSearch` and 54 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
 - **`gk.GutterDecorationCollection`** (GutterDecorationCollection, kit state): `gk.NewGutterDecorationCollectionDefault(cx)`; reads `.GetRanges`; writes `.Append`, `.Clear`, `.Dispose`, `.Set`
 - **`gk.InlineTokenClickEvent`** (InlineTokenClickEvent, kit state): handed out by the kit (no constructor); reads `.Bounds`, `.Click`, `.Range`, `.Token`
 - **`gk.InlineTokenContext`** (InlineTokenContext, kit state): handed out by the kit (no constructor); shown by `gk.InputToken(state)`; reads `.AvailableWidth`, `.IsDisabled`, `.IsReadonly`, `.IsSelected`, `.LineHeight`, `.Range`, `.Token`
@@ -829,13 +829,13 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.InputContent`** (InputContent, kit state): `gk.NewInputContent(cx, text)`; reads `.Text`, `.Tokens`
 - **`gk.InputContextMenuCapabilitiesRead`** (InputContextMenuCapabilities, kit state): handed out by the kit (no constructor); reads `.HasCodeActions`, `.HasDefinition`, `.HasSelection`, `.IsCodeEditor`, `.IsCopyable`, `.IsDisabled`, `.IsEditable`, `.IsMasked` and 1 more
 - **`gk.InputPresentation`** (InputPresentation, kit state): handed out by the kit (no constructor); reads `.Placeholder`, `.FocusHandle`, `.IsCodeEditor`, `.IsDisabled`, `.IsEditable`, `.IsLoading`, `.IsMasked`, `.IsMultiLine` and 3 more
-- **`gk.InputState`** (InputState, kit state): `gk.NewInputState(cx)….Build()`; shown by `gk.BaseInput(state)`, `gk.BaseNumberInput(state)`, `gk.Input(state)`, `gk.NewQuestionnaireInputDefinition(state)`, `gk.NumberInput(state)`; built with `.Placeholder`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue`, `.InputAction` and 7 more; reads `.Text`, `.Value`, `.Content`, `.ContextMenuCapabilities`, `.Cursor`, `.DiagnosticPopover`, `.Diagnostics`, `.DisplayMapBufferLineCount` and 47 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.CloseEditMenu`, `.CloseSearch`, `.EndEdgeDrag`, `.EnsureHighlighterFactory` and 41 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
+- **`gk.InputState`** (InputState, kit state): `gk.NewInputState(cx)….Build()`; shown by `gk.BaseInput(state)`, `gk.BaseNumberInput(state)`, `gk.Input(state)`, `gk.NewQuestionnaireInputDefinition(state)`, `gk.NumberInput(state)`; built with `.Placeholder`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue`, `.InputAction` and 7 more; reads `.Text`, `.Value`, `.Content`, `.ContextMenuCapabilities`, `.ContextMenuOffset`, `.Cursor`, `.DiagnosticPopover`, `.Diagnostics` and 49 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.CloseEditMenu`, `.CloseSearch`, `.EndEdgeDrag`, `.EnsureHighlighterFactory` and 41 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
 - **`gk.OverviewRulerDecorationCollection`** (OverviewRulerDecorationCollection, kit state): `gk.NewOverviewRulerDecorationCollectionDefault(cx)`; reads `.GetRanges`; writes `.Append`, `.Clear`, `.Dispose`, `.Set`
 - **`gk.RangeDecorationCollection`** (RangeDecorationCollection, kit state): handed out by the kit (no constructor); reads `.GetRanges`; writes `.Append`, `.Clear`, `.Dispose`, `.Set`
 - **`gk.SearchMatcher`** (SearchMatcher, kit state): `gk.NewSearchMatcher(cx)`; reads `.Label`, `.Current`, `.CurrentMatchIndex`, `.IsEmpty`, `.Len`, `.MatchedRanges`; writes `.UpdateCursorByOffset`, `.UpdateQuery`
 - **`gk.SearchSession`** (SearchSession, kit state): `gk.NewSearchSessionDefault(cx)`; reads `.IsActive`
 - **`gk.TextDecorationCollection`** (TextDecorationCollection, kit state): handed out by the kit (no constructor); reads `.GetRanges`; writes `.Append`, `.Clear`, `.Set`
-- **`gk.TextareaState`** (TextareaState, kit state): `gk.NewTextareaState(cx)….Build()`; shown by `gk.BaseTextarea(state)`, `gk.Textarea(state)`; built with `.Placeholder`, `.AutoGrow`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue` and 5 more; reads `.Text`, `.Value`, `.Content`, `.ContextMenuCapabilities`, `.Cursor`, `.DiagnosticPopover`, `.Diagnostics`, `.DisplayMapBufferLineCount` and 47 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.CloseEditMenu`, `.CloseSearch`, `.EndEdgeDrag`, `.EnsureHighlighterFactory` and 42 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
+- **`gk.TextareaState`** (TextareaState, kit state): `gk.NewTextareaState(cx)….Build()`; shown by `gk.BaseTextarea(state)`, `gk.Textarea(state)`; built with `.Placeholder`, `.AutoGrow`, `.Autocapitalize`, `.Autocorrect`, `.CleanOnEscape`, `.ContextMenu`, `.CursorSurroundingLines`, `.DefaultValue` and 5 more; reads `.Text`, `.Value`, `.Content`, `.ContextMenuCapabilities`, `.ContextMenuOffset`, `.Cursor`, `.Decorations`, `.DiagnosticPopover` and 50 more; writes `.AddSelection`, `.ApplyHighlighterFoldCandidates`, `.BeginEdgeDrag`, `.Clean`, `.CloseEditMenu`, `.CloseSearch`, `.EndEdgeDrag`, `.EnsureHighlighterFactory` and 43 more; events `.OnInputEditsEvent(cx, f)`, `.OnInputEvent(cx, f)`
 - **`gk.AutoClosingPair`** (AutoClosingPair, value): `gk.NewAutoClosingPair(open, close_)`; `.NotIn`
 - **`gk.BracketPair`** (BracketPair, value): `gk.NewBracketPair(open, close_)`
 - **`gk.CursorBlink`** (CursorBlink, value): `gk.NewCursorBlinkDefault()` or `gk.NewCursorBlinkSteady()` or `gk.NewCursorBlinkBlinking(interval)`; `.WithIdleTimeout`
@@ -905,6 +905,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`gk.LeafGeometry`** (LeafGeometry, kit state): handed out by the kit (no constructor); reads `.AtomAt`, `.Bounds`, `.CaretForPosition`, `.CaretHeight`, `.IndexForPosition`, `.IsEmpty`, `.Len`, `.LineHeight` and 2 more
 - **`gk.ParagraphRead`** (Paragraph, kit state): handed out by the kit (no constructor); reads `.Children`
 - **`gk.BaseCodeBlock`** (CodeBlock, value): `gk.NewBaseCodeBlockFromCode(code, lang)` or `gk.NewBaseCodeBlock(code, lang, span)`; `.WithLeafKey`, `.WithMeta`
+- **`gk.BaseLink2`** (Link, value): `gk.NewBaseLink2(url)`; `.Title`, `.URL`
 - **`gk.FlowPosition`** (FlowPosition, value): `gk.NewFlowPositionAt(blocks, ix, isLast)`; `.First`, `.Last`
 - **`gk.InlineNode`** (InlineNode, value): `gk.NewInlineNodeDefault()` or `gk.NewInlineNode(text)` or `gk.NewInlineNodeImage(image)`; `.Marks`
 - **`gk.Paragraph`** (Paragraph, value): `gk.NewParagraphDefault()`; `.Push`, `.WithLeafKey`

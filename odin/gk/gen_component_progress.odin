@@ -11,6 +11,7 @@ Progress :: struct {
 
 Progress_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Progress),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Progress),
 	using t_styled_ext: ^Styled_Ext_Trait(Progress),
 	using t_styled: ^Styled_Trait(Progress),
 	using t_sizable: ^Sizable_Trait(Progress),
@@ -42,6 +43,7 @@ progress :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Progre
 @(private)
 progress_vt := Progress_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Progress))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Progress))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Progress))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Progress))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Progress))&sizable_any,
@@ -79,6 +81,7 @@ Progress_Circle_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Progress_Circle),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Progress_Circle),
 	using t_element_ext: ^Element_Ext_Trait(Progress_Circle),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Progress_Circle),
 	using t_styled_ext: ^Styled_Ext_Trait(Progress_Circle),
 	using t_styled: ^Styled_Trait(Progress_Circle),
 	using t_sizable: ^Sizable_Trait(Progress_Circle),
@@ -113,6 +116,7 @@ progress_circle_vt := Progress_Circle_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Progress_Circle))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Progress_Circle))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Progress_Circle))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Progress_Circle))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Progress_Circle))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Progress_Circle))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Progress_Circle))&sizable_any,

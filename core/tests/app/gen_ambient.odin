@@ -73,6 +73,11 @@ ambient_all :: proc(a: ^App, cx: ^gk.Cx) -> (called: int) {
 	}
 	called += 1
 	{
+		v := gk.base_logical_anchor(cx, gk.Anchor.Top_Left, gk.Layout_Direction.Ltr)
+		fmt.printf("ambient base_logical_anchor %v\n", v)
+	}
+	called += 1
+	{
 		v := gk.base_measure_text_width(cx, "s", 4)
 		fmt.printf("ambient base_measure_text_width %v\n", v)
 	}
@@ -94,6 +99,9 @@ ambient_all :: proc(a: ^App, cx: ^gk.Cx) -> (called: int) {
 	called += 1
 	gk.base_set_language_config(cx, "s", gk.language_config_default())
 	fmt.println("ambient base_set_language_config")
+	called += 1
+	gk.base_set_reduce_motion_preference(cx, gk.Reduce_Motion_Preference.System)
+	fmt.println("ambient base_set_reduce_motion_preference")
 	called += 1
 	{
 		v := gk.base_step_value(cx, "s", gk.Step_Action.Decrement, 1.5, 1.5, 1.5)
@@ -365,4 +373,4 @@ ambient_all :: proc(a: ^App, cx: ^gk.Cx) -> (called: int) {
 }
 
 // The ambient calls this test runs, and those it cannot (an argument is kit state): base_handle_key_down, base_highlight_characters, base_highlight_contains, base_highlight_prefix, base_parse_markdown, base_sankey_layout_from, base_set_language_provider, kit_panel_handle, open_alert_dialog, open_dialog, open_sheet, open_sheet_at, set_icon_resolver.
-AMBIENT_CALLS :: 74
+AMBIENT_CALLS :: 76

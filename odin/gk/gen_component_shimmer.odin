@@ -88,6 +88,7 @@ Shimmer_Text :: struct {
 
 Shimmer_Text_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Shimmer_Text),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Shimmer_Text),
 	using t_styled_ext: ^Styled_Ext_Trait(Shimmer_Text),
 	using t_styled: ^Styled_Trait(Shimmer_Text),
 	// Set the duration of one complete sweep.
@@ -119,6 +120,7 @@ shimmer_text :: proc(text: string, flags: ..Style_Flag, loc := #caller_location)
 @(private)
 shimmer_text_vt := Shimmer_Text_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Shimmer_Text))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Shimmer_Text))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Shimmer_Text))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Shimmer_Text))&styled_any,
 	duration = proc(e: Shimmer_Text, duration: time.Duration) -> Shimmer_Text {

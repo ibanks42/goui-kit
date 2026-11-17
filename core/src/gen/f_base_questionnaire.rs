@@ -47,7 +47,7 @@ pub fn c_1061(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h =
 pub fn sb_base_questionnaire_state(s: gpui_kit::base::questionnaire::QuestionnaireState, op: u16, r: &mut R) -> gpui_kit::base::questionnaire::QuestionnaireState {
     match op {
         1 => { let a0 = gpui_kit::SharedString::new(r.str()); crate::overlay::Fallible(<gpui_kit::base::questionnaire::QuestionnaireState>::with_current_item).call2(s, a0) }
-        2 => { let a0 = en_81(r.u16()); <gpui_kit::base::questionnaire::QuestionnaireState>::with_shortcuts(s, a0) }
+        2 => { let a0 = en_83(r.u16()); <gpui_kit::base::questionnaire::QuestionnaireState>::with_shortcuts(s, a0) }
         _ => s,
     }
 }

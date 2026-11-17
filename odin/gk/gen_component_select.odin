@@ -11,6 +11,7 @@ Select :: struct {
 
 Select_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Select),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Select),
 	using t_styled_ext: ^Styled_Ext_Trait(Select),
 	using t_sizable: ^Sizable_Trait(Select),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Select),
@@ -28,6 +29,11 @@ Select_VT :: struct {
 	disabled: proc(e: Select, disabled: bool) -> Select,
 	// Set a custom closure that renders the empty-state element.
 	empty: proc(e: Select, builder: View) -> Select,
+	// Highlight the part of each row that matches the search query, default is `false`.
+	//
+	// Rows render with `render_highlighted`; the default highlights the matched text of `title()` in
+	// the theme's `list_highlight_foreground` color.
+	highlight_matches: proc(e: Select, highlight: bool) -> Select,
 	// Override the trailing icon, replacing the default chevron.
 	icon: proc(e: Select, icon: Icon_Name) -> Select,
 	// Sets an explicit identity for the select root.
@@ -61,6 +67,7 @@ select :: proc(state: Select_State, flags: ..Style_Flag, loc := #caller_location
 @(private)
 select_vt := Select_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Select))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Select))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Select))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Select))&sizable_any,
 	t_focusable_ext = cast(^Focusable_Ext_Trait(Select))&focusable_ext_any,
@@ -88,6 +95,11 @@ select_vt := Select_VT {
 	empty = proc(e: Select, builder: View) -> Select {
 		o := op(e.el, 267)
 		put_view_arg(o, builder)
+		return e
+	},
+	highlight_matches = proc(e: Select, highlight: bool) -> Select {
+		o := op(e.el, 269)
+		put_u8(o, u8(highlight))
 		return e
 	},
 	icon = proc(e: Select, icon: Icon_Name) -> Select {

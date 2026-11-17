@@ -38,25 +38,25 @@ package you download.
 
 ### Download and unpack
 
-The download is one file per system: `gpuikit-0.0.1-linux-x86_64.tar.zst` (about 66 MB),
-`gpuikit-0.0.1-macos-universal.tar.zst` or `gpuikit-0.0.1-windows-x86_64.zip`, from release `v0.0.1`
+The download is one file per system: `gpuikit-0.0.2-linux-x86_64.tar.zst` (about 66 MB),
+`gpuikit-0.0.2-macos-universal.tar.zst` or `gpuikit-0.0.2-windows-x86_64.zip`, from release `v0.0.2`
 of the bindings' GitHub releases
 ([github.com/ibanks42/gpui-kit-bindings/releases](https://github.com/ibanks42/gpui-kit-bindings/releases)).
 `SHA256SUMS` beside them checks what you downloaded: `sha256sum -c --ignore-missing SHA256SUMS`
 (on macOS `shasum -a 256 -c --ignore-missing SHA256SUMS`). Unpack it anywhere:
 
 ```sh
-tar --zstd -xf gpuikit-0.0.1-linux-x86_64.tar.zst      # or: zstd -dc gpuikit-0.0.1-linux-x86_64.tar.zst | tar -x
-cd gpuikit-0.0.1-linux-x86_64
+tar --zstd -xf gpuikit-0.0.2-linux-x86_64.tar.zst      # or: zstd -dc gpuikit-0.0.2-linux-x86_64.tar.zst | tar -x
+cd gpuikit-0.0.2-linux-x86_64
 ```
 
 On macOS the same with `macos-universal` (`zstd` is in Homebrew); on Windows unpack the `.zip` with
-Explorer or `tar -xf gpuikit-0.0.1-windows-x86_64.zip`. The three hold the same files except the
+Explorer or `tar -xf gpuikit-0.0.2-windows-x86_64.zip`. The three hold the same files except the
 library's:
 
 | path | what |
 |---|---|
-| `lib/libgpuikit_static.a` | the library (GPUI-kit 0.9.1 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel, on Windows in MinGW's format |
+| `lib/libgpuikit_static.a` | the library (GPUI-kit 0.10.0 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel, on Windows in MinGW's format |
 | `lib/libgpuikit_sys.so`, `lib/libgpuikit_sys.a` | Linux: a small linker script naming the system libraries it needs; Windows: the import library of the Windows API it uses |
 | `lib/gpuikit_static.lib`, `lib/gpuikit_sys.lib` | Windows: the same in Visual Studio's format, which Odin links |
 | `windows/` | Windows: the manifest a program embeds, and `gpuikit.rc`, which embeds it |
@@ -109,13 +109,13 @@ go 1.27
 
 require gpuikit.dev v0.0.0
 
-replace gpuikit.dev => ../gpuikit-0.0.1-linux-x86_64/go
+replace gpuikit.dev => ../gpuikit-0.0.2-linux-x86_64/go
 ```
 
 and build it with:
 
 ```sh
-G=$PWD/../gpuikit-0.0.1-linux-x86_64
+G=$PWD/../gpuikit-0.0.2-linux-x86_64
 CGO_LDFLAGS="-L$G/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o groceries.bin .
 ./groceries.bin
 ```
@@ -155,7 +155,7 @@ environment with the `mingw-w64-ucrt-x86_64-gcc` and `mingw-w64-ucrt-x86_64-lld`
 llvm-mingw, or WinLibs' build "with LLVM". In PowerShell:
 
 ```powershell
-$G = "$PWD/../gpuikit-0.0.1-windows-x86_64"
+$G = "$PWD/../gpuikit-0.0.2-windows-x86_64"
 $env:CGO_ENABLED = "1"; $env:CGO_LDFLAGS = "-L$G/lib"
 go build -ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'" -o groceries.exe .
 .\groceries.exe

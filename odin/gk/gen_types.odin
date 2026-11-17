@@ -605,6 +605,12 @@ Layer :: enum u16 {
 	Overlay = 3,
 }
 
+// Layout_Direction is gpui_kit::base::LayoutDirection.
+Layout_Direction :: enum u16 {
+	Ltr = 0,
+	Rtl = 1,
+}
+
 // List_Sizing_Behavior is gpui_kit::ListSizingBehavior.
 List_Sizing_Behavior :: enum u16 {
 	Infer = 0,
@@ -779,6 +785,13 @@ Questionnaire_Shortcut_Mode :: enum u16 {
 Range_Decoration_Style :: enum u16 {
 	Fill = 0,
 	Frame = 1,
+}
+
+// Reduce_Motion_Preference is gpui_kit::base::ReduceMotionPreference.
+Reduce_Motion_Preference :: enum u16 {
+	System = 0,
+	Reduce = 1,
+	Allow = 2,
 }
 
 // Reduced_Motion is gpui_kit::base::ReducedMotion.
@@ -3107,6 +3120,12 @@ Index_Path :: union #no_nil {int, Base_Index_Path}
 Maybe_Index_Path :: union {int, Base_Index_Path}
 Index_Path_List :: union {[]int, []Base_Index_Path}
 
+// Base_Link_3 is gpui_kit::base::text::Link. Only the fields the binding can carry.
+Base_Link_3 :: struct {
+	url: Temp_String,
+	title: Maybe(Temp_String),
+}
+
 // Base_List_Settings is gpui_kit::base::ListSettings. Only the fields the binding can carry.
 Base_List_Settings :: struct {
 	active_highlight: bool,
@@ -3793,6 +3812,7 @@ Kit_Theme_Color_2 :: struct {
 	list_even: Hsla,
 	list_head: Hsla,
 	list_hover: Hsla,
+	list_highlight_foreground: Hsla,
 	muted: Hsla,
 	muted_foreground: Hsla,
 	popover: Hsla,
@@ -3913,6 +3933,12 @@ put_Link_Mark :: proc(o: ^Tape, v: Link_Mark) {
 List_Offset :: struct {
 	item_ix: int,
 	offset_in_item: f32,
+}
+
+@(private)
+put_List_Offset :: proc(o: ^Tape, v: List_Offset) {
+	put_usize(o, v.item_ix)
+	put_f32(o, v.offset_in_item)
 }
 
 // Modifiers is gpui_kit::Modifiers.
@@ -4408,6 +4434,7 @@ Theme_Tokens :: struct {
 	list_even: Kit_Theme_Token,
 	list_head: Kit_Theme_Token,
 	list_hover: Kit_Theme_Token,
+	list_highlight_foreground: Kit_Theme_Token,
 	muted: Kit_Theme_Token,
 	muted_foreground: Kit_Theme_Token,
 	popover: Kit_Theme_Token,

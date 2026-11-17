@@ -55,6 +55,78 @@ func (e BreadcrumbEl) PopoverStyle() BreadcrumbEl { tThemeStyledPopoverStyle(e.n
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e BreadcrumbEl) RoundedFullStyle() BreadcrumbEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e BreadcrumbEl) BorderE(width Length) BreadcrumbEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e BreadcrumbEl) BorderS(width Length) BreadcrumbEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e BreadcrumbEl) FlexRowDir() BreadcrumbEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e BreadcrumbEl) InsetE(length Length) BreadcrumbEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e BreadcrumbEl) InsetS(length Length) BreadcrumbEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e BreadcrumbEl) JustifyFlexEnd() BreadcrumbEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e BreadcrumbEl) JustifyFlexStart() BreadcrumbEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e BreadcrumbEl) Me(length Length) BreadcrumbEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e BreadcrumbEl) Ms(length Length) BreadcrumbEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e BreadcrumbEl) Pe(length Length) BreadcrumbEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e BreadcrumbEl) Ps(length Length) BreadcrumbEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e BreadcrumbEl) RoundedE(radius Length) BreadcrumbEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e BreadcrumbEl) RoundedS(radius Length) BreadcrumbEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e BreadcrumbEl) TextEnd() BreadcrumbEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e BreadcrumbEl) TextStart() BreadcrumbEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e BreadcrumbEl) CornerRadii(radius Corners) BreadcrumbEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -491,6 +563,93 @@ func (e BreadcrumbItemEl) RoundedFullStyle() BreadcrumbItemEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
+
+// Border width on the end edge.
+func (e BreadcrumbItemEl) BorderE(width Length) BreadcrumbItemEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e BreadcrumbItemEl) BorderS(width Length) BreadcrumbItemEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e BreadcrumbItemEl) FlexRowDir() BreadcrumbItemEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e BreadcrumbItemEl) InsetE(length Length) BreadcrumbItemEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e BreadcrumbItemEl) InsetS(length Length) BreadcrumbItemEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e BreadcrumbItemEl) JustifyFlexEnd() BreadcrumbItemEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e BreadcrumbItemEl) JustifyFlexStart() BreadcrumbItemEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e BreadcrumbItemEl) Me(length Length) BreadcrumbItemEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e BreadcrumbItemEl) Ms(length Length) BreadcrumbItemEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e BreadcrumbItemEl) Pe(length Length) BreadcrumbItemEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e BreadcrumbItemEl) Ps(length Length) BreadcrumbItemEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e BreadcrumbItemEl) RoundedE(radius Length) BreadcrumbItemEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e BreadcrumbItemEl) RoundedS(radius Length) BreadcrumbItemEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e BreadcrumbItemEl) TextEnd() BreadcrumbItemEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e BreadcrumbItemEl) TextStart() BreadcrumbItemEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e BreadcrumbItemEl) CornerRadii(radius Corners) BreadcrumbItemEl {
 	tStyledExtCornerRadii(e.n, radius)

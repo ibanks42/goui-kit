@@ -43,17 +43,18 @@ pub fn apply_component_searchable_list_item_element(dx: &mut Dx, mut el: gpui_ki
         let r = &mut r;
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::searchable_list::SearchableListItemElement>::checked(el, a0) }; }
-            257 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::searchable_list::SearchableListItemElement>::check_icon(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            257 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::searchable_list::SearchableListItemElement>::check_icon(el, a0) }; }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
             17024..=17151 => { el = tr_disableable_5(el, op, r, dx); }
-            17664..=17791 => { el = tr_selectable_17(el, op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            17664..=17791 => { el = tr_selectable_18(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("SearchableListItemElement", op),

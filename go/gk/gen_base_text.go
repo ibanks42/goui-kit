@@ -74,6 +74,39 @@ func (e BaseCodeBlock) WithMeta(meta Option[string]) BaseCodeBlock {
 	return e
 }
 
+// BaseLink2 is gpui_kit::base::text::Link.
+type BaseLink2 struct{ n *node }
+
+func (e BaseLink2) valueNode() *node { return e.n }
+
+// A link to `url` with no title.
+//
+// NewBaseLink2 is <gpui_kit::base::text::Link>::new.
+func NewBaseLink2(url string) BaseLink2 {
+	n := newValue(889)
+	o := nodeArgs(n)
+	o.str(url)
+	return BaseLink2{n}
+}
+
+// Set the link title.
+//
+// Title is <gpui_kit::base::text::Link>::title.
+func (e BaseLink2) Title(title string) BaseLink2 {
+	o := op(e.n, 256)
+	o.str(title)
+	return e
+}
+
+// Point the link at `url`.
+//
+// URL is <gpui_kit::base::text::Link>::url.
+func (e BaseLink2) URL(url string) BaseLink2 {
+	o := op(e.n, 257)
+	o.str(url)
+	return e
+}
+
 // BlockState is gpui_kit::base::text::editor_host::BlockState.
 type BlockState struct{ n *node }
 

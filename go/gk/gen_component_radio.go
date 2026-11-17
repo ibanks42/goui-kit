@@ -154,11 +154,71 @@ func (e RadioEl) RoundedFullStyle() RadioEl { tThemeStyledRoundedFullStyle(e.n);
 // off — leave it a few pixels of room, or don't clip.
 func (e RadioEl) FocusRingStyle() RadioEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e RadioEl) KeepTextSelection(id ID) RadioEl { tElementExtKeepTextSelection(e.n, id); return e }
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e RadioEl) OnPrepaint(callback func(cx *Cx, e Bounds)) RadioEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e RadioEl) BorderE(width Length) RadioEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e RadioEl) BorderS(width Length) RadioEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e RadioEl) FlexRowDir() RadioEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e RadioEl) InsetE(length Length) RadioEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e RadioEl) InsetS(length Length) RadioEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e RadioEl) JustifyFlexEnd() RadioEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e RadioEl) JustifyFlexStart() RadioEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e RadioEl) Me(length Length) RadioEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e RadioEl) Ms(length Length) RadioEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e RadioEl) Pe(length Length) RadioEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e RadioEl) Ps(length Length) RadioEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e RadioEl) RoundedE(radius Length) RadioEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e RadioEl) RoundedS(radius Length) RadioEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e RadioEl) TextEnd() RadioEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e RadioEl) TextStart() RadioEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e RadioEl) CornerRadii(radius Corners) RadioEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e RadioEl) DebugBlue() RadioEl                 { tStyledExtDebugBlue(e.n); return e }
@@ -1235,6 +1295,78 @@ func (e RadioGroupEl) PopoverStyle() RadioGroupEl { tThemeStyledPopoverStyle(e.n
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e RadioGroupEl) RoundedFullStyle() RadioGroupEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e RadioGroupEl) BorderE(width Length) RadioGroupEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e RadioGroupEl) BorderS(width Length) RadioGroupEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e RadioGroupEl) FlexRowDir() RadioGroupEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e RadioGroupEl) InsetE(length Length) RadioGroupEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e RadioGroupEl) InsetS(length Length) RadioGroupEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e RadioGroupEl) JustifyFlexEnd() RadioGroupEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e RadioGroupEl) JustifyFlexStart() RadioGroupEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e RadioGroupEl) Me(length Length) RadioGroupEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e RadioGroupEl) Ms(length Length) RadioGroupEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e RadioGroupEl) Pe(length Length) RadioGroupEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e RadioGroupEl) Ps(length Length) RadioGroupEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e RadioGroupEl) RoundedE(radius Length) RadioGroupEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e RadioGroupEl) RoundedS(radius Length) RadioGroupEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e RadioGroupEl) TextEnd() RadioGroupEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e RadioGroupEl) TextStart() RadioGroupEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e RadioGroupEl) CornerRadii(radius Corners) RadioGroupEl {
 	tStyledExtCornerRadii(e.n, radius)

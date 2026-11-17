@@ -33,7 +33,7 @@ pub fn make_component_icon(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Optio
     let el: gpui_kit::component::Icon = match ty {
         885 => { <gpui_kit::component::Icon as Default>::default() }
         886 => { <gpui_kit::component::Icon>::empty() }
-        887 => { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::Icon>::new(a0) }
+        887 => { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::Icon>::new(a0) }
         _ => return bad_node("Icon", ty),
     };
     Some(apply_component_icon(dx, el, first))
@@ -48,11 +48,12 @@ pub fn apply_component_icon(dx: &mut Dx, mut el: gpui_kit::component::Icon, firs
             257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::Icon>::path(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some((in_5(r, dx)?,)))() else { continue }; <gpui_kit::component::Icon>::rotate(el, a0) }; }
             259 => { el = { let a0 = gpui_kit::Transformation::scale(gpui_kit::size(r.f32(), r.f32())).with_translation(gpui_kit::point(gpui_kit::px(r.f32()), gpui_kit::px(r.f32()))).with_rotation(gpui_kit::radians(r.f32())); <gpui_kit::component::Icon>::transform(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { el = tr_styled_3(el, op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("Icon", op),
         }
     }

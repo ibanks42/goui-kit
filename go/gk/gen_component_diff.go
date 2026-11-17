@@ -153,6 +153,17 @@ func (e DiffEl) SoftWrap(value bool) DiffEl {
 	return e
 }
 
+// Gives the original column this share of the width in split mode, clamped to 0.1..=0.9. Default
+// is 0.5. Without soft wrap, each column keeps its share and clips its long lines, and the code of
+// both columns scrolls horizontally together.
+//
+// SplitRatio is <gpui_kit::component::diff::Diff>::split_ratio.
+func (e DiffEl) SplitRatio(ratio float32) DiffEl {
+	o := op(e.n, 281)
+	o.f32(ratio)
+	return e
+}
+
 // Emphasizes syntax once the state has prepared it. Default is true.
 //
 // SyntaxHighlight is <gpui_kit::component::diff::Diff>::syntax_highlight.
@@ -176,6 +187,57 @@ func (e DiffEl) PopoverStyle() DiffEl { tThemeStyledPopoverStyle(e.n); return e 
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e DiffEl) RoundedFullStyle() DiffEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e DiffEl) BorderE(width Length) DiffEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e DiffEl) BorderS(width Length) DiffEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e DiffEl) FlexRowDir() DiffEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e DiffEl) InsetE(length Length) DiffEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e DiffEl) InsetS(length Length) DiffEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e DiffEl) JustifyFlexEnd() DiffEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e DiffEl) JustifyFlexStart() DiffEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e DiffEl) Me(length Length) DiffEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e DiffEl) Ms(length Length) DiffEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e DiffEl) Pe(length Length) DiffEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e DiffEl) Ps(length Length) DiffEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e DiffEl) RoundedE(radius Length) DiffEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e DiffEl) RoundedS(radius Length) DiffEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e DiffEl) TextEnd() DiffEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e DiffEl) TextStart() DiffEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e DiffEl) CornerRadii(radius Corners) DiffEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e DiffEl) DebugBlue() DiffEl                 { tStyledExtDebugBlue(e.n); return e }

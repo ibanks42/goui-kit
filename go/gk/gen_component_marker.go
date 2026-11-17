@@ -156,11 +156,71 @@ func (e MarkerEl) RoundedFullStyle() MarkerEl { tThemeStyledRoundedFullStyle(e.n
 // off — leave it a few pixels of room, or don't clip.
 func (e MarkerEl) FocusRingStyle() MarkerEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e MarkerEl) KeepTextSelection(id ID) MarkerEl { tElementExtKeepTextSelection(e.n, id); return e }
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e MarkerEl) OnPrepaint(callback func(cx *Cx, e Bounds)) MarkerEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e MarkerEl) BorderE(width Length) MarkerEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e MarkerEl) BorderS(width Length) MarkerEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e MarkerEl) FlexRowDir() MarkerEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e MarkerEl) InsetE(length Length) MarkerEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e MarkerEl) InsetS(length Length) MarkerEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e MarkerEl) JustifyFlexEnd() MarkerEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e MarkerEl) JustifyFlexStart() MarkerEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e MarkerEl) Me(length Length) MarkerEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e MarkerEl) Ms(length Length) MarkerEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e MarkerEl) Pe(length Length) MarkerEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e MarkerEl) Ps(length Length) MarkerEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e MarkerEl) RoundedE(radius Length) MarkerEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e MarkerEl) RoundedS(radius Length) MarkerEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e MarkerEl) TextEnd() MarkerEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e MarkerEl) TextStart() MarkerEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e MarkerEl) CornerRadii(radius Corners) MarkerEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e MarkerEl) DebugBlue() MarkerEl                 { tStyledExtDebugBlue(e.n); return e }
@@ -613,11 +673,110 @@ func (e MarkerContentEl) FocusRingStyle() MarkerContentEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e MarkerContentEl) KeepTextSelection(id ID) MarkerContentEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e MarkerContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) MarkerContentEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e MarkerContentEl) BorderE(width Length) MarkerContentEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e MarkerContentEl) BorderS(width Length) MarkerContentEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e MarkerContentEl) FlexRowDir() MarkerContentEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e MarkerContentEl) InsetE(length Length) MarkerContentEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e MarkerContentEl) InsetS(length Length) MarkerContentEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e MarkerContentEl) JustifyFlexEnd() MarkerContentEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e MarkerContentEl) JustifyFlexStart() MarkerContentEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e MarkerContentEl) Me(length Length) MarkerContentEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e MarkerContentEl) Ms(length Length) MarkerContentEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e MarkerContentEl) Pe(length Length) MarkerContentEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e MarkerContentEl) Ps(length Length) MarkerContentEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e MarkerContentEl) RoundedE(radius Length) MarkerContentEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e MarkerContentEl) RoundedS(radius Length) MarkerContentEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e MarkerContentEl) TextEnd() MarkerContentEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e MarkerContentEl) TextStart() MarkerContentEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e MarkerContentEl) CornerRadii(radius Corners) MarkerContentEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -1147,11 +1306,95 @@ func (e MarkerIconEl) FocusRingStyle() MarkerIconEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e MarkerIconEl) KeepTextSelection(id ID) MarkerIconEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e MarkerIconEl) OnPrepaint(callback func(cx *Cx, e Bounds)) MarkerIconEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e MarkerIconEl) BorderE(width Length) MarkerIconEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e MarkerIconEl) BorderS(width Length) MarkerIconEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e MarkerIconEl) FlexRowDir() MarkerIconEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e MarkerIconEl) InsetE(length Length) MarkerIconEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e MarkerIconEl) InsetS(length Length) MarkerIconEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e MarkerIconEl) JustifyFlexEnd() MarkerIconEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e MarkerIconEl) JustifyFlexStart() MarkerIconEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e MarkerIconEl) Me(length Length) MarkerIconEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e MarkerIconEl) Ms(length Length) MarkerIconEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e MarkerIconEl) Pe(length Length) MarkerIconEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e MarkerIconEl) Ps(length Length) MarkerIconEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e MarkerIconEl) RoundedE(radius Length) MarkerIconEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e MarkerIconEl) RoundedS(radius Length) MarkerIconEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e MarkerIconEl) TextEnd() MarkerIconEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e MarkerIconEl) TextStart() MarkerIconEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e MarkerIconEl) CornerRadii(radius Corners) MarkerIconEl {
 	tStyledExtCornerRadii(e.n, radius)

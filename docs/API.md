@@ -159,39 +159,39 @@ types, is in its generated file.
 
 <!-- index:begin (written by gen/gk_apidoc.py from odin/gk/gen_*.odin; do not edit) -->
 
-254 element types, 139 kit state types and 93 value types, in 76 upstream modules. Styling builders every element has (`->bg`, `->w`, `->p`, `->border_color`, … and the style tokens) are not repeated per type.
+254 element types, 139 kit state types and 94 value types, in 76 upstream modules. Styling builders every element has (`->bg`, `->w`, `->p`, `->border_color`, … and the style tokens) are not repeated per type.
 
 ### component
 
-- **`gk.Icon`** (Icon, element): `gk.icon_default()` or `gk.icon_empty()` or `gk.icon(icon)`; `->small`, `->large`, `->data`, `->path`, `->rotate`, `->transform`, `->with_size`, `->xsmall`
-- **`gk.Title_Bar`** (TitleBar, element): `gk.title_bar()`; `->on_close_window`
+- **`gk.Icon`** (Icon, element): `gk.icon_default()` or `gk.icon_empty()` or `gk.icon(icon)`; `->small`, `->large`, `->border_e`, `->border_s`, `->data`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 15 more
+- **`gk.Title_Bar`** (TitleBar, element): `gk.title_bar()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
 - **`gk.Window_Border`** (WindowBorder, element): `gk.kit_window_border()` or `gk.window_border()` or `gk.window_border_default()`; `->resize_hit_size`, `->shadow_size`
 - **`gk.Theme`** (Theme, kit state): handed out by the kit (no constructor); reads `gk.apply_semantic_config`, `gk.apply_semantic_config_str`, `gk.color_tokens`, `gk.colors`, `gk.cursor_blink`, `gk.dark_theme`, `gk.focus_ring`, `gk.font_family` and 31 more; writes `gk.apply_config`, `gk.apply_semantic_tokens`, `gk.set_colors`, `gk.set_cursor_blink`, `gk.set_dark_theme`, `gk.set_focus_ring`, `gk.set_font_family`, `gk.set_font_size` and 14 more
 - **`gk.Theme_Registry`** (ThemeRegistry, kit state): handed out by the kit (no constructor); reads `gk.default_dark_theme`, `gk.default_light_theme`, `gk.default_themes`, `gk.load_themes_from_str`, `gk.sorted_themes`, `gk.themes`
 
 ### component::accordion
 
-- **`gk.Accordion`** (Accordion, element): `gk.accordion(id)`; `->small`, `->large`, `->disabled`, `->bordered`, `->item`, `->multiple`, `->on_toggle_click`, `->with_size` and 1 more
-- **`gk.Accordion_Item`** (AccordionItem, element): `gk.accordion_item()`; `->title`, `->icon`, `->small`, `->large`, `->disabled`, `->content_style`, `->open`, `->title_style` and 2 more
+- **`gk.Accordion`** (Accordion, element): `gk.accordion(id)`; `->small`, `->large`, `->disabled`, `->border_e`, `->border_s`, `->bordered`, `->flex_row_dir`, `->inset_e` and 16 more
+- **`gk.Accordion_Item`** (AccordionItem, element): `gk.accordion_item()`; `->title`, `->icon`, `->small`, `->large`, `->disabled`, `->border_e`, `->border_s`, `->content_style` and 17 more
 
 ### component::alert
 
-- **`gk.Alert`** (Alert, element): `gk.alert(id, message)` or `gk.alert_error(id, message)` or `gk.alert_info(id, message)` (and 2 more); `->title`, `->icon`, `->small`, `->large`, `->banner`, `->on_close`, `->visible`, `->with_size` and 2 more
+- **`gk.Alert`** (Alert, element): `gk.alert(id, message)` or `gk.alert_error(id, message)` or `gk.alert_info(id, message)` (and 2 more); `->title`, `->icon`, `->small`, `->large`, `->banner`, `->border_e`, `->border_s`, `->flex_row_dir` and 17 more
 
 ### component::attachment
 
-- **`gk.Attachment`** (Attachment, element): `gk.attachment()` or `gk.attachment_default()`; `->on_click`, `->tooltip`, `->content`, `->small`, `->large`, `->actions`, `->axis`, `->media` and 6 more
-- **`gk.Attachment_Actions`** (AttachmentActions, element): `gk.attachment_actions()` or `gk.attachment_actions_default()`
-- **`gk.Attachment_Content`** (AttachmentContent, element): `gk.attachment_content()` or `gk.attachment_content_default()`; `->title`, `->description`
-- **`gk.Attachment_Description`** (AttachmentDescription, element): `gk.attachment_description(text)`; `->status`
-- **`gk.Attachment_Group`** (AttachmentGroup, element): `gk.attachment_group(id)`; `->with_edge_fade`
-- **`gk.Attachment_Media`** (AttachmentMedia, element): `gk.attachment_media()` or `gk.attachment_media_default()`; `->small`, `->large`, `->overlay`, `->src`, `->with_size`, `->xsmall`
-- **`gk.Attachment_Title`** (AttachmentTitle, element): `gk.attachment_title(text)`; `->status`, `->with_shimmer_style`
+- **`gk.Attachment`** (Attachment, element): `gk.attachment()` or `gk.attachment_default()`; `->on_click`, `->tooltip`, `->content`, `->small`, `->large`, `->actions`, `->axis`, `->border_e` and 21 more
+- **`gk.Attachment_Actions`** (AttachmentActions, element): `gk.attachment_actions()` or `gk.attachment_actions_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Attachment_Content`** (AttachmentContent, element): `gk.attachment_content()` or `gk.attachment_content_default()`; `->title`, `->description`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
+- **`gk.Attachment_Description`** (AttachmentDescription, element): `gk.attachment_description(text)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
+- **`gk.Attachment_Group`** (AttachmentGroup, element): `gk.attachment_group(id)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
+- **`gk.Attachment_Media`** (AttachmentMedia, element): `gk.attachment_media()` or `gk.attachment_media_default()`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 13 more
+- **`gk.Attachment_Title`** (AttachmentTitle, element): `gk.attachment_title(text)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 9 more
 
 ### component::avatar
 
-- **`gk.Avatar`** (Avatar, element): `gk.avatar()`; `->placeholder`, `->small`, `->large`, `->name`, `->src`, `->with_size`, `->xsmall`
-- **`gk.Avatar_Group`** (AvatarGroup, element): `gk.avatar_group()`; `->child`, `->children`, `->small`, `->large`, `->ellipsis`, `->limit`, `->with_size`, `->xsmall`
+- **`gk.Avatar`** (Avatar, element): `gk.avatar()`; `->placeholder`, `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 14 more
+- **`gk.Avatar_Group`** (AvatarGroup, element): `gk.avatar_group()`; `->child`, `->children`, `->small`, `->large`, `->border_e`, `->border_s`, `->ellipsis`, `->flex_row_dir` and 15 more
 
 ### component::badge
 
@@ -199,38 +199,38 @@ types, is in its generated file.
 
 ### component::breadcrumb
 
-- **`gk.Breadcrumb`** (Breadcrumb, element): `gk.breadcrumb()`; `->child`, `->children`
-- **`gk.Breadcrumb_Item`** (BreadcrumbItem, element): `gk.breadcrumb_item(label)`; `->on_click`, `->disabled`
+- **`gk.Breadcrumb`** (Breadcrumb, element): `gk.breadcrumb()`; `->child`, `->children`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
+- **`gk.Breadcrumb_Item`** (BreadcrumbItem, element): `gk.breadcrumb_item(label)`; `->on_click`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
 
 ### component::bubble
 
-- **`gk.Bubble`** (Bubble, element): `gk.bubble()` or `gk.bubble_default()`; `->content`, `->alignment`, `->reactions`, `->with_variant`
-- **`gk.Bubble_Content`** (BubbleContent, element): `gk.bubble_content()` or `gk.bubble_content_default()`
-- **`gk.Bubble_Group`** (BubbleGroup, element): `gk.bubble_group()` or `gk.bubble_group_default()`
-- **`gk.Bubble_Reactions`** (BubbleReactions, element): `gk.bubble_reactions()` or `gk.bubble_reactions_default()`; `->action`, `->alignment`, `->side`
+- **`gk.Bubble`** (Bubble, element): `gk.bubble()` or `gk.bubble_default()`; `->content`, `->alignment`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Bubble_Content`** (BubbleContent, element): `gk.bubble_content()` or `gk.bubble_content_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Bubble_Group`** (BubbleGroup, element): `gk.bubble_group()` or `gk.bubble_group_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Bubble_Reactions`** (BubbleReactions, element): `gk.bubble_reactions()` or `gk.bubble_reactions_default()`; `->action`, `->alignment`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 10 more
 
 ### component::button
 
-- **`gk.Button`** (Button, element): `gk.button(id)`; `->label`, `->child`, `->children`, `->selected`, `->icon`, `->on_click`, `->tooltip`, `->primary` and 24 more
-- **`gk.Button_Group`** (ButtonGroup, element): `gk.button_group(id)`; `->child`, `->children`, `->on_click`, `->primary`, `->ghost`, `->outline`, `->small`, `->large` and 14 more
-- **`gk.Dropdown_Button`** (DropdownButton, element): `gk.dropdown_button(id)`; `->selected`, `->primary`, `->ghost`, `->outline`, `->small`, `->large`, `->disabled`, `->button` and 15 more
-- **`gk.Toggle`** (Toggle, element): `gk.toggle(id)`; `->label`, `->checked`, `->icon`, `->on_click`, `->tooltip`, `->ghost`, `->outline`, `->small` and 5 more
-- **`gk.Toggle_Group`** (ToggleGroup, element): `gk.toggle_group(id)`; `->child`, `->children`, `->on_click`, `->ghost`, `->outline`, `->small`, `->large`, `->disabled` and 5 more
+- **`gk.Button`** (Button, element): `gk.button(id)`; `->label`, `->child`, `->children`, `->selected`, `->icon`, `->on_click`, `->tooltip`, `->primary` and 39 more
+- **`gk.Button_Group`** (ButtonGroup, element): `gk.button_group(id)`; `->child`, `->children`, `->on_click`, `->primary`, `->ghost`, `->outline`, `->small`, `->large` and 29 more
+- **`gk.Dropdown_Button`** (DropdownButton, element): `gk.dropdown_button(id)`; `->selected`, `->primary`, `->ghost`, `->outline`, `->small`, `->large`, `->disabled`, `->border_e` and 30 more
+- **`gk.Toggle`** (Toggle, element): `gk.toggle(id)`; `->label`, `->checked`, `->icon`, `->on_click`, `->tooltip`, `->ghost`, `->outline`, `->small` and 20 more
+- **`gk.Toggle_Group`** (ToggleGroup, element): `gk.toggle_group(id)`; `->child`, `->children`, `->on_click`, `->ghost`, `->outline`, `->small`, `->large`, `->disabled` and 20 more
 - **`gk.Button_Custom_Variant`** (ButtonCustomVariant, value): `gk.button_custom_variant()`; `->active`, `->color`, `->foreground`, `->hover`, `->shadow`
 
 ### component::calendar
 
-- **`gk.Calendar`** (Calendar, element): `gk.calendar(state)`; `->small`, `->large`, `->first_day_of_week`, `->number_of_months`, `->with_size`, `->xsmall`
+- **`gk.Calendar`** (Calendar, element): `gk.calendar(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->first_day_of_week`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 13 more
 
 ### component::carousel
 
-- **`gk.Carousel`** (Carousel, element): `gk.carousel(id, state)`
-- **`gk.Carousel_Content`** (CarouselContent, element): `gk.carousel_content(state)`; `->track_style`
-- **`gk.Carousel_Item`** (CarouselItem, element): `gk.carousel_item(id, index, state)`
-- **`gk.Carousel_Next`** (CarouselNext, element): `gk.carousel_next(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Carousel_Pagination`** (CarouselPagination, element): `gk.carousel_pagination()`
-- **`gk.Carousel_Pagination_Item`** (CarouselPaginationItem, element): `gk.carousel_pagination_item(id, index, state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Carousel_Previous`** (CarouselPrevious, element): `gk.carousel_previous(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
+- **`gk.Carousel`** (Carousel, element): `gk.carousel(id, state)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Carousel_Content`** (CarouselContent, element): `gk.carousel_content(state)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
+- **`gk.Carousel_Item`** (CarouselItem, element): `gk.carousel_item(id, index, state)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Carousel_Next`** (CarouselNext, element): `gk.carousel_next(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Carousel_Pagination`** (CarouselPagination, element): `gk.carousel_pagination()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Carousel_Pagination_Item`** (CarouselPaginationItem, element): `gk.carousel_pagination_item(id, index, state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Carousel_Previous`** (CarouselPrevious, element): `gk.carousel_previous(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
 - **`gk.Carousel_State`** (CarouselState, kit state): `gk.carousel_state(cx, item_count)->…->build()`; shown by `gk.carousel(state)`, `gk.carousel_content(state)`, `gk.carousel_item(state)`, `gk.carousel_next(state)`, `gk.carousel_pagination_item(state)`, `gk.carousel_previous(state)`; built with `->with_axis`, `->with_looping`, `->with_selected_index`; reads `gk.axis`, `gk.has_next`, `gk.has_previous`, `gk.is_looping`, `gk.item_count`, `gk.select_first`, `gk.select_index`, `gk.select_last` and 3 more; writes `gk.set_axis`, `gk.set_item_count`, `gk.set_looping`, `gk.set_selected_index`; events `gk.on_carousel_event(s, cx, gk.on(p))`
 
 ### component::chart
@@ -246,37 +246,37 @@ types, is in its generated file.
 
 ### component::checkbox
 
-- **`gk.Checkbox`** (Checkbox, element): `gk.checkbox(id)`; `->label`, `->checked`, `->selected`, `->on_click`, `->on_change`, `->tooltip`, `->small`, `->large` and 5 more
+- **`gk.Checkbox`** (Checkbox, element): `gk.checkbox(id)`; `->label`, `->checked`, `->selected`, `->on_click`, `->on_change`, `->tooltip`, `->small`, `->large` and 21 more
 
 ### component::clipboard
 
-- **`gk.Clipboard`** (Clipboard, element): `gk.clipboard(id)`; `->value`, `->tooltip`, `->small`, `->large`, `->on_copied`, `->value_fn`, `->with_size`, `->xsmall`
+- **`gk.Clipboard`** (Clipboard, element): `gk.clipboard(id)`; `->label`, `->value`, `->tooltip`, `->small`, `->large`, `->on_copied`, `->value_fn`, `->with_size` and 1 more
 
 ### component::collapsible
 
-- **`gk.Collapsible`** (Collapsible, element): `gk.collapsible()`; `->content`, `->motion_id`, `->open`
+- **`gk.Collapsible`** (Collapsible, element): `gk.collapsible()`; `->content`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 10 more
 
 ### component::color_picker
 
-- **`gk.Color_Picker`** (ColorPicker, element): `gk.color_picker(state)`; `->label`, `->icon`, `->small`, `->large`, `->anchor`, `->featured_colors`, `->with_size`, `->xsmall`
-- **`gk.Color_Select`** (ColorSelect, element): `gk.color_select(state)`; `->placeholder`, `->small`, `->large`, `->featured_colors`, `->with_size`, `->xsmall`
+- **`gk.Color_Picker`** (ColorPicker, element): `gk.color_picker(state)`; `->label`, `->icon`, `->small`, `->large`, `->anchor`, `->border_e`, `->border_s`, `->featured_colors` and 15 more
+- **`gk.Color_Select`** (ColorSelect, element): `gk.color_select(state)`; `->placeholder`, `->small`, `->large`, `->border_e`, `->border_s`, `->featured_colors`, `->flex_row_dir`, `->inset_e` and 13 more
 
 ### component::combobox
 
 - **`gk.Caret`** (Caret, element): `gk.caret(size)`
-- **`gk.Combobox`** (Combobox<GkSearchDelegate>, element): `gk.combobox(state)`; `->icon`, `->placeholder`, `->footer`, `->small`, `->large`, `->disabled`, `->appearance`, `->check_icon` and 7 more
+- **`gk.Combobox`** (Combobox<GkSearchDelegate>, element): `gk.combobox(state)`; `->icon`, `->placeholder`, `->footer`, `->small`, `->large`, `->disabled`, `->appearance`, `->border_e` and 23 more
 - **`gk.Combobox_State`** (ComboboxState<GkSearchDelegate>, kit state): `gk.combobox_state(cx, gk.search_source(cx, a, items), selected_indices)->…->build()`; shown by `gk.combobox(state)`; built with `->multiple`, `->searchable`; reads `gk.add_selected_index`, `gk.query`, `gk.remove_selected_index`, `gk.selected_value`, `gk.selected_values`, `gk.selection`; writes `gk.clear_selection`, `gk.combobox_state_focus`, `gk.set_items`, `gk.set_query`, `gk.set_selected_indices`, `gk.set_selected_values`; events `gk.on_combobox_event(s, cx, gk.on(p))`
 
 ### component::command
 
-- **`gk.Command`** (Command, element): `gk.command(state)`; `->placeholder`, `->on_select`, `->bordered`, `->filterable`, `->item`, `->items`, `->on_cancel`, `->on_confirm` and 4 more
+- **`gk.Command`** (Command, element): `gk.command(state)`; `->placeholder`, `->on_select`, `->border_e`, `->border_s`, `->bordered`, `->filterable`, `->flex_row_dir`, `->highlight_matches` and 20 more
 - **`gk.Command_State`** (CommandState, kit state): handed out by the kit (no constructor); shown by `gk.command(state)`; reads `gk.is_loading`, `gk.matched_count`, `gk.query`, `gk.selected_index`; writes `gk.command_state_focus`, `gk.set_loading`, `gk.set_query`, `gk.set_selected_index`
 - **`gk.Command_Group`** (CommandGroup, value): `gk.command_group()`; `->label`, `->item`, `->items`
 - **`gk.Command_Item`** (CommandItem, value): `gk.command_item()` or `gk.command_item_default()`; `->label`, `->child`, `->checked`, `->icon`, `->disabled`, `->action`, `->keywords`
 
 ### component::date_picker
 
-- **`gk.Date_Picker`** (DatePicker, element): `gk.date_picker(state)`; `->placeholder`, `->small`, `->large`, `->disabled`, `->appearance`, `->cleanable`, `->number_of_months`, `->presets` and 2 more
+- **`gk.Date_Picker`** (DatePicker, element): `gk.date_picker(state)`; `->placeholder`, `->small`, `->large`, `->disabled`, `->appearance`, `->border_e`, `->border_s`, `->cleanable` and 17 more
 - **`gk.Date_Picker_State`** (DatePickerState, kit state): `gk.date_picker_state(cx)->…->build()` or `gk.date_picker_state_range(cx)->…->build()`; shown by `gk.date_picker(state)`; built with `->date_format`, `->default_time`, `->disabled_matcher`, `->first_day_of_week`, `->hour_cycle`, `->number_of_months`, `->time_precision`; reads `gk.date`, `gk.date_time`; writes `gk.set_date`, `gk.set_date_time`, `gk.set_year_range`; events `gk.on_date_picker_event(s, cx, gk.on(p))`
 - **`gk.Date_Range_Preset`** (DateRangePreset, value): `gk.date_range_preset_date_time(label, value)` or `gk.date_range_preset_single(label, date)` or `gk.date_range_preset_range(label, start, end)`
 
@@ -286,20 +286,20 @@ types, is in its generated file.
 
 ### component::dialog
 
-- **`gk.Alert_Dialog`** (AlertDialog, element): `gk.alert_dialog()`; `->title`, `->icon`, `->description`, `->content`, `->footer`, `->button_props`, `->cancel_text`, `->cancel_variant` and 14 more
-- **`gk.Dialog`** (Dialog, element): `gk.dialog()`; `->title`, `->content`, `->footer`, `->button_props`, `->centered`, `->close_button`, `->entrance`, `->keyboard` and 8 more
+- **`gk.Alert_Dialog`** (AlertDialog, element): `gk.alert_dialog()`; `->title`, `->icon`, `->description`, `->content`, `->footer`, `->border_e`, `->border_s`, `->button_props` and 29 more
+- **`gk.Dialog`** (Dialog, element): `gk.dialog()`; `->title`, `->content`, `->footer`, `->border_e`, `->border_s`, `->button_props`, `->centered`, `->close_button` and 23 more
 - **`gk.Dialog_Action`** (DialogAction, element): `gk.dialog_action()`
 - **`gk.Dialog_Close`** (DialogClose, element): `gk.dialog_close()`; `->trigger`
-- **`gk.Dialog_Content`** (DialogContent, element): `gk.dialog_content()`
-- **`gk.Dialog_Description`** (DialogDescription, element): `gk.dialog_description()`
-- **`gk.Dialog_Footer`** (DialogFooter, element): `gk.dialog_footer()`
-- **`gk.Dialog_Header`** (DialogHeader, element): `gk.dialog_header()`
-- **`gk.Dialog_Title`** (DialogTitle, element): `gk.dialog_title()`
+- **`gk.Dialog_Content`** (DialogContent, element): `gk.dialog_content()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Dialog_Description`** (DialogDescription, element): `gk.dialog_description()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Dialog_Footer`** (DialogFooter, element): `gk.dialog_footer()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Dialog_Header`** (DialogHeader, element): `gk.dialog_header()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Dialog_Title`** (DialogTitle, element): `gk.dialog_title()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
 - **`gk.Dialog_Button_Props`** (DialogButtonProps, value): `gk.dialog_button_props_default()`; `->cancel_text`, `->cancel_variant`, `->ok_text`, `->ok_variant`, `->on_cancel`, `->on_ok`, `->show_cancel`
 
 ### component::diff
 
-- **`gk.Diff`** (Diff, element): `gk.diff(state)`; `->annotations`, `->change_background`, `->change_indicator`, `->decorations`, `->gutter_markers`, `->header_visible`, `->hover_highlight`, `->hunk_separator` and 6 more
+- **`gk.Diff`** (Diff, element): `gk.diff(state)`; `->annotations`, `->border_e`, `->border_s`, `->change_background`, `->change_indicator`, `->decorations`, `->flex_row_dir`, `->gutter_markers` and 22 more
 - **`gk.Diff_Annotation`** (DiffAnnotation, kit state): handed out by the kit (no constructor); reads `gk.diff_annotation_id`, `gk.path`, `gk.position`
 - **`gk.Diff_Conflict`** (DiffConflict, kit state): handed out by the kit (no constructor); reads `gk.base_label`, `gk.base_lines`, `gk.current_label`, `gk.current_lines`, `gk.incoming_label`, `gk.incoming_lines`, `gk.lines`
 - **`gk.Diff_File_Read`** (DiffFile, kit state): handed out by the kit (no constructor); reads `gk.additions`, `gk.conflicts`, `gk.deletions`, `gk.extended_headers`, `gk.has_changes`, `gk.is_binary`, `gk.is_truncated`, `gk.language` and 4 more
@@ -307,7 +307,7 @@ types, is in its generated file.
 - **`gk.Diff_Line_Position`** (DiffLinePosition, kit state): handed out by the kit (no constructor); reads `gk.line`, `gk.path`, `gk.side`
 - **`gk.Diff_Line_Range_Read`** (DiffLineRange, kit state): handed out by the kit (no constructor); reads `gk.diff_line_range_read_start`, `gk.end`, `gk.end_side`, `gk.path`, `gk.side`
 - **`gk.Diff_Parse_Error`** (DiffParseError, kit state): handed out by the kit (no constructor); reads `gk.diff_parse_error_message`, `gk.line`
-- **`gk.Diff_State`** (DiffState, kit state): `gk.diff_state(cx, files)->…->build()`; shown by `gk.diff(state)`; built with `->with_context_lines`, `->with_expansion_lines`, `->with_inline_max_line_length`, `->with_inline_unit`, `->with_min_collapsed_lines`, `->with_mode`, `->with_syntax_highlighter`, `->with_syntax_max_line_length`; reads `gk.conflict_resolution`, `gk.context_lines`, `gk.expansion_lines`, `gk.files`, `gk.inline_max_line_length`, `gk.inline_unit`, `gk.is_file_collapsed`, `gk.min_collapsed_lines` and 5 more; writes `gk.clear_syntax_highlighter`, `gk.collapse_unchanged`, `gk.expand_unchanged`, `gk.next_change`, `gk.previous_change`, `gk.resolve_conflict`, `gk.scroll_to_file`, `gk.scroll_to_line` and 11 more; events `gk.on_diff_event(s, cx, gk.on(p))`
+- **`gk.Diff_State`** (DiffState, kit state): `gk.diff_state(cx, files)->…->build()`; shown by `gk.diff(state)`; built with `->with_context_lines`, `->with_expansion_lines`, `->with_inline_max_line_length`, `->with_inline_unit`, `->with_min_collapsed_lines`, `->with_mode`, `->with_syntax_highlighter`, `->with_syntax_max_line_length`; reads `gk.conflict_resolution`, `gk.context_lines`, `gk.expansion_lines`, `gk.files`, `gk.inline_max_line_length`, `gk.inline_unit`, `gk.is_file_collapsed`, `gk.min_collapsed_lines` and 5 more; writes `gk.clear_syntax_highlighter`, `gk.collapse_unchanged`, `gk.expand_unchanged`, `gk.next_change`, `gk.previous_change`, `gk.resolve_conflict`, `gk.scroll_to_file`, `gk.scroll_to_line` and 13 more; events `gk.on_diff_event(s, cx, gk.on(p))`
 - **`gk.Diff_Decoration`** (DiffDecoration, value): `gk.diff_decoration(range)`; `->with_background`
 - **`gk.Diff_File`** (DiffFile, value): `gk.diff_file_parse_at(patch, index)` or `gk.diff_file_unchanged(path, text)` or `gk.diff_file_parse_with_at(patch, options, index)`; `->with_language`
 - **`gk.Diff_Gutter_Marker`** (DiffGutterMarker, value): `gk.diff_gutter_marker(id, position)`; `->with_label`
@@ -320,21 +320,21 @@ types, is in its generated file.
 
 ### component::empty
 
-- **`gk.Empty`** (Empty, element): `gk.empty()` or `gk.empty_default()`; `->content`, `->header`
-- **`gk.Empty_Content`** (EmptyContent, element): `gk.empty_content()` or `gk.empty_content_default()`
-- **`gk.Empty_Description`** (EmptyDescription, element): `gk.empty_description()` or `gk.empty_description_default()`
-- **`gk.Empty_Header`** (EmptyHeader, element): `gk.empty_header()` or `gk.empty_header_default()`; `->title`, `->description`, `->media`
-- **`gk.Empty_Media`** (EmptyMedia, element): `gk.empty_media()` or `gk.empty_media_default()`; `->with_variant`
-- **`gk.Empty_Title`** (EmptyTitle, element): `gk.empty_title()` or `gk.empty_title_default()`
+- **`gk.Empty`** (Empty, element): `gk.empty()` or `gk.empty_default()`; `->content`, `->border_e`, `->border_s`, `->flex_row_dir`, `->header`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
+- **`gk.Empty_Content`** (EmptyContent, element): `gk.empty_content()` or `gk.empty_content_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Empty_Description`** (EmptyDescription, element): `gk.empty_description()` or `gk.empty_description_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Empty_Header`** (EmptyHeader, element): `gk.empty_header()` or `gk.empty_header_default()`; `->title`, `->description`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 10 more
+- **`gk.Empty_Media`** (EmptyMedia, element): `gk.empty_media()` or `gk.empty_media_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
+- **`gk.Empty_Title`** (EmptyTitle, element): `gk.empty_title()` or `gk.empty_title_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
 
 ### component::form
 
-- **`gk.Field`** (Field, element): `gk.field()` or `gk.kit_field()`; `->label`, `->description`, `->description_fn`, `->items_center`, `->items_end`, `->items_start`, `->label_fn`, `->label_indent` and 2 more
-- **`gk.Form`** (Form, element): `gk.form()` or `gk.form_default()` or `gk.form_horizontal()` (and 3 more); `->child`, `->children`, `->footer`, `->small`, `->large`, `->columns`, `->label_layout`, `->label_text_size` and 4 more
+- **`gk.Field`** (Field, element): `gk.field()` or `gk.kit_field()`; `->label`, `->description`, `->border_e`, `->border_s`, `->description_fn`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 17 more
+- **`gk.Form`** (Form, element): `gk.form()` or `gk.form_default()` or `gk.form_horizontal()` (and 3 more); `->child`, `->children`, `->footer`, `->small`, `->large`, `->border_e`, `->border_s`, `->columns` and 19 more
 
 ### component::group_box
 
-- **`gk.Group_Box`** (GroupBox, element): `gk.group_box()`; `->title`, `->footer`, `->outline`, `->content_style`, `->fill`, `->normal`, `->title_style`, `->with_variant`
+- **`gk.Group_Box`** (GroupBox, element): `gk.group_box()`; `->title`, `->footer`, `->outline`, `->border_e`, `->border_s`, `->content_style`, `->fill`, `->flex_row_dir` and 15 more
 
 ### component::highlighter
 
@@ -344,43 +344,43 @@ types, is in its generated file.
 
 ### component::hover_card
 
-- **`gk.Hover_Card`** (HoverCard, element): `gk.hover_card(id)`; `->anchor`, `->appearance`, `->close_delay`, `->on_open_change`, `->open_delay`, `->trigger`, `->trigger_style`
+- **`gk.Hover_Card`** (HoverCard, element): `gk.hover_card(id)`; `->anchor`, `->appearance`, `->border_e`, `->border_s`, `->close_delay`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 14 more
 
 ### component::input
 
-- **`gk.Input`** (Input, element): `gk.input(state)`; `->selected`, `->prefix`, `->suffix`, `->small`, `->large`, `->disabled`, `->appearance`, `->bordered` and 13 more
-- **`gk.Input_Group`** (InputGroup, element): `gk.input_group(id)`; `->small`, `->large`, `->disabled`, `->addon`, `->input`, `->invalid`, `->readonly`, `->with_size` and 1 more
-- **`gk.Input_Group_Addon`** (InputGroupAddon, element): `gk.input_group_addon(id)`; `->align`
-- **`gk.Input_Group_Button`** (InputGroupButton, element): `gk.input_group_button(id)`; `->label`, `->child`, `->children`, `->selected`, `->icon`, `->on_click`, `->tooltip`, `->primary` and 20 more
-- **`gk.Input_Group_Text`** (InputGroupText, element): `gk.input_group_text()` or `gk.input_group_text_default()`
-- **`gk.Input_Token`** (InputToken, element): `gk.input_token(context_)`; `->icon`
-- **`gk.Number_Input`** (NumberInput, element): `gk.number_input(state)`; `->placeholder`, `->prefix`, `->suffix`, `->small`, `->large`, `->disabled`, `->appearance`, `->with_size` and 1 more
+- **`gk.Input`** (Input, element): `gk.input(state)`; `->selected`, `->prefix`, `->suffix`, `->small`, `->large`, `->disabled`, `->appearance`, `->border_e` and 28 more
+- **`gk.Input_Group`** (InputGroup, element): `gk.input_group(id)`; `->small`, `->large`, `->disabled`, `->addon`, `->border_e`, `->border_s`, `->flex_row_dir`, `->input` and 16 more
+- **`gk.Input_Group_Addon`** (InputGroupAddon, element): `gk.input_group_addon(id)`; `->align`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Input_Group_Button`** (InputGroupButton, element): `gk.input_group_button(id)`; `->label`, `->child`, `->children`, `->selected`, `->icon`, `->on_click`, `->tooltip`, `->primary` and 35 more
+- **`gk.Input_Group_Text`** (InputGroupText, element): `gk.input_group_text()` or `gk.input_group_text_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Input_Token`** (InputToken, element): `gk.input_token(context_)`; `->icon`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Number_Input`** (NumberInput, element): `gk.number_input(state)`; `->placeholder`, `->prefix`, `->suffix`, `->small`, `->large`, `->disabled`, `->appearance`, `->border_e` and 17 more
 - **`gk.Otp_Input`** (OtpInput, element): `gk.otp_input(state)`; `->small`, `->large`, `->disabled`, `->groups`, `->with_size`, `->xsmall`
-- **`gk.Textarea`** (Textarea, element): `gk.textarea(state)`; `->small`, `->large`, `->disabled`, `->appearance`, `->bordered`, `->on_paste`, `->on_token_click`, `->on_token_hover` and 3 more
+- **`gk.Textarea`** (Textarea, element): `gk.textarea(state)`; `->small`, `->large`, `->disabled`, `->appearance`, `->border_e`, `->border_s`, `->bordered`, `->flex_row_dir` and 18 more
 
 ### component::kbd
 
-- **`gk.Kbd`** (Kbd, element): `gk.kbd(stroke)`; `->outline`, `->appearance`
+- **`gk.Kbd`** (Kbd, element): `gk.kbd(stroke)`; `->outline`, `->appearance`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
 
 ### component::label
 
-- **`gk.Label`** (Label, element): `gk.label(label)`; `->highlights`, `->masked`, `->secondary`
+- **`gk.Label`** (Label, element): `gk.label(label)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->highlights`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 10 more
 
 ### component::link
 
-- **`gk.Link`** (Link, element): `gk.link(id)`; `->on_click`, `->disabled`, `->href`
+- **`gk.Link`** (Link, element): `gk.link(id)`; `->on_click`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->href`, `->inset_e`, `->inset_s` and 10 more
 
 ### component::list
 
-- **`gk.List`** (List<GkListDelegate>, element): `gk.list(state)`; `->small`, `->large`, `->scroll_bounce`, `->scrollbar_visible`, `->search_placeholder`, `->with_size`, `->xsmall`
-- **`gk.List_Item`** (ListItem, element): `gk.list_item(id)`; `->selected`, `->on_click`, `->tooltip`, `->suffix`, `->disabled`, `->check_icon`, `->confirmed`, `->on_mouse_enter` and 3 more
+- **`gk.List`** (List<GkListDelegate>, element): `gk.list(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 14 more
+- **`gk.List_Item`** (ListItem, element): `gk.list_item(id)`; `->selected`, `->on_click`, `->tooltip`, `->suffix`, `->disabled`, `->border_e`, `->border_s`, `->check_icon` and 18 more
 - **`gk.List_State`** (ListState<GkListDelegate>, kit state): `gk.list_state(cx, gk.list_source(cx, a, count, row))->…->build()`; shown by `gk.list(state)`; built with `->searchable`, `->selectable`; reads `gk.delegate`, `gk.delegate_mut`, `gk.list_state_scroll_handle`, `gk.right_clicked_index`, `gk.selected_index`; writes `gk.list_state_focus`, `gk.scroll_to_item`, `gk.scroll_to_selected_item`, `gk.set_item_to_measure_index`, `gk.set_query`, `gk.set_right_clicked_index`, `gk.set_searchable`, `gk.set_selectable` and 1 more; events `gk.on_list_event(s, cx, gk.on(p))`
 
 ### component::marker
 
-- **`gk.Marker`** (Marker, element): `gk.marker()` or `gk.marker_default()`; `->icon`, `->content`, `->alignment`, `->loading`, `->separator_style`, `->with_loading_style`, `->with_shimmer_style`, `->with_variant`
-- **`gk.Marker_Content`** (MarkerContent, element): `gk.marker_content()` or `gk.marker_content_default()`; `->text`, `->child`, `->children`
-- **`gk.Marker_Icon`** (MarkerIcon, element): `gk.marker_icon()` or `gk.marker_icon_default()`
+- **`gk.Marker`** (Marker, element): `gk.marker()` or `gk.marker_default()`; `->icon`, `->content`, `->alignment`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 15 more
+- **`gk.Marker_Content`** (MarkerContent, element): `gk.marker_content()` or `gk.marker_content_default()`; `->text`, `->child`, `->children`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 10 more
+- **`gk.Marker_Icon`** (MarkerIcon, element): `gk.marker_icon()` or `gk.marker_icon_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
 
 ### component::menu
 
@@ -390,17 +390,17 @@ types, is in its generated file.
 
 ### component::message
 
-- **`gk.Message`** (Message, element): `gk.message()` or `gk.message_default()`; `->content`, `->footer`, `->alignment`, `->avatar`, `->avatar_slot`, `->header`, `->with_stack_style`
-- **`gk.Message_Avatar`** (MessageAvatar, element): `gk.message_avatar()` or `gk.message_avatar_default()`
-- **`gk.Message_Content`** (MessageContent, element): `gk.message_content()` or `gk.message_content_default()`; `->bubble`
-- **`gk.Message_Footer`** (MessageFooter, element): `gk.message_footer()` or `gk.message_footer_default()`; `->content_inset`
-- **`gk.Message_Group`** (MessageGroup, element): `gk.message_group()` or `gk.message_group_default()`
-- **`gk.Message_Header`** (MessageHeader, element): `gk.message_header()` or `gk.message_header_default()`; `->content_inset`
+- **`gk.Message`** (Message, element): `gk.message()` or `gk.message_default()`; `->content`, `->footer`, `->alignment`, `->avatar`, `->avatar_slot`, `->border_e`, `->border_s`, `->flex_row_dir` and 14 more
+- **`gk.Message_Avatar`** (MessageAvatar, element): `gk.message_avatar()` or `gk.message_avatar_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Message_Content`** (MessageContent, element): `gk.message_content()` or `gk.message_content_default()`; `->border_e`, `->border_s`, `->bubble`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Message_Footer`** (MessageFooter, element): `gk.message_footer()` or `gk.message_footer_default()`; `->border_e`, `->border_s`, `->content_inset`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Message_Group`** (MessageGroup, element): `gk.message_group()` or `gk.message_group_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Message_Header`** (MessageHeader, element): `gk.message_header()` or `gk.message_header_default()`; `->border_e`, `->border_s`, `->content_inset`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
 
 ### component::message_scroller
 
-- **`gk.Message_Scroller`** (MessageScroller, element): `gk.message_scroller(id, state, renderer)`; `->jump_button`, `->with_bottom_fade`, `->with_content_style`, `->with_jump_button_label`, `->with_jump_button_renderer`, `->with_jump_button_style`, `->with_jump_button_transition`, `->with_list_style` and 1 more
-- **`gk.Message_Scroller_State`** (MessageScrollerState, kit state): handed out by the kit (no constructor); shown by `gk.message_scroller(state)`; reads `gk.is_following_tail`, `gk.is_scrolled_up`, `gk.item_count`, `gk.logical_scroll_top`, `gk.message_scroller_state_append`, `gk.prepend`, `gk.remeasure_items`, `gk.scroll_to_item` and 1 more; writes `gk.remeasure`, `gk.reset`, `gk.scroll_to_end`
+- **`gk.Message_Scroller`** (MessageScroller, element): `gk.message_scroller(id, state, renderer)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->jump_button`, `->justify_flex_end`, `->justify_flex_start` and 16 more
+- **`gk.Message_Scroller_State`** (MessageScrollerState, kit state): handed out by the kit (no constructor); shown by `gk.message_scroller(state)`; reads `gk.is_following_tail`, `gk.is_scrolled_up`, `gk.item_count`, `gk.logical_scroll_top`, `gk.message_scroller_state_append`, `gk.prepend`, `gk.remeasure_items`, `gk.scroll_to_item` and 2 more; writes `gk.remeasure`, `gk.reset`, `gk.scroll_to_end`
 
 ### component::native_menu
 
@@ -413,106 +413,106 @@ types, is in its generated file.
 
 ### component::pagination
 
-- **`gk.Pagination`** (Pagination, element): `gk.pagination(id)`; `->on_click`, `->small`, `->large`, `->disabled`, `->compact`, `->current_page`, `->total_pages`, `->visible_pages` and 2 more
+- **`gk.Pagination`** (Pagination, element): `gk.pagination(id)`; `->on_click`, `->small`, `->large`, `->disabled`, `->border_e`, `->border_s`, `->compact`, `->current_page` and 17 more
 
 ### component::plot
 
 - **`gk.Cross_Line`** (CrossLine, element): `gk.cross_line(point)`; `->band`, `->both`, `->h_span`, `->height`, `->horizontal`, `->span`, `->width`
 - **`gk.Dot`** (Dot, element): `gk.dot(point)`; `->fill`, `->halo`, `->stroke`
-- **`gk.Tooltip`** (Tooltip, element): `gk.tooltip(cursor, within)`; `->title`, `->appearance`, `->cross_line`, `->dots`, `->glide`, `->plain_row`, `->progress`, `->row` and 1 more
+- **`gk.Tooltip`** (Tooltip, element): `gk.tooltip(cursor, within)`; `->title`, `->appearance`, `->border_e`, `->border_s`, `->cross_line`, `->dots`, `->flex_row_dir`, `->glide` and 16 more
 
 ### component::popover
 
-- **`gk.Popover`** (Popover, element): `gk.popover(id)`; `->anchor`, `->appearance`, `->arrow`, `->default_open`, `->mouse_button`, `->offset`, `->on_open_change`, `->open` and 3 more
+- **`gk.Popover`** (Popover, element): `gk.popover(id)`; `->anchor`, `->appearance`, `->arrow`, `->border_e`, `->border_s`, `->default_open`, `->flex_row_dir`, `->inset_e` and 18 more
 
 ### component::progress
 
-- **`gk.Progress`** (Progress, element): `gk.progress(id)`; `->value`, `->small`, `->large`, `->color`, `->loading`, `->with_size`, `->xsmall`
-- **`gk.Progress_Circle`** (ProgressCircle, element): `gk.progress_circle(id)`; `->value`, `->small`, `->large`, `->color`, `->loading`, `->with_size`, `->xsmall`
+- **`gk.Progress`** (Progress, element): `gk.progress(id)`; `->value`, `->small`, `->large`, `->border_e`, `->border_s`, `->color`, `->flex_row_dir`, `->inset_e` and 14 more
+- **`gk.Progress_Circle`** (ProgressCircle, element): `gk.progress_circle(id)`; `->value`, `->small`, `->large`, `->border_e`, `->border_s`, `->color`, `->flex_row_dir`, `->inset_e` and 14 more
 
 ### component::questionnaire
 
-- **`gk.Questionnaire`** (Questionnaire, element): `gk.questionnaire(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Actions`** (QuestionnaireActions, element): `gk.questionnaire_actions(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Choice`** (QuestionnaireChoice, element): `gk.questionnaire_choice(state, item, value)`; `->small`, `->large`, `->content_style`, `->indicator_style`, `->shortcut_style`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Choice_Description`** (QuestionnaireChoiceDescription, element): `gk.questionnaire_choice_description()` or `gk.questionnaire_choice_description_default()`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Choices`** (QuestionnaireChoices, element): `gk.questionnaire_choices(state, item)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Description`** (QuestionnaireDescription, element): `gk.questionnaire_description(state, item)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Error`** (QuestionnaireError, element): `gk.questionnaire_error(state, item)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Input`** (QuestionnaireInput, element): `gk.questionnaire_input(state, item)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Item`** (QuestionnaireItem, element): `gk.questionnaire_item(state, item)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Next`** (QuestionnaireNext, element): `gk.questionnaire_next(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Previous`** (QuestionnairePrevious, element): `gk.questionnaire_previous(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Progress`** (QuestionnaireProgress, element): `gk.questionnaire_progress(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Skip`** (QuestionnaireSkip, element): `gk.questionnaire_skip(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Submit`** (QuestionnaireSubmit, element): `gk.questionnaire_submit(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Questionnaire_Title`** (QuestionnaireTitle, element): `gk.questionnaire_title(state, item)`; `->small`, `->large`, `->with_size`, `->xsmall`
+- **`gk.Questionnaire`** (Questionnaire, element): `gk.questionnaire(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Actions`** (QuestionnaireActions, element): `gk.questionnaire_actions(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Choice`** (QuestionnaireChoice, element): `gk.questionnaire_choice(state, item, value)`; `->small`, `->large`, `->border_e`, `->border_s`, `->content_style`, `->flex_row_dir`, `->indicator_style`, `->inset_e` and 14 more
+- **`gk.Questionnaire_Choice_Description`** (QuestionnaireChoiceDescription, element): `gk.questionnaire_choice_description()` or `gk.questionnaire_choice_description_default()`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Choices`** (QuestionnaireChoices, element): `gk.questionnaire_choices(state, item)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Description`** (QuestionnaireDescription, element): `gk.questionnaire_description(state, item)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Error`** (QuestionnaireError, element): `gk.questionnaire_error(state, item)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Input`** (QuestionnaireInput, element): `gk.questionnaire_input(state, item)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Item`** (QuestionnaireItem, element): `gk.questionnaire_item(state, item)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Next`** (QuestionnaireNext, element): `gk.questionnaire_next(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Previous`** (QuestionnairePrevious, element): `gk.questionnaire_previous(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Progress`** (QuestionnaireProgress, element): `gk.questionnaire_progress(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Skip`** (QuestionnaireSkip, element): `gk.questionnaire_skip(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Submit`** (QuestionnaireSubmit, element): `gk.questionnaire_submit(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Questionnaire_Title`** (QuestionnaireTitle, element): `gk.questionnaire_title(state, item)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
 
 ### component::radio
 
-- **`gk.Radio`** (Radio, element): `gk.radio(id)`; `->label`, `->checked`, `->on_click`, `->on_change`, `->tooltip`, `->small`, `->large`, `->disabled` and 2 more
-- **`gk.Radio_Group`** (RadioGroup, element): `gk.radio_group(id)` or `gk.radio_group_horizontal(id)` or `gk.radio_group_vertical(id)`; `->child`, `->children`, `->on_click`, `->on_change`, `->disabled`, `->layout`, `->selected_index`
+- **`gk.Radio`** (Radio, element): `gk.radio(id)`; `->label`, `->checked`, `->on_click`, `->on_change`, `->tooltip`, `->small`, `->large`, `->disabled` and 17 more
+- **`gk.Radio_Group`** (RadioGroup, element): `gk.radio_group(id)` or `gk.radio_group_horizontal(id)` or `gk.radio_group_vertical(id)`; `->child`, `->children`, `->on_click`, `->on_change`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir` and 14 more
 
 ### component::rating
 
-- **`gk.Rating`** (Rating, element): `gk.rating(id)`; `->value`, `->on_click`, `->small`, `->large`, `->disabled`, `->color`, `->max`, `->with_size` and 1 more
+- **`gk.Rating`** (Rating, element): `gk.rating(id)`; `->value`, `->on_click`, `->small`, `->large`, `->disabled`, `->border_e`, `->border_s`, `->color` and 16 more
 
 ### component::searchable_list
 
-- **`gk.Searchable_List_Item_Element`** (SearchableListItemElement, element): `gk.searchable_list_item_element(ix)`; `->checked`, `->selected`, `->small`, `->large`, `->disabled`, `->check_icon`, `->open`, `->secondary_selected` and 2 more
+- **`gk.Searchable_List_Item_Element`** (SearchableListItemElement, element): `gk.searchable_list_item_element(ix)`; `->checked`, `->selected`, `->small`, `->large`, `->disabled`, `->border_e`, `->border_s`, `->check_icon` and 17 more
 
 ### component::select
 
-- **`gk.Select`** (Select<GkSearchDelegate>, element): `gk.select(state)`; `->icon`, `->placeholder`, `->small`, `->large`, `->disabled`, `->appearance`, `->cleanable`, `->empty` and 7 more
+- **`gk.Select`** (Select<GkSearchDelegate>, element): `gk.select(state)`; `->icon`, `->placeholder`, `->small`, `->large`, `->disabled`, `->appearance`, `->border_e`, `->border_s` and 23 more
 - **`gk.Select_State`** (SelectState<GkSearchDelegate>, kit state): `gk.select_state(cx, gk.search_source(cx, a, items), selected_index)->…->build()`; shown by `gk.select(state)`; built with `->searchable`; reads `gk.selected_index`, `gk.selected_value`; writes `gk.select_state_focus`, `gk.set_items`, `gk.set_selected_index`, `gk.set_selected_value`; events `gk.on_select_event(s, cx, gk.on(p))`
 
 ### component::separator
 
-- **`gk.Separator`** (Separator, element): `gk.separator_horizontal()` or `gk.separator_horizontal_dashed()` or `gk.separator_vertical()` (and 1 more); `->label`, `->color`, `->dashed`
+- **`gk.Separator`** (Separator, element): `gk.separator_horizontal()` or `gk.separator_horizontal_dashed()` or `gk.separator_vertical()` (and 1 more); `->label`, `->border_e`, `->border_s`, `->color`, `->dashed`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 10 more
 
 ### component::setting
 
 - **`gk.Settings`** (Settings, element): `gk.settings(id)`; `->small`, `->large`, `->default_selected_index`, `->header_style`, `->page`, `->pages`, `->sidebar_size_range`, `->sidebar_style` and 4 more
-- **`gk.Setting_Field_Bool`** (SettingField<bool>, value): `gk.setting_field_bool_checkbox(value, set_value)` or `gk.setting_field_bool_switch(value, set_value)`; `->default_value`, `->on_reset`
-- **`gk.Setting_Field_Number`** (SettingField<f64>, value): `gk.setting_field_number_number_input(options, value, set_value)`; `->default_value`, `->on_reset`
-- **`gk.Setting_Field_Text`** (SettingField<SharedString>, value): `gk.setting_field_text_element(element)` or `gk.setting_field_text_render(element_render)` or `gk.setting_field_text_input(value, set_value)` (and 2 more); `->default_value`, `->on_reset`
-- **`gk.Setting_Group`** (SettingGroup, value): `gk.setting_group()`; `->title`, `->description`, `->footer`, `->item`, `->items`, `->variant`
+- **`gk.Setting_Field_Bool`** (SettingField<bool>, value): `gk.setting_field_bool_checkbox(value, set_value)` or `gk.setting_field_bool_switch(value, set_value)`; `->border_e`, `->border_s`, `->default_value`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 9 more
+- **`gk.Setting_Field_Number`** (SettingField<f64>, value): `gk.setting_field_number_number_input(options, value, set_value)`; `->border_e`, `->border_s`, `->default_value`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 9 more
+- **`gk.Setting_Field_Text`** (SettingField<SharedString>, value): `gk.setting_field_text_element(element)` or `gk.setting_field_text_render(element_render)` or `gk.setting_field_text_input(value, set_value)` (and 2 more); `->border_e`, `->border_s`, `->default_value`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 9 more
+- **`gk.Setting_Group`** (SettingGroup, value): `gk.setting_group()`; `->title`, `->description`, `->footer`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 13 more
 - **`gk.Setting_Item`** (SettingItem, value): `gk.setting_item_render(render)` or `gk.setting_item(title, field)`; `->description`, `->disabled`, `->keywords`, `->layout`, `->on_reset`
 - **`gk.Setting_Page`** (SettingPage, value): `gk.setting_page(title)`; `->title`, `->icon`, `->description`, `->default_open`, `->group`, `->groups`, `->header_style`, `->resettable` and 1 more
 
 ### component::sheet
 
-- **`gk.Sheet`** (Sheet, element): `gk.sheet()`; `->title`, `->footer`, `->on_close`, `->overlay`, `->overlay_closable`, `->resizable`
+- **`gk.Sheet`** (Sheet, element): `gk.sheet()`; `->title`, `->footer`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 13 more
 
 ### component::shimmer
 
-- **`gk.Shimmer_Text`** (ShimmerText, element): `gk.shimmer_text(text)`; `->duration`, `->highlight_color`, `->once`, `->reverse`, `->spread`, `->with_shimmer_style`
+- **`gk.Shimmer_Text`** (ShimmerText, element): `gk.shimmer_text(text)`; `->border_e`, `->border_s`, `->duration`, `->flex_row_dir`, `->highlight_color`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 13 more
 - **`gk.Shimmer_Style`** (ShimmerStyle, value): `gk.shimmer_style()` or `gk.shimmer_style_default()`; `->duration`, `->highlight_color`, `->once`, `->reverse`, `->spread`
 
 ### component::sidebar
 
-- **`gk.Grouped_Sidebar`** (Sidebar<SidebarGroup<SidebarMenu>>, element): `gk.grouped_sidebar(id)`; `->child`, `->children`, `->footer`, `->collapsed`, `->collapsible`, `->header`, `->side`
-- **`gk.Sidebar`** (Sidebar<SidebarMenu>, element): `gk.sidebar(id)`; `->child`, `->children`, `->footer`, `->collapsed`, `->collapsible`, `->header`, `->side`
-- **`gk.Sidebar_Footer`** (SidebarFooter, element): `gk.sidebar_footer()`; `->selected`, `->collapsed`, `->open`, `->secondary_selected`
-- **`gk.Sidebar_Header`** (SidebarHeader, element): `gk.sidebar_header()` or `gk.sidebar_header_default()`; `->selected`, `->collapsed`, `->open`, `->secondary_selected`
+- **`gk.Grouped_Sidebar`** (Sidebar<SidebarGroup<SidebarMenu>>, element): `gk.grouped_sidebar(id)`; `->child`, `->children`, `->footer`, `->border_e`, `->border_s`, `->collapsed`, `->collapsible`, `->flex_row_dir` and 14 more
+- **`gk.Sidebar`** (Sidebar<SidebarMenu>, element): `gk.sidebar(id)`; `->child`, `->children`, `->footer`, `->border_e`, `->border_s`, `->collapsed`, `->collapsible`, `->flex_row_dir` and 14 more
+- **`gk.Sidebar_Footer`** (SidebarFooter, element): `gk.sidebar_footer()`; `->selected`, `->border_e`, `->border_s`, `->collapsed`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Sidebar_Header`** (SidebarHeader, element): `gk.sidebar_header()` or `gk.sidebar_header_default()`; `->selected`, `->border_e`, `->border_s`, `->collapsed`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
 - **`gk.Sidebar_Toggle_Button`** (SidebarToggleButton, element): `gk.sidebar_toggle_button()`; `->on_click`, `->collapsed`, `->side`
-- **`gk.Sidebar_Group`** (SidebarGroup<SidebarMenu>, value): `gk.sidebar_group(label)`; `->child`, `->children`, `->collapsed`
-- **`gk.Sidebar_Menu`** (SidebarMenu, value): `gk.sidebar_menu()`; `->child`, `->children`, `->collapsed`
-- **`gk.Sidebar_Menu_Item`** (SidebarMenuItem, value): `gk.sidebar_menu_item(label)`; `->children`, `->icon`, `->on_click`, `->suffix`, `->accessibility_label`, `->active`, `->click_to_open`, `->click_to_toggle` and 5 more
+- **`gk.Sidebar_Group`** (SidebarGroup<SidebarMenu>, value): `gk.sidebar_group(label)`; `->child`, `->children`, `->suffix`, `->collapsed`
+- **`gk.Sidebar_Menu`** (SidebarMenu, value): `gk.sidebar_menu()`; `->child`, `->children`, `->border_e`, `->border_s`, `->collapsed`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 10 more
+- **`gk.Sidebar_Menu_Item`** (SidebarMenuItem, value): `gk.sidebar_menu_item(label)`; `->children`, `->icon`, `->on_click`, `->suffix`, `->accessibility_label`, `->active`, `->border_e`, `->border_s` and 20 more
 
 ### component::skeleton
 
-- **`gk.Skeleton`** (Skeleton, element): `gk.skeleton()`; `->secondary`
+- **`gk.Skeleton`** (Skeleton, element): `gk.skeleton()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
 
 ### component::slider
 
-- **`gk.Slider`** (Slider, element): `gk.slider(state)`; `->disabled`, `->horizontal`, `->reverse`, `->vertical`
+- **`gk.Slider`** (Slider, element): `gk.slider(state)`; `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->horizontal`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
 
 ### component::speech
 
-- **`gk.Speech_Button`** (SpeechButton, element): `gk.speech_button(state)`; `->small`, `->large`, `->disabled`, `->show_when_unsupported`, `->with_size`, `->xsmall`
+- **`gk.Speech_Button`** (SpeechButton, element): `gk.speech_button(state)`; `->small`, `->large`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 13 more
 - **`gk.Speech_Indicator`** (SpeechIndicator, element): `gk.speech_indicator(state)`; `->small`, `->large`, `->with_size`, `->xsmall`
-- **`gk.Speech_Waveform`** (SpeechWaveform, element): `gk.speech_waveform(state)`; `->small`, `->large`, `->liquid`, `->with_size`, `->xsmall`
+- **`gk.Speech_Waveform`** (SpeechWaveform, element): `gk.speech_waveform(state)`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 12 more
 - **`gk.Audio_Format`** (AudioFormat, kit state): handed out by the kit (no constructor); reads `gk.channels`, `gk.sample_rate`
 - **`gk.Speech_State`** (SpeechState, kit state): `gk.speech_state(cx)->…->build()`; shown by `gk.speech_button(state)`, `gk.speech_indicator(state)`, `gk.speech_waveform(state)`; built with `->stop_timeout`, `->system_fallback`; reads `gk.has_recognizer`, `gk.is_available`, `gk.levels`, `gk.status`, `gk.transcript`; writes `gk.cancel`, `gk.speech_state_start`, `gk.speech_state_stop`, `gk.speech_state_toggle`; events `gk.on_speech_event(s, cx, gk.on(p))`
 
@@ -522,160 +522,160 @@ types, is in its generated file.
 
 ### component::status_bar
 
-- **`gk.Status_Bar`** (StatusBar, element): `gk.status_bar()`
+- **`gk.Status_Bar`** (StatusBar, element): `gk.status_bar()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
 
 ### component::stepper
 
-- **`gk.Stepper`** (Stepper, element): `gk.stepper(id)`; `->on_click`, `->small`, `->large`, `->disabled`, `->item`, `->items`, `->layout`, `->selected_index` and 4 more
-- **`gk.Stepper_Item`** (StepperItem, element): `gk.stepper_item()`; `->icon`, `->small`, `->large`, `->disabled`, `->with_size`, `->xsmall`
+- **`gk.Stepper`** (Stepper, element): `gk.stepper(id)`; `->on_click`, `->small`, `->large`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 19 more
+- **`gk.Stepper_Item`** (StepperItem, element): `gk.stepper_item()`; `->icon`, `->small`, `->large`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 13 more
 
 ### component::switch
 
-- **`gk.Switch`** (Switch, element): `gk.switch_(id)`; `->label`, `->checked`, `->on_click`, `->on_change`, `->tooltip`, `->small`, `->large`, `->disabled` and 3 more
+- **`gk.Switch`** (Switch, element): `gk.switch_(id)`; `->label`, `->checked`, `->on_click`, `->on_change`, `->tooltip`, `->small`, `->large`, `->disabled` and 18 more
 
 ### component::tab
 
-- **`gk.Tab`** (Tab, element): `gk.tab()` or `gk.tab_default()`; `->label`, `->selected`, `->icon`, `->on_click`, `->tooltip`, `->prefix`, `->suffix`, `->outline` and 12 more
-- **`gk.Tab_Bar`** (TabBar, element): `gk.tab_bar(id)`; `->child`, `->children`, `->on_click`, `->prefix`, `->suffix`, `->outline`, `->small`, `->large` and 11 more
+- **`gk.Tab`** (Tab, element): `gk.tab()` or `gk.tab_default()`; `->label`, `->selected`, `->icon`, `->on_click`, `->tooltip`, `->prefix`, `->suffix`, `->outline` and 27 more
+- **`gk.Tab_Bar`** (TabBar, element): `gk.tab_bar(id)`; `->child`, `->children`, `->on_click`, `->prefix`, `->suffix`, `->outline`, `->small`, `->large` and 26 more
 
 ### component::table
 
-- **`gk.Data_Table`** (DataTable<GkTableDelegate>, element): `gk.data_table(state)`; `->small`, `->large`, `->bordered`, `->fixed_cols_border`, `->header_row_height`, `->scroll_bounce`, `->scrollbar_visible`, `->stripe` and 2 more
-- **`gk.Table`** (Table, element): `gk.table()`; `->child`, `->children`, `->small`, `->large`, `->with_ix`, `->with_size`, `->xsmall`
-- **`gk.Table_Body`** (TableBody, element): `gk.table_body()`; `->child`, `->children`, `->small`, `->large`, `->with_ix`, `->with_size`, `->xsmall`
-- **`gk.Table_Caption`** (TableCaption, element): `gk.table_caption()`; `->small`, `->large`, `->with_ix`, `->with_size`, `->xsmall`
-- **`gk.Table_Cell`** (TableCell, element): `gk.table_cell()`; `->small`, `->large`, `->text_center`, `->text_right`, `->with_ix`, `->with_size`, `->xsmall`
-- **`gk.Table_Footer`** (TableFooter, element): `gk.table_footer()`; `->child`, `->children`, `->small`, `->large`, `->with_ix`, `->with_size`, `->xsmall`
-- **`gk.Table_Head`** (TableHead, element): `gk.table_head()`; `->small`, `->large`, `->text_center`, `->text_right`, `->with_ix`, `->with_size`, `->xsmall`
-- **`gk.Table_Header`** (TableHeader, element): `gk.table_header()`; `->child`, `->children`, `->small`, `->large`, `->with_ix`, `->with_size`, `->xsmall`
-- **`gk.Table_Row`** (TableRow, element): `gk.table_row()`; `->child`, `->children`, `->small`, `->large`, `->with_ix`, `->with_size`, `->xsmall`
+- **`gk.Data_Table`** (DataTable<GkTableDelegate>, element): `gk.data_table(state)`; `->small`, `->large`, `->bordered`, `->fixed_cols_border`, `->header_row_height`, `->scroll_bounce`, `->scrollbar_mode`, `->scrollbar_visible` and 3 more
+- **`gk.Table`** (Table, element): `gk.table()`; `->child`, `->children`, `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 14 more
+- **`gk.Table_Body`** (TableBody, element): `gk.table_body()`; `->child`, `->children`, `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 14 more
+- **`gk.Table_Caption`** (TableCaption, element): `gk.table_caption()`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 12 more
+- **`gk.Table_Cell`** (TableCell, element): `gk.table_cell()`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 14 more
+- **`gk.Table_Footer`** (TableFooter, element): `gk.table_footer()`; `->child`, `->children`, `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 14 more
+- **`gk.Table_Head`** (TableHead, element): `gk.table_head()`; `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 14 more
+- **`gk.Table_Header`** (TableHeader, element): `gk.table_header()`; `->child`, `->children`, `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 14 more
+- **`gk.Table_Row`** (TableRow, element): `gk.table_row()`; `->child`, `->children`, `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 14 more
 - **`gk.Table_State`** (TableState<GkTableDelegate>, kit state): `gk.table_state(cx, gk.table_source(cx, a, rows, columns, cell))->…->build()`; shown by `gk.data_table(state)`; built with `->cell_selectable`, `->col_movable`, `->col_resizable`, `->col_selectable`, `->loop_selection`, `->row_header`, `->row_selectable`, `->select_on_modifier_click` and 1 more; reads `gk.col_width`, `gk.delegate`, `gk.delegate_mut`, `gk.dump`, `gk.dump_range`, `gk.fit_col`, `gk.headers`, `gk.right_clicked_cell` and 7 more; writes `gk.clear_selection`, `gk.refresh_header_layout`, `gk.scroll_to_col`, `gk.scroll_to_row`, `gk.set_right_clicked_row`, `gk.set_selected_cell`, `gk.set_selected_col`, `gk.set_selected_row` and 2 more; events `gk.on_table_event(s, cx, gk.on(p))`
 - **`gk.Table_Visible_Range`** (TableVisibleRange, kit state): handed out by the kit (no constructor); reads `gk.cols`, `gk.table_visible_range_rows`
 - **`gk.Column`** (Column, value): `gk.column_default()` or `gk.column(key, name)`; `->ascending`, `->descending`, `->fixed`, `->fixed_left`, `->fixed_right`, `->max_width`, `->min_width`, `->movable` and 9 more
 
 ### component::tag
 
-- **`gk.Tag`** (Tag, element): `gk.tag()` or `gk.tag_danger()` or `gk.tag_info()` (and 6 more); `->outline`, `->small`, `->large`, `->rounded_full`, `->with_size`, `->with_variant`, `->xsmall`
+- **`gk.Tag`** (Tag, element): `gk.tag()` or `gk.tag_danger()` or `gk.tag_info()` (and 6 more); `->outline`, `->small`, `->large`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 14 more
 
 ### component::text
 
-- **`gk.Text_View`** (TextView, element): `gk.html(source)` or `gk.markdown(source)` or `gk.text_view(state)` (and 2 more); `->blockquote_style`, `->image_source`, `->inline_code_style`, `->link_tooltip`, `->list_style`, `->markdown_extensions`, `->markdown_mdx`, `->max_lines` and 9 more
+- **`gk.Text_View`** (TextView, element): `gk.html(source)` or `gk.markdown(source)` or `gk.text_view(state)` (and 2 more); `->blockquote_style`, `->border_e`, `->border_s`, `->flex_row_dir`, `->image_source`, `->inline_code_style`, `->inset_e`, `->inset_s` and 24 more
 - **`gk.Frontmatter_Plugin`** (FrontmatterPlugin, value): `gk.frontmatter_plugin()` or `gk.frontmatter_plugin_default()`; `->setup`
 - **`gk.Text_View_Style`** (TextViewStyle, value): `gk.text_view_style_default()`; `->code_block`, `->heading_font_size`, `->inline_code`, `->paragraph_gap`, `->table`, `->table_cell`, `->table_head`
 
 ### component::time_field
 
-- **`gk.Time_Field`** (TimeField, element): `gk.time_field(state)`; `->small`, `->large`, `->disabled`, `->invalid`, `->with_size`, `->xsmall`
+- **`gk.Time_Field`** (TimeField, element): `gk.time_field(state)`; `->small`, `->large`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 13 more
 
 ### component::toolbar
 
-- **`gk.Toolbar`** (Toolbar, element): `gk.toolbar(id)`; `->child`, `->children`, `->content`, `->small`, `->large`, `->disabled`, `->contents`, `->with_size` and 1 more
-- **`gk.Toolbar_Group`** (ToolbarGroup, element): `gk.toolbar_group(id)`; `->label`, `->child`, `->children`, `->content`, `->small`, `->large`, `->with_size`, `->xsmall`
+- **`gk.Toolbar`** (Toolbar, element): `gk.toolbar(id)`; `->child`, `->children`, `->content`, `->small`, `->large`, `->disabled`, `->border_e`, `->border_s` and 16 more
+- **`gk.Toolbar_Group`** (ToolbarGroup, element): `gk.toolbar_group(id)`; `->label`, `->child`, `->children`, `->content`, `->small`, `->large`, `->border_e`, `->border_s` and 15 more
 
 ### component::tooltip
 
-- **`gk.Kit_Tooltip`** (Tooltip, value): `gk.kit_tooltip(text)` or `gk.kit_tooltip_element(builder)`; `->action`, `->key_binding`
+- **`gk.Kit_Tooltip`** (Tooltip, value): `gk.kit_tooltip(text)` or `gk.kit_tooltip_element(builder)`; `->action`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 9 more
 
 ### component::tree
 
-- **`gk.Tree`** (Tree, element): `gk.kit_tree(state, render_item)` or `gk.tree(state, render_item)`; `->scroll_bounce`
+- **`gk.Tree`** (Tree, element): `gk.kit_tree(state, render_item)` or `gk.tree(state, render_item)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
 
 ### base
 
-- **`gk.Accordion_Header`** (AccordionHeader, element): `gk.accordion_header(trigger)`; `->level`
-- **`gk.Accordion_Panel`** (AccordionPanel, element): `gk.accordion_panel()`; `->keep_mounted`, `->open`
-- **`gk.Accordion_Trigger`** (AccordionTrigger, element): `gk.accordion_trigger(id)`; `->on_change`, `->disabled`, `->open`
-- **`gk.Alert_Dialog_Action`** (AlertDialogAction, element): `gk.alert_dialog_action()` or `gk.alert_dialog_action_default()`
-- **`gk.Alert_Dialog_Backdrop`** (AlertDialogBackdrop, element): `gk.alert_dialog_backdrop()` or `gk.alert_dialog_backdrop_default()`
-- **`gk.Alert_Dialog_Cancel`** (AlertDialogCancel, element): `gk.alert_dialog_cancel()` or `gk.alert_dialog_cancel_default()`
-- **`gk.Alert_Dialog_Close`** (AlertDialogClose, element): `gk.alert_dialog_close()` or `gk.alert_dialog_close_default()`
-- **`gk.Alert_Dialog_Description`** (AlertDialogDescription, element): `gk.alert_dialog_description()` or `gk.alert_dialog_description_default()`
-- **`gk.Alert_Dialog_Popup`** (AlertDialogPopup, element): `gk.alert_dialog_popup()` or `gk.alert_dialog_popup_default()`
-- **`gk.Alert_Dialog_Title`** (AlertDialogTitle, element): `gk.alert_dialog_title()` or `gk.alert_dialog_title_default()`
+- **`gk.Accordion_Header`** (AccordionHeader, element): `gk.accordion_header(trigger)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->level` and 8 more
+- **`gk.Accordion_Panel`** (AccordionPanel, element): `gk.accordion_panel()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->keep_mounted` and 9 more
+- **`gk.Accordion_Trigger`** (AccordionTrigger, element): `gk.accordion_trigger(id)`; `->on_change`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 10 more
+- **`gk.Alert_Dialog_Action`** (AlertDialogAction, element): `gk.alert_dialog_action()` or `gk.alert_dialog_action_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Alert_Dialog_Backdrop`** (AlertDialogBackdrop, element): `gk.alert_dialog_backdrop()` or `gk.alert_dialog_backdrop_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Alert_Dialog_Cancel`** (AlertDialogCancel, element): `gk.alert_dialog_cancel()` or `gk.alert_dialog_cancel_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Alert_Dialog_Close`** (AlertDialogClose, element): `gk.alert_dialog_close()` or `gk.alert_dialog_close_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Alert_Dialog_Description`** (AlertDialogDescription, element): `gk.alert_dialog_description()` or `gk.alert_dialog_description_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Alert_Dialog_Popup`** (AlertDialogPopup, element): `gk.alert_dialog_popup()` or `gk.alert_dialog_popup_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Alert_Dialog_Title`** (AlertDialogTitle, element): `gk.alert_dialog_title()` or `gk.alert_dialog_title_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
 - **`gk.Alert_Dialog_Trigger`** (AlertDialogTrigger, element): `gk.alert_dialog_trigger(trigger)`; `->handle`, `->on_open`
-- **`gk.Avatar_Fallback`** (AvatarFallback, element): `gk.avatar_fallback()` or `gk.avatar_fallback_default()`
-- **`gk.Avatar_Image`** (AvatarImage, element): `gk.avatar_image(source)`
-- **`gk.Base_Accordion`** (Accordion, element): `gk.base_accordion(id)`
-- **`gk.Base_Accordion_Item`** (AccordionItem, element): `gk.base_accordion_item()`; `->disabled`, `->header`, `->open`, `->panel`
-- **`gk.Base_Alert_Dialog`** (AlertDialog, element): `gk.base_alert_dialog()`; `->backdrop`, `->close_on_escape`, `->dismiss_below_y`, `->handle`, `->on_cancel`, `->on_close`, `->on_ok`, `->on_open_change` and 2 more
-- **`gk.Base_Avatar`** (Avatar, element): `gk.base_avatar()` or `gk.base_avatar_default()`; `->fallback`, `->image`
-- **`gk.Base_Button`** (Button, element): `gk.base_button(id)`; `->selected`, `->on_click`, `->tooltip`, `->disabled`, `->open`, `->secondary_selected`, `->styles`
-- **`gk.Base_Calendar`** (Calendar, element): `gk.base_calendar(id, state)`; `->label`, `->first_day_of_week`, `->number_of_months`
-- **`gk.Base_Checkbox`** (Checkbox, element): `gk.base_checkbox(id)`; `->checked`, `->on_click`, `->on_change`, `->tooltip`, `->disabled`, `->indeterminate`, `->state`, `->styles`
-- **`gk.Base_Collapsible`** (Collapsible, element): `gk.base_collapsible()` or `gk.base_collapsible_default()`; `->content`, `->open`, `->reveal`
-- **`gk.Base_Color_Picker`** (ColorPicker, element): `gk.base_color_picker(id)`; `->on_click`, `->tooltip`, `->disabled`, `->on_open_change`, `->open`
-- **`gk.Base_Combobox`** (Combobox, element): `gk.base_combobox(id)`; `->disabled`, `->content_focus_handle`, `->focus_handle`, `->on_confirm`, `->on_dismiss`, `->on_open_change`, `->open`
-- **`gk.Base_Date_Picker`** (DatePicker, element): `gk.base_date_picker(id, focus_handle)`; `->disabled`, `->on_open_change`, `->open`
-- **`gk.Base_Dialog`** (Dialog, element): `gk.base_dialog()`; `->backdrop`, `->close_on_backdrop_press`, `->close_on_escape`, `->dismiss_below_y`, `->handle`, `->on_cancel`, `->on_close`, `->on_ok` and 3 more
-- **`gk.Base_Dialog_Close`** (DialogClose, element): `gk.base_dialog_close()` or `gk.base_dialog_close_default()`; `->trigger`
-- **`gk.Base_Dialog_Description`** (DialogDescription, element): `gk.base_dialog_description()` or `gk.base_dialog_description_default()`
-- **`gk.Base_Dialog_Title`** (DialogTitle, element): `gk.base_dialog_title()` or `gk.base_dialog_title_default()`
-- **`gk.Base_Hover_Card`** (HoverCard, element): `gk.base_hover_card(id)`; `->anchor`, `->close_delay`, `->on_open_change`, `->open_delay`, `->trigger`
+- **`gk.Avatar_Fallback`** (AvatarFallback, element): `gk.avatar_fallback()` or `gk.avatar_fallback_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Avatar_Image`** (AvatarImage, element): `gk.avatar_image(source)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Accordion`** (Accordion, element): `gk.base_accordion(id)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Accordion_Item`** (AccordionItem, element): `gk.base_accordion_item()`; `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->header`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Base_Alert_Dialog`** (AlertDialog, element): `gk.base_alert_dialog()`; `->backdrop`, `->border_e`, `->border_s`, `->close_on_escape`, `->dismiss_below_y`, `->flex_row_dir`, `->handle`, `->inset_e` and 17 more
+- **`gk.Base_Avatar`** (Avatar, element): `gk.base_avatar()` or `gk.base_avatar_default()`; `->border_e`, `->border_s`, `->fallback`, `->flex_row_dir`, `->image`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
+- **`gk.Base_Button`** (Button, element): `gk.base_button(id)`; `->selected`, `->on_click`, `->tooltip`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 14 more
+- **`gk.Base_Calendar`** (Calendar, element): `gk.base_calendar(id, state)`; `->label`, `->border_e`, `->border_s`, `->first_day_of_week`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 10 more
+- **`gk.Base_Checkbox`** (Checkbox, element): `gk.base_checkbox(id)`; `->checked`, `->on_click`, `->on_change`, `->tooltip`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir` and 15 more
+- **`gk.Base_Collapsible`** (Collapsible, element): `gk.base_collapsible()` or `gk.base_collapsible_default()`; `->content`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 10 more
+- **`gk.Base_Color_Picker`** (ColorPicker, element): `gk.base_color_picker(id)`; `->on_click`, `->tooltip`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 12 more
+- **`gk.Base_Combobox`** (Combobox, element): `gk.base_combobox(id)`; `->disabled`, `->border_e`, `->border_s`, `->content_focus_handle`, `->flex_row_dir`, `->focus_handle`, `->inset_e`, `->inset_s` and 14 more
+- **`gk.Base_Date_Picker`** (DatePicker, element): `gk.base_date_picker(id, focus_handle)`; `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 10 more
+- **`gk.Base_Dialog`** (Dialog, element): `gk.base_dialog()`; `->backdrop`, `->border_e`, `->border_s`, `->close_on_backdrop_press`, `->close_on_escape`, `->dismiss_below_y`, `->flex_row_dir`, `->handle` and 18 more
+- **`gk.Base_Dialog_Close`** (DialogClose, element): `gk.base_dialog_close()` or `gk.base_dialog_close_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
+- **`gk.Base_Dialog_Description`** (DialogDescription, element): `gk.base_dialog_description()` or `gk.base_dialog_description_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Dialog_Title`** (DialogTitle, element): `gk.base_dialog_title()` or `gk.base_dialog_title_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Hover_Card`** (HoverCard, element): `gk.base_hover_card(id)`; `->anchor`, `->border_e`, `->border_s`, `->close_delay`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 12 more
 - **`gk.Base_Input`** (Input, element): `gk.base_input(state)`; `->on_token_click`, `->on_token_hover`
-- **`gk.Base_Link`** (Link, element): `gk.base_link(id)`; `->disabled`, `->href`, `->on_activate`, `->open_with`, `->styles`
-- **`gk.Base_Number_Input`** (NumberInput, element): `gk.base_number_input(state)`; `->disabled`, `->controls_right`, `->decrement_button`, `->increment_button`, `->input`, `->on_step`
-- **`gk.Base_Otp_Input`** (OtpInput, element): `gk.base_otp_input(state)`; `->disabled`
-- **`gk.Base_Pagination`** (Pagination, element): `gk.base_pagination(id, state)`
-- **`gk.Base_Popover`** (Popover, element): `gk.base_popover(id)`; `->anchor`, `->default_open`, `->mouse_button`, `->offset`, `->on_open_change`, `->on_position`, `->open`, `->overlay_closable` and 1 more
-- **`gk.Base_Progress`** (Progress, element): `gk.base_progress(id)`; `->value`, `->indeterminate`
-- **`gk.Base_Radio`** (Radio, element): `gk.base_radio(id)`; `->checked`, `->on_change`, `->disabled`, `->set_position`, `->styles`
-- **`gk.Base_Radio_Group`** (RadioGroup, element): `gk.base_radio_group(id)`; `->axis`
-- **`gk.Base_Select`** (Select, element): `gk.base_select(id)`; `->disabled`, `->content_focus_handle`, `->focus_handle`, `->on_confirm`, `->on_dismiss`, `->on_open_change`, `->open`
-- **`gk.Base_Sheet`** (Sheet, element): `gk.base_sheet()`; `->on_close`, `->overlay`, `->overlay_closable`, `->surface`
-- **`gk.Base_Slider`** (Slider, element): `gk.base_slider(state)`; `->disabled`, `->axis`, `->horizontal`, `->vertical`
-- **`gk.Base_Switch`** (Switch, element): `gk.base_switch(id)`; `->checked`, `->on_change`, `->disabled`, `->styles`
-- **`gk.Base_Tab`** (Tab, element): `gk.base_tab(id)`; `->selected`, `->on_click`, `->tooltip`, `->disabled`, `->set_position`, `->styles`
-- **`gk.Base_Table`** (Table, element): `gk.base_table(id)`; `->column_count`, `->row_count`
-- **`gk.Base_Table_Body`** (TableBody, element): `gk.base_table_body(id)`
-- **`gk.Base_Table_Caption`** (TableCaption, element): `gk.base_table_caption(id)`
-- **`gk.Base_Table_Cell`** (TableCell, element): `gk.base_table_cell(id, column_index)`
-- **`gk.Base_Table_Head`** (TableHead, element): `gk.base_table_head(id, column_index)`
-- **`gk.Base_Table_Header`** (TableHeader, element): `gk.base_table_header(id)`
-- **`gk.Base_Table_Row`** (TableRow, element): `gk.base_table_row(id, row_index)`
-- **`gk.Base_Text_View`** (TextView, element): `gk.base_html(source)` or `gk.base_markdown(source)` or `gk.base_text_view(state)` (and 2 more); `->blockquote_style`, `->code_block_highlighter`, `->image_source`, `->inline_code_style`, `->link_tooltip`, `->list_style`, `->markdown_extensions`, `->markdown_mdx` and 9 more
+- **`gk.Base_Link`** (Link, element): `gk.base_link(id)`; `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->href`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 12 more
+- **`gk.Base_Number_Input`** (NumberInput, element): `gk.base_number_input(state)`; `->disabled`, `->border_e`, `->border_s`, `->controls_right`, `->decrement_button`, `->flex_row_dir`, `->increment_button`, `->input` and 14 more
+- **`gk.Base_Otp_Input`** (OtpInput, element): `gk.base_otp_input(state)`; `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Base_Pagination`** (Pagination, element): `gk.base_pagination(id, state)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Popover`** (Popover, element): `gk.base_popover(id)`; `->anchor`, `->border_e`, `->border_s`, `->default_open`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 16 more
+- **`gk.Base_Progress`** (Progress, element): `gk.base_progress(id)`; `->value`, `->border_e`, `->border_s`, `->flex_row_dir`, `->indeterminate`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
+- **`gk.Base_Radio`** (Radio, element): `gk.base_radio(id)`; `->checked`, `->on_change`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 12 more
+- **`gk.Base_Radio_Group`** (RadioGroup, element): `gk.base_radio_group(id)`; `->axis`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Base_Select`** (Select, element): `gk.base_select(id)`; `->disabled`, `->border_e`, `->border_s`, `->content_focus_handle`, `->flex_row_dir`, `->focus_handle`, `->inset_e`, `->inset_s` and 14 more
+- **`gk.Base_Sheet`** (Sheet, element): `gk.base_sheet()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 11 more
+- **`gk.Base_Slider`** (Slider, element): `gk.base_slider(state)`; `->disabled`, `->axis`, `->border_e`, `->border_s`, `->flex_row_dir`, `->horizontal`, `->inset_e`, `->inset_s` and 11 more
+- **`gk.Base_Switch`** (Switch, element): `gk.base_switch(id)`; `->checked`, `->on_change`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s` and 11 more
+- **`gk.Base_Tab`** (Tab, element): `gk.base_tab(id)`; `->selected`, `->on_click`, `->tooltip`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 13 more
+- **`gk.Base_Table`** (Table, element): `gk.base_table(id)`; `->border_e`, `->border_s`, `->column_count`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 9 more
+- **`gk.Base_Table_Body`** (TableBody, element): `gk.base_table_body(id)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Table_Caption`** (TableCaption, element): `gk.base_table_caption(id)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Table_Cell`** (TableCell, element): `gk.base_table_cell(id, column_index)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Table_Head`** (TableHead, element): `gk.base_table_head(id, column_index)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Table_Header`** (TableHeader, element): `gk.base_table_header(id)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Table_Row`** (TableRow, element): `gk.base_table_row(id, row_index)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Text_View`** (TextView, element): `gk.base_html(source)` or `gk.base_markdown(source)` or `gk.base_text_view(state)` (and 2 more); `->blockquote_style`, `->border_e`, `->border_s`, `->code_block_highlighter`, `->flex_row_dir`, `->image_source`, `->inline_code_style`, `->inset_e` and 25 more
 - **`gk.Base_Textarea`** (Textarea, element): `gk.base_textarea(state)`; `->on_token_click`, `->on_token_hover`
-- **`gk.Base_Time_Field`** (TimeField, element): `gk.base_time_field(id, state)`; `->disabled`, `->separator`
-- **`gk.Base_Toggle`** (Toggle, element): `gk.base_toggle(id)`; `->on_change`, `->disabled`, `->pressed`, `->styles`
-- **`gk.Base_Toggle_Group`** (ToggleGroup, element): `gk.base_toggle_group(id)`; `->axis`
-- **`gk.Base_Toolbar`** (Toolbar, element): `gk.base_toolbar(id)`; `->disabled`, `->axis`
-- **`gk.Base_Toolbar_Group`** (ToolbarGroup, element): `gk.base_toolbar_group(id)`; `->label`
-- **`gk.Base_Tooltip`** (Tooltip, element): `gk.base_tooltip(id)`
-- **`gk.Base_Tree`** (Tree, element): `gk.base_tree(state)`; `->list_style`
-- **`gk.Calendar_Item`** (CalendarItem, element): `gk.calendar_item_handed(index)`; `->clear_children`
-- **`gk.Checkbox_Indicator`** (CheckboxIndicator, element): `gk.checkbox_indicator()` or `gk.checkbox_indicator_default()`; `->checked`, `->disabled`, `->state`, `->styles`
-- **`gk.Color_Swatch`** (ColorSwatch, element): `gk.color_swatch(id, color)`; `->selected`, `->on_click`, `->tooltip`, `->disabled`
-- **`gk.Dialog_Backdrop`** (DialogBackdrop, element): `gk.dialog_backdrop()` or `gk.dialog_backdrop_default()`
-- **`gk.Dialog_Popup`** (DialogPopup, element): `gk.dialog_popup()` or `gk.dialog_popup_default()`
+- **`gk.Base_Time_Field`** (TimeField, element): `gk.base_time_field(id, state)`; `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 9 more
+- **`gk.Base_Toggle`** (Toggle, element): `gk.base_toggle(id)`; `->on_change`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Base_Toggle_Group`** (ToggleGroup, element): `gk.base_toggle_group(id)`; `->axis`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Base_Toolbar`** (Toolbar, element): `gk.base_toolbar(id)`; `->disabled`, `->axis`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
+- **`gk.Base_Toolbar_Group`** (ToolbarGroup, element): `gk.base_toolbar_group(id)`; `->label`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Base_Tooltip`** (Tooltip, element): `gk.base_tooltip(id)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Base_Tree`** (Tree, element): `gk.base_tree(state)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->list_style` and 8 more
+- **`gk.Calendar_Item`** (CalendarItem, element): `gk.calendar_item_handed(index)`; `->border_e`, `->border_s`, `->clear_children`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Checkbox_Indicator`** (CheckboxIndicator, element): `gk.checkbox_indicator()` or `gk.checkbox_indicator_default()`; `->checked`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
+- **`gk.Color_Swatch`** (ColorSwatch, element): `gk.color_swatch(id, color)`; `->selected`, `->on_click`, `->tooltip`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e` and 11 more
+- **`gk.Dialog_Backdrop`** (DialogBackdrop, element): `gk.dialog_backdrop()` or `gk.dialog_backdrop_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Dialog_Popup`** (DialogPopup, element): `gk.dialog_popup()` or `gk.dialog_popup_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
 - **`gk.Dialog_Trigger`** (DialogTrigger, element): `gk.dialog_trigger(trigger)`; `->handle`, `->on_open`
 - **`gk.Editor`** (Editor, element): `gk.editor(state)`
-- **`gk.Grid_Layout`** (GridLayout, element): `gk.grid_layout(id, state)` or `gk.kit_grid_layout(id, state)`; `->placeholder`, `->dragging_item`, `->focused_item`, `->item`, `->items`, `->reflow`, `->resize_handle`, `->row_height` and 2 more
-- **`gk.Input_Base`** (InputBase, element): `gk.input_base(id)`; `->on_click`, `->tooltip`, `->disabled`, `->focused`, `->semantic_owner`, `->styles`
+- **`gk.Grid_Layout`** (GridLayout, element): `gk.grid_layout(id, state)` or `gk.kit_grid_layout(id, state)`; `->placeholder`, `->border_e`, `->border_s`, `->dragging_item`, `->flex_row_dir`, `->focused_item`, `->inset_e`, `->inset_s` and 17 more
+- **`gk.Input_Base`** (InputBase, element): `gk.input_base(id)`; `->on_click`, `->tooltip`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->focused`, `->inset_e` and 13 more
 - **`gk.Motion_Reveal`** (MotionReveal, element): `gk.motion_reveal(id, progress, child)`
-- **`gk.Nav_Page`** (NavPage, element): `gk.nav_page_handed(index)`
-- **`gk.Nav_Stack`** (NavStack, element): `gk.nav_stack(state)`; `->transition`
-- **`gk.Number_Input_Text`** (NumberInputText, element): `gk.number_input_text()` or `gk.number_input_text_default()`
-- **`gk.Popup`** (Popup, element): `gk.popup(id, trigger)`; `->content`, `->anchor`, `->offset`, `->on_position`
+- **`gk.Nav_Page`** (NavPage, element): `gk.nav_page_handed(index)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Nav_Stack`** (NavStack, element): `gk.nav_stack(state)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
+- **`gk.Number_Input_Text`** (NumberInputText, element): `gk.number_input_text()` or `gk.number_input_text_default()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Popup`** (Popup, element): `gk.popup(id, trigger)`; `->content`, `->anchor`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 11 more
 - **`gk.Positioner`** (Positioner, element): `gk.positioner_side(trigger_bounds)` or `gk.positioner_corner(anchor, position)`; `->align`, `->margin`, `->offset`, `->on_position`, `->placement`, `->position`
-- **`gk.Progress_Indicator`** (ProgressIndicator, element): `gk.progress_indicator()`
-- **`gk.Progress_Track`** (ProgressTrack, element): `gk.progress_track()`
-- **`gk.Resizable_Panel`** (ResizablePanel, element): `gk.resizable_panel()`; `->fixed`, `->size_range`, `->visible`
+- **`gk.Progress_Indicator`** (ProgressIndicator, element): `gk.progress_indicator()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Progress_Track`** (ProgressTrack, element): `gk.progress_track()`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Resizable_Panel`** (ResizablePanel, element): `gk.resizable_panel()`; `->border_e`, `->border_s`, `->fixed`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 10 more
 - **`gk.Resizable_Panel_Group`** (ResizablePanelGroup, element): `gk.h_resizable(id)` or `gk.kit_h_resizable(id)` or `gk.kit_v_resizable(id)` (and 2 more); `->child`, `->children`, `->axis`, `->on_resize`, `->with_handle_appearance`, `->with_state`
 - **`gk.Resize_Handle`** (ResizeHandle<Drag, element): `gk.kit_resize_handle(id, axis)` or `gk.resize_handle(id, axis)`; `->on_click`, `->tooltip`, `->inside`, `->lock_scroll_axis`, `->on_double_click`, `->with_appearance`
 - **`gk.Rounded_Frame_Cover`** (RoundedFrameCover, element): `gk.rounded_frame_cover_uniform(radius)`; `->backdrop`, `->frame_border`
 - **`gk.Scroll_Bounce`** (ScrollBounce, element): `gk.scroll_bounce(id, handle, child)`; `->enabled`, `->motion`, `->scroll_wheel`
 - **`gk.Scrollable_Mask`** (ScrollableMask<ScrollHandle>, element): `gk.scrollable_mask_vertical_wheel(scroll_handle)` or `gk.scrollable_mask(axis, scroll_handle)`; `->debug`
 - **`gk.Scrollbar`** (Scrollbar, element): `gk.scrollbar(scroll_handle)` or `gk.scrollbar_horizontal(scroll_handle)` or `gk.scrollbar_vertical(scroll_handle)`; `->axis`, `->mode`, `->scroll_size`, `->styles`, `->viewport_bounds`, `->viewport_from_layout`
-- **`gk.Selectable_Text`** (SelectableText, element): `gk.selectable_text(id, text)` or `gk.selectable_text_with_handle(id, handle, text)`; `->document_order`, `->selection_color`, `->text_style`
-- **`gk.Slider_Indicator`** (SliderIndicator, element): `gk.slider_indicator(state)`
-- **`gk.Slider_Thumb`** (SliderThumb, element): `gk.slider_thumb(state)`; `->disabled`, `->axis`, `->start`
-- **`gk.Slider_Track`** (SliderTrack, element): `gk.slider_track(state)`; `->disabled`, `->axis`
-- **`gk.Switch_Thumb`** (SwitchThumb, element): `gk.switch_thumb(checked)`; `->disabled`, `->styles`
-- **`gk.Switch_Track`** (SwitchTrack, element): `gk.switch_track(id)`; `->checked`, `->disabled`, `->styles`
-- **`gk.Tabs`** (Tabs, element): `gk.tabs(id)`
-- **`gk.Time_Field_Segment`** (TimeFieldSegment, element): `gk.time_field_segment_handed(index)`; `->clear_children`
-- **`gk.Toast`** (Toast, element): `gk.toast(id)`; `->transition_status`
-- **`gk.Toast_Stack`** (ToastStack, element): `gk.toast_stack(id, state)`; `->focus_handle`, `->item`, `->motion`, `->placement`
-- **`gk.Tooltip_Positioner`** (TooltipPositioner, element): `gk.tooltip_positioner(trigger_bounds)`; `->placement`
+- **`gk.Selectable_Text`** (SelectableText, element): `gk.selectable_text(id, text)` or `gk.selectable_text_with_handle(id, handle, text)`; `->document_order`, `->highlights`, `->selection_color`, `->text_style`
+- **`gk.Slider_Indicator`** (SliderIndicator, element): `gk.slider_indicator(state)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 7 more
+- **`gk.Slider_Thumb`** (SliderThumb, element): `gk.slider_thumb(state)`; `->disabled`, `->axis`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 10 more
+- **`gk.Slider_Track`** (SliderTrack, element): `gk.slider_track(state)`; `->disabled`, `->axis`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
+- **`gk.Switch_Thumb`** (SwitchThumb, element): `gk.switch_thumb(checked)`; `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 9 more
+- **`gk.Switch_Track`** (SwitchTrack, element): `gk.switch_track(id)`; `->checked`, `->disabled`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 10 more
+- **`gk.Tabs`** (Tabs, element): `gk.tabs(id)`; `->axis`, `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Time_Field_Segment`** (TimeFieldSegment, element): `gk.time_field_segment_handed(index)`; `->border_e`, `->border_s`, `->clear_children`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start` and 8 more
+- **`gk.Toast`** (Toast, element): `gk.toast(id)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end`, `->justify_flex_start`, `->me` and 8 more
+- **`gk.Toast_Stack`** (ToastStack, element): `gk.toast_stack(id, state)`; `->border_e`, `->border_s`, `->flex_row_dir`, `->focus_handle`, `->inset_e`, `->inset_s`, `->item`, `->justify_flex_end` and 11 more
+- **`gk.Tooltip_Positioner`** (TooltipPositioner, element): `gk.tooltip_positioner(trigger_bounds)`; `->offset`, `->placement`
 - **`gk.Auto_Scroll`** (AutoScroll, kit state): handed out by the kit (no constructor); reads `gk.delta`, `gk.is_active`; writes `gk.auto_scroll_stop`
 - **`gk.Base_Theme`** (Theme, kit state): handed out by the kit (no constructor); reads `gk.appearance`, `gk.base_theme_plot`, `gk.base_theme_scrollbar`, `gk.base_theme_tokens`, `gk.cursor_blink`, `gk.resizable`; writes `gk.set_appearance`, `gk.set_cursor_blink`, `gk.set_plot`, `gk.set_resizable`, `gk.set_scrollbar`, `gk.set_tokens`
 - **`gk.Base_Tree_Entry`** (TreeEntry, kit state): handed out by the kit (no constructor); reads `gk.depth`, `gk.is_disabled`, `gk.is_expanded`, `gk.is_folder`, `gk.is_root`, `gk.item`
@@ -726,10 +726,10 @@ types, is in its generated file.
 - **`gk.Checkbox_Indicator_Styles`** (CheckboxIndicatorStyles, value): `gk.checkbox_indicator_styles_default()`; `->checked`, `->disabled`, `->indeterminate`
 - **`gk.Checkbox_Styles`** (CheckboxStyles, value): `gk.checkbox_styles_default()`; `->checked`, `->disabled`, `->indeterminate`
 - **`gk.Grid_Area`** (GridArea, value): `gk.grid_area(id)`; `->col`, `->col_span`, `->locked`, `->max_span`, `->min_span`, `->row`, `->row_span`
-- **`gk.Grid_Item`** (GridItem, value): `gk.grid_item(id)`; `->accessibility_label`, `->drag_handle_only`
+- **`gk.Grid_Item`** (GridItem, value): `gk.grid_item(id)`; `->accessibility_label`, `->border_e`, `->border_s`, `->drag_handle_only`, `->flex_row_dir`, `->inset_e`, `->inset_s`, `->justify_flex_end` and 9 more
 - **`gk.Input_Styles`** (InputStyles, value): `gk.input_styles_default()`; `->disabled`, `->focused`
 - **`gk.Link_Styles`** (LinkStyles, value): `gk.link_styles_default()`; `->disabled`
-- **`gk.Markdown_Extensions`** (MarkdownExtensions, value): `gk.markdown_extensions_default()`; `->block_surface`, `->frontmatter`, `->mdx`, `->parser_revision`, `->plugin`
+- **`gk.Markdown_Extensions`** (MarkdownExtensions, value): `gk.markdown_extensions_default()`; `->block_surface`, `->frontmatter`, `->mdx`, `->parser_revision`, `->plugin`, `->raw_html`
 - **`gk.Pagination_State`** (PaginationState, value): `gk.pagination_state(current_page, total_pages)`; `->on_change`, `->disabled`, `->visible_pages`
 - **`gk.Plot_Motion`** (PlotMotion, value): `gk.plot_motion_default()`; `->with_appear`, `->with_enter`, `->with_exit`, `->with_pointer`
 - **`gk.Plot_Theme`** (PlotTheme, value): `gk.plot_theme()` or `gk.plot_theme_default()`; `->with_motion`
@@ -749,7 +749,7 @@ types, is in its generated file.
 - **`gk.Text_View_Motion`** (TextViewMotion, value): `gk.text_view_motion_default()`; `->with_stream_fade`, `->with_stream_fade_easing`, `->with_stream_fade_stagger`
 - **`gk.Timing`** (Timing, value): `gk.timing(duration)`; `->delay`, `->direction`, `->ease`, `->iterations`
 - **`gk.Toggle_Styles`** (ToggleStyles, value): `gk.toggle_styles_default()`; `->disabled`, `->pressed`
-- **`gk.Tooltip_Request`** (TooltipRequest, value): `gk.tooltip_request(trigger_bounds, build)`; `->with_placement`, `->with_show_delay`
+- **`gk.Tooltip_Request`** (TooltipRequest, value): `gk.tooltip_request(trigger_bounds, build)`; `->with_offset`, `->with_placement`, `->with_show_delay`
 - **`gk.Transition`** (Transition, value): `gk.transition(duration)`; `->delay`, `->ease`, `->easing`, `->reduced_motion`
 - **`gk.Tree_Item`** (TreeItem, value): `gk.tree_item(id, label)`; `->child`, `->children`, `->disabled`, `->expanded`
 
@@ -783,7 +783,7 @@ types, is in its generated file.
 - **`gk.Diagnostic_Set`** (DiagnosticSet, kit state): handed out by the kit (no constructor); reads `gk.diagnostic_set_len`, `gk.for_offset`, `gk.is_empty`, `gk.iter`, `gk.range`; writes `gk.diagnostic_set_clear`, `gk.extend`, `gk.push`
 - **`gk.Display_Map`** (DisplayMap, kit state): handed out by the kit (no constructor); reads `gk.buffer_line_count`, `gk.buffer_line_to_display_row`, `gk.buffer_line_to_display_row_range`, `gk.buffer_pos_to_display_pos`, `gk.display_map_text`, `gk.display_pos_to_buffer_pos`, `gk.display_row_count`, `gk.display_row_to_buffer_line` and 9 more; writes `gk.clear_folds`, `gk.on_layout_changed`, `gk.set_fold_candidates`, `gk.set_folded`, `gk.set_font`, `gk.set_wrapping_indent`, `gk.toggle_fold`
 - **`gk.Editor_Scrollbar_Context`** (EditorScrollbarContext, kit state): handed out by the kit (no constructor); reads `gk.axis`, `gk.scroll_viewport_size`
-- **`gk.Editor_State`** (EditorState, kit state): `gk.editor_state(cx)->…->build()`; shown by `gk.editor(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->gutter_decorations_width` and 6 more; reads `gk.value`, `gk.context_menu_capabilities`, `gk.create_decorations_collection`, `gk.create_gutter_decorations_collection`, `gk.create_overview_ruler_decorations_collection`, `gk.create_range_decorations_collection`, `gk.cursor`, `gk.cursor_position` and 55 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.clear_diagnostic_popover`, `gk.clear_hover_state`, `gk.close_edit_menu`, `gk.close_search` and 61 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
+- **`gk.Editor_State`** (EditorState, kit state): `gk.editor_state(cx)->…->build()`; shown by `gk.editor(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->gutter_decorations_width` and 6 more; reads `gk.value`, `gk.context_menu_capabilities`, `gk.context_menu_offset`, `gk.create_decorations_collection`, `gk.create_gutter_decorations_collection`, `gk.create_overview_ruler_decorations_collection`, `gk.create_range_decorations_collection`, `gk.cursor` and 57 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.clear_diagnostic_popover`, `gk.clear_hover_state`, `gk.close_edit_menu`, `gk.close_search` and 61 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
 - **`gk.Gutter_Decoration_Collection`** (GutterDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.dispose`, `gk.gutter_decoration_collection_append`, `gk.gutter_decoration_collection_clear`, `gk.gutter_decoration_collection_set`
 - **`gk.Inline_Token_Click_Event`** (InlineTokenClickEvent, kit state): handed out by the kit (no constructor); reads `gk.bounds`, `gk.click`, `gk.range`, `gk.token`
 - **`gk.Inline_Token_Context`** (InlineTokenContext, kit state): handed out by the kit (no constructor); reads `gk.available_width`, `gk.is_disabled`, `gk.is_readonly`, `gk.is_selected`, `gk.line_height`, `gk.range`, `gk.token`
@@ -793,13 +793,13 @@ types, is in its generated file.
 - **`gk.Input_Content`** (InputContent, kit state): handed out by the kit (no constructor); reads `gk.input_content_text`, `gk.input_content_tokens`, `gk.with_token`
 - **`gk.Input_Context_Menu_Capabilities_Read`** (InputContextMenuCapabilities, kit state): handed out by the kit (no constructor); reads `gk.has_code_actions`, `gk.has_definition`, `gk.has_selection`, `gk.is_code_editor`, `gk.is_copyable`, `gk.is_disabled`, `gk.is_editable`, `gk.is_masked` and 1 more
 - **`gk.Input_Presentation`** (InputPresentation, kit state): handed out by the kit (no constructor); reads `gk.placeholder`, `gk.input_presentation_focus_handle`, `gk.is_code_editor`, `gk.is_disabled`, `gk.is_editable`, `gk.is_loading`, `gk.is_masked`, `gk.is_multi_line` and 3 more
-- **`gk.Input_State`** (InputState, kit state): `gk.input_state(cx)->…->build()`; shown by `gk.base_input(state)`, `gk.base_number_input(state)`, `gk.input(state)`, `gk.number_input(state)`, `gk.questionnaire_input_definition(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->input_action` and 8 more; reads `gk.value`, `gk.content`, `gk.context_menu_capabilities`, `gk.cursor`, `gk.cursor_position`, `gk.diagnostic_popover`, `gk.diagnostics`, `gk.diagnostics_mut` and 49 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 45 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
+- **`gk.Input_State`** (InputState, kit state): `gk.input_state(cx)->…->build()`; shown by `gk.base_input(state)`, `gk.base_number_input(state)`, `gk.input(state)`, `gk.number_input(state)`, `gk.questionnaire_input_definition(state)`; built with `->placeholder`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value`, `->input_action` and 8 more; reads `gk.value`, `gk.content`, `gk.context_menu_capabilities`, `gk.context_menu_offset`, `gk.cursor`, `gk.cursor_position`, `gk.diagnostic_popover`, `gk.diagnostics` and 51 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 45 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
 - **`gk.Overview_Ruler_Decoration_Collection`** (OverviewRulerDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.dispose`, `gk.overview_ruler_decoration_collection_append`, `gk.overview_ruler_decoration_collection_clear`, `gk.overview_ruler_decoration_collection_set`
 - **`gk.Range_Decoration_Collection`** (RangeDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.dispose`, `gk.range_decoration_collection_append`, `gk.range_decoration_collection_clear`, `gk.range_decoration_collection_set`
 - **`gk.Search_Matcher`** (SearchMatcher, kit state): handed out by the kit (no constructor); reads `gk.current`, `gk.current_match_index`, `gk.is_empty`, `gk.matched_ranges`, `gk.search_matcher_label`, `gk.search_matcher_len`; writes `gk.update_cursor_by_offset`, `gk.update_query`
 - **`gk.Search_Session`** (SearchSession, kit state): handed out by the kit (no constructor); reads `gk.is_active`
 - **`gk.Text_Decoration_Collection`** (TextDecorationCollection, kit state): handed out by the kit (no constructor); reads `gk.get_ranges`; writes `gk.text_decoration_collection_append`, `gk.text_decoration_collection_clear`, `gk.text_decoration_collection_set`
-- **`gk.Textarea_State`** (TextareaState, kit state): `gk.textarea_state(cx)->…->build()`; shown by `gk.base_textarea(state)`, `gk.textarea(state)`; built with `->placeholder`, `->auto_grow`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value` and 5 more; reads `gk.value`, `gk.content`, `gk.context_menu_capabilities`, `gk.cursor`, `gk.cursor_position`, `gk.diagnostic_popover`, `gk.diagnostics`, `gk.diagnostics_mut` and 49 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 46 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
+- **`gk.Textarea_State`** (TextareaState, kit state): `gk.textarea_state(cx)->…->build()`; shown by `gk.base_textarea(state)`, `gk.textarea(state)`; built with `->placeholder`, `->auto_grow`, `->autocapitalize`, `->autocorrect`, `->clean_on_escape`, `->context_menu`, `->cursor_surrounding_lines`, `->default_value` and 5 more; reads `gk.value`, `gk.content`, `gk.context_menu_capabilities`, `gk.context_menu_offset`, `gk.cursor`, `gk.cursor_position`, `gk.decorations`, `gk.diagnostic_popover` and 52 more; writes `gk.add_selection`, `gk.apply_highlighter_fold_candidates`, `gk.begin_edge_drag`, `gk.clean`, `gk.close_edit_menu`, `gk.close_search`, `gk.end_edge_drag`, `gk.ensure_highlighter_factory` and 47 more; events `gk.on_input_event(s, cx, gk.on(p))`, `gk.on_input_edits_event(s, cx, gk.on(p))`
 - **`gk.Auto_Closing_Pair`** (AutoClosingPair, value): `gk.auto_closing_pair(open, close)`; `->not_in_`
 - **`gk.Bracket_Pair`** (BracketPair, value): `gk.bracket_pair(open, close)`
 - **`gk.Cursor_Blink`** (CursorBlink, value): `gk.cursor_blink_default()` or `gk.cursor_blink_steady()` or `gk.cursor_blink_blinking(interval)`; `->with_idle_timeout`
@@ -869,6 +869,7 @@ types, is in its generated file.
 - **`gk.Leaf_Geometry`** (LeafGeometry, kit state): handed out by the kit (no constructor); reads `gk.atom_at`, `gk.bounds`, `gk.caret_for_position`, `gk.caret_height`, `gk.index_for_position`, `gk.is_empty`, `gk.leaf_geometry_len`, `gk.line_height` and 2 more
 - **`gk.Paragraph_Read`** (Paragraph, kit state): handed out by the kit (no constructor); reads `gk.children`
 - **`gk.Base_Code_Block`** (CodeBlock, value): `gk.base_code_block_from_code(code, lang)` or `gk.base_code_block(code, lang, span)`; `->with_leaf_key`, `->with_meta`
+- **`gk.Base_Link_2`** (Link, value): `gk.base_link_2(url)`; `->title`, `->url`
 - **`gk.Flow_Position`** (FlowPosition, value): `gk.flow_position_at(blocks, ix, is_last)`; `->first`, `->last`
 - **`gk.Inline_Node`** (InlineNode, value): `gk.inline_node_default()` or `gk.inline_node(text)` or `gk.inline_node_image(image)`; `->marks`
 - **`gk.Paragraph`** (Paragraph, value): `gk.paragraph_default()`; `->push`, `->with_leaf_key`

@@ -3,6 +3,9 @@ package gk
 
 // A text label element with optional secondary text, masking, and highlighting capabilities.
 //
+// A label is exposed to assistive technology as a `Label` node whose value is its text, so a
+// screen reader can read it. A masked or empty label has no node.
+//
 // Label is gpui_kit::component::label::Label.
 Label :: struct {
 	using el: Element,
@@ -11,10 +14,18 @@ Label :: struct {
 
 Label_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Label),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Label),
 	using t_styled_ext: ^Styled_Ext_Trait(Label),
 	using t_styled: ^Styled_Trait(Label),
 	// Set for matching text to highlight in the label.
 	highlights: proc(e: Label, text: Highlights_Match_Into) -> Label,
+	// Set the label's element id, replacing the default taken from where `gk.label` was called.
+	//
+	// Pass one where a single `Label::new` renders several labels as siblings, such as in a loop: they
+	// share the default id, so assistive technology gets only the first of them, and GPUI's debug
+	// builds panic on the duplicate while it is connected. The id must be unique among those siblings.
+	// Labels under parents that have their own ids, like the rows of a `List`, are already distinct.
+	id: proc(e: Label, id: Id) -> Label,
 	// Set whether to mask the label text.
 	masked: proc(e: Label, masked: bool) -> Label,
 	// Set the secondary text for the label, the secondary text will be displayed after the label text
@@ -23,6 +34,9 @@ Label_VT :: struct {
 }
 
 // Create a new label with the main label.
+//
+// The label's id defaults to this call site, which is unique wherever one line builds one label.
+// See `->id` for labels built in a loop.
 label :: proc(label: string, flags: ..Style_Flag, loc := #caller_location) -> Label {
 	use_component_label()
 	e := Label{new_node(685, loc), &label_vt}
@@ -35,11 +49,17 @@ label :: proc(label: string, flags: ..Style_Flag, loc := #caller_location) -> La
 @(private)
 label_vt := Label_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Label))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Label))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Label))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Label))&styled_any,
 	highlights = proc(e: Label, text: Highlights_Match_Into) -> Label {
 		o := op(e.el, 256)
 		put_Highlights_Match_Into(o, text)
+		return e
+	},
+	id = proc(e: Label, id: Id) -> Label {
+		o := op(e.el, 259)
+		put_id(o, id)
 		return e
 	},
 	masked = proc(e: Label, masked: bool) -> Label {

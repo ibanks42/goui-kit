@@ -11,6 +11,7 @@ Alert :: struct {
 
 Alert_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Alert),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Alert),
 	using t_styled_ext: ^Styled_Ext_Trait(Alert),
 	using t_sizable: ^Sizable_Trait(Alert),
 	using t_styled: ^Styled_Trait(Alert),
@@ -89,6 +90,7 @@ alert_warning :: proc(id: Id, message: Text_Into, flags: ..Style_Flag, loc := #c
 @(private)
 alert_vt := Alert_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Alert))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Alert))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Alert))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Alert))&sizable_any,
 	t_styled = cast(^Styled_Trait(Alert))&styled_any,

@@ -11,6 +11,7 @@ Calendar :: struct {
 
 Calendar_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Calendar),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Calendar),
 	using t_styled_ext: ^Styled_Ext_Trait(Calendar),
 	using t_sizable: ^Sizable_Trait(Calendar),
 	using t_styled: ^Styled_Trait(Calendar),
@@ -31,6 +32,7 @@ calendar :: proc(state: Calendar_State, flags: ..Style_Flag, loc := #caller_loca
 @(private)
 calendar_vt := Calendar_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Calendar))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Calendar))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Calendar))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Calendar))&sizable_any,
 	t_styled = cast(^Styled_Trait(Calendar))&styled_any,

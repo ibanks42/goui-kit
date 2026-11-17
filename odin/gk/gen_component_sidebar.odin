@@ -11,6 +11,7 @@ Grouped_Sidebar :: struct {
 
 Grouped_Sidebar_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Grouped_Sidebar),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Grouped_Sidebar),
 	using t_styled_ext: ^Styled_Ext_Trait(Grouped_Sidebar),
 	using t_styled: ^Styled_Trait(Grouped_Sidebar),
 	// Add a child element to the sidebar, the child must implement `Collapsible`
@@ -46,6 +47,7 @@ grouped_sidebar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) ->
 @(private)
 grouped_sidebar_vt := Grouped_Sidebar_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Grouped_Sidebar))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Grouped_Sidebar))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Grouped_Sidebar))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Grouped_Sidebar))&styled_any,
 	child = proc(e: Grouped_Sidebar, child: Sidebar_Group) -> Grouped_Sidebar {
@@ -98,6 +100,7 @@ Sidebar :: struct {
 
 Sidebar_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Sidebar),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Sidebar),
 	using t_styled_ext: ^Styled_Ext_Trait(Sidebar),
 	using t_styled: ^Styled_Trait(Sidebar),
 	// Add a child element to the sidebar, the child must implement `Collapsible`
@@ -133,6 +136,7 @@ sidebar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Sidebar
 @(private)
 sidebar_vt := Sidebar_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Sidebar))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Sidebar))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Sidebar))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Sidebar))&styled_any,
 	child = proc(e: Sidebar, child: Sidebar_Menu) -> Sidebar {
@@ -187,6 +191,7 @@ Sidebar_Footer_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Sidebar_Footer),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Sidebar_Footer),
 	using t_element_ext: ^Element_Ext_Trait(Sidebar_Footer),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Sidebar_Footer),
 	using t_styled_ext: ^Styled_Ext_Trait(Sidebar_Footer),
 	using t_selectable: ^Selectable_Trait(Sidebar_Footer),
 	using t_collapsible: ^Collapsible_Trait(Sidebar_Footer),
@@ -208,6 +213,7 @@ sidebar_footer_vt := Sidebar_Footer_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Sidebar_Footer))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Sidebar_Footer))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Sidebar_Footer))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Sidebar_Footer))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Sidebar_Footer))&styled_ext_any,
 	t_selectable = cast(^Selectable_Trait(Sidebar_Footer))&selectable_any,
 	t_collapsible = cast(^Collapsible_Trait(Sidebar_Footer))&collapsible_any,
@@ -232,6 +238,12 @@ Sidebar_Group_VT :: struct {
 	//
 	// See also `->child`.
 	children: proc(e: Sidebar_Group, children: []Sidebar_Menu) -> Sidebar_Group,
+	// Set content to show at the end of the group's header, such as a button that adds an item to the
+	// group.
+	//
+	// The label shortens to make room for it. Like the label, it is hidden while the sidebar is
+	// collapsed.
+	suffix: proc(e: Sidebar_Group, builder: Element) -> Sidebar_Group,
 }
 
 // Create a new `Sidebar_Group` with the given label.
@@ -258,6 +270,11 @@ sidebar_group_vt := Sidebar_Group_VT {
 		}
 		return e
 	},
+	suffix = proc(e: Sidebar_Group, builder: Element) -> Sidebar_Group {
+		o := op(vel(e.nd), 258)
+		put_u32(o, take(builder))
+		return e
+	},
 }
 
 // Header for the `Grouped_Sidebar`
@@ -272,6 +289,7 @@ Sidebar_Header_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Sidebar_Header),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Sidebar_Header),
 	using t_element_ext: ^Element_Ext_Trait(Sidebar_Header),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Sidebar_Header),
 	using t_styled_ext: ^Styled_Ext_Trait(Sidebar_Header),
 	using t_selectable: ^Selectable_Trait(Sidebar_Header),
 	using t_collapsible: ^Collapsible_Trait(Sidebar_Header),
@@ -300,6 +318,7 @@ sidebar_header_vt := Sidebar_Header_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Sidebar_Header))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Sidebar_Header))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Sidebar_Header))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Sidebar_Header))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Sidebar_Header))&styled_ext_any,
 	t_selectable = cast(^Selectable_Trait(Sidebar_Header))&selectable_any,
 	t_collapsible = cast(^Collapsible_Trait(Sidebar_Header))&collapsible_any,
@@ -318,6 +337,7 @@ Sidebar_Menu :: struct {
 
 Sidebar_Menu_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Sidebar_Menu),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Sidebar_Menu),
 	using t_styled_ext: ^Styled_Ext_Trait(Sidebar_Menu),
 	using t_collapsible: ^Collapsible_Trait(Sidebar_Menu),
 	using t_styled: ^Styled_Trait(Sidebar_Menu),
@@ -339,6 +359,7 @@ sidebar_menu :: proc(flags: ..Style_Flag, loc := #caller_location) -> Sidebar_Me
 @(private)
 sidebar_menu_vt := Sidebar_Menu_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Sidebar_Menu))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Sidebar_Menu))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Sidebar_Menu))&styled_ext_any,
 	t_collapsible = cast(^Collapsible_Trait(Sidebar_Menu))&collapsible_any,
 	t_styled = cast(^Styled_Trait(Sidebar_Menu))&styled_any,
@@ -367,6 +388,7 @@ Sidebar_Menu_Item :: struct {
 
 Sidebar_Menu_Item_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Sidebar_Menu_Item),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Sidebar_Menu_Item),
 	using t_styled_ext: ^Styled_Ext_Trait(Sidebar_Menu_Item),
 	using t_styled: ^Styled_Trait(Sidebar_Menu_Item),
 	// Set the accessibility label of the item row.
@@ -420,6 +442,7 @@ sidebar_menu_item :: proc(label: string, flags: ..Style_Flag, loc := #caller_loc
 @(private)
 sidebar_menu_item_vt := Sidebar_Menu_Item_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Sidebar_Menu_Item))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Sidebar_Menu_Item))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Sidebar_Menu_Item))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Sidebar_Menu_Item))&styled_any,
 	accessibility_label = proc(e: Sidebar_Menu_Item, label: string) -> Sidebar_Menu_Item {

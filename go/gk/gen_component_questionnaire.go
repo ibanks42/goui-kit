@@ -55,11 +55,110 @@ func (e QuestionnaireEl) FocusRingStyle() QuestionnaireEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireEl) KeepTextSelection(id ID) QuestionnaireEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e QuestionnaireEl) BorderE(width Length) QuestionnaireEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireEl) BorderS(width Length) QuestionnaireEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireEl) FlexRowDir() QuestionnaireEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireEl) InsetE(length Length) QuestionnaireEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireEl) InsetS(length Length) QuestionnaireEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireEl) JustifyFlexEnd() QuestionnaireEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireEl) JustifyFlexStart() QuestionnaireEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireEl) Me(length Length) QuestionnaireEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireEl) Ms(length Length) QuestionnaireEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireEl) Pe(length Length) QuestionnaireEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireEl) Ps(length Length) QuestionnaireEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireEl) RoundedE(radius Length) QuestionnaireEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireEl) RoundedS(radius Length) QuestionnaireEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireEl) TextEnd() QuestionnaireEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireEl) TextStart() QuestionnaireEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e QuestionnaireEl) CornerRadii(radius Corners) QuestionnaireEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -607,9 +706,117 @@ func (e QuestionnaireActionsEl) FocusRingStyle() QuestionnaireActionsEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireActionsEl) KeepTextSelection(id ID) QuestionnaireActionsEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireActionsEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireActionsEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireActionsEl) BorderE(width Length) QuestionnaireActionsEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireActionsEl) BorderS(width Length) QuestionnaireActionsEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireActionsEl) FlexRowDir() QuestionnaireActionsEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireActionsEl) InsetE(length Length) QuestionnaireActionsEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireActionsEl) InsetS(length Length) QuestionnaireActionsEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireActionsEl) JustifyFlexEnd() QuestionnaireActionsEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireActionsEl) JustifyFlexStart() QuestionnaireActionsEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireActionsEl) Me(length Length) QuestionnaireActionsEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireActionsEl) Ms(length Length) QuestionnaireActionsEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireActionsEl) Pe(length Length) QuestionnaireActionsEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireActionsEl) Ps(length Length) QuestionnaireActionsEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireActionsEl) RoundedE(radius Length) QuestionnaireActionsEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireActionsEl) RoundedS(radius Length) QuestionnaireActionsEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireActionsEl) TextEnd() QuestionnaireActionsEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireActionsEl) TextStart() QuestionnaireActionsEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -1341,9 +1548,117 @@ func (e QuestionnaireChoiceEl) FocusRingStyle() QuestionnaireChoiceEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireChoiceEl) KeepTextSelection(id ID) QuestionnaireChoiceEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireChoiceEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireChoiceEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireChoiceEl) BorderE(width Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireChoiceEl) BorderS(width Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireChoiceEl) FlexRowDir() QuestionnaireChoiceEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireChoiceEl) InsetE(length Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireChoiceEl) InsetS(length Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireChoiceEl) JustifyFlexEnd() QuestionnaireChoiceEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireChoiceEl) JustifyFlexStart() QuestionnaireChoiceEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireChoiceEl) Me(length Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireChoiceEl) Ms(length Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireChoiceEl) Pe(length Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireChoiceEl) Ps(length Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireChoiceEl) RoundedE(radius Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireChoiceEl) RoundedS(radius Length) QuestionnaireChoiceEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireChoiceEl) TextEnd() QuestionnaireChoiceEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireChoiceEl) TextStart() QuestionnaireChoiceEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -2046,9 +2361,117 @@ func (e QuestionnaireChoiceDescriptionEl) FocusRingStyle() QuestionnaireChoiceDe
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireChoiceDescriptionEl) KeepTextSelection(id ID) QuestionnaireChoiceDescriptionEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireChoiceDescriptionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireChoiceDescriptionEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireChoiceDescriptionEl) BorderE(width Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireChoiceDescriptionEl) BorderS(width Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireChoiceDescriptionEl) FlexRowDir() QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireChoiceDescriptionEl) InsetE(length Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireChoiceDescriptionEl) InsetS(length Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireChoiceDescriptionEl) JustifyFlexEnd() QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireChoiceDescriptionEl) JustifyFlexStart() QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireChoiceDescriptionEl) Me(length Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireChoiceDescriptionEl) Ms(length Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireChoiceDescriptionEl) Pe(length Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireChoiceDescriptionEl) Ps(length Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireChoiceDescriptionEl) RoundedE(radius Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireChoiceDescriptionEl) RoundedS(radius Length) QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireChoiceDescriptionEl) TextEnd() QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireChoiceDescriptionEl) TextStart() QuestionnaireChoiceDescriptionEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -2794,9 +3217,117 @@ func (e QuestionnaireChoicesEl) FocusRingStyle() QuestionnaireChoicesEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireChoicesEl) KeepTextSelection(id ID) QuestionnaireChoicesEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireChoicesEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireChoicesEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireChoicesEl) BorderE(width Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireChoicesEl) BorderS(width Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireChoicesEl) FlexRowDir() QuestionnaireChoicesEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireChoicesEl) InsetE(length Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireChoicesEl) InsetS(length Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireChoicesEl) JustifyFlexEnd() QuestionnaireChoicesEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireChoicesEl) JustifyFlexStart() QuestionnaireChoicesEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireChoicesEl) Me(length Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireChoicesEl) Ms(length Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireChoicesEl) Pe(length Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireChoicesEl) Ps(length Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireChoicesEl) RoundedE(radius Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireChoicesEl) RoundedS(radius Length) QuestionnaireChoicesEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireChoicesEl) TextEnd() QuestionnaireChoicesEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireChoicesEl) TextStart() QuestionnaireChoicesEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -3506,9 +4037,117 @@ func (e QuestionnaireDescriptionEl) FocusRingStyle() QuestionnaireDescriptionEl 
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireDescriptionEl) KeepTextSelection(id ID) QuestionnaireDescriptionEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireDescriptionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireDescriptionEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireDescriptionEl) BorderE(width Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireDescriptionEl) BorderS(width Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireDescriptionEl) FlexRowDir() QuestionnaireDescriptionEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireDescriptionEl) InsetE(length Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireDescriptionEl) InsetS(length Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireDescriptionEl) JustifyFlexEnd() QuestionnaireDescriptionEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireDescriptionEl) JustifyFlexStart() QuestionnaireDescriptionEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireDescriptionEl) Me(length Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireDescriptionEl) Ms(length Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireDescriptionEl) Pe(length Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireDescriptionEl) Ps(length Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireDescriptionEl) RoundedE(radius Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireDescriptionEl) RoundedS(radius Length) QuestionnaireDescriptionEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireDescriptionEl) TextEnd() QuestionnaireDescriptionEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireDescriptionEl) TextStart() QuestionnaireDescriptionEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -4248,9 +4887,114 @@ func (e QuestionnaireErrorEl) FocusRingStyle() QuestionnaireErrorEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireErrorEl) KeepTextSelection(id ID) QuestionnaireErrorEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireErrorEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireErrorEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireErrorEl) BorderE(width Length) QuestionnaireErrorEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireErrorEl) BorderS(width Length) QuestionnaireErrorEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireErrorEl) FlexRowDir() QuestionnaireErrorEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireErrorEl) InsetE(length Length) QuestionnaireErrorEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireErrorEl) InsetS(length Length) QuestionnaireErrorEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireErrorEl) JustifyFlexEnd() QuestionnaireErrorEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireErrorEl) JustifyFlexStart() QuestionnaireErrorEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireErrorEl) Me(length Length) QuestionnaireErrorEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireErrorEl) Ms(length Length) QuestionnaireErrorEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireErrorEl) Pe(length Length) QuestionnaireErrorEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireErrorEl) Ps(length Length) QuestionnaireErrorEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireErrorEl) RoundedE(radius Length) QuestionnaireErrorEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireErrorEl) RoundedS(radius Length) QuestionnaireErrorEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireErrorEl) TextEnd() QuestionnaireErrorEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireErrorEl) TextStart() QuestionnaireErrorEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -4903,6 +5647,99 @@ func (e QuestionnaireInputEl) PopoverStyle() QuestionnaireInputEl {
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e QuestionnaireInputEl) RoundedFullStyle() QuestionnaireInputEl {
 	tThemeStyledRoundedFullStyle(e.n)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireInputEl) BorderE(width Length) QuestionnaireInputEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireInputEl) BorderS(width Length) QuestionnaireInputEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireInputEl) FlexRowDir() QuestionnaireInputEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireInputEl) InsetE(length Length) QuestionnaireInputEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireInputEl) InsetS(length Length) QuestionnaireInputEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireInputEl) JustifyFlexEnd() QuestionnaireInputEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireInputEl) JustifyFlexStart() QuestionnaireInputEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireInputEl) Me(length Length) QuestionnaireInputEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireInputEl) Ms(length Length) QuestionnaireInputEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireInputEl) Pe(length Length) QuestionnaireInputEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireInputEl) Ps(length Length) QuestionnaireInputEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireInputEl) RoundedE(radius Length) QuestionnaireInputEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireInputEl) RoundedS(radius Length) QuestionnaireInputEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireInputEl) TextEnd() QuestionnaireInputEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireInputEl) TextStart() QuestionnaireInputEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -5559,9 +6396,114 @@ func (e QuestionnaireItemEl) FocusRingStyle() QuestionnaireItemEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireItemEl) KeepTextSelection(id ID) QuestionnaireItemEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireItemEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireItemEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireItemEl) BorderE(width Length) QuestionnaireItemEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireItemEl) BorderS(width Length) QuestionnaireItemEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireItemEl) FlexRowDir() QuestionnaireItemEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireItemEl) InsetE(length Length) QuestionnaireItemEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireItemEl) InsetS(length Length) QuestionnaireItemEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireItemEl) JustifyFlexEnd() QuestionnaireItemEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireItemEl) JustifyFlexStart() QuestionnaireItemEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireItemEl) Me(length Length) QuestionnaireItemEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireItemEl) Ms(length Length) QuestionnaireItemEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireItemEl) Pe(length Length) QuestionnaireItemEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireItemEl) Ps(length Length) QuestionnaireItemEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireItemEl) RoundedE(radius Length) QuestionnaireItemEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireItemEl) RoundedS(radius Length) QuestionnaireItemEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireItemEl) TextEnd() QuestionnaireItemEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireItemEl) TextStart() QuestionnaireItemEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -6189,9 +7131,114 @@ func (e QuestionnaireNextEl) FocusRingStyle() QuestionnaireNextEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireNextEl) KeepTextSelection(id ID) QuestionnaireNextEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireNextEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireNextEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireNextEl) BorderE(width Length) QuestionnaireNextEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireNextEl) BorderS(width Length) QuestionnaireNextEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireNextEl) FlexRowDir() QuestionnaireNextEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireNextEl) InsetE(length Length) QuestionnaireNextEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireNextEl) InsetS(length Length) QuestionnaireNextEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireNextEl) JustifyFlexEnd() QuestionnaireNextEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireNextEl) JustifyFlexStart() QuestionnaireNextEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireNextEl) Me(length Length) QuestionnaireNextEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireNextEl) Ms(length Length) QuestionnaireNextEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireNextEl) Pe(length Length) QuestionnaireNextEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireNextEl) Ps(length Length) QuestionnaireNextEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireNextEl) RoundedE(radius Length) QuestionnaireNextEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireNextEl) RoundedS(radius Length) QuestionnaireNextEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireNextEl) TextEnd() QuestionnaireNextEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireNextEl) TextStart() QuestionnaireNextEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -6819,9 +7866,117 @@ func (e QuestionnairePreviousEl) FocusRingStyle() QuestionnairePreviousEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnairePreviousEl) KeepTextSelection(id ID) QuestionnairePreviousEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnairePreviousEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnairePreviousEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnairePreviousEl) BorderE(width Length) QuestionnairePreviousEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnairePreviousEl) BorderS(width Length) QuestionnairePreviousEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnairePreviousEl) FlexRowDir() QuestionnairePreviousEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnairePreviousEl) InsetE(length Length) QuestionnairePreviousEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnairePreviousEl) InsetS(length Length) QuestionnairePreviousEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnairePreviousEl) JustifyFlexEnd() QuestionnairePreviousEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnairePreviousEl) JustifyFlexStart() QuestionnairePreviousEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnairePreviousEl) Me(length Length) QuestionnairePreviousEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnairePreviousEl) Ms(length Length) QuestionnairePreviousEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnairePreviousEl) Pe(length Length) QuestionnairePreviousEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnairePreviousEl) Ps(length Length) QuestionnairePreviousEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnairePreviousEl) RoundedE(radius Length) QuestionnairePreviousEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnairePreviousEl) RoundedS(radius Length) QuestionnairePreviousEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnairePreviousEl) TextEnd() QuestionnairePreviousEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnairePreviousEl) TextStart() QuestionnairePreviousEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -7548,9 +8703,117 @@ func (e QuestionnaireProgressEl) FocusRingStyle() QuestionnaireProgressEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireProgressEl) KeepTextSelection(id ID) QuestionnaireProgressEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireProgressEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireProgressEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireProgressEl) BorderE(width Length) QuestionnaireProgressEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireProgressEl) BorderS(width Length) QuestionnaireProgressEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireProgressEl) FlexRowDir() QuestionnaireProgressEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireProgressEl) InsetE(length Length) QuestionnaireProgressEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireProgressEl) InsetS(length Length) QuestionnaireProgressEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireProgressEl) JustifyFlexEnd() QuestionnaireProgressEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireProgressEl) JustifyFlexStart() QuestionnaireProgressEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireProgressEl) Me(length Length) QuestionnaireProgressEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireProgressEl) Ms(length Length) QuestionnaireProgressEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireProgressEl) Pe(length Length) QuestionnaireProgressEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireProgressEl) Ps(length Length) QuestionnaireProgressEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireProgressEl) RoundedE(radius Length) QuestionnaireProgressEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireProgressEl) RoundedS(radius Length) QuestionnaireProgressEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireProgressEl) TextEnd() QuestionnaireProgressEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireProgressEl) TextStart() QuestionnaireProgressEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -8277,9 +9540,114 @@ func (e QuestionnaireSkipEl) FocusRingStyle() QuestionnaireSkipEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireSkipEl) KeepTextSelection(id ID) QuestionnaireSkipEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireSkipEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireSkipEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireSkipEl) BorderE(width Length) QuestionnaireSkipEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireSkipEl) BorderS(width Length) QuestionnaireSkipEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireSkipEl) FlexRowDir() QuestionnaireSkipEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireSkipEl) InsetE(length Length) QuestionnaireSkipEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireSkipEl) InsetS(length Length) QuestionnaireSkipEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireSkipEl) JustifyFlexEnd() QuestionnaireSkipEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireSkipEl) JustifyFlexStart() QuestionnaireSkipEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireSkipEl) Me(length Length) QuestionnaireSkipEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireSkipEl) Ms(length Length) QuestionnaireSkipEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireSkipEl) Pe(length Length) QuestionnaireSkipEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireSkipEl) Ps(length Length) QuestionnaireSkipEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireSkipEl) RoundedE(radius Length) QuestionnaireSkipEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireSkipEl) RoundedS(radius Length) QuestionnaireSkipEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireSkipEl) TextEnd() QuestionnaireSkipEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireSkipEl) TextStart() QuestionnaireSkipEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -8907,9 +10275,117 @@ func (e QuestionnaireSubmitEl) FocusRingStyle() QuestionnaireSubmitEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireSubmitEl) KeepTextSelection(id ID) QuestionnaireSubmitEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireSubmitEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireSubmitEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireSubmitEl) BorderE(width Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireSubmitEl) BorderS(width Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireSubmitEl) FlexRowDir() QuestionnaireSubmitEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireSubmitEl) InsetE(length Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireSubmitEl) InsetS(length Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireSubmitEl) JustifyFlexEnd() QuestionnaireSubmitEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireSubmitEl) JustifyFlexStart() QuestionnaireSubmitEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireSubmitEl) Me(length Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireSubmitEl) Ms(length Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireSubmitEl) Pe(length Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireSubmitEl) Ps(length Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireSubmitEl) RoundedE(radius Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireSubmitEl) RoundedS(radius Length) QuestionnaireSubmitEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireSubmitEl) TextEnd() QuestionnaireSubmitEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireSubmitEl) TextStart() QuestionnaireSubmitEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -9607,9 +11083,114 @@ func (e QuestionnaireTitleEl) FocusRingStyle() QuestionnaireTitleEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e QuestionnaireTitleEl) KeepTextSelection(id ID) QuestionnaireTitleEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e QuestionnaireTitleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) QuestionnaireTitleEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e QuestionnaireTitleEl) BorderE(width Length) QuestionnaireTitleEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e QuestionnaireTitleEl) BorderS(width Length) QuestionnaireTitleEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e QuestionnaireTitleEl) FlexRowDir() QuestionnaireTitleEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e QuestionnaireTitleEl) InsetE(length Length) QuestionnaireTitleEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e QuestionnaireTitleEl) InsetS(length Length) QuestionnaireTitleEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e QuestionnaireTitleEl) JustifyFlexEnd() QuestionnaireTitleEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e QuestionnaireTitleEl) JustifyFlexStart() QuestionnaireTitleEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e QuestionnaireTitleEl) Me(length Length) QuestionnaireTitleEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e QuestionnaireTitleEl) Ms(length Length) QuestionnaireTitleEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e QuestionnaireTitleEl) Pe(length Length) QuestionnaireTitleEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e QuestionnaireTitleEl) Ps(length Length) QuestionnaireTitleEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e QuestionnaireTitleEl) RoundedE(radius Length) QuestionnaireTitleEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e QuestionnaireTitleEl) RoundedS(radius Length) QuestionnaireTitleEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e QuestionnaireTitleEl) TextEnd() QuestionnaireTitleEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e QuestionnaireTitleEl) TextStart() QuestionnaireTitleEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 

@@ -160,8 +160,8 @@ One archive serves both languages. Inside it:
 Unpack the archive and try an example:
 
 ```sh
-tar --zstd -xf gpuikit-0.0.1-linux-x86_64.tar.zst
-cd gpuikit-0.0.1-linux-x86_64
+tar --zstd -xf gpuikit-0.0.2-linux-x86_64.tar.zst
+cd gpuikit-0.0.2-linux-x86_64
 
 examples/build.sh notes && examples/notes.bin          # Odin
 examples/go/build.sh notes && examples/go/notes.bin    # Go
@@ -172,7 +172,7 @@ To build your own app, put its folder next to the unpacked download.
 **Odin** (you need the Odin compiler and `clang`):
 
 ```sh
-G=gpuikit-0.0.1-linux-x86_64
+G=gpuikit-0.0.2-linux-x86_64
 odin build myapp -o:minimal -collection:gpuikit=$G/odin "-extra-linker-flags:-L$G/lib" -out:myapp.bin
 ```
 
@@ -182,11 +182,11 @@ the download, so nothing is fetched from the network:
 ```
 require gpuikit.dev v0.0.0
 
-replace gpuikit.dev => ../gpuikit-0.0.1-linux-x86_64/go
+replace gpuikit.dev => ../gpuikit-0.0.2-linux-x86_64/go
 ```
 
 ```sh
-CGO_LDFLAGS="-L$PWD/../gpuikit-0.0.1-linux-x86_64/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o myapp.bin .
+CGO_LDFLAGS="-L$PWD/../gpuikit-0.0.2-linux-x86_64/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o myapp.bin .
 ```
 
 Your app links the library statically, and **only the components it uses** end up in the

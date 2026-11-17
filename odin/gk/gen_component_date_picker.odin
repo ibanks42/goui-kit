@@ -11,6 +11,7 @@ Date_Picker :: struct {
 
 Date_Picker_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Date_Picker),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Date_Picker),
 	using t_styled_ext: ^Styled_Ext_Trait(Date_Picker),
 	using t_sizable: ^Sizable_Trait(Date_Picker),
 	using t_styled: ^Styled_Trait(Date_Picker),
@@ -41,6 +42,7 @@ date_picker :: proc(state: Date_Picker_State, flags: ..Style_Flag, loc := #calle
 @(private)
 date_picker_vt := Date_Picker_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Date_Picker))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Date_Picker))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Date_Picker))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Date_Picker))&sizable_any,
 	t_styled = cast(^Styled_Trait(Date_Picker))&styled_any,

@@ -83,6 +83,12 @@ func tDisableableDisabled(n *node, disabled bool) {
 	o.bool(disabled)
 }
 
+// tElementExtKeepTextSelection: gpui_kit::base::ElementExt::keep_text_selection.
+func tElementExtKeepTextSelection(n *node, id ID) {
+	o := op(n, 17153)
+	putID(o, id)
+}
+
 // tElementExtOnPrepaint: gpui_kit::base::ElementExt::on_prepaint.
 func tElementExtOnPrepaint(n *node, callback func(cx *Cx, e Bounds)) {
 	o := op(n, 17152)
@@ -380,6 +386,91 @@ func tInteractiveElementTrackFocus(n *node, focusHandle FocusHandle) {
 func tInteractiveElementWindowControlArea(n *node, area WindowControlArea) {
 	o := op(n, 16545)
 	o.u16(uint16(area))
+}
+
+// tLogicalStyledExtBorderE: gpui_kit::base::LogicalStyledExt::border_e.
+func tLogicalStyledExtBorderE(n *node, width Length) {
+	o := op(n, 19200)
+	putAbsoluteLength(o, width)
+}
+
+// tLogicalStyledExtBorderS: gpui_kit::base::LogicalStyledExt::border_s.
+func tLogicalStyledExtBorderS(n *node, width Length) {
+	o := op(n, 19201)
+	putAbsoluteLength(o, width)
+}
+
+// tLogicalStyledExtFlexRowDir: gpui_kit::base::LogicalStyledExt::flex_row_dir.
+func tLogicalStyledExtFlexRowDir(n *node) {
+	op(n, 19202)
+}
+
+// tLogicalStyledExtInsetE: gpui_kit::base::LogicalStyledExt::inset_e.
+func tLogicalStyledExtInsetE(n *node, length Length) {
+	o := op(n, 19203)
+	putLength(o, length)
+}
+
+// tLogicalStyledExtInsetS: gpui_kit::base::LogicalStyledExt::inset_s.
+func tLogicalStyledExtInsetS(n *node, length Length) {
+	o := op(n, 19204)
+	putLength(o, length)
+}
+
+// tLogicalStyledExtJustifyFlexEnd: gpui_kit::base::LogicalStyledExt::justify_flex_end.
+func tLogicalStyledExtJustifyFlexEnd(n *node) {
+	op(n, 19205)
+}
+
+// tLogicalStyledExtJustifyFlexStart: gpui_kit::base::LogicalStyledExt::justify_flex_start.
+func tLogicalStyledExtJustifyFlexStart(n *node) {
+	op(n, 19206)
+}
+
+// tLogicalStyledExtMe: gpui_kit::base::LogicalStyledExt::me.
+func tLogicalStyledExtMe(n *node, length Length) {
+	o := op(n, 19207)
+	putLength(o, length)
+}
+
+// tLogicalStyledExtMs: gpui_kit::base::LogicalStyledExt::ms.
+func tLogicalStyledExtMs(n *node, length Length) {
+	o := op(n, 19208)
+	putLength(o, length)
+}
+
+// tLogicalStyledExtPe: gpui_kit::base::LogicalStyledExt::pe.
+func tLogicalStyledExtPe(n *node, length Length) {
+	o := op(n, 19209)
+	putDefiniteLength(o, length)
+}
+
+// tLogicalStyledExtPs: gpui_kit::base::LogicalStyledExt::ps.
+func tLogicalStyledExtPs(n *node, length Length) {
+	o := op(n, 19210)
+	putDefiniteLength(o, length)
+}
+
+// tLogicalStyledExtRoundedE: gpui_kit::base::LogicalStyledExt::rounded_e.
+func tLogicalStyledExtRoundedE(n *node, radius Length) {
+	o := op(n, 19211)
+	putAbsoluteLength(o, radius)
+}
+
+// tLogicalStyledExtRoundedS: gpui_kit::base::LogicalStyledExt::rounded_s.
+func tLogicalStyledExtRoundedS(n *node, radius Length) {
+	o := op(n, 19212)
+	putAbsoluteLength(o, radius)
+}
+
+// tLogicalStyledExtTextEnd: gpui_kit::base::LogicalStyledExt::text_end.
+func tLogicalStyledExtTextEnd(n *node) {
+	op(n, 19213)
+}
+
+// tLogicalStyledExtTextStart: gpui_kit::base::LogicalStyledExt::text_start.
+func tLogicalStyledExtTextStart(n *node) {
+	op(n, 19214)
 }
 
 func tParentElementChild(n *node, child Element) {

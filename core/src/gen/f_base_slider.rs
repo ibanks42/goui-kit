@@ -10,7 +10,7 @@ pub fn sb_base_slider_state(s: gpui_kit::base::slider::SliderState, op: u16, r: 
     match op {
         1 => { let a0 = r.f32(); <gpui_kit::base::slider::SliderState>::max(s, a0) }
         2 => { let a0 = r.f32(); <gpui_kit::base::slider::SliderState>::min(s, a0) }
-        3 => { let a0 = en_82(r.u16()); <gpui_kit::base::slider::SliderState>::scale(s, a0) }
+        3 => { let a0 = en_84(r.u16()); <gpui_kit::base::slider::SliderState>::scale(s, a0) }
         4 => { let a0 = r.f32(); <gpui_kit::base::slider::SliderState>::step(s, a0) }
         5 => { let Some((a0,)) = (|| Some((in_18_c(r)?,)))() else { return s }; <gpui_kit::base::slider::SliderState>::default_value(s, a0) }
         _ => s,
@@ -84,7 +84,8 @@ pub fn apply_base_slider(dx: &mut Dx, mut el: gpui_kit::base::Slider, first: u32
             260 => { el = { let a0 = genapi::shown_focus(r.u64()); <gpui_kit::base::Slider>::track_focus(el, &a0) }; }
             261 => { el = { <gpui_kit::base::Slider>::vertical(el) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
@@ -114,7 +115,8 @@ pub fn apply_base_slider_indicator(dx: &mut Dx, mut el: gpui_kit::base::SliderIn
         let r = &mut r;
         match op {
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
@@ -149,7 +151,8 @@ pub fn apply_base_slider_thumb(dx: &mut Dx, mut el: gpui_kit::base::SliderThumb,
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::SliderThumb>::disabled(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::SliderThumb>::start(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
@@ -183,7 +186,8 @@ pub fn apply_base_slider_track(dx: &mut Dx, mut el: gpui_kit::base::SliderTrack,
             256 => { el = { let a0 = en_4(r.u16()); <gpui_kit::base::SliderTrack>::axis(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::SliderTrack>::disabled(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }

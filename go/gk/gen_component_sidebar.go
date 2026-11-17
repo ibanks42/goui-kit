@@ -109,6 +109,93 @@ func (e GroupedSidebarEl) RoundedFullStyle() GroupedSidebarEl {
 	return e
 }
 
+// Border width on the end edge.
+func (e GroupedSidebarEl) BorderE(width Length) GroupedSidebarEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e GroupedSidebarEl) BorderS(width Length) GroupedSidebarEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e GroupedSidebarEl) FlexRowDir() GroupedSidebarEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e GroupedSidebarEl) InsetE(length Length) GroupedSidebarEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e GroupedSidebarEl) InsetS(length Length) GroupedSidebarEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e GroupedSidebarEl) JustifyFlexEnd() GroupedSidebarEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e GroupedSidebarEl) JustifyFlexStart() GroupedSidebarEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e GroupedSidebarEl) Me(length Length) GroupedSidebarEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e GroupedSidebarEl) Ms(length Length) GroupedSidebarEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e GroupedSidebarEl) Pe(length Length) GroupedSidebarEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e GroupedSidebarEl) Ps(length Length) GroupedSidebarEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e GroupedSidebarEl) RoundedE(radius Length) GroupedSidebarEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e GroupedSidebarEl) RoundedS(radius Length) GroupedSidebarEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e GroupedSidebarEl) TextEnd() GroupedSidebarEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e GroupedSidebarEl) TextStart() GroupedSidebarEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e GroupedSidebarEl) CornerRadii(radius Corners) GroupedSidebarEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -695,6 +782,63 @@ func (e SidebarEl) PopoverStyle() SidebarEl { tThemeStyledPopoverStyle(e.n); ret
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e SidebarEl) RoundedFullStyle() SidebarEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e SidebarEl) BorderE(width Length) SidebarEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e SidebarEl) BorderS(width Length) SidebarEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SidebarEl) FlexRowDir() SidebarEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SidebarEl) InsetE(length Length) SidebarEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e SidebarEl) InsetS(length Length) SidebarEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SidebarEl) JustifyFlexEnd() SidebarEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SidebarEl) JustifyFlexStart() SidebarEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e SidebarEl) Me(length Length) SidebarEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e SidebarEl) Ms(length Length) SidebarEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e SidebarEl) Pe(length Length) SidebarEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e SidebarEl) Ps(length Length) SidebarEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e SidebarEl) RoundedE(radius Length) SidebarEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SidebarEl) RoundedS(radius Length) SidebarEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SidebarEl) TextEnd() SidebarEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SidebarEl) TextStart() SidebarEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e SidebarEl) CornerRadii(radius Corners) SidebarEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -1122,11 +1266,110 @@ func (e SidebarFooterEl) FocusRingStyle() SidebarFooterEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e SidebarFooterEl) KeepTextSelection(id ID) SidebarFooterEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e SidebarFooterEl) OnPrepaint(callback func(cx *Cx, e Bounds)) SidebarFooterEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e SidebarFooterEl) BorderE(width Length) SidebarFooterEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SidebarFooterEl) BorderS(width Length) SidebarFooterEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SidebarFooterEl) FlexRowDir() SidebarFooterEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SidebarFooterEl) InsetE(length Length) SidebarFooterEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SidebarFooterEl) InsetS(length Length) SidebarFooterEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SidebarFooterEl) JustifyFlexEnd() SidebarFooterEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SidebarFooterEl) JustifyFlexStart() SidebarFooterEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e SidebarFooterEl) Me(length Length) SidebarFooterEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e SidebarFooterEl) Ms(length Length) SidebarFooterEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e SidebarFooterEl) Pe(length Length) SidebarFooterEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e SidebarFooterEl) Ps(length Length) SidebarFooterEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e SidebarFooterEl) RoundedE(radius Length) SidebarFooterEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SidebarFooterEl) RoundedS(radius Length) SidebarFooterEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SidebarFooterEl) TextEnd() SidebarFooterEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SidebarFooterEl) TextStart() SidebarFooterEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e SidebarFooterEl) CornerRadii(radius Corners) SidebarFooterEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -2008,6 +2251,19 @@ func (e SidebarGroup) Children(children []SidebarMenu) SidebarGroup {
 	return e
 }
 
+// Set content to show at the end of the group's header, such as a button that adds an item to the
+// group.
+//
+// The label shortens to make room for it. Like the label, it is hidden while the sidebar is
+// collapsed.
+//
+// Suffix is <gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::suffix.
+func (e SidebarGroup) Suffix(builder Element) SidebarGroup {
+	o := op(e.n, 258)
+	o.u32(take(builder))
+	return e
+}
+
 func (e SidebarGroup) Collapsed(collapsed bool) SidebarGroup {
 	tCollapsibleCollapsed(e.n, collapsed)
 	return e
@@ -2072,11 +2328,110 @@ func (e SidebarHeaderEl) FocusRingStyle() SidebarHeaderEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e SidebarHeaderEl) KeepTextSelection(id ID) SidebarHeaderEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e SidebarHeaderEl) OnPrepaint(callback func(cx *Cx, e Bounds)) SidebarHeaderEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e SidebarHeaderEl) BorderE(width Length) SidebarHeaderEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SidebarHeaderEl) BorderS(width Length) SidebarHeaderEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SidebarHeaderEl) FlexRowDir() SidebarHeaderEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SidebarHeaderEl) InsetE(length Length) SidebarHeaderEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SidebarHeaderEl) InsetS(length Length) SidebarHeaderEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SidebarHeaderEl) JustifyFlexEnd() SidebarHeaderEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SidebarHeaderEl) JustifyFlexStart() SidebarHeaderEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e SidebarHeaderEl) Me(length Length) SidebarHeaderEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e SidebarHeaderEl) Ms(length Length) SidebarHeaderEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e SidebarHeaderEl) Pe(length Length) SidebarHeaderEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e SidebarHeaderEl) Ps(length Length) SidebarHeaderEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e SidebarHeaderEl) RoundedE(radius Length) SidebarHeaderEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SidebarHeaderEl) RoundedS(radius Length) SidebarHeaderEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SidebarHeaderEl) TextEnd() SidebarHeaderEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SidebarHeaderEl) TextStart() SidebarHeaderEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e SidebarHeaderEl) CornerRadii(radius Corners) SidebarHeaderEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -2972,6 +3327,75 @@ func (e SidebarMenu) PopoverStyle() SidebarMenu { tThemeStyledPopoverStyle(e.n);
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e SidebarMenu) RoundedFullStyle() SidebarMenu { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e SidebarMenu) BorderE(width Length) SidebarMenu {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SidebarMenu) BorderS(width Length) SidebarMenu {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SidebarMenu) FlexRowDir() SidebarMenu { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SidebarMenu) InsetE(length Length) SidebarMenu {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SidebarMenu) InsetS(length Length) SidebarMenu {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SidebarMenu) JustifyFlexEnd() SidebarMenu { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SidebarMenu) JustifyFlexStart() SidebarMenu { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e SidebarMenu) Me(length Length) SidebarMenu { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e SidebarMenu) Ms(length Length) SidebarMenu { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e SidebarMenu) Pe(length Length) SidebarMenu { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e SidebarMenu) Ps(length Length) SidebarMenu { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e SidebarMenu) RoundedE(radius Length) SidebarMenu {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SidebarMenu) RoundedS(radius Length) SidebarMenu {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SidebarMenu) TextEnd() SidebarMenu { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SidebarMenu) TextStart() SidebarMenu { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e SidebarMenu) CornerRadii(radius Corners) SidebarMenu {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -3522,6 +3946,93 @@ func (e SidebarMenuItem) RoundedFullStyle() SidebarMenuItem {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
+
+// Border width on the end edge.
+func (e SidebarMenuItem) BorderE(width Length) SidebarMenuItem {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SidebarMenuItem) BorderS(width Length) SidebarMenuItem {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SidebarMenuItem) FlexRowDir() SidebarMenuItem { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SidebarMenuItem) InsetE(length Length) SidebarMenuItem {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SidebarMenuItem) InsetS(length Length) SidebarMenuItem {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SidebarMenuItem) JustifyFlexEnd() SidebarMenuItem {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SidebarMenuItem) JustifyFlexStart() SidebarMenuItem {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e SidebarMenuItem) Me(length Length) SidebarMenuItem {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e SidebarMenuItem) Ms(length Length) SidebarMenuItem {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e SidebarMenuItem) Pe(length Length) SidebarMenuItem {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e SidebarMenuItem) Ps(length Length) SidebarMenuItem {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e SidebarMenuItem) RoundedE(radius Length) SidebarMenuItem {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SidebarMenuItem) RoundedS(radius Length) SidebarMenuItem {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SidebarMenuItem) TextEnd() SidebarMenuItem { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SidebarMenuItem) TextStart() SidebarMenuItem { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e SidebarMenuItem) CornerRadii(radius Corners) SidebarMenuItem {
 	tStyledExtCornerRadii(e.n, radius)

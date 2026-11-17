@@ -66,7 +66,7 @@ pub fn apply_component_area_chart(dx: &mut Dx, mut el: gpui_kit::component::char
             278 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::x_tick_count(el, a0) }; }
             279 => { el = { let a0 = { let f = crate::data::Field::new(r.str()); move |a0: &crate::data::Datum| -> f64 { f.num(a0) as f64 } }; <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y(el, a0) }; }
             280 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis(el, a0) }; }
-            281 => { el = { let a0 = en_74(r.u16()); <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis_label_placement(el, a0) }; }
+            281 => { el = { let a0 = en_76(r.u16()); <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis_label_placement(el, a0) }; }
             282 => { el = { let a0 = r.f64(); let a1 = r.f64(); <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_domain(el, a0, a1) }; }
             283 => { el = { let a0 = r.f32(); let a1 = r.f32(); <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_padding(el, a0, a1) }; }
             284 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_tick_count(el, a0) }; }
@@ -94,7 +94,7 @@ pub fn apply_component_bar_chart(dx: &mut Dx, mut el: gpui_kit::component::chart
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_77(r.u16()); <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::alignment(el, a0) }; }
+            256 => { el = { let a0 = en_79(r.u16()); <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::alignment(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear(el, a0) }; }
             258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::appear_key(el, a0) }; }
             259 => { el = { let a0 = { let f = crate::data::Field::new(r.str()); move |a0: &crate::data::Datum| -> gpui_kit::SharedString { f.text(a0).into() } }; <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::band(el, a0) }; }
@@ -121,7 +121,7 @@ pub fn apply_component_bar_chart(dx: &mut Dx, mut el: gpui_kit::component::chart
             280 => { el = { let a0 = { let f = crate::data::Field::new(r.str()); move |a0: &crate::data::Datum, a1: f64| -> gpui_kit::Hsla { f.color(a0).into() } }; <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_value_color(el, a0) }; }
             281 => { el = { let a0 = { let f = crate::data::Field::new(r.str()); move |a0: &crate::data::Datum| -> f64 { f.num(a0) as f64 } }; <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value(el, a0) }; }
             282 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value_axis(el, a0) }; }
-            283 => { el = { let a0 = en_74(r.u16()); <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value_axis_label_placement(el, a0) }; }
+            283 => { el = { let a0 = en_76(r.u16()); <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value_axis_label_placement(el, a0) }; }
             284 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value_tick_count(el, a0) }; }
             285 => { el = { let a0 = { let f = crate::data::Format::new(r.str()); move |a0: f64| -> gpui_kit::SharedString { f.text(None, &[crate::data::Arg::F64(a0)]).into() } }; <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::value_tick_format(el, a0) }; }
             286 => { el = { let Some((a0,)) = (|| Some(({ let rows: Vec<[gpui_kit::LinearColorStop; 2]> = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push([rc_26(r, dx)?, rc_26(r, dx)?]); } v }; move |v: &crate::data::Datum, _a1: std::ops::RangeInclusive<f32>, _a2: &dyn Fn(f32) -> f32| crate::plot::row_value(&rows, v) },)))() else { continue }; <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::fill_gradient(el, a0) }; }
@@ -216,7 +216,7 @@ pub fn apply_component_line_chart(dx: &mut Dx, mut el: gpui_kit::component::char
             278 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::x_tick_count(el, a0) }; }
             279 => { el = { let a0 = { let f = crate::data::Field::new(r.str()); move |a0: &crate::data::Datum| -> f64 { f.num(a0) as f64 } }; <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y(el, a0) }; }
             280 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis(el, a0) }; }
-            281 => { el = { let a0 = en_74(r.u16()); <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis_label_placement(el, a0) }; }
+            281 => { el = { let a0 = en_76(r.u16()); <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_axis_label_placement(el, a0) }; }
             282 => { el = { let a0 = r.f64(); let a1 = r.f64(); <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_domain(el, a0, a1) }; }
             283 => { el = { let a0 = r.f32(); let a1 = r.f32(); <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_padding(el, a0, a1) }; }
             284 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::y_tick_count(el, a0) }; }
@@ -337,7 +337,7 @@ pub fn apply_component_sankey_chart(dx: &mut Dx, mut el: gpui_kit::component::ch
             261 => { el = { let a0 = r.f32(); <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::label_gap(el, a0) }; }
             262 => { el = { let a0 = r.f32(); <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::link_opacity(el, a0) }; }
             263 => { el = { let a0 = r.f32(); <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::min_link_width(el, a0) }; }
-            264 => { el = { let a0 = en_78(r.u16()); <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_align(el, a0) }; }
+            264 => { el = { let a0 = en_80(r.u16()); <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_align(el, a0) }; }
             265 => { el = { let a0 = { let f = crate::data::Field::new(r.str()); move |a0: &crate::data::Datum| -> gpui_kit::Hsla { f.color(a0).into() } }; <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_color(el, a0) }; }
             266 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_corner_radius(el, a0) }; }
             267 => { el = { let a0 = { let f = crate::data::Field::new(r.str()); move |a0: &crate::data::Datum| -> gpui_kit::SharedString { f.text(a0).into() } }; <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::node_label(el, a0) }; }
@@ -346,7 +346,7 @@ pub fn apply_component_sankey_chart(dx: &mut Dx, mut el: gpui_kit::component::ch
             270 => { el = { let a0 = { let f = crate::data::Field::new(r.str()); move |a0: &crate::data::Datum| -> gpui_kit::SharedString { f.text(a0).into() } }; <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::tooltip_name(el, a0) }; }
             271 => { el = { let a0 = { let f = crate::data::Format::new(r.str()); move |a0: &crate::data::Datum, a1: f64| -> gpui_kit::SharedString { f.text(Some(a0), &[crate::data::Arg::F64(a1)]).into() } }; <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::tooltip_value(el, a0) }; }
             272 => { el = { let a0 = { let f = crate::data::Format::new(r.str()); move |a0: &crate::data::Datum, a1: f64| -> gpui_kit::SharedString { f.text(Some(a0), &[crate::data::Arg::F64(a1)]).into() } }; <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::value_label(el, a0) }; }
-            273 => { el = { let a0 = en_79(r.u16()); <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::value_scale(el, a0) }; }
+            273 => { el = { let a0 = en_81(r.u16()); <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::value_scale(el, a0) }; }
             274 => { el = { let Some((a0,)) = (|| Some(({ let rows: Vec<Vec<gpui_kit::component::chart::SankeyLabel>> = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_sankey_label(dx, r.u32())?); } v }); } v }; move |v: &crate::data::Datum, _a1: f64| crate::plot::row_value(&rows, v) },)))() else { continue }; <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::labels(el, a0) }; }
             _ => bad_op("SankeyChart", op),
         }

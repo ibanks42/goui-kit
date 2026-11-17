@@ -11,6 +11,7 @@ Skeleton :: struct {
 
 Skeleton_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Skeleton),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Skeleton),
 	using t_styled_ext: ^Styled_Ext_Trait(Skeleton),
 	using t_styled: ^Styled_Trait(Skeleton),
 	// Set use secondary color.
@@ -28,6 +29,7 @@ skeleton :: proc(flags: ..Style_Flag, loc := #caller_location) -> Skeleton {
 @(private)
 skeleton_vt := Skeleton_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Skeleton))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Skeleton))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Skeleton))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Skeleton))&styled_any,
 	secondary = proc(e: Skeleton) -> Skeleton {

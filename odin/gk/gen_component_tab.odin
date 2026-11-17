@@ -15,6 +15,7 @@ Tab_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Tab),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Tab),
 	using t_element_ext: ^Element_Ext_Trait(Tab),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Tab),
 	using t_styled_ext: ^Styled_Ext_Trait(Tab),
 	using t_parent_element: ^Parent_Element_Trait(Tab),
 	using t_selectable: ^Selectable_Trait(Tab),
@@ -107,6 +108,7 @@ tab_vt := Tab_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Tab))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Tab))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Tab))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Tab))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Tab))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Tab))&parent_element_any,
 	t_selectable = cast(^Selectable_Trait(Tab))&selectable_any,
@@ -223,6 +225,7 @@ Tab_Bar :: struct {
 
 Tab_Bar_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Tab_Bar),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Tab_Bar),
 	using t_styled_ext: ^Styled_Ext_Trait(Tab_Bar),
 	using t_styled: ^Styled_Trait(Tab_Bar),
 	using t_sizable: ^Sizable_Trait(Tab_Bar),
@@ -280,6 +283,7 @@ tab_bar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Tab_Bar
 @(private)
 tab_bar_vt := Tab_Bar_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Tab_Bar))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Tab_Bar))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Tab_Bar))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Tab_Bar))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Tab_Bar))&sizable_any,

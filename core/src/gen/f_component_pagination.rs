@@ -47,10 +47,11 @@ pub fn apply_component_pagination(dx: &mut Dx, mut el: gpui_kit::component::pagi
             258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::pagination::Pagination>::on_click(el, a0) }; }
             259 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::pagination::Pagination>::total_pages(el, a0) }; }
             260 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::pagination::Pagination>::visible_pages(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             17024..=17151 => { el = tr_disableable_5(el, op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Pagination", op),

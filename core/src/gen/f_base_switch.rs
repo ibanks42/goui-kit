@@ -55,7 +55,8 @@ pub fn apply_base_switch(dx: &mut Dx, mut el: gpui_kit::base::Switch, first: u32
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Switch>::tab_stop(el, a0) }; }
             263 => { el = { let a0 = genapi::shown_focus(r.u64()); <gpui_kit::base::Switch>::track_focus(el, &a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
@@ -114,7 +115,8 @@ pub fn apply_base_switch_thumb(dx: &mut Dx, mut el: gpui_kit::base::SwitchThumb,
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::SwitchThumb>::disabled(el, a0) }; }
             257 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::SwitchThumbStyles| { let first = dx.node(n).2; apply_base_switch_thumb_styles(dx, v, first) } }; <gpui_kit::base::SwitchThumb>::styles(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
@@ -172,7 +174,8 @@ pub fn apply_base_switch_track(dx: &mut Dx, mut el: gpui_kit::base::SwitchTrack,
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::SwitchTrack>::disabled(el, a0) }; }
             258 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::SwitchTrackStyles| { let first = dx.node(n).2; apply_base_switch_track_styles(dx, v, first) } }; <gpui_kit::base::SwitchTrack>::styles(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }

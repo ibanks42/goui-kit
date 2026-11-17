@@ -71,6 +71,46 @@ base_code_block_vt := Base_Code_Block_VT {
 	},
 }
 
+// A link a `Base_Text_View` draws, as handed to `link`.
+//
+// Reference links (``text``) arrive resolved to their definition. New fields may be added later,
+// so build one with `gk.base_link_2` or change a received one with the setters.
+//
+// Base_Link_2 is gpui_kit::base::text::Link.
+Base_Link_2 :: struct {
+	using nd: Value,
+	using vt: ^Base_Link_2_VT,
+}
+
+Base_Link_2_VT :: struct {
+	// Set the link title.
+	title: proc(e: Base_Link_2, title: string) -> Base_Link_2,
+	// Point the link at `url`.
+	url: proc(e: Base_Link_2, url: string) -> Base_Link_2,
+}
+
+// A link to `url` with no title.
+base_link_2 :: proc(url: string, loc := #caller_location) -> Base_Link_2 {
+	e := Base_Link_2{new_value(889, loc), &base_link_2_vt}
+	o := node_args()
+	put_str(o, url)
+	return e
+}
+
+@(private)
+base_link_2_vt := Base_Link_2_VT {
+	title = proc(e: Base_Link_2, title: string) -> Base_Link_2 {
+		o := op(vel(e.nd), 256)
+		put_str(o, title)
+		return e
+	},
+	url = proc(e: Base_Link_2, url: string) -> Base_Link_2 {
+		o := op(vel(e.nd), 257)
+		put_str(o, url)
+		return e
+	},
+}
+
 // Retained block interaction state, shared with its rendered element.
 //
 // Opaque: build one with `BlockState::default()` for a `Custom`.

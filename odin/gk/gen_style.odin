@@ -3541,4 +3541,5 @@ Theme_Color :: enum u16 {
 	Magenta_Light = 137,
 	Cyan = 138,
 	Cyan_Light = 139,
+	List_Highlight_Foreground = 140,
 }

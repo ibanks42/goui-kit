@@ -84,6 +84,78 @@ func (e DatePickerEl) PopoverStyle() DatePickerEl { tThemeStyledPopoverStyle(e.n
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e DatePickerEl) RoundedFullStyle() DatePickerEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e DatePickerEl) BorderE(width Length) DatePickerEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e DatePickerEl) BorderS(width Length) DatePickerEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e DatePickerEl) FlexRowDir() DatePickerEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e DatePickerEl) InsetE(length Length) DatePickerEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e DatePickerEl) InsetS(length Length) DatePickerEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e DatePickerEl) JustifyFlexEnd() DatePickerEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e DatePickerEl) JustifyFlexStart() DatePickerEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e DatePickerEl) Me(length Length) DatePickerEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e DatePickerEl) Ms(length Length) DatePickerEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e DatePickerEl) Pe(length Length) DatePickerEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e DatePickerEl) Ps(length Length) DatePickerEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e DatePickerEl) RoundedE(radius Length) DatePickerEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e DatePickerEl) RoundedS(radius Length) DatePickerEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e DatePickerEl) TextEnd() DatePickerEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e DatePickerEl) TextStart() DatePickerEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e DatePickerEl) CornerRadii(radius Corners) DatePickerEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e

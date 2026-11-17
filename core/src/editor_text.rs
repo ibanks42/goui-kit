@@ -79,6 +79,8 @@ struct LazyRow {
     row: Option<(Vec<u8>, Rc<dyn Fn(&mut Vec<u8>)>)>,
 }
 
+// gpui-fast (0.1.16 on) has `impl<T: Element> IntoElement for T`; upstream GPUI does not.
+#[cfg(not(feature = "gpui-fast"))]
 impl IntoElement for LazyRow {
     type Element = Self;
 
@@ -479,6 +481,8 @@ pub fn host_node(dx: &mut genapi::Dx, args: u32, _first: u32) -> Option<AnyEleme
     Some(BlockHost { id, blocks, flows, context, decorations, handler, _keep: dx.pin() }.into_any_element())
 }
 
+// gpui-fast (0.1.16 on) has `impl<T: Element> IntoElement for T`; upstream GPUI does not.
+#[cfg(not(feature = "gpui-fast"))]
 impl IntoElement for BlockHost {
     type Element = Self;
 

@@ -52,7 +52,8 @@ pub fn apply_base_tab(dx: &mut Dx, mut el: gpui_kit::base::Tab, first: u32) -> g
             261 => { el = { let a0 = r.u64() as usize; let a1 = r.u64() as usize; <gpui_kit::base::Tab>::set_position(el, a0, a1) }; }
             262 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::TabStyles| { let first = dx.node(n).2; apply_base_tab_styles(dx, v, first) } }; <gpui_kit::base::Tab>::styles(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
@@ -108,8 +109,10 @@ pub fn apply_base_tabs(dx: &mut Dx, mut el: gpui_kit::base::Tabs, first: u32) ->
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
+            256 => { el = { let a0 = en_4(r.u16()); <gpui_kit::base::Tabs>::axis(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }

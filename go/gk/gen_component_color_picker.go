@@ -97,6 +97,78 @@ func (e ColorPickerEl) PopoverStyle() ColorPickerEl { tThemeStyledPopoverStyle(e
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e ColorPickerEl) RoundedFullStyle() ColorPickerEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e ColorPickerEl) BorderE(width Length) ColorPickerEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e ColorPickerEl) BorderS(width Length) ColorPickerEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e ColorPickerEl) FlexRowDir() ColorPickerEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e ColorPickerEl) InsetE(length Length) ColorPickerEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e ColorPickerEl) InsetS(length Length) ColorPickerEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e ColorPickerEl) JustifyFlexEnd() ColorPickerEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e ColorPickerEl) JustifyFlexStart() ColorPickerEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e ColorPickerEl) Me(length Length) ColorPickerEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e ColorPickerEl) Ms(length Length) ColorPickerEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e ColorPickerEl) Pe(length Length) ColorPickerEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e ColorPickerEl) Ps(length Length) ColorPickerEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e ColorPickerEl) RoundedE(radius Length) ColorPickerEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e ColorPickerEl) RoundedS(radius Length) ColorPickerEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e ColorPickerEl) TextEnd() ColorPickerEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e ColorPickerEl) TextStart() ColorPickerEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e ColorPickerEl) CornerRadii(radius Corners) ColorPickerEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -581,6 +653,78 @@ func (e ColorSelectEl) PopoverStyle() ColorSelectEl { tThemeStyledPopoverStyle(e
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e ColorSelectEl) RoundedFullStyle() ColorSelectEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e ColorSelectEl) BorderE(width Length) ColorSelectEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e ColorSelectEl) BorderS(width Length) ColorSelectEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e ColorSelectEl) FlexRowDir() ColorSelectEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e ColorSelectEl) InsetE(length Length) ColorSelectEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e ColorSelectEl) InsetS(length Length) ColorSelectEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e ColorSelectEl) JustifyFlexEnd() ColorSelectEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e ColorSelectEl) JustifyFlexStart() ColorSelectEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e ColorSelectEl) Me(length Length) ColorSelectEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e ColorSelectEl) Ms(length Length) ColorSelectEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e ColorSelectEl) Pe(length Length) ColorSelectEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e ColorSelectEl) Ps(length Length) ColorSelectEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e ColorSelectEl) RoundedE(radius Length) ColorSelectEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e ColorSelectEl) RoundedS(radius Length) ColorSelectEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e ColorSelectEl) TextEnd() ColorSelectEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e ColorSelectEl) TextStart() ColorSelectEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e ColorSelectEl) CornerRadii(radius Corners) ColorSelectEl {
 	tStyledExtCornerRadii(e.n, radius)

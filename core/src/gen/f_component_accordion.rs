@@ -49,9 +49,10 @@ pub fn apply_component_accordion(dx: &mut Dx, mut el: gpui_kit::component::accor
             258 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::component::accordion::AccordionItem| { let first = dx.node(n).2; apply_component_accordion_item(dx, v, first) } }; <gpui_kit::component::accordion::Accordion>::item(el, a0) }; }
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::accordion::Accordion>::multiple(el, a0) }; }
             260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &[usize], window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 72, &a0, window, cx) } }; <gpui_kit::component::accordion::Accordion>::on_toggle_click(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Accordion", op),
@@ -83,15 +84,16 @@ pub fn apply_component_accordion_item(dx: &mut Dx, mut el: gpui_kit::component::
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::accordion::AccordionItem>::open(el, a0) }; }
             260 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::accordion::AccordionItem>::title(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::accordion::AccordionItem>::title_style(el, a0) }; }
-            262 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::accordion::AccordionItem>::icon(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            262 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::accordion::AccordionItem>::icon(el, a0) }; }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("AccordionItem", op),

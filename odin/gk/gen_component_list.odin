@@ -13,6 +13,7 @@ List :: struct {
 
 List_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(List),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(List),
 	using t_styled_ext: ^Styled_Ext_Trait(List),
 	using t_styled: ^Styled_Trait(List),
 	using t_sizable: ^Sizable_Trait(List),
@@ -38,6 +39,7 @@ list :: proc(state: List_State, flags: ..Style_Flag, loc := #caller_location) ->
 @(private)
 list_vt := List_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(List))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(List))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(List))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(List))&styled_any,
 	t_sizable = cast(^Sizable_Trait(List))&sizable_any,
@@ -68,6 +70,7 @@ List_Item_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(List_Item),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(List_Item),
 	using t_element_ext: ^Element_Ext_Trait(List_Item),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(List_Item),
 	using t_styled_ext: ^Styled_Ext_Trait(List_Item),
 	open: proc(e: List_Item, open: bool) -> List_Item,
 	secondary_selected: proc(e: List_Item, arg0: bool) -> List_Item,
@@ -189,6 +192,7 @@ list_item_vt := List_Item_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(List_Item))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(List_Item))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(List_Item))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(List_Item))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(List_Item))&styled_ext_any,
 	open = transmute(proc(e: List_Item, open: bool) -> List_Item)selectable_open,
 	secondary_selected = transmute(proc(e: List_Item, arg0: bool) -> List_Item)selectable_secondary_selected,

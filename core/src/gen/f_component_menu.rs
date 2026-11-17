@@ -83,7 +83,7 @@ pub fn apply_component_popup_menu(dx: &mut Dx, mut el: gpui_kit::component::menu
         let r = &mut r;
         match op {
             256 => { el = { let a0 = genapi::shown_focus(r.u64()); <gpui_kit::component::menu::PopupMenu>::action_context(el, a0) }; }
-            257 => { el = { let a0 = en_58(r.u16()); <gpui_kit::component::menu::PopupMenu>::check_side(el, a0) }; }
+            257 => { el = { let a0 = en_60(r.u16()); <gpui_kit::component::menu::PopupMenu>::check_side(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::menu::PopupMenu>::external_link_icon(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some((build_component_popup_menu_item(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::menu::PopupMenu>::item(el, a0) }; }
             260 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::menu::PopupMenu>::label(el, a0) }; }
@@ -103,10 +103,10 @@ pub fn apply_component_popup_menu(dx: &mut Dx, mut el: gpui_kit::component::menu
             274 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::menu::PopupMenu>::scrollable(el, a0) }; }
             275 => { el = { <gpui_kit::component::menu::PopupMenu>::separator(el) }; }
             276 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); let a3 = { let f = dx.frag(r.u32()); move |v: gpui_kit::component::menu::PopupMenu, window: &mut gpui_kit::Window, cx: &mut gpui_kit::Context<gpui_kit::component::menu::PopupMenu>| f.with(window, cx, |dx, n| apply_component_popup_menu(dx, v, dx.node(n).2)) }; crate::overlay::submenu(el, a0, &mut *dx.window, &mut *dx.cx, a3) }; }
-            277 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); let a2 = r.str().to_string(); <gpui_kit::component::menu::PopupMenu>::link_with_icon(el, a0, a1, a2) }; }
-            278 => { el = { let Some((a0, a1, a2)) = (|| Some((<gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())), genapi::action(r).ok()?, { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) })))() else { continue }; <gpui_kit::component::menu::PopupMenu>::menu_element_with_icon(el, a0, a1, a2) }; }
-            279 => { el = { let Some((a0, a1, a2)) = (|| Some((gpui_kit::SharedString::new(r.str()), <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())), genapi::action(r).ok()?)))() else { continue }; <gpui_kit::component::menu::PopupMenu>::menu_with_icon(el, a0, a1, a2) }; }
-            280 => { el = { let Some((a0, a1, a2, a3)) = (|| Some((gpui_kit::SharedString::new(r.str()), <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())), genapi::action(r).ok()?, r.u8() != 0)))() else { continue }; <gpui_kit::component::menu::PopupMenu>::menu_with_icon_and_disabled(el, a0, a1, a2, a3) }; }
+            277 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); let a2 = r.str().to_string(); <gpui_kit::component::menu::PopupMenu>::link_with_icon(el, a0, a1, a2) }; }
+            278 => { el = { let Some((a0, a1, a2)) = (|| Some((<gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())), genapi::action(r).ok()?, { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) })))() else { continue }; <gpui_kit::component::menu::PopupMenu>::menu_element_with_icon(el, a0, a1, a2) }; }
+            279 => { el = { let Some((a0, a1, a2)) = (|| Some((gpui_kit::SharedString::new(r.str()), <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())), genapi::action(r).ok()?)))() else { continue }; <gpui_kit::component::menu::PopupMenu>::menu_with_icon(el, a0, a1, a2) }; }
+            280 => { el = { let Some((a0, a1, a2, a3)) = (|| Some((gpui_kit::SharedString::new(r.str()), <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())), genapi::action(r).ok()?, r.u8() != 0)))() else { continue }; <gpui_kit::component::menu::PopupMenu>::menu_with_icon_and_disabled(el, a0, a1, a2, a3) }; }
             281 => { el = { let Some((a0, a1, a4)) = (|| Some((if r.u8() != 0 { Some(build_component_icon(dx, r.u32())?) } else { None }, gpui_kit::SharedString::new(r.str()), { let f = dx.frag(r.u32()); move |v: gpui_kit::component::menu::PopupMenu, window: &mut gpui_kit::Window, cx: &mut gpui_kit::Context<gpui_kit::component::menu::PopupMenu>| f.with(window, cx, |dx, n| apply_component_popup_menu(dx, v, dx.node(n).2)) })))() else { continue }; crate::views_menu::submenu_with_icon(el, a0, a1, &mut *dx.window, &mut *dx.cx, a4) }; }
             _ => bad_op("PopupMenu", op),
         }
@@ -138,7 +138,7 @@ pub fn apply_component_popup_menu_item(dx: &mut Dx, mut el: gpui_kit::component:
             256 => { el = { let Some((a0,)) = (|| Some((genapi::action(r).ok()?,)))() else { continue }; <gpui_kit::component::menu::PopupMenuItem>::action(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::menu::PopupMenuItem>::checked(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::menu::PopupMenuItem>::disabled(el, a0) }; }
-            259 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::menu::PopupMenuItem>::icon(el, a0) }; }
+            259 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::menu::PopupMenuItem>::icon(el, a0) }; }
             260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::menu::PopupMenuItem>::on_click(el, a0) }; }
             _ => bad_op("PopupMenuItem", op),
         }

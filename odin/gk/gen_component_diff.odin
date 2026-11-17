@@ -16,6 +16,7 @@ Diff :: struct {
 
 Diff_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Diff),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Diff),
 	using t_styled_ext: ^Styled_Ext_Trait(Diff),
 	using t_styled: ^Styled_Trait(Diff),
 	// Compatibility alias for `->render_annotation`.
@@ -79,6 +80,10 @@ Diff_VT :: struct {
 	render_header_title_suffix: proc(e: Diff, render: Row_Source) -> Diff, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, diff_file_read: Diff_File_Read) -> Element)
 	// Wraps long lines at the column width instead of scrolling horizontally. Default is false.
 	soft_wrap: proc(e: Diff, value: bool) -> Diff,
+	// Gives the original column this share of the width in split mode, clamped to 0.1..=0.9. Default
+	// is 0.5. Without soft wrap, each column keeps its share and clips its long lines, and the code of
+	// both columns scrolls horizontally together.
+	split_ratio: proc(e: Diff, ratio: f32) -> Diff,
 	// Emphasizes syntax once the state has prepared it. Default is true.
 	syntax_highlight: proc(e: Diff, value: bool) -> Diff,
 }
@@ -95,6 +100,7 @@ diff :: proc(state: Diff_State, flags: ..Style_Flag, loc := #caller_location) ->
 @(private)
 diff_vt := Diff_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Diff))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Diff))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Diff))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Diff))&styled_any,
 	annotation_content = proc(e: Diff, render: Row_Source) -> Diff {
@@ -224,6 +230,11 @@ diff_vt := Diff_VT {
 	soft_wrap = proc(e: Diff, value: bool) -> Diff {
 		o := op(e.el, 264)
 		put_u8(o, u8(value))
+		return e
+	},
+	split_ratio = proc(e: Diff, ratio: f32) -> Diff {
+		o := op(e.el, 281)
+		put_f32(o, ratio)
 		return e
 	},
 	syntax_highlight = proc(e: Diff, value: bool) -> Diff {

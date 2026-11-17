@@ -11,6 +11,7 @@ Color_Picker :: struct {
 
 Color_Picker_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Color_Picker),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Color_Picker),
 	using t_styled_ext: ^Styled_Ext_Trait(Color_Picker),
 	using t_sizable: ^Sizable_Trait(Color_Picker),
 	using t_styled: ^Styled_Trait(Color_Picker),
@@ -52,6 +53,7 @@ color_picker :: proc(state: Color_Picker_State, flags: ..Style_Flag, loc := #cal
 @(private)
 color_picker_vt := Color_Picker_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Color_Picker))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Color_Picker))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Color_Picker))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Color_Picker))&sizable_any,
 	t_styled = cast(^Styled_Trait(Color_Picker))&styled_any,
@@ -99,6 +101,7 @@ Color_Select :: struct {
 
 Color_Select_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Color_Select),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Color_Select),
 	using t_styled_ext: ^Styled_Ext_Trait(Color_Select),
 	using t_sizable: ^Sizable_Trait(Color_Select),
 	using t_styled: ^Styled_Trait(Color_Select),
@@ -125,6 +128,7 @@ color_select :: proc(state: Color_Picker_State, flags: ..Style_Flag, loc := #cal
 @(private)
 color_select_vt := Color_Select_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Color_Select))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Color_Select))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Color_Select))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Color_Select))&sizable_any,
 	t_styled = cast(^Styled_Trait(Color_Select))&styled_any,

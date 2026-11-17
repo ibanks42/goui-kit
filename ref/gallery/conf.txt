@@ -174,6 +174,7 @@ base::TableHead.new |  | gpui_kit::base::TableHead::new
 base::TableHeader.new |  | gpui_kit::base::TableHeader::new
 base::TableRow.new |  | gpui_kit::base::TableRow::new
 Tabs.new |  | gpui_kit::base::Tabs::new
+Tabs.axis |  | gpui_kit::base::Tabs::axis
 base::TextView.markdown |  | gpui_kit::base::TextView::markdown
 base::TextView.html |  | gpui_kit::base::TextView::html
 base::TextView.selectable |  | gpui_kit::base::TextView::selectable
@@ -181,6 +182,7 @@ base::TextView.selection_format |  | gpui_kit::base::TextView::selection_format
 base::TextView.scrollable |  | gpui_kit::base::TextView::scrollable
 base::TextView.max_lines |  | gpui_kit::base::TextView::max_lines
 base::TextView.markdown_mdx |  | gpui_kit::base::TextView::markdown_mdx
+base::TextView.markdown_raw_html |  | gpui_kit::base::TextView::markdown_raw_html
 Toast.new |  | gpui_kit::base::Toast::new
 Toast.transition_status |  | gpui_kit::base::Toast::transition_status
 base::Toggle.new |  | gpui_kit::base::Toggle::new
@@ -297,9 +299,11 @@ component::Checkbox.tooltip |  | gpui_kit::component::checkbox::Checkbox::toolti
 component::Checkbox.tooltip_show_delay |  | gpui_kit::component::checkbox::Checkbox::tooltip_show_delay
 component::Checkbox.accessibility_label |  | gpui_kit::component::checkbox::Checkbox::accessibility_label
 component::Checkbox.checked |  | gpui_kit::component::checkbox::Checkbox::checked
+component::Checkbox.indeterminate |  | gpui_kit::component::checkbox::Checkbox::indeterminate
 component::Checkbox.tab_stop |  | gpui_kit::component::checkbox::Checkbox::tab_stop
 component::Checkbox.tab_index |  | gpui_kit::component::checkbox::Checkbox::tab_index
 Clipboard.new |  | gpui_kit::component::clipboard::Clipboard::new
+Clipboard.label |  | gpui_kit::component::clipboard::Clipboard::label
 Clipboard.tooltip |  | gpui_kit::component::clipboard::Clipboard::tooltip
 Clipboard.tooltip_show_delay |  | gpui_kit::component::clipboard::Clipboard::tooltip_show_delay
 Clipboard.accessibility_label |  | gpui_kit::component::clipboard::Clipboard::accessibility_label
@@ -387,6 +391,7 @@ InputGroupButton.dropdown_caret |  | gpui_kit::component::input::InputGroupButto
 InputGroupText.new |  | gpui_kit::component::input::InputGroupText::new
 InputGroupText.default |  | gpui_kit::component::input::InputGroupText::Default::default
 Label.new |  | gpui_kit::component::label::Label::new
+Label.id |  | gpui_kit::component::label::Label::id
 Label.secondary |  | gpui_kit::component::label::Label::secondary
 Label.masked |  | gpui_kit::component::label::Label::masked
 component::Link.new |  | gpui_kit::component::link::Link::new
@@ -564,6 +569,7 @@ component::TableHead.text_center |  | gpui_kit::component::table::TableHead::tex
 component::TableHead.text_right |  | gpui_kit::component::table::TableHead::text_right
 component::TableHeader.new |  | gpui_kit::component::table::TableHeader::new
 component::TableRow.new |  | gpui_kit::component::table::TableRow::new
+component::TableRow.id |  | gpui_kit::component::table::TableRow::id
 Tag.new |  | gpui_kit::component::tag::Tag::new
 Tag.primary |  | gpui_kit::component::tag::Tag::primary
 Tag.secondary |  | gpui_kit::component::tag::Tag::secondary
@@ -703,7 +709,10 @@ Styled.text_size |  | gpui_kit::Styled::text_size
 Styled.top |  | gpui_kit::Styled::top
 Styled.w |  | gpui_kit::Styled::w
 Disableable.disabled |  | gpui_kit::base::Disableable::disabled
+ElementExt.keep_text_selection |  | gpui_kit::base::ElementExt::keep_text_selection
 FocusableExt.focus_ring |  | gpui_kit::base::FocusableExt::focus_ring
+LogicalStyledExt.justify_flex_end |  | gpui_kit::base::LogicalStyledExt::justify_flex_end
+LogicalStyledExt.justify_flex_start |  | gpui_kit::base::LogicalStyledExt::justify_flex_start
 Selectable.open |  | gpui_kit::base::Selectable::open
 Selectable.secondary_selected |  | gpui_kit::base::Selectable::secondary_selected
 Selectable.selected |  | gpui_kit::base::Selectable::selected

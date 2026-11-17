@@ -9,14 +9,14 @@ use gpui_kit::IntoElement as _;
 pub fn sb_component_notification(s: gpui_kit::component::notification::Notification, op: u16, r: &mut R) -> gpui_kit::component::notification::Notification {
     match op {
         1 => { let a0 = r.u8() != 0; <gpui_kit::component::notification::Notification>::autohide(s, a0) }
-        2 => { let a0 = en_111(r.u16()); <gpui_kit::component::notification::Notification>::delivery(s, a0) }
+        2 => { let a0 = en_113(r.u16()); <gpui_kit::component::notification::Notification>::delivery(s, a0) }
         5 => { <gpui_kit::component::notification::Notification>::in_app_and_system(s) }
         6 => { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::notification::Notification>::message(s, a0) }
         7 => { let a0 = en_2(r.u16()); <gpui_kit::component::notification::Notification>::placement(s, a0) }
         8 => { <gpui_kit::component::notification::Notification>::system(s) }
         9 => { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::notification::Notification>::title(s, a0) }
-        10 => { let a0 = en_112(r.u16()); <gpui_kit::component::notification::Notification>::with_type(s, a0) }
-        11 => { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::notification::Notification>::icon(s, a0) }
+        10 => { let a0 = en_114(r.u16()); <gpui_kit::component::notification::Notification>::with_type(s, a0) }
+        11 => { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::notification::Notification>::icon(s, a0) }
         12 => { let a0 = { let h = crate::shim_editor::kept(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::notification::Notification>::on_click(s, a0) }
         13 => { let a0 = { let h = crate::shim_editor::kept(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::notification::Notification>::on_close(s, a0) }
         14 => { let a0 = { let src = r.u64(); move |k0: &mut gpui_kit::component::notification::Notification, window: &mut gpui_kit::Window, cx: &mut gpui_kit::Context<gpui_kit::component::notification::Notification>| -> gpui_kit::component::button::Button { let p: Vec<u8> = Vec::new();  let h: Vec<Box<dyn std::any::Any>> = vec![]; crate::items::row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| {  }), h, window, cx, |dx, n| build_component_button(dx, n), |_| <gpui_kit::component::button::Button>::new("gk-item")) } }; <gpui_kit::component::notification::Notification>::action(s, a0) }

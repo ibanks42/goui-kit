@@ -54,11 +54,12 @@ pub fn apply_component_radio(dx: &mut Dx, mut el: gpui_kit::component::radio::Ra
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::radio::Radio>::tab_stop(el, a0) }; }
             264 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::radio::Radio>::tooltip(el, a0) }; }
             265 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::component::radio::Radio>::tooltip_show_delay(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             17280..=17407 => { el = tr_focusable_ext_8(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
@@ -99,8 +100,9 @@ pub fn apply_component_radio_group(dx: &mut Dx, mut el: gpui_kit::component::rad
             260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::radio::RadioGroup>::on_change(el, a0) }; }
             261 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::radio::RadioGroup>::on_click(el, a0) }; }
             262 => { el = { let a0 = if r.u8() != 0 { Some(r.u64() as usize) } else { None }; <gpui_kit::component::radio::RadioGroup>::selected_index(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("RadioGroup", op),

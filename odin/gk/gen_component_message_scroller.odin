@@ -13,6 +13,7 @@ Message_Scroller :: struct {
 
 Message_Scroller_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Message_Scroller),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Message_Scroller),
 	using t_styled_ext: ^Styled_Ext_Trait(Message_Scroller),
 	using t_styled: ^Styled_Trait(Message_Scroller),
 	// Enable or disable the built-in jump-to-latest button.
@@ -63,6 +64,7 @@ message_scroller :: proc(id: Id, state: Message_Scroller_State, renderer: Row_So
 @(private)
 message_scroller_vt := Message_Scroller_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Message_Scroller))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Message_Scroller))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Message_Scroller))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Message_Scroller))&styled_any,
 	jump_button = proc(e: Message_Scroller, jump_button: bool) -> Message_Scroller {

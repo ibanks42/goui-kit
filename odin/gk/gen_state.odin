@@ -2930,6 +2930,18 @@ diff_state_scroll_to_line :: proc(s: Diff_State, cx: ^Cx, position: Diff_Line_Po
 	state_set(cx, req[:], loc)
 }
 
+// Collapses every file to its header, or expands them all, in one rebuild like
+// `gk.diff_state_set_files_collapsed`.
+diff_state_set_all_files_collapsed :: proc(s: Diff_State, cx: ^Cx, collapsed: bool, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_component_diff()
+	put_op(o, 1774)
+	put_u64(o, s.h)
+	put_u8(o, u8(collapsed))
+	state_set(cx, req[:], loc)
+}
+
 // Sets surrounding context. `None` shows every supplied patch line.
 diff_state_set_context_lines :: proc(s: Diff_State, cx: ^Cx, lines: Maybe(int), loc := #caller_location) {
 	req := make(Tape, 0, 32, context.temp_allocator)
@@ -2981,6 +2993,23 @@ diff_state_set_files :: proc(s: Diff_State, cx: ^Cx, files: []Diff_File, loc := 
 	for x0 in files {
 		put_vtape(o, x0.nd)
 	}
+	state_set(cx, req[:], loc)
+}
+
+// Collapses the given files to their headers, or expands them, without emitting a user event. One
+// rebuild covers the whole change; calling `gk.diff_state_set_file_collapsed` per file rebuilds
+// the rows each time, which freezes a view of thousands of files.
+diff_state_set_files_collapsed :: proc(s: Diff_State, cx: ^Cx, paths: []string, collapsed: bool, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_component_diff()
+	put_op(o, 1775)
+	put_u64(o, s.h)
+	put_u32(o, u32(len(paths)))
+	for x0 in paths {
+		put_str(o, x0)
+	}
+	put_u8(o, u8(collapsed))
 	state_set(cx, req[:], loc)
 }
 
@@ -4729,6 +4758,22 @@ editor_state_context_menu_capabilities :: proc(s: Editor_State, cx: ^Cx, loc := 
 	return
 }
 
+// Get byte offset of the text under the pointer at the right-click that last opened the context
+// menu.
+//
+// A right-click inside the selection keeps the selection and the cursor, so a custom context menu
+// reads this to find the word under the pointer. The offset is the UTF-8 offset.
+editor_state_context_menu_offset :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1766)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 // Get byte offset of the cursor.
 //
 // The offset is the UTF-8 offset.
@@ -5284,6 +5329,26 @@ editor_state_text_input_configuration :: proc(s: Editor_State, cx: ^Cx, loc := #
 	o := &req
 	use_base_input()
 	put_op(o, 473)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// Horizontal offset from the content area's left edge to unscrolled source text.
+//
+// Includes the laid-out gap, line numbers, folding controls, and gutter decorations. Excludes
+// input-frame padding, horizontal scrolling, and text alignment. For left-aligned text, add this
+// to the content area's origin and the horizontal scroll offset to recover the text origin.
+//
+// Returns `None` before the first layout. Like `gk.input_state_range_to_bounds`, this describes
+// the most recent layout; render again after changing gutter settings or typography before using
+// it to align a static view.
+editor_state_text_origin_offset :: proc(s: Editor_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(f32)) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1767)
 	put_u64(o, s.h)
 	r := state_get(s.h, cx, req[:], loc)
 	rd_into(&r, &v)
@@ -8184,6 +8249,22 @@ input_state_context_menu_capabilities :: proc(s: Input_State, cx: ^Cx, loc := #c
 	return
 }
 
+// Get byte offset of the text under the pointer at the right-click that last opened the context
+// menu.
+//
+// A right-click inside the selection keeps the selection and the cursor, so a custom context menu
+// reads this to find the word under the pointer. The offset is the UTF-8 offset.
+input_state_context_menu_offset :: proc(s: Input_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1768)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 // Get byte offset of the cursor.
 //
 // The offset is the UTF-8 offset.
@@ -8868,6 +8949,26 @@ input_state_replace_with_token :: proc(s: Input_State, cx: ^Cx, token: Inline_To
 	put_op(o, 1037)
 	put_u64(o, s.h)
 	put_vtape(o, token.nd)
+	r := state_call(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// Replace the tokens and keep the text, the selections and the undo history.
+//
+// Returns `TextMismatch` if `content` holds different text, `SplitsSelection` if a token cuts
+// through any selection, `CompositionActive` during IME composition and `UnsupportedMode` for
+// masked or password inputs.
+//
+// Undo and redo replay the text and the tokens recorded with it; a token set here that an undone
+// edit cuts through is dropped. Call this again after every change to keep derived tokens current.
+input_state_set_tokens :: proc(s: Input_State, cx: ^Cx, content: Input_Content, loc := #caller_location) -> (v: Maybe(Temp_String)) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1769)
+	put_u64(o, s.h)
+	put_u64(o, content.h)
 	r := state_call(s.h, cx, req[:], loc)
 	rd_into(&r, &v)
 	return
@@ -10409,10 +10510,11 @@ message_scroller_state_item_count :: proc(s: Message_Scroller_State, cx: ^Cx, lo
 
 // Return the row at the top of the viewport and how far into it the list is scrolled.
 //
-// Wheel, trackpad, and scrollbar scrolls and `gk.message_scroller_state_scroll_to_item` update it
-// at once. `gk.message_scroller_state_scroll_to_end` and tail following settle it when the list
-// next lays out; right after `scroll_to_end`, `item_ix` is `gk.message_scroller_state_item_count`
-// until then.
+// Wheel, trackpad, and scrollbar scrolls, `gk.message_scroller_state_scroll_to_item` and
+// `gk.message_scroller_state_scroll_to_offset` update it at once.
+// `gk.message_scroller_state_scroll_to_end` and tail following settle it when the list next lays
+// out; right after `scroll_to_end`, `item_ix` is `gk.message_scroller_state_item_count` until
+// then.
 message_scroller_state_logical_scroll_top :: proc(s: Message_Scroller_State, cx: ^Cx, loc := #caller_location) -> (v: List_Offset) {
 	req := make(Tape, 0, 32, context.temp_allocator)
 	o := &req
@@ -10473,6 +10575,23 @@ message_scroller_state_scroll_to_item :: proc(s: Message_Scroller_State, cx: ^Cx
 	put_op(o, 655)
 	put_u64(o, s.h)
 	put_usize(o, index)
+	r := state_call(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// Scroll to a position `gk.message_scroller_state_logical_scroll_top` returned, if its row exists:
+// the row at the top of the viewport and how far into it the list is scrolled.
+//
+// Restores a saved reading position to the pixel, where `gk.message_scroller_state_scroll_to_item`
+// puts the top of the row at the top of the viewport.
+message_scroller_state_scroll_to_offset :: proc(s: Message_Scroller_State, cx: ^Cx, offset: List_Offset, loc := #caller_location) -> (v: bool) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_component_message_scroller()
+	put_op(o, 1776)
+	put_u64(o, s.h)
+	put_List_Offset(o, offset)
 	r := state_call(s.h, cx, req[:], loc)
 	rd_into(&r, &v)
 	return
@@ -17179,6 +17298,22 @@ textarea_state_context_menu_capabilities :: proc(s: Textarea_State, cx: ^Cx, loc
 	return
 }
 
+// Get byte offset of the text under the pointer at the right-click that last opened the context
+// menu.
+//
+// A right-click inside the selection keeps the selection and the cursor, so a custom context menu
+// reads this to find the word under the pointer. The offset is the UTF-8 offset.
+textarea_state_context_menu_offset :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: Maybe(int)) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1770)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 // Get byte offset of the cursor.
 //
 // The offset is the UTF-8 offset.
@@ -17199,6 +17334,18 @@ textarea_state_cursor_position :: proc(s: Textarea_State, cx: ^Cx, loc := #calle
 	o := &req
 	use_base_input()
 	put_op(o, 1476)
+	put_u64(o, s.h)
+	r := state_get(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
+// The textarea's text decorations, as last set and moved by edits since.
+textarea_state_decorations :: proc(s: Textarea_State, cx: ^Cx, loc := #caller_location) -> (v: []Text_Decoration) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1771)
 	put_u64(o, s.h)
 	r := state_get(s.h, cx, req[:], loc)
 	rd_into(&r, &v)
@@ -17868,6 +18015,26 @@ textarea_state_replace_with_token :: proc(s: Textarea_State, cx: ^Cx, token: Inl
 	return
 }
 
+// Replace the tokens and keep the text, the selections and the undo history.
+//
+// Returns `TextMismatch` if `content` holds different text, `SplitsSelection` if a token cuts
+// through any selection, `CompositionActive` during IME composition and `UnsupportedMode` for
+// masked or password inputs.
+//
+// Undo and redo replay the text and the tokens recorded with it; a token set here that an undone
+// edit cuts through is dropped. Call this again after every change to keep derived tokens current.
+textarea_state_set_tokens :: proc(s: Textarea_State, cx: ^Cx, content: Input_Content, loc := #caller_location) -> (v: Maybe(Temp_String)) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1773)
+	put_u64(o, s.h)
+	put_u64(o, content.h)
+	r := state_call(s.h, cx, req[:], loc)
+	rd_into(&r, &v)
+	return
+}
+
 // Add `range` as an additional selection, keeping the existing ones — the programmatic equivalent
 // of Alt-clicking another cursor into the text.
 //
@@ -18179,6 +18346,22 @@ textarea_state_set_cursor_surrounding_lines :: proc(s: Textarea_State, cx: ^Cx, 
 		put_usize(o, x0)
 	} else {
 		put_u8(o, 0)
+	}
+	state_set(cx, req[:], loc)
+}
+
+// Replace the textarea's text decorations, as UTF-8 byte ranges into `gk.input_state_value`.
+// Ranges follow later edits like an editor's decoration collections, and one whose text is deleted
+// is dropped.
+textarea_state_set_decorations :: proc(s: Textarea_State, cx: ^Cx, decorations: []Text_Decoration, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_input()
+	put_op(o, 1772)
+	put_u64(o, s.h)
+	put_u32(o, u32(len(decorations)))
+	for x0 in decorations {
+		put_Text_Decoration(o, x0)
 	}
 	state_set(cx, req[:], loc)
 }
@@ -20863,6 +21046,7 @@ content_size :: proc{scroll_handle_content_size}
 context_ :: proc{tab_group_context}
 context_lines :: proc{diff_state_context_lines}
 context_menu_capabilities :: proc{editor_state_context_menu_capabilities, input_state_context_menu_capabilities, textarea_state_context_menu_capabilities}
+context_menu_offset :: proc{editor_state_context_menu_offset, input_state_context_menu_offset, textarea_state_context_menu_offset}
 coverage :: proc{text_selection_snapshot_coverage}
 create_decorations_collection :: proc{editor_state_create_decorations_collection}
 create_gutter_decorations_collection :: proc{editor_state_create_gutter_decorations_collection}
@@ -20886,6 +21070,7 @@ dark_theme :: proc{theme_dark_theme}
 date :: proc{calendar_state_date, date_picker_state_date}
 date_time :: proc{date_picker_state_date_time}
 days :: proc{calendar_state_days}
+decorations :: proc{textarea_state_decorations}
 default_dark_theme :: proc{theme_registry_default_dark_theme}
 default_light_theme :: proc{theme_registry_default_light_theme}
 default_themes :: proc{theme_registry_default_themes}
@@ -21246,6 +21431,7 @@ scroll_to_end :: proc{message_scroller_state_scroll_to_end}
 scroll_to_file :: proc{diff_state_scroll_to_file}
 scroll_to_item :: proc{list_state_scroll_to_item, message_scroller_state_scroll_to_item, tree_state_scroll_to_item, virtual_list_scroll_handle_scroll_to_item}
 scroll_to_line :: proc{diff_state_scroll_to_line}
+scroll_to_offset :: proc{message_scroller_state_scroll_to_offset}
 scroll_to_row :: proc{table_state_scroll_to_row}
 scroll_to_selected_item :: proc{list_state_scroll_to_selected_item}
 scroll_viewport_size :: proc{editor_scrollbar_context_scroll_viewport_size}
@@ -21284,6 +21470,7 @@ series :: proc{stack_series}
 set_accessibility :: proc{editor_state_set_accessibility, input_state_set_accessibility, textarea_state_set_accessibility}
 set_active :: proc{pane_tree_set_active}
 set_active_tab :: proc{color_picker_state_set_active_tab}
+set_all_files_collapsed :: proc{diff_state_set_all_files_collapsed}
 set_answer :: proc{questionnaire_state_set_answer}
 set_appearance :: proc{base_theme_set_appearance}
 set_areas :: proc{grid_layout_state_set_areas}
@@ -21306,6 +21493,7 @@ set_cursor_surrounding_lines :: proc{editor_state_set_cursor_surrounding_lines, 
 set_dark_theme :: proc{theme_set_dark_theme}
 set_date :: proc{calendar_state_set_date, date_picker_state_set_date}
 set_date_time :: proc{date_picker_state_set_date_time}
+set_decorations :: proc{textarea_state_set_decorations}
 set_disabled :: proc{editor_state_set_disabled, input_state_set_disabled, textarea_state_set_disabled}
 set_disabled_matcher :: proc{calendar_state_set_disabled_matcher}
 set_dock :: proc{dock_area_set_dock}
@@ -21319,6 +21507,7 @@ set_external_error :: proc{questionnaire_state_set_external_error}
 set_fallback_copy_text :: proc{text_selection_handle_set_fallback_copy_text}
 set_file_collapsed :: proc{diff_state_set_file_collapsed}
 set_files :: proc{diff_state_set_files}
+set_files_collapsed :: proc{diff_state_set_files_collapsed}
 set_focus_ring :: proc{theme_set_focus_ring}
 set_fold_background :: proc{editor_state_set_fold_background, input_state_set_fold_background, textarea_state_set_fold_background}
 set_fold_candidates :: proc{display_map_set_fold_candidates}
@@ -21417,7 +21606,7 @@ set_tab_size :: proc{editor_state_set_tab_size, textarea_state_set_tab_size}
 set_text :: proc{text_view_state_set_text}
 set_text_align :: proc{editor_state_set_text_align, input_state_set_text_align, textarea_state_set_text_align}
 set_time :: proc{time_field_state_set_time}
-set_tokens :: proc{base_theme_set_tokens}
+set_tokens :: proc{base_theme_set_tokens, input_state_set_tokens, textarea_state_set_tokens}
 set_transparent :: proc{theme_set_transparent}
 set_validator :: proc{input_state_set_validator}
 set_value :: proc{color_picker_state_set_value, editor_state_set_value, input_state_set_value, otp_state_set_value, slider_state_set_value, textarea_state_set_value}
@@ -21469,6 +21658,7 @@ target :: proc{sequence_step_target}
 text_align :: proc{input_presentation_text_align}
 text_bounds :: proc{editor_state_text_bounds, input_state_text_bounds, textarea_state_text_bounds}
 text_input_configuration :: proc{editor_state_text_input_configuration, input_state_text_input_configuration, textarea_state_text_input_configuration}
+text_origin_offset :: proc{editor_state_text_origin_offset}
 text_style :: proc{inline_render_context_text_style}
 theme_name :: proc{theme_theme_name}
 themes :: proc{theme_registry_themes}

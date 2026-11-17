@@ -61,7 +61,7 @@ pub fn apply_component_text_view(dx: &mut Dx, mut el: gpui_kit::component::text:
             263 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::Bounds<gpui_kit::Pixels>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 75, &a0, window, cx) } }; <gpui_kit::component::text::TextView>::on_reveal(el, a0) }; }
             264 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::text::TextView>::scrollable(el, a0) }; }
             265 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::text::TextView>::selectable(el, a0) }; }
-            266 => { el = { let a0 = en_57(r.u16()); <gpui_kit::component::text::TextView>::selection_format(el, a0) }; }
+            266 => { el = { let a0 = en_59(r.u16()); <gpui_kit::component::text::TextView>::selection_format(el, a0) }; }
             267 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::text::TextView>::stream_fade(el, a0) }; }
             268 => { el = { let Some((a0,)) = (|| Some((build_component_text_view_style(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::text::TextView>::style(el, a0) }; }
             269 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::SharedString, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 83, &(&a0, a1), window, cx) } }; <gpui_kit::component::text::TextView>::on_link_click(el, a0) }; }
@@ -72,8 +72,9 @@ pub fn apply_component_text_view(dx: &mut Dx, mut el: gpui_kit::component::text:
             274 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::base::TableData, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&k0, &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&k0, &mut b); b }; (crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); }), window, cx)) } }; <gpui_kit::component::text::TextView>::table_actions(el, a0) }; }
             275 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::SharedString, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyView { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&k0, &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&k0, &mut b); b }; crate::editor_text::ctx_view(src, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); }), window, cx) } }; <gpui_kit::component::text::TextView>::link_tooltip(el, a0) }; }
             276 => { el = { let Some((a0,)) = (|| Some(({ match r.u8() { 0 => crate::editor_text::GkPlugin::Frontmatter(build_component_frontmatter_plugin(dx, r.u32())?), _ => crate::editor_text::GkPlugin::Data(<crate::editor_text::DataPlugin as genapi::Unwire>::get(r)) } },)))() else { continue }; <gpui_kit::component::text::TextView>::plugin(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("TextView", op),

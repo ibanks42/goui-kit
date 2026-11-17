@@ -48,8 +48,9 @@ pub fn apply_component_separator(dx: &mut Dx, mut el: gpui_kit::component::separ
             256 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::component::separator::Separator>::color(el, a0) }; }
             257 => { el = { <gpui_kit::component::separator::Separator>::dashed(el) }; }
             258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::separator::Separator>::label(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Separator", op),

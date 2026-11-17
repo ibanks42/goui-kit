@@ -64,7 +64,7 @@ pub fn apply_component_alert_dialog(dx: &mut Dx, mut el: gpui_kit::component::di
             261 => { el = { <gpui_kit::component::dialog::AlertDialog>::confirm(el) }; }
             262 => { el = { let a0 = { let f = dx.frag(r.u32()); move |v: gpui_kit::component::dialog::DialogContent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| apply_component_dialog_content(dx, v, dx.node(n).2)) }; <gpui_kit::component::dialog::AlertDialog>::content(el, a0) }; }
             263 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::description(el, a0) }; }
-            264 => { el = { let a0 = en_93(r.u16()); <gpui_kit::component::dialog::AlertDialog>::entrance(el, a0) }; }
+            264 => { el = { let a0 = en_95(r.u16()); <gpui_kit::component::dialog::AlertDialog>::entrance(el, a0) }; }
             265 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::footer(el, a0) }; }
             266 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::icon(el, a0) }; }
             267 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::AlertDialog>::keyboard(el, a0) }; }
@@ -78,10 +78,11 @@ pub fn apply_component_alert_dialog(dx: &mut Dx, mut el: gpui_kit::component::di
             275 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::title(el, a0) }; }
             276 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::trigger(el, a0) }; }
             277 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::dialog::AlertDialog>::width(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
@@ -114,7 +115,7 @@ pub fn apply_component_dialog(dx: &mut Dx, mut el: gpui_kit::component::dialog::
             257 => { el = { <gpui_kit::component::dialog::Dialog>::centered(el) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::Dialog>::close_button(el, a0) }; }
             259 => { el = { let a0 = { let f = dx.frag(r.u32()); move |v: gpui_kit::component::dialog::DialogContent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| apply_component_dialog_content(dx, v, dx.node(n).2)) }; <gpui_kit::component::dialog::Dialog>::content(el, a0) }; }
-            260 => { el = { let a0 = en_93(r.u16()); <gpui_kit::component::dialog::Dialog>::entrance(el, a0) }; }
+            260 => { el = { let a0 = en_95(r.u16()); <gpui_kit::component::dialog::Dialog>::entrance(el, a0) }; }
             261 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::Dialog>::footer(el, a0) }; }
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::Dialog>::keyboard(el, a0) }; }
             263 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::dialog::Dialog>::margin_top(el, a0) }; }
@@ -128,10 +129,11 @@ pub fn apply_component_dialog(dx: &mut Dx, mut el: gpui_kit::component::dialog::
             271 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::Dialog>::trigger(el, a0) }; }
             272 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::dialog::Dialog>::w(el, a0) }; }
             273 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::dialog::Dialog>::width(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
@@ -245,10 +247,11 @@ pub fn apply_component_dialog_content(dx: &mut Dx, mut el: gpui_kit::component::
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
@@ -277,10 +280,11 @@ pub fn apply_component_dialog_description(dx: &mut Dx, mut el: gpui_kit::compone
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
@@ -309,10 +313,11 @@ pub fn apply_component_dialog_footer(dx: &mut Dx, mut el: gpui_kit::component::d
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
@@ -341,10 +346,11 @@ pub fn apply_component_dialog_header(dx: &mut Dx, mut el: gpui_kit::component::d
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
@@ -373,10 +379,11 @@ pub fn apply_component_dialog_title(dx: &mut Dx, mut el: gpui_kit::component::di
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }

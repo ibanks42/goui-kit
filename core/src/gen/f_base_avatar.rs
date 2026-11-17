@@ -49,7 +49,8 @@ pub fn apply_base_avatar(dx: &mut Dx, mut el: gpui_kit::base::Avatar, first: u32
         match op {
             256 => { el = { let Some((a0,)) = (|| Some((build_base_avatar_fallback(dx, r.u32())?,)))() else { continue }; <gpui_kit::base::Avatar>::fallback(el, a0) }; }
             257 => { el = { let Some((a0,)) = (|| Some((build_base_avatar_image(dx, r.u32())?,)))() else { continue }; <gpui_kit::base::Avatar>::image(el, a0) }; }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             16512..=16639 => { el = tr_interactive_element_0(el, op, r, dx); }
@@ -78,7 +79,8 @@ pub fn apply_base_avatar_fallback(dx: &mut Dx, mut el: gpui_kit::base::AvatarFal
         let r = &mut r;
         match op {
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
@@ -107,7 +109,8 @@ pub fn apply_base_avatar_image(dx: &mut Dx, mut el: gpui_kit::base::AvatarImage,
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             16512..=16639 => { el = tr_interactive_element_0(el, op, r, dx); }

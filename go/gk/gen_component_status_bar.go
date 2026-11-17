@@ -70,11 +70,92 @@ func (e StatusBarEl) FocusRingStyle() StatusBarEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e StatusBarEl) KeepTextSelection(id ID) StatusBarEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e StatusBarEl) OnPrepaint(callback func(cx *Cx, e Bounds)) StatusBarEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e StatusBarEl) BorderE(width Length) StatusBarEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e StatusBarEl) BorderS(width Length) StatusBarEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e StatusBarEl) FlexRowDir() StatusBarEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e StatusBarEl) InsetE(length Length) StatusBarEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e StatusBarEl) InsetS(length Length) StatusBarEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e StatusBarEl) JustifyFlexEnd() StatusBarEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e StatusBarEl) JustifyFlexStart() StatusBarEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e StatusBarEl) Me(length Length) StatusBarEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e StatusBarEl) Ms(length Length) StatusBarEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e StatusBarEl) Pe(length Length) StatusBarEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e StatusBarEl) Ps(length Length) StatusBarEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e StatusBarEl) RoundedE(radius Length) StatusBarEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e StatusBarEl) RoundedS(radius Length) StatusBarEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e StatusBarEl) TextEnd() StatusBarEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e StatusBarEl) TextStart() StatusBarEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e StatusBarEl) CornerRadii(radius Corners) StatusBarEl {
 	tStyledExtCornerRadii(e.n, radius)

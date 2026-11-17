@@ -78,8 +78,9 @@ pub fn apply_component_shimmer_text(dx: &mut Dx, mut el: gpui_kit::component::sh
             260 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::shimmer::ShimmerText>::reverse(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some((in_38(r, dx)?,)))() else { continue }; <gpui_kit::component::shimmer::ShimmerText>::spread(el, a0) }; }
             262 => { el = { let Some((a0,)) = (|| Some((build_component_shimmer_style(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::shimmer::ShimmerText>::with_shimmer_style(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("ShimmerText", op),

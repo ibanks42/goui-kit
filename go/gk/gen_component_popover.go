@@ -188,11 +188,80 @@ func (e PopoverEl) RoundedFullStyle() PopoverEl { tThemeStyledRoundedFullStyle(e
 // off — leave it a few pixels of room, or don't clip.
 func (e PopoverEl) FocusRingStyle() PopoverEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e PopoverEl) KeepTextSelection(id ID) PopoverEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e PopoverEl) OnPrepaint(callback func(cx *Cx, e Bounds)) PopoverEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e PopoverEl) BorderE(width Length) PopoverEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e PopoverEl) BorderS(width Length) PopoverEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e PopoverEl) FlexRowDir() PopoverEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e PopoverEl) InsetE(length Length) PopoverEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e PopoverEl) InsetS(length Length) PopoverEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e PopoverEl) JustifyFlexEnd() PopoverEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e PopoverEl) JustifyFlexStart() PopoverEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e PopoverEl) Me(length Length) PopoverEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e PopoverEl) Ms(length Length) PopoverEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e PopoverEl) Pe(length Length) PopoverEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e PopoverEl) Ps(length Length) PopoverEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e PopoverEl) RoundedE(radius Length) PopoverEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e PopoverEl) RoundedS(radius Length) PopoverEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e PopoverEl) TextEnd() PopoverEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e PopoverEl) TextStart() PopoverEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e PopoverEl) CornerRadii(radius Corners) PopoverEl {
 	tStyledExtCornerRadii(e.n, radius)

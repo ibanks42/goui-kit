@@ -150,10 +150,24 @@ disableable_any := Disableable_Trait(Any_El) {
 
 // Element_Ext_Trait is gpui_kit::base::ElementExt.
 Element_Ext_Trait :: struct($T: typeid) {
+	// Keeps the window's text selection when this element is pressed, for one that acts on the
+	// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+	// starts a new one, so its click still finds the selection. `id` must be unique among this
+	// element's children. Works inside a cached view.
+	//
+	// The window remembers each element marked this way until it closes, so mark the row of buttons,
+	// not each row of a long list.
+	keep_text_selection: proc(e: T, id: Id) -> T,
 	// Invokes `callback` during prepaint with this element's resolved bounds.
 	on_prepaint: proc(e: T, callback: Handler) -> T,
 }
 
+@(private)
+element_ext_keep_text_selection :: proc(e: Any_El, id: Id) -> Any_El {
+	o := op(e, 17153)
+	put_id(o, id)
+	return e
+}
 @(private)
 element_ext_on_prepaint :: proc(e: Any_El, callback: Handler) -> Any_El {
 	o := op(e, 17152)
@@ -162,6 +176,7 @@ element_ext_on_prepaint :: proc(e: Any_El, callback: Handler) -> Any_El {
 }
 @(private)
 element_ext_any := Element_Ext_Trait(Any_El) {
+	keep_text_selection = element_ext_keep_text_selection,
 	on_prepaint = element_ext_on_prepaint,
 }
 
@@ -760,6 +775,150 @@ interactive_element_any := Interactive_Element_Trait(Any_El) {
 	tab_stop = interactive_element_tab_stop,
 	track_focus = interactive_element_track_focus,
 	window_control_area = interactive_element_window_control_area,
+}
+
+// Logical_Styled_Ext_Trait is gpui_kit::base::LogicalStyledExt.
+Logical_Styled_Ext_Trait :: struct($T: typeid) {
+	// Border width on the end edge.
+	border_e: proc(e: T, width: Length) -> T,
+	// Border width on the start edge.
+	border_s: proc(e: T, width: Length) -> T,
+	// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+	// `flex_row_reverse` in RTL.
+	flex_row_dir: proc(e: T) -> T,
+	// Inset from the end edge of the positioned ancestor.
+	inset_e: proc(e: T, length: Length) -> T,
+	// Inset from the start edge of the positioned ancestor.
+	inset_s: proc(e: T, length: Length) -> T,
+	// Packs a row's children against the edge its last child sits on — the end edge of a
+	// `->flex_row_dir` row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+	justify_flex_end: proc(e: T) -> T,
+	// Packs a row's children against the edge its first child sits on — the start edge of a
+	// `->flex_row_dir` row.
+	//
+	// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+	// layout direction; this is CSS `flex-start`.
+	justify_flex_start: proc(e: T) -> T,
+	// Margin on the end edge.
+	me: proc(e: T, length: Length) -> T,
+	// Margin on the start edge.
+	ms: proc(e: T, length: Length) -> T,
+	// Padding on the end edge.
+	pe: proc(e: T, length: Length) -> T,
+	// Padding on the start edge.
+	ps: proc(e: T, length: Length) -> T,
+	// Corner radius of both end corners.
+	rounded_e: proc(e: T, radius: Length) -> T,
+	// Corner radius of both start corners.
+	rounded_s: proc(e: T, radius: Length) -> T,
+	// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+	text_end: proc(e: T) -> T,
+	// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+	text_start: proc(e: T) -> T,
+}
+
+@(private)
+logical_styled_ext_border_e :: proc(e: Any_El, width: Length) -> Any_El {
+	o := op(e, 19200)
+	put_absolute_length(o, width)
+	return e
+}
+@(private)
+logical_styled_ext_border_s :: proc(e: Any_El, width: Length) -> Any_El {
+	o := op(e, 19201)
+	put_absolute_length(o, width)
+	return e
+}
+@(private)
+logical_styled_ext_flex_row_dir :: proc(e: Any_El) -> Any_El {
+	op(e, 19202)
+	return e
+}
+@(private)
+logical_styled_ext_inset_e :: proc(e: Any_El, length: Length) -> Any_El {
+	o := op(e, 19203)
+	put_length(o, length)
+	return e
+}
+@(private)
+logical_styled_ext_inset_s :: proc(e: Any_El, length: Length) -> Any_El {
+	o := op(e, 19204)
+	put_length(o, length)
+	return e
+}
+@(private)
+logical_styled_ext_justify_flex_end :: proc(e: Any_El) -> Any_El {
+	op(e, 19205)
+	return e
+}
+@(private)
+logical_styled_ext_justify_flex_start :: proc(e: Any_El) -> Any_El {
+	op(e, 19206)
+	return e
+}
+@(private)
+logical_styled_ext_me :: proc(e: Any_El, length: Length) -> Any_El {
+	o := op(e, 19207)
+	put_length(o, length)
+	return e
+}
+@(private)
+logical_styled_ext_ms :: proc(e: Any_El, length: Length) -> Any_El {
+	o := op(e, 19208)
+	put_length(o, length)
+	return e
+}
+@(private)
+logical_styled_ext_pe :: proc(e: Any_El, length: Length) -> Any_El {
+	o := op(e, 19209)
+	put_definite_length(o, length)
+	return e
+}
+@(private)
+logical_styled_ext_ps :: proc(e: Any_El, length: Length) -> Any_El {
+	o := op(e, 19210)
+	put_definite_length(o, length)
+	return e
+}
+@(private)
+logical_styled_ext_rounded_e :: proc(e: Any_El, radius: Length) -> Any_El {
+	o := op(e, 19211)
+	put_absolute_length(o, radius)
+	return e
+}
+@(private)
+logical_styled_ext_rounded_s :: proc(e: Any_El, radius: Length) -> Any_El {
+	o := op(e, 19212)
+	put_absolute_length(o, radius)
+	return e
+}
+@(private)
+logical_styled_ext_text_end :: proc(e: Any_El) -> Any_El {
+	op(e, 19213)
+	return e
+}
+@(private)
+logical_styled_ext_text_start :: proc(e: Any_El) -> Any_El {
+	op(e, 19214)
+	return e
+}
+@(private)
+logical_styled_ext_any := Logical_Styled_Ext_Trait(Any_El) {
+	border_e = logical_styled_ext_border_e,
+	border_s = logical_styled_ext_border_s,
+	flex_row_dir = logical_styled_ext_flex_row_dir,
+	inset_e = logical_styled_ext_inset_e,
+	inset_s = logical_styled_ext_inset_s,
+	justify_flex_end = logical_styled_ext_justify_flex_end,
+	justify_flex_start = logical_styled_ext_justify_flex_start,
+	me = logical_styled_ext_me,
+	ms = logical_styled_ext_ms,
+	pe = logical_styled_ext_pe,
+	ps = logical_styled_ext_ps,
+	rounded_e = logical_styled_ext_rounded_e,
+	rounded_s = logical_styled_ext_rounded_s,
+	text_end = logical_styled_ext_text_end,
+	text_start = logical_styled_ext_text_start,
 }
 
 // Parent_Element_Trait is gpui_kit::ParentElement.

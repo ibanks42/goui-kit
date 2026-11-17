@@ -421,7 +421,8 @@ def from_implementors(m, hc, im):
     for cr in g.KIT:
         for iid, (_, ty) in sorted(m.api.walks[cr].types.items()):
             f = m.info(cr, iid)
-            if bounds[0] not in f["traits"] or f["generic"]:
+            has = bounds[0] in f["traits"] or bounds[0] == "IntoElement" and f["element"]  # blanket (gk_model)
+            if not has or f["generic"]:
                 continue
             ref = {"resolved_path": {"path": ty["name"], "id": int(iid), "args": None}}
             try:

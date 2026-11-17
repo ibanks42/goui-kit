@@ -269,11 +269,71 @@ func (e ButtonEl) RoundedFullStyle() ButtonEl { tThemeStyledRoundedFullStyle(e.n
 // off — leave it a few pixels of room, or don't clip.
 func (e ButtonEl) FocusRingStyle() ButtonEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e ButtonEl) KeepTextSelection(id ID) ButtonEl { tElementExtKeepTextSelection(e.n, id); return e }
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e ButtonEl) OnPrepaint(callback func(cx *Cx, e Bounds)) ButtonEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e ButtonEl) BorderE(width Length) ButtonEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e ButtonEl) BorderS(width Length) ButtonEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e ButtonEl) FlexRowDir() ButtonEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e ButtonEl) InsetE(length Length) ButtonEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e ButtonEl) InsetS(length Length) ButtonEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e ButtonEl) JustifyFlexEnd() ButtonEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e ButtonEl) JustifyFlexStart() ButtonEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e ButtonEl) Me(length Length) ButtonEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e ButtonEl) Ms(length Length) ButtonEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e ButtonEl) Pe(length Length) ButtonEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e ButtonEl) Ps(length Length) ButtonEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e ButtonEl) RoundedE(radius Length) ButtonEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e ButtonEl) RoundedS(radius Length) ButtonEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e ButtonEl) TextEnd() ButtonEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e ButtonEl) TextStart() ButtonEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e ButtonEl) CornerRadii(radius Corners) ButtonEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e ButtonEl) DebugBlue() ButtonEl                 { tStyledExtDebugBlue(e.n); return e }
@@ -1048,7 +1108,11 @@ func (e ButtonCustomVariant) Active(color Color) ButtonCustomVariant {
 	return e
 }
 
-// Set background color, default is transparent.
+// Set the base color, default is transparent.
+//
+// At rest the button fills with this color at 20% opacity, the tint the danger, warning, success
+// and info buttons use by default. An outline button also draws its border in it. The `Hover` and
+// `Active` colors are painted as given.
 //
 // Color is <gpui_kit::component::button::ButtonCustomVariant>::color.
 func (e ButtonCustomVariant) Color(color Color) ButtonCustomVariant {
@@ -1188,6 +1252,78 @@ func (e ButtonGroupEl) PopoverStyle() ButtonGroupEl { tThemeStyledPopoverStyle(e
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e ButtonGroupEl) RoundedFullStyle() ButtonGroupEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e ButtonGroupEl) BorderE(width Length) ButtonGroupEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e ButtonGroupEl) BorderS(width Length) ButtonGroupEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e ButtonGroupEl) FlexRowDir() ButtonGroupEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e ButtonGroupEl) InsetE(length Length) ButtonGroupEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e ButtonGroupEl) InsetS(length Length) ButtonGroupEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e ButtonGroupEl) JustifyFlexEnd() ButtonGroupEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e ButtonGroupEl) JustifyFlexStart() ButtonGroupEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e ButtonGroupEl) Me(length Length) ButtonGroupEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e ButtonGroupEl) Ms(length Length) ButtonGroupEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e ButtonGroupEl) Pe(length Length) ButtonGroupEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e ButtonGroupEl) Ps(length Length) ButtonGroupEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e ButtonGroupEl) RoundedE(radius Length) ButtonGroupEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e ButtonGroupEl) RoundedS(radius Length) ButtonGroupEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e ButtonGroupEl) TextEnd() ButtonGroupEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e ButtonGroupEl) TextStart() ButtonGroupEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e ButtonGroupEl) CornerRadii(radius Corners) ButtonGroupEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -1741,6 +1877,93 @@ func (e DropdownButtonEl) RoundedFullStyle() DropdownButtonEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
+
+// Border width on the end edge.
+func (e DropdownButtonEl) BorderE(width Length) DropdownButtonEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e DropdownButtonEl) BorderS(width Length) DropdownButtonEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e DropdownButtonEl) FlexRowDir() DropdownButtonEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e DropdownButtonEl) InsetE(length Length) DropdownButtonEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e DropdownButtonEl) InsetS(length Length) DropdownButtonEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e DropdownButtonEl) JustifyFlexEnd() DropdownButtonEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e DropdownButtonEl) JustifyFlexStart() DropdownButtonEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e DropdownButtonEl) Me(length Length) DropdownButtonEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e DropdownButtonEl) Ms(length Length) DropdownButtonEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e DropdownButtonEl) Pe(length Length) DropdownButtonEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e DropdownButtonEl) Ps(length Length) DropdownButtonEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e DropdownButtonEl) RoundedE(radius Length) DropdownButtonEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e DropdownButtonEl) RoundedS(radius Length) DropdownButtonEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e DropdownButtonEl) TextEnd() DropdownButtonEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e DropdownButtonEl) TextStart() DropdownButtonEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e DropdownButtonEl) CornerRadii(radius Corners) DropdownButtonEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -2405,11 +2628,71 @@ func (e ToggleEl) RoundedFullStyle() ToggleEl { tThemeStyledRoundedFullStyle(e.n
 // off — leave it a few pixels of room, or don't clip.
 func (e ToggleEl) FocusRingStyle() ToggleEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e ToggleEl) KeepTextSelection(id ID) ToggleEl { tElementExtKeepTextSelection(e.n, id); return e }
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e ToggleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) ToggleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e ToggleEl) BorderE(width Length) ToggleEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e ToggleEl) BorderS(width Length) ToggleEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e ToggleEl) FlexRowDir() ToggleEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e ToggleEl) InsetE(length Length) ToggleEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e ToggleEl) InsetS(length Length) ToggleEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e ToggleEl) JustifyFlexEnd() ToggleEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e ToggleEl) JustifyFlexStart() ToggleEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e ToggleEl) Me(length Length) ToggleEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e ToggleEl) Ms(length Length) ToggleEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e ToggleEl) Pe(length Length) ToggleEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e ToggleEl) Ps(length Length) ToggleEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e ToggleEl) RoundedE(radius Length) ToggleEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e ToggleEl) RoundedS(radius Length) ToggleEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e ToggleEl) TextEnd() ToggleEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e ToggleEl) TextStart() ToggleEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e ToggleEl) CornerRadii(radius Corners) ToggleEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e ToggleEl) DebugBlue() ToggleEl                 { tStyledExtDebugBlue(e.n); return e }
@@ -2908,6 +3191,78 @@ func (e ToggleGroupEl) PopoverStyle() ToggleGroupEl { tThemeStyledPopoverStyle(e
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e ToggleGroupEl) RoundedFullStyle() ToggleGroupEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e ToggleGroupEl) BorderE(width Length) ToggleGroupEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e ToggleGroupEl) BorderS(width Length) ToggleGroupEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e ToggleGroupEl) FlexRowDir() ToggleGroupEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e ToggleGroupEl) InsetE(length Length) ToggleGroupEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e ToggleGroupEl) InsetS(length Length) ToggleGroupEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e ToggleGroupEl) JustifyFlexEnd() ToggleGroupEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e ToggleGroupEl) JustifyFlexStart() ToggleGroupEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e ToggleGroupEl) Me(length Length) ToggleGroupEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e ToggleGroupEl) Ms(length Length) ToggleGroupEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e ToggleGroupEl) Pe(length Length) ToggleGroupEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e ToggleGroupEl) Ps(length Length) ToggleGroupEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e ToggleGroupEl) RoundedE(radius Length) ToggleGroupEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e ToggleGroupEl) RoundedS(radius Length) ToggleGroupEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e ToggleGroupEl) TextEnd() ToggleGroupEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e ToggleGroupEl) TextStart() ToggleGroupEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e ToggleGroupEl) CornerRadii(radius Corners) ToggleGroupEl {
 	tStyledExtCornerRadii(e.n, radius)

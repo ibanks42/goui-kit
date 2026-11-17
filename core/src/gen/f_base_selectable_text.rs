@@ -39,6 +39,7 @@ pub fn apply_base_selectable_text(dx: &mut Dx, mut el: gpui_kit::base::Selectabl
             256 => { el = { let a0 = r.u64(); <gpui_kit::base::SelectableText>::document_order(el, a0) }; }
             257 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::base::SelectableText>::selection_color(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some((rc_47(r, dx)?,)))() else { continue }; <gpui_kit::base::SelectableText>::text_style(el, a0) }; }
+            259 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(({ let a = r.u64() as usize; a..(r.u64() as usize) }, rc_22(r, dx)?)); } v },)))() else { continue }; <gpui_kit::base::SelectableText>::highlights(el, a0) }; }
             _ => bad_op("SelectableText", op),
         }
     }

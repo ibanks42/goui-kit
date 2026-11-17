@@ -11,6 +11,9 @@ func (e LabelEl) node() *node { return e.n }
 
 // Create a new label with the main label.
 //
+// The label's id defaults to this call site, which is unique wherever one line builds one label.
+// See `ID` for labels built in a loop.
+//
 // Label is <gpui_kit::component::label::Label>::new.
 func Label(label string, st ...Style) LabelEl {
 	useComponentLabel()
@@ -27,6 +30,20 @@ func Label(label string, st ...Style) LabelEl {
 func (e LabelEl) Highlights(text HighlightsMatchInto) LabelEl {
 	o := op(e.n, 256)
 	putHighlightsMatchInto(o, text)
+	return e
+}
+
+// Set the label's element id, replacing the default taken from where `gk.Label` was called.
+//
+// Pass one where a single `Label::new` renders several labels as siblings, such as in a loop: they
+// share the default id, so assistive technology gets only the first of them, and GPUI's debug
+// builds panic on the duplicate while it is connected. The id must be unique among those siblings.
+// Labels under parents that have their own ids, like the rows of a `List`, are already distinct.
+//
+// ID is <gpui_kit::component::label::Label>::id.
+func (e LabelEl) ID(id ID) LabelEl {
+	o := op(e.n, 259)
+	putID(o, id)
 	return e
 }
 
@@ -63,6 +80,57 @@ func (e LabelEl) PopoverStyle() LabelEl { tThemeStyledPopoverStyle(e.n); return 
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e LabelEl) RoundedFullStyle() LabelEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e LabelEl) BorderE(width Length) LabelEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e LabelEl) BorderS(width Length) LabelEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e LabelEl) FlexRowDir() LabelEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e LabelEl) InsetE(length Length) LabelEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e LabelEl) InsetS(length Length) LabelEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e LabelEl) JustifyFlexEnd() LabelEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e LabelEl) JustifyFlexStart() LabelEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e LabelEl) Me(length Length) LabelEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e LabelEl) Ms(length Length) LabelEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e LabelEl) Pe(length Length) LabelEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e LabelEl) Ps(length Length) LabelEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e LabelEl) RoundedE(radius Length) LabelEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e LabelEl) RoundedS(radius Length) LabelEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e LabelEl) TextEnd() LabelEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e LabelEl) TextStart() LabelEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e LabelEl) CornerRadii(radius Corners) LabelEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e LabelEl) DebugBlue() LabelEl                 { tStyledExtDebugBlue(e.n); return e }

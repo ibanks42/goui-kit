@@ -11,6 +11,7 @@ Pagination :: struct {
 
 Pagination_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Pagination),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Pagination),
 	using t_styled_ext: ^Styled_Ext_Trait(Pagination),
 	using t_disableable: ^Disableable_Trait(Pagination),
 	using t_sizable: ^Sizable_Trait(Pagination),
@@ -46,6 +47,7 @@ pagination :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Pagi
 @(private)
 pagination_vt := Pagination_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Pagination))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Pagination))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Pagination))&styled_ext_any,
 	t_disableable = cast(^Disableable_Trait(Pagination))&disableable_any,
 	t_sizable = cast(^Sizable_Trait(Pagination))&sizable_any,

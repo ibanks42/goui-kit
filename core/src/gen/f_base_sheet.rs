@@ -46,7 +46,8 @@ pub fn apply_base_sheet(dx: &mut Dx, mut el: gpui_kit::base::Sheet, first: u32) 
             257 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::base::Sheet>::overlay(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Sheet>::overlay_closable(el, a0) }; }
             259 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::base::Sheet>::surface(el, a0) }; }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Sheet", op),

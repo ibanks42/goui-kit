@@ -55,6 +55,7 @@ Text_View :: struct {
 
 Text_View_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Text_View),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Text_View),
 	using t_styled_ext: ^Styled_Ext_Trait(Text_View),
 	aspect_ratio: proc(e: Text_View, ratio: f32) -> Text_View,
 	bg: proc(e: Text_View, fill: Fill) -> Text_View,
@@ -250,6 +251,7 @@ text_view_markdown :: proc(id: Id, text: string, flags: ..Style_Flag, loc := #ca
 @(private)
 text_view_vt := Text_View_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Text_View))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Text_View))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Text_View))&styled_ext_any,
 	aspect_ratio = transmute(proc(e: Text_View, ratio: f32) -> Text_View)styled_aspect_ratio,
 	bg = transmute(proc(e: Text_View, fill: Fill) -> Text_View)styled_bg,

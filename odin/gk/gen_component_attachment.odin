@@ -11,6 +11,7 @@ Attachment :: struct {
 
 Attachment_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Attachment),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Attachment),
 	using t_styled_ext: ^Styled_Ext_Trait(Attachment),
 	using t_sizable: ^Sizable_Trait(Attachment),
 	using t_styled: ^Styled_Trait(Attachment),
@@ -69,6 +70,7 @@ attachment_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Atta
 @(private)
 attachment_vt := Attachment_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Attachment))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Attachment))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Attachment))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Attachment))&sizable_any,
 	t_styled = cast(^Styled_Trait(Attachment))&styled_any,
@@ -144,6 +146,7 @@ Attachment_Actions_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Attachment_Actions),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Attachment_Actions),
 	using t_element_ext: ^Element_Ext_Trait(Attachment_Actions),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Attachment_Actions),
 	using t_styled_ext: ^Styled_Ext_Trait(Attachment_Actions),
 	using t_parent_element: ^Parent_Element_Trait(Attachment_Actions),
 	using t_styled: ^Styled_Trait(Attachment_Actions),
@@ -169,6 +172,7 @@ attachment_actions_vt := Attachment_Actions_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Attachment_Actions))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Attachment_Actions))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Attachment_Actions))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Attachment_Actions))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Attachment_Actions))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Attachment_Actions))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Attachment_Actions))&styled_any,
@@ -186,6 +190,7 @@ Attachment_Content_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Attachment_Content),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Attachment_Content),
 	using t_element_ext: ^Element_Ext_Trait(Attachment_Content),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Attachment_Content),
 	using t_styled_ext: ^Styled_Ext_Trait(Attachment_Content),
 	using t_parent_element: ^Parent_Element_Trait(Attachment_Content),
 	using t_styled: ^Styled_Trait(Attachment_Content),
@@ -215,6 +220,7 @@ attachment_content_vt := Attachment_Content_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Attachment_Content))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Attachment_Content))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Attachment_Content))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Attachment_Content))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Attachment_Content))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Attachment_Content))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Attachment_Content))&styled_any,
@@ -240,6 +246,7 @@ Attachment_Description :: struct {
 
 Attachment_Description_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Attachment_Description),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Attachment_Description),
 	using t_styled_ext: ^Styled_Ext_Trait(Attachment_Description),
 	using t_styled: ^Styled_Trait(Attachment_Description),
 	// Set the status used for the semantic description color.
@@ -259,6 +266,7 @@ attachment_description :: proc(text: string, flags: ..Style_Flag, loc := #caller
 @(private)
 attachment_description_vt := Attachment_Description_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Attachment_Description))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Attachment_Description))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Attachment_Description))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Attachment_Description))&styled_any,
 	status = proc(e: Attachment_Description, status: Attachment_Status) -> Attachment_Description {
@@ -280,6 +288,7 @@ Attachment_Group_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Attachment_Group),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Attachment_Group),
 	using t_element_ext: ^Element_Ext_Trait(Attachment_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Attachment_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Attachment_Group),
 	using t_parent_element: ^Parent_Element_Trait(Attachment_Group),
 	using t_styled: ^Styled_Trait(Attachment_Group),
@@ -311,6 +320,7 @@ attachment_group_vt := Attachment_Group_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Attachment_Group))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Attachment_Group))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Attachment_Group))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Attachment_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Attachment_Group))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Attachment_Group))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Attachment_Group))&styled_any,
@@ -341,6 +351,7 @@ Attachment_Media_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Attachment_Media),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Attachment_Media),
 	using t_element_ext: ^Element_Ext_Trait(Attachment_Media),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Attachment_Media),
 	using t_styled_ext: ^Styled_Ext_Trait(Attachment_Media),
 	using t_parent_element: ^Parent_Element_Trait(Attachment_Media),
 	using t_sizable: ^Sizable_Trait(Attachment_Media),
@@ -371,6 +382,7 @@ attachment_media_vt := Attachment_Media_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Attachment_Media))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Attachment_Media))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Attachment_Media))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Attachment_Media))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Attachment_Media))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Attachment_Media))&parent_element_any,
 	t_sizable = cast(^Sizable_Trait(Attachment_Media))&sizable_any,
@@ -397,6 +409,7 @@ Attachment_Title :: struct {
 
 Attachment_Title_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Attachment_Title),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Attachment_Title),
 	using t_styled_ext: ^Styled_Ext_Trait(Attachment_Title),
 	using t_styled: ^Styled_Trait(Attachment_Title),
 	// Override the attachment lifecycle status used for the loading shimmer.
@@ -418,6 +431,7 @@ attachment_title :: proc(text: string, flags: ..Style_Flag, loc := #caller_locat
 @(private)
 attachment_title_vt := Attachment_Title_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Attachment_Title))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Attachment_Title))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Attachment_Title))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Attachment_Title))&styled_any,
 	status = proc(e: Attachment_Title, status: Attachment_Status) -> Attachment_Title {

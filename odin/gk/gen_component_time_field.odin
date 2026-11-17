@@ -13,6 +13,7 @@ Time_Field :: struct {
 
 Time_Field_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Time_Field),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Time_Field),
 	using t_styled_ext: ^Styled_Ext_Trait(Time_Field),
 	using t_sizable: ^Sizable_Trait(Time_Field),
 	using t_disableable: ^Disableable_Trait(Time_Field),
@@ -33,6 +34,7 @@ time_field :: proc(state: Time_Field_State, flags: ..Style_Flag, loc := #caller_
 @(private)
 time_field_vt := Time_Field_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Time_Field))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Time_Field))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Time_Field))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Time_Field))&sizable_any,
 	t_disableable = cast(^Disableable_Trait(Time_Field))&disableable_any,

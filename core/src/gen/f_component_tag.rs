@@ -31,7 +31,7 @@ pub fn build_component_tag(dx: &mut Dx, n: u32) -> Option<gpui_kit::component::t
 pub fn make_component_tag(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::tag::Tag> {
     let r = &mut dx.args(args);
     let el: gpui_kit::component::tag::Tag = match ty {
-        782 => { let a0 = en_85(r.u16()); <gpui_kit::component::tag::Tag>::color(a0) }
+        782 => { let a0 = en_87(r.u16()); <gpui_kit::component::tag::Tag>::color(a0) }
         783 => { let a0 = genapi::color(r, &*dx.cx); let a1 = genapi::color(r, &*dx.cx); let a2 = genapi::color(r, &*dx.cx); <gpui_kit::component::tag::Tag>::custom(a0, a1, a2) }
         784 => { <gpui_kit::component::tag::Tag>::danger() }
         785 => { <gpui_kit::component::tag::Tag>::info() }
@@ -54,11 +54,12 @@ pub fn apply_component_tag(dx: &mut Dx, mut el: gpui_kit::component::tag::Tag, f
             257 => { el = { let a0 = absolute_length(r); <gpui_kit::component::tag::Tag>::rounded(el, a0) }; }
             258 => { el = { <gpui_kit::component::tag::Tag>::rounded_full(el) }; }
             259 => { el = { let Some((a0,)) = (|| Some((de_58(r, dx)?,)))() else { continue }; <gpui_kit::component::tag::Tag>::with_variant(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }

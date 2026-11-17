@@ -56,21 +56,22 @@ pub fn apply_component_tab(dx: &mut Dx, mut el: gpui_kit::component::tab::Tab, f
             264 => { el = { <gpui_kit::component::tab::Tab>::segmented(el) }; }
             265 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::tab::Tab>::suffix(el, a0) }; }
             266 => { el = { <gpui_kit::component::tab::Tab>::underline(el) }; }
-            267 => { el = { let a0 = en_115(r.u16()); <gpui_kit::component::tab::Tab>::with_variant(el, a0) }; }
-            268 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::tab::Tab>::icon(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            267 => { el = { let a0 = en_117(r.u16()); <gpui_kit::component::tab::Tab>::with_variant(el, a0) }; }
+            268 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::tab::Tab>::icon(el, a0) }; }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
-            17664..=17791 => { el = tr_selectable_17(el, op, r, dx); }
+            17664..=17791 => { el = tr_selectable_18(el, op, r, dx); }
             16512..=16639 => { el = tr_interactive_element_0(el, op, r, dx); }
             16768..=16895 => { el = tr_stateful_interactive_element_2(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("Tab", op),
         }
     }
@@ -108,13 +109,14 @@ pub fn apply_component_tab_bar(dx: &mut Dx, mut el: gpui_kit::component::tab::Ta
             267 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::tab::TabBar>::selected_index(el, a0) }; }
             268 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::tab::TabBar>::suffix(el, a0) }; }
             269 => { el = { <gpui_kit::component::tab::TabBar>::underline(el) }; }
-            270 => { el = { let a0 = en_115(r.u16()); <gpui_kit::component::tab::TabBar>::with_variant(el, a0) }; }
+            270 => { el = { let a0 = en_117(r.u16()); <gpui_kit::component::tab::TabBar>::with_variant(el, a0) }; }
             271 => { el = { let a0 = genapi::obj_shown::<gpui_kit::ScrollHandle>(r.u64()); <gpui_kit::component::tab::TabBar>::track_scroll(el, &a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("TabBar", op),
         }
     }

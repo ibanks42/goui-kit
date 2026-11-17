@@ -33,25 +33,25 @@ package you download.
 
 ### Download and unpack
 
-The download is one file per system: `gpuikit-0.0.1-linux-x86_64.tar.zst` (about 66 MB),
-`gpuikit-0.0.1-macos-universal.tar.zst` or `gpuikit-0.0.1-windows-x86_64.zip`, from release `v0.0.1`
+The download is one file per system: `gpuikit-0.0.2-linux-x86_64.tar.zst` (about 66 MB),
+`gpuikit-0.0.2-macos-universal.tar.zst` or `gpuikit-0.0.2-windows-x86_64.zip`, from release `v0.0.2`
 of the bindings' GitHub releases
 ([github.com/ibanks42/gpui-kit-bindings/releases](https://github.com/ibanks42/gpui-kit-bindings/releases)).
 `SHA256SUMS` beside them checks what you downloaded: `sha256sum -c --ignore-missing SHA256SUMS`
 (on macOS `shasum -a 256 -c --ignore-missing SHA256SUMS`). Unpack it anywhere:
 
 ```sh
-tar --zstd -xf gpuikit-0.0.1-linux-x86_64.tar.zst      # or: zstd -dc gpuikit-0.0.1-linux-x86_64.tar.zst | tar -x
-cd gpuikit-0.0.1-linux-x86_64
+tar --zstd -xf gpuikit-0.0.2-linux-x86_64.tar.zst      # or: zstd -dc gpuikit-0.0.2-linux-x86_64.tar.zst | tar -x
+cd gpuikit-0.0.2-linux-x86_64
 ```
 
 On macOS the same with `macos-universal` (`zstd` is in Homebrew); on Windows unpack the `.zip` with
-Explorer or `tar -xf gpuikit-0.0.1-windows-x86_64.zip`. The three hold the same files except the
+Explorer or `tar -xf gpuikit-0.0.2-windows-x86_64.zip`. The three hold the same files except the
 library's:
 
 | path | what |
 |---|---|
-| `lib/libgpuikit_static.a` | the library (GPUI-kit 0.9.1 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel |
+| `lib/libgpuikit_static.a` | the library (GPUI-kit 0.10.0 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel |
 | `lib/libgpuikit_sys.so` | Linux: a small linker script naming the system libraries the library uses |
 | `lib/gpuikit_static.lib`, `lib/gpuikit_sys.lib` | Windows: the library in Visual Studio's format, which Odin links, and the import library of the Windows API it uses |
 | `windows/` | Windows: the manifest a program needs, and `gpuikit.rc`, which embeds it |
@@ -88,7 +88,7 @@ An app is a folder with one or more `.odin` files of one package. Put it beside 
 download and build it with:
 
 ```sh
-G=gpuikit-0.0.1-linux-x86_64
+G=gpuikit-0.0.2-linux-x86_64
 odin build groceries -o:minimal -collection:gpuikit=$G/odin "-extra-linker-flags:-L$G/lib" -out:groceries.bin
 ./groceries.bin
 ```
@@ -112,7 +112,7 @@ builds for Intel on Apple silicon (`-target:darwin_arm64` the other way round), 
 linker is `lld-link`, which takes the library folder as `/LIBPATH:` (in PowerShell):
 
 ```powershell
-$G = "gpuikit-0.0.1-windows-x86_64"
+$G = "gpuikit-0.0.2-windows-x86_64"
 odin build groceries -o:minimal -linker:lld -collection:gpuikit=$G/odin "-extra-linker-flags:/LIBPATH:$G/lib" -out:groceries.exe
 copy $G/windows/gpuikit.manifest groceries.exe.manifest
 .\groceries.exe

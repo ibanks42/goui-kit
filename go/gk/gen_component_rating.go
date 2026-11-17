@@ -92,6 +92,57 @@ func (e RatingEl) PopoverStyle() RatingEl { tThemeStyledPopoverStyle(e.n); retur
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e RatingEl) RoundedFullStyle() RatingEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e RatingEl) BorderE(width Length) RatingEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e RatingEl) BorderS(width Length) RatingEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e RatingEl) FlexRowDir() RatingEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e RatingEl) InsetE(length Length) RatingEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e RatingEl) InsetS(length Length) RatingEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e RatingEl) JustifyFlexEnd() RatingEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e RatingEl) JustifyFlexStart() RatingEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e RatingEl) Me(length Length) RatingEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e RatingEl) Ms(length Length) RatingEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e RatingEl) Pe(length Length) RatingEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e RatingEl) Ps(length Length) RatingEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e RatingEl) RoundedE(radius Length) RatingEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e RatingEl) RoundedS(radius Length) RatingEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e RatingEl) TextEnd() RatingEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e RatingEl) TextStart() RatingEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e RatingEl) CornerRadii(radius Corners) RatingEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e RatingEl) DebugBlue() RatingEl                 { tStyledExtDebugBlue(e.n); return e }
 func (e RatingEl) DebugFocused(focusHandle FocusHandle) RatingEl {

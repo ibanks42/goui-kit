@@ -2402,6 +2402,18 @@ func (s DiffState) ScrollToLine(cx *Cx, position DiffLinePosition) {
 	stateSet(cx, o)
 }
 
+// Collapses every file to its header, or expands them all, in one rebuild like
+// `SetFilesCollapsed`.
+//
+// SetAllFilesCollapsed is <gpui_kit::component::diff::DiffState>::set_all_files_collapsed.
+func (s DiffState) SetAllFilesCollapsed(cx *Cx, collapsed bool) {
+	useComponentDiff()
+	o := newReq(1774)
+	o.u64(s.h)
+	o.bool(collapsed)
+	stateSet(cx, o)
+}
+
 // Sets surrounding context. `None` shows every supplied patch line.
 //
 // SetContextLines is <gpui_kit::component::diff::DiffState>::set_context_lines.
@@ -2453,6 +2465,23 @@ func (s DiffState) SetFiles(cx *Cx, files []DiffFile) {
 	for _, x0 := range files {
 		putVtape(o, x0.n)
 	}
+	stateSet(cx, o)
+}
+
+// Collapses the given files to their headers, or expands them, without emitting a user event. One
+// rebuild covers the whole change; calling `SetFileCollapsed` per file rebuilds the rows each
+// time, which freezes a view of thousands of files.
+//
+// SetFilesCollapsed is <gpui_kit::component::diff::DiffState>::set_files_collapsed.
+func (s DiffState) SetFilesCollapsed(cx *Cx, paths []string, collapsed bool) {
+	useComponentDiff()
+	o := newReq(1775)
+	o.u64(s.h)
+	o.u32(uint32(len(paths)))
+	for _, x0 := range paths {
+		o.str(x0)
+	}
+	o.bool(collapsed)
 	stateSet(cx, o)
 }
 
@@ -3705,6 +3734,21 @@ func (s EditorState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilitie
 	return InputContextMenuCapabilitiesRead{h: r.u64()}
 }
 
+// Get byte offset of the text under the pointer at the right-click that last opened the context
+// menu.
+//
+// A right-click inside the selection keeps the selection and the cursor, so a custom context menu
+// reads this to find the word under the pointer. The offset is the UTF-8 offset.
+//
+// ContextMenuOffset is <gpui_kit::base::input::EditorState>::context_menu_offset.
+func (s EditorState) ContextMenuOffset(cx *Cx) Option[int] {
+	useBaseInput()
+	o := newReq(1766)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
+}
+
 // Get byte offset of the cursor.
 //
 // The offset is the UTF-8 offset.
@@ -4182,6 +4226,25 @@ func (s EditorState) TextInputConfiguration(cx *Cx) TextInputConfiguration {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return rdTextInputConfiguration(r)
+}
+
+// Horizontal offset from the content area's left edge to unscrolled source text.
+//
+// Includes the laid-out gap, line numbers, folding controls, and gutter decorations. Excludes
+// input-frame padding, horizontal scrolling, and text alignment. For left-aligned text, add this
+// to the content area's origin and the horizontal scroll offset to recover the text origin.
+//
+// Returns `None` before the first layout. Like `RangeToBounds`, this describes the most recent
+// layout; render again after changing gutter settings or typography before using it to align a
+// static view.
+//
+// TextOriginOffset is <gpui_kit::base::input::EditorState>::text_origin_offset.
+func (s EditorState) TextOriginOffset(cx *Cx) Option[float32] {
+	useBaseInput()
+	o := newReq(1767)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) float32 { return r.f32() })
 }
 
 // The live touch selection, laid out for the handles and the edit menu.
@@ -6515,6 +6578,21 @@ func (s InputState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilities
 	return InputContextMenuCapabilitiesRead{h: r.u64()}
 }
 
+// Get byte offset of the text under the pointer at the right-click that last opened the context
+// menu.
+//
+// A right-click inside the selection keeps the selection and the cursor, so a custom context menu
+// reads this to find the word under the pointer. The offset is the UTF-8 offset.
+//
+// ContextMenuOffset is <gpui_kit::base::input::InputState>::context_menu_offset.
+func (s InputState) ContextMenuOffset(cx *Cx) Option[int] {
+	useBaseInput()
+	o := newReq(1768)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
+}
+
 // Get byte offset of the cursor.
 //
 // The offset is the UTF-8 offset.
@@ -7096,6 +7174,25 @@ func (s InputState) ReplaceWithToken(cx *Cx, token InlineToken) error {
 	o := newReq(1037)
 	o.u64(s.h)
 	putVtape(o, token.n)
+	r := stateCall(s.h, cx, o)
+	return rdResult(r)
+}
+
+// Replace the tokens and keep the text, the selections and the undo history.
+//
+// Returns `TextMismatch` if `content` holds different text, `SplitsSelection` if a token cuts
+// through any selection, `CompositionActive` during IME composition and `UnsupportedMode` for
+// masked or password inputs.
+//
+// Undo and redo replay the text and the tokens recorded with it; a token set here that an undone
+// edit cuts through is dropped. Call this again after every change to keep derived tokens current.
+//
+// SetTokens is <gpui_kit::base::input::InputState>::set_tokens.
+func (s InputState) SetTokens(cx *Cx, content InputContent) error {
+	useBaseInput()
+	o := newReq(1769)
+	o.u64(s.h)
+	o.u64(content.h)
 	r := stateCall(s.h, cx, o)
 	return rdResult(r)
 }
@@ -8315,9 +8412,9 @@ func (s MessageScrollerState) ItemCount(cx *Cx) int {
 
 // Return the row at the top of the viewport and how far into it the list is scrolled.
 //
-// Wheel, trackpad, and scrollbar scrolls and `ScrollToItem` update it at once. `ScrollToEnd` and
-// tail following settle it when the list next lays out; right after `scroll_to_end`, `item_ix` is
-// `ItemCount` until then.
+// Wheel, trackpad, and scrollbar scrolls, `ScrollToItem` and `ScrollToOffset` update it at once.
+// `ScrollToEnd` and tail following settle it when the list next lays out; right after
+// `scroll_to_end`, `item_ix` is `ItemCount` until then.
 //
 // LogicalScrollTop is <gpui_kit::component::message_scroller::MessageScrollerState>::logical_scroll_top.
 func (s MessageScrollerState) LogicalScrollTop(cx *Cx) ListOffset {
@@ -8374,6 +8471,22 @@ func (s MessageScrollerState) ScrollToItem(cx *Cx, index int) bool {
 	o := newReq(655)
 	o.u64(s.h)
 	putUsize(o, index)
+	r := stateCall(s.h, cx, o)
+	return r.bool()
+}
+
+// Scroll to a position `LogicalScrollTop` returned, if its row exists: the row at the top of the
+// viewport and how far into it the list is scrolled.
+//
+// Restores a saved reading position to the pixel, where `ScrollToItem` puts the top of the row at
+// the top of the viewport.
+//
+// ScrollToOffset is <gpui_kit::component::message_scroller::MessageScrollerState>::scroll_to_offset.
+func (s MessageScrollerState) ScrollToOffset(cx *Cx, offset ListOffset) bool {
+	useComponentMessageScroller()
+	o := newReq(1776)
+	o.u64(s.h)
+	putListOffset(o, offset)
 	r := stateCall(s.h, cx, o)
 	return r.bool()
 }
@@ -13412,6 +13525,21 @@ func (s TextareaState) ContextMenuCapabilities(cx *Cx) InputContextMenuCapabilit
 	return InputContextMenuCapabilitiesRead{h: r.u64()}
 }
 
+// Get byte offset of the text under the pointer at the right-click that last opened the context
+// menu.
+//
+// A right-click inside the selection keeps the selection and the cursor, so a custom context menu
+// reads this to find the word under the pointer. The offset is the UTF-8 offset.
+//
+// ContextMenuOffset is <gpui_kit::base::input::TextareaState>::context_menu_offset.
+func (s TextareaState) ContextMenuOffset(cx *Cx) Option[int] {
+	useBaseInput()
+	o := newReq(1770)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
+}
+
 // Get byte offset of the cursor.
 //
 // The offset is the UTF-8 offset.
@@ -13423,6 +13551,17 @@ func (s TextareaState) Cursor(cx *Cx) int {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return int(r.u64())
+}
+
+// The textarea's text decorations, as last set and moved by edits since.
+//
+// Decorations is <gpui_kit::base::input::TextareaState>::decorations.
+func (s TextareaState) Decorations(cx *Cx) []TextDecoration {
+	useBaseInput()
+	o := newReq(1771)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdList(r, func(r *reader) TextDecoration { return rdTextDecoration(r) })
 }
 
 // DiagnosticPopover is <gpui_kit::base::input::TextareaState>::diagnostic_popover.
@@ -13997,6 +14136,25 @@ func (s TextareaState) ReplaceWithToken(cx *Cx, token InlineToken) error {
 	return rdResult(r)
 }
 
+// Replace the tokens and keep the text, the selections and the undo history.
+//
+// Returns `TextMismatch` if `content` holds different text, `SplitsSelection` if a token cuts
+// through any selection, `CompositionActive` during IME composition and `UnsupportedMode` for
+// masked or password inputs.
+//
+// Undo and redo replay the text and the tokens recorded with it; a token set here that an undone
+// edit cuts through is dropped. Call this again after every change to keep derived tokens current.
+//
+// SetTokens is <gpui_kit::base::input::TextareaState>::set_tokens.
+func (s TextareaState) SetTokens(cx *Cx, content InputContent) error {
+	useBaseInput()
+	o := newReq(1773)
+	o.u64(s.h)
+	o.u64(content.h)
+	r := stateCall(s.h, cx, o)
+	return rdResult(r)
+}
+
 // Add `range` as an additional selection, keeping the existing ones — the programmatic equivalent
 // of Alt-clicking another cursor into the text.
 //
@@ -14268,6 +14426,21 @@ func (s TextareaState) SetCursorSurroundingLines(cx *Cx, lines Option[int]) {
 		putUsize(o, x0)
 	} else {
 		o.u8(0)
+	}
+	stateSet(cx, o)
+}
+
+// Replace the textarea's text decorations, as UTF-8 byte ranges into `Value`. Ranges follow later
+// edits like an editor's decoration collections, and one whose text is deleted is dropped.
+//
+// SetDecorations is <gpui_kit::base::input::TextareaState>::set_decorations.
+func (s TextareaState) SetDecorations(cx *Cx, decorations []TextDecoration) {
+	useBaseInput()
+	o := newReq(1772)
+	o.u64(s.h)
+	o.u32(uint32(len(decorations)))
+	for _, x0 := range decorations {
+		putTextDecoration(o, x0)
 	}
 	stateSet(cx, o)
 }

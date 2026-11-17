@@ -1596,7 +1596,7 @@ component layer's `Panel` once, an entity behind a state handle (Odin `gk.Dock_P
   names are interned (`panel_name` is `&'static str` upstream);
 - `set_active`, `set_zoomed`, `on_added_to`, `on_removed` reach the app's handler as a queued
   `gk.Panel_Event{kind, flag}` (shape `PANEL_EVENT 36`); `gk.panel_emit` emits upstream's
-  `PanelEvent` (zoom in, zoom out, layout changed). The kit 0.9.1 zooms tab groups, never a panel,
+  `PanelEvent` (zoom in, zoom out, layout changed). The kit (0.9.1 and 0.10.0) zooms tab groups, never a panel,
   so a panel's ZoomIn is delivered and ignored (tested);
 - **by rule**: a generic `P: Panel` is GkPanel (descriptor `entity crate::dock::GkPanel`, Odin
   `gk.Dock_Panel`), and `Arc<dyn PanelView>` given to the kit is made from a panel handle

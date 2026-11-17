@@ -14,6 +14,7 @@ Command :: struct {
 
 Command_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Command),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Command),
 	using t_styled_ext: ^Styled_Ext_Trait(Command),
 	aspect_ratio: proc(e: Command, ratio: f32) -> Command,
 	bg: proc(e: Command, fill: Fill) -> Command,
@@ -114,6 +115,9 @@ Command_VT :: struct {
 	group: proc(e: Command, group: Command_Group) -> Command,
 	// Render a custom element above the search field and command list.
 	header: proc(e: Command, f: Row_Source) -> Command, // gk.items(cx, state, proc(s: ^S, cx: ^Cx, command_state_reads: Command_State_Reads) -> Element)
+	// Highlight the part of each item's label that matches the query, default is `false`. Has no
+	// effect with `filterable(false)` or on rows built with `child`.
+	highlight_matches: proc(e: Command, highlight: bool) -> Command,
 	// Add an ungrouped command item.
 	item: proc(e: Command, item: Command_Item) -> Command,
 	// Add multiple ungrouped command items.
@@ -161,6 +165,7 @@ command :: proc(state: Command_State, flags: ..Style_Flag, loc := #caller_locati
 @(private)
 command_vt := Command_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Command))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Command))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Command))&styled_ext_any,
 	aspect_ratio = transmute(proc(e: Command, ratio: f32) -> Command)styled_aspect_ratio,
 	bg = transmute(proc(e: Command, fill: Fill) -> Command)styled_bg,
@@ -271,6 +276,11 @@ command_vt := Command_VT {
 	header = proc(e: Command, f: Row_Source) -> Command {
 		o := op(e.el, 272)
 		put_u64(o, items_check(f, 12))
+		return e
+	},
+	highlight_matches = proc(e: Command, highlight: bool) -> Command {
+		o := op(e.el, 273)
+		put_u8(o, u8(highlight))
 		return e
 	},
 	item = proc(e: Command, item: Command_Item) -> Command {

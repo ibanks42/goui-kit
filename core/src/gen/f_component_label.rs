@@ -45,8 +45,10 @@ pub fn apply_component_label(dx: &mut Dx, mut el: gpui_kit::component::label::La
             256 => { el = { let Some((a0,)) = (|| Some((in_34(r, dx)?,)))() else { continue }; <gpui_kit::component::label::Label>::highlights(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::label::Label>::masked(el, a0) }; }
             258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::label::Label>::secondary(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            259 => { el = { let a0 = element_id(r); <gpui_kit::component::label::Label>::id(el, a0) }; }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Label", op),

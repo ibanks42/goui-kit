@@ -18,6 +18,8 @@ Clipboard_VT :: struct {
 	// The clipboard button shows only an icon, so it has no visible label to read, and its tooltip is
 	// a hint rather than a name.
 	accessibility_label: proc(e: Clipboard, label: string) -> Clipboard,
+	// Set visible text for the clipboard button.
+	label: proc(e: Clipboard, label: string) -> Clipboard,
 	// Set a callback to be invoked when the content is copied to the clipboard.
 	on_copied: proc(e: Clipboard, handler: Handler) -> Clipboard,
 	// Set tooltip text for the clipboard button.
@@ -48,6 +50,11 @@ clipboard_vt := Clipboard_VT {
 	t_sizable = cast(^Sizable_Trait(Clipboard))&sizable_any,
 	accessibility_label = proc(e: Clipboard, label: string) -> Clipboard {
 		o := op(e.el, 256)
+		put_str(o, label)
+		return e
+	},
+	label = proc(e: Clipboard, label: string) -> Clipboard {
+		o := op(e.el, 262)
 		put_str(o, label)
 		return e
 	},

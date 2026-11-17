@@ -13,6 +13,7 @@ Base_Accordion :: struct {
 
 Base_Accordion_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Accordion),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Accordion),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Accordion),
 	using t_styled: ^Styled_Trait(Base_Accordion),
 	using t_parent_element: ^Parent_Element_Trait(Base_Accordion),
@@ -32,6 +33,7 @@ base_accordion :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> 
 @(private)
 base_accordion_vt := Base_Accordion_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Accordion))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Accordion))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Accordion))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Accordion))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Accordion))&parent_element_any,
@@ -49,6 +51,7 @@ Accordion_Header :: struct {
 
 Accordion_Header_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Accordion_Header),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Accordion_Header),
 	using t_styled_ext: ^Styled_Ext_Trait(Accordion_Header),
 	using t_styled: ^Styled_Trait(Accordion_Header),
 	using t_parent_element: ^Parent_Element_Trait(Accordion_Header),
@@ -68,6 +71,7 @@ accordion_header :: proc(trigger: Accordion_Trigger, flags: ..Style_Flag, loc :=
 @(private)
 accordion_header_vt := Accordion_Header_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Accordion_Header))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Accordion_Header))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Accordion_Header))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Accordion_Header))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Accordion_Header))&parent_element_any,
@@ -93,6 +97,7 @@ Base_Accordion_Item :: struct {
 
 Base_Accordion_Item_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Accordion_Item),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Accordion_Item),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Accordion_Item),
 	using t_styled: ^Styled_Trait(Base_Accordion_Item),
 	using t_parent_element: ^Parent_Element_Trait(Base_Accordion_Item),
@@ -112,6 +117,7 @@ base_accordion_item :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bas
 @(private)
 base_accordion_item_vt := Base_Accordion_Item_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Accordion_Item))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Accordion_Item))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Accordion_Item))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Accordion_Item))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Accordion_Item))&parent_element_any,
@@ -147,6 +153,7 @@ Accordion_Panel :: struct {
 
 Accordion_Panel_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Accordion_Panel),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Accordion_Panel),
 	using t_styled_ext: ^Styled_Ext_Trait(Accordion_Panel),
 	using t_styled: ^Styled_Trait(Accordion_Panel),
 	using t_parent_element: ^Parent_Element_Trait(Accordion_Panel),
@@ -165,6 +172,7 @@ accordion_panel :: proc(flags: ..Style_Flag, loc := #caller_location) -> Accordi
 @(private)
 accordion_panel_vt := Accordion_Panel_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Accordion_Panel))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Accordion_Panel))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Accordion_Panel))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Accordion_Panel))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Accordion_Panel))&parent_element_any,
@@ -198,6 +206,7 @@ Accordion_Trigger :: struct {
 
 Accordion_Trigger_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Accordion_Trigger),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Accordion_Trigger),
 	using t_styled_ext: ^Styled_Ext_Trait(Accordion_Trigger),
 	using t_styled: ^Styled_Trait(Accordion_Trigger),
 	using t_parent_element: ^Parent_Element_Trait(Accordion_Trigger),
@@ -221,6 +230,7 @@ accordion_trigger :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) 
 @(private)
 accordion_trigger_vt := Accordion_Trigger_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Accordion_Trigger))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Accordion_Trigger))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Accordion_Trigger))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Accordion_Trigger))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Accordion_Trigger))&parent_element_any,
@@ -253,6 +263,7 @@ Base_Alert_Dialog :: struct {
 
 Base_Alert_Dialog_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Alert_Dialog),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Alert_Dialog),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Alert_Dialog),
 	using t_styled: ^Styled_Trait(Base_Alert_Dialog),
 	using t_parent_element: ^Parent_Element_Trait(Base_Alert_Dialog),
@@ -278,6 +289,7 @@ base_alert_dialog :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_
 @(private)
 base_alert_dialog_vt := Base_Alert_Dialog_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Alert_Dialog))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Alert_Dialog))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Alert_Dialog))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Alert_Dialog))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Alert_Dialog))&parent_element_any,
@@ -343,6 +355,7 @@ Alert_Dialog_Action :: struct {
 
 Alert_Dialog_Action_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Alert_Dialog_Action),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Alert_Dialog_Action),
 	using t_styled_ext: ^Styled_Ext_Trait(Alert_Dialog_Action),
 	using t_parent_element: ^Parent_Element_Trait(Alert_Dialog_Action),
 	using t_styled: ^Styled_Trait(Alert_Dialog_Action),
@@ -365,6 +378,7 @@ alert_dialog_action_default :: proc(flags: ..Style_Flag, loc := #caller_location
 @(private)
 alert_dialog_action_vt := Alert_Dialog_Action_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Alert_Dialog_Action))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Alert_Dialog_Action))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Alert_Dialog_Action))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Alert_Dialog_Action))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Alert_Dialog_Action))&styled_any,
@@ -378,6 +392,7 @@ Alert_Dialog_Backdrop :: struct {
 
 Alert_Dialog_Backdrop_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Alert_Dialog_Backdrop),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Alert_Dialog_Backdrop),
 	using t_styled_ext: ^Styled_Ext_Trait(Alert_Dialog_Backdrop),
 	using t_parent_element: ^Parent_Element_Trait(Alert_Dialog_Backdrop),
 	using t_styled: ^Styled_Trait(Alert_Dialog_Backdrop),
@@ -400,6 +415,7 @@ alert_dialog_backdrop_default :: proc(flags: ..Style_Flag, loc := #caller_locati
 @(private)
 alert_dialog_backdrop_vt := Alert_Dialog_Backdrop_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Alert_Dialog_Backdrop))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Alert_Dialog_Backdrop))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Alert_Dialog_Backdrop))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Alert_Dialog_Backdrop))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Alert_Dialog_Backdrop))&styled_any,
@@ -413,6 +429,7 @@ Alert_Dialog_Cancel :: struct {
 
 Alert_Dialog_Cancel_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Alert_Dialog_Cancel),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Alert_Dialog_Cancel),
 	using t_styled_ext: ^Styled_Ext_Trait(Alert_Dialog_Cancel),
 	using t_parent_element: ^Parent_Element_Trait(Alert_Dialog_Cancel),
 	using t_styled: ^Styled_Trait(Alert_Dialog_Cancel),
@@ -435,6 +452,7 @@ alert_dialog_cancel_default :: proc(flags: ..Style_Flag, loc := #caller_location
 @(private)
 alert_dialog_cancel_vt := Alert_Dialog_Cancel_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Alert_Dialog_Cancel))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Alert_Dialog_Cancel))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Alert_Dialog_Cancel))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Alert_Dialog_Cancel))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Alert_Dialog_Cancel))&styled_any,
@@ -448,6 +466,7 @@ Alert_Dialog_Close :: struct {
 
 Alert_Dialog_Close_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Alert_Dialog_Close),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Alert_Dialog_Close),
 	using t_styled_ext: ^Styled_Ext_Trait(Alert_Dialog_Close),
 	using t_parent_element: ^Parent_Element_Trait(Alert_Dialog_Close),
 	using t_styled: ^Styled_Trait(Alert_Dialog_Close),
@@ -470,6 +489,7 @@ alert_dialog_close_default :: proc(flags: ..Style_Flag, loc := #caller_location)
 @(private)
 alert_dialog_close_vt := Alert_Dialog_Close_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Alert_Dialog_Close))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Alert_Dialog_Close))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Alert_Dialog_Close))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Alert_Dialog_Close))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Alert_Dialog_Close))&styled_any,
@@ -483,6 +503,7 @@ Alert_Dialog_Description :: struct {
 
 Alert_Dialog_Description_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Alert_Dialog_Description),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Alert_Dialog_Description),
 	using t_styled_ext: ^Styled_Ext_Trait(Alert_Dialog_Description),
 	using t_parent_element: ^Parent_Element_Trait(Alert_Dialog_Description),
 	using t_styled: ^Styled_Trait(Alert_Dialog_Description),
@@ -505,6 +526,7 @@ alert_dialog_description_default :: proc(flags: ..Style_Flag, loc := #caller_loc
 @(private)
 alert_dialog_description_vt := Alert_Dialog_Description_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Alert_Dialog_Description))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Alert_Dialog_Description))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Alert_Dialog_Description))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Alert_Dialog_Description))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Alert_Dialog_Description))&styled_any,
@@ -518,6 +540,7 @@ Alert_Dialog_Popup :: struct {
 
 Alert_Dialog_Popup_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Alert_Dialog_Popup),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Alert_Dialog_Popup),
 	using t_styled_ext: ^Styled_Ext_Trait(Alert_Dialog_Popup),
 	using t_parent_element: ^Parent_Element_Trait(Alert_Dialog_Popup),
 	using t_styled: ^Styled_Trait(Alert_Dialog_Popup),
@@ -540,6 +563,7 @@ alert_dialog_popup_default :: proc(flags: ..Style_Flag, loc := #caller_location)
 @(private)
 alert_dialog_popup_vt := Alert_Dialog_Popup_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Alert_Dialog_Popup))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Alert_Dialog_Popup))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Alert_Dialog_Popup))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Alert_Dialog_Popup))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Alert_Dialog_Popup))&styled_any,
@@ -553,6 +577,7 @@ Alert_Dialog_Title :: struct {
 
 Alert_Dialog_Title_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Alert_Dialog_Title),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Alert_Dialog_Title),
 	using t_styled_ext: ^Styled_Ext_Trait(Alert_Dialog_Title),
 	using t_parent_element: ^Parent_Element_Trait(Alert_Dialog_Title),
 	using t_styled: ^Styled_Trait(Alert_Dialog_Title),
@@ -575,6 +600,7 @@ alert_dialog_title_default :: proc(flags: ..Style_Flag, loc := #caller_location)
 @(private)
 alert_dialog_title_vt := Alert_Dialog_Title_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Alert_Dialog_Title))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Alert_Dialog_Title))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Alert_Dialog_Title))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Alert_Dialog_Title))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Alert_Dialog_Title))&styled_any,
@@ -622,6 +648,7 @@ Base_Avatar :: struct {
 }
 
 Base_Avatar_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Avatar),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Avatar),
 	using t_styled: ^Styled_Trait(Base_Avatar),
 	using t_interactive_element: ^Interactive_Element_Trait(Base_Avatar),
@@ -645,6 +672,7 @@ base_avatar_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Bas
 
 @(private)
 base_avatar_vt := Base_Avatar_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Avatar))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Avatar))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Avatar))&styled_any,
 	t_interactive_element = cast(^Interactive_Element_Trait(Base_Avatar))&interactive_element_any,
@@ -670,6 +698,7 @@ Avatar_Fallback :: struct {
 
 Avatar_Fallback_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Avatar_Fallback),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Avatar_Fallback),
 	using t_styled_ext: ^Styled_Ext_Trait(Avatar_Fallback),
 	using t_styled: ^Styled_Trait(Avatar_Fallback),
 	using t_parent_element: ^Parent_Element_Trait(Avatar_Fallback),
@@ -692,6 +721,7 @@ avatar_fallback_default :: proc(flags: ..Style_Flag, loc := #caller_location) ->
 @(private)
 avatar_fallback_vt := Avatar_Fallback_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Avatar_Fallback))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Avatar_Fallback))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Avatar_Fallback))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Avatar_Fallback))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Avatar_Fallback))&parent_element_any,
@@ -706,6 +736,7 @@ Avatar_Image :: struct {
 }
 
 Avatar_Image_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Avatar_Image),
 	using t_styled_ext: ^Styled_Ext_Trait(Avatar_Image),
 	using t_styled: ^Styled_Trait(Avatar_Image),
 	using t_interactive_element: ^Interactive_Element_Trait(Avatar_Image),
@@ -722,6 +753,7 @@ avatar_image :: proc(source: Image_Source_Into, flags: ..Style_Flag, loc := #cal
 
 @(private)
 avatar_image_vt := Avatar_Image_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Avatar_Image))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Avatar_Image))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Avatar_Image))&styled_any,
 	t_interactive_element = cast(^Interactive_Element_Trait(Avatar_Image))&interactive_element_any,
@@ -740,6 +772,7 @@ Base_Button :: struct {
 
 Base_Button_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Button),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Button),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Button),
 	open: proc(e: Base_Button, open: bool) -> Base_Button,
 	secondary_selected: proc(e: Base_Button, arg0: bool) -> Base_Button,
@@ -829,6 +862,9 @@ Base_Button_VT :: struct {
 	// Disabled buttons are skipped during Tab traversal. If this button already owns focus when it
 	// becomes disabled, it retains the focus binding until focus moves away, so keyboard traversal can
 	// continue in either direction.
+	//
+	// While disabled, the `hover`, `active`, `group_hover` and `group_active` styles are not applied;
+	// use `->disabled` for its look.
 	disabled: proc(e: Base_Button, disabled: bool) -> Base_Button,
 	// Sets whether pressing the button moves focus onto it. The default is `true`.
 	//
@@ -869,6 +905,7 @@ base_button :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Bas
 @(private)
 base_button_vt := Base_Button_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Button))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Button))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Button))&styled_ext_any,
 	open = transmute(proc(e: Base_Button, open: bool) -> Base_Button)selectable_open,
 	secondary_selected = transmute(proc(e: Base_Button, arg0: bool) -> Base_Button)selectable_secondary_selected,
@@ -1048,6 +1085,7 @@ Base_Calendar :: struct {
 }
 
 Base_Calendar_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Calendar),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Calendar),
 	using t_styled: ^Styled_Trait(Base_Calendar),
 	first_day_of_week: proc(e: Base_Calendar, day: Weekday) -> Base_Calendar,
@@ -1068,6 +1106,7 @@ base_calendar :: proc(id: Id, state: Calendar_State, flags: ..Style_Flag, loc :=
 
 @(private)
 base_calendar_vt := Base_Calendar_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Calendar))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Calendar))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Calendar))&styled_any,
 	first_day_of_week = proc(e: Base_Calendar, day: Weekday) -> Base_Calendar {
@@ -1102,6 +1141,7 @@ Calendar_Item :: struct {
 
 Calendar_Item_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Calendar_Item),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Calendar_Item),
 	using t_styled_ext: ^Styled_Ext_Trait(Calendar_Item),
 	using t_parent_element: ^Parent_Element_Trait(Calendar_Item),
 	using t_styled: ^Styled_Trait(Calendar_Item),
@@ -1124,6 +1164,7 @@ calendar_item_handed :: proc(index: u8, flags: ..Style_Flag, loc := #caller_loca
 @(private)
 calendar_item_vt := Calendar_Item_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Calendar_Item))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Calendar_Item))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Calendar_Item))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Calendar_Item))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Calendar_Item))&styled_any,
@@ -1148,6 +1189,7 @@ Base_Checkbox :: struct {
 
 Base_Checkbox_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Checkbox),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Checkbox),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Checkbox),
 	using t_styled: ^Styled_Trait(Base_Checkbox),
 	using t_parent_element: ^Parent_Element_Trait(Base_Checkbox),
@@ -1275,6 +1317,7 @@ base_checkbox :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> B
 @(private)
 base_checkbox_vt := Base_Checkbox_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Checkbox))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Checkbox))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Checkbox))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Checkbox))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Checkbox))&parent_element_any,
@@ -1427,6 +1470,7 @@ Checkbox_Indicator :: struct {
 
 Checkbox_Indicator_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Checkbox_Indicator),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Checkbox_Indicator),
 	using t_styled_ext: ^Styled_Ext_Trait(Checkbox_Indicator),
 	using t_styled: ^Styled_Trait(Checkbox_Indicator),
 	using t_parent_element: ^Parent_Element_Trait(Checkbox_Indicator),
@@ -1453,6 +1497,7 @@ checkbox_indicator_default :: proc(flags: ..Style_Flag, loc := #caller_location)
 @(private)
 checkbox_indicator_vt := Checkbox_Indicator_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Checkbox_Indicator))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Checkbox_Indicator))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Checkbox_Indicator))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Checkbox_Indicator))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Checkbox_Indicator))&parent_element_any,
@@ -1567,6 +1612,7 @@ Base_Collapsible :: struct {
 
 Base_Collapsible_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Collapsible),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Collapsible),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Collapsible),
 	using t_styled: ^Styled_Trait(Base_Collapsible),
 	using t_parent_element: ^Parent_Element_Trait(Base_Collapsible),
@@ -1593,6 +1639,7 @@ base_collapsible_default :: proc(flags: ..Style_Flag, loc := #caller_location) -
 @(private)
 base_collapsible_vt := Base_Collapsible_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Collapsible))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Collapsible))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Collapsible))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Collapsible))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Collapsible))&parent_element_any,
@@ -1627,6 +1674,7 @@ Base_Color_Picker :: struct {
 
 Base_Color_Picker_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Color_Picker),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Color_Picker),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Color_Picker),
 	using t_styled: ^Styled_Trait(Base_Color_Picker),
 	using t_parent_element: ^Parent_Element_Trait(Base_Color_Picker),
@@ -1739,6 +1787,7 @@ base_color_picker :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) 
 @(private)
 base_color_picker_vt := Base_Color_Picker_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Color_Picker))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Color_Picker))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Color_Picker))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Color_Picker))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Color_Picker))&parent_element_any,
@@ -1868,6 +1917,7 @@ Color_Swatch :: struct {
 
 Color_Swatch_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Color_Swatch),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Color_Swatch),
 	using t_styled_ext: ^Styled_Ext_Trait(Color_Swatch),
 	using t_styled: ^Styled_Trait(Color_Swatch),
 	using t_parent_element: ^Parent_Element_Trait(Color_Swatch),
@@ -1980,6 +2030,7 @@ color_swatch :: proc(id: Id, color: Color, flags: ..Style_Flag, loc := #caller_l
 @(private)
 color_swatch_vt := Color_Swatch_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Color_Swatch))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Color_Swatch))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Color_Swatch))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Color_Swatch))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Color_Swatch))&parent_element_any,
@@ -2116,6 +2167,7 @@ Base_Combobox :: struct {
 
 Base_Combobox_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Combobox),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Combobox),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Combobox),
 	using t_styled: ^Styled_Trait(Base_Combobox),
 	using t_parent_element: ^Parent_Element_Trait(Base_Combobox),
@@ -2145,6 +2197,7 @@ base_combobox :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> B
 @(private)
 base_combobox_vt := Base_Combobox_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Combobox))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Combobox))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Combobox))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Combobox))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Combobox))&parent_element_any,
@@ -2196,6 +2249,7 @@ Base_Date_Picker :: struct {
 
 Base_Date_Picker_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Date_Picker),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Date_Picker),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Date_Picker),
 	using t_styled: ^Styled_Trait(Base_Date_Picker),
 	using t_parent_element: ^Parent_Element_Trait(Base_Date_Picker),
@@ -2219,6 +2273,7 @@ base_date_picker :: proc(id: Id, focus_handle: Focus_Handle, flags: ..Style_Flag
 @(private)
 base_date_picker_vt := Base_Date_Picker_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Date_Picker))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Date_Picker))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Date_Picker))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Date_Picker))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Date_Picker))&parent_element_any,
@@ -2270,6 +2325,7 @@ Base_Dialog :: struct {
 
 Base_Dialog_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Dialog),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Dialog),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Dialog),
 	using t_styled: ^Styled_Trait(Base_Dialog),
 	using t_parent_element: ^Parent_Element_Trait(Base_Dialog),
@@ -2298,6 +2354,7 @@ base_dialog :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Dialog
 @(private)
 base_dialog_vt := Base_Dialog_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Dialog))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Dialog))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Dialog))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Dialog))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Dialog))&parent_element_any,
@@ -2373,6 +2430,7 @@ Dialog_Backdrop :: struct {
 
 Dialog_Backdrop_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Dialog_Backdrop),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Dialog_Backdrop),
 	using t_styled_ext: ^Styled_Ext_Trait(Dialog_Backdrop),
 	using t_styled: ^Styled_Trait(Dialog_Backdrop),
 	using t_parent_element: ^Parent_Element_Trait(Dialog_Backdrop),
@@ -2395,6 +2453,7 @@ dialog_backdrop_default :: proc(flags: ..Style_Flag, loc := #caller_location) ->
 @(private)
 dialog_backdrop_vt := Dialog_Backdrop_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Dialog_Backdrop))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Dialog_Backdrop))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Dialog_Backdrop))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Dialog_Backdrop))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Dialog_Backdrop))&parent_element_any,
@@ -2410,6 +2469,7 @@ Base_Dialog_Close :: struct {
 
 Base_Dialog_Close_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Dialog_Close),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Dialog_Close),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Dialog_Close),
 	using t_parent_element: ^Parent_Element_Trait(Base_Dialog_Close),
 	using t_styled: ^Styled_Trait(Base_Dialog_Close),
@@ -2438,6 +2498,7 @@ base_dialog_close_default :: proc(flags: ..Style_Flag, loc := #caller_location) 
 @(private)
 base_dialog_close_vt := Base_Dialog_Close_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Dialog_Close))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Dialog_Close))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Dialog_Close))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Dialog_Close))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Base_Dialog_Close))&styled_any,
@@ -2458,6 +2519,7 @@ Base_Dialog_Description :: struct {
 
 Base_Dialog_Description_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Dialog_Description),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Dialog_Description),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Dialog_Description),
 	using t_styled: ^Styled_Trait(Base_Dialog_Description),
 	using t_parent_element: ^Parent_Element_Trait(Base_Dialog_Description),
@@ -2480,6 +2542,7 @@ base_dialog_description_default :: proc(flags: ..Style_Flag, loc := #caller_loca
 @(private)
 base_dialog_description_vt := Base_Dialog_Description_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Dialog_Description))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Dialog_Description))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Dialog_Description))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Dialog_Description))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Dialog_Description))&parent_element_any,
@@ -2495,6 +2558,7 @@ Dialog_Popup :: struct {
 
 Dialog_Popup_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Dialog_Popup),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Dialog_Popup),
 	using t_styled_ext: ^Styled_Ext_Trait(Dialog_Popup),
 	using t_styled: ^Styled_Trait(Dialog_Popup),
 	using t_parent_element: ^Parent_Element_Trait(Dialog_Popup),
@@ -2517,6 +2581,7 @@ dialog_popup_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Di
 @(private)
 dialog_popup_vt := Dialog_Popup_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Dialog_Popup))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Dialog_Popup))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Dialog_Popup))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Dialog_Popup))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Dialog_Popup))&parent_element_any,
@@ -2532,6 +2597,7 @@ Base_Dialog_Title :: struct {
 
 Base_Dialog_Title_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Dialog_Title),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Dialog_Title),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Dialog_Title),
 	using t_styled: ^Styled_Trait(Base_Dialog_Title),
 	using t_parent_element: ^Parent_Element_Trait(Base_Dialog_Title),
@@ -2554,6 +2620,7 @@ base_dialog_title_default :: proc(flags: ..Style_Flag, loc := #caller_location) 
 @(private)
 base_dialog_title_vt := Base_Dialog_Title_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Dialog_Title))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Dialog_Title))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Dialog_Title))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Dialog_Title))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Dialog_Title))&parent_element_any,
@@ -2713,6 +2780,7 @@ Grid_Item :: struct {
 
 Grid_Item_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Grid_Item),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Grid_Item),
 	using t_styled_ext: ^Styled_Ext_Trait(Grid_Item),
 	using t_styled: ^Styled_Trait(Grid_Item),
 	using t_parent_element: ^Parent_Element_Trait(Grid_Item),
@@ -2734,6 +2802,7 @@ grid_item :: proc(id: string, flags: ..Style_Flag, loc := #caller_location) -> G
 @(private)
 grid_item_vt := Grid_Item_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Grid_Item))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Grid_Item))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Grid_Item))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Grid_Item))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Grid_Item))&parent_element_any,
@@ -2774,6 +2843,7 @@ Grid_Layout :: struct {
 }
 
 Grid_Layout_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Grid_Layout),
 	using t_styled_ext: ^Styled_Ext_Trait(Grid_Layout),
 	using t_styled: ^Styled_Trait(Grid_Layout),
 	// Name the grid for assistive technology. Defaults to "Grid layout".
@@ -2843,6 +2913,7 @@ kit_grid_layout :: proc(id: Id, state: Grid_Layout_State, flags: ..Style_Flag, l
 
 @(private)
 grid_layout_vt := Grid_Layout_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Grid_Layout))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Grid_Layout))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Grid_Layout))&styled_any,
 	accessibility_label = proc(e: Grid_Layout, label: string) -> Grid_Layout {
@@ -2915,6 +2986,7 @@ Base_Hover_Card :: struct {
 }
 
 Base_Hover_Card_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Hover_Card),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Hover_Card),
 	using t_styled: ^Styled_Trait(Base_Hover_Card),
 	anchor: proc(e: Base_Hover_Card, anchor: Anchor) -> Base_Hover_Card,
@@ -2936,6 +3008,7 @@ base_hover_card :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) ->
 
 @(private)
 base_hover_card_vt := Base_Hover_Card_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Hover_Card))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Hover_Card))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Hover_Card))&styled_any,
 	anchor = proc(e: Base_Hover_Card, anchor: Anchor) -> Base_Hover_Card {
@@ -3049,6 +3122,7 @@ Input_Base :: struct {
 
 Input_Base_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Input_Base),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Input_Base),
 	using t_styled_ext: ^Styled_Ext_Trait(Input_Base),
 	using t_styled: ^Styled_Trait(Input_Base),
 	using t_parent_element: ^Parent_Element_Trait(Input_Base),
@@ -3123,6 +3197,7 @@ input_base :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Inpu
 @(private)
 input_base_vt := Input_Base_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Input_Base))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Input_Base))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Input_Base))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Input_Base))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Input_Base))&parent_element_any,
@@ -3243,6 +3318,7 @@ Base_Link :: struct {
 
 Base_Link_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Link),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Link),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Link),
 	using t_styled: ^Styled_Trait(Base_Link),
 	using t_parent_element: ^Parent_Element_Trait(Base_Link),
@@ -3320,6 +3396,7 @@ base_link :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_
 @(private)
 base_link_vt := Base_Link_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Link))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Link))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Link))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Link))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Link))&parent_element_any,
@@ -3509,6 +3586,13 @@ Markdown_Extensions_VT :: struct {
 	parser_revision: proc(e: Markdown_Extensions, revision: u64) -> Markdown_Extensions,
 	// Apply a reusable Markdown plugin.
 	plugin: proc(e: Markdown_Extensions, plugin: Markdown_Plugin_Any) -> Markdown_Extensions,
+	// Set whether raw HTML in Markdown is parsed as HTML (the default).
+	//
+	// When `false`, CommonMark's HTML blocks and inline tags are not recognized, so a `<b>` or an
+	// `<img>` in the source shows as the text it is written as, and nothing is loaded from it. Use
+	// this for Markdown from a source that must not render HTML. Autolinks such as
+	// `<https://example.com>` are not HTML and still render as links.
+	raw_html: proc(e: Markdown_Extensions, enabled: bool) -> Markdown_Extensions,
 }
 
 markdown_extensions_default :: proc(loc := #caller_location) -> Markdown_Extensions {
@@ -3558,6 +3642,11 @@ markdown_extensions_vt := Markdown_Extensions_VT {
 		}
 		return e
 	},
+	raw_html = proc(e: Markdown_Extensions, enabled: bool) -> Markdown_Extensions {
+		o := op(vel(e.nd), 262)
+		put_u8(o, u8(enabled))
+		return e
+	},
 }
 
 // A measured, clipped vertical reveal driven by normalized progress.
@@ -3599,6 +3688,7 @@ Nav_Page :: struct {
 }
 
 Nav_Page_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Nav_Page),
 	using t_styled_ext: ^Styled_Ext_Trait(Nav_Page),
 	using t_styled: ^Styled_Trait(Nav_Page),
 }
@@ -3615,6 +3705,7 @@ nav_page_handed :: proc(index: u8, flags: ..Style_Flag, loc := #caller_location)
 
 @(private)
 nav_page_vt := Nav_Page_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Nav_Page))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Nav_Page))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Nav_Page))&styled_any,
 }
@@ -3635,6 +3726,7 @@ Nav_Stack :: struct {
 }
 
 Nav_Stack_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Nav_Stack),
 	using t_styled_ext: ^Styled_Ext_Trait(Nav_Stack),
 	using t_styled: ^Styled_Trait(Nav_Stack),
 	// Renders each mounted view. The item is already positioned to fill the container; refine it to
@@ -3655,6 +3747,7 @@ nav_stack :: proc(state: Nav_Stack_State, flags: ..Style_Flag, loc := #caller_lo
 
 @(private)
 nav_stack_vt := Nav_Stack_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Nav_Stack))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Nav_Stack))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Nav_Stack))&styled_any,
 	item = proc(e: Nav_Stack, render: Row_Source) -> Nav_Stack {
@@ -3679,6 +3772,7 @@ Base_Number_Input :: struct {
 
 Base_Number_Input_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Number_Input),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Number_Input),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Number_Input),
 	using t_styled: ^Styled_Trait(Base_Number_Input),
 	using t_parent_element: ^Parent_Element_Trait(Base_Number_Input),
@@ -3697,6 +3791,11 @@ Base_Number_Input_VT :: struct {
 	// Decorate the built-in text region with an editor, adornments, and styles.
 	input: proc(e: Base_Number_Input, input: Element) -> Base_Number_Input,
 	on_step: proc(e: Base_Number_Input, handler: Handler) -> Base_Number_Input,
+	// Set whether the increment and decrement buttons are rendered.
+	//
+	// The buttons are rendered by default. Up and Down keys continue to step the value when they are
+	// omitted.
+	stepper: proc(e: Base_Number_Input, stepper: bool) -> Base_Number_Input,
 }
 
 base_number_input :: proc(state: Input_State, flags: ..Style_Flag, loc := #caller_location) -> Base_Number_Input {
@@ -3711,6 +3810,7 @@ base_number_input :: proc(state: Input_State, flags: ..Style_Flag, loc := #calle
 @(private)
 base_number_input_vt := Base_Number_Input_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Number_Input))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Number_Input))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Number_Input))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Number_Input))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Number_Input))&parent_element_any,
@@ -3748,6 +3848,11 @@ base_number_input_vt := Base_Number_Input_VT {
 		put_u32(o, register(handler, 68))
 		return e
 	},
+	stepper = proc(e: Base_Number_Input, stepper: bool) -> Base_Number_Input {
+		o := op(e.el, 263)
+		put_u8(o, u8(stepper))
+		return e
+	},
 }
 
 // The built-in text region of a `Base_Number_Input`.
@@ -3763,6 +3868,7 @@ Number_Input_Text :: struct {
 
 Number_Input_Text_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Number_Input_Text),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Number_Input_Text),
 	using t_styled_ext: ^Styled_Ext_Trait(Number_Input_Text),
 	using t_styled: ^Styled_Trait(Number_Input_Text),
 	using t_parent_element: ^Parent_Element_Trait(Number_Input_Text),
@@ -3785,6 +3891,7 @@ number_input_text_default :: proc(flags: ..Style_Flag, loc := #caller_location) 
 @(private)
 number_input_text_vt := Number_Input_Text_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Number_Input_Text))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Number_Input_Text))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Number_Input_Text))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Number_Input_Text))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Number_Input_Text))&parent_element_any,
@@ -3800,6 +3907,7 @@ Base_Otp_Input :: struct {
 
 Base_Otp_Input_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Otp_Input),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Otp_Input),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Otp_Input),
 	using t_styled: ^Styled_Trait(Base_Otp_Input),
 	using t_parent_element: ^Parent_Element_Trait(Base_Otp_Input),
@@ -3818,6 +3926,7 @@ base_otp_input :: proc(state: Otp_State, flags: ..Style_Flag, loc := #caller_loc
 @(private)
 base_otp_input_vt := Base_Otp_Input_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Otp_Input))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Otp_Input))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Otp_Input))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Otp_Input))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Otp_Input))&parent_element_any,
@@ -3838,6 +3947,7 @@ Base_Pagination :: struct {
 
 Base_Pagination_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Pagination),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Pagination),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Pagination),
 	using t_parent_element: ^Parent_Element_Trait(Base_Pagination),
 	using t_styled: ^Styled_Trait(Base_Pagination),
@@ -3859,6 +3969,7 @@ base_pagination :: proc(id: Id, state: Pagination_State, flags: ..Style_Flag, lo
 @(private)
 base_pagination_vt := Base_Pagination_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Pagination))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Pagination))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Pagination))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Pagination))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Base_Pagination))&styled_any,
@@ -4015,6 +4126,7 @@ Base_Popover :: struct {
 }
 
 Base_Popover_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Popover),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Popover),
 	using t_styled: ^Styled_Trait(Base_Popover),
 	anchor: proc(e: Base_Popover, anchor: Anchor) -> Base_Popover,
@@ -4043,6 +4155,7 @@ base_popover :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Ba
 
 @(private)
 base_popover_vt := Base_Popover_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Popover))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Popover))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Popover))&styled_any,
 	anchor = proc(e: Base_Popover, anchor: Anchor) -> Base_Popover {
@@ -4142,6 +4255,7 @@ Popup :: struct {
 }
 
 Popup_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Popup),
 	using t_styled_ext: ^Styled_Ext_Trait(Popup),
 	using t_styled: ^Styled_Trait(Popup),
 	using t_interactive_element: ^Interactive_Element_Trait(Popup),
@@ -4166,6 +4280,7 @@ popup :: proc(id: Id, trigger: Element, flags: ..Style_Flag, loc := #caller_loca
 
 @(private)
 popup_vt := Popup_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Popup))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Popup))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Popup))&styled_any,
 	t_interactive_element = cast(^Interactive_Element_Trait(Popup))&interactive_element_any,
@@ -4328,6 +4443,7 @@ Base_Progress :: struct {
 
 Base_Progress_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Progress),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Progress),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Progress),
 	using t_styled: ^Styled_Trait(Base_Progress),
 	using t_parent_element: ^Parent_Element_Trait(Base_Progress),
@@ -4351,6 +4467,7 @@ base_progress :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> B
 @(private)
 base_progress_vt := Base_Progress_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Progress))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Progress))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Progress))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Progress))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Progress))&parent_element_any,
@@ -4383,6 +4500,7 @@ Progress_Indicator :: struct {
 
 Progress_Indicator_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Progress_Indicator),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Progress_Indicator),
 	using t_styled_ext: ^Styled_Ext_Trait(Progress_Indicator),
 	using t_styled: ^Styled_Trait(Progress_Indicator),
 	using t_parent_element: ^Parent_Element_Trait(Progress_Indicator),
@@ -4398,6 +4516,7 @@ progress_indicator :: proc(flags: ..Style_Flag, loc := #caller_location) -> Prog
 @(private)
 progress_indicator_vt := Progress_Indicator_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Progress_Indicator))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Progress_Indicator))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Progress_Indicator))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Progress_Indicator))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Progress_Indicator))&parent_element_any,
@@ -4413,6 +4532,7 @@ Progress_Track :: struct {
 
 Progress_Track_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Progress_Track),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Progress_Track),
 	using t_styled_ext: ^Styled_Ext_Trait(Progress_Track),
 	using t_styled: ^Styled_Trait(Progress_Track),
 	using t_parent_element: ^Parent_Element_Trait(Progress_Track),
@@ -4428,6 +4548,7 @@ progress_track :: proc(flags: ..Style_Flag, loc := #caller_location) -> Progress
 @(private)
 progress_track_vt := Progress_Track_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Progress_Track))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Progress_Track))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Progress_Track))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Progress_Track))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Progress_Track))&parent_element_any,
@@ -4447,6 +4568,7 @@ Base_Radio :: struct {
 
 Base_Radio_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Radio),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Radio),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Radio),
 	using t_styled: ^Styled_Trait(Base_Radio),
 	using t_parent_element: ^Parent_Element_Trait(Base_Radio),
@@ -4529,6 +4651,7 @@ base_radio :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base
 @(private)
 base_radio_vt := Base_Radio_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Radio))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Radio))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Radio))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Radio))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Radio))&parent_element_any,
@@ -4636,6 +4759,7 @@ Base_Radio_Group :: struct {
 
 Base_Radio_Group_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Radio_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Radio_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Radio_Group),
 	using t_styled: ^Styled_Trait(Base_Radio_Group),
 	using t_parent_element: ^Parent_Element_Trait(Base_Radio_Group),
@@ -4657,6 +4781,7 @@ base_radio_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -
 @(private)
 base_radio_group_vt := Base_Radio_Group_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Radio_Group))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Radio_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Radio_Group))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Radio_Group))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Radio_Group))&parent_element_any,
@@ -4729,6 +4854,7 @@ Resizable_Panel :: struct {
 
 Resizable_Panel_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Resizable_Panel),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Resizable_Panel),
 	using t_styled_ext: ^Styled_Ext_Trait(Resizable_Panel),
 	aspect_ratio: proc(e: Resizable_Panel, ratio: f32) -> Resizable_Panel,
 	bg: proc(e: Resizable_Panel, fill: Fill) -> Resizable_Panel,
@@ -4840,6 +4966,7 @@ resizable_panel :: proc(flags: ..Style_Flag, loc := #caller_location) -> Resizab
 @(private)
 resizable_panel_vt := Resizable_Panel_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Resizable_Panel))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Resizable_Panel))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Resizable_Panel))&styled_ext_any,
 	aspect_ratio = transmute(proc(e: Resizable_Panel, ratio: f32) -> Resizable_Panel)styled_aspect_ratio,
 	bg = transmute(proc(e: Resizable_Panel, fill: Fill) -> Resizable_Panel)styled_bg,
@@ -5676,6 +5803,7 @@ Base_Select :: struct {
 
 Base_Select_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Select),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Select),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Select),
 	using t_styled: ^Styled_Trait(Base_Select),
 	using t_parent_element: ^Parent_Element_Trait(Base_Select),
@@ -5719,6 +5847,7 @@ base_select :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Bas
 @(private)
 base_select_vt := Base_Select_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Select))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Select))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Select))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Select))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Select))&parent_element_any,
@@ -5786,6 +5915,9 @@ Selectable_Text :: struct {
 Selectable_Text_VT :: struct {
 	// Places this run in reading order among the others sharing its handle.
 	document_order: proc(e: Selectable_Text, order: u64) -> Selectable_Text,
+	// Styles ranges of the text, such as the matches of a search, as `with_highlights` does. The
+	// ranges are UTF-8 offsets, in order and without overlap.
+	highlights: proc(e: Selectable_Text, highlights: []Tuple_Range_Highlight_Style) -> Selectable_Text,
 	// Overrides the selection background, which defaults to the theme's `colors.selection` token.
 	selection_color: proc(e: Selectable_Text, color: Color) -> Selectable_Text,
 	// Sets the text style the run is laid out and painted with.
@@ -5818,6 +5950,15 @@ selectable_text_vt := Selectable_Text_VT {
 	document_order = proc(e: Selectable_Text, order: u64) -> Selectable_Text {
 		o := op(e.el, 256)
 		put_u64(o, u64(order))
+		return e
+	},
+	highlights = proc(e: Selectable_Text, highlights: []Tuple_Range_Highlight_Style) -> Selectable_Text {
+		o := op(e.el, 259)
+		put_u32(o, u32(len(highlights)))
+		for x0 in highlights {
+			put_range(o, x0.v0)
+			put_Highlight_Style(o, x0.v1)
+		}
 		return e
 	},
 	selection_color = proc(e: Selectable_Text, color: Color) -> Selectable_Text {
@@ -5862,6 +6003,7 @@ Base_Sheet :: struct {
 }
 
 Base_Sheet_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Sheet),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Sheet),
 	using t_styled: ^Styled_Trait(Base_Sheet),
 	on_close: proc(e: Base_Sheet, handler: Handler) -> Base_Sheet,
@@ -5879,6 +6021,7 @@ base_sheet :: proc(flags: ..Style_Flag, loc := #caller_location) -> Base_Sheet {
 
 @(private)
 base_sheet_vt := Base_Sheet_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Sheet))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Sheet))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Sheet))&styled_any,
 	on_close = proc(e: Base_Sheet, handler: Handler) -> Base_Sheet {
@@ -5915,6 +6058,7 @@ Base_Slider :: struct {
 
 Base_Slider_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Slider),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Slider),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Slider),
 	using t_parent_element: ^Parent_Element_Trait(Base_Slider),
 	using t_styled: ^Styled_Trait(Base_Slider),
@@ -5924,7 +6068,8 @@ Base_Slider_VT :: struct {
 	disabled: proc(e: Base_Slider, disabled: bool) -> Base_Slider,
 	horizontal: proc(e: Base_Slider) -> Base_Slider,
 	// Makes the slider's accessibility node itself focusable with `focus`, so keyboard focus and
-	// assistive technology land on the slider.
+	// assistive technology land on the slider. While it has focus, the arrow keys move the end thumb a
+	// step, Page Up and Page Down ten steps, and Home and End to the slider's ends.
 	track_focus: proc(e: Base_Slider, focus: Focus_Handle) -> Base_Slider,
 	vertical: proc(e: Base_Slider) -> Base_Slider,
 }
@@ -5941,6 +6086,7 @@ base_slider :: proc(state: Slider_State, flags: ..Style_Flag, loc := #caller_loc
 @(private)
 base_slider_vt := Base_Slider_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Slider))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Slider))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Slider))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Slider))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Base_Slider))&styled_any,
@@ -5984,6 +6130,7 @@ Slider_Indicator :: struct {
 
 Slider_Indicator_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Slider_Indicator),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Slider_Indicator),
 	using t_styled_ext: ^Styled_Ext_Trait(Slider_Indicator),
 	using t_parent_element: ^Parent_Element_Trait(Slider_Indicator),
 	using t_styled: ^Styled_Trait(Slider_Indicator),
@@ -6003,6 +6150,7 @@ slider_indicator :: proc(state: Slider_State, flags: ..Style_Flag, loc := #calle
 @(private)
 slider_indicator_vt := Slider_Indicator_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Slider_Indicator))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Slider_Indicator))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Slider_Indicator))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Slider_Indicator))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Slider_Indicator))&styled_any,
@@ -6020,6 +6168,7 @@ Slider_Thumb :: struct {
 
 Slider_Thumb_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Slider_Thumb),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Slider_Thumb),
 	using t_styled_ext: ^Styled_Ext_Trait(Slider_Thumb),
 	using t_parent_element: ^Parent_Element_Trait(Slider_Thumb),
 	using t_styled: ^Styled_Trait(Slider_Thumb),
@@ -6042,6 +6191,7 @@ slider_thumb :: proc(state: Slider_State, flags: ..Style_Flag, loc := #caller_lo
 @(private)
 slider_thumb_vt := Slider_Thumb_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Slider_Thumb))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Slider_Thumb))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Slider_Thumb))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Slider_Thumb))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Slider_Thumb))&styled_any,
@@ -6074,6 +6224,7 @@ Slider_Track :: struct {
 
 Slider_Track_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Slider_Track),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Slider_Track),
 	using t_styled_ext: ^Styled_Ext_Trait(Slider_Track),
 	using t_parent_element: ^Parent_Element_Trait(Slider_Track),
 	using t_styled: ^Styled_Trait(Slider_Track),
@@ -6094,6 +6245,7 @@ slider_track :: proc(state: Slider_State, flags: ..Style_Flag, loc := #caller_lo
 @(private)
 slider_track_vt := Slider_Track_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Slider_Track))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Slider_Track))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Slider_Track))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Slider_Track))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Slider_Track))&styled_any,
@@ -6216,6 +6368,7 @@ State_Style :: struct {
 }
 
 State_Style_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(State_Style),
 	using t_styled_ext: ^Styled_Ext_Trait(State_Style),
 	using t_styled: ^Styled_Trait(State_Style),
 }
@@ -6228,6 +6381,7 @@ state_style_default :: proc(flags: ..Style_Flag, loc := #caller_location) -> Sta
 
 @(private)
 state_style_vt := State_Style_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(State_Style))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(State_Style))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(State_Style))&styled_any,
 }
@@ -6246,6 +6400,7 @@ Base_Switch :: struct {
 
 Base_Switch_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Switch),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Switch),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Switch),
 	using t_styled: ^Styled_Trait(Base_Switch),
 	using t_parent_element: ^Parent_Element_Trait(Base_Switch),
@@ -6323,6 +6478,7 @@ base_switch :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Bas
 @(private)
 base_switch_vt := Base_Switch_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Switch))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Switch))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Switch))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Switch))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Switch))&parent_element_any,
@@ -6451,6 +6607,7 @@ Switch_Thumb :: struct {
 
 Switch_Thumb_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Switch_Thumb),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Switch_Thumb),
 	using t_styled_ext: ^Styled_Ext_Trait(Switch_Thumb),
 	using t_styled: ^Styled_Trait(Switch_Thumb),
 	using t_parent_element: ^Parent_Element_Trait(Switch_Thumb),
@@ -6470,6 +6627,7 @@ switch_thumb :: proc(checked: bool, flags: ..Style_Flag, loc := #caller_location
 @(private)
 switch_thumb_vt := Switch_Thumb_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Switch_Thumb))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Switch_Thumb))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Switch_Thumb))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Switch_Thumb))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Switch_Thumb))&parent_element_any,
@@ -6527,6 +6685,7 @@ Switch_Track :: struct {
 
 Switch_Track_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Switch_Track),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Switch_Track),
 	using t_styled_ext: ^Styled_Ext_Trait(Switch_Track),
 	using t_styled: ^Styled_Trait(Switch_Track),
 	using t_parent_element: ^Parent_Element_Trait(Switch_Track),
@@ -6549,6 +6708,7 @@ switch_track :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Sw
 @(private)
 switch_track_vt := Switch_Track_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Switch_Track))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Switch_Track))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Switch_Track))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Switch_Track))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Switch_Track))&parent_element_any,
@@ -6605,8 +6765,9 @@ switch_track_styles_vt := Switch_Track_Styles_VT {
 
 // An unstyled tab that owns pointer activation and accessibility behavior.
 //
-// Tabs do not participate in keyboard focus by themselves. A compound tab list may add keyboard
-// navigation when that behavior is introduced.
+// Inside a `Tabs` list the tab also takes part in the list's roving keyboard focus: it is
+// focusable, Enter and Space activate it like a click, and the list moves focus between its tabs
+// with the arrow keys. A tab rendered outside a `Tabs` list is pointer-only, as before.
 //
 // Base_Tab is gpui_kit::base::Tab.
 Base_Tab :: struct {
@@ -6616,6 +6777,7 @@ Base_Tab :: struct {
 
 Base_Tab_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Tab),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Tab),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Tab),
 	using t_styled: ^Styled_Trait(Base_Tab),
 	using t_parent_element: ^Parent_Element_Trait(Base_Tab),
@@ -6683,6 +6845,7 @@ base_tab :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base_T
 @(private)
 base_tab_vt := Base_Tab_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Tab))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Tab))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Tab))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Tab))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Tab))&parent_element_any,
@@ -6804,6 +6967,7 @@ Base_Table :: struct {
 
 Base_Table_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Table),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Table),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Table),
 	using t_styled: ^Styled_Trait(Base_Table),
 	using t_parent_element: ^Parent_Element_Trait(Base_Table),
@@ -6832,6 +6996,7 @@ base_table :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Base
 @(private)
 base_table_vt := Base_Table_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Table))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Table))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Table))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Table))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Table))&parent_element_any,
@@ -6864,6 +7029,7 @@ Base_Table_Body :: struct {
 
 Base_Table_Body_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Table_Body),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Table_Body),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Table_Body),
 	using t_styled: ^Styled_Trait(Base_Table_Body),
 	using t_parent_element: ^Parent_Element_Trait(Base_Table_Body),
@@ -6884,6 +7050,7 @@ base_table_body :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) ->
 @(private)
 base_table_body_vt := Base_Table_Body_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Table_Body))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Table_Body))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Table_Body))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Table_Body))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Table_Body))&parent_element_any,
@@ -6901,6 +7068,7 @@ Base_Table_Caption :: struct {
 
 Base_Table_Caption_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Table_Caption),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Table_Caption),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Table_Caption),
 	using t_styled: ^Styled_Trait(Base_Table_Caption),
 	using t_parent_element: ^Parent_Element_Trait(Base_Table_Caption),
@@ -6921,6 +7089,7 @@ base_table_caption :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location)
 @(private)
 base_table_caption_vt := Base_Table_Caption_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Table_Caption))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Table_Caption))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Table_Caption))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Table_Caption))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Table_Caption))&parent_element_any,
@@ -6938,6 +7107,7 @@ Base_Table_Cell :: struct {
 
 Base_Table_Cell_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Table_Cell),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Table_Cell),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Table_Cell),
 	using t_styled: ^Styled_Trait(Base_Table_Cell),
 	using t_parent_element: ^Parent_Element_Trait(Base_Table_Cell),
@@ -6959,6 +7129,7 @@ base_table_cell :: proc(id: Id, column_index: int, flags: ..Style_Flag, loc := #
 @(private)
 base_table_cell_vt := Base_Table_Cell_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Table_Cell))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Table_Cell))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Table_Cell))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Table_Cell))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Table_Cell))&parent_element_any,
@@ -6976,6 +7147,7 @@ Base_Table_Head :: struct {
 
 Base_Table_Head_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Table_Head),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Table_Head),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Table_Head),
 	using t_styled: ^Styled_Trait(Base_Table_Head),
 	using t_parent_element: ^Parent_Element_Trait(Base_Table_Head),
@@ -6997,6 +7169,7 @@ base_table_head :: proc(id: Id, column_index: int, flags: ..Style_Flag, loc := #
 @(private)
 base_table_head_vt := Base_Table_Head_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Table_Head))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Table_Head))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Table_Head))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Table_Head))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Table_Head))&parent_element_any,
@@ -7014,6 +7187,7 @@ Base_Table_Header :: struct {
 
 Base_Table_Header_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Table_Header),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Table_Header),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Table_Header),
 	using t_styled: ^Styled_Trait(Base_Table_Header),
 	using t_parent_element: ^Parent_Element_Trait(Base_Table_Header),
@@ -7034,6 +7208,7 @@ base_table_header :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) 
 @(private)
 base_table_header_vt := Base_Table_Header_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Table_Header))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Table_Header))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Table_Header))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Table_Header))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Table_Header))&parent_element_any,
@@ -7051,6 +7226,7 @@ Base_Table_Row :: struct {
 
 Base_Table_Row_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Table_Row),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Table_Row),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Table_Row),
 	using t_styled: ^Styled_Trait(Base_Table_Row),
 	using t_parent_element: ^Parent_Element_Trait(Base_Table_Row),
@@ -7072,6 +7248,7 @@ base_table_row :: proc(id: Id, row_index: int, flags: ..Style_Flag, loc := #call
 @(private)
 base_table_row_vt := Base_Table_Row_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Table_Row))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Table_Row))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Table_Row))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Table_Row))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Table_Row))&parent_element_any,
@@ -7081,8 +7258,20 @@ base_table_row_vt := Base_Table_Row_VT {
 
 // An unstyled collection root for `Base_Tab` elements.
 //
-// Controlled selection and activation are expressed directly by its child tabs. The root supplies
-// collection accessibility without introducing a context hierarchy or new keyboard behavior.
+// Controlled selection and activation stay with the child tabs: the application decides which tab
+// is selected and what activating one does. The root supplies the tab-list semantics and the
+// keyboard contract of the ARIA tabs pattern (manual activation):
+// - The list is one tab stop. `Tab` enters it on the selected tab (the first enabled tab when
+//   none is selected) and leaves it with the next `Tab`.
+// - Left and Right move focus to the previous or next enabled tab, wrapping at either end; in a
+//   right-to-left layout the next tab sits to the left. A vertical list (`->axis`) uses Up and
+//   Down instead.
+// - Home and End move focus to the first and last enabled tab.
+// - Enter and Space activate the focused tab, running its click handler.
+// - Disabled tabs are skipped and never take focus from the keyboard.
+//
+// Moving focus does not select: selection follows activation, so a controlled list never changes
+// behind the application's back.
 //
 // Tabs is gpui_kit::base::Tabs.
 Tabs :: struct {
@@ -7092,11 +7281,15 @@ Tabs :: struct {
 
 Tabs_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Tabs),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Tabs),
 	using t_styled_ext: ^Styled_Ext_Trait(Tabs),
 	using t_styled: ^Styled_Trait(Tabs),
 	using t_parent_element: ^Parent_Element_Trait(Tabs),
 	using t_interactive_element: ^Interactive_Element_Trait(Tabs),
 	using t_stateful_interactive_element: ^Stateful_Interactive_Element_Trait(Tabs),
+	// The direction the tabs run: horizontal (Left/Right, the default) or vertical (Up/Down).
+	// Assistive technology hears the same orientation.
+	axis: proc(e: Tabs, axis: Axis) -> Tabs,
 }
 
 tabs :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Tabs {
@@ -7111,11 +7304,17 @@ tabs :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Tabs {
 @(private)
 tabs_vt := Tabs_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Tabs))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Tabs))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Tabs))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Tabs))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Tabs))&parent_element_any,
 	t_interactive_element = cast(^Interactive_Element_Trait(Tabs))&interactive_element_any,
 	t_stateful_interactive_element = cast(^Stateful_Interactive_Element_Trait(Tabs))&stateful_interactive_element_any,
+	axis = proc(e: Tabs, axis: Axis) -> Tabs {
+		o := op(e.el, 256)
+		put_u16(o, u16(axis))
+		return e
+	},
 }
 
 // A text view that can render Markdown or HTML.
@@ -7143,6 +7342,7 @@ Base_Text_View :: struct {
 }
 
 Base_Text_View_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Text_View),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Text_View),
 	aspect_ratio: proc(e: Base_Text_View, ratio: f32) -> Base_Text_View,
 	bg: proc(e: Base_Text_View, fill: Fill) -> Base_Text_View,
@@ -7264,6 +7464,9 @@ Base_Text_View_VT :: struct {
 	// This disables raw HTML parsing because `markdown-rs` gives HTML priority over MDX when both are
 	// enabled.
 	markdown_mdx: proc(e: Base_Text_View) -> Base_Text_View,
+	// Set whether raw HTML in Markdown renders as HTML (the default) or shows as the text it is
+	// written as. See `->raw_html`.
+	markdown_raw_html: proc(e: Base_Text_View, enabled: bool) -> Base_Text_View,
 	// Clamp the rendered content to at most `n` lines of body text.
 	//
 	// The view's height is capped at `n` × the base line height, and a line of glyphs is never cut in
@@ -7316,6 +7519,10 @@ Base_Text_View_VT :: struct {
 	// content, such as a few lines of text, a label, etc.
 	scrollable: proc(e: Base_Text_View, scrollable: bool) -> Base_Text_View,
 	// Set whether the text view is selectable, default is true.
+	//
+	// Hovering selectable text shows the I-beam cursor. A cursor set on the text view itself, such as
+	// `.cursor_default()`, replaces it: use that for text on a surface that opens on click. Links keep
+	// the pointing hand, and the I-beam still shows while a drag selection is in progress.
 	selectable: proc(e: Base_Text_View, selectable: bool) -> Base_Text_View,
 	// Set the `SelectionFormat`, default is `Plain`.
 	//
@@ -7384,6 +7591,7 @@ base_text_view_markdown :: proc(id: Id, markdown: string, flags: ..Style_Flag, l
 
 @(private)
 base_text_view_vt := Base_Text_View_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Text_View))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Text_View))&styled_ext_any,
 	aspect_ratio = transmute(proc(e: Base_Text_View, ratio: f32) -> Base_Text_View)styled_aspect_ratio,
 	bg = transmute(proc(e: Base_Text_View, fill: Fill) -> Base_Text_View)styled_bg,
@@ -7514,6 +7722,11 @@ base_text_view_vt := Base_Text_View_VT {
 	},
 	markdown_mdx = proc(e: Base_Text_View) -> Base_Text_View {
 		op(e.el, 260)
+		return e
+	},
+	markdown_raw_html = proc(e: Base_Text_View, enabled: bool) -> Base_Text_View {
+		o := op(e.el, 277)
+		put_u8(o, u8(enabled))
 		return e
 	},
 	max_lines = proc(e: Base_Text_View, max_lines: int) -> Base_Text_View {
@@ -7887,6 +8100,7 @@ Base_Time_Field :: struct {
 }
 
 Base_Time_Field_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Time_Field),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Time_Field),
 	using t_styled: ^Styled_Trait(Base_Time_Field),
 	disabled: proc(e: Base_Time_Field, disabled: bool) -> Base_Time_Field,
@@ -7909,6 +8123,7 @@ base_time_field :: proc(id: Id, state: Time_Field_State, flags: ..Style_Flag, lo
 
 @(private)
 base_time_field_vt := Base_Time_Field_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Time_Field))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Time_Field))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Time_Field))&styled_any,
 	disabled = proc(e: Base_Time_Field, disabled: bool) -> Base_Time_Field {
@@ -7938,6 +8153,7 @@ Time_Field_Segment :: struct {
 
 Time_Field_Segment_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Time_Field_Segment),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Time_Field_Segment),
 	using t_styled_ext: ^Styled_Ext_Trait(Time_Field_Segment),
 	using t_parent_element: ^Parent_Element_Trait(Time_Field_Segment),
 	using t_styled: ^Styled_Trait(Time_Field_Segment),
@@ -7960,6 +8176,7 @@ time_field_segment_handed :: proc(index: u8, flags: ..Style_Flag, loc := #caller
 @(private)
 time_field_segment_vt := Time_Field_Segment_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Time_Field_Segment))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Time_Field_Segment))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Time_Field_Segment))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Time_Field_Segment))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Time_Field_Segment))&styled_any,
@@ -8025,6 +8242,7 @@ Toast :: struct {
 
 Toast_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Toast),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Toast),
 	using t_styled_ext: ^Styled_Ext_Trait(Toast),
 	using t_styled: ^Styled_Trait(Toast),
 	using t_parent_element: ^Parent_Element_Trait(Toast),
@@ -8047,6 +8265,7 @@ toast :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Toast {
 @(private)
 toast_vt := Toast_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Toast))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Toast))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Toast))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Toast))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Toast))&parent_element_any,
@@ -8069,6 +8288,7 @@ Toast_Stack :: struct {
 
 Toast_Stack_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Toast_Stack),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Toast_Stack),
 	using t_styled_ext: ^Styled_Ext_Trait(Toast_Stack),
 	using t_styled: ^Styled_Trait(Toast_Stack),
 	using t_parent_element: ^Parent_Element_Trait(Toast_Stack),
@@ -8098,6 +8318,7 @@ toast_stack :: proc(id: Id, state: Toast_Stack_State, flags: ..Style_Flag, loc :
 @(private)
 toast_stack_vt := Toast_Stack_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Toast_Stack))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Toast_Stack))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Toast_Stack))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Toast_Stack))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Toast_Stack))&parent_element_any,
@@ -8139,6 +8360,7 @@ Base_Toggle :: struct {
 
 Base_Toggle_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Toggle),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Toggle),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Toggle),
 	using t_styled: ^Styled_Trait(Base_Toggle),
 	using t_parent_element: ^Parent_Element_Trait(Base_Toggle),
@@ -8207,6 +8429,7 @@ base_toggle :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Bas
 @(private)
 base_toggle_vt := Base_Toggle_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Toggle))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Toggle))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Toggle))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Toggle))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Toggle))&parent_element_any,
@@ -8303,6 +8526,7 @@ Base_Toggle_Group :: struct {
 
 Base_Toggle_Group_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Toggle_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Toggle_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Toggle_Group),
 	using t_styled: ^Styled_Trait(Base_Toggle_Group),
 	using t_parent_element: ^Parent_Element_Trait(Base_Toggle_Group),
@@ -8324,6 +8548,7 @@ base_toggle_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) 
 @(private)
 base_toggle_group_vt := Base_Toggle_Group_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Toggle_Group))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Toggle_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Toggle_Group))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Toggle_Group))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Toggle_Group))&parent_element_any,
@@ -8399,6 +8624,7 @@ Base_Toolbar :: struct {
 
 Base_Toolbar_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Toolbar),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Toolbar),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Toolbar),
 	using t_styled: ^Styled_Trait(Base_Toolbar),
 	using t_parent_element: ^Parent_Element_Trait(Base_Toolbar),
@@ -8423,6 +8649,7 @@ base_toolbar :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Ba
 @(private)
 base_toolbar_vt := Base_Toolbar_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Toolbar))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Toolbar))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Toolbar))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Toolbar))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Toolbar))&parent_element_any,
@@ -8461,6 +8688,7 @@ Base_Toolbar_Group :: struct {
 
 Base_Toolbar_Group_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Toolbar_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Toolbar_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Toolbar_Group),
 	using t_styled: ^Styled_Trait(Base_Toolbar_Group),
 	using t_parent_element: ^Parent_Element_Trait(Base_Toolbar_Group),
@@ -8482,6 +8710,7 @@ base_toolbar_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location)
 @(private)
 base_toolbar_group_vt := Base_Toolbar_Group_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Toolbar_Group))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Toolbar_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Toolbar_Group))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Toolbar_Group))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Toolbar_Group))&parent_element_any,
@@ -8507,6 +8736,7 @@ Base_Tooltip :: struct {
 
 Base_Tooltip_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Base_Tooltip),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Tooltip),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Tooltip),
 	using t_styled: ^Styled_Trait(Base_Tooltip),
 	using t_parent_element: ^Parent_Element_Trait(Base_Tooltip),
@@ -8524,6 +8754,7 @@ base_tooltip :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Ba
 @(private)
 base_tooltip_vt := Base_Tooltip_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Base_Tooltip))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Tooltip))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Tooltip))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Tooltip))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Base_Tooltip))&parent_element_any,
@@ -8543,6 +8774,8 @@ Tooltip_Positioner :: struct {
 Tooltip_Positioner_VT :: struct {
 	using t_element_ext: ^Element_Ext_Trait(Tooltip_Positioner),
 	using t_parent_element: ^Parent_Element_Trait(Tooltip_Positioner),
+	// Sets the gap between the trigger and tooltip. Defaults to zero.
+	offset: proc(e: Tooltip_Positioner, offset: f32) -> Tooltip_Positioner,
 	placement: proc(e: Tooltip_Positioner, placement: Placement) -> Tooltip_Positioner,
 }
 
@@ -8558,6 +8791,11 @@ tooltip_positioner :: proc(trigger_bounds: Bounds, loc := #caller_location) -> T
 tooltip_positioner_vt := Tooltip_Positioner_VT {
 	t_element_ext = cast(^Element_Ext_Trait(Tooltip_Positioner))&element_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Tooltip_Positioner))&parent_element_any,
+	offset = proc(e: Tooltip_Positioner, offset: f32) -> Tooltip_Positioner {
+		o := op(e.el, 257)
+		put_f32(o, offset)
+		return e
+	},
 	placement = proc(e: Tooltip_Positioner, placement: Placement) -> Tooltip_Positioner {
 		o := op(e.el, 256)
 		put_u16(o, u16(placement))
@@ -8574,6 +8812,8 @@ Tooltip_Request :: struct {
 }
 
 Tooltip_Request_VT :: struct {
+	// Sets the gap between the trigger and tooltip. Defaults to zero.
+	with_offset: proc(e: Tooltip_Request, offset: f32) -> Tooltip_Request,
 	// Prefers a side for the tooltip, falling back when it does not fit.
 	with_placement: proc(e: Tooltip_Request, placement: Placement) -> Tooltip_Request,
 	// Overrides `gk.tooltip_defaults_show_delay` for this trigger.
@@ -8602,6 +8842,11 @@ tooltip_request :: proc(trigger_bounds: Bounds, build: View_Or_Tooltip, loc := #
 
 @(private)
 tooltip_request_vt := Tooltip_Request_VT {
+	with_offset = proc(e: Tooltip_Request, offset: f32) -> Tooltip_Request {
+		o := op(vel(e.nd), 258)
+		put_f32(o, offset)
+		return e
+	},
 	with_placement = proc(e: Tooltip_Request, placement: Placement) -> Tooltip_Request {
 		o := op(vel(e.nd), 256)
 		put_u16(o, u16(placement))
@@ -8703,6 +8948,7 @@ Base_Tree :: struct {
 }
 
 Base_Tree_VT :: struct {
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Base_Tree),
 	using t_styled_ext: ^Styled_Ext_Trait(Base_Tree),
 	using t_styled: ^Styled_Trait(Base_Tree),
 	// Supplies the application-owned content for each visible entry.
@@ -8722,6 +8968,7 @@ base_tree :: proc(state: Tree_State, flags: ..Style_Flag, loc := #caller_locatio
 
 @(private)
 base_tree_vt := Base_Tree_VT {
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Base_Tree))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Base_Tree))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Base_Tree))&styled_any,
 	item = proc(e: Base_Tree, render_item: Row_Source) -> Base_Tree {

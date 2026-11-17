@@ -26,13 +26,14 @@ func Amber(cx *Cx, scale int) Hsla {
 // Reads the operating system's reduced-motion preference into `set_reduce_motion`.
 //
 // `gpui_base::init` calls this once. Call it again to re-read the preference on a platform Base
-// does not follow live — macOS and Windows post no notification Base can subscribe to without a
-// window, so a change made while the application runs reaches it only through this call.
+// does not follow live. The current macOS and Windows implementations read the preference only
+// when this function is called.
 //
-// The application wins over the system: when the flag no longer holds what Base last wrote, the
-// application set it, and this call leaves it alone. Where the platform cannot say (wasm, an
-// unsupported desktop, a Linux session without the portal) the flag is left as it is, and under
-// GPUI's test scheduler the platform is not asked at all.
+// Explicit overrides are preserved. For direct `set_reduce_motion` calls, a flag different from
+// what Base last wrote is also left alone; a same-value application choice cannot be detected.
+// This function does not clear either override: use `SetReduceMotionPreference` with `System`.
+// Where the platform cannot say (wasm, an unsupported desktop, a Linux session without the portal)
+// the flag is left as it is, and under GPUI's test scheduler the platform is not asked at all.
 //
 // BaseApplySystemReduceMotion is gpui_kit::base::apply_system_reduce_motion.
 func BaseApplySystemReduceMotion(cx *Cx) {
@@ -200,6 +201,21 @@ func BaseLastHorizontalScrollClaim(cx *Cx) Option[HorizontalScrollClaim] {
 	return rdOpt(r, func(r *reader) HorizontalScrollClaim { return HorizontalScrollClaim{h: r.u64()} })
 }
 
+// The physical anchor for `anchor` in `direction`.
+//
+// Anchors are written for left-to-right layout; in RTL the horizontal side is mirrored, so a
+// `TopLeft` popover that hangs from the trigger's start edge hangs from its right edge instead.
+//
+// BaseLogicalAnchor is gpui_kit::base::logical_anchor.
+func BaseLogicalAnchor(cx *Cx, anchor Anchor, direction LayoutDirection) Anchor {
+	useBaseRoot()
+	o := newReq(1777)
+	o.u16(uint16(anchor))
+	o.u16(uint16(direction))
+	r := ambientCall(cx, o, true)
+	return Anchor(r.u16())
+}
+
 // Returns the rendered width of `text` at `font_size` using the window's current text style. Used
 // for layout calculations that need to reserve space for labels before the scale ranges are fixed.
 //
@@ -262,6 +278,28 @@ func BaseSetLanguageProvider(cx *Cx, provider RowSource) {
 	useBaseInput()
 	o := newReq(1624)
 	o.u64(provider.h)
+	ambientCall(cx, o, false)
+}
+
+// Selects the application's reduced-motion preference.
+//
+// `Reduce` and `Allow` set `reduce_motion` and prevent Base's system readings from changing it,
+// even when the value already matches. The application can still change the flag directly; system
+// readings continue to be cached.
+//
+// `System` releases application ownership, resumes the last known system value and calls
+// `gk.BaseApplySystemReduceMotion` through the existing platform mechanism. If no system value is
+// known, the current flag is kept until a reading arrives. On Linux, an existing portal listener
+// supplies updates; selecting System does not restart it or force a new read.
+//
+// System also releases ownership taken through `set_reduce_motion`. Under the test scheduler,
+// explicit choices and cached readings still apply, but the platform is never queried.
+//
+// BaseSetReduceMotionPreference is gpui_kit::base::set_reduce_motion_preference.
+func BaseSetReduceMotionPreference(cx *Cx, preference ReduceMotionPreference) {
+	useBaseRoot()
+	o := newReq(1778)
+	o.u16(uint16(preference))
 	ambientCall(cx, o, false)
 }
 

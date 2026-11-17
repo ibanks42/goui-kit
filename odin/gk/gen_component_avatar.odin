@@ -14,6 +14,7 @@ Avatar :: struct {
 
 Avatar_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Avatar),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Avatar),
 	using t_styled_ext: ^Styled_Ext_Trait(Avatar),
 	using t_sizable: ^Sizable_Trait(Avatar),
 	using t_styled: ^Styled_Trait(Avatar),
@@ -36,6 +37,7 @@ avatar :: proc(flags: ..Style_Flag, loc := #caller_location) -> Avatar {
 @(private)
 avatar_vt := Avatar_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Avatar))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Avatar))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Avatar))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Avatar))&sizable_any,
 	t_styled = cast(^Styled_Trait(Avatar))&styled_any,
@@ -67,6 +69,7 @@ Avatar_Group :: struct {
 
 Avatar_Group_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Avatar_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Avatar_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Avatar_Group),
 	using t_sizable: ^Sizable_Trait(Avatar_Group),
 	using t_styled: ^Styled_Trait(Avatar_Group),
@@ -92,6 +95,7 @@ avatar_group :: proc(flags: ..Style_Flag, loc := #caller_location) -> Avatar_Gro
 @(private)
 avatar_group_vt := Avatar_Group_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Avatar_Group))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Avatar_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Avatar_Group))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Avatar_Group))&sizable_any,
 	t_styled = cast(^Styled_Trait(Avatar_Group))&styled_any,

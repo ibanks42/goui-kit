@@ -1510,6 +1510,19 @@ call		gpui_kit::base::text::editor_host::LeafGeometry::position_for_index	1762
 call		read:gpui_kit::base::questionnaire::QuestionnaireItemDefinition::validator	1763
 call		gpui_kit::base::text::editor_host::parse_markdown	1764
 call		gpui_kit::component::try_parse_background	1765
+call		gpui_kit::base::input::EditorState::context_menu_offset	1766
+call		gpui_kit::base::input::EditorState::text_origin_offset	1767
+call		gpui_kit::base::input::InputState::context_menu_offset	1768
+call		gpui_kit::base::input::InputState::set_tokens	1769
+call		gpui_kit::base::input::TextareaState::context_menu_offset	1770
+call		gpui_kit::base::input::TextareaState::decorations	1771
+call		gpui_kit::base::input::TextareaState::set_decorations	1772
+call		gpui_kit::base::input::TextareaState::set_tokens	1773
+call		gpui_kit::component::diff::DiffState::set_all_files_collapsed	1774
+call		gpui_kit::component::diff::DiffState::set_files_collapsed	1775
+call		gpui_kit::component::message_scroller::MessageScrollerState::scroll_to_offset	1776
+call		gpui_kit::base::logical_anchor	1777
+call		gpui_kit::base::set_reduce_motion_preference	1778
 node		gpui_kit::base::h_flex	256
 node		gpui_kit::base::v_flex	257
 node		gpui_kit::div	258
@@ -2142,6 +2155,8 @@ node		gpui_kit::base::TimeFieldSegment::(handed)	884
 node		gpui_kit::component::Icon::Default::default	885
 node		gpui_kit::component::Icon::empty	886
 node		gpui_kit::component::Icon::new	887
+node		gpui_kit::base::input::TextareaExtras::Default::default	888
+node		gpui_kit::base::text::Link::new	889
 op	gpui_kit::Div	on_children_prepainted	256
 op	gpui_kit::Div	image_cache	257
 op	gpui_kit::Div	with_dynamic_prepaint_order	258
@@ -2317,6 +2332,7 @@ op	gpui_kit::base::MarkdownExtensions	parser_revision	258
 op	gpui_kit::base::MarkdownExtensions	block_renderer	259
 op	gpui_kit::base::MarkdownExtensions	block_surface	260
 op	gpui_kit::base::MarkdownExtensions	plugin	261
+op	gpui_kit::base::MarkdownExtensions	raw_html	262
 op	gpui_kit::base::MarkdownNode	accessibility_label	256
 op	gpui_kit::base::MarkdownNode	markdown	257
 op	gpui_kit::base::MarkdownNode	text	258
@@ -2329,6 +2345,7 @@ op	gpui_kit::base::NumberInput	input	259
 op	gpui_kit::base::NumberInput	on_step	260
 op	gpui_kit::base::NumberInput	decrement_button	261
 op	gpui_kit::base::NumberInput	increment_button	262
+op	gpui_kit::base::NumberInput	stepper	263
 op	gpui_kit::base::OtpInput	disabled	256
 op	gpui_kit::base::Pagination	accessibility_label	256
 op	gpui_kit::base::PaginationState	disabled	256
@@ -2445,6 +2462,7 @@ op	gpui_kit::base::Select	open	264
 op	gpui_kit::base::SelectableText	document_order	256
 op	gpui_kit::base::SelectableText	selection_color	257
 op	gpui_kit::base::SelectableText	text_style	258
+op	gpui_kit::base::SelectableText	highlights	259
 op	gpui_kit::base::Sheet	on_close	256
 op	gpui_kit::base::Sheet	overlay	257
 op	gpui_kit::base::Sheet	overlay_closable	258
@@ -2494,6 +2512,7 @@ op	gpui_kit::base::TabStyles	selected	257
 op	gpui_kit::base::Table	accessibility_label	256
 op	gpui_kit::base::Table	column_count	257
 op	gpui_kit::base::Table	row_count	258
+op	gpui_kit::base::Tabs	axis	256
 op	gpui_kit::base::TextSelectionRegistration	with_document_order	256
 op	gpui_kit::base::TextSelectionRegistration	with_scope	257
 op	gpui_kit::base::TextSelectionRegistration	with_scroll_offset	258
@@ -2522,6 +2541,7 @@ op	gpui_kit::base::TextView	markdown_block_renderer	273
 op	gpui_kit::base::TextView	table_actions	274
 op	gpui_kit::base::TextView	link_tooltip	275
 op	gpui_kit::base::TextView	plugin	276
+op	gpui_kit::base::TextView	markdown_raw_html	277
 op	gpui_kit::base::TextViewMotion	with_stream_fade	256
 op	gpui_kit::base::TextViewMotion	with_stream_fade_easing	257
 op	gpui_kit::base::TextViewMotion	with_stream_fade_stagger	258
@@ -2574,8 +2594,10 @@ op	gpui_kit::base::Toolbar	axis	256
 op	gpui_kit::base::Toolbar	disabled	257
 op	gpui_kit::base::ToolbarGroup	label	256
 op	gpui_kit::base::TooltipPositioner	placement	256
+op	gpui_kit::base::TooltipPositioner	offset	257
 op	gpui_kit::base::TooltipRequest	with_placement	256
 op	gpui_kit::base::TooltipRequest	with_show_delay	257
+op	gpui_kit::base::TooltipRequest	with_offset	258
 op	gpui_kit::base::Transition	delay	256
 op	gpui_kit::base::Transition	easing	257
 op	gpui_kit::base::Transition	reduced_motion	258
@@ -2717,6 +2739,8 @@ op	gpui_kit::base::questionnaire::QuestionnaireItemDefinition	with_required	262
 op	gpui_kit::base::questionnaire::QuestionnaireItemDefinition	with_validator	263
 op	gpui_kit::base::text::CodeBlock	with_leaf_key	256
 op	gpui_kit::base::text::CodeBlock	with_meta	257
+op	gpui_kit::base::text::Link	title	256
+op	gpui_kit::base::text::Link	url	257
 op	gpui_kit::base::text::editor_host::FlowPosition	first	256
 op	gpui_kit::base::text::editor_host::FlowPosition	last	257
 op	gpui_kit::base::text::editor_host::InlineNode	marks	256
@@ -3045,12 +3069,14 @@ op	gpui_kit::component::checkbox::Checkbox	tab_index	262
 op	gpui_kit::component::checkbox::Checkbox	tab_stop	263
 op	gpui_kit::component::checkbox::Checkbox	tooltip	264
 op	gpui_kit::component::checkbox::Checkbox	tooltip_show_delay	265
+op	gpui_kit::component::checkbox::Checkbox	indeterminate	266
 op	gpui_kit::component::clipboard::Clipboard	accessibility_label	256
 op	gpui_kit::component::clipboard::Clipboard	tooltip	257
 op	gpui_kit::component::clipboard::Clipboard	tooltip_show_delay	258
 op	gpui_kit::component::clipboard::Clipboard	value	259
 op	gpui_kit::component::clipboard::Clipboard	on_copied	260
 op	gpui_kit::component::clipboard::Clipboard	value_fn	261
+op	gpui_kit::component::clipboard::Clipboard	label	262
 op	gpui_kit::component::collapsible::Collapsible	content	256
 op	gpui_kit::component::collapsible::Collapsible	motion_id	257
 op	gpui_kit::component::collapsible::Collapsible	open	258
@@ -3075,6 +3101,7 @@ op	gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>
 op	gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>	empty	265
 op	gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>	icon	266
 op	gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>	render_trigger	267
+op	gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>	highlight_matches	268
 op	gpui_kit::component::command::Command	bordered	256
 op	gpui_kit::component::command::Command	filterable	257
 op	gpui_kit::component::command::Command	group	258
@@ -3092,6 +3119,7 @@ op	gpui_kit::component::command::Command	separator	269
 op	gpui_kit::component::command::Command	empty	270
 op	gpui_kit::component::command::Command	footer	271
 op	gpui_kit::component::command::Command	header	272
+op	gpui_kit::component::command::Command	highlight_matches	273
 op	gpui_kit::component::command::CommandGroup	item	256
 op	gpui_kit::component::command::CommandGroup	items	257
 op	gpui_kit::component::command::CommandGroup	label	258
@@ -3187,6 +3215,7 @@ op	gpui_kit::component::diff::Diff	render_header	277
 op	gpui_kit::component::diff::Diff	render_header_prefix	278
 op	gpui_kit::component::diff::Diff	render_header_suffix	279
 op	gpui_kit::component::diff::Diff	render_header_title_suffix	280
+op	gpui_kit::component::diff::Diff	split_ratio	281
 op	gpui_kit::component::diff::DiffDecoration	with_background	256
 op	gpui_kit::component::diff::DiffFile	with_language	256
 op	gpui_kit::component::diff::DiffGutterMarker	with_label	256
@@ -3278,6 +3307,7 @@ op	gpui_kit::component::input::NumberInput	appearance	257
 op	gpui_kit::component::input::NumberInput	placeholder	258
 op	gpui_kit::component::input::NumberInput	prefix	259
 op	gpui_kit::component::input::NumberInput	suffix	260
+op	gpui_kit::component::input::NumberInput	stepper	261
 op	gpui_kit::component::input::OtpInput	groups	256
 op	gpui_kit::component::input::Textarea	accessibility_id	256
 op	gpui_kit::component::input::Textarea	appearance	257
@@ -3298,6 +3328,7 @@ op	gpui_kit::component::kbd::Kbd	outline	257
 op	gpui_kit::component::label::Label	highlights	256
 op	gpui_kit::component::label::Label	masked	257
 op	gpui_kit::component::label::Label	secondary	258
+op	gpui_kit::component::label::Label	id	259
 op	gpui_kit::component::link::Link	disabled	256
 op	gpui_kit::component::link::Link	href	257
 op	gpui_kit::component::link::Link	on_click	258
@@ -3478,6 +3509,7 @@ op	gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>	sea
 op	gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>	title_prefix	266
 op	gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>	empty	267
 op	gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>	icon	268
+op	gpui_kit::component::select::Select<crate::shim_select::GkSearchDelegate>	highlight_matches	269
 op	gpui_kit::component::separator::Separator	color	256
 op	gpui_kit::component::separator::Separator	dashed	257
 op	gpui_kit::component::separator::Separator	label	258
@@ -3557,6 +3589,7 @@ op	gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMe
 op	gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarMenu>	side	262
 op	gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>	child	256
 op	gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>	children	257
+op	gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>	suffix	258
 op	gpui_kit::component::sidebar::SidebarMenu	child	256
 op	gpui_kit::component::sidebar::SidebarMenu	children	257
 op	gpui_kit::component::sidebar::SidebarMenuItem	accessibility_label	256
@@ -3582,6 +3615,8 @@ op	gpui_kit::component::slider::Slider	disabled	257
 op	gpui_kit::component::slider::Slider	horizontal	258
 op	gpui_kit::component::slider::Slider	reverse	259
 op	gpui_kit::component::slider::Slider	vertical	260
+op	gpui_kit::component::slider::Slider	tab_index	261
+op	gpui_kit::component::slider::Slider	tab_stop	262
 op	gpui_kit::component::speech::SpeechButton	show_when_unsupported	256
 op	gpui_kit::component::speech::SpeechWaveform	liquid	256
 op	gpui_kit::component::spinner::Spinner	color	256
@@ -3662,6 +3697,7 @@ op	gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>	head
 op	gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>	scroll_bounce	260
 op	gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>	scrollbar_visible	261
 op	gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>	stripe	262
+op	gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>	scrollbar_mode	263
 op	gpui_kit::component::table::Table	accessibility_label	256
 op	gpui_kit::component::table::Table	child	257
 op	gpui_kit::component::table::Table	children	258
@@ -3679,6 +3715,8 @@ op	gpui_kit::component::table::TableHeader	child	256
 op	gpui_kit::component::table::TableHeader	children	257
 op	gpui_kit::component::table::TableRow	child	256
 op	gpui_kit::component::table::TableRow	children	257
+op	gpui_kit::component::table::TableRow	hover	258
+op	gpui_kit::component::table::TableRow	id	259
 op	gpui_kit::component::tag::Tag	outline	256
 op	gpui_kit::component::tag::Tag	rounded	257
 op	gpui_kit::component::tag::Tag	rounded_full	258
@@ -7469,6 +7507,7 @@ theme		magenta	136
 theme		magenta_light	137
 theme		cyan	138
 theme		cyan_light	139
+theme		list_highlight_foreground	140
 trait		gpui_kit::InteractiveElement	1
 trait		gpui_kit::ParentElement	2
 trait		gpui_kit::StatefulInteractiveElement	3
@@ -7490,6 +7529,7 @@ trait		gpui_kit::component::button::ToggleVariants	18
 trait		gpui_kit::component::group_box::GroupBoxVariants	19
 trait		gpui_kit::component::StyleSized	20
 trait		gpui_kit::component::scroll::ScrollableElement	21
+trait		gpui_kit::base::LogicalStyledExt	22
 trait-op	gpui_kit::InteractiveElement	block_mouse_except_scroll	0
 trait-op	gpui_kit::InteractiveElement	capture_any_mouse_down	1
 trait-op	gpui_kit::InteractiveElement	capture_any_mouse_up	2
@@ -7656,9 +7696,25 @@ trait-op	gpui_kit::Styled	font	79
 trait-op	gpui_kit::Styled	font_features	80
 trait-op	gpui_kit::base::Disableable	disabled	0
 trait-op	gpui_kit::base::ElementExt	on_prepaint	0
+trait-op	gpui_kit::base::ElementExt	keep_text_selection	1
 trait-op	gpui_kit::base::FocusableExt	focus_ring	0
 trait-op	gpui_kit::base::InteractiveElementExt	on_double_click	0
 trait-op	gpui_kit::base::InteractiveElementExt where Self: StatefulInteractiveElement	lock_scroll_axis	0
+trait-op	gpui_kit::base::LogicalStyledExt	border_e	0
+trait-op	gpui_kit::base::LogicalStyledExt	border_s	1
+trait-op	gpui_kit::base::LogicalStyledExt	flex_row_dir	2
+trait-op	gpui_kit::base::LogicalStyledExt	inset_e	3
+trait-op	gpui_kit::base::LogicalStyledExt	inset_s	4
+trait-op	gpui_kit::base::LogicalStyledExt	justify_flex_end	5
+trait-op	gpui_kit::base::LogicalStyledExt	justify_flex_start	6
+trait-op	gpui_kit::base::LogicalStyledExt	me	7
+trait-op	gpui_kit::base::LogicalStyledExt	ms	8
+trait-op	gpui_kit::base::LogicalStyledExt	pe	9
+trait-op	gpui_kit::base::LogicalStyledExt	ps	10
+trait-op	gpui_kit::base::LogicalStyledExt	rounded_e	11
+trait-op	gpui_kit::base::LogicalStyledExt	rounded_s	12
+trait-op	gpui_kit::base::LogicalStyledExt	text_end	13
+trait-op	gpui_kit::base::LogicalStyledExt	text_start	14
 trait-op	gpui_kit::base::Selectable	open	0
 trait-op	gpui_kit::base::Selectable	secondary_selected	1
 trait-op	gpui_kit::base::Selectable	selected	2
@@ -8136,6 +8192,8 @@ variant	gpui_kit::base::HourCycle	H23	0
 variant	gpui_kit::base::HourCycle	H12	1
 variant	gpui_kit::base::IterationCount	Finite	0
 variant	gpui_kit::base::IterationCount	Infinite	1
+variant	gpui_kit::base::LayoutDirection	Ltr	0
+variant	gpui_kit::base::LayoutDirection	Rtl	1
 variant	gpui_kit::base::Matcher	DayOfWeek	0
 variant	gpui_kit::base::Matcher	Interval	1
 variant	gpui_kit::base::Matcher	Range	2
@@ -8177,6 +8235,9 @@ variant	gpui_kit::base::PresencePhase	Entering	0
 variant	gpui_kit::base::PresencePhase	Present	1
 variant	gpui_kit::base::PresencePhase	Exiting	2
 variant	gpui_kit::base::PresencePhase	Absent	3
+variant	gpui_kit::base::ReduceMotionPreference	System	0
+variant	gpui_kit::base::ReduceMotionPreference	Reduce	1
+variant	gpui_kit::base::ReduceMotionPreference	Allow	2
 variant	gpui_kit::base::ReducedMotion	Finish	0
 variant	gpui_kit::base::ReducedMotion	Continue	1
 variant	gpui_kit::base::ResizablePanelEvent	Resized	0

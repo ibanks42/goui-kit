@@ -104,8 +104,10 @@ pub fn apply_base_number_input(dx: &mut Dx, mut el: gpui_kit::base::NumberInput,
             260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::base::StepAction, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 68, &a0, window, cx) } }; <gpui_kit::base::NumberInput>::on_step(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some(({ let s = if r.u8() != 0 { Some(build_gpui_style_refinement(dx, r.u32())?) } else { None }; let src = r.u64(); move |b: gpui_kit::base::Button| crate::editor_text::decorate(b, s, src) },)))() else { continue }; <gpui_kit::base::NumberInput>::decrement_button(el, a0) }; }
             262 => { el = { let Some((a0,)) = (|| Some(({ let s = if r.u8() != 0 { Some(build_gpui_style_refinement(dx, r.u32())?) } else { None }; let src = r.u64(); move |b: gpui_kit::base::Button| crate::editor_text::decorate(b, s, src) },)))() else { continue }; <gpui_kit::base::NumberInput>::increment_button(el, a0) }; }
+            263 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::NumberInput>::stepper(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
@@ -136,7 +138,8 @@ pub fn apply_base_number_input_text(dx: &mut Dx, mut el: gpui_kit::base::NumberI
         let r = &mut r;
         match op {
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }

@@ -5,7 +5,7 @@ use crate::genapi::{self, Dx, R};
 use super::*;
 
 #[inline(always)]
-pub fn tr_button_variants_56<E: gpui_kit::component::button::ButtonVariants>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_button_variants_57<E: gpui_kit::component::button::ButtonVariants>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         18560 => { let Some((a0,)) = (|| Some((build_component_button_custom_variant(dx, r.u32())?,)))() else { return el }; <E as gpui_kit::component::button::ButtonVariants>::custom(el, a0) }
         18561 => { <E as gpui_kit::component::button::ButtonVariants>::danger(el) }
@@ -22,14 +22,14 @@ pub fn tr_button_variants_56<E: gpui_kit::component::button::ButtonVariants>(el:
     }
 }
 #[inline(always)]
-pub fn tr_child_element_48<E: gpui_kit::component::ChildElement>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_child_element_49<E: gpui_kit::component::ChildElement>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         18048 => { let a0 = r.u64() as usize; <E as gpui_kit::component::ChildElement>::with_ix(el, a0) }
         _ => { bad_op("ChildElement", op); el }
     }
 }
 #[inline(always)]
-pub fn tr_collapsible_23<E: gpui_kit::base::component_traits::Collapsible>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_collapsible_24<E: gpui_kit::base::component_traits::Collapsible>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         17920 => { let a0 = r.u8() != 0; <E as gpui_kit::base::component_traits::Collapsible>::collapsed(el, a0) }
         _ => { bad_op("Collapsible", op); el }
@@ -46,6 +46,7 @@ pub fn tr_disableable_5<E: gpui_kit::base::Disableable>(el: E, op: u16, r: &mut 
 pub fn tr_element_ext_6<E: gpui_kit::base::ElementExt>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         17152 => { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::Bounds<gpui_kit::Pixels>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 75, &a0, window, cx) } }; <E as gpui_kit::base::ElementExt>::on_prepaint(el, a0) }
+        17153 => { let a0 = element_id(r); <E as gpui_kit::base::ElementExt>::keep_text_selection(el, a0) }
         _ => { bad_op("ElementExt", op); el }
     }
 }
@@ -57,12 +58,12 @@ pub fn tr_focusable_ext_8<E: gpui_kit::base::FocusableExt>(el: E, op: u16, r: &m
     }
 }
 #[inline(always)]
-pub fn tr_group_box_variants_61<E: gpui_kit::component::group_box::GroupBoxVariants>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_group_box_variants_62<E: gpui_kit::component::group_box::GroupBoxVariants>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         18816 => { <E as gpui_kit::component::group_box::GroupBoxVariants>::fill(el) }
         18817 => { <E as gpui_kit::component::group_box::GroupBoxVariants>::normal(el) }
         18818 => { <E as gpui_kit::component::group_box::GroupBoxVariants>::outline(el) }
-        18819 => { let a0 = en_104(r.u16()); <E as gpui_kit::component::group_box::GroupBoxVariants>::with_variant(el, a0) }
+        18819 => { let a0 = en_106(r.u16()); <E as gpui_kit::component::group_box::GroupBoxVariants>::with_variant(el, a0) }
         _ => { bad_op("GroupBoxVariants", op); el }
     }
 }
@@ -130,7 +131,28 @@ pub fn tr_interactive_element_ext_9<E: gpui_kit::base::InteractiveElementExt>(el
     }
 }
 #[inline(always)]
-pub fn tr_scrollable_element_65<E: gpui_kit::component::scroll::ScrollableElement>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_logical_styled_ext_13<E: gpui_kit::base::LogicalStyledExt>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+    match op {
+        19200 => { let a0 = absolute_length(r); <E as gpui_kit::base::LogicalStyledExt>::border_e(el, a0, &*dx.cx) }
+        19201 => { let a0 = absolute_length(r); <E as gpui_kit::base::LogicalStyledExt>::border_s(el, a0, &*dx.cx) }
+        19202 => { <E as gpui_kit::base::LogicalStyledExt>::flex_row_dir(el, &*dx.cx) }
+        19203 => { let a0 = length(r); <E as gpui_kit::base::LogicalStyledExt>::inset_e(el, a0, &*dx.cx) }
+        19204 => { let a0 = length(r); <E as gpui_kit::base::LogicalStyledExt>::inset_s(el, a0, &*dx.cx) }
+        19205 => { <E as gpui_kit::base::LogicalStyledExt>::justify_flex_end(el) }
+        19206 => { <E as gpui_kit::base::LogicalStyledExt>::justify_flex_start(el) }
+        19207 => { let a0 = length(r); <E as gpui_kit::base::LogicalStyledExt>::me(el, a0, &*dx.cx) }
+        19208 => { let a0 = length(r); <E as gpui_kit::base::LogicalStyledExt>::ms(el, a0, &*dx.cx) }
+        19209 => { let a0 = definite_length(r); <E as gpui_kit::base::LogicalStyledExt>::pe(el, a0, &*dx.cx) }
+        19210 => { let a0 = definite_length(r); <E as gpui_kit::base::LogicalStyledExt>::ps(el, a0, &*dx.cx) }
+        19211 => { let a0 = absolute_length(r); <E as gpui_kit::base::LogicalStyledExt>::rounded_e(el, a0, &*dx.cx) }
+        19212 => { let a0 = absolute_length(r); <E as gpui_kit::base::LogicalStyledExt>::rounded_s(el, a0, &*dx.cx) }
+        19213 => { <E as gpui_kit::base::LogicalStyledExt>::text_end(el, &*dx.cx) }
+        19214 => { <E as gpui_kit::base::LogicalStyledExt>::text_start(el, &*dx.cx) }
+        _ => { bad_op("LogicalStyledExt", op); el }
+    }
+}
+#[inline(always)]
+pub fn tr_scrollable_element_66<E: gpui_kit::component::scroll::ScrollableElement>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         19072 => { let a0 = genapi::obj_shown::<gpui_kit::ScrollHandle>(r.u64()); <E as gpui_kit::component::scroll::ScrollableElement>::horizontal_scrollbar(el, &a0) }
         19073 => { let Some((a0, a1)) = (|| Some((genapi::obj_shown::<gpui_kit::ScrollHandle>(r.u64()), in_11(r, dx)?)))() else { return el }; <E as gpui_kit::component::scroll::ScrollableElement>::scrollbar(el, &a0, a1) }
@@ -139,7 +161,7 @@ pub fn tr_scrollable_element_65<E: gpui_kit::component::scroll::ScrollableElemen
     }
 }
 #[inline(always)]
-pub fn tr_selectable_17<E: gpui_kit::base::Selectable>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_selectable_18<E: gpui_kit::base::Selectable>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         17664 => { let a0 = r.u8() != 0; <E as gpui_kit::base::Selectable>::open(el, a0) }
         17665 => { let a0 = r.u8() != 0; <E as gpui_kit::base::Selectable>::secondary_selected(el, a0) }
@@ -148,7 +170,7 @@ pub fn tr_selectable_17<E: gpui_kit::base::Selectable>(el: E, op: u16, r: &mut R
     }
 }
 #[inline(always)]
-pub fn tr_sizable_51<E: gpui_kit::component::Sizable>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_sizable_52<E: gpui_kit::component::Sizable>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         18176 => { <E as gpui_kit::component::Sizable>::large(el) }
         18177 => { <E as gpui_kit::component::Sizable>::small(el) }
@@ -203,7 +225,7 @@ pub fn tr_stateful_interactive_element_2<E: gpui_kit::StatefulInteractiveElement
         _ => { bad_op("StatefulInteractiveElement", op); el }
     }
 }
-pub fn tr_style_sized_52<E: gpui_kit::component::StyleSized<E> + gpui_kit::Styled>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_style_sized_53<E: gpui_kit::component::StyleSized<E> + gpui_kit::Styled>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         18944 => { let Some((a0,)) = (|| Some((de_38(r, dx)?,)))() else { return el }; <E as gpui_kit::component::StyleSized<E>>::button_text_size(el, a0) }
         18945 => { let Some((a0,)) = (|| Some((de_38(r, dx)?,)))() else { return el }; <E as gpui_kit::component::StyleSized<E>>::input_h(el, a0) }
@@ -307,7 +329,7 @@ pub fn tr_styled_3<E: gpui_kit::Styled>(el: E, op: u16, r: &mut R, dx: &mut Dx) 
         _ => { bad_op("Styled", op); el }
     }
 }
-pub fn tr_styled_ext_18<E: gpui_kit::base::StyledExt>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_styled_ext_19<E: gpui_kit::base::StyledExt>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         17792 => { let Some((a0,)) = (|| Some((rc_16(r, dx)?,)))() else { return el }; <E as gpui_kit::base::StyledExt>::corner_radii(el, a0) }
         17793 => { <E as gpui_kit::base::StyledExt>::debug_blue(el) }
@@ -333,25 +355,25 @@ pub fn tr_styled_ext_18<E: gpui_kit::base::StyledExt>(el: E, op: u16, r: &mut R,
         _ => { bad_op("StyledExt", op); el }
     }
 }
-pub fn tr_theme_styled_53<E: gpui_kit::component::ThemeStyled>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_theme_styled_54<E: gpui_kit::component::ThemeStyled>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         18304 => { <E as gpui_kit::component::ThemeStyled>::popover_style(el, &*dx.cx) }
         18305 => { <E as gpui_kit::component::ThemeStyled>::rounded_full_style(el, &*dx.cx) }
         _ => { bad_op("ThemeStyled", op); el }
     }
 }
-pub fn tr_theme_styled_54<E: gpui_kit::component::ThemeStyled + gpui_kit::ParentElement>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_theme_styled_55<E: gpui_kit::component::ThemeStyled + gpui_kit::ParentElement>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         18432 => { <E as gpui_kit::component::ThemeStyled>::focus_ring_style(el, &*dx.window, &*dx.cx) }
         _ => { bad_op("ThemeStyled", op); el }
     }
 }
 #[inline(always)]
-pub fn tr_toggle_variants_57<E: gpui_kit::component::button::ToggleVariants>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
+pub fn tr_toggle_variants_58<E: gpui_kit::component::button::ToggleVariants>(el: E, op: u16, r: &mut R, dx: &mut Dx) -> E {
     match op {
         18688 => { <E as gpui_kit::component::button::ToggleVariants>::ghost(el) }
         18689 => { <E as gpui_kit::component::button::ToggleVariants>::outline(el) }
-        18690 => { let a0 = en_92(r.u16()); <E as gpui_kit::component::button::ToggleVariants>::with_variant(el, a0) }
+        18690 => { let a0 = en_94(r.u16()); <E as gpui_kit::component::button::ToggleVariants>::with_variant(el, a0) }
         _ => { bad_op("ToggleVariants", op); el }
     }
 }

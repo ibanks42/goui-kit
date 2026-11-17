@@ -15,6 +15,7 @@ Checkbox_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Checkbox),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Checkbox),
 	using t_element_ext: ^Element_Ext_Trait(Checkbox),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Checkbox),
 	using t_styled_ext: ^Styled_Ext_Trait(Checkbox),
 	block_mouse_except_scroll: proc(e: Checkbox) -> Checkbox,
 	can_drop: proc(e: Checkbox, predicate: Drop_Accept) -> Checkbox,
@@ -106,6 +107,12 @@ Checkbox_VT :: struct {
 	accessibility_label: proc(e: Checkbox, label: string) -> Checkbox,
 	// Set the checked state for the checkbox.
 	checked: proc(e: Checkbox, checked: bool) -> Checkbox,
+	// Show the mixed state, for example on a checkbox that selects a group whose items are only partly
+	// checked. Default is false.
+	//
+	// While set, the checkbox draws a dash instead of the check mark and reports the mixed state to
+	// assistive technology, whatever `->checked` says. Activating it requests `true`.
+	indeterminate: proc(e: Checkbox, indeterminate: bool) -> Checkbox,
 	// Set the label for the checkbox.
 	label: proc(e: Checkbox, label: Text_Into) -> Checkbox,
 	// Handle a requested checked value from pointer or keyboard activation.
@@ -144,6 +151,7 @@ checkbox_vt := Checkbox_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Checkbox))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Checkbox))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Checkbox))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Checkbox))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Checkbox))&styled_ext_any,
 	block_mouse_except_scroll = transmute(proc(e: Checkbox) -> Checkbox)interactive_element_block_mouse_except_scroll,
 	can_drop = transmute(proc(e: Checkbox, predicate: Drop_Accept) -> Checkbox)interactive_element_can_drop,
@@ -236,6 +244,11 @@ checkbox_vt := Checkbox_VT {
 	checked = proc(e: Checkbox, checked: bool) -> Checkbox {
 		o := op(e.el, 257)
 		put_u8(o, u8(checked))
+		return e
+	},
+	indeterminate = proc(e: Checkbox, indeterminate: bool) -> Checkbox {
+		o := op(e.el, 266)
+		put_u8(o, u8(indeterminate))
 		return e
 	},
 	label = proc(e: Checkbox, label: Text_Into) -> Checkbox {

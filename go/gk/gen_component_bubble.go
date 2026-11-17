@@ -96,11 +96,71 @@ func (e BubbleEl) RoundedFullStyle() BubbleEl { tThemeStyledRoundedFullStyle(e.n
 // off — leave it a few pixels of room, or don't clip.
 func (e BubbleEl) FocusRingStyle() BubbleEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e BubbleEl) KeepTextSelection(id ID) BubbleEl { tElementExtKeepTextSelection(e.n, id); return e }
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BubbleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BubbleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e BubbleEl) BorderE(width Length) BubbleEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e BubbleEl) BorderS(width Length) BubbleEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e BubbleEl) FlexRowDir() BubbleEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e BubbleEl) InsetE(length Length) BubbleEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e BubbleEl) InsetS(length Length) BubbleEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e BubbleEl) JustifyFlexEnd() BubbleEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e BubbleEl) JustifyFlexStart() BubbleEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e BubbleEl) Me(length Length) BubbleEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e BubbleEl) Ms(length Length) BubbleEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e BubbleEl) Pe(length Length) BubbleEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e BubbleEl) Ps(length Length) BubbleEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e BubbleEl) RoundedE(radius Length) BubbleEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e BubbleEl) RoundedS(radius Length) BubbleEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e BubbleEl) TextEnd() BubbleEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e BubbleEl) TextStart() BubbleEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e BubbleEl) CornerRadii(radius Corners) BubbleEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e BubbleEl) DebugBlue() BubbleEl                 { tStyledExtDebugBlue(e.n); return e }
@@ -542,11 +602,110 @@ func (e BubbleContentEl) FocusRingStyle() BubbleContentEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e BubbleContentEl) KeepTextSelection(id ID) BubbleContentEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BubbleContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BubbleContentEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e BubbleContentEl) BorderE(width Length) BubbleContentEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e BubbleContentEl) BorderS(width Length) BubbleContentEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e BubbleContentEl) FlexRowDir() BubbleContentEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e BubbleContentEl) InsetE(length Length) BubbleContentEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e BubbleContentEl) InsetS(length Length) BubbleContentEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e BubbleContentEl) JustifyFlexEnd() BubbleContentEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e BubbleContentEl) JustifyFlexStart() BubbleContentEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e BubbleContentEl) Me(length Length) BubbleContentEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e BubbleContentEl) Ms(length Length) BubbleContentEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e BubbleContentEl) Pe(length Length) BubbleContentEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e BubbleContentEl) Ps(length Length) BubbleContentEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e BubbleContentEl) RoundedE(radius Length) BubbleContentEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e BubbleContentEl) RoundedS(radius Length) BubbleContentEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e BubbleContentEl) TextEnd() BubbleContentEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e BubbleContentEl) TextStart() BubbleContentEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e BubbleContentEl) CornerRadii(radius Corners) BubbleContentEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -1078,11 +1237,95 @@ func (e BubbleGroupEl) FocusRingStyle() BubbleGroupEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e BubbleGroupEl) KeepTextSelection(id ID) BubbleGroupEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BubbleGroupEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BubbleGroupEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e BubbleGroupEl) BorderE(width Length) BubbleGroupEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e BubbleGroupEl) BorderS(width Length) BubbleGroupEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e BubbleGroupEl) FlexRowDir() BubbleGroupEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e BubbleGroupEl) InsetE(length Length) BubbleGroupEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e BubbleGroupEl) InsetS(length Length) BubbleGroupEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e BubbleGroupEl) JustifyFlexEnd() BubbleGroupEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e BubbleGroupEl) JustifyFlexStart() BubbleGroupEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e BubbleGroupEl) Me(length Length) BubbleGroupEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e BubbleGroupEl) Ms(length Length) BubbleGroupEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e BubbleGroupEl) Pe(length Length) BubbleGroupEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e BubbleGroupEl) Ps(length Length) BubbleGroupEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e BubbleGroupEl) RoundedE(radius Length) BubbleGroupEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e BubbleGroupEl) RoundedS(radius Length) BubbleGroupEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e BubbleGroupEl) TextEnd() BubbleGroupEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e BubbleGroupEl) TextStart() BubbleGroupEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e BubbleGroupEl) CornerRadii(radius Corners) BubbleGroupEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -1595,11 +1838,110 @@ func (e BubbleReactionsEl) FocusRingStyle() BubbleReactionsEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e BubbleReactionsEl) KeepTextSelection(id ID) BubbleReactionsEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BubbleReactionsEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BubbleReactionsEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e BubbleReactionsEl) BorderE(width Length) BubbleReactionsEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e BubbleReactionsEl) BorderS(width Length) BubbleReactionsEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e BubbleReactionsEl) FlexRowDir() BubbleReactionsEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e BubbleReactionsEl) InsetE(length Length) BubbleReactionsEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e BubbleReactionsEl) InsetS(length Length) BubbleReactionsEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e BubbleReactionsEl) JustifyFlexEnd() BubbleReactionsEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e BubbleReactionsEl) JustifyFlexStart() BubbleReactionsEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e BubbleReactionsEl) Me(length Length) BubbleReactionsEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e BubbleReactionsEl) Ms(length Length) BubbleReactionsEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e BubbleReactionsEl) Pe(length Length) BubbleReactionsEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e BubbleReactionsEl) Ps(length Length) BubbleReactionsEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e BubbleReactionsEl) RoundedE(radius Length) BubbleReactionsEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e BubbleReactionsEl) RoundedS(radius Length) BubbleReactionsEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e BubbleReactionsEl) TextEnd() BubbleReactionsEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e BubbleReactionsEl) TextStart() BubbleReactionsEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e BubbleReactionsEl) CornerRadii(radius Corners) BubbleReactionsEl {
 	tStyledExtCornerRadii(e.n, radius)

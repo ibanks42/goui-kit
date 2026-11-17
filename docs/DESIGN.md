@@ -9,8 +9,8 @@ The exact runtime contract (every turn, message and rule, as built) is
 [PROTOCOLS.md](PROTOCOLS.md). The Go front end has its own design notes in [GO.md](GO.md).
 What is bound today is counted in [STATUS.md](STATUS.md).
 
-Pinned upstream: gpui-kit 0.9.1 (commit 0400b34), gpui-fast 0.1.14 (commit 8200882),
-gpui-pre 0.3.12, all built from Zed commit d2a4fb6; rustc 1.99.1; rustdoc JSON format 61.
+Pinned upstream: gpui-kit 0.10.0 (commit f697c31), gpui-fast 0.1.16, gpui-pre 0.3.12 (which
+gpui-kit 0.10.0 pins exactly), built from Zed commit d2a4fb6; rustc 1.99.1; rustdoc JSON format 61.
 
 A few words used throughout:
 
@@ -158,8 +158,8 @@ name = "gpuikit"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-gpui-kit = { version = "=0.9.1", features = ["syntect"] }
-gpui-fps = { version = "=0.9.1", features = ["gpui-fast"], optional = true }
+gpui-kit = { version = "=0.10.0", features = ["syntect"] }
+gpui-fps = { version = "=0.10.0", features = ["gpui-fast"], optional = true }
 
 [features]
 default = ["gpui-fast"]
@@ -941,7 +941,14 @@ behaviour that changed under an unchanged signature (caught by the conformance p
 examples); a rustdoc JSON format change (the reader is a few hundred lines); platform items.
 
 How much moves between versions: between gpui-pre 0.3.12 and gpui-fast 0.1.14, 5,014
-signatures were identical, none changed, none were removed and 58 were added.
+signatures were identical, none changed, none were removed and 58 were added. From gpui-kit 0.9.1
+to 0.10.0 (gpui-fast 0.1.14 to 0.1.16) nothing bound was removed and 67 functions were added (55
+bound or bridged, mostly the logical-direction styles `ps`, `pe`, `ms`, `me`, `border_s`, ..., on
+every element; 5 need a new protocol). One change needed a person: gpui-fast 0.1.16 gives every
+`Element` its `IntoElement` by a blanket impl, so the generator reads an element from either
+(`gk_model`: `f["element"]`), and the library's own elements implement `IntoElement` only for
+upstream GPUI (`editor_text.rs`). Read without it, 18 element types (`Div`, `Img`, `Svg`,
+`TextView`, ..) silently stopped being elements.
 
 ## 18. Verification and the frame-rate gate
 

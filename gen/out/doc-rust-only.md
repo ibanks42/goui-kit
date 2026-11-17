@@ -35,4 +35,5 @@ Written by gen/gk_doc.py: each sentence names Rust-only mechanics (gk_doc.RUST_O
 - `gpui_kit::component::dock::PanelHandle`: That is the only recovery Rust offers: the sub-trait object `Arc<dyn PanelView>` cannot be reconstructed from base's handle, but a concrete wrapper around it can be.
 - `gpui_kit::component::dock::PanelHandle`: The panel handle `gpui-base` holds on this crate's behalf.
 - `gpui_kit::component::message_scroller::MessageScrollerState::new`: The constructor receives the entity context so the list's scroll handler can safely defer its entity update until GPUI has released the list's internal borrow.
+- `gpui_kit::component::table::TableRow::hover`: Apply the given style to the row while the pointer is over it, such as `.hover(|this| this.bg(cx.theme().table_hover))`.
 - `gpui_kit::component::try_parse_color`: - `name` - The color name `black`, `white`, or any other defined in `crate::color`.

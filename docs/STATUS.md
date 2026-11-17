@@ -50,44 +50,44 @@ not counted here.
 ## Coverage
 
 <!-- coverage:begin (written by tools/status.py; do not edit) -->
-Pin: gpui-kit 0.9.1, gpui-fast 0.1.14, features gpui-fast, syntect.
+Pin: gpui-kit 0.10.0, gpui-fast 0.1.16, features gpui-fast, syntect.
 
-**Real functions (style tokens left out): 4507. Usable (bound or bridged): 3843 (85.3 %). Not attempted yet: 0. Skipped on purpose: 664. Failed: 0. Verified by a byte-identical gallery page: 1198.**
+**Real functions (style tokens left out): 4570. Usable (bound or bridged): 3894 (85.2 %). Not attempted yet: 5. Skipped on purpose: 671. Failed: 0. Verified by a byte-identical gallery page: 1219.**
 
-- **builder: 496 of 752 functions bound or bridged (66.0 %)**: 375 bound, 121 bridged, 256 skipped, 0 failed, 0 not attempted yet; 135 verified by a run.
-- **component: 1432 of 1442 functions bound or bridged (99.3 %)**: 1096 bound, 336 bridged, 10 skipped, 0 failed, 0 not attempted yet; 764 verified by a run.
-- **data: 0 of 179 functions bound or bridged (0.0 %)**: 0 bound, 0 bridged, 179 skipped, 0 failed, 0 not attempted yet; 0 verified by a run.
-- **function: 326 of 338 functions bound or bridged (96.4 %)**: 314 bound, 12 bridged, 12 skipped, 0 failed, 0 not attempted yet; 20 verified by a run.
+- **builder: 502 of 758 functions bound or bridged (66.2 %)**: 380 bound, 122 bridged, 256 skipped, 0 failed, 0 not attempted yet; 136 verified by a run.
+- **component: 1450 of 1463 functions bound or bridged (99.1 %)**: 1113 bound, 337 bridged, 11 skipped, 0 failed, 2 not attempted yet; 777 verified by a run.
+- **data: 0 of 185 functions bound or bridged (0.0 %)**: 0 bound, 0 bridged, 185 skipped, 0 failed, 0 not attempted yet; 0 verified by a run.
+- **function: 328 of 340 functions bound or bridged (96.5 %)**: 316 bound, 12 bridged, 12 skipped, 0 failed, 0 not attempted yet; 20 verified by a run.
 - **generic: 4 of 18 functions bound or bridged (22.2 %)**: 0 bound, 4 bridged, 14 skipped, 0 failed, 0 not attempted yet; 0 verified by a run.
 - **gpui: 179 of 192 functions bound or bridged (93.2 %)**: 132 bound, 47 bridged, 13 skipped, 0 failed, 0 not attempted yet; 130 verified by a run.
-- **state: 1147 of 1224 functions bound or bridged (93.7 %)**: 0 bound, 1147 bridged, 77 skipped, 0 failed, 0 not attempted yet; 48 verified by a run.
+- **state: 1155 of 1234 functions bound or bridged (93.6 %)**: 0 bound, 1155 bridged, 77 skipped, 0 failed, 2 not attempted yet; 52 verified by a run.
 - **style: 3130 of 3130 functions bound or bridged (100.0 %)**: 3130 bound, 0 bridged, 0 skipped, 0 failed, 0 not attempted yet; 11 verified by a run.
-- **trait: 259 of 362 functions bound or bridged (71.5 %)**: 87 bound, 172 bridged, 103 skipped, 0 failed, 0 not attempted yet; 101 verified by a run.
+- **trait: 276 of 380 functions bound or bridged (72.6 %)**: 103 bound, 173 bridged, 103 skipped, 0 failed, 1 not attempted yet; 104 verified by a run.
 
-The table covers 674 of 586 catalogued types and 7637 of 9425 public functions in the pin (this table: every public function of the kit crates (4315; a trait's methods are counted once, in the trait's row, not per implementor), the gpui traits and types the kit's elements are made of, and the style table; an inventory of the pinned crates counts 4,350 functions in the kit crates and 5,075 in gpui-fast).
+The table covers 677 of 586 catalogued types and 7700 of 9425 public functions in the pin (this table: every public function of the kit crates (4378; a trait's methods are counted once, in the trait's row, not per implementor), the gpui traits and types the kit's elements are made of, and the style table; an inventory of the pinned crates counts 4,350 functions in the kit crates and 5,075 in gpui-fast).
 
 What remains, by family (style tokens left out; a row is an upstream type, trait or module):
 
 | family | rows | functions | bound or bridged | verified | skipped | remaining | what the remaining ones need (functions) |
 |---|---|---|---|---|---|---|---|
-| other components and values | 304 | 1672 | 1440 | 617 | 232 | 0 |  |
-| ambient context, theme and window | 14 | 392 | 371 | 19 | 21 | 0 |  |
-| menus, actions and commands | 22 | 152 | 123 | 33 | 29 | 0 |  |
+| editor and text input | 121 | 952 | 739 | 108 | 211 | 2 | data (a closure that returns a value) 2 |
+| dock, panels and layout | 52 | 303 | 269 | 52 | 32 | 2 | object (no constructor, global or bound function hands one out) 2 |
+| tables and lists with delegates | 67 | 449 | 368 | 100 | 80 | 1 | delegates (a trait the app implements: one bridge per trait) 1 |
+| other components and values | 306 | 1701 | 1463 | 629 | 238 | 0 |  |
+| ambient context, theme and window | 14 | 394 | 373 | 19 | 21 | 0 |  |
+| menus, actions and commands | 22 | 153 | 124 | 33 | 29 | 0 |  |
 | charts and plots | 41 | 358 | 313 | 220 | 45 | 0 |  |
-| tables and lists with delegates | 67 | 442 | 362 | 99 | 80 | 0 |  |
-| dialogs, popovers and overlays | 53 | 258 | 243 | 58 | 15 | 0 |  |
-| editor and text input | 120 | 935 | 724 | 100 | 211 | 0 |  |
-| dock, panels and layout | 52 | 298 | 267 | 52 | 31 | 0 |  |
+| dialogs, popovers and overlays | 53 | 260 | 245 | 58 | 15 | 0 |  |
 
 Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's fixed list):
 
 | family | skipped | reasons (functions) |
 |---|---|---|
-| other components and values | 232 | value-helper 126; builder-getter 48; rust-only-extension 33; feature-off 19; third-party-type 3; test-only 1; builder-mutator 1; deprecated 1 |
+| other components and values | 238 | value-helper 131; builder-getter 49; rust-only-extension 33; feature-off 19; third-party-type 3; test-only 1; builder-mutator 1; deprecated 1 |
 | editor and text input | 211 | builder-getter 82; rust-only-extension 44; third-party-type 42; value-helper 35; feature-off 7; builder-mutator 1 |
 | tables and lists with delegates | 80 | rust-only-extension 36; value-helper 25; builder-getter 18; deprecated 1 |
 | charts and plots | 45 | rust-only-extension 26; builder-getter 11; deprecated 5; value-helper 3 |
-| dock, panels and layout | 31 | value-helper 14; rust-only-extension 12; builder-getter 5 |
+| dock, panels and layout | 32 | value-helper 15; rust-only-extension 12; builder-getter 5 |
 | menus, actions and commands | 29 | builder-getter 12; value-helper 12; rust-only-extension 4; builder-mutator 1 |
 | ambient context, theme and window | 21 | rust-only-extension 16; builder-getter 3; value-helper 2 |
 | dialogs, popovers and overlays | 15 | rust-only-extension 6; value-helper 5; deprecated 3; builder-getter 1 |
@@ -126,9 +126,10 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::InputStyles | builder | 2 | 0 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::LanguageConfig | builder | 4 | 4 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::Line | builder | 15 | 8 | 4 | 3 (deprecated 2, builder-getter 1) | 0 | 0 | 80.0 % | 12 |
+| base::Link | builder | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::LinkStyles | builder | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
-| base::Lsp | builder | 3 | 0 | 1 | 2 (builder-getter 1, builder-mutator 1) | 0 | 0 | 33.3 % | 0 |
-| base::MarkdownExtensions | builder | 7 | 5 | 1 | 1 (third-party-type 1) | 0 | 0 | 85.7 % | 2 |
+| base::Lsp | builder | 3 | 0 | 1 | 2 (builder-getter 1, builder-mutator 1) | 0 | 0 | 33.3 % | 1 |
+| base::MarkdownExtensions | builder | 8 | 6 | 1 | 1 (third-party-type 1) | 0 | 0 | 87.5 % | 2 |
 | base::MarkdownNode | builder | 10 | 0 | 0 | 10 (rust-only-extension 5, builder-getter 5) | 0 | 0 | 0.0 % | 0 |
 | base::Measure | builder | 2 | 0 | 0 | 2 (rust-only-extension 2) | 0 | 0 | 0.0 % | 0 |
 | base::NativeMenu | builder | 4 | 0 | 0 | 4 (value-helper 4) | 0 | 0 | 0.0 % | 0 |
@@ -175,7 +176,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::TextViewStyle | builder | 37 | 18 | 1 | 18 (builder-getter 18) | 0 | 0 | 51.4 % | 1 |
 | base::Timing | builder | 6 | 6 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::ToggleStyles | builder | 2 | 0 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
-| base::TooltipRequest | builder | 4 | 3 | 0 | 1 (deprecated 1) | 0 | 0 | 75.0 % | 0 |
+| base::TooltipRequest | builder | 5 | 4 | 0 | 1 (deprecated 1) | 0 | 0 | 80.0 % | 0 |
 | base::TooltipState | builder | 1 | 0 | 0 | 1 (rust-only-extension 1) | 0 | 0 | 0.0 % | 0 |
 | base::Transition | builder | 5 | 4 | 1 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::TreeEntryState | builder | 2 | 0 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -204,7 +205,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::SettingItem | builder | 7 | 4 | 3 | 0 | 0 | 0 | 100.0 % | 2 |
 | component::SettingPage | builder | 10 | 9 | 1 | 0 | 0 | 0 | 100.0 % | 2 |
 | component::ShimmerStyle | builder | 6 | 6 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
-| component::SidebarGroup | builder | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 3 |
+| component::SidebarGroup | builder | 4 | 3 | 1 | 0 | 0 | 0 | 100.0 % | 3 |
 | component::SidebarMenu | builder | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
 | component::SidebarMenuItem | builder | 14 | 11 | 3 | 0 | 0 | 0 | 100.0 % | 2 |
 | component::TextViewStyle | builder | 7 | 6 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -228,7 +229,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::Avatar | component | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::AvatarFallback | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::AvatarImage | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
-| base::Button | component | 11 | 8 | 3 | 0 | 0 | 0 | 100.0 % | 7 |
+| base::Button | component | 12 | 8 | 3 | 1 (builder-getter 1) | 0 | 0 | 91.7 % | 7 |
 | base::Calendar | component | 5 | 2 | 3 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::CalendarItem | component | 2 | 1 | 0 | 1 (builder-getter 1) | 0 | 0 | 50.0 % | 0 |
 | base::Checkbox | component | 12 | 9 | 3 | 0 | 0 | 0 | 100.0 % | 8 |
@@ -254,7 +255,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::MotionReveal | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::NavPage | component | 5 | 0 | 4 | 1 (builder-getter 1) | 0 | 0 | 80.0 % | 0 |
 | base::NavStack | component | 3 | 1 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
-| base::NumberInput | component | 8 | 6 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
+| base::NumberInput | component | 9 | 7 | 2 | 0 | 0 | 0 | 100.0 % | 3 |
 | base::NumberInputText | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::OtpInput | component | 2 | 1 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::Pagination | component | 3 | 2 | 0 | 1 (builder-getter 1) | 0 | 0 | 66.7 % | 0 |
@@ -275,7 +276,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::ScrollableMask | component | 4 | 2 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::Scrollbar | component | 10 | 6 | 4 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::Select | component | 10 | 5 | 5 | 0 | 0 | 0 | 100.0 % | 5 |
-| base::SelectableText | component | 5 | 4 | 1 | 0 | 0 | 0 | 100.0 % | 3 |
+| base::SelectableText | component | 6 | 5 | 1 | 0 | 0 | 0 | 100.0 % | 3 |
 | base::Sheet | component | 5 | 4 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::Slider | component | 7 | 5 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::SliderIndicator | component | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -292,8 +293,8 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::TableHead | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::TableHeader | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::TableRow | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
-| base::Tabs | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
-| base::TextView | component | 25 | 15 | 9 | 1 (third-party-type 1) | 0 | 0 | 96.0 % | 10 |
+| base::Tabs | component | 2 | 2 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
+| base::TextView | component | 27 | 16 | 9 | 1 (third-party-type 1) | 0 | 1 | 92.6 % | 11 |
 | base::Textarea | component | 4 | 0 | 4 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::TimeField | component | 4 | 2 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::TimeFieldSegment | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -304,7 +305,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::Toolbar | component | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 3 |
 | base::ToolbarGroup | component | 2 | 2 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
 | base::Tooltip | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
-| base::TooltipPositioner | component | 2 | 2 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
+| base::TooltipPositioner | component | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::Tree | component | 3 | 1 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::VirtualList | component | 3 | 2 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::Accordion | component | 6 | 4 | 2 | 0 | 0 | 0 | 100.0 % | 4 |
@@ -341,15 +342,15 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::CarouselPagination | component | 2 | 2 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
 | component::CarouselPaginationItem | component | 2 | 1 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::CarouselPrevious | component | 2 | 1 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
-| component::Checkbox | component | 11 | 9 | 2 | 0 | 0 | 0 | 100.0 % | 9 |
-| component::Clipboard | component | 7 | 5 | 2 | 0 | 0 | 0 | 100.0 % | 5 |
+| component::Checkbox | component | 12 | 10 | 2 | 0 | 0 | 0 | 100.0 % | 10 |
+| component::Clipboard | component | 8 | 6 | 2 | 0 | 0 | 0 | 100.0 % | 6 |
 | component::Collapsible | component | 4 | 4 | 0 | 0 | 0 | 0 | 100.0 % | 4 |
 | component::ColorPicker | component | 6 | 5 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::ColorSelect | component | 4 | 3 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
-| component::Combobox | component | 13 | 9 | 4 | 0 | 0 | 0 | 100.0 % | 2 |
-| component::Command | component | 18 | 10 | 8 | 0 | 0 | 0 | 100.0 % | 0 |
+| component::Combobox | component | 14 | 10 | 4 | 0 | 0 | 0 | 100.0 % | 2 |
+| component::Command | component | 19 | 11 | 8 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::CrossLine | component | 8 | 8 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
-| component::DataTable | component | 8 | 7 | 1 | 0 | 0 | 0 | 100.0 % | 2 |
+| component::DataTable | component | 9 | 8 | 1 | 0 | 0 | 0 | 100.0 % | 2 |
 | component::DatePicker | component | 6 | 5 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::DescriptionList | component | 11 | 11 | 0 | 0 | 0 | 0 | 100.0 % | 9 |
 | component::Dialog | component | 19 | 15 | 4 | 0 | 0 | 0 | 100.0 % | 3 |
@@ -360,7 +361,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::DialogFooter | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::DialogHeader | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::DialogTitle | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
-| component::Diff | component | 26 | 10 | 16 | 0 | 0 | 0 | 100.0 % | 2 |
+| component::Diff | component | 27 | 11 | 16 | 0 | 0 | 0 | 100.0 % | 2 |
 | component::Dot | component | 5 | 5 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::DropdownButton | component | 6 | 4 | 2 | 0 | 0 | 0 | 100.0 % | 3 |
 | component::Empty | component | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
@@ -373,7 +374,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::Form | component | 11 | 11 | 0 | 0 | 0 | 0 | 100.0 % | 8 |
 | component::GroupBox | component | 6 | 6 | 0 | 0 | 0 | 0 | 100.0 % | 4 |
 | component::HoverCard | component | 9 | 7 | 2 | 0 | 0 | 0 | 100.0 % | 6 |
-| component::Icon | component | 7 | 6 | 0 | 1 (rust-only-extension 1) | 0 | 0 | 85.7 % | 0 |
+| component::Icon | component | 7 | 6 | 0 | 1 (rust-only-extension 1) | 0 | 0 | 85.7 % | 2 |
 | component::Input | component | 23 | 17 | 6 | 0 | 0 | 0 | 100.0 % | 5 |
 | component::InputGroup | component | 7 | 7 | 0 | 0 | 0 | 0 | 100.0 % | 5 |
 | component::InputGroupAddon | component | 2 | 2 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
@@ -381,7 +382,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::InputGroupText | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::InputToken | component | 2 | 1 | 1 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::Kbd | component | 7 | 4 | 3 | 0 | 0 | 0 | 100.0 % | 4 |
-| component::Label | component | 4 | 4 | 0 | 0 | 0 | 0 | 100.0 % | 4 |
+| component::Label | component | 5 | 5 | 0 | 0 | 0 | 0 | 100.0 % | 5 |
 | component::LineChart | component | 31 | 23 | 8 | 0 | 0 | 0 | 100.0 % | 30 |
 | component::Link | component | 4 | 3 | 1 | 0 | 0 | 0 | 100.0 % | 3 |
 | component::List | component | 4 | 3 | 1 | 0 | 0 | 0 | 100.0 % | 2 |
@@ -395,8 +396,8 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::MessageFooter | component | 2 | 2 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
 | component::MessageGroup | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::MessageHeader | component | 2 | 2 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
-| component::MessageScroller | component | 11 | 10 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
-| component::NumberInput | component | 6 | 5 | 1 | 0 | 0 | 0 | 100.0 % | 1 |
+| component::MessageScroller | component | 11 | 10 | 1 | 0 | 0 | 0 | 100.0 % | 2 |
+| component::NumberInput | component | 7 | 6 | 1 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::OtpInput | component | 2 | 1 | 1 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::Pagination | component | 6 | 5 | 1 | 0 | 0 | 0 | 100.0 % | 5 |
 | component::PieChart | component | 20 | 11 | 9 | 0 | 0 | 0 | 100.0 % | 20 |
@@ -425,7 +426,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::SankeyChart | component | 20 | 14 | 6 | 0 | 0 | 0 | 100.0 % | 18 |
 | component::Scrollable | component | 2 | 2 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::SearchableListItemElement | component | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
-| component::Select | component | 14 | 12 | 2 | 0 | 0 | 0 | 100.0 % | 3 |
+| component::Select | component | 15 | 13 | 2 | 0 | 0 | 0 | 100.0 % | 3 |
 | component::Separator | component | 7 | 7 | 0 | 0 | 0 | 0 | 100.0 % | 7 |
 | component::Settings | component | 9 | 9 | 0 | 0 | 0 | 0 | 100.0 % | 5 |
 | component::Sheet | component | 8 | 7 | 1 | 0 | 0 | 0 | 100.0 % | 2 |
@@ -435,7 +436,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::SidebarHeader | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::SidebarToggleButton | component | 5 | 4 | 1 | 0 | 0 | 0 | 100.0 % | 4 |
 | component::Skeleton | component | 2 | 2 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
-| component::Slider | component | 6 | 5 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
+| component::Slider | component | 8 | 7 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::SpeechButton | component | 2 | 1 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::SpeechIndicator | component | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::SpeechWaveform | component | 2 | 1 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -453,9 +454,9 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::TableFooter | component | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::TableHead | component | 4 | 4 | 0 | 0 | 0 | 0 | 100.0 % | 4 |
 | component::TableHeader | component | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
-| component::TableRow | component | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
+| component::TableRow | component | 5 | 4 | 1 | 0 | 0 | 0 | 100.0 % | 3 |
 | component::Tag | component | 13 | 13 | 0 | 0 | 0 | 0 | 100.0 % | 12 |
-| component::TextView | component | 25 | 16 | 8 | 1 (third-party-type 1) | 0 | 0 | 96.0 % | 8 |
+| component::TextView | component | 26 | 16 | 8 | 1 (third-party-type 1) | 0 | 1 | 92.3 % | 8 |
 | component::Textarea | component | 15 | 9 | 6 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::TimeField | component | 2 | 1 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::TitleBar | component | 4 | 2 | 2 | 0 | 0 | 0 | 100.0 % | 1 |
@@ -473,13 +474,14 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::Caret | data | 2 | 0 | 0 | 2 (value-helper 2) | 0 | 0 | 0.0 % | 0 |
 | base::Date | data | 8 | 0 | 0 | 8 (value-helper 8) | 0 | 0 | 0.0 % | 0 |
 | base::DisplayPoint | data | 1 | 0 | 0 | 1 (value-helper 1) | 0 | 0 | 0.0 % | 0 |
-| base::DockPlacement | data | 4 | 0 | 0 | 4 (value-helper 4) | 0 | 0 | 0.0 % | 0 |
+| base::DockPlacement | data | 5 | 0 | 0 | 5 (value-helper 5) | 0 | 0 | 0.0 % | 0 |
 | base::Easing | data | 4 | 0 | 0 | 4 (value-helper 4) | 0 | 0 | 0.0 % | 0 |
 | base::Edges | data | 1 | 0 | 0 | 1 (value-helper 1) | 0 | 0 | 0.0 % | 0 |
 | base::Enter | data | 1 | 0 | 0 | 1 (value-helper 1) | 0 | 0 | 0.0 % | 0 |
 | base::FoldRange | data | 1 | 0 | 0 | 1 (value-helper 1) | 0 | 0 | 0.0 % | 0 |
 | base::InputEditorStyle | data | 1 | 0 | 0 | 1 (value-helper 1) | 0 | 0 | 0.0 % | 0 |
 | base::Keyframe | data | 2 | 0 | 0 | 2 (value-helper 2) | 0 | 0 | 0.0 % | 0 |
+| base::LayoutDirection | data | 5 | 0 | 0 | 5 (value-helper 5) | 0 | 0 | 0.0 % | 0 |
 | base::LinearStop | data | 2 | 0 | 0 | 2 (value-helper 2) | 0 | 0 | 0.0 % | 0 |
 | base::MaskPattern | data | 8 | 0 | 0 | 8 (value-helper 8) | 0 | 0 | 0.0 % | 0 |
 | base::Matcher | data | 5 | 0 | 0 | 5 (value-helper 5) | 0 | 0 | 0.0 % | 0 |
@@ -530,7 +532,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::SpeechStatus | data | 2 | 0 | 0 | 2 (value-helper 2) | 0 | 0 | 0.0 % | 0 |
 | component::Text | data | 1 | 0 | 0 | 1 (value-helper 1) | 0 | 0 | 0.0 % | 0 |
 | component::ThemeMode | data | 2 | 0 | 0 | 2 (value-helper 2) | 0 | 0 | 0.0 % | 0 |
-| base::(root) functions | function | 24 | 13 | 6 | 5 (rust-only-extension 5) | 0 | 0 | 79.2 % | 9 |
+| base::(root) functions | function | 26 | 15 | 6 | 5 (rust-only-extension 5) | 0 | 0 | 80.8 % | 9 |
 | base::animation functions | function | 4 | 3 | 1 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::dock functions | function | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::input functions | function | 5 | 5 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -592,7 +594,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::InlineTokenContext | state | 7 | 0 | 7 | 0 | 0 | 0 | 100.0 % | 4 |
 | base::InlineTokenHoverEvent | state | 5 | 0 | 5 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::InlineTokenSpan | state | 2 | 0 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
-| base::InputBaseState | state | 155 | 0 | 149 | 6 (third-party-type 6) | 0 | 0 | 96.1 % | 18 |
+| base::InputBaseState | state | 160 | 0 | 154 | 6 (third-party-type 6) | 0 | 0 | 96.2 % | 21 |
 | base::InputContent | state | 4 | 0 | 4 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::InputEditsEvent | state | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::InputPresentation | state | 11 | 0 | 11 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -679,13 +681,13 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::DiffConflict | state | 7 | 0 | 7 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::DiffLinePosition | state | 4 | 0 | 4 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::DiffParseError | state | 2 | 0 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
-| component::DiffState | state | 41 | 0 | 41 | 0 | 0 | 0 | 100.0 % | 1 |
+| component::DiffState | state | 43 | 0 | 43 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::DivInspector | state | 2 | 0 | 0 | 2 (feature-off 2) | 0 | 0 | 0.0 % | 0 |
-| component::DockSkin | state | 7 | 0 | 6 | 1 (rust-only-extension 1) | 0 | 0 | 85.7 % | 3 |
+| component::DockSkin | state | 9 | 0 | 6 | 1 (rust-only-extension 1) | 0 | 2 | 66.7 % | 3 |
 | component::DockToggleEvent | state | 2 | 0 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::LanguageRegistry | state | 4 | 0 | 0 | 4 (feature-off 4) | 0 | 0 | 0.0 % | 0 |
 | component::ListState | state | 17 | 0 | 17 | 0 | 0 | 0 | 100.0 % | 0 |
-| component::MessageScrollerState | state | 13 | 0 | 13 | 0 | 0 | 0 | 100.0 % | 0 |
+| component::MessageScrollerState | state | 14 | 0 | 14 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::Notification | state | 21 | 0 | 19 | 2 (rust-only-extension 2) | 0 | 0 | 90.5 % | 0 |
 | component::NotificationList | state | 4 | 0 | 4 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::PanelHandle | state | 4 | 0 | 4 | 0 | 0 | 0 | 100.0 % | 1 |
@@ -706,10 +708,10 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::CompletionProvider | trait | 5 | 0 | 5 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::DefinitionProvider | trait | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::Disableable | trait | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
-| base::DockAreaRenderer | trait | 7 | 0 | 7 | 0 | 0 | 0 | 100.0 % | 3 |
+| base::DockAreaRenderer | trait | 8 | 0 | 8 | 0 | 0 | 0 | 100.0 % | 3 |
 | base::DocumentColorProvider | trait | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::DocumentRangeSemanticTokensProvider | trait | 2 | 0 | 2 | 0 | 0 | 0 | 100.0 % | 0 |
-| base::ElementExt | trait | 2 | 0 | 2 | 0 | 0 | 0 | 100.0 % | 1 |
+| base::ElementExt | trait | 3 | 1 | 2 | 0 | 0 | 0 | 100.0 % | 2 |
 | base::FocusTrapElement | trait | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::FocusableExt | trait | 2 | 1 | 0 | 1 (builder-getter 1) | 0 | 0 | 50.0 % | 1 |
 | base::HighlightStyleResolver | trait | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -722,6 +724,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::LanguageProvider | trait | 3 | 0 | 3 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::LengthExt | trait | 1 | 0 | 0 | 1 (value-helper 1) | 0 | 0 | 0.0 % | 0 |
 | base::Lerp | trait | 1 | 0 | 0 | 1 (value-helper 1) | 0 | 0 | 0.0 % | 0 |
+| base::LogicalStyledExt | trait | 15 | 15 | 0 | 0 | 0 | 0 | 100.0 % | 2 |
 | base::MarkdownPlugin | trait | 5 | 0 | 5 | 0 | 0 | 0 | 100.0 % | 5 |
 | base::OngoingScrollExt | trait | 1 | 0 | 0 | 1 (value-helper 1) | 0 | 0 | 0.0 % | 0 |
 | base::Panel | trait | 9 | 0 | 9 | 0 | 0 | 0 | 100.0 % | 1 |
@@ -757,7 +760,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::RecognitionSession | trait | 2 | 0 | 0 | 2 (feature-off 2) | 0 | 0 | 0.0 % | 0 |
 | component::ScrollableElement | trait | 6 | 3 | 3 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::SearchableListDelegate | trait | 12 | 0 | 11 | 1 (deprecated 1) | 0 | 0 | 91.7 % | 9 |
-| component::SearchableListItem | trait | 6 | 0 | 6 | 0 | 0 | 0 | 100.0 % | 6 |
+| component::SearchableListItem | trait | 7 | 0 | 6 | 0 | 0 | 1 | 85.7 % | 6 |
 | component::SettingFieldElement | trait | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::SidebarItem | trait | 1 | 0 | 0 | 1 (rust-only-extension 1) | 0 | 0 | 0.0 % | 0 |
 | component::Sizable | trait | 4 | 4 | 0 | 0 | 0 | 0 | 100.0 % | 3 |
@@ -768,7 +771,15 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::ThemeStyled | trait | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::ToggleVariants | trait | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 3 |
 | component::WindowExt | trait | 16 | 14 | 0 | 2 (rust-only-extension 2) | 0 | 0 | 87.5 % | 4 |
-| **all** | | **7637** | **5134** | **1839** | **664** | **0** | **0** | **91.3 %** | **1209** |
+| **all** | | **7700** | **5174** | **1850** | **671** | **0** | **5** | **91.2 %** | **1230** |
+
+Not attempted yet, by what is missing:
+
+| missing rule | functions |
+|---|---|
+| protocol: object (no constructor, global or bound function hands one out) | 2 |
+| protocol: data (a closure that returns a value) | 2 |
+| protocol: delegates (a trait the app implements: one bridge per trait) | 1 |
 <!-- coverage:end -->
 
 ## Gates

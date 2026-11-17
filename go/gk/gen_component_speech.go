@@ -49,6 +49,81 @@ func (e SpeechButtonEl) RoundedFullStyle() SpeechButtonEl {
 	return e
 }
 
+// Border width on the end edge.
+func (e SpeechButtonEl) BorderE(width Length) SpeechButtonEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SpeechButtonEl) BorderS(width Length) SpeechButtonEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SpeechButtonEl) FlexRowDir() SpeechButtonEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SpeechButtonEl) InsetE(length Length) SpeechButtonEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SpeechButtonEl) InsetS(length Length) SpeechButtonEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SpeechButtonEl) JustifyFlexEnd() SpeechButtonEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SpeechButtonEl) JustifyFlexStart() SpeechButtonEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e SpeechButtonEl) Me(length Length) SpeechButtonEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e SpeechButtonEl) Ms(length Length) SpeechButtonEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e SpeechButtonEl) Pe(length Length) SpeechButtonEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e SpeechButtonEl) Ps(length Length) SpeechButtonEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e SpeechButtonEl) RoundedE(radius Length) SpeechButtonEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SpeechButtonEl) RoundedS(radius Length) SpeechButtonEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SpeechButtonEl) TextEnd() SpeechButtonEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SpeechButtonEl) TextStart() SpeechButtonEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e SpeechButtonEl) CornerRadii(radius Corners) SpeechButtonEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -582,6 +657,93 @@ func (e SpeechWaveformEl) RoundedFullStyle() SpeechWaveformEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
+
+// Border width on the end edge.
+func (e SpeechWaveformEl) BorderE(width Length) SpeechWaveformEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SpeechWaveformEl) BorderS(width Length) SpeechWaveformEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SpeechWaveformEl) FlexRowDir() SpeechWaveformEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SpeechWaveformEl) InsetE(length Length) SpeechWaveformEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SpeechWaveformEl) InsetS(length Length) SpeechWaveformEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SpeechWaveformEl) JustifyFlexEnd() SpeechWaveformEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SpeechWaveformEl) JustifyFlexStart() SpeechWaveformEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e SpeechWaveformEl) Me(length Length) SpeechWaveformEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e SpeechWaveformEl) Ms(length Length) SpeechWaveformEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e SpeechWaveformEl) Pe(length Length) SpeechWaveformEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e SpeechWaveformEl) Ps(length Length) SpeechWaveformEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e SpeechWaveformEl) RoundedE(radius Length) SpeechWaveformEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SpeechWaveformEl) RoundedS(radius Length) SpeechWaveformEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SpeechWaveformEl) TextEnd() SpeechWaveformEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SpeechWaveformEl) TextStart() SpeechWaveformEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e SpeechWaveformEl) CornerRadii(radius Corners) SpeechWaveformEl {
 	tStyledExtCornerRadii(e.n, radius)

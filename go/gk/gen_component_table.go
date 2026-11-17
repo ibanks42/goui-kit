@@ -262,6 +262,18 @@ func (e DataTableEl) ScrollBounce(enabled bool) DataTableEl {
 	return e
 }
 
+// Set the show mode of both the vertical and horizontal scrollbars.
+//
+// Defaults to the theme's `ScrollbarMode`. A data grid can use `Always` so that the columns out of
+// view are visible without scrolling.
+//
+// ScrollbarMode is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::scrollbar_mode.
+func (e DataTableEl) ScrollbarMode(mode ScrollbarMode) DataTableEl {
+	o := op(e.n, 263)
+	o.u16(uint16(mode))
+	return e
+}
+
 // Set scrollbar visibility.
 //
 // ScrollbarVisible is <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::scrollbar_visible.
@@ -357,6 +369,57 @@ func (e TableEl) PopoverStyle() TableEl { tThemeStyledPopoverStyle(e.n); return 
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e TableEl) RoundedFullStyle() TableEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e TableEl) BorderE(width Length) TableEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e TableEl) BorderS(width Length) TableEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e TableEl) FlexRowDir() TableEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e TableEl) InsetE(length Length) TableEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e TableEl) InsetS(length Length) TableEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e TableEl) JustifyFlexEnd() TableEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e TableEl) JustifyFlexStart() TableEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e TableEl) Me(length Length) TableEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e TableEl) Ms(length Length) TableEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e TableEl) Pe(length Length) TableEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e TableEl) Ps(length Length) TableEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e TableEl) RoundedE(radius Length) TableEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e TableEl) RoundedS(radius Length) TableEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e TableEl) TextEnd() TableEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e TableEl) TextStart() TableEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e TableEl) CornerRadii(radius Corners) TableEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e TableEl) DebugBlue() TableEl                 { tStyledExtDebugBlue(e.n); return e }
@@ -780,6 +843,75 @@ func (e TableBodyEl) PopoverStyle() TableBodyEl { tThemeStyledPopoverStyle(e.n);
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e TableBodyEl) RoundedFullStyle() TableBodyEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e TableBodyEl) BorderE(width Length) TableBodyEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e TableBodyEl) BorderS(width Length) TableBodyEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e TableBodyEl) FlexRowDir() TableBodyEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e TableBodyEl) InsetE(length Length) TableBodyEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e TableBodyEl) InsetS(length Length) TableBodyEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e TableBodyEl) JustifyFlexEnd() TableBodyEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e TableBodyEl) JustifyFlexStart() TableBodyEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e TableBodyEl) Me(length Length) TableBodyEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e TableBodyEl) Ms(length Length) TableBodyEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e TableBodyEl) Pe(length Length) TableBodyEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e TableBodyEl) Ps(length Length) TableBodyEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e TableBodyEl) RoundedE(radius Length) TableBodyEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e TableBodyEl) RoundedS(radius Length) TableBodyEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e TableBodyEl) TextEnd() TableBodyEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e TableBodyEl) TextStart() TableBodyEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e TableBodyEl) CornerRadii(radius Corners) TableBodyEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -1229,11 +1361,98 @@ func (e TableCaptionEl) FocusRingStyle() TableCaptionEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e TableCaptionEl) KeepTextSelection(id ID) TableCaptionEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e TableCaptionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) TableCaptionEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e TableCaptionEl) BorderE(width Length) TableCaptionEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e TableCaptionEl) BorderS(width Length) TableCaptionEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e TableCaptionEl) FlexRowDir() TableCaptionEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e TableCaptionEl) InsetE(length Length) TableCaptionEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e TableCaptionEl) InsetS(length Length) TableCaptionEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e TableCaptionEl) JustifyFlexEnd() TableCaptionEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e TableCaptionEl) JustifyFlexStart() TableCaptionEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e TableCaptionEl) Me(length Length) TableCaptionEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e TableCaptionEl) Ms(length Length) TableCaptionEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e TableCaptionEl) Pe(length Length) TableCaptionEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e TableCaptionEl) Ps(length Length) TableCaptionEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e TableCaptionEl) RoundedE(radius Length) TableCaptionEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e TableCaptionEl) RoundedS(radius Length) TableCaptionEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e TableCaptionEl) TextEnd() TableCaptionEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e TableCaptionEl) TextStart() TableCaptionEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e TableCaptionEl) CornerRadii(radius Corners) TableCaptionEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -1767,11 +1986,92 @@ func (e TableCellEl) FocusRingStyle() TableCellEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e TableCellEl) KeepTextSelection(id ID) TableCellEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e TableCellEl) OnPrepaint(callback func(cx *Cx, e Bounds)) TableCellEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e TableCellEl) BorderE(width Length) TableCellEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e TableCellEl) BorderS(width Length) TableCellEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e TableCellEl) FlexRowDir() TableCellEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e TableCellEl) InsetE(length Length) TableCellEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e TableCellEl) InsetS(length Length) TableCellEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e TableCellEl) JustifyFlexEnd() TableCellEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e TableCellEl) JustifyFlexStart() TableCellEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e TableCellEl) Me(length Length) TableCellEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e TableCellEl) Ms(length Length) TableCellEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e TableCellEl) Pe(length Length) TableCellEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e TableCellEl) Ps(length Length) TableCellEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e TableCellEl) RoundedE(radius Length) TableCellEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e TableCellEl) RoundedS(radius Length) TableCellEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e TableCellEl) TextEnd() TableCellEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e TableCellEl) TextStart() TableCellEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e TableCellEl) CornerRadii(radius Corners) TableCellEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -2227,6 +2527,78 @@ func (e TableFooterEl) PopoverStyle() TableFooterEl { tThemeStyledPopoverStyle(e
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e TableFooterEl) RoundedFullStyle() TableFooterEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e TableFooterEl) BorderE(width Length) TableFooterEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e TableFooterEl) BorderS(width Length) TableFooterEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e TableFooterEl) FlexRowDir() TableFooterEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e TableFooterEl) InsetE(length Length) TableFooterEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e TableFooterEl) InsetS(length Length) TableFooterEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e TableFooterEl) JustifyFlexEnd() TableFooterEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e TableFooterEl) JustifyFlexStart() TableFooterEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e TableFooterEl) Me(length Length) TableFooterEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e TableFooterEl) Ms(length Length) TableFooterEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e TableFooterEl) Pe(length Length) TableFooterEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e TableFooterEl) Ps(length Length) TableFooterEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e TableFooterEl) RoundedE(radius Length) TableFooterEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e TableFooterEl) RoundedS(radius Length) TableFooterEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e TableFooterEl) TextEnd() TableFooterEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e TableFooterEl) TextStart() TableFooterEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e TableFooterEl) CornerRadii(radius Corners) TableFooterEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -2722,11 +3094,92 @@ func (e TableHeadEl) FocusRingStyle() TableHeadEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e TableHeadEl) KeepTextSelection(id ID) TableHeadEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e TableHeadEl) OnPrepaint(callback func(cx *Cx, e Bounds)) TableHeadEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e TableHeadEl) BorderE(width Length) TableHeadEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e TableHeadEl) BorderS(width Length) TableHeadEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e TableHeadEl) FlexRowDir() TableHeadEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e TableHeadEl) InsetE(length Length) TableHeadEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e TableHeadEl) InsetS(length Length) TableHeadEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e TableHeadEl) JustifyFlexEnd() TableHeadEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e TableHeadEl) JustifyFlexStart() TableHeadEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e TableHeadEl) Me(length Length) TableHeadEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e TableHeadEl) Ms(length Length) TableHeadEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e TableHeadEl) Pe(length Length) TableHeadEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e TableHeadEl) Ps(length Length) TableHeadEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e TableHeadEl) RoundedE(radius Length) TableHeadEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e TableHeadEl) RoundedS(radius Length) TableHeadEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e TableHeadEl) TextEnd() TableHeadEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e TableHeadEl) TextStart() TableHeadEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e TableHeadEl) CornerRadii(radius Corners) TableHeadEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -3183,6 +3636,78 @@ func (e TableHeaderEl) PopoverStyle() TableHeaderEl { tThemeStyledPopoverStyle(e
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e TableHeaderEl) RoundedFullStyle() TableHeaderEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e TableHeaderEl) BorderE(width Length) TableHeaderEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e TableHeaderEl) BorderS(width Length) TableHeaderEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e TableHeaderEl) FlexRowDir() TableHeaderEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e TableHeaderEl) InsetE(length Length) TableHeaderEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e TableHeaderEl) InsetS(length Length) TableHeaderEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e TableHeaderEl) JustifyFlexEnd() TableHeaderEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e TableHeaderEl) JustifyFlexStart() TableHeaderEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e TableHeaderEl) Me(length Length) TableHeaderEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e TableHeaderEl) Ms(length Length) TableHeaderEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e TableHeaderEl) Pe(length Length) TableHeaderEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e TableHeaderEl) Ps(length Length) TableHeaderEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e TableHeaderEl) RoundedE(radius Length) TableHeaderEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e TableHeaderEl) RoundedS(radius Length) TableHeaderEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e TableHeaderEl) TextEnd() TableHeaderEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e TableHeaderEl) TextStart() TableHeaderEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e TableHeaderEl) CornerRadii(radius Corners) TableHeaderEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -3636,6 +4161,23 @@ func (e TableRowEl) Children(children []ChildElementNode) TableRowEl {
 	return e
 }
 
+// Hover is <gpui_kit::component::table::TableRow>::hover.
+func (e TableRowEl) Hover(f StyleRefinement) TableRowEl {
+	o := op(e.n, 258)
+	o.u32(takeValue(f.n))
+	return e
+}
+
+// Set a stable identity for the row. Without one a row is identified by its position, so element
+// state inside it (an open popover, a tooltip) stays at that position when the rows reorder.
+//
+// ID is <gpui_kit::component::table::TableRow>::id.
+func (e TableRowEl) ID(id ID) TableRowEl {
+	o := op(e.n, 259)
+	putID(o, id)
+	return e
+}
+
 // Give this element the surface, edge, shadow and radius of a popover.
 //
 // This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
@@ -3650,6 +4192,63 @@ func (e TableRowEl) PopoverStyle() TableRowEl { tThemeStyledPopoverStyle(e.n); r
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e TableRowEl) RoundedFullStyle() TableRowEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e TableRowEl) BorderE(width Length) TableRowEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e TableRowEl) BorderS(width Length) TableRowEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e TableRowEl) FlexRowDir() TableRowEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e TableRowEl) InsetE(length Length) TableRowEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e TableRowEl) InsetS(length Length) TableRowEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e TableRowEl) JustifyFlexEnd() TableRowEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e TableRowEl) JustifyFlexStart() TableRowEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e TableRowEl) Me(length Length) TableRowEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e TableRowEl) Ms(length Length) TableRowEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e TableRowEl) Pe(length Length) TableRowEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e TableRowEl) Ps(length Length) TableRowEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e TableRowEl) RoundedE(radius Length) TableRowEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e TableRowEl) RoundedS(radius Length) TableRowEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e TableRowEl) TextEnd() TableRowEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e TableRowEl) TextStart() TableRowEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e TableRowEl) CornerRadii(radius Corners) TableRowEl {
 	tStyledExtCornerRadii(e.n, radius)

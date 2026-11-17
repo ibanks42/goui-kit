@@ -140,6 +140,57 @@ func (e SwitchEl) PopoverStyle() SwitchEl { tThemeStyledPopoverStyle(e.n); retur
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e SwitchEl) RoundedFullStyle() SwitchEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e SwitchEl) BorderE(width Length) SwitchEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e SwitchEl) BorderS(width Length) SwitchEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SwitchEl) FlexRowDir() SwitchEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SwitchEl) InsetE(length Length) SwitchEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e SwitchEl) InsetS(length Length) SwitchEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SwitchEl) JustifyFlexEnd() SwitchEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SwitchEl) JustifyFlexStart() SwitchEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e SwitchEl) Me(length Length) SwitchEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e SwitchEl) Ms(length Length) SwitchEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e SwitchEl) Pe(length Length) SwitchEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e SwitchEl) Ps(length Length) SwitchEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e SwitchEl) RoundedE(radius Length) SwitchEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e SwitchEl) RoundedS(radius Length) SwitchEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SwitchEl) TextEnd() SwitchEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SwitchEl) TextStart() SwitchEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e SwitchEl) CornerRadii(radius Corners) SwitchEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e SwitchEl) DebugBlue() SwitchEl                 { tStyledExtDebugBlue(e.n); return e }
 func (e SwitchEl) DebugFocused(focusHandle FocusHandle) SwitchEl {

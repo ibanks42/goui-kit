@@ -13,6 +13,7 @@ Field_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Field),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Field),
 	using t_element_ext: ^Element_Ext_Trait(Field),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Field),
 	using t_styled_ext: ^Styled_Ext_Trait(Field),
 	using t_parent_element: ^Parent_Element_Trait(Field),
 	aspect_ratio: proc(e: Field, ratio: f32) -> Field,
@@ -149,6 +150,7 @@ field_vt := Field_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Field))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Field))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Field))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Field))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Field))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Field))&parent_element_any,
 	aspect_ratio = transmute(proc(e: Field, ratio: f32) -> Field)styled_aspect_ratio,
@@ -304,6 +306,7 @@ Form :: struct {
 
 Form_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Form),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Form),
 	using t_styled_ext: ^Styled_Ext_Trait(Form),
 	using t_styled: ^Styled_Trait(Form),
 	using t_sizable: ^Sizable_Trait(Form),
@@ -385,6 +388,7 @@ v_form :: proc(flags: ..Style_Flag, loc := #caller_location) -> Form {
 @(private)
 form_vt := Form_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Form))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Form))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Form))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Form))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Form))&sizable_any,

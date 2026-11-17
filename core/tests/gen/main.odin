@@ -612,6 +612,7 @@ make_states :: proc(a: ^App, cx: ^gk.Cx) {
 	// Editor_Scrollbar_Context: not made here: no constructor with arguments this test can make
 	a.st_editor_state = gk.editor_state(cx)->autocapitalize(gk.Autocapitalize.None)->autocorrect(true)->clean_on_escape()->context_menu(true)->cursor_surrounding_lines(3)->default_value("s")->gutter_decorations_width(4)->input_action(gk.Text_Input_Action.Unspecified)->language("s")->mask_pattern(gk.Mask_Pattern_Kind.None)->placeholder("s")->scroll_beyond_last_line(3)->scroll_bounce(true)->searchable(true)->build()
 	_ = gk.editor_state_context_menu_capabilities(a.st_editor_state, cx)
+	_ = gk.editor_state_context_menu_offset(a.st_editor_state, cx)
 	_ = gk.editor_state_cursor(a.st_editor_state, cx)
 	_ = gk.editor_state_cursor_position(a.st_editor_state, cx)
 	_ = gk.editor_state_diagnostic_popover(a.st_editor_state, cx)
@@ -657,6 +658,7 @@ make_states :: proc(a: ^App, cx: ^gk.Cx) {
 	_ = gk.editor_state_text(a.st_editor_state, cx)
 	_ = gk.editor_state_text_bounds(a.st_editor_state, cx)
 	_ = gk.editor_state_text_input_configuration(a.st_editor_state, cx)
+	_ = gk.editor_state_text_origin_offset(a.st_editor_state, cx)
 	_ = gk.editor_state_touch_selection(a.st_editor_state, cx)
 	_ = gk.editor_state_unmask_value(a.st_editor_state, cx)
 	_ = gk.editor_state_value(a.st_editor_state, cx)
@@ -726,7 +728,7 @@ make_states :: proc(a: ^App, cx: ^gk.Cx) {
 	gk.editor_state_update_edge_drag(a.st_editor_state, cx, gk.Gpui_Point{4, 4})
 	append(&a.subs, gk.editor_state_on_input_event(a.st_editor_state, cx, gk.on(any_event)))
 	append(&a.subs, gk.editor_state_on_input_edits_event(a.st_editor_state, cx, gk.on(any_event)))
-	fmt.printf("states made Editor_State builders=14 reads=50 writes=56 calls=7 events=2\n")
+	fmt.printf("states made Editor_State builders=14 reads=52 writes=56 calls=7 events=2\n")
 	// Global_State: not made here: no constructor with arguments this test can make
 	a.st_grid_layout_state = gk.grid_layout_state(cx)->cols(3)->compaction(gk.Axis.Vertical)->draggable(true)->prevent_collision(true)->resizable(true)->build()
 	_ = gk.grid_layout_state_active_item(a.st_grid_layout_state, cx)
@@ -788,6 +790,7 @@ make_states :: proc(a: ^App, cx: ^gk.Cx) {
 	a.st_input_state = gk.input_state(cx)->autocapitalize(gk.Autocapitalize.None)->autocorrect(true)->clean_on_escape()->context_menu(true)->cursor_surrounding_lines(3)->default_value("s")->input_action(gk.Text_Input_Action.Unspecified)->mask_pattern(gk.Mask_Pattern_Kind.None)->masked(true)->max(1.5)->min(1.5)->placeholder("s")->scroll_beyond_last_line(3)->step(gk.Number_Step_Fixed{1.5})->validate(gk.on(noop))->build()
 	_ = gk.input_state_content(a.st_input_state, cx)
 	_ = gk.input_state_context_menu_capabilities(a.st_input_state, cx)
+	_ = gk.input_state_context_menu_offset(a.st_input_state, cx)
 	_ = gk.input_state_cursor(a.st_input_state, cx)
 	_ = gk.input_state_cursor_position(a.st_input_state, cx)
 	_ = gk.input_state_diagnostic_popover(a.st_input_state, cx)
@@ -886,7 +889,7 @@ make_states :: proc(a: ^App, cx: ^gk.Cx) {
 	gk.input_state_update_edge_drag(a.st_input_state, cx, gk.Gpui_Point{4, 4})
 	append(&a.subs, gk.input_state_on_input_event(a.st_input_state, cx, gk.on(any_event)))
 	append(&a.subs, gk.input_state_on_input_edits_event(a.st_input_state, cx, gk.on(any_event)))
-	fmt.printf("states made Input_State builders=15 reads=48 writes=44 calls=6 events=2\n")
+	fmt.printf("states made Input_State builders=15 reads=49 writes=44 calls=6 events=2\n")
 	// Keyframes: not made here: no constructor with arguments this test can make
 	// Leaf_Geometry: not made here: no constructor with arguments this test can make
 	// List_State: not made here: its constructor takes a row source (core/tests/rows)
@@ -901,11 +904,12 @@ make_states :: proc(a: ^App, cx: ^gk.Cx) {
 	_ = gk.message_scroller_state_prepend(a.st_message_scroller_state, cx, 3)
 	_ = gk.message_scroller_state_remeasure_items(a.st_message_scroller_state, cx, gk.Range{1, 3})
 	_ = gk.message_scroller_state_scroll_to_item(a.st_message_scroller_state, cx, 3)
+	_ = gk.message_scroller_state_scroll_to_offset(a.st_message_scroller_state, cx, gk.List_Offset{3, 4})
 	_ = gk.message_scroller_state_splice(a.st_message_scroller_state, cx, gk.Range{1, 3}, 3)
 	gk.message_scroller_state_remeasure(a.st_message_scroller_state, cx)
 	gk.message_scroller_state_reset(a.st_message_scroller_state, cx, 3)
 	gk.message_scroller_state_scroll_to_end(a.st_message_scroller_state, cx)
-	fmt.printf("states made Message_Scroller_State builders=0 reads=4 writes=3 calls=5 events=0\n")
+	fmt.printf("states made Message_Scroller_State builders=0 reads=4 writes=3 calls=6 events=0\n")
 	a.st_nav_stack_state = gk.nav_stack_state(cx)
 	_ = gk.nav_stack_state_current(a.st_nav_stack_state, cx)
 	_ = gk.nav_stack_state_depth(a.st_nav_stack_state, cx)
@@ -1173,8 +1177,10 @@ make_states :: proc(a: ^App, cx: ^gk.Cx) {
 	a.st_textarea_state = gk.textarea_state(cx)->auto_grow(3, 3)->autocapitalize(gk.Autocapitalize.None)->autocorrect(true)->clean_on_escape()->context_menu(true)->cursor_surrounding_lines(3)->default_value("s")->input_action(gk.Text_Input_Action.Unspecified)->mask_pattern(gk.Mask_Pattern_Kind.None)->placeholder("s")->scroll_beyond_last_line(3)->scroll_bounce(true)->searchable(true)->build()
 	_ = gk.textarea_state_content(a.st_textarea_state, cx)
 	_ = gk.textarea_state_context_menu_capabilities(a.st_textarea_state, cx)
+	_ = gk.textarea_state_context_menu_offset(a.st_textarea_state, cx)
 	_ = gk.textarea_state_cursor(a.st_textarea_state, cx)
 	_ = gk.textarea_state_cursor_position(a.st_textarea_state, cx)
+	_ = gk.textarea_state_decorations(a.st_textarea_state, cx)
 	_ = gk.textarea_state_diagnostic_popover(a.st_textarea_state, cx)
 	_ = gk.textarea_state_diagnostics(a.st_textarea_state, cx)
 	_ = gk.textarea_state_display_map_buffer_line_count(a.st_textarea_state, cx)
@@ -1246,6 +1252,7 @@ make_states :: proc(a: ^App, cx: ^gk.Cx) {
 	gk.textarea_state_set_clean_on_escape(a.st_textarea_state, cx, true)
 	gk.textarea_state_set_context_menu_enabled(a.st_textarea_state, cx, true)
 	gk.textarea_state_set_cursor_surrounding_lines(a.st_textarea_state, cx, 3)
+	gk.textarea_state_set_decorations(a.st_textarea_state, cx, []gk.Text_Decoration{gk.Text_Decoration{gk.Range{1, 3}, gk.Highlight_Style{gk.hsla(0.5, 0.25, 0.75, 1), gk.Font_Weight{1.5}, gk.Font_Style.Normal, gk.hsla(0.5, 0.25, 0.75, 1), gk.Underline_Style{4, gk.hsla(0.5, 0.25, 0.75, 1), true}, gk.Strikethrough_Style{4, gk.hsla(0.5, 0.25, 0.75, 1)}, 1.5}}})
 	gk.textarea_state_set_disabled(a.st_textarea_state, cx, true)
 	gk.textarea_state_set_fold_background(a.st_textarea_state, cx, gk.hsla(0.5, 0.25, 0.75, 1))
 	gk.textarea_state_set_highlighter(a.st_textarea_state, cx, "s")
@@ -1272,7 +1279,7 @@ make_states :: proc(a: ^App, cx: ^gk.Cx) {
 	gk.textarea_state_update_edge_drag(a.st_textarea_state, cx, gk.Gpui_Point{4, 4})
 	append(&a.subs, gk.textarea_state_on_input_event(a.st_textarea_state, cx, gk.on(any_event)))
 	append(&a.subs, gk.textarea_state_on_input_edits_event(a.st_textarea_state, cx, gk.on(any_event)))
-	fmt.printf("states made Textarea_State builders=13 reads=48 writes=45 calls=6 events=2\n")
+	fmt.printf("states made Textarea_State builders=13 reads=50 writes=46 calls=6 events=2\n")
 	// Theme: not made here: no constructor with arguments this test can make
 	// Theme_Color_Arc: not made here: no constructor with arguments this test can make
 	// Theme_Config_Rc: not made here: no constructor with arguments this test can make

@@ -1274,6 +1274,27 @@ show_completions_default :: proc(loc := #caller_location) -> Show_Completions {
 show_completions_vt := Show_Completions_VT {
 }
 
+// What a textarea adds: one layer of text decorations, such as inline marks. Their ranges follow
+// edits like an editor's decoration collections.
+//
+// Textarea_Extras is gpui_kit::base::input::TextareaExtras.
+Textarea_Extras :: struct {
+	using nd: Value,
+	using vt: ^Textarea_Extras_VT,
+}
+
+Textarea_Extras_VT :: struct {
+}
+
+textarea_extras_default :: proc(loc := #caller_location) -> Textarea_Extras {
+	e := Textarea_Extras{new_value(888, loc), &textarea_extras_vt}
+	return e
+}
+
+@(private)
+textarea_extras_vt := Textarea_Extras_VT {
+}
+
 // Toggle_Code_Actions is gpui_kit::base::input::ToggleCodeActions.
 Toggle_Code_Actions :: struct {
 	using nd: Value,

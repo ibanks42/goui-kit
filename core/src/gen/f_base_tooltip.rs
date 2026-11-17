@@ -80,7 +80,8 @@ pub fn apply_base_tooltip(dx: &mut Dx, mut el: gpui_kit::base::Tooltip, first: u
         let r = &mut r;
         match op {
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
@@ -109,7 +110,8 @@ pub fn apply_base_tooltip_positioner(dx: &mut Dx, mut el: gpui_kit::base::Toolti
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_47(r.u16()); <gpui_kit::base::TooltipPositioner>::placement(el, a0) }; }
+            256 => { el = { let a0 = en_48(r.u16()); <gpui_kit::base::TooltipPositioner>::placement(el, a0) }; }
+            257 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::base::TooltipPositioner>::offset(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
@@ -137,8 +139,9 @@ pub fn apply_base_tooltip_request(dx: &mut Dx, mut el: gpui_kit::base::TooltipRe
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_47(r.u16()); <gpui_kit::base::TooltipRequest>::with_placement(el, a0) }; }
+            256 => { el = { let a0 = en_48(r.u16()); <gpui_kit::base::TooltipRequest>::with_placement(el, a0) }; }
             257 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::base::TooltipRequest>::with_show_delay(el, a0) }; }
+            258 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::base::TooltipRequest>::with_offset(el, a0) }; }
             _ => bad_op("TooltipRequest", op),
         }
     }

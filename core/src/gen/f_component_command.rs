@@ -87,8 +87,10 @@ pub fn apply_component_command(dx: &mut Dx, mut el: gpui_kit::component::command
             270 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::component::command::CommandState, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&crate::items::Reads(k0), &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&crate::items::Reads(k0), &mut b); b }; crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); }), window, cx) } }; <gpui_kit::component::command::Command>::empty(el, a0) }; }
             271 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::component::command::CommandState, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&crate::items::Reads(k0), &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&crate::items::Reads(k0), &mut b); b }; crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); }), window, cx) } }; <gpui_kit::component::command::Command>::footer(el, a0) }; }
             272 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::component::command::CommandState, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&crate::items::Reads(k0), &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&crate::items::Reads(k0), &mut b); b }; crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); }), window, cx) } }; <gpui_kit::component::command::Command>::header(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            273 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::command::Command>::highlight_matches(el, a0) }; }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Command", op),
@@ -146,7 +148,7 @@ pub fn apply_component_command_item(dx: &mut Dx, mut el: gpui_kit::component::co
             258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::command::CommandItem>::label(el, a0) }; }
             259 => { el = { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(gpui_kit::SharedString::new(r.str())); } v }; <gpui_kit::component::command::CommandItem>::keywords(el, a0) }; }
             260 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::command::CommandItem>::child(el, a0) }; }
-            261 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::command::CommandItem>::icon(el, a0) }; }
+            261 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::command::CommandItem>::icon(el, a0) }; }
             17024..=17151 => { el = tr_disableable_5(el, op, r, dx); }
             _ => bad_op("CommandItem", op),
         }

@@ -42,6 +42,63 @@ func (e SkeletonEl) PopoverStyle() SkeletonEl { tThemeStyledPopoverStyle(e.n); r
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e SkeletonEl) RoundedFullStyle() SkeletonEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e SkeletonEl) BorderE(width Length) SkeletonEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e SkeletonEl) BorderS(width Length) SkeletonEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SkeletonEl) FlexRowDir() SkeletonEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SkeletonEl) InsetE(length Length) SkeletonEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e SkeletonEl) InsetS(length Length) SkeletonEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SkeletonEl) JustifyFlexEnd() SkeletonEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SkeletonEl) JustifyFlexStart() SkeletonEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e SkeletonEl) Me(length Length) SkeletonEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e SkeletonEl) Ms(length Length) SkeletonEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e SkeletonEl) Pe(length Length) SkeletonEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e SkeletonEl) Ps(length Length) SkeletonEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e SkeletonEl) RoundedE(radius Length) SkeletonEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SkeletonEl) RoundedS(radius Length) SkeletonEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SkeletonEl) TextEnd() SkeletonEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SkeletonEl) TextStart() SkeletonEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e SkeletonEl) CornerRadii(radius Corners) SkeletonEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e

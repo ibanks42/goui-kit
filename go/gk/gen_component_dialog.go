@@ -290,11 +290,95 @@ func (e AlertDialogEl) FocusRingStyle() AlertDialogEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e AlertDialogEl) KeepTextSelection(id ID) AlertDialogEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AlertDialogEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AlertDialogEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e AlertDialogEl) BorderE(width Length) AlertDialogEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e AlertDialogEl) BorderS(width Length) AlertDialogEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AlertDialogEl) FlexRowDir() AlertDialogEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e AlertDialogEl) InsetE(length Length) AlertDialogEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e AlertDialogEl) InsetS(length Length) AlertDialogEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AlertDialogEl) JustifyFlexEnd() AlertDialogEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AlertDialogEl) JustifyFlexStart() AlertDialogEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e AlertDialogEl) Me(length Length) AlertDialogEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e AlertDialogEl) Ms(length Length) AlertDialogEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e AlertDialogEl) Pe(length Length) AlertDialogEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e AlertDialogEl) Ps(length Length) AlertDialogEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e AlertDialogEl) RoundedE(radius Length) AlertDialogEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e AlertDialogEl) RoundedS(radius Length) AlertDialogEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AlertDialogEl) TextEnd() AlertDialogEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AlertDialogEl) TextStart() AlertDialogEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e AlertDialogEl) CornerRadii(radius Corners) AlertDialogEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -958,11 +1042,71 @@ func (e DialogEl) RoundedFullStyle() DialogEl { tThemeStyledRoundedFullStyle(e.n
 // off — leave it a few pixels of room, or don't clip.
 func (e DialogEl) FocusRingStyle() DialogEl { tThemeStyledParentElementFocusRingStyle(e.n); return e }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e DialogEl) KeepTextSelection(id ID) DialogEl { tElementExtKeepTextSelection(e.n, id); return e }
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e DialogEl) BorderE(width Length) DialogEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e DialogEl) BorderS(width Length) DialogEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e DialogEl) FlexRowDir() DialogEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e DialogEl) InsetE(length Length) DialogEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e DialogEl) InsetS(length Length) DialogEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e DialogEl) JustifyFlexEnd() DialogEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e DialogEl) JustifyFlexStart() DialogEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e DialogEl) Me(length Length) DialogEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e DialogEl) Ms(length Length) DialogEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e DialogEl) Pe(length Length) DialogEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e DialogEl) Ps(length Length) DialogEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e DialogEl) RoundedE(radius Length) DialogEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e DialogEl) RoundedS(radius Length) DialogEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e DialogEl) TextEnd() DialogEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e DialogEl) TextStart() DialogEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e DialogEl) CornerRadii(radius Corners) DialogEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e DialogEl) DebugBlue() DialogEl                 { tStyledExtDebugBlue(e.n); return e }
@@ -1351,6 +1495,18 @@ func DialogAction() DialogActionEl {
 	return DialogActionEl{n}
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e DialogActionEl) KeepTextSelection(id ID) DialogActionEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogActionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogActionEl {
 	tElementExtOnPrepaint(e.n, callback)
@@ -1475,6 +1631,18 @@ func (e DialogCloseEl) Trigger(build ButtonEl) DialogCloseEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e DialogCloseEl) KeepTextSelection(id ID) DialogCloseEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogCloseEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogCloseEl {
 	tElementExtOnPrepaint(e.n, callback)
@@ -1544,11 +1712,110 @@ func (e DialogContentEl) FocusRingStyle() DialogContentEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e DialogContentEl) KeepTextSelection(id ID) DialogContentEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogContentEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e DialogContentEl) BorderE(width Length) DialogContentEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e DialogContentEl) BorderS(width Length) DialogContentEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e DialogContentEl) FlexRowDir() DialogContentEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e DialogContentEl) InsetE(length Length) DialogContentEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e DialogContentEl) InsetS(length Length) DialogContentEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e DialogContentEl) JustifyFlexEnd() DialogContentEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e DialogContentEl) JustifyFlexStart() DialogContentEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e DialogContentEl) Me(length Length) DialogContentEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e DialogContentEl) Ms(length Length) DialogContentEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e DialogContentEl) Pe(length Length) DialogContentEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e DialogContentEl) Ps(length Length) DialogContentEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e DialogContentEl) RoundedE(radius Length) DialogContentEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e DialogContentEl) RoundedS(radius Length) DialogContentEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e DialogContentEl) TextEnd() DialogContentEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e DialogContentEl) TextStart() DialogContentEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e DialogContentEl) CornerRadii(radius Corners) DialogContentEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -2076,9 +2343,114 @@ func (e DialogDescriptionEl) FocusRingStyle() DialogDescriptionEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e DialogDescriptionEl) KeepTextSelection(id ID) DialogDescriptionEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogDescriptionEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogDescriptionEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e DialogDescriptionEl) BorderE(width Length) DialogDescriptionEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e DialogDescriptionEl) BorderS(width Length) DialogDescriptionEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e DialogDescriptionEl) FlexRowDir() DialogDescriptionEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e DialogDescriptionEl) InsetE(length Length) DialogDescriptionEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e DialogDescriptionEl) InsetS(length Length) DialogDescriptionEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e DialogDescriptionEl) JustifyFlexEnd() DialogDescriptionEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e DialogDescriptionEl) JustifyFlexStart() DialogDescriptionEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e DialogDescriptionEl) Me(length Length) DialogDescriptionEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e DialogDescriptionEl) Ms(length Length) DialogDescriptionEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e DialogDescriptionEl) Pe(length Length) DialogDescriptionEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e DialogDescriptionEl) Ps(length Length) DialogDescriptionEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e DialogDescriptionEl) RoundedE(radius Length) DialogDescriptionEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e DialogDescriptionEl) RoundedS(radius Length) DialogDescriptionEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e DialogDescriptionEl) TextEnd() DialogDescriptionEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e DialogDescriptionEl) TextStart() DialogDescriptionEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -2683,11 +3055,98 @@ func (e DialogFooterEl) FocusRingStyle() DialogFooterEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e DialogFooterEl) KeepTextSelection(id ID) DialogFooterEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogFooterEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogFooterEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e DialogFooterEl) BorderE(width Length) DialogFooterEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e DialogFooterEl) BorderS(width Length) DialogFooterEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e DialogFooterEl) FlexRowDir() DialogFooterEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e DialogFooterEl) InsetE(length Length) DialogFooterEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e DialogFooterEl) InsetS(length Length) DialogFooterEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e DialogFooterEl) JustifyFlexEnd() DialogFooterEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e DialogFooterEl) JustifyFlexStart() DialogFooterEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e DialogFooterEl) Me(length Length) DialogFooterEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e DialogFooterEl) Ms(length Length) DialogFooterEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e DialogFooterEl) Pe(length Length) DialogFooterEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e DialogFooterEl) Ps(length Length) DialogFooterEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e DialogFooterEl) RoundedE(radius Length) DialogFooterEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e DialogFooterEl) RoundedS(radius Length) DialogFooterEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e DialogFooterEl) TextEnd() DialogFooterEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e DialogFooterEl) TextStart() DialogFooterEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e DialogFooterEl) CornerRadii(radius Corners) DialogFooterEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -3182,11 +3641,98 @@ func (e DialogHeaderEl) FocusRingStyle() DialogHeaderEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e DialogHeaderEl) KeepTextSelection(id ID) DialogHeaderEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogHeaderEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogHeaderEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e DialogHeaderEl) BorderE(width Length) DialogHeaderEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e DialogHeaderEl) BorderS(width Length) DialogHeaderEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e DialogHeaderEl) FlexRowDir() DialogHeaderEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e DialogHeaderEl) InsetE(length Length) DialogHeaderEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e DialogHeaderEl) InsetS(length Length) DialogHeaderEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e DialogHeaderEl) JustifyFlexEnd() DialogHeaderEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e DialogHeaderEl) JustifyFlexStart() DialogHeaderEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e DialogHeaderEl) Me(length Length) DialogHeaderEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e DialogHeaderEl) Ms(length Length) DialogHeaderEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e DialogHeaderEl) Pe(length Length) DialogHeaderEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e DialogHeaderEl) Ps(length Length) DialogHeaderEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e DialogHeaderEl) RoundedE(radius Length) DialogHeaderEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e DialogHeaderEl) RoundedS(radius Length) DialogHeaderEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e DialogHeaderEl) TextEnd() DialogHeaderEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e DialogHeaderEl) TextStart() DialogHeaderEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e DialogHeaderEl) CornerRadii(radius Corners) DialogHeaderEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -3678,11 +4224,95 @@ func (e DialogTitleEl) FocusRingStyle() DialogTitleEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e DialogTitleEl) KeepTextSelection(id ID) DialogTitleEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e DialogTitleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) DialogTitleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e DialogTitleEl) BorderE(width Length) DialogTitleEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e DialogTitleEl) BorderS(width Length) DialogTitleEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e DialogTitleEl) FlexRowDir() DialogTitleEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e DialogTitleEl) InsetE(length Length) DialogTitleEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e DialogTitleEl) InsetS(length Length) DialogTitleEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e DialogTitleEl) JustifyFlexEnd() DialogTitleEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e DialogTitleEl) JustifyFlexStart() DialogTitleEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e DialogTitleEl) Me(length Length) DialogTitleEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e DialogTitleEl) Ms(length Length) DialogTitleEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e DialogTitleEl) Pe(length Length) DialogTitleEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e DialogTitleEl) Ps(length Length) DialogTitleEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e DialogTitleEl) RoundedE(radius Length) DialogTitleEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e DialogTitleEl) RoundedS(radius Length) DialogTitleEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e DialogTitleEl) TextEnd() DialogTitleEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e DialogTitleEl) TextStart() DialogTitleEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e DialogTitleEl) CornerRadii(radius Corners) DialogTitleEl {
 	tStyledExtCornerRadii(e.n, radius)

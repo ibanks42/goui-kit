@@ -77,6 +77,63 @@ func (e ProgressEl) PopoverStyle() ProgressEl { tThemeStyledPopoverStyle(e.n); r
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e ProgressEl) RoundedFullStyle() ProgressEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e ProgressEl) BorderE(width Length) ProgressEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e ProgressEl) BorderS(width Length) ProgressEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e ProgressEl) FlexRowDir() ProgressEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e ProgressEl) InsetE(length Length) ProgressEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e ProgressEl) InsetS(length Length) ProgressEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e ProgressEl) JustifyFlexEnd() ProgressEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e ProgressEl) JustifyFlexStart() ProgressEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e ProgressEl) Me(length Length) ProgressEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e ProgressEl) Ms(length Length) ProgressEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e ProgressEl) Pe(length Length) ProgressEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e ProgressEl) Ps(length Length) ProgressEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e ProgressEl) RoundedE(radius Length) ProgressEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e ProgressEl) RoundedS(radius Length) ProgressEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e ProgressEl) TextEnd() ProgressEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e ProgressEl) TextStart() ProgressEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e ProgressEl) CornerRadii(radius Corners) ProgressEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -565,11 +622,110 @@ func (e ProgressCircleEl) FocusRingStyle() ProgressCircleEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e ProgressCircleEl) KeepTextSelection(id ID) ProgressCircleEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e ProgressCircleEl) OnPrepaint(callback func(cx *Cx, e Bounds)) ProgressCircleEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e ProgressCircleEl) BorderE(width Length) ProgressCircleEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e ProgressCircleEl) BorderS(width Length) ProgressCircleEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e ProgressCircleEl) FlexRowDir() ProgressCircleEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e ProgressCircleEl) InsetE(length Length) ProgressCircleEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e ProgressCircleEl) InsetS(length Length) ProgressCircleEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e ProgressCircleEl) JustifyFlexEnd() ProgressCircleEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e ProgressCircleEl) JustifyFlexStart() ProgressCircleEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e ProgressCircleEl) Me(length Length) ProgressCircleEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e ProgressCircleEl) Ms(length Length) ProgressCircleEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e ProgressCircleEl) Pe(length Length) ProgressCircleEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e ProgressCircleEl) Ps(length Length) ProgressCircleEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e ProgressCircleEl) RoundedE(radius Length) ProgressCircleEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e ProgressCircleEl) RoundedS(radius Length) ProgressCircleEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e ProgressCircleEl) TextEnd() ProgressCircleEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e ProgressCircleEl) TextStart() ProgressCircleEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e ProgressCircleEl) CornerRadii(radius Corners) ProgressCircleEl {
 	tStyledExtCornerRadii(e.n, radius)

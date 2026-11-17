@@ -36,6 +36,15 @@ func (e ClipboardEl) AccessibilityLabel(label string) ClipboardEl {
 	return e
 }
 
+// Set visible text for the clipboard button.
+//
+// Label is <gpui_kit::component::clipboard::Clipboard>::label.
+func (e ClipboardEl) Label(label string) ClipboardEl {
+	o := op(e.n, 262)
+	o.str(label)
+	return e
+}
+
 // Set a callback to be invoked when the content is copied to the clipboard.
 //
 // OnCopied is <gpui_kit::component::clipboard::Clipboard>::on_copied.

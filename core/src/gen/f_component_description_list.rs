@@ -45,7 +45,7 @@ pub fn apply_component_description_list(dx: &mut Dx, mut el: gpui_kit::component
             261 => { el = { let a0 = definite_length(r); <gpui_kit::component::description_list::DescriptionList>::label_width(el, a0) }; }
             262 => { el = { let a0 = en_4(r.u16()); <gpui_kit::component::description_list::DescriptionList>::layout(el, a0) }; }
             263 => { el = { <gpui_kit::component::description_list::DescriptionList>::separator(el) }; }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("DescriptionList", op),
         }
     }

@@ -154,6 +154,78 @@ func (e AttachmentEl) PopoverStyle() AttachmentEl { tThemeStyledPopoverStyle(e.n
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e AttachmentEl) RoundedFullStyle() AttachmentEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e AttachmentEl) BorderE(width Length) AttachmentEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e AttachmentEl) BorderS(width Length) AttachmentEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AttachmentEl) FlexRowDir() AttachmentEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e AttachmentEl) InsetE(length Length) AttachmentEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e AttachmentEl) InsetS(length Length) AttachmentEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AttachmentEl) JustifyFlexEnd() AttachmentEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AttachmentEl) JustifyFlexStart() AttachmentEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e AttachmentEl) Me(length Length) AttachmentEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e AttachmentEl) Ms(length Length) AttachmentEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e AttachmentEl) Pe(length Length) AttachmentEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e AttachmentEl) Ps(length Length) AttachmentEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e AttachmentEl) RoundedE(radius Length) AttachmentEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e AttachmentEl) RoundedS(radius Length) AttachmentEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AttachmentEl) TextEnd() AttachmentEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AttachmentEl) TextStart() AttachmentEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e AttachmentEl) CornerRadii(radius Corners) AttachmentEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -619,9 +691,114 @@ func (e AttachmentActionsEl) FocusRingStyle() AttachmentActionsEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e AttachmentActionsEl) KeepTextSelection(id ID) AttachmentActionsEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AttachmentActionsEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AttachmentActionsEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e AttachmentActionsEl) BorderE(width Length) AttachmentActionsEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e AttachmentActionsEl) BorderS(width Length) AttachmentActionsEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AttachmentActionsEl) FlexRowDir() AttachmentActionsEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e AttachmentActionsEl) InsetE(length Length) AttachmentActionsEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e AttachmentActionsEl) InsetS(length Length) AttachmentActionsEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AttachmentActionsEl) JustifyFlexEnd() AttachmentActionsEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AttachmentActionsEl) JustifyFlexStart() AttachmentActionsEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e AttachmentActionsEl) Me(length Length) AttachmentActionsEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e AttachmentActionsEl) Ms(length Length) AttachmentActionsEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e AttachmentActionsEl) Pe(length Length) AttachmentActionsEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e AttachmentActionsEl) Ps(length Length) AttachmentActionsEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e AttachmentActionsEl) RoundedE(radius Length) AttachmentActionsEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e AttachmentActionsEl) RoundedS(radius Length) AttachmentActionsEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AttachmentActionsEl) TextEnd() AttachmentActionsEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AttachmentActionsEl) TextStart() AttachmentActionsEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -1257,9 +1434,114 @@ func (e AttachmentContentEl) FocusRingStyle() AttachmentContentEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e AttachmentContentEl) KeepTextSelection(id ID) AttachmentContentEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AttachmentContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AttachmentContentEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e AttachmentContentEl) BorderE(width Length) AttachmentContentEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e AttachmentContentEl) BorderS(width Length) AttachmentContentEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AttachmentContentEl) FlexRowDir() AttachmentContentEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e AttachmentContentEl) InsetE(length Length) AttachmentContentEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e AttachmentContentEl) InsetS(length Length) AttachmentContentEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AttachmentContentEl) JustifyFlexEnd() AttachmentContentEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AttachmentContentEl) JustifyFlexStart() AttachmentContentEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e AttachmentContentEl) Me(length Length) AttachmentContentEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e AttachmentContentEl) Ms(length Length) AttachmentContentEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e AttachmentContentEl) Pe(length Length) AttachmentContentEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e AttachmentContentEl) Ps(length Length) AttachmentContentEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e AttachmentContentEl) RoundedE(radius Length) AttachmentContentEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e AttachmentContentEl) RoundedS(radius Length) AttachmentContentEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AttachmentContentEl) TextEnd() AttachmentContentEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AttachmentContentEl) TextStart() AttachmentContentEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -1859,6 +2141,102 @@ func (e AttachmentDescriptionEl) PopoverStyle() AttachmentDescriptionEl {
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e AttachmentDescriptionEl) RoundedFullStyle() AttachmentDescriptionEl {
 	tThemeStyledRoundedFullStyle(e.n)
+	return e
+}
+
+// Border width on the end edge.
+func (e AttachmentDescriptionEl) BorderE(width Length) AttachmentDescriptionEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e AttachmentDescriptionEl) BorderS(width Length) AttachmentDescriptionEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AttachmentDescriptionEl) FlexRowDir() AttachmentDescriptionEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e AttachmentDescriptionEl) InsetE(length Length) AttachmentDescriptionEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e AttachmentDescriptionEl) InsetS(length Length) AttachmentDescriptionEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AttachmentDescriptionEl) JustifyFlexEnd() AttachmentDescriptionEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AttachmentDescriptionEl) JustifyFlexStart() AttachmentDescriptionEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e AttachmentDescriptionEl) Me(length Length) AttachmentDescriptionEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e AttachmentDescriptionEl) Ms(length Length) AttachmentDescriptionEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e AttachmentDescriptionEl) Pe(length Length) AttachmentDescriptionEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e AttachmentDescriptionEl) Ps(length Length) AttachmentDescriptionEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e AttachmentDescriptionEl) RoundedE(radius Length) AttachmentDescriptionEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e AttachmentDescriptionEl) RoundedS(radius Length) AttachmentDescriptionEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AttachmentDescriptionEl) TextEnd() AttachmentDescriptionEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AttachmentDescriptionEl) TextStart() AttachmentDescriptionEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -2571,11 +2949,110 @@ func (e AttachmentGroupEl) FocusRingStyle() AttachmentGroupEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e AttachmentGroupEl) KeepTextSelection(id ID) AttachmentGroupEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AttachmentGroupEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AttachmentGroupEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e AttachmentGroupEl) BorderE(width Length) AttachmentGroupEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e AttachmentGroupEl) BorderS(width Length) AttachmentGroupEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AttachmentGroupEl) FlexRowDir() AttachmentGroupEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e AttachmentGroupEl) InsetE(length Length) AttachmentGroupEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e AttachmentGroupEl) InsetS(length Length) AttachmentGroupEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AttachmentGroupEl) JustifyFlexEnd() AttachmentGroupEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AttachmentGroupEl) JustifyFlexStart() AttachmentGroupEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e AttachmentGroupEl) Me(length Length) AttachmentGroupEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e AttachmentGroupEl) Ms(length Length) AttachmentGroupEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e AttachmentGroupEl) Pe(length Length) AttachmentGroupEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e AttachmentGroupEl) Ps(length Length) AttachmentGroupEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e AttachmentGroupEl) RoundedE(radius Length) AttachmentGroupEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e AttachmentGroupEl) RoundedS(radius Length) AttachmentGroupEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AttachmentGroupEl) TextEnd() AttachmentGroupEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AttachmentGroupEl) TextStart() AttachmentGroupEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e AttachmentGroupEl) CornerRadii(radius Corners) AttachmentGroupEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -3170,11 +3647,110 @@ func (e AttachmentMediaEl) FocusRingStyle() AttachmentMediaEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e AttachmentMediaEl) KeepTextSelection(id ID) AttachmentMediaEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e AttachmentMediaEl) OnPrepaint(callback func(cx *Cx, e Bounds)) AttachmentMediaEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e AttachmentMediaEl) BorderE(width Length) AttachmentMediaEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e AttachmentMediaEl) BorderS(width Length) AttachmentMediaEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AttachmentMediaEl) FlexRowDir() AttachmentMediaEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e AttachmentMediaEl) InsetE(length Length) AttachmentMediaEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e AttachmentMediaEl) InsetS(length Length) AttachmentMediaEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AttachmentMediaEl) JustifyFlexEnd() AttachmentMediaEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AttachmentMediaEl) JustifyFlexStart() AttachmentMediaEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e AttachmentMediaEl) Me(length Length) AttachmentMediaEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e AttachmentMediaEl) Ms(length Length) AttachmentMediaEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e AttachmentMediaEl) Pe(length Length) AttachmentMediaEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e AttachmentMediaEl) Ps(length Length) AttachmentMediaEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e AttachmentMediaEl) RoundedE(radius Length) AttachmentMediaEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e AttachmentMediaEl) RoundedS(radius Length) AttachmentMediaEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AttachmentMediaEl) TextEnd() AttachmentMediaEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AttachmentMediaEl) TextStart() AttachmentMediaEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e AttachmentMediaEl) CornerRadii(radius Corners) AttachmentMediaEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -3762,6 +4338,93 @@ func (e AttachmentTitleEl) RoundedFullStyle() AttachmentTitleEl {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
+
+// Border width on the end edge.
+func (e AttachmentTitleEl) BorderE(width Length) AttachmentTitleEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e AttachmentTitleEl) BorderS(width Length) AttachmentTitleEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AttachmentTitleEl) FlexRowDir() AttachmentTitleEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e AttachmentTitleEl) InsetE(length Length) AttachmentTitleEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e AttachmentTitleEl) InsetS(length Length) AttachmentTitleEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AttachmentTitleEl) JustifyFlexEnd() AttachmentTitleEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AttachmentTitleEl) JustifyFlexStart() AttachmentTitleEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e AttachmentTitleEl) Me(length Length) AttachmentTitleEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e AttachmentTitleEl) Ms(length Length) AttachmentTitleEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e AttachmentTitleEl) Pe(length Length) AttachmentTitleEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e AttachmentTitleEl) Ps(length Length) AttachmentTitleEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e AttachmentTitleEl) RoundedE(radius Length) AttachmentTitleEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e AttachmentTitleEl) RoundedS(radius Length) AttachmentTitleEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AttachmentTitleEl) TextEnd() AttachmentTitleEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AttachmentTitleEl) TextStart() AttachmentTitleEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e AttachmentTitleEl) CornerRadii(radius Corners) AttachmentTitleEl {
 	tStyledExtCornerRadii(e.n, radius)

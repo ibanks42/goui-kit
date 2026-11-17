@@ -62,6 +62,24 @@ func (e SliderEl) Reverse() SliderEl {
 	return e
 }
 
+// Set the tab index for the slider, default is 0.
+//
+// TabIndex is <gpui_kit::component::slider::Slider>::tab_index.
+func (e SliderEl) TabIndex(tabIndex int) SliderEl {
+	o := op(e.n, 261)
+	o.u64(uint64(tabIndex))
+	return e
+}
+
+// Set the tab stop for the slider, default is true.
+//
+// TabStop is <gpui_kit::component::slider::Slider>::tab_stop.
+func (e SliderEl) TabStop(tabStop bool) SliderEl {
+	o := op(e.n, 262)
+	o.bool(tabStop)
+	return e
+}
+
 // As a vertical slider.
 //
 // Vertical is <gpui_kit::component::slider::Slider>::vertical.
@@ -84,6 +102,57 @@ func (e SliderEl) PopoverStyle() SliderEl { tThemeStyledPopoverStyle(e.n); retur
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e SliderEl) RoundedFullStyle() SliderEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e SliderEl) BorderE(width Length) SliderEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e SliderEl) BorderS(width Length) SliderEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SliderEl) FlexRowDir() SliderEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SliderEl) InsetE(length Length) SliderEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e SliderEl) InsetS(length Length) SliderEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SliderEl) JustifyFlexEnd() SliderEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SliderEl) JustifyFlexStart() SliderEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e SliderEl) Me(length Length) SliderEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e SliderEl) Ms(length Length) SliderEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e SliderEl) Pe(length Length) SliderEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e SliderEl) Ps(length Length) SliderEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e SliderEl) RoundedE(radius Length) SliderEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e SliderEl) RoundedS(radius Length) SliderEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SliderEl) TextEnd() SliderEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SliderEl) TextStart() SliderEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e SliderEl) CornerRadii(radius Corners) SliderEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e SliderEl) DebugBlue() SliderEl                 { tStyledExtDebugBlue(e.n); return e }

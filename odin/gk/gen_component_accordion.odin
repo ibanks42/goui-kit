@@ -11,6 +11,7 @@ Accordion :: struct {
 
 Accordion_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Accordion),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Accordion),
 	using t_styled_ext: ^Styled_Ext_Trait(Accordion),
 	using t_sizable: ^Sizable_Trait(Accordion),
 	using t_styled: ^Styled_Trait(Accordion),
@@ -41,6 +42,7 @@ accordion :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Accor
 @(private)
 accordion_vt := Accordion_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Accordion))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Accordion))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Accordion))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Accordion))&sizable_any,
 	t_styled = cast(^Styled_Trait(Accordion))&styled_any,
@@ -84,6 +86,7 @@ Accordion_Item_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Accordion_Item),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Accordion_Item),
 	using t_element_ext: ^Element_Ext_Trait(Accordion_Item),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Accordion_Item),
 	using t_styled_ext: ^Styled_Ext_Trait(Accordion_Item),
 	using t_parent_element: ^Parent_Element_Trait(Accordion_Item),
 	using t_sizable: ^Sizable_Trait(Accordion_Item),
@@ -118,6 +121,7 @@ accordion_item_vt := Accordion_Item_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Accordion_Item))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Accordion_Item))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Accordion_Item))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Accordion_Item))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Accordion_Item))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Accordion_Item))&parent_element_any,
 	t_sizable = cast(^Sizable_Trait(Accordion_Item))&sizable_any,

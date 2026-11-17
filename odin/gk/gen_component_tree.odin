@@ -12,6 +12,7 @@ Tree :: struct {
 
 Tree_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Tree),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Tree),
 	using t_styled_ext: ^Styled_Ext_Trait(Tree),
 	using t_styled: ^Styled_Trait(Tree),
 	// Add a context menu to the tree.
@@ -45,6 +46,7 @@ tree :: proc(state: Tree_State, render_item: Row_Source, flags: ..Style_Flag, lo
 @(private)
 tree_vt := Tree_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Tree))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Tree))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Tree))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Tree))&styled_any,
 	context_menu = proc(e: Tree, f: Row_Source) -> Tree {

@@ -715,6 +715,14 @@ const (
 	LayerOverlay    Layer = 3
 )
 
+// LayoutDirection is gpui_kit::base::LayoutDirection.
+type LayoutDirection uint16
+
+const (
+	LayoutDirectionLtr LayoutDirection = 0
+	LayoutDirectionRtl LayoutDirection = 1
+)
+
 // ListSizingBehavior is gpui_kit::ListSizingBehavior.
 type ListSizingBehavior uint16
 
@@ -939,6 +947,15 @@ type RangeDecorationStyle uint16
 const (
 	RangeDecorationStyleFill  RangeDecorationStyle = 0
 	RangeDecorationStyleFrame RangeDecorationStyle = 1
+)
+
+// ReduceMotionPreference is gpui_kit::base::ReduceMotionPreference.
+type ReduceMotionPreference uint16
+
+const (
+	ReduceMotionPreferenceSystem ReduceMotionPreference = 0
+	ReduceMotionPreferenceReduce ReduceMotionPreference = 1
+	ReduceMotionPreferenceAllow  ReduceMotionPreference = 2
 )
 
 // ReducedMotion is gpui_kit::base::ReducedMotion.
@@ -1570,6 +1587,12 @@ func Row(row int) BaseIndexPath { return BaseIndexPath{Row: row} }
 // NoRow is no BaseIndexPath, for a parameter that takes an optional one: gk.NewSelectState(cx, src, gk.NoRow).
 var NoRow = Option[BaseIndexPath]{}
 
+// BaseLink3 is gpui_kit::base::text::Link. Only the fields the binding can carry.
+type BaseLink3 struct {
+	URL   string
+	Title Option[string]
+}
+
 // BaseListSettings is gpui_kit::base::ListSettings. Only the fields the binding can carry.
 type BaseListSettings struct {
 	ActiveHighlight bool
@@ -2187,6 +2210,7 @@ type KitThemeColor2 struct {
 	ListEven                       Hsla
 	ListHead                       Hsla
 	ListHover                      Hsla
+	ListHighlightForeground        Hsla
 	Muted                          Hsla
 	MutedForeground                Hsla
 	Popover                        Hsla
@@ -2302,6 +2326,11 @@ func putLinkMark(o *tape, v LinkMark) {
 type ListOffset struct {
 	ItemIx       int
 	OffsetInItem float32
+}
+
+func putListOffset(o *tape, v ListOffset) {
+	putUsize(o, v.ItemIx)
+	o.f32(v.OffsetInItem)
 }
 
 // Modifiers is gpui_kit::Modifiers.
@@ -2781,6 +2810,7 @@ type ThemeTokens struct {
 	ListEven                       KitThemeToken
 	ListHead                       KitThemeToken
 	ListHover                      KitThemeToken
+	ListHighlightForeground        KitThemeToken
 	Muted                          KitThemeToken
 	MutedForeground                KitThemeToken
 	Popover                        KitThemeToken
@@ -6280,6 +6310,11 @@ type TupleRangeColor struct {
 	V1 Color
 }
 
+type TupleRangeHighlightstyle struct {
+	V0 Range
+	V1 HighlightStyle
+}
+
 type TupleRangeTextmark struct {
 	V0 Range
 	V1 TextMark
@@ -7331,6 +7366,12 @@ func rdBaseNativeMenu2(r *reader) (v BaseNativeMenu2) {
 	return
 }
 
+func rdTextDecoration(r *reader) (v TextDecoration) {
+	v.Range = rdRange(r)
+	v.Style = rdHighlightStyle(r)
+	return
+}
+
 func rdBaseCaret(r *reader) (v BaseCaret) {
 	v.Index = int(r.u64())
 	v.Affinity = CaretAffinity(r.u16())
@@ -7429,6 +7470,7 @@ func rdKitThemeColor2(r *reader) (v KitThemeColor2) {
 	v.ListEven = rdHsla(r)
 	v.ListHead = rdHsla(r)
 	v.ListHover = rdHsla(r)
+	v.ListHighlightForeground = rdHsla(r)
 	v.Muted = rdHsla(r)
 	v.MutedForeground = rdHsla(r)
 	v.Popover = rdHsla(r)
@@ -7572,6 +7614,7 @@ func rdThemeTokens(r *reader) (v ThemeTokens) {
 	v.ListEven = rdKitThemeToken(r)
 	v.ListHead = rdKitThemeToken(r)
 	v.ListHover = rdKitThemeToken(r)
+	v.ListHighlightForeground = rdKitThemeToken(r)
 	v.Muted = rdKitThemeToken(r)
 	v.MutedForeground = rdKitThemeToken(r)
 	v.Popover = rdKitThemeToken(r)

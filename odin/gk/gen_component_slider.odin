@@ -11,6 +11,7 @@ Slider :: struct {
 
 Slider_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Slider),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Slider),
 	using t_styled_ext: ^Styled_Ext_Trait(Slider),
 	using t_styled: ^Styled_Trait(Slider),
 	// Sets the label exposed to accessibility clients.
@@ -28,6 +29,10 @@ Slider_VT :: struct {
 	// This only changes the visual fill; values, events and interactions are unaffected. It applies to
 	// single-value sliders and is ignored for range sliders.
 	reverse: proc(e: Slider) -> Slider,
+	// Set the tab index for the slider, default is 0.
+	tab_index: proc(e: Slider, tab_index: int) -> Slider,
+	// Set the tab stop for the slider, default is true.
+	tab_stop: proc(e: Slider, tab_stop: bool) -> Slider,
 	// As a vertical slider.
 	vertical: proc(e: Slider) -> Slider,
 }
@@ -45,6 +50,7 @@ slider :: proc(state: Slider_State, flags: ..Style_Flag, loc := #caller_location
 @(private)
 slider_vt := Slider_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Slider))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Slider))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Slider))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Slider))&styled_any,
 	accessibility_label = proc(e: Slider, label: string) -> Slider {
@@ -63,6 +69,16 @@ slider_vt := Slider_VT {
 	},
 	reverse = proc(e: Slider) -> Slider {
 		op(e.el, 259)
+		return e
+	},
+	tab_index = proc(e: Slider, tab_index: int) -> Slider {
+		o := op(e.el, 261)
+		put_u64(o, u64(tab_index))
+		return e
+	},
+	tab_stop = proc(e: Slider, tab_stop: bool) -> Slider {
+		o := op(e.el, 262)
+		put_u8(o, u8(tab_stop))
 		return e
 	},
 	vertical = proc(e: Slider) -> Slider {

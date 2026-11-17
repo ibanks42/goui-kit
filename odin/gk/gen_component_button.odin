@@ -15,6 +15,7 @@ Button_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Button),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Button),
 	using t_element_ext: ^Element_Ext_Trait(Button),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Button),
 	using t_styled_ext: ^Styled_Ext_Trait(Button),
 	using t_disableable: ^Disableable_Trait(Button),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Button),
@@ -226,6 +227,7 @@ button_vt := Button_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Button))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Button))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Button))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Button))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Button))&styled_ext_any,
 	t_disableable = cast(^Disableable_Trait(Button))&disableable_any,
 	t_focusable_ext = cast(^Focusable_Ext_Trait(Button))&focusable_ext_any,
@@ -476,7 +478,11 @@ Button_Custom_Variant :: struct {
 Button_Custom_Variant_VT :: struct {
 	// Set active background color, default is transparent.
 	active: proc(e: Button_Custom_Variant, color: Color) -> Button_Custom_Variant,
-	// Set background color, default is transparent.
+	// Set the base color, default is transparent.
+	//
+	// At rest the button fills with this color at 20% opacity, the tint the danger, warning, success
+	// and info buttons use by default. An outline button also draws its border in it. The `->hover`
+	// and `->active` colors are painted as given.
 	color: proc(e: Button_Custom_Variant, color: Color) -> Button_Custom_Variant,
 	// Set foreground color, default is theme foreground.
 	foreground: proc(e: Button_Custom_Variant, color: Color) -> Button_Custom_Variant,
@@ -530,6 +536,7 @@ Button_Group :: struct {
 
 Button_Group_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Button_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Button_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Button_Group),
 	using t_disableable: ^Disableable_Trait(Button_Group),
 	using t_sizable: ^Sizable_Trait(Button_Group),
@@ -573,6 +580,7 @@ button_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Bu
 @(private)
 button_group_vt := Button_Group_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Button_Group))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Button_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Button_Group))&styled_ext_any,
 	t_disableable = cast(^Disableable_Trait(Button_Group))&disableable_any,
 	t_sizable = cast(^Sizable_Trait(Button_Group))&sizable_any,
@@ -630,6 +638,7 @@ Dropdown_Button :: struct {
 
 Dropdown_Button_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Dropdown_Button),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Dropdown_Button),
 	using t_styled_ext: ^Styled_Ext_Trait(Dropdown_Button),
 	using t_disableable: ^Disableable_Trait(Dropdown_Button),
 	using t_styled: ^Styled_Trait(Dropdown_Button),
@@ -671,6 +680,7 @@ dropdown_button :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) ->
 @(private)
 dropdown_button_vt := Dropdown_Button_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Dropdown_Button))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Dropdown_Button))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Dropdown_Button))&styled_ext_any,
 	t_disableable = cast(^Disableable_Trait(Dropdown_Button))&disableable_any,
 	t_styled = cast(^Styled_Trait(Dropdown_Button))&styled_any,
@@ -714,6 +724,7 @@ Toggle_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Toggle),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Toggle),
 	using t_element_ext: ^Element_Ext_Trait(Toggle),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Toggle),
 	using t_styled_ext: ^Styled_Ext_Trait(Toggle),
 	using t_toggle_variants: ^Toggle_Variants_Trait(Toggle),
 	using t_parent_element: ^Parent_Element_Trait(Toggle),
@@ -753,6 +764,7 @@ toggle_vt := Toggle_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Toggle))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Toggle))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Toggle))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Toggle))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Toggle))&styled_ext_any,
 	t_toggle_variants = cast(^Toggle_Variants_Trait(Toggle))&toggle_variants_any,
 	t_parent_element = cast(^Parent_Element_Trait(Toggle))&parent_element_any,
@@ -801,6 +813,7 @@ Toggle_Group :: struct {
 
 Toggle_Group_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Toggle_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Toggle_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Toggle_Group),
 	using t_sizable: ^Sizable_Trait(Toggle_Group),
 	using t_toggle_variants: ^Toggle_Variants_Trait(Toggle_Group),
@@ -841,6 +854,7 @@ toggle_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> To
 @(private)
 toggle_group_vt := Toggle_Group_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Toggle_Group))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Toggle_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Toggle_Group))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Toggle_Group))&sizable_any,
 	t_toggle_variants = cast(^Toggle_Variants_Trait(Toggle_Group))&toggle_variants_any,

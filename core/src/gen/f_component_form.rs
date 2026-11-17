@@ -58,10 +58,11 @@ pub fn apply_component_field(dx: &mut Dx, mut el: gpui_kit::component::form::Fie
             266 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::form::Field>::visible(el, a0) }; }
             267 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::form::Field>::description_fn(el, a0) }; }
             268 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::form::Field>::label_fn(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
@@ -103,11 +104,12 @@ pub fn apply_component_form(dx: &mut Dx, mut el: gpui_kit::component::form::Form
             261 => { el = { let a0 = gpui_kit::rems(r.f32()); <gpui_kit::component::form::Form>::label_text_size(el, a0) }; }
             262 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::form::Form>::label_width(el, a0) }; }
             263 => { el = { let a0 = en_4(r.u16()); <gpui_kit::component::form::Form>::layout(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("Form", op),
         }
     }

@@ -90,6 +90,75 @@ func (e SeparatorEl) PopoverStyle() SeparatorEl { tThemeStyledPopoverStyle(e.n);
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e SeparatorEl) RoundedFullStyle() SeparatorEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e SeparatorEl) BorderE(width Length) SeparatorEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SeparatorEl) BorderS(width Length) SeparatorEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SeparatorEl) FlexRowDir() SeparatorEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SeparatorEl) InsetE(length Length) SeparatorEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SeparatorEl) InsetS(length Length) SeparatorEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SeparatorEl) JustifyFlexEnd() SeparatorEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SeparatorEl) JustifyFlexStart() SeparatorEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e SeparatorEl) Me(length Length) SeparatorEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e SeparatorEl) Ms(length Length) SeparatorEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e SeparatorEl) Pe(length Length) SeparatorEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e SeparatorEl) Ps(length Length) SeparatorEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e SeparatorEl) RoundedE(radius Length) SeparatorEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SeparatorEl) RoundedS(radius Length) SeparatorEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SeparatorEl) TextEnd() SeparatorEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SeparatorEl) TextStart() SeparatorEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e SeparatorEl) CornerRadii(radius Corners) SeparatorEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e

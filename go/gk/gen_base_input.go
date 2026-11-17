@@ -862,6 +862,17 @@ func NewShowCompletionsDefault() ShowCompletions {
 	return ShowCompletions{n}
 }
 
+// TextareaExtras is gpui_kit::base::input::TextareaExtras.
+type TextareaExtras struct{ n *node }
+
+func (e TextareaExtras) valueNode() *node { return e.n }
+
+// NewTextareaExtrasDefault is <gpui_kit::base::input::TextareaExtras as Default>::default.
+func NewTextareaExtrasDefault() TextareaExtras {
+	n := newValue(888)
+	return TextareaExtras{n}
+}
+
 // ToggleCodeActions is gpui_kit::base::input::ToggleCodeActions.
 type ToggleCodeActions struct{ n *node }
 

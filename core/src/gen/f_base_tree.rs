@@ -106,7 +106,8 @@ pub fn apply_base_tree(dx: &mut Dx, mut el: gpui_kit::base::Tree, first: u32) ->
         match op {
             256 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::base::Tree>::list_style(el, a0) }; }
             257 => { el = { let a0 = { let src = r.u64(); move |k0: usize, k1: &gpui_kit::base::TreeEntry, k2: gpui_kit::base::TreeEntryState, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&k0, &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&k0, &mut b); b }; genapi::Wire::put(&crate::items::Reads(k1), &mut p); let b1 = { let mut b = Vec::new(); genapi::Wire::put(&crate::items::Reads(k1), &mut b); b }; genapi::Wire::put(&crate::items::Reads(&k2), &mut p); let b2 = { let mut b = Vec::new(); genapi::Wire::put(&crate::items::Reads(&k2), &mut b); b }; crate::source::ctx_row(src, Some((k0) as u64), p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); o.extend_from_slice(&b1); o.extend_from_slice(&b2); }), window, cx) } }; <gpui_kit::base::Tree>::item(el, a0) }; }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Tree", op),

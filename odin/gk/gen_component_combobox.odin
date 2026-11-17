@@ -43,6 +43,7 @@ Combobox :: struct {
 
 Combobox_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Combobox),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Combobox),
 	using t_styled_ext: ^Styled_Ext_Trait(Combobox),
 	using t_sizable: ^Sizable_Trait(Combobox),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Combobox),
@@ -59,6 +60,11 @@ Combobox_VT :: struct {
 	empty: proc(e: Combobox, builder: View) -> Combobox,
 	// Render an element below a separator at the bottom of the dropdown.
 	footer: proc(e: Combobox, f: Element) -> Combobox,
+	// Highlight the part of each row that matches the search query, default is `false`.
+	//
+	// Rows render with `render_highlighted`; the default highlights the matched text of `title()` in
+	// the theme's `list_highlight_foreground` color.
+	highlight_matches: proc(e: Combobox, highlight: bool) -> Combobox,
 	// Override the trigger chevron icon.
 	icon: proc(e: Combobox, icon: Icon_Name) -> Combobox,
 	// Set the maximum height of the dropdown menu.
@@ -85,6 +91,7 @@ combobox :: proc(state: Combobox_State, flags: ..Style_Flag, loc := #caller_loca
 @(private)
 combobox_vt := Combobox_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Combobox))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Combobox))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Combobox))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Combobox))&sizable_any,
 	t_focusable_ext = cast(^Focusable_Ext_Trait(Combobox))&focusable_ext_any,
@@ -117,6 +124,11 @@ combobox_vt := Combobox_VT {
 	footer = proc(e: Combobox, f: Element) -> Combobox {
 		o := op(e.el, 259)
 		put_u32(o, take(f))
+		return e
+	},
+	highlight_matches = proc(e: Combobox, highlight: bool) -> Combobox {
+		o := op(e.el, 268)
+		put_u8(o, u8(highlight))
 		return e
 	},
 	icon = proc(e: Combobox, icon: Icon_Name) -> Combobox {

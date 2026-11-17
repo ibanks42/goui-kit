@@ -68,7 +68,8 @@ pub fn apply_base_state_style(dx: &mut Dx, mut el: gpui_kit::base::StateStyle, f
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("StateStyle", op),

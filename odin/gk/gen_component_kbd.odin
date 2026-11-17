@@ -11,6 +11,7 @@ Kbd :: struct {
 
 Kbd_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Kbd),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Kbd),
 	using t_styled_ext: ^Styled_Ext_Trait(Kbd),
 	using t_styled: ^Styled_Trait(Kbd),
 	// Set the appearance of the keybinding, default is `true`.
@@ -32,6 +33,7 @@ kbd :: proc(stroke: Keystroke, flags: ..Style_Flag, loc := #caller_location) -> 
 @(private)
 kbd_vt := Kbd_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Kbd))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Kbd))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Kbd))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Kbd))&styled_any,
 	appearance = proc(e: Kbd, appearance: bool) -> Kbd {

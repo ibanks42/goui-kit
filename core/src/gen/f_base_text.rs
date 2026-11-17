@@ -51,7 +51,7 @@ pub fn sb_base_text_view_state(s: gpui_kit::base::TextViewState, op: u16, r: &mu
     match op {
         1 => { let a0 = r.u8() != 0; <gpui_kit::base::TextViewState>::scrollable(s, a0) }
         2 => { let a0 = r.u8() != 0; <gpui_kit::base::TextViewState>::selectable(s, a0) }
-        3 => { let a0 = en_57(r.u16()); <gpui_kit::base::TextViewState>::selection_format(s, a0) }
+        3 => { let a0 = en_59(r.u16()); <gpui_kit::base::TextViewState>::selection_format(s, a0) }
         4 => { let Some((a0,)) = (|| Some((None?,)))() else { return s }; <gpui_kit::base::TextViewState>::motion(s, a0) }
         _ => s,
     }
@@ -62,7 +62,7 @@ pub fn sbp_base_text_view_state(op: u16, r: &mut R, c: &mut genapi::Call) -> gen
     Ok(match op {
         1 => { let a0 = r.u8() != 0; Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::scrollable(s, a0)) }
         2 => { let a0 = r.u8() != 0; Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::selectable(s, a0)) }
-        3 => { let a0 = en_57(r.u16()); Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::selection_format(s, a0)) }
+        3 => { let a0 = en_59(r.u16()); Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::selection_format(s, a0)) }
         4 => { let a0 = genapi::value_arg(c, r, build_base_text_view_motion)?; Box::new(move |s: gpui_kit::base::TextViewState| <gpui_kit::base::TextViewState>::motion(s, a0)) }
         _ => Box::new(|s: gpui_kit::base::TextViewState| s),
     })
@@ -77,7 +77,7 @@ pub fn c_312(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = 
 pub fn c_313(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::TextViewState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::TextViewState>::selected_text(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_314(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u8() != 0; genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_scrollable(s, a0, cx); })?; Ok(()) }
 pub fn c_315(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u8() != 0; genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_selectable(s, a0, cx); })?; Ok(()) }
-pub fn c_316(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_57(r.u16()); genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_selection_format(s, a0, cx); })?; Ok(()) }
+pub fn c_316(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_59(r.u16()); genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_selection_format(s, a0, cx); })?; Ok(()) }
 pub fn c_317(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.str().to_string(); genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_text(s, &a0[..], cx); })?; Ok(()) }
 pub fn c_818(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::TextViewState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&genapi::Owned::new(<gpui_kit::base::TextViewState>::rendered_text(s)), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_819(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::value_arg(c, r, build_base_text_view_motion)?; genapi::state_update::<gpui_kit::base::TextViewState>(h, c, move |s, window, cx| { <gpui_kit::base::TextViewState>::set_motion(s, a0); })?; Ok(()) }
@@ -98,7 +98,7 @@ pub fn c_1757(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h =
 pub fn c_1758(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::LeafGeometry, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::LeafGeometry>::is_empty(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1759(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::LeafGeometry, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::LeafGeometry>::len(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1760(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::LeafGeometry, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::LeafGeometry>::line_height(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
-pub fn c_1761(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::decoded(rc_90_c(r))?; let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::LeafGeometry, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::LeafGeometry>::position_for_caret(s, a0), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
+pub fn c_1761(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::decoded(rc_91_c(r))?; let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::LeafGeometry, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::LeafGeometry>::position_for_caret(s, a0), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1762(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = r.u64() as usize; let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::LeafGeometry, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::LeafGeometry>::position_for_index(s, a0), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn sb_base_table(s: gpui_kit::base::text::editor_host::Table, op: u16, r: &mut R) -> gpui_kit::base::text::editor_host::Table {
     match op {
@@ -106,7 +106,7 @@ pub fn sb_base_table(s: gpui_kit::base::text::editor_host::Table, op: u16, r: &m
     }
 }
 pub fn c_954(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::Table, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::Table>::column_aligns(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
-pub fn c_955(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(genapi::value_arg(c, r, build_base_paragraph)?); } v }); } v }; let a1 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(en_84(r.u16())); } v }; let cx = &mut *c.cx; let mut s = <gpui_kit::base::text::editor_host::Table>::new(a0, a1); for _ in 0..r.u16() { let op = r.u16(); s = sb_base_table(s, op, r); } let h = genapi::obj_new(s); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
+pub fn c_955(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(genapi::value_arg(c, r, build_base_paragraph)?); } v }); } v }; let a1 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(en_86(r.u16())); } v }; let cx = &mut *c.cx; let mut s = <gpui_kit::base::text::editor_host::Table>::new(a0, a1); for _ in 0..r.u16() { let op = r.u16(); s = sb_base_table(s, op, r); } let h = genapi::obj_new(s); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
 pub fn c_1358(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::Table, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&(<gpui_kit::base::text::editor_host::Table>::rows(s)).map(|i| i.collect::<Vec<_>>()).collect::<Vec<_>>(), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1403(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::InlineNode, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::InlineNode>::as_custom(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1404(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read::<gpui_kit::base::text::editor_host::InlineNode, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::text::editor_host::InlineNode>::as_image(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
@@ -229,6 +229,7 @@ pub fn apply_base_markdown_extensions(dx: &mut Dx, mut el: gpui_kit::base::Markd
             259 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = { let src = r.u64(); move |k0: &gpui_kit::base::MarkdownNode, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&<gpui_kit::base::MarkdownNode>::name(k0), &mut p); genapi::Wire::put(&<gpui_kit::base::MarkdownNode>::as_text(k0), &mut p); genapi::Wire::put(&<gpui_kit::base::MarkdownNode>::as_markdown(k0), &mut p); genapi::Wire::put(&<gpui_kit::base::MarkdownNode>::source_range(k0), &mut p); genapi::Wire::put(&<gpui_kit::base::MarkdownNode>::accessibility_name(k0), &mut p); let c0 = k0.clone(); (crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { genapi::Wire::put(&c0, o); }), window, cx)) } }; <gpui_kit::base::MarkdownExtensions>::block_renderer(el, a0, a1) }; }
             260 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = { let f = crate::editor_text::MainThread::new(dx.frag(r.u32())); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::Div { f.get().with(window, cx, |dx, n| { let (ty, a, fi) = dx.node(n); make_gpui_div(dx, ty, a, fi) }).unwrap_or_else(|| crate::editor_text::bad_fragment("Div")) } }; <gpui_kit::base::MarkdownExtensions>::block_surface(el, a0, a1) }; }
             261 => { el = { let Some((a0,)) = (|| Some(({ match r.u8() { 0 => crate::editor_text::GkPlugin::Frontmatter(build_component_frontmatter_plugin(dx, r.u32())?), _ => crate::editor_text::GkPlugin::Data(<crate::editor_text::DataPlugin as genapi::Unwire>::get(r)) } },)))() else { continue }; <gpui_kit::base::MarkdownExtensions>::plugin(el, a0) }; }
+            262 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::MarkdownExtensions>::raw_html(el, a0) }; }
             _ => bad_op("MarkdownExtensions", op),
         }
     }
@@ -267,7 +268,7 @@ pub fn apply_base_text_view(dx: &mut Dx, mut el: gpui_kit::base::TextView, first
             263 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::Bounds<gpui_kit::Pixels>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 75, &a0, window, cx) } }; <gpui_kit::base::TextView>::on_reveal(el, a0) }; }
             264 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::TextView>::scrollable(el, a0) }; }
             265 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::TextView>::selectable(el, a0) }; }
-            266 => { el = { let a0 = en_57(r.u16()); <gpui_kit::base::TextView>::selection_format(el, a0) }; }
+            266 => { el = { let a0 = en_59(r.u16()); <gpui_kit::base::TextView>::selection_format(el, a0) }; }
             267 => { el = { let Some((a0,)) = (|| Some((build_base_text_view_style(dx, r.u32())?,)))() else { continue }; <gpui_kit::base::TextView>::style(el, a0) }; }
             268 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::SharedString, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 83, &(&a0, a1), window, cx) } }; <gpui_kit::base::TextView>::on_link_click(el, a0) }; }
             269 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::base::TaskToggleEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 105, a0, window, cx) } }; <gpui_kit::base::TextView>::on_task_toggle(el, a0) }; }
@@ -278,7 +279,9 @@ pub fn apply_base_text_view(dx: &mut Dx, mut el: gpui_kit::base::TextView, first
             274 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::base::TableData, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&k0, &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&k0, &mut b); b }; (crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); }), window, cx)) } }; <gpui_kit::base::TextView>::table_actions(el, a0) }; }
             275 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::SharedString, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyView { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&k0, &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&k0, &mut b); b }; crate::editor_text::ctx_view(src, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); }), window, cx) } }; <gpui_kit::base::TextView>::link_tooltip(el, a0) }; }
             276 => { el = { let Some((a0,)) = (|| Some(({ match r.u8() { 0 => crate::editor_text::GkPlugin::Frontmatter(build_component_frontmatter_plugin(dx, r.u32())?), _ => crate::editor_text::GkPlugin::Data(<crate::editor_text::DataPlugin as genapi::Unwire>::get(r)) } },)))() else { continue }; <gpui_kit::base::TextView>::plugin(el, a0) }; }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            277 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::TextView>::markdown_raw_html(el, a0) }; }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("TextView", op),
@@ -362,7 +365,7 @@ pub fn make_base_code_block(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Opti
     let r = &mut dx.args(args);
     let el: gpui_kit::base::text::CodeBlock = match ty {
         544 => { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = if r.u8() != 0 { Some(gpui_kit::SharedString::new(r.str())) } else { None }; <gpui_kit::base::text::CodeBlock>::from_code(a0, a1) }
-        802 => { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = if r.u8() != 0 { Some(gpui_kit::SharedString::new(r.str())) } else { None }; let a2 = if r.u8() != 0 { Some(rc_92(r, dx)?) } else { None }; <gpui_kit::base::text::CodeBlock>::new(a0, a1, a2) }
+        802 => { let a0 = gpui_kit::SharedString::new(r.str()); let a1 = if r.u8() != 0 { Some(gpui_kit::SharedString::new(r.str())) } else { None }; let a2 = if r.u8() != 0 { Some(rc_93(r, dx)?) } else { None }; <gpui_kit::base::text::CodeBlock>::new(a0, a1, a2) }
         _ => return bad_node("CodeBlock", ty),
     };
     Some(apply_base_code_block(dx, el, first))
@@ -376,6 +379,31 @@ pub fn apply_base_code_block(dx: &mut Dx, mut el: gpui_kit::base::text::CodeBloc
             256 => { el = { let a0 = r.u64(); <gpui_kit::base::text::CodeBlock>::with_leaf_key(el, a0) }; }
             257 => { el = { let a0 = if r.u8() != 0 { Some(gpui_kit::SharedString::new(r.str())) } else { None }; <gpui_kit::base::text::CodeBlock>::with_meta(el, a0) }; }
             _ => bad_op("CodeBlock", op),
+        }
+    }
+    el
+}
+pub fn build_base_link_text(dx: &mut Dx, n: u32) -> Option<gpui_kit::base::text::Link> {
+    let (ty, args, first) = dx.node(n);
+    make_base_link_text(dx, ty, args, first)
+}
+pub fn make_base_link_text(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::base::text::Link> {
+    let r = &mut dx.args(args);
+    let el: gpui_kit::base::text::Link = match ty {
+        889 => { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::text::Link>::new(a0) }
+        _ => return bad_node("Link", ty),
+    };
+    Some(apply_base_link_text(dx, el, first))
+}
+#[inline]
+pub fn apply_base_link_text(dx: &mut Dx, mut el: gpui_kit::base::text::Link, first: u32) -> gpui_kit::base::text::Link {
+    let mut at = first;
+    while let Some((op, mut r)) = dx.op(&mut at) {
+        let r = &mut r;
+        match op {
+            256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::text::Link>::title(el, a0) }; }
+            257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::text::Link>::url(el, a0) }; }
+            _ => bad_op("Link", op),
         }
     }
     el
@@ -502,7 +530,7 @@ pub fn apply_base_render_context(dx: &mut Dx, mut el: gpui_kit::base::text::edit
             257 => { el = { let a0 = r.u64(); let a1 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(({ let a = r.u64() as usize; a..(r.u64() as usize) }, genapi::color(r, &*dx.cx))); } v }; <gpui_kit::base::text::editor_host::RenderContext>::with_foreground_ranges(el, a0, a1) }; }
             258 => { el = { let Some((a0,)) = (|| Some((build_base_text_view_style(dx, r.u32())?,)))() else { continue }; <gpui_kit::base::text::editor_host::RenderContext>::with_style(el, a0) }; }
             259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::SharedString, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 83, &(&a0, a1), window, cx) } }; <gpui_kit::base::text::editor_host::RenderContext>::on_link_click(el, a0) }; }
-            260 => { el = { let Some((a0, a1)) = (|| Some((gpui_kit::SharedString::new(r.str()), rc_91(r, dx)?)))() else { continue }; <gpui_kit::base::text::editor_host::RenderContext>::with_link_reference(el, a0, a1) }; }
+            260 => { el = { let Some((a0, a1)) = (|| Some((gpui_kit::SharedString::new(r.str()), rc_92(r, dx)?)))() else { continue }; <gpui_kit::base::text::editor_host::RenderContext>::with_link_reference(el, a0, a1) }; }
             261 => { el = { let a0 = genapi::obj_shown::<std::sync::Arc<gpui_kit::base::MarkdownExtensions>>(r.u64()); <gpui_kit::base::text::editor_host::RenderContext>::with_markdown_extensions(el, a0) }; }
             262 => { el = { let Some((a0,)) = (|| Some(({ let a = crate::shim_text::Ask::take(r.u64()); move |k0: &gpui_kit::base::text::CodeBlock| -> std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)> { a.get::<std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)>, std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)>>(crate::shim_text::key(&k0), |r: &mut genapi::R, dx: &mut genapi::Dx| -> Option<std::vec::Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)>> { let _ = &dx; Some({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(({ let a = r.u64() as usize; a..(r.u64() as usize) }, rc_22(r, dx)?)); } v }) }, |v| v, Default::default) } },)))() else { continue }; <gpui_kit::base::text::editor_host::RenderContext>::with_code_block_highlighter(el, a0) }; }
             263 => { el = { let a0 = { let a = crate::shim_text::Ask::take(r.u64()); move |k0: &gpui_kit::SharedUri| -> gpui_kit::ImageSource { a.get::<String, gpui_kit::ImageSource>(crate::shim_text::key(&k0), |r: &mut genapi::R, dx: &mut genapi::Dx| -> Option<String> { let _ = &dx; Some(r.str().to_string()) }, crate::shim_text::image_source, || crate::shim_text::image_source(String::new())) } }; <gpui_kit::base::text::editor_host::RenderContext>::with_image_source(el, a0) }; }
@@ -535,7 +563,7 @@ pub fn apply_base_text_mark(dx: &mut Dx, mut el: gpui_kit::base::text::editor_ho
             259 => { el = { <gpui_kit::base::text::editor_host::TextMark>::italic(el) }; }
             260 => { el = { <gpui_kit::base::text::editor_host::TextMark>::strikethrough(el) }; }
             261 => { el = { <gpui_kit::base::text::editor_host::TextMark>::underline(el) }; }
-            262 => { el = { let Some((a0,)) = (|| Some((rc_91(r, dx)?,)))() else { continue }; <gpui_kit::base::text::editor_host::TextMark>::link(el, a0) }; }
+            262 => { el = { let Some((a0,)) = (|| Some((rc_92(r, dx)?,)))() else { continue }; <gpui_kit::base::text::editor_host::TextMark>::link(el, a0) }; }
             263 => { el = { let Some((a0,)) = (|| Some((build_base_text_mark(dx, r.u32())?,)))() else { continue }; (|mut s: gpui_kit::base::text::editor_host::TextMark, a0| { s.merge(a0); s })(el, a0) }; }
             _ => bad_op("TextMark", op),
         }

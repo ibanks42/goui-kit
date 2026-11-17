@@ -88,13 +88,15 @@ pub fn apply_component_combobox(dx: &mut Dx, mut el: gpui_kit::component::combob
             261 => { el = { let a0 = length(r); <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::menu_width(el, a0) }; }
             262 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::placeholder(el, a0) }; }
             263 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::search_placeholder(el, a0) }; }
-            264 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::check_icon(el, a0) }; }
+            264 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::check_icon(el, a0) }; }
             265 => { el = { let a0 = { let h = r.u64(); let v = if h == 0 { None } else { dx.child_view(h) }; move |window: &mut gpui_kit::Window, cx: &gpui_kit::App| crate::shim_select::view_element(&v) }; <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::empty(el, a0) }; }
-            266 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::icon(el, a0) }; }
+            266 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::icon(el, a0) }; }
             267 => { el = { let a0 = { let src = r.u64(); move |k0: &gpui_kit::component::combobox::ComboboxTriggerContext<crate::shim_select::GkSearchDelegate>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&crate::items::Reads(k0), &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&crate::items::Reads(k0), &mut b); b }; crate::source::ctx_row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); }), window, cx) } }; <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::render_trigger(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            268 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::highlight_matches(el, a0) }; }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             17280..=17407 => { el = tr_focusable_ext_8(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

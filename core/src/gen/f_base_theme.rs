@@ -15,7 +15,7 @@ pub fn c_820(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let cx =
 pub fn c_821(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = genapi::obj_global::<gpui_kit::base::Theme>(); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
 pub fn c_1185(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read_global::<gpui_kit::base::Theme, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&&s.appearance, &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1186(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::obj_read_global::<gpui_kit::base::Theme, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&&s.resizable, &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
-pub fn c_1187(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_62(r.u16()); let bytes = genapi::obj_update_global::<gpui_kit::base::Theme, _>(h, c, move |s, cx| { { s.appearance = a0; cx.refresh_windows(); }; Vec::new() })?; c.out.extend_from_slice(&bytes); Ok(()) }
+pub fn c_1187(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_64(r.u16()); let bytes = genapi::obj_update_global::<gpui_kit::base::Theme, _>(h, c, move |s, cx| { { s.appearance = a0; cx.refresh_windows(); }; Vec::new() })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1188(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::value_arg(c, r, build_base_cursor_blink)?; let bytes = genapi::obj_update_global::<gpui_kit::base::Theme, _>(h, c, move |s, cx| { { s.cursor_blink = a0; cx.refresh_windows(); }; Vec::new() })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1189(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::value_arg(c, r, build_base_plot_theme)?; let bytes = genapi::obj_update_global::<gpui_kit::base::Theme, _>(h, c, move |s, cx| { { s.plot = a0; cx.refresh_windows(); }; Vec::new() })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_1190(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = genapi::value_arg(c, r, build_base_resizable_theme)?; let bytes = genapi::obj_update_global::<gpui_kit::base::Theme, _>(h, c, move |s, cx| { { s.resizable = a0; cx.refresh_windows(); }; Vec::new() })?; c.out.extend_from_slice(&bytes); Ok(()) }
@@ -115,7 +115,7 @@ pub fn apply_base_scrollbar_theme(dx: &mut Dx, mut el: gpui_kit::base::Scrollbar
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = en_55(r.u16()); <gpui_kit::base::ScrollbarTheme>::with_mode(el, a0) }; }
+            256 => { el = { let a0 = en_57(r.u16()); <gpui_kit::base::ScrollbarTheme>::with_mode(el, a0) }; }
             257 => { el = { let Some((a0,)) = (|| Some((build_base_scrollbar_motion(dx, r.u32())?,)))() else { continue }; <gpui_kit::base::ScrollbarTheme>::with_motion(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some((build_base_scrollbar_styles(dx, r.u32())?,)))() else { continue }; <gpui_kit::base::ScrollbarTheme>::with_styles(el, a0) }; }
             _ => bad_op("ScrollbarTheme", op),

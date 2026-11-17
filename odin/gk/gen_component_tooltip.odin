@@ -12,6 +12,7 @@ Kit_Tooltip :: struct {
 
 Kit_Tooltip_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Kit_Tooltip),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Kit_Tooltip),
 	using t_styled_ext: ^Styled_Ext_Trait(Kit_Tooltip),
 	using t_styled: ^Styled_Trait(Kit_Tooltip),
 	// Set Action to display key binding information for the tooltip if it exists.
@@ -41,6 +42,7 @@ kit_tooltip_element :: proc(builder: Element, flags: ..Style_Flag, loc := #calle
 @(private)
 kit_tooltip_vt := Kit_Tooltip_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Kit_Tooltip))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Kit_Tooltip))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Kit_Tooltip))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Kit_Tooltip))&styled_any,
 	action = proc(e: Kit_Tooltip, action: Action, context_: Maybe(string)) -> Kit_Tooltip {

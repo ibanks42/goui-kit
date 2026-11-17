@@ -10,7 +10,7 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 gpui-kit.workspace = true
-gpui-fps = { version = "=0.9.1", features = ["gpui-fast"], optional = true }
+gpui-fps = { version = "=0.10.0", features = ["gpui-fast"], optional = true }
 gk-meter.workspace = true
 futures = "0.3"
 # The input family's provider shims (core/src/shim_input.rs) implement upstream traits whose

@@ -24,13 +24,15 @@ amber :: proc(cx: ^Cx, scale: int, loc := #caller_location) -> (v: Hsla) {
 // Reads the operating system's reduced-motion preference into `set_reduce_motion`.
 //
 // `gpui_base::init` calls this once. Call it again to re-read the preference on a platform Base
-// does not follow live — macOS and Windows post no notification Base can subscribe to without a
-// window, so a change made while the application runs reaches it only through this call.
+// does not follow live. The current macOS and Windows implementations read the preference only
+// when this function is called.
 //
-// The application wins over the system: when the flag no longer holds what Base last wrote, the
-// application set it, and this call leaves it alone. Where the platform cannot say (wasm, an
-// unsupported desktop, a Linux session without the portal) the flag is left as it is, and under
-// GPUI's test scheduler the platform is not asked at all.
+// Explicit overrides are preserved. For direct `set_reduce_motion` calls, a flag different from
+// what Base last wrote is also left alone; a same-value application choice cannot be detected.
+// This function does not clear either override: use `gk.base_set_reduce_motion_preference` with
+// `System`. Where the platform cannot say (wasm, an unsupported desktop, a Linux session without
+// the portal) the flag is left as it is, and under GPUI's test scheduler the platform is not asked
+// at all.
 //
 // base_apply_system_reduce_motion is gpui_kit::base::apply_system_reduce_motion.
 base_apply_system_reduce_motion :: proc(cx: ^Cx, loc := #caller_location) {
@@ -288,6 +290,24 @@ base_last_horizontal_scroll_claim :: proc(cx: ^Cx, loc := #caller_location) -> (
 	return
 }
 
+// The physical anchor for `anchor` in `direction`.
+//
+// Anchors are written for left-to-right layout; in RTL the horizontal side is mirrored, so a
+// `TopLeft` popover that hangs from the trigger's start edge hangs from its right edge instead.
+//
+// base_logical_anchor is gpui_kit::base::logical_anchor.
+base_logical_anchor :: proc(cx: ^Cx, anchor: Anchor, direction: Layout_Direction, loc := #caller_location) -> (v: Anchor) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_root()
+	put_op(o, 1777)
+	put_u16(o, u16(anchor))
+	put_u16(o, u16(direction))
+	r := ambient_call(cx, req[:], true, loc)
+	rd_into(&r, &v)
+	return
+}
+
 // Returns the rendered width of `text` at `font_size` using the window's current text style. Used
 // for layout calculations that need to reserve space for labels before the scale ranges are fixed.
 //
@@ -425,6 +445,30 @@ base_set_language_provider :: proc(cx: ^Cx, provider: Row_Source, loc := #caller
 	use_base_input()
 	put_op(o, 1624)
 	put_u64(o, provider.h)
+	ambient_call(cx, req[:], false, loc)
+}
+
+// Selects the application's reduced-motion preference.
+//
+// `Reduce` and `Allow` set `reduce_motion` and prevent Base's system readings from changing it,
+// even when the value already matches. The application can still change the flag directly; system
+// readings continue to be cached.
+//
+// `System` releases application ownership, resumes the last known system value and calls
+// `gk.base_apply_system_reduce_motion` through the existing platform mechanism. If no system value
+// is known, the current flag is kept until a reading arrives. On Linux, an existing portal
+// listener supplies updates; selecting System does not restart it or force a new read.
+//
+// System also releases ownership taken through `set_reduce_motion`. Under the test scheduler,
+// explicit choices and cached readings still apply, but the platform is never queried.
+//
+// base_set_reduce_motion_preference is gpui_kit::base::set_reduce_motion_preference.
+base_set_reduce_motion_preference :: proc(cx: ^Cx, preference: Reduce_Motion_Preference, loc := #caller_location) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_root()
+	put_op(o, 1778)
+	put_u16(o, u16(preference))
 	ambient_call(cx, req[:], false, loc)
 }
 

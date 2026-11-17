@@ -47,8 +47,11 @@ pub fn apply_component_slider(dx: &mut Dx, mut el: gpui_kit::component::slider::
             258 => { el = { <gpui_kit::component::slider::Slider>::horizontal(el) }; }
             259 => { el = { <gpui_kit::component::slider::Slider>::reverse(el) }; }
             260 => { el = { <gpui_kit::component::slider::Slider>::vertical(el) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            261 => { el = { let a0 = r.i64() as isize; <gpui_kit::component::slider::Slider>::tab_index(el, a0) }; }
+            262 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::slider::Slider>::tab_stop(el, a0) }; }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("Slider", op),

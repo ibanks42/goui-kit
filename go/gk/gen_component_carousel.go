@@ -64,11 +64,80 @@ func (e CarouselEl) FocusRingStyle() CarouselEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e CarouselEl) KeepTextSelection(id ID) CarouselEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e CarouselEl) BorderE(width Length) CarouselEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e CarouselEl) BorderS(width Length) CarouselEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e CarouselEl) FlexRowDir() CarouselEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e CarouselEl) InsetE(length Length) CarouselEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e CarouselEl) InsetS(length Length) CarouselEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e CarouselEl) JustifyFlexEnd() CarouselEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e CarouselEl) JustifyFlexStart() CarouselEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e CarouselEl) Me(length Length) CarouselEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e CarouselEl) Ms(length Length) CarouselEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e CarouselEl) Pe(length Length) CarouselEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e CarouselEl) Ps(length Length) CarouselEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e CarouselEl) RoundedE(radius Length) CarouselEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e CarouselEl) RoundedS(radius Length) CarouselEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e CarouselEl) TextEnd() CarouselEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e CarouselEl) TextStart() CarouselEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e CarouselEl) CornerRadii(radius Corners) CarouselEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -533,11 +602,110 @@ func (e CarouselContentEl) FocusRingStyle() CarouselContentEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e CarouselContentEl) KeepTextSelection(id ID) CarouselContentEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselContentEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselContentEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e CarouselContentEl) BorderE(width Length) CarouselContentEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e CarouselContentEl) BorderS(width Length) CarouselContentEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e CarouselContentEl) FlexRowDir() CarouselContentEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e CarouselContentEl) InsetE(length Length) CarouselContentEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e CarouselContentEl) InsetS(length Length) CarouselContentEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e CarouselContentEl) JustifyFlexEnd() CarouselContentEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e CarouselContentEl) JustifyFlexStart() CarouselContentEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e CarouselContentEl) Me(length Length) CarouselContentEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e CarouselContentEl) Ms(length Length) CarouselContentEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e CarouselContentEl) Pe(length Length) CarouselContentEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e CarouselContentEl) Ps(length Length) CarouselContentEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e CarouselContentEl) RoundedE(radius Length) CarouselContentEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e CarouselContentEl) RoundedS(radius Length) CarouselContentEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e CarouselContentEl) TextEnd() CarouselContentEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e CarouselContentEl) TextStart() CarouselContentEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e CarouselContentEl) CornerRadii(radius Corners) CarouselContentEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -1119,11 +1287,98 @@ func (e CarouselItemEl) FocusRingStyle() CarouselItemEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e CarouselItemEl) KeepTextSelection(id ID) CarouselItemEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselItemEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselItemEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e CarouselItemEl) BorderE(width Length) CarouselItemEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e CarouselItemEl) BorderS(width Length) CarouselItemEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e CarouselItemEl) FlexRowDir() CarouselItemEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e CarouselItemEl) InsetE(length Length) CarouselItemEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e CarouselItemEl) InsetS(length Length) CarouselItemEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e CarouselItemEl) JustifyFlexEnd() CarouselItemEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e CarouselItemEl) JustifyFlexStart() CarouselItemEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e CarouselItemEl) Me(length Length) CarouselItemEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e CarouselItemEl) Ms(length Length) CarouselItemEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e CarouselItemEl) Pe(length Length) CarouselItemEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e CarouselItemEl) Ps(length Length) CarouselItemEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e CarouselItemEl) RoundedE(radius Length) CarouselItemEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e CarouselItemEl) RoundedS(radius Length) CarouselItemEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e CarouselItemEl) TextEnd() CarouselItemEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e CarouselItemEl) TextStart() CarouselItemEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e CarouselItemEl) CornerRadii(radius Corners) CarouselItemEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -1631,11 +1886,98 @@ func (e CarouselNextEl) FocusRingStyle() CarouselNextEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e CarouselNextEl) KeepTextSelection(id ID) CarouselNextEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselNextEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselNextEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e CarouselNextEl) BorderE(width Length) CarouselNextEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e CarouselNextEl) BorderS(width Length) CarouselNextEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e CarouselNextEl) FlexRowDir() CarouselNextEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e CarouselNextEl) InsetE(length Length) CarouselNextEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e CarouselNextEl) InsetS(length Length) CarouselNextEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e CarouselNextEl) JustifyFlexEnd() CarouselNextEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e CarouselNextEl) JustifyFlexStart() CarouselNextEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e CarouselNextEl) Me(length Length) CarouselNextEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e CarouselNextEl) Ms(length Length) CarouselNextEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e CarouselNextEl) Pe(length Length) CarouselNextEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e CarouselNextEl) Ps(length Length) CarouselNextEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e CarouselNextEl) RoundedE(radius Length) CarouselNextEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e CarouselNextEl) RoundedS(radius Length) CarouselNextEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e CarouselNextEl) TextEnd() CarouselNextEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e CarouselNextEl) TextStart() CarouselNextEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e CarouselNextEl) CornerRadii(radius Corners) CarouselNextEl {
 	tStyledExtCornerRadii(e.n, radius)
@@ -2159,9 +2501,114 @@ func (e CarouselPaginationEl) FocusRingStyle() CarouselPaginationEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e CarouselPaginationEl) KeepTextSelection(id ID) CarouselPaginationEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselPaginationEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselPaginationEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e CarouselPaginationEl) BorderE(width Length) CarouselPaginationEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e CarouselPaginationEl) BorderS(width Length) CarouselPaginationEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e CarouselPaginationEl) FlexRowDir() CarouselPaginationEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e CarouselPaginationEl) InsetE(length Length) CarouselPaginationEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e CarouselPaginationEl) InsetS(length Length) CarouselPaginationEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e CarouselPaginationEl) JustifyFlexEnd() CarouselPaginationEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e CarouselPaginationEl) JustifyFlexStart() CarouselPaginationEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e CarouselPaginationEl) Me(length Length) CarouselPaginationEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e CarouselPaginationEl) Ms(length Length) CarouselPaginationEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e CarouselPaginationEl) Pe(length Length) CarouselPaginationEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e CarouselPaginationEl) Ps(length Length) CarouselPaginationEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e CarouselPaginationEl) RoundedE(radius Length) CarouselPaginationEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e CarouselPaginationEl) RoundedS(radius Length) CarouselPaginationEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e CarouselPaginationEl) TextEnd() CarouselPaginationEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e CarouselPaginationEl) TextStart() CarouselPaginationEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -2829,9 +3276,117 @@ func (e CarouselPaginationItemEl) FocusRingStyle() CarouselPaginationItemEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e CarouselPaginationItemEl) KeepTextSelection(id ID) CarouselPaginationItemEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselPaginationItemEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselPaginationItemEl {
 	tElementExtOnPrepaint(e.n, callback)
+	return e
+}
+
+// Border width on the end edge.
+func (e CarouselPaginationItemEl) BorderE(width Length) CarouselPaginationItemEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e CarouselPaginationItemEl) BorderS(width Length) CarouselPaginationItemEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e CarouselPaginationItemEl) FlexRowDir() CarouselPaginationItemEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e CarouselPaginationItemEl) InsetE(length Length) CarouselPaginationItemEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e CarouselPaginationItemEl) InsetS(length Length) CarouselPaginationItemEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e CarouselPaginationItemEl) JustifyFlexEnd() CarouselPaginationItemEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e CarouselPaginationItemEl) JustifyFlexStart() CarouselPaginationItemEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e CarouselPaginationItemEl) Me(length Length) CarouselPaginationItemEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e CarouselPaginationItemEl) Ms(length Length) CarouselPaginationItemEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e CarouselPaginationItemEl) Pe(length Length) CarouselPaginationItemEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e CarouselPaginationItemEl) Ps(length Length) CarouselPaginationItemEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e CarouselPaginationItemEl) RoundedE(radius Length) CarouselPaginationItemEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e CarouselPaginationItemEl) RoundedS(radius Length) CarouselPaginationItemEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e CarouselPaginationItemEl) TextEnd() CarouselPaginationItemEl {
+	tLogicalStyledExtTextEnd(e.n)
+	return e
+}
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e CarouselPaginationItemEl) TextStart() CarouselPaginationItemEl {
+	tLogicalStyledExtTextStart(e.n)
 	return e
 }
 
@@ -3569,11 +4124,113 @@ func (e CarouselPreviousEl) FocusRingStyle() CarouselPreviousEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e CarouselPreviousEl) KeepTextSelection(id ID) CarouselPreviousEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e CarouselPreviousEl) OnPrepaint(callback func(cx *Cx, e Bounds)) CarouselPreviousEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e CarouselPreviousEl) BorderE(width Length) CarouselPreviousEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e CarouselPreviousEl) BorderS(width Length) CarouselPreviousEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e CarouselPreviousEl) FlexRowDir() CarouselPreviousEl {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e CarouselPreviousEl) InsetE(length Length) CarouselPreviousEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e CarouselPreviousEl) InsetS(length Length) CarouselPreviousEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e CarouselPreviousEl) JustifyFlexEnd() CarouselPreviousEl {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e CarouselPreviousEl) JustifyFlexStart() CarouselPreviousEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e CarouselPreviousEl) Me(length Length) CarouselPreviousEl {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e CarouselPreviousEl) Ms(length Length) CarouselPreviousEl {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e CarouselPreviousEl) Pe(length Length) CarouselPreviousEl {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e CarouselPreviousEl) Ps(length Length) CarouselPreviousEl {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e CarouselPreviousEl) RoundedE(radius Length) CarouselPreviousEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e CarouselPreviousEl) RoundedS(radius Length) CarouselPreviousEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e CarouselPreviousEl) TextEnd() CarouselPreviousEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e CarouselPreviousEl) TextStart() CarouselPreviousEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e CarouselPreviousEl) CornerRadii(radius Corners) CarouselPreviousEl {
 	tStyledExtCornerRadii(e.n, radius)

@@ -114,6 +114,63 @@ func (e StepperEl) PopoverStyle() StepperEl { tThemeStyledPopoverStyle(e.n); ret
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e StepperEl) RoundedFullStyle() StepperEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e StepperEl) BorderE(width Length) StepperEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e StepperEl) BorderS(width Length) StepperEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e StepperEl) FlexRowDir() StepperEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e StepperEl) InsetE(length Length) StepperEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e StepperEl) InsetS(length Length) StepperEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e StepperEl) JustifyFlexEnd() StepperEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e StepperEl) JustifyFlexStart() StepperEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e StepperEl) Me(length Length) StepperEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e StepperEl) Ms(length Length) StepperEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e StepperEl) Pe(length Length) StepperEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e StepperEl) Ps(length Length) StepperEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e StepperEl) RoundedE(radius Length) StepperEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e StepperEl) RoundedS(radius Length) StepperEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e StepperEl) TextEnd() StepperEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e StepperEl) TextStart() StepperEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e StepperEl) CornerRadii(radius Corners) StepperEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -573,11 +630,95 @@ func (e StepperItemEl) FocusRingStyle() StepperItemEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e StepperItemEl) KeepTextSelection(id ID) StepperItemEl {
+	tElementExtKeepTextSelection(e.n, id)
+	return e
+}
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e StepperItemEl) OnPrepaint(callback func(cx *Cx, e Bounds)) StepperItemEl {
 	tElementExtOnPrepaint(e.n, callback)
 	return e
 }
+
+// Border width on the end edge.
+func (e StepperItemEl) BorderE(width Length) StepperItemEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e StepperItemEl) BorderS(width Length) StepperItemEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e StepperItemEl) FlexRowDir() StepperItemEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e StepperItemEl) InsetE(length Length) StepperItemEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e StepperItemEl) InsetS(length Length) StepperItemEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e StepperItemEl) JustifyFlexEnd() StepperItemEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e StepperItemEl) JustifyFlexStart() StepperItemEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e StepperItemEl) Me(length Length) StepperItemEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e StepperItemEl) Ms(length Length) StepperItemEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e StepperItemEl) Pe(length Length) StepperItemEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e StepperItemEl) Ps(length Length) StepperItemEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e StepperItemEl) RoundedE(radius Length) StepperItemEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e StepperItemEl) RoundedS(radius Length) StepperItemEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e StepperItemEl) TextEnd() StepperItemEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e StepperItemEl) TextStart() StepperItemEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e StepperItemEl) CornerRadii(radius Corners) StepperItemEl {
 	tStyledExtCornerRadii(e.n, radius)

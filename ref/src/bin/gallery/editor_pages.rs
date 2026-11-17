@@ -180,6 +180,8 @@ struct Host {
     decorations: HashMap<u64, Vec<(std::ops::Range<usize>, Hsla)>>,
 }
 
+// gpui-fast (0.1.16 on) has `impl<T: Element> IntoElement for T`; upstream GPUI does not.
+#[cfg(not(feature = "gpui-fast"))]
 impl IntoElement for Host {
     type Element = Self;
 

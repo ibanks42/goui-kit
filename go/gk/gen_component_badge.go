@@ -64,6 +64,15 @@ func (e BadgeEl) Max(max_ int) BadgeEl {
 	return e
 }
 
+// Keeps the window's text selection when this element is pressed, for one that acts on the
+// selection, such as a button beside it: pressing anywhere on it neither clears the selection nor
+// starts a new one, so its click still finds the selection. `id` must be unique among this
+// element's children. Works inside a cached view.
+//
+// The window remembers each element marked this way until it closes, so mark the row of buttons,
+// not each row of a long list.
+func (e BadgeEl) KeepTextSelection(id ID) BadgeEl { tElementExtKeepTextSelection(e.n, id); return e }
+
 // Invokes `callback` during prepaint with this element's resolved bounds.
 func (e BadgeEl) OnPrepaint(callback func(cx *Cx, e Bounds)) BadgeEl {
 	tElementExtOnPrepaint(e.n, callback)

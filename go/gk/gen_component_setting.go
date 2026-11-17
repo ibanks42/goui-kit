@@ -39,6 +39,93 @@ func (e SettingFieldBool) RoundedFullStyle() SettingFieldBool {
 	return e
 }
 
+// Border width on the end edge.
+func (e SettingFieldBool) BorderE(width Length) SettingFieldBool {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SettingFieldBool) BorderS(width Length) SettingFieldBool {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SettingFieldBool) FlexRowDir() SettingFieldBool { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SettingFieldBool) InsetE(length Length) SettingFieldBool {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SettingFieldBool) InsetS(length Length) SettingFieldBool {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SettingFieldBool) JustifyFlexEnd() SettingFieldBool {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SettingFieldBool) JustifyFlexStart() SettingFieldBool {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e SettingFieldBool) Me(length Length) SettingFieldBool {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e SettingFieldBool) Ms(length Length) SettingFieldBool {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e SettingFieldBool) Pe(length Length) SettingFieldBool {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e SettingFieldBool) Ps(length Length) SettingFieldBool {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e SettingFieldBool) RoundedE(radius Length) SettingFieldBool {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SettingFieldBool) RoundedS(radius Length) SettingFieldBool {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SettingFieldBool) TextEnd() SettingFieldBool { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SettingFieldBool) TextStart() SettingFieldBool { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e SettingFieldBool) CornerRadii(radius Corners) SettingFieldBool {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -560,6 +647,96 @@ func (e SettingFieldNumber) RoundedFullStyle() SettingFieldNumber {
 	tThemeStyledRoundedFullStyle(e.n)
 	return e
 }
+
+// Border width on the end edge.
+func (e SettingFieldNumber) BorderE(width Length) SettingFieldNumber {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SettingFieldNumber) BorderS(width Length) SettingFieldNumber {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SettingFieldNumber) FlexRowDir() SettingFieldNumber {
+	tLogicalStyledExtFlexRowDir(e.n)
+	return e
+}
+
+// Inset from the end edge of the positioned ancestor.
+func (e SettingFieldNumber) InsetE(length Length) SettingFieldNumber {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SettingFieldNumber) InsetS(length Length) SettingFieldNumber {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SettingFieldNumber) JustifyFlexEnd() SettingFieldNumber {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SettingFieldNumber) JustifyFlexStart() SettingFieldNumber {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e SettingFieldNumber) Me(length Length) SettingFieldNumber {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e SettingFieldNumber) Ms(length Length) SettingFieldNumber {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e SettingFieldNumber) Pe(length Length) SettingFieldNumber {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e SettingFieldNumber) Ps(length Length) SettingFieldNumber {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e SettingFieldNumber) RoundedE(radius Length) SettingFieldNumber {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SettingFieldNumber) RoundedS(radius Length) SettingFieldNumber {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SettingFieldNumber) TextEnd() SettingFieldNumber { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SettingFieldNumber) TextStart() SettingFieldNumber { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e SettingFieldNumber) CornerRadii(radius Corners) SettingFieldNumber {
 	tStyledExtCornerRadii(e.n, radius)
@@ -1152,6 +1329,93 @@ func (e SettingFieldText) RoundedFullStyle() SettingFieldText {
 	return e
 }
 
+// Border width on the end edge.
+func (e SettingFieldText) BorderE(width Length) SettingFieldText {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SettingFieldText) BorderS(width Length) SettingFieldText {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SettingFieldText) FlexRowDir() SettingFieldText { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SettingFieldText) InsetE(length Length) SettingFieldText {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SettingFieldText) InsetS(length Length) SettingFieldText {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SettingFieldText) JustifyFlexEnd() SettingFieldText {
+	tLogicalStyledExtJustifyFlexEnd(e.n)
+	return e
+}
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SettingFieldText) JustifyFlexStart() SettingFieldText {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e SettingFieldText) Me(length Length) SettingFieldText {
+	tLogicalStyledExtMe(e.n, length)
+	return e
+}
+
+// Margin on the start edge.
+func (e SettingFieldText) Ms(length Length) SettingFieldText {
+	tLogicalStyledExtMs(e.n, length)
+	return e
+}
+
+// Padding on the end edge.
+func (e SettingFieldText) Pe(length Length) SettingFieldText {
+	tLogicalStyledExtPe(e.n, length)
+	return e
+}
+
+// Padding on the start edge.
+func (e SettingFieldText) Ps(length Length) SettingFieldText {
+	tLogicalStyledExtPs(e.n, length)
+	return e
+}
+
+// Corner radius of both end corners.
+func (e SettingFieldText) RoundedE(radius Length) SettingFieldText {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SettingFieldText) RoundedS(radius Length) SettingFieldText {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SettingFieldText) TextEnd() SettingFieldText { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SettingFieldText) TextStart() SettingFieldText { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e SettingFieldText) CornerRadii(radius Corners) SettingFieldText {
 	tStyledExtCornerRadii(e.n, radius)
 	return e
@@ -1729,6 +1993,78 @@ func (e SettingGroup) PopoverStyle() SettingGroup { tThemeStyledPopoverStyle(e.n
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e SettingGroup) RoundedFullStyle() SettingGroup { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e SettingGroup) BorderE(width Length) SettingGroup {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e SettingGroup) BorderS(width Length) SettingGroup {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e SettingGroup) FlexRowDir() SettingGroup { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e SettingGroup) InsetE(length Length) SettingGroup {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e SettingGroup) InsetS(length Length) SettingGroup {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e SettingGroup) JustifyFlexEnd() SettingGroup { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e SettingGroup) JustifyFlexStart() SettingGroup {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e SettingGroup) Me(length Length) SettingGroup { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e SettingGroup) Ms(length Length) SettingGroup { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e SettingGroup) Pe(length Length) SettingGroup { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e SettingGroup) Ps(length Length) SettingGroup { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e SettingGroup) RoundedE(radius Length) SettingGroup {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e SettingGroup) RoundedS(radius Length) SettingGroup {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e SettingGroup) TextEnd() SettingGroup { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e SettingGroup) TextStart() SettingGroup { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e SettingGroup) CornerRadii(radius Corners) SettingGroup {
 	tStyledExtCornerRadii(e.n, radius)

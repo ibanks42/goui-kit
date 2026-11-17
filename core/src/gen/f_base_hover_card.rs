@@ -48,7 +48,8 @@ pub fn apply_base_hover_card(dx: &mut Dx, mut el: gpui_kit::base::HoverCard, fir
             259 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::base::HoverCard>::open_delay(el, a0) }; }
             260 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::base::HoverCard>::trigger(el, a0) }; }
             261 => { el = { let a0 = { let src = r.u64(); move |k0: &mut gpui_kit::base::HoverCardState, window: &mut gpui_kit::Window, cx: &mut gpui_kit::Context<gpui_kit::base::HoverCardState>| -> gpui_kit::Stateful<gpui_kit::Div> { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&crate::items::Reads(&*k0), &mut p); let b0 = { let mut b = Vec::new(); genapi::Wire::put(&crate::items::Reads(&*k0), &mut b); b }; let h: Vec<Box<dyn std::any::Any>> = vec![]; crate::items::row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b0); }), h, window, cx, |dx, n| build_gpui_stateful_div(dx, n), |_| gpui_kit::InteractiveElement::id(gpui_kit::div(), "gk-item")) } }; <gpui_kit::base::HoverCard>::content(el, a0) }; }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("HoverCard", op),

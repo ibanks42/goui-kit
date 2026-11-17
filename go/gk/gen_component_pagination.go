@@ -86,6 +86,78 @@ func (e PaginationEl) PopoverStyle() PaginationEl { tThemeStyledPopoverStyle(e.n
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e PaginationEl) RoundedFullStyle() PaginationEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e PaginationEl) BorderE(width Length) PaginationEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e PaginationEl) BorderS(width Length) PaginationEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e PaginationEl) FlexRowDir() PaginationEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e PaginationEl) InsetE(length Length) PaginationEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e PaginationEl) InsetS(length Length) PaginationEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e PaginationEl) JustifyFlexEnd() PaginationEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e PaginationEl) JustifyFlexStart() PaginationEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e PaginationEl) Me(length Length) PaginationEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e PaginationEl) Ms(length Length) PaginationEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e PaginationEl) Pe(length Length) PaginationEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e PaginationEl) Ps(length Length) PaginationEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e PaginationEl) RoundedE(radius Length) PaginationEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e PaginationEl) RoundedS(radius Length) PaginationEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e PaginationEl) TextEnd() PaginationEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e PaginationEl) TextStart() PaginationEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e PaginationEl) CornerRadii(radius Corners) PaginationEl {
 	tStyledExtCornerRadii(e.n, radius)
 	return e

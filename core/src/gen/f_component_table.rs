@@ -142,7 +142,7 @@ pub fn apply_component_column(dx: &mut Dx, mut el: gpui_kit::component::table::C
         match op {
             256 => { el = { <gpui_kit::component::table::Column>::ascending(el) }; }
             257 => { el = { <gpui_kit::component::table::Column>::descending(el) }; }
-            258 => { el = { let a0 = en_116(r.u16()); <gpui_kit::component::table::Column>::fixed(el, a0) }; }
+            258 => { el = { let a0 = en_118(r.u16()); <gpui_kit::component::table::Column>::fixed(el, a0) }; }
             259 => { el = { <gpui_kit::component::table::Column>::fixed_left(el) }; }
             260 => { el = { <gpui_kit::component::table::Column>::fixed_right(el) }; }
             261 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::table::Column>::max_width(el, a0) }; }
@@ -152,7 +152,7 @@ pub fn apply_component_column(dx: &mut Dx, mut el: gpui_kit::component::table::C
             265 => { el = { let Some((a0,)) = (|| Some((in_3(r, dx)?,)))() else { continue }; <gpui_kit::component::table::Column>::paddings(el, a0) }; }
             266 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::table::Column>::resizable(el, a0) }; }
             267 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::table::Column>::selectable(el, a0) }; }
-            268 => { el = { let a0 = en_117(r.u16()); <gpui_kit::component::table::Column>::sort(el, a0) }; }
+            268 => { el = { let a0 = en_119(r.u16()); <gpui_kit::component::table::Column>::sort(el, a0) }; }
             269 => { el = { <gpui_kit::component::table::Column>::sortable(el) }; }
             270 => { el = { <gpui_kit::component::table::Column>::text_center(el) }; }
             271 => { el = { <gpui_kit::component::table::Column>::text_right(el) }; }
@@ -187,7 +187,8 @@ pub fn apply_component_data_table(dx: &mut Dx, mut el: gpui_kit::component::tabl
             260 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::scroll_bounce(el, a0) }; }
             261 => { el = { let a0 = r.u8() != 0; let a1 = r.u8() != 0; <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::scrollbar_visible(el, a0, a1) }; }
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::stripe(el, a0) }; }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            263 => { el = { let a0 = en_57(r.u16()); <gpui_kit::component::table::DataTable<crate::shim_rows::GkTableDelegate>>::scrollbar_mode(el, a0) }; }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             17280..=17407 => { el = tr_focusable_ext_8(el, op, r, dx); }
             _ => bad_op("DataTable", op),
         }
@@ -215,12 +216,13 @@ pub fn apply_component_table(dx: &mut Dx, mut el: gpui_kit::component::table::Ta
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::table::Table>::accessibility_label(el, a0) }; }
             257 => { el = { let n = r.u32(); let (ty, a, f) = dx.node(n); match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::child(el, v), None => { continue } }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::child(el, v), None => { continue } }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::child(el, v), None => { continue } }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::child(el, v), None => { continue } }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::child(el, v), None => { continue } }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::child(el, v), None => { continue } }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::child(el, v), None => { continue } }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::child(el, v), None => { continue } }, _ => { bad_node::<()>("a child element", ty); continue } } }; }
             258 => { el = { let k = r.u32(); let mut acc = el; for _ in 0..k { let n = r.u32(); let (ty, a, f) = dx.node(n); acc = match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::children(acc, vec![v]), None => acc }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::children(acc, vec![v]), None => acc }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::children(acc, vec![v]), None => acc }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::children(acc, vec![v]), None => acc }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::children(acc, vec![v]), None => acc }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::children(acc, vec![v]), None => acc }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::children(acc, vec![v]), None => acc }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::Table>::children(acc, vec![v]), None => acc }, _ => { bad_node::<()>("a child element", ty); acc } }; } acc }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
-            18048..=18175 => { el = tr_child_element_48(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
+            18048..=18175 => { el = tr_child_element_49(el, op, r, dx); }
             _ => bad_op("Table", op),
         }
     }
@@ -246,12 +248,13 @@ pub fn apply_component_table_body(dx: &mut Dx, mut el: gpui_kit::component::tabl
         match op {
             256 => { el = { let n = r.u32(); let (ty, a, f) = dx.node(n); match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::child(el, v), None => { continue } }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::child(el, v), None => { continue } }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::child(el, v), None => { continue } }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::child(el, v), None => { continue } }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::child(el, v), None => { continue } }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::child(el, v), None => { continue } }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::child(el, v), None => { continue } }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::child(el, v), None => { continue } }, _ => { bad_node::<()>("a child element", ty); continue } } }; }
             257 => { el = { let k = r.u32(); let mut acc = el; for _ in 0..k { let n = r.u32(); let (ty, a, f) = dx.node(n); acc = match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::children(acc, vec![v]), None => acc }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::children(acc, vec![v]), None => acc }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::children(acc, vec![v]), None => acc }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::children(acc, vec![v]), None => acc }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::children(acc, vec![v]), None => acc }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::children(acc, vec![v]), None => acc }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::children(acc, vec![v]), None => acc }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableBody>::children(acc, vec![v]), None => acc }, _ => { bad_node::<()>("a child element", ty); acc } }; } acc }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
-            18048..=18175 => { el = tr_child_element_48(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
+            18048..=18175 => { el = tr_child_element_49(el, op, r, dx); }
             _ => bad_op("TableBody", op),
         }
     }
@@ -275,15 +278,16 @@ pub fn apply_component_table_caption(dx: &mut Dx, mut el: gpui_kit::component::t
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
-            18048..=18175 => { el = tr_child_element_48(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
+            18048..=18175 => { el = tr_child_element_49(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("TableCaption", op),
@@ -312,15 +316,16 @@ pub fn apply_component_table_cell(dx: &mut Dx, mut el: gpui_kit::component::tabl
             256 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::table::TableCell>::col_span(el, a0) }; }
             257 => { el = { <gpui_kit::component::table::TableCell>::text_center(el) }; }
             258 => { el = { <gpui_kit::component::table::TableCell>::text_right(el) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
-            18048..=18175 => { el = tr_child_element_48(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
+            18048..=18175 => { el = tr_child_element_49(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("TableCell", op),
@@ -348,12 +353,13 @@ pub fn apply_component_table_footer(dx: &mut Dx, mut el: gpui_kit::component::ta
         match op {
             256 => { el = { let n = r.u32(); let (ty, a, f) = dx.node(n); match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::child(el, v), None => { continue } }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::child(el, v), None => { continue } }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::child(el, v), None => { continue } }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::child(el, v), None => { continue } }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::child(el, v), None => { continue } }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::child(el, v), None => { continue } }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::child(el, v), None => { continue } }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::child(el, v), None => { continue } }, _ => { bad_node::<()>("a child element", ty); continue } } }; }
             257 => { el = { let k = r.u32(); let mut acc = el; for _ in 0..k { let n = r.u32(); let (ty, a, f) = dx.node(n); acc = match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::children(acc, vec![v]), None => acc }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::children(acc, vec![v]), None => acc }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::children(acc, vec![v]), None => acc }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::children(acc, vec![v]), None => acc }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::children(acc, vec![v]), None => acc }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::children(acc, vec![v]), None => acc }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::children(acc, vec![v]), None => acc }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableFooter>::children(acc, vec![v]), None => acc }, _ => { bad_node::<()>("a child element", ty); acc } }; } acc }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
-            18048..=18175 => { el = tr_child_element_48(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
+            18048..=18175 => { el = tr_child_element_49(el, op, r, dx); }
             _ => bad_op("TableFooter", op),
         }
     }
@@ -380,15 +386,16 @@ pub fn apply_component_table_head(dx: &mut Dx, mut el: gpui_kit::component::tabl
             256 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::table::TableHead>::col_span(el, a0) }; }
             257 => { el = { <gpui_kit::component::table::TableHead>::text_center(el) }; }
             258 => { el = { <gpui_kit::component::table::TableHead>::text_right(el) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18432..=18559 => { el = tr_theme_styled_55(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
-            18048..=18175 => { el = tr_child_element_48(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
+            18048..=18175 => { el = tr_child_element_49(el, op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("TableHead", op),
@@ -416,12 +423,13 @@ pub fn apply_component_table_header(dx: &mut Dx, mut el: gpui_kit::component::ta
         match op {
             256 => { el = { let n = r.u32(); let (ty, a, f) = dx.node(n); match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::child(el, v), None => { continue } }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::child(el, v), None => { continue } }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::child(el, v), None => { continue } }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::child(el, v), None => { continue } }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::child(el, v), None => { continue } }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::child(el, v), None => { continue } }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::child(el, v), None => { continue } }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::child(el, v), None => { continue } }, _ => { bad_node::<()>("a child element", ty); continue } } }; }
             257 => { el = { let k = r.u32(); let mut acc = el; for _ in 0..k { let n = r.u32(); let (ty, a, f) = dx.node(n); acc = match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::children(acc, vec![v]), None => acc }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::children(acc, vec![v]), None => acc }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::children(acc, vec![v]), None => acc }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::children(acc, vec![v]), None => acc }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::children(acc, vec![v]), None => acc }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::children(acc, vec![v]), None => acc }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::children(acc, vec![v]), None => acc }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableHeader>::children(acc, vec![v]), None => acc }, _ => { bad_node::<()>("a child element", ty); acc } }; } acc }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18048..=18175 => { el = tr_child_element_48(el, op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18048..=18175 => { el = tr_child_element_49(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("TableHeader", op),
         }
     }
@@ -447,12 +455,15 @@ pub fn apply_component_table_row(dx: &mut Dx, mut el: gpui_kit::component::table
         match op {
             256 => { el = { let n = r.u32(); let (ty, a, f) = dx.node(n); match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::child(el, v), None => { continue } }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::child(el, v), None => { continue } }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::child(el, v), None => { continue } }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::child(el, v), None => { continue } }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::child(el, v), None => { continue } }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::child(el, v), None => { continue } }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::child(el, v), None => { continue } }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::child(el, v), None => { continue } }, _ => { bad_node::<()>("a child element", ty); continue } } }; }
             257 => { el = { let k = r.u32(); let mut acc = el; for _ in 0..k { let n = r.u32(); let (ty, a, f) = dx.node(n); acc = match ty { 774 => match make_component_table(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::children(acc, vec![v]), None => acc }, 775 => match make_component_table_body(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::children(acc, vec![v]), None => acc }, 776 => match make_component_table_caption(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::children(acc, vec![v]), None => acc }, 777 => match make_component_table_cell(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::children(acc, vec![v]), None => acc }, 778 => match make_component_table_footer(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::children(acc, vec![v]), None => acc }, 779 => match make_component_table_head(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::children(acc, vec![v]), None => acc }, 780 => match make_component_table_header(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::children(acc, vec![v]), None => acc }, 781 => match make_component_table_row(dx, ty, a, f) { Some(v) => <gpui_kit::component::table::TableRow>::children(acc, vec![v]), None => acc }, _ => { bad_node::<()>("a child element", ty); acc } }; } acc }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            258 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |mut v: gpui_kit::StyleRefinement| { style_into(dx, n, &mut v); v } }; <gpui_kit::component::table::TableRow>::hover(el, a0) }; }
+            259 => { el = { let a0 = element_id(r); <gpui_kit::component::table::TableRow>::id(el, a0) }; }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
-            18048..=18175 => { el = tr_child_element_48(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
+            18048..=18175 => { el = tr_child_element_49(el, op, r, dx); }
             _ => bad_op("TableRow", op),
         }
     }

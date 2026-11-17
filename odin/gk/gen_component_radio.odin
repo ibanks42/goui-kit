@@ -17,6 +17,7 @@ Radio_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Radio),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Radio),
 	using t_element_ext: ^Element_Ext_Trait(Radio),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Radio),
 	using t_styled_ext: ^Styled_Ext_Trait(Radio),
 	using t_sizable: ^Sizable_Trait(Radio),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Radio),
@@ -146,6 +147,7 @@ radio_vt := Radio_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Radio))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Radio))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Radio))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Radio))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Radio))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Radio))&sizable_any,
 	t_focusable_ext = cast(^Focusable_Ext_Trait(Radio))&focusable_ext_any,
@@ -291,6 +293,7 @@ Radio_Group :: struct {
 
 Radio_Group_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Radio_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Radio_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Radio_Group),
 	using t_styled: ^Styled_Trait(Radio_Group),
 	// Add a child Radio element.
@@ -346,6 +349,7 @@ radio_group_vertical :: proc(id: Id, flags: ..Style_Flag, loc := #caller_locatio
 @(private)
 radio_group_vt := Radio_Group_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Radio_Group))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Radio_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Radio_Group))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Radio_Group))&styled_any,
 	child = proc(e: Radio_Group, child: Radio_Into) -> Radio_Group {

@@ -59,6 +59,57 @@ func (e AvatarEl) PopoverStyle() AvatarEl { tThemeStyledPopoverStyle(e.n); retur
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e AvatarEl) RoundedFullStyle() AvatarEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e AvatarEl) BorderE(width Length) AvatarEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e AvatarEl) BorderS(width Length) AvatarEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AvatarEl) FlexRowDir() AvatarEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e AvatarEl) InsetE(length Length) AvatarEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e AvatarEl) InsetS(length Length) AvatarEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AvatarEl) JustifyFlexEnd() AvatarEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AvatarEl) JustifyFlexStart() AvatarEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e AvatarEl) Me(length Length) AvatarEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e AvatarEl) Ms(length Length) AvatarEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e AvatarEl) Pe(length Length) AvatarEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e AvatarEl) Ps(length Length) AvatarEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e AvatarEl) RoundedE(radius Length) AvatarEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e AvatarEl) RoundedS(radius Length) AvatarEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AvatarEl) TextEnd() AvatarEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AvatarEl) TextStart() AvatarEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e AvatarEl) CornerRadii(radius Corners) AvatarEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e AvatarEl) DebugBlue() AvatarEl                 { tStyledExtDebugBlue(e.n); return e }
 func (e AvatarEl) DebugFocused(focusHandle FocusHandle) AvatarEl {
@@ -836,6 +887,78 @@ func (e AvatarGroupEl) PopoverStyle() AvatarGroupEl { tThemeStyledPopoverStyle(e
 // survives `radius` being set to zero, which leaves avatars, badge dots and slider thumbs round in
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e AvatarGroupEl) RoundedFullStyle() AvatarGroupEl { tThemeStyledRoundedFullStyle(e.n); return e }
+
+// Border width on the end edge.
+func (e AvatarGroupEl) BorderE(width Length) AvatarGroupEl {
+	tLogicalStyledExtBorderE(e.n, width)
+	return e
+}
+
+// Border width on the start edge.
+func (e AvatarGroupEl) BorderS(width Length) AvatarGroupEl {
+	tLogicalStyledExtBorderS(e.n, width)
+	return e
+}
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e AvatarGroupEl) FlexRowDir() AvatarGroupEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e AvatarGroupEl) InsetE(length Length) AvatarGroupEl {
+	tLogicalStyledExtInsetE(e.n, length)
+	return e
+}
+
+// Inset from the start edge of the positioned ancestor.
+func (e AvatarGroupEl) InsetS(length Length) AvatarGroupEl {
+	tLogicalStyledExtInsetS(e.n, length)
+	return e
+}
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e AvatarGroupEl) JustifyFlexEnd() AvatarGroupEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e AvatarGroupEl) JustifyFlexStart() AvatarGroupEl {
+	tLogicalStyledExtJustifyFlexStart(e.n)
+	return e
+}
+
+// Margin on the end edge.
+func (e AvatarGroupEl) Me(length Length) AvatarGroupEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e AvatarGroupEl) Ms(length Length) AvatarGroupEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e AvatarGroupEl) Pe(length Length) AvatarGroupEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e AvatarGroupEl) Ps(length Length) AvatarGroupEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e AvatarGroupEl) RoundedE(radius Length) AvatarGroupEl {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e AvatarGroupEl) RoundedS(radius Length) AvatarGroupEl {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e AvatarGroupEl) TextEnd() AvatarGroupEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e AvatarGroupEl) TextStart() AvatarGroupEl { tLogicalStyledExtTextStart(e.n); return e }
 
 func (e AvatarGroupEl) CornerRadii(radius Corners) AvatarGroupEl {
 	tStyledExtCornerRadii(e.n, radius)

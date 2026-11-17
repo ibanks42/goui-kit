@@ -75,6 +75,63 @@ func (e KitTooltip) PopoverStyle() KitTooltip { tThemeStyledPopoverStyle(e.n); r
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e KitTooltip) RoundedFullStyle() KitTooltip { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e KitTooltip) BorderE(width Length) KitTooltip { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e KitTooltip) BorderS(width Length) KitTooltip { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e KitTooltip) FlexRowDir() KitTooltip { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e KitTooltip) InsetE(length Length) KitTooltip { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e KitTooltip) InsetS(length Length) KitTooltip { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e KitTooltip) JustifyFlexEnd() KitTooltip { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e KitTooltip) JustifyFlexStart() KitTooltip { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e KitTooltip) Me(length Length) KitTooltip { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e KitTooltip) Ms(length Length) KitTooltip { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e KitTooltip) Pe(length Length) KitTooltip { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e KitTooltip) Ps(length Length) KitTooltip { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e KitTooltip) RoundedE(radius Length) KitTooltip {
+	tLogicalStyledExtRoundedE(e.n, radius)
+	return e
+}
+
+// Corner radius of both start corners.
+func (e KitTooltip) RoundedS(radius Length) KitTooltip {
+	tLogicalStyledExtRoundedS(e.n, radius)
+	return e
+}
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e KitTooltip) TextEnd() KitTooltip { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e KitTooltip) TextStart() KitTooltip { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e KitTooltip) CornerRadii(radius Corners) KitTooltip {
 	tStyledExtCornerRadii(e.n, radius)
 	return e

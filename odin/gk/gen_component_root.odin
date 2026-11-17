@@ -9,6 +9,7 @@ Icon :: struct {
 
 Icon_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Icon),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Icon),
 	using t_styled_ext: ^Styled_Ext_Trait(Icon),
 	using t_styled: ^Styled_Trait(Icon),
 	using t_sizable: ^Sizable_Trait(Icon),
@@ -56,6 +57,7 @@ icon_empty :: proc(flags: ..Style_Flag, loc := #caller_location) -> Icon {
 @(private)
 icon_vt := Icon_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Icon))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Icon))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Icon))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Icon))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Icon))&sizable_any,
@@ -174,6 +176,7 @@ Title_Bar_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Title_Bar),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Title_Bar),
 	using t_element_ext: ^Element_Ext_Trait(Title_Bar),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Title_Bar),
 	using t_styled_ext: ^Styled_Ext_Trait(Title_Bar),
 	using t_styled: ^Styled_Trait(Title_Bar),
 	using t_parent_element: ^Parent_Element_Trait(Title_Bar),
@@ -194,6 +197,7 @@ title_bar_vt := Title_Bar_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Title_Bar))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Title_Bar))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Title_Bar))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Title_Bar))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Title_Bar))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Title_Bar))&styled_any,
 	t_parent_element = cast(^Parent_Element_Trait(Title_Bar))&parent_element_any,

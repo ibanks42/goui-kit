@@ -11,6 +11,7 @@ Breadcrumb :: struct {
 
 Breadcrumb_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Breadcrumb),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Breadcrumb),
 	using t_styled_ext: ^Styled_Ext_Trait(Breadcrumb),
 	using t_styled: ^Styled_Trait(Breadcrumb),
 	// Add an `Breadcrumb_Item` to the breadcrumb.
@@ -30,6 +31,7 @@ breadcrumb :: proc(flags: ..Style_Flag, loc := #caller_location) -> Breadcrumb {
 @(private)
 breadcrumb_vt := Breadcrumb_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Breadcrumb))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Breadcrumb))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Breadcrumb))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Breadcrumb))&styled_any,
 	child = proc(e: Breadcrumb, item: Breadcrumb_Item_Into) -> Breadcrumb {
@@ -57,6 +59,7 @@ Breadcrumb_Item :: struct {
 
 Breadcrumb_Item_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Breadcrumb_Item),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Breadcrumb_Item),
 	using t_styled_ext: ^Styled_Ext_Trait(Breadcrumb_Item),
 	using t_styled: ^Styled_Trait(Breadcrumb_Item),
 	disabled: proc(e: Breadcrumb_Item, disabled: bool) -> Breadcrumb_Item,
@@ -76,6 +79,7 @@ breadcrumb_item :: proc(label: string, flags: ..Style_Flag, loc := #caller_locat
 @(private)
 breadcrumb_item_vt := Breadcrumb_Item_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Breadcrumb_Item))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Breadcrumb_Item))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Breadcrumb_Item))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Breadcrumb_Item))&styled_any,
 	disabled = proc(e: Breadcrumb_Item, disabled: bool) -> Breadcrumb_Item {

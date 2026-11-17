@@ -53,6 +53,57 @@ func (e KbdEl) PopoverStyle() KbdEl { tThemeStyledPopoverStyle(e.n); return e }
 // a UI that is square everywhere else. See `RadiusFull`.
 func (e KbdEl) RoundedFullStyle() KbdEl { tThemeStyledRoundedFullStyle(e.n); return e }
 
+// Border width on the end edge.
+func (e KbdEl) BorderE(width Length) KbdEl { tLogicalStyledExtBorderE(e.n, width); return e }
+
+// Border width on the start edge.
+func (e KbdEl) BorderS(width Length) KbdEl { tLogicalStyledExtBorderS(e.n, width); return e }
+
+// A horizontal flex row whose first child sits on the start edge: `flex_row` in LTR,
+// `flex_row_reverse` in RTL.
+func (e KbdEl) FlexRowDir() KbdEl { tLogicalStyledExtFlexRowDir(e.n); return e }
+
+// Inset from the end edge of the positioned ancestor.
+func (e KbdEl) InsetE(length Length) KbdEl { tLogicalStyledExtInsetE(e.n, length); return e }
+
+// Inset from the start edge of the positioned ancestor.
+func (e KbdEl) InsetS(length Length) KbdEl { tLogicalStyledExtInsetS(e.n, length); return e }
+
+// Packs a row's children against the edge its last child sits on — the end edge of a `FlexRowDir`
+// row. This is CSS `flex-end`; `justify_end` stays on the physical right edge.
+func (e KbdEl) JustifyFlexEnd() KbdEl { tLogicalStyledExtJustifyFlexEnd(e.n); return e }
+
+// Packs a row's children against the edge its first child sits on — the start edge of a
+// `FlexRowDir` row.
+//
+// `justify_start` is the physical left edge even in a reversed row, so it does not follow the
+// layout direction; this is CSS `flex-start`.
+func (e KbdEl) JustifyFlexStart() KbdEl { tLogicalStyledExtJustifyFlexStart(e.n); return e }
+
+// Margin on the end edge.
+func (e KbdEl) Me(length Length) KbdEl { tLogicalStyledExtMe(e.n, length); return e }
+
+// Margin on the start edge.
+func (e KbdEl) Ms(length Length) KbdEl { tLogicalStyledExtMs(e.n, length); return e }
+
+// Padding on the end edge.
+func (e KbdEl) Pe(length Length) KbdEl { tLogicalStyledExtPe(e.n, length); return e }
+
+// Padding on the start edge.
+func (e KbdEl) Ps(length Length) KbdEl { tLogicalStyledExtPs(e.n, length); return e }
+
+// Corner radius of both end corners.
+func (e KbdEl) RoundedE(radius Length) KbdEl { tLogicalStyledExtRoundedE(e.n, radius); return e }
+
+// Corner radius of both start corners.
+func (e KbdEl) RoundedS(radius Length) KbdEl { tLogicalStyledExtRoundedS(e.n, radius); return e }
+
+// Aligns text to the end edge: `text_right` in LTR, `text_left` in RTL.
+func (e KbdEl) TextEnd() KbdEl { tLogicalStyledExtTextEnd(e.n); return e }
+
+// Aligns text to the start edge: `text_left` in LTR, `text_right` in RTL.
+func (e KbdEl) TextStart() KbdEl { tLogicalStyledExtTextStart(e.n); return e }
+
 func (e KbdEl) CornerRadii(radius Corners) KbdEl { tStyledExtCornerRadii(e.n, radius); return e }
 func (e KbdEl) DebugBlue() KbdEl                 { tStyledExtDebugBlue(e.n); return e }
 func (e KbdEl) DebugFocused(focusHandle FocusHandle) KbdEl {

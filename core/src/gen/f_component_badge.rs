@@ -39,12 +39,12 @@ pub fn apply_component_badge(dx: &mut Dx, mut el: gpui_kit::component::badge::Ba
             257 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::badge::Badge>::count(el, a0) }; }
             258 => { el = { <gpui_kit::component::badge::Badge>::dot(el) }; }
             259 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::badge::Badge>::max(el, a0) }; }
-            260 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::badge::Badge>::icon(el, a0) }; }
+            260 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::badge::Badge>::icon(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("Badge", op),
         }
     }

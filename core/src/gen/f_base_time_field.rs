@@ -9,14 +9,14 @@ use gpui_kit::IntoElement as _;
 pub fn sb_base_time_field_state(s: gpui_kit::base::TimeFieldState, op: u16, r: &mut R) -> gpui_kit::base::TimeFieldState {
     match op {
         1 => { let a0 = en_40(r.u16()); <gpui_kit::base::TimeFieldState>::hour_cycle(s, a0) }
-        2 => { let a0 = en_63(r.u16()); <gpui_kit::base::TimeFieldState>::precision(s, a0) }
+        2 => { let a0 = en_65(r.u16()); <gpui_kit::base::TimeFieldState>::precision(s, a0) }
         _ => s,
     }
 }
 pub fn c_318(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let window = c.window()?; let entity = c.cx.new(|cx| { let mut s = <gpui_kit::base::TimeFieldState>::new(window, cx); for _ in 0..r.u16() { let op = r.u16(); s = sb_base_time_field_state(s, op, r); } s }); let h = genapi::state_new(entity, c); c.out.extend_from_slice(&h.to_le_bytes()); Ok(()) }
 pub fn c_319(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::TimeFieldState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::TimeFieldState>::selected_segment(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
 pub fn c_320(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_40(r.u16()); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::set_hour_cycle(s, a0, window, cx); })?; Ok(()) }
-pub fn c_321(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_63(r.u16()); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::set_precision(s, a0, window, cx); })?; Ok(()) }
+pub fn c_321(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = en_65(r.u16()); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::set_precision(s, a0, window, cx); })?; Ok(()) }
 pub fn c_407(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::focus(s, window, cx); })?; Ok(()) }
 pub fn c_1329(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let a0 = <chrono::NaiveTime as genapi::Unwire>::get(r); genapi::state_update::<gpui_kit::base::TimeFieldState>(h, c, move |s, window, cx| { <gpui_kit::base::TimeFieldState>::set_time(s, a0, window, cx); })?; Ok(()) }
 pub fn c_1330(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let h = r.u64(); let bytes = genapi::state_read::<gpui_kit::base::TimeFieldState, _>(h, c, |s, cx| { let mut out = Vec::new(); genapi::Wire::put(&<gpui_kit::base::TimeFieldState>::time(s), &mut out); out })?; c.out.extend_from_slice(&bytes); Ok(()) }
@@ -73,7 +73,8 @@ pub fn apply_base_time_field(dx: &mut Dx, mut el: gpui_kit::base::TimeField, fir
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::TimeField>::disabled(el, a0) }; }
             257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::TimeField>::separator(el, a0) }; }
             258 => { el = { let a0 = { let src = r.u64(); move |k0: gpui_kit::base::TimeFieldSegment, k1: gpui_kit::base::TimeFieldSegmentState, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyElement { let mut p: Vec<u8> = Vec::new(); genapi::Wire::put(&crate::items::Reads(&k1), &mut p); let b1 = { let mut b = Vec::new(); genapi::Wire::put(&crate::items::Reads(&k1), &mut b); b }; let h: Vec<Box<dyn std::any::Any>> = vec![Box::new(k0)]; crate::items::row(src, None, p, std::rc::Rc::new(move |o: &mut Vec<u8>| { o.extend_from_slice(&b1); }), h, window, cx, |dx, n| Some(dx.child(n)), |h| match crate::items::first::<gpui_kit::base::TimeFieldSegment>(h) { Some(v) => gpui_kit::IntoElement::into_any_element(v), None => gpui_kit::IntoElement::into_any_element(gpui_kit::div()) }) } }; <gpui_kit::base::TimeField>::render_segment(el, a0) }; }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("TimeField", op),
@@ -101,7 +102,8 @@ pub fn apply_base_time_field_segment(dx: &mut Dx, mut el: gpui_kit::base::TimeFi
         match op {
             256 => { el = { <gpui_kit::base::TimeFieldSegment>::clear_children(el) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
             3 => { el = gpui_kit::ParentElement::child(el, gpui_kit::SharedString::new(r.str())); }

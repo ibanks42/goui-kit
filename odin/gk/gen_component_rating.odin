@@ -11,6 +11,7 @@ Rating :: struct {
 
 Rating_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Rating),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Rating),
 	using t_styled_ext: ^Styled_Ext_Trait(Rating),
 	using t_styled: ^Styled_Trait(Rating),
 	large: proc(e: Rating) -> Rating,
@@ -45,6 +46,7 @@ rating :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Rating {
 @(private)
 rating_vt := Rating_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Rating))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Rating))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Rating))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Rating))&styled_any,
 	large = transmute(proc(e: Rating) -> Rating)sizable_large,

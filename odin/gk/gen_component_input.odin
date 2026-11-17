@@ -13,6 +13,7 @@ Input :: struct {
 
 Input_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Input),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Input),
 	using t_styled_ext: ^Styled_Ext_Trait(Input),
 	using t_sizable: ^Sizable_Trait(Input),
 	using t_selectable: ^Selectable_Trait(Input),
@@ -177,6 +178,7 @@ input :: proc(state: Input_State, flags: ..Style_Flag, loc := #caller_location) 
 @(private)
 input_vt := Input_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Input))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Input))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Input))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Input))&sizable_any,
 	t_selectable = cast(^Selectable_Trait(Input))&selectable_any,
@@ -386,6 +388,7 @@ Input_Group :: struct {
 
 Input_Group_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Input_Group),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Input_Group),
 	using t_styled_ext: ^Styled_Ext_Trait(Input_Group),
 	using t_sizable: ^Sizable_Trait(Input_Group),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Input_Group),
@@ -416,6 +419,7 @@ input_group :: proc(id: Id, flags: ..Style_Flag, loc := #caller_location) -> Inp
 @(private)
 input_group_vt := Input_Group_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Input_Group))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Input_Group))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Input_Group))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Input_Group))&sizable_any,
 	t_focusable_ext = cast(^Focusable_Ext_Trait(Input_Group))&focusable_ext_any,
@@ -467,6 +471,7 @@ Input_Group_Addon_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Input_Group_Addon),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Input_Group_Addon),
 	using t_element_ext: ^Element_Ext_Trait(Input_Group_Addon),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Input_Group_Addon),
 	using t_styled_ext: ^Styled_Ext_Trait(Input_Group_Addon),
 	using t_parent_element: ^Parent_Element_Trait(Input_Group_Addon),
 	using t_styled: ^Styled_Trait(Input_Group_Addon),
@@ -487,6 +492,7 @@ input_group_addon_vt := Input_Group_Addon_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Input_Group_Addon))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Input_Group_Addon))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Input_Group_Addon))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Input_Group_Addon))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Input_Group_Addon))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Input_Group_Addon))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Input_Group_Addon))&styled_any,
@@ -512,6 +518,7 @@ Input_Group_Button_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Input_Group_Button),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Input_Group_Button),
 	using t_element_ext: ^Element_Ext_Trait(Input_Group_Button),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Input_Group_Button),
 	using t_styled_ext: ^Styled_Ext_Trait(Input_Group_Button),
 	using t_sizable: ^Sizable_Trait(Input_Group_Button),
 	using t_button_variants: ^Button_Variants_Trait(Input_Group_Button),
@@ -589,6 +596,7 @@ input_group_button_vt := Input_Group_Button_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Input_Group_Button))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Input_Group_Button))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Input_Group_Button))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Input_Group_Button))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Input_Group_Button))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Input_Group_Button))&sizable_any,
 	t_button_variants = cast(^Button_Variants_Trait(Input_Group_Button))&button_variants_any,
@@ -707,6 +715,7 @@ Input_Group_Text_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Input_Group_Text),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Input_Group_Text),
 	using t_element_ext: ^Element_Ext_Trait(Input_Group_Text),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Input_Group_Text),
 	using t_styled_ext: ^Styled_Ext_Trait(Input_Group_Text),
 	using t_parent_element: ^Parent_Element_Trait(Input_Group_Text),
 	using t_styled: ^Styled_Trait(Input_Group_Text),
@@ -731,6 +740,7 @@ input_group_text_vt := Input_Group_Text_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Input_Group_Text))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Input_Group_Text))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Input_Group_Text))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Input_Group_Text))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Input_Group_Text))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Input_Group_Text))&parent_element_any,
 	t_styled = cast(^Styled_Trait(Input_Group_Text))&styled_any,
@@ -746,6 +756,7 @@ Input_Token :: struct {
 
 Input_Token_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Input_Token),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Input_Token),
 	using t_styled_ext: ^Styled_Ext_Trait(Input_Token),
 	using t_styled: ^Styled_Trait(Input_Token),
 	icon: proc(e: Input_Token, icon: Icon_Name) -> Input_Token,
@@ -763,6 +774,7 @@ input_token :: proc(context_: Inline_Token_Context, flags: ..Style_Flag, loc := 
 @(private)
 input_token_vt := Input_Token_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Input_Token))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Input_Token))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Input_Token))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Input_Token))&styled_any,
 	icon = proc(e: Input_Token, icon: Icon_Name) -> Input_Token {
@@ -782,6 +794,7 @@ Number_Input :: struct {
 
 Number_Input_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Number_Input),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Number_Input),
 	using t_styled_ext: ^Styled_Ext_Trait(Number_Input),
 	using t_disableable: ^Disableable_Trait(Number_Input),
 	using t_focusable_ext: ^Focusable_Ext_Trait(Number_Input),
@@ -798,6 +811,11 @@ Number_Input_VT :: struct {
 	placeholder: proc(e: Number_Input, placeholder: string) -> Number_Input,
 	// Set the prefix element of the number input.
 	prefix: proc(e: Number_Input, prefix: Element) -> Number_Input,
+	// Set whether the increment and decrement buttons are rendered.
+	//
+	// The buttons are rendered by default. Up and Down keys continue to step the value when the
+	// buttons are omitted.
+	stepper: proc(e: Number_Input, stepper: bool) -> Number_Input,
 	// Set the suffix element of the number input.
 	suffix: proc(e: Number_Input, suffix: Element) -> Number_Input,
 }
@@ -815,6 +833,7 @@ number_input :: proc(state: Input_State, flags: ..Style_Flag, loc := #caller_loc
 @(private)
 number_input_vt := Number_Input_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Number_Input))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Number_Input))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Number_Input))&styled_ext_any,
 	t_disableable = cast(^Disableable_Trait(Number_Input))&disableable_any,
 	t_focusable_ext = cast(^Focusable_Ext_Trait(Number_Input))&focusable_ext_any,
@@ -838,6 +857,11 @@ number_input_vt := Number_Input_VT {
 	prefix = proc(e: Number_Input, prefix: Element) -> Number_Input {
 		o := op(e.el, 259)
 		put_u32(o, take(prefix))
+		return e
+	},
+	stepper = proc(e: Number_Input, stepper: bool) -> Number_Input {
+		o := op(e.el, 261)
+		put_u8(o, u8(stepper))
 		return e
 	},
 	suffix = proc(e: Number_Input, suffix: Element) -> Number_Input {
@@ -900,6 +924,7 @@ Textarea :: struct {
 
 Textarea_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Textarea),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Textarea),
 	using t_styled_ext: ^Styled_Ext_Trait(Textarea),
 	using t_sizable: ^Sizable_Trait(Textarea),
 	aspect_ratio: proc(e: Textarea, ratio: f32) -> Textarea,
@@ -1031,6 +1056,7 @@ textarea :: proc(state: Textarea_State, flags: ..Style_Flag, loc := #caller_loca
 @(private)
 textarea_vt := Textarea_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Textarea))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Textarea))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Textarea))&styled_ext_any,
 	t_sizable = cast(^Sizable_Trait(Textarea))&sizable_any,
 	aspect_ratio = transmute(proc(e: Textarea, ratio: f32) -> Textarea)styled_aspect_ratio,

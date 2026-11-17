@@ -146,4 +146,5 @@ var (
 	MagentaLight                   = gk.ThemeColor(137)
 	Cyan                           = gk.ThemeColor(138)
 	CyanLight                      = gk.ThemeColor(139)
+	ListHighlightForeground        = gk.ThemeColor(140)
 )

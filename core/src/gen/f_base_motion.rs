@@ -195,7 +195,7 @@ pub fn apply_base_timing(dx: &mut Dx, mut el: gpui_kit::base::Timing, first: u32
         let r = &mut r;
         match op {
             256 => { el = { let Some((a0,)) = (|| Some((de_21(r, dx)?,)))() else { continue }; <gpui_kit::base::Timing>::delay(el, a0) }; }
-            257 => { el = { let a0 = en_48(r.u16()); <gpui_kit::base::Timing>::direction(el, a0) }; }
+            257 => { el = { let a0 = en_49(r.u16()); <gpui_kit::base::Timing>::direction(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some((de_14(r, dx)?,)))() else { continue }; <gpui_kit::base::Timing>::ease(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some((de_16(r, dx)?,)))() else { continue }; <gpui_kit::base::Timing>::iterations(el, a0) }; }
             _ => bad_op("Timing", op),
@@ -223,7 +223,7 @@ pub fn apply_base_transition(dx: &mut Dx, mut el: gpui_kit::base::Transition, fi
         match op {
             256 => { el = { let Some((a0,)) = (|| Some((in_12(r, dx)?,)))() else { continue }; <gpui_kit::base::Transition>::delay(el, a0) }; }
             257 => { el = { let Some((a0,)) = (|| Some((de_14(r, dx)?,)))() else { continue }; <gpui_kit::base::Transition>::easing(el, a0) }; }
-            258 => { el = { let a0 = en_50(r.u16()); <gpui_kit::base::Transition>::reduced_motion(el, a0) }; }
+            258 => { el = { let a0 = en_52(r.u16()); <gpui_kit::base::Transition>::reduced_motion(el, a0) }; }
             259 => { el = { let a0 = { let e = crate::shim_editor::Expr::new(r.str()); move |a0: f32| { (e.eval(&[(a0 as f64)]) as f32) } }; <gpui_kit::base::Transition>::ease(el, a0) }; }
             _ => bad_op("Transition", op),
         }

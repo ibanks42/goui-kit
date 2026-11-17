@@ -210,6 +210,11 @@ Data_Table_VT :: struct {
 	// Bounce the rows at the vertical boundaries, keeping headers and scrollbars fixed. On by default
 	// on iOS, Android and macOS, off elsewhere.
 	scroll_bounce: proc(e: Data_Table, enabled: bool) -> Data_Table,
+	// Set the show mode of both the vertical and horizontal scrollbars.
+	//
+	// Defaults to the theme's `ScrollbarMode`. A data grid can use `Always` so that the columns out of
+	// view are visible without scrolling.
+	scrollbar_mode: proc(e: Data_Table, mode: Scrollbar_Mode) -> Data_Table,
 	// Set scrollbar visibility.
 	scrollbar_visible: proc(e: Data_Table, vertical: bool, horizontal: bool) -> Data_Table,
 	// Set to use stripe style of the table, default to false.
@@ -254,6 +259,11 @@ data_table_vt := Data_Table_VT {
 		put_u8(o, u8(enabled))
 		return e
 	},
+	scrollbar_mode = proc(e: Data_Table, mode: Scrollbar_Mode) -> Data_Table {
+		o := op(e.el, 263)
+		put_u16(o, u16(mode))
+		return e
+	},
 	scrollbar_visible = proc(e: Data_Table, vertical: bool, horizontal: bool) -> Data_Table {
 		o := op(e.el, 261)
 		put_u8(o, u8(vertical))
@@ -282,6 +292,7 @@ Table :: struct {
 
 Table_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Table),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Table),
 	using t_styled_ext: ^Styled_Ext_Trait(Table),
 	using t_styled: ^Styled_Trait(Table),
 	using t_sizable: ^Sizable_Trait(Table),
@@ -305,6 +316,7 @@ table :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table {
 @(private)
 table_vt := Table_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Table))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Table))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Table))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Table))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Table))&sizable_any,
@@ -381,6 +393,7 @@ Table_Body :: struct {
 
 Table_Body_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Table_Body),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Table_Body),
 	using t_styled_ext: ^Styled_Ext_Trait(Table_Body),
 	using t_styled: ^Styled_Trait(Table_Body),
 	using t_sizable: ^Sizable_Trait(Table_Body),
@@ -399,6 +412,7 @@ table_body :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Body {
 @(private)
 table_body_vt := Table_Body_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Table_Body))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Table_Body))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Table_Body))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Table_Body))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Table_Body))&sizable_any,
@@ -472,6 +486,7 @@ Table_Caption_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Table_Caption),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Table_Caption),
 	using t_element_ext: ^Element_Ext_Trait(Table_Caption),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Table_Caption),
 	using t_styled_ext: ^Styled_Ext_Trait(Table_Caption),
 	using t_parent_element: ^Parent_Element_Trait(Table_Caption),
 	using t_sizable: ^Sizable_Trait(Table_Caption),
@@ -491,6 +506,7 @@ table_caption_vt := Table_Caption_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Table_Caption))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Table_Caption))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Table_Caption))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Table_Caption))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Table_Caption))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Table_Caption))&parent_element_any,
 	t_sizable = cast(^Sizable_Trait(Table_Caption))&sizable_any,
@@ -510,6 +526,7 @@ Table_Cell_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Table_Cell),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Table_Cell),
 	using t_element_ext: ^Element_Ext_Trait(Table_Cell),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Table_Cell),
 	using t_styled_ext: ^Styled_Ext_Trait(Table_Cell),
 	using t_parent_element: ^Parent_Element_Trait(Table_Cell),
 	using t_sizable: ^Sizable_Trait(Table_Cell),
@@ -615,6 +632,7 @@ table_cell_vt := Table_Cell_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Table_Cell))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Table_Cell))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Table_Cell))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Table_Cell))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Table_Cell))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Table_Cell))&parent_element_any,
 	t_sizable = cast(^Sizable_Trait(Table_Cell))&sizable_any,
@@ -725,6 +743,7 @@ Table_Footer :: struct {
 
 Table_Footer_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Table_Footer),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Table_Footer),
 	using t_styled_ext: ^Styled_Ext_Trait(Table_Footer),
 	using t_styled: ^Styled_Trait(Table_Footer),
 	using t_sizable: ^Sizable_Trait(Table_Footer),
@@ -743,6 +762,7 @@ table_footer :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Foot
 @(private)
 table_footer_vt := Table_Footer_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Table_Footer))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Table_Footer))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Table_Footer))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Table_Footer))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Table_Footer))&sizable_any,
@@ -816,6 +836,7 @@ Table_Head_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Table_Head),
 	using t_theme_styled_parent_element: ^Theme_Styled_Parent_Element_Trait(Table_Head),
 	using t_element_ext: ^Element_Ext_Trait(Table_Head),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Table_Head),
 	using t_styled_ext: ^Styled_Ext_Trait(Table_Head),
 	using t_parent_element: ^Parent_Element_Trait(Table_Head),
 	using t_sizable: ^Sizable_Trait(Table_Head),
@@ -921,6 +942,7 @@ table_head_vt := Table_Head_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Table_Head))&theme_styled_any,
 	t_theme_styled_parent_element = cast(^Theme_Styled_Parent_Element_Trait(Table_Head))&theme_styled_parent_element_any,
 	t_element_ext = cast(^Element_Ext_Trait(Table_Head))&element_ext_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Table_Head))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Table_Head))&styled_ext_any,
 	t_parent_element = cast(^Parent_Element_Trait(Table_Head))&parent_element_any,
 	t_sizable = cast(^Sizable_Trait(Table_Head))&sizable_any,
@@ -1031,6 +1053,7 @@ Table_Header :: struct {
 
 Table_Header_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Table_Header),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Table_Header),
 	using t_styled_ext: ^Styled_Ext_Trait(Table_Header),
 	using t_styled: ^Styled_Trait(Table_Header),
 	using t_child_element: ^Child_Element_Trait(Table_Header),
@@ -1049,6 +1072,7 @@ table_header :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Head
 @(private)
 table_header_vt := Table_Header_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Table_Header))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Table_Header))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Table_Header))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Table_Header))&styled_any,
 	t_child_element = cast(^Child_Element_Trait(Table_Header))&child_element_any,
@@ -1120,12 +1144,17 @@ Table_Row :: struct {
 
 Table_Row_VT :: struct {
 	using t_theme_styled: ^Theme_Styled_Trait(Table_Row),
+	using t_logical_styled_ext: ^Logical_Styled_Ext_Trait(Table_Row),
 	using t_styled_ext: ^Styled_Ext_Trait(Table_Row),
 	using t_styled: ^Styled_Trait(Table_Row),
 	using t_sizable: ^Sizable_Trait(Table_Row),
 	using t_child_element: ^Child_Element_Trait(Table_Row),
 	child: proc(e: Table_Row, child: Table_Child) -> Table_Row,
 	children: proc(e: Table_Row, children: []Table_Child) -> Table_Row,
+	hover: proc(e: Table_Row, f: Style_Refinement) -> Table_Row,
+	// Set a stable identity for the row. Without one a row is identified by its position, so element
+	// state inside it (an open popover, a tooltip) stays at that position when the rows reorder.
+	id: proc(e: Table_Row, id: Id) -> Table_Row,
 }
 
 table_row :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Row {
@@ -1138,6 +1167,7 @@ table_row :: proc(flags: ..Style_Flag, loc := #caller_location) -> Table_Row {
 @(private)
 table_row_vt := Table_Row_VT {
 	t_theme_styled = cast(^Theme_Styled_Trait(Table_Row))&theme_styled_any,
+	t_logical_styled_ext = cast(^Logical_Styled_Ext_Trait(Table_Row))&logical_styled_ext_any,
 	t_styled_ext = cast(^Styled_Ext_Trait(Table_Row))&styled_ext_any,
 	t_styled = cast(^Styled_Trait(Table_Row))&styled_any,
 	t_sizable = cast(^Sizable_Trait(Table_Row))&sizable_any,
@@ -1195,6 +1225,16 @@ table_row_vt := Table_Row_VT {
 				put_u32(o, take(oe))
 			}
 		}
+		return e
+	},
+	hover = proc(e: Table_Row, f: Style_Refinement) -> Table_Row {
+		o := op(e.el, 258)
+		put_u32(o, take_value(f.nd))
+		return e
+	},
+	id = proc(e: Table_Row, id: Id) -> Table_Row {
+		o := op(e.el, 259)
+		put_id(o, id)
 		return e
 	},
 }

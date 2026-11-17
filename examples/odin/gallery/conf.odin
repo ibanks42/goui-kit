@@ -186,6 +186,7 @@ CONF := [?]Page {
 	{"base::TableHeader.new", conf_base_tableheader_new},
 	{"base::TableRow.new", conf_base_tablerow_new},
 	{"Tabs.new", conf_tabs_new},
+	{"Tabs.axis", conf_tabs_axis},
 	{"base::TextView.markdown", conf_base_textview_markdown},
 	{"base::TextView.html", conf_base_textview_html},
 	{"base::TextView.selectable", conf_base_textview_selectable},
@@ -193,6 +194,7 @@ CONF := [?]Page {
 	{"base::TextView.scrollable", conf_base_textview_scrollable},
 	{"base::TextView.max_lines", conf_base_textview_max_lines},
 	{"base::TextView.markdown_mdx", conf_base_textview_markdown_mdx},
+	{"base::TextView.markdown_raw_html", conf_base_textview_markdown_raw_html},
 	{"Toast.new", conf_toast_new},
 	{"Toast.transition_status", conf_toast_transition_status},
 	{"base::Toggle.new", conf_base_toggle_new},
@@ -309,9 +311,11 @@ CONF := [?]Page {
 	{"component::Checkbox.tooltip_show_delay", conf_component_checkbox_tooltip_show_delay},
 	{"component::Checkbox.accessibility_label", conf_component_checkbox_accessibility_label},
 	{"component::Checkbox.checked", conf_component_checkbox_checked},
+	{"component::Checkbox.indeterminate", conf_component_checkbox_indeterminate},
 	{"component::Checkbox.tab_stop", conf_component_checkbox_tab_stop},
 	{"component::Checkbox.tab_index", conf_component_checkbox_tab_index},
 	{"Clipboard.new", conf_clipboard_new},
+	{"Clipboard.label", conf_clipboard_label},
 	{"Clipboard.tooltip", conf_clipboard_tooltip},
 	{"Clipboard.tooltip_show_delay", conf_clipboard_tooltip_show_delay},
 	{"Clipboard.accessibility_label", conf_clipboard_accessibility_label},
@@ -399,6 +403,7 @@ CONF := [?]Page {
 	{"InputGroupText.new", conf_inputgrouptext_new},
 	{"InputGroupText.default", conf_inputgrouptext_default},
 	{"Label.new", conf_label_new},
+	{"Label.id", conf_label_id},
 	{"Label.secondary", conf_label_secondary},
 	{"Label.masked", conf_label_masked},
 	{"component::Link.new", conf_component_link_new},
@@ -576,6 +581,7 @@ CONF := [?]Page {
 	{"component::TableHead.text_right", conf_component_tablehead_text_right},
 	{"component::TableHeader.new", conf_component_tableheader_new},
 	{"component::TableRow.new", conf_component_tablerow_new},
+	{"component::TableRow.id", conf_component_tablerow_id},
 	{"Tag.new", conf_tag_new},
 	{"Tag.primary", conf_tag_primary},
 	{"Tag.secondary", conf_tag_secondary},
@@ -715,7 +721,10 @@ CONF := [?]Page {
 	{"Styled.top", conf_styled_top},
 	{"Styled.w", conf_styled_w},
 	{"Disableable.disabled", conf_disableable_disabled},
+	{"ElementExt.keep_text_selection", conf_elementext_keep_text_selection},
 	{"FocusableExt.focus_ring", conf_focusableext_focus_ring},
+	{"LogicalStyledExt.justify_flex_end", conf_logicalstyledext_justify_flex_end},
+	{"LogicalStyledExt.justify_flex_start", conf_logicalstyledext_justify_flex_start},
 	{"Selectable.open", conf_selectable_open},
 	{"Selectable.secondary_selected", conf_selectable_secondary_selected},
 	{"Selectable.selected", conf_selectable_selected},
@@ -1796,6 +1805,12 @@ conf_tabs_new :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	return conf_pair(base, el)
 }
 
+conf_tabs_axis :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.tabs("conf-a")
+	el := gk.tabs("conf-b")->axis(.Horizontal)
+	return conf_pair(base, el)
+}
+
 conf_base_textview_markdown :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	base := gk.base_text_view_markdown("conf-a", "Sample")
 	el := gk.base_text_view_markdown("conf-b", "Sample")
@@ -1835,6 +1850,12 @@ conf_base_textview_max_lines :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 conf_base_textview_markdown_mdx :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	base := gk.base_text_view_markdown("conf-a", "Sample")
 	el := gk.base_text_view_markdown("conf-b", "Sample")->markdown_mdx()
+	return conf_pair(base, el)
+}
+
+conf_base_textview_markdown_raw_html :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.base_text_view_markdown("conf-a", "Sample")
+	el := gk.base_text_view_markdown("conf-b", "Sample")->markdown_raw_html(true)
 	return conf_pair(base, el)
 }
 
@@ -2534,6 +2555,12 @@ conf_component_checkbox_checked :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	return conf_pair(base, el)
 }
 
+conf_component_checkbox_indeterminate :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.checkbox("conf-a")
+	el := gk.checkbox("conf-b")->indeterminate(true)
+	return conf_pair(base, el)
+}
+
 conf_component_checkbox_tab_stop :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	base := gk.checkbox("conf-a")
 	el := gk.checkbox("conf-b")->tab_stop(true)
@@ -2549,6 +2576,12 @@ conf_component_checkbox_tab_index :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 conf_clipboard_new :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	base := gk.clipboard("conf-a")
 	el := gk.clipboard("conf-b")
+	return conf_pair(base, el)
+}
+
+conf_clipboard_label :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.clipboard("conf-a")
+	el := gk.clipboard("conf-b")->label("Sample")
 	return conf_pair(base, el)
 }
 
@@ -3071,6 +3104,12 @@ conf_inputgrouptext_default :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 conf_label_new :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	base := gk.label("Sample")
 	el := gk.label("Sample")
+	return conf_pair(base, el)
+}
+
+conf_label_id :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.label("Sample")
+	el := gk.label("Sample")->id("conf-a")
 	return conf_pair(base, el)
 }
 
@@ -4136,6 +4175,12 @@ conf_component_tablerow_new :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	return conf_pair(base, el)
 }
 
+conf_component_tablerow_id :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.table_row()
+	el := gk.table_row()->id("conf-a")
+	return conf_pair(base, el)
+}
+
 conf_tag_new :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	base := gk.tag()->child(gk.div()->text("Tag"))
 	el := gk.tag()->child(gk.div()->text("Tag"))
@@ -4970,9 +5015,27 @@ conf_disableable_disabled :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	return conf_pair(base, el)
 }
 
+conf_elementext_keep_text_selection :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.button("conf-a")->label("Button")
+	el := gk.button("conf-b")->label("Button")->keep_text_selection("conf-a")
+	return conf_pair(base, el)
+}
+
 conf_focusableext_focus_ring :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	base := gk.button("conf-a")->label("Button")
 	el := gk.button("conf-b")->label("Button")->focus_ring(true)
+	return conf_pair(base, el)
+}
+
+conf_logicalstyledext_justify_flex_end :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.button("conf-a")->label("Button")
+	el := gk.button("conf-b")->label("Button")->justify_flex_end()
+	return conf_pair(base, el)
+}
+
+conf_logicalstyledext_justify_flex_start :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	base := gk.button("conf-a")->label("Button")
+	el := gk.button("conf-b")->label("Button")->justify_flex_start()
 	return conf_pair(base, el)
 }
 

@@ -47,8 +47,9 @@ pub fn apply_component_setting_field_bool(dx: &mut Dx, mut el: gpui_kit::compone
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::setting::SettingField<bool>>::default_value(el, a0) }; }
             257 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingField<bool>>::on_reset(el, a0, a1) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("SettingFieldBool", op),
@@ -63,7 +64,7 @@ pub fn build_component_setting_field_number(dx: &mut Dx, n: u32) -> Option<gpui_
 pub fn make_component_setting_field_number(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::setting::SettingField<f64>> {
     let r = &mut dx.args(args);
     let el: gpui_kit::component::setting::SettingField<f64> = match ty {
-        852 => { let a0 = rc_99(r, dx)?; let a1 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> f64 { crate::values::cell_read(&cell, |r| r.f64()) } }; let a2 = { let h = dx.handler(r); let k = dx.pin(); move |a0: f64, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire_app::<_, ()>(h, 10, &a0, cx) } }; <gpui_kit::component::setting::SettingField<f64>>::number_input(a0, a1, a2) }
+        852 => { let a0 = rc_100(r, dx)?; let a1 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> f64 { crate::values::cell_read(&cell, |r| r.f64()) } }; let a2 = { let h = dx.handler(r); let k = dx.pin(); move |a0: f64, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire_app::<_, ()>(h, 10, &a0, cx) } }; <gpui_kit::component::setting::SettingField<f64>>::number_input(a0, a1, a2) }
         _ => return bad_node("SettingFieldNumber", ty),
     };
     Some(apply_component_setting_field_number(dx, el, first))
@@ -76,8 +77,9 @@ pub fn apply_component_setting_field_number(dx: &mut Dx, mut el: gpui_kit::compo
         match op {
             256 => { el = { let a0 = r.f64(); <gpui_kit::component::setting::SettingField<f64>>::default_value(el, a0) }; }
             257 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingField<f64>>::on_reset(el, a0, a1) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("SettingFieldNumber", op),
@@ -109,8 +111,9 @@ pub fn apply_component_setting_field_text(dx: &mut Dx, mut el: gpui_kit::compone
         match op {
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::default_value(el, a0) }; }
             257 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::on_reset(el, a0, a1) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("SettingFieldText", op),
@@ -138,12 +141,13 @@ pub fn apply_component_setting_group(dx: &mut Dx, mut el: gpui_kit::component::s
         match op {
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::setting::SettingGroup>::description(el, a0) }; }
             257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::setting::SettingGroup>::title(el, a0) }; }
-            258 => { el = { let a0 = en_104(r.u16()); <gpui_kit::component::setting::SettingGroup>::variant(el, a0) }; }
+            258 => { el = { let a0 = en_106(r.u16()); <gpui_kit::component::setting::SettingGroup>::variant(el, a0) }; }
             259 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::setting::SettingGroup>::footer(el, a0) }; }
             260 => { el = { let Some((a0,)) = (|| Some((build_component_setting_item(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::setting::SettingGroup>::item(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_setting_item(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::setting::SettingGroup>::items(el, a0) }; }
-            18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
-            17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            18304..=18431 => { let _ = tr_theme_styled_54(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
+            19200..=19327 => { el = tr_logical_styled_ext_13(el, op, r, dx); }
+            17792..=17919 => { let _ = tr_styled_ext_19(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             _ => bad_op("SettingGroup", op),
@@ -206,7 +210,7 @@ pub fn apply_component_setting_page(dx: &mut Dx, mut el: gpui_kit::component::se
             261 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::setting::SettingPage>::resettable(el, a0) }; }
             262 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::setting::SettingPage>::title(el, a0) }; }
             263 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::setting::SettingPage>::title_suffix(el, a0) }; }
-            264 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::setting::SettingPage>::icon(el, a0) }; }
+            264 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_88(r.u16())); <gpui_kit::component::setting::SettingPage>::icon(el, a0) }; }
             _ => bad_op("SettingPage", op),
         }
     }
@@ -230,15 +234,15 @@ pub fn apply_component_settings(dx: &mut Dx, mut el: gpui_kit::component::settin
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let Some((a0,)) = (|| Some((rc_100(r, dx)?,)))() else { continue }; <gpui_kit::component::setting::Settings>::default_selected_index(el, a0) }; }
+            256 => { el = { let Some((a0,)) = (|| Some((rc_101(r, dx)?,)))() else { continue }; <gpui_kit::component::setting::Settings>::default_selected_index(el, a0) }; }
             257 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::setting::Settings>::header_style(el, &a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some((build_component_setting_page(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::setting::Settings>::page(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_setting_page(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::setting::Settings>::pages(el, a0) }; }
             260 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::setting::Settings>::sidebar_style(el, &a0) }; }
             261 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::setting::Settings>::sidebar_width(el, a0) }; }
-            262 => { el = { let a0 = en_104(r.u16()); <gpui_kit::component::setting::Settings>::with_group_variant(el, a0) }; }
+            262 => { el = { let a0 = en_106(r.u16()); <gpui_kit::component::setting::Settings>::with_group_variant(el, a0) }; }
             263 => { el = { let a0 = { let a = gpui_kit::px(r.f32()); a..gpui_kit::px(r.f32()) }; <gpui_kit::component::setting::Settings>::sidebar_size_range(el, a0) }; }
-            18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
+            18176..=18303 => { el = tr_sizable_52(el, op, r, dx); }
             _ => bad_op("Settings", op),
         }
     }
