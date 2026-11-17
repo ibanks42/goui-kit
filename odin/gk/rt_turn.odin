@@ -56,6 +56,8 @@ turn_serial: u64
 ui_thread: int
 @(private)
 debug: bool
+// lib_diag: the library is the diagnostic one (tests), where a binding fault stops loudly.
+lib_diag: bool
 @(private)
 dropped: u64
 
@@ -170,9 +172,18 @@ dispatch :: proc(kind: u32, input: []u8) -> []u8 {
 		}
 	case K_VIEWS:
 		t.window = rd_u64(&r)
-		n := int(rd_u32(&r))
-		for _ in 0 ..< n {
-			if v, ok := views[rd_u64(&r)]; ok {
+		list := make([]u64, int(rd_u32(&r)), context.temp_allocator)
+		for &h in list {
+			h = rd_u64(&r)
+		}
+		// The descriptions the library dropped since the last VIEWS turn: their tables go.
+		n_retired := int(rd_u32(&r))
+		for _ in 0 ..< n_retired {
+			view := rd_u64(&r)
+			retire_table(view, rd_u32(&r))
+		}
+		for h in list {
+			if v, ok := views[h]; ok {
 				describe(cx, v)
 			}
 		}

@@ -44,7 +44,7 @@ pub fn apply_component_pagination(dx: &mut Dx, mut el: gpui_kit::component::pagi
         match op {
             256 => { el = { <gpui_kit::component::pagination::Pagination>::compact(el) }; }
             257 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::pagination::Pagination>::current_page(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::pagination::Pagination>::on_click(el, a0) }; }
+            258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::pagination::Pagination>::on_click(el, a0) }; }
             259 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::pagination::Pagination>::total_pages(el, a0) }; }
             260 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::pagination::Pagination>::visible_pages(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

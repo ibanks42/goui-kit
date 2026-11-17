@@ -606,11 +606,21 @@ Image_Bytes :: struct {
 	bytes:  []u8,
 }
 
-// Pixel_Image is an image as pixels for ImageSource's Render and Custom variants: width x height
-// pixels of 4 bytes each, red, green, blue, alpha, row by row.
+// Pixel_Image is an image as pixels, for gk.render_image: width x height pixels of 4 bytes each, red,
+// green, blue, alpha, row by row.
 Pixel_Image :: struct {
 	width, height: u32,
 	rgba:          []u8,
+}
+
+// Render_Image is an image the library made from pixels (gpui's RenderImage), shown by ImageSource's
+// Render and Custom variants. Make it once, with gk.render_image, and keep it while a view shows it:
+// gpui keeps each image's texture on the graphics card until the image is released, so pixels made
+// into a new image on every frame would be a new texture on every frame. gk.release frees it in every
+// window; a view that names it after that stops with a message. New pixels are a new image: make it,
+// show it, release the old one.
+Render_Image :: struct {
+	h: u64,
 }
 
 @(private)
@@ -620,10 +630,31 @@ put_bytes :: proc(o: ^Tape, b: []u8) {
 }
 
 @(private)
-put_pixel_image :: proc(o: ^Tape, p: Pixel_Image) {
-	put_u32(o, p.width)
-	put_u32(o, p.height)
-	put_bytes(o, p.rgba)
+put_render_image :: proc(o: ^Tape, i: Render_Image) {
+	if i.h == 0 {
+		stop(#location(), "a zero gk.Render_Image: make one with gk.render_image(cx, gk.Pixel_Image{..}) and keep it")
+	}
+	put_u64(o, i.h)
+}
+
+// render_image makes an image of p's pixels, converted once to the format gpui draws. Make it in init
+// or in a handler, not in a view procedure; gk.release frees it.
+render_image :: proc(cx: ^Cx, p: Pixel_Image, loc := #caller_location) -> Render_Image {
+	t := check_cx(cx, loc)
+	if build.active {
+		stop(loc, "a view procedure may not make an image: make it once, in init or in a handler, and keep it")
+	}
+	if int(p.width) * int(p.height) * 4 != len(p.rgba) {
+		stop(loc, "a gk.Pixel_Image of %dx%d pixels holds %d bytes: it needs width x height x 4 (red, green, blue, alpha per pixel)", p.width, p.height, len(p.rgba))
+	}
+	flush(t, loc)
+	req := make(Tape, 0, 16 + len(p.rgba), context.temp_allocator)
+	put_u16(&req, C_RENDER_IMAGE_NEW)
+	put_u32(&req, p.width)
+	put_u32(&req, p.height)
+	put_bytes(&req, p.rgba)
+	r := Reader{must_call(req[:], loc), 0}
+	return {rd_u64(&r)}
 }
 
 // --- tests (core/tests/platform, mode elements): the decoders generated code uses, on the library side
@@ -671,17 +702,30 @@ test_prepaint_order :: proc(cx: ^Cx, order: []int, loc := #caller_location) -> [
 	return out
 }
 
-// test_pixel_image: the library's RenderImage of p (custom: through ImageSource::Custom's loader):
-// its size and its first pixel as gpui keeps it (BGRA, little-endian u32).
-test_pixel_image :: proc(cx: ^Cx, p: Pixel_Image, custom := false, loc := #caller_location) -> (w, h, first: u32) {
+// test_render_image: the library's image behind i (custom: through ImageSource::Custom's loader): its
+// size, its first pixel as gpui keeps it (BGRA, little-endian u32) and gpui's id of it, the same for as
+// long as i is kept.
+test_render_image :: proc(cx: ^Cx, i: Render_Image, custom := false, loc := #caller_location) -> (w, h, first: u32, id: u64) {
 	flush(check_cx(cx, loc), loc)
-	req := make(Tape, 0, 64 + len(p.rgba), context.temp_allocator)
+	req := make(Tape, 0, 16, context.temp_allocator)
 	put_u16(&req, C_PLATFORM_TEST)
 	put_u8(&req, 4)
 	put_u8(&req, u8(custom))
-	put_pixel_image(&req, p)
+	put_render_image(&req, i)
 	r := Reader{must_call(req[:], loc), 0}
-	return rd_u32(&r), rd_u32(&r), rd_u32(&r)
+	return rd_u32(&r), rd_u32(&r), rd_u32(&r), rd_u64(&r)
+}
+
+// test_images_shown: how many times views have handed gpui an image (Image_Source_Render or
+// Image_Source_Custom), how many distinct images (gpui's ids, one texture each) those were, and how
+// many times a release dropped an image's texture from a window. The diagnostic library only.
+test_images_shown :: proc(cx: ^Cx, loc := #caller_location) -> (times: u64, images: u32, dropped: u64) {
+	flush(check_cx(cx, loc), loc)
+	req := make(Tape, 0, 4, context.temp_allocator)
+	put_u16(&req, C_PLATFORM_TEST)
+	put_u8(&req, 7)
+	r := Reader{must_call(req[:], loc), 0}
+	return rd_u64(&r), rd_u32(&r), rd_u64(&r)
 }
 
 // test_file_drop_entered: gpui's FileDropEvent::Entered as the library writes a handler's payload (its

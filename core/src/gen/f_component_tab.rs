@@ -49,7 +49,7 @@ pub fn apply_component_tab(dx: &mut Dx, mut el: gpui_kit::component::tab::Tab, f
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::tab::Tab>::disabled(el, a0) }; }
             258 => { el = { <gpui_kit::component::tab::Tab>::folder(el) }; }
             259 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::tab::Tab>::label(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::tab::Tab>::on_click(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::tab::Tab>::on_click(el, a0) }; }
             261 => { el = { <gpui_kit::component::tab::Tab>::outline(el) }; }
             262 => { el = { <gpui_kit::component::tab::Tab>::pill(el) }; }
             263 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::tab::Tab>::prefix(el, a0) }; }
@@ -100,7 +100,7 @@ pub fn apply_component_tab_bar(dx: &mut Dx, mut el: gpui_kit::component::tab::Ta
             259 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::tab::TabBar>::last_empty_space(el, a0) }; }
             260 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::tab::TabBar>::max_width(el, a0) }; }
             261 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::tab::TabBar>::menu(el, a0) }; }
-            262 => { el = { let a0 = { let h = dx.handler(r); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::tab::TabBar>::on_click(el, a0) }; }
+            262 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::tab::TabBar>::on_click(el, a0) }; }
             263 => { el = { <gpui_kit::component::tab::TabBar>::outline(el) }; }
             264 => { el = { <gpui_kit::component::tab::TabBar>::pill(el) }; }
             265 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::tab::TabBar>::prefix(el, a0) }; }

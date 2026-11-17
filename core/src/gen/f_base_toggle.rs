@@ -44,7 +44,7 @@ pub fn apply_base_toggle(dx: &mut Dx, mut el: gpui_kit::base::Toggle, first: u32
         match op {
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::Toggle>::accessibility_label(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Toggle>::disabled(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: bool, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 65, &(&a0, a1), window, cx) } }; <gpui_kit::base::Toggle>::on_change(el, a0) }; }
+            258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: bool, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 65, &(&a0, a1), window, cx) } }; <gpui_kit::base::Toggle>::on_change(el, a0) }; }
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Toggle>::pressed(el, a0) }; }
             260 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::ToggleStyles| { let first = dx.node(n).2; apply_base_toggle_styles(dx, v, first) } }; <gpui_kit::base::Toggle>::styles(el, a0) }; }
             261 => { el = { let a0 = r.i64() as isize; <gpui_kit::base::Toggle>::tab_index(el, a0) }; }

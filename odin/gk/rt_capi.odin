@@ -281,6 +281,7 @@ check_library :: proc() {
 		)
 		os.exit(1)
 	}
+	lib_diag = info.features & FEAT_DIAG != 0
 	if _, show := os.lookup_env("GK_INFO", context.allocator); show {
 		fmt.printf(
 			"gk-info binding=odin abi=%d.%d api_hash=%#x gpui_fast=%v diag=%v versions=%q\n",

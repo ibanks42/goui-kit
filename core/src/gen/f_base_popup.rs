@@ -52,7 +52,7 @@ pub fn apply_base_popup(dx: &mut Dx, mut el: gpui_kit::base::Popup, first: u32) 
             256 => { el = { let a0 = en_2(r.u16()); <gpui_kit::base::Popup>::anchor(el, a0) }; }
             257 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::base::Popup>::content(el, a0) }; }
             258 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::base::Popup>::offset(el, a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |a0: gpui_kit::base::ResolvedPosition, a1: gpui_kit::Bounds<gpui_kit::Pixels>| { crate::views_after::observe(h, 117, &(&a0, &a1)) } }; <gpui_kit::base::Popup>::on_position(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::base::ResolvedPosition, a1: gpui_kit::Bounds<gpui_kit::Pixels>| { let _ = &k; crate::views_after::observe(h, 117, &(&a0, &a1)) } }; <gpui_kit::base::Popup>::on_position(el, a0) }; }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
             16896..=17023 => { let _ = tr_styled_3(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

@@ -46,8 +46,8 @@ pub fn apply_component_switch(dx: &mut Dx, mut el: gpui_kit::component::switch::
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::switch::Switch>::checked(el, a0) }; }
             258 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::component::switch::Switch>::color(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some((in_43(r, dx)?,)))() else { continue }; <gpui_kit::component::switch::Switch>::label(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::switch::Switch>::on_change(el, a0) }; }
-            261 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::switch::Switch>::on_click(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::switch::Switch>::on_change(el, a0) }; }
+            261 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::switch::Switch>::on_click(el, a0) }; }
             262 => { el = { let a0 = r.i64() as isize; <gpui_kit::component::switch::Switch>::tab_index(el, a0) }; }
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::switch::Switch>::tab_stop(el, a0) }; }
             264 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::switch::Switch>::tooltip(el, a0) }; }

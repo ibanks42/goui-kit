@@ -253,7 +253,7 @@ pub fn apply_component_sidebar_menu_item(dx: &mut Dx, mut el: gpui_kit::componen
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::sidebar::SidebarMenuItem>::default_open(el, a0) }; }
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::sidebar::SidebarMenuItem>::disable(el, a0) }; }
             264 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::sidebar::SidebarMenuItem>::label_style(el, a0) }; }
-            265 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::sidebar::SidebarMenuItem>::on_click(el, a0) }; }
+            265 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::sidebar::SidebarMenuItem>::on_click(el, a0) }; }
             266 => { el = { let a0 = { let f = dx.frag(r.u32()); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::sidebar::SidebarMenuItem>::suffix(el, a0) }; }
             267 => { el = { let a0 = { let f = dx.frag(r.u32()); move |v: gpui_kit::component::menu::PopupMenu, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| apply_component_popup_menu(dx, v, dx.node(n).2)) }; <gpui_kit::component::sidebar::SidebarMenuItem>::context_menu(el, a0) }; }
             268 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::sidebar::SidebarMenuItem>::icon(el, a0) }; }
@@ -287,7 +287,7 @@ pub fn apply_component_sidebar_toggle_button(dx: &mut Dx, mut el: gpui_kit::comp
         match op {
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::sidebar::SidebarToggleButton>::accessibility_label(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::sidebar::SidebarToggleButton>::collapsed(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::sidebar::SidebarToggleButton>::on_click(el, a0) }; }
+            258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::sidebar::SidebarToggleButton>::on_click(el, a0) }; }
             259 => { el = { let a0 = en_58(r.u16()); <gpui_kit::component::sidebar::SidebarToggleButton>::side(el, a0) }; }
             _ => bad_op("SidebarToggleButton", op),
         }

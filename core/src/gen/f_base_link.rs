@@ -45,8 +45,8 @@ pub fn apply_base_link(dx: &mut Dx, mut el: gpui_kit::base::Link, first: u32) ->
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::Link>::accessibility_label(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Link>::disabled(el, a0) }; }
             258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::Link>::href(el, a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::base::Link>::on_activate(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &str, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 83, &(&a0, a1), window, cx) } }; <gpui_kit::base::Link>::open_with(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::base::Link>::on_activate(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &str, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 83, &(&a0, a1), window, cx) } }; <gpui_kit::base::Link>::open_with(el, a0) }; }
             261 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::LinkStyles| { let first = dx.node(n).2; apply_base_link_styles(dx, v, first) } }; <gpui_kit::base::Link>::styles(el, a0) }; }
             262 => { el = { let a0 = r.i64() as isize; <gpui_kit::base::Link>::tab_index(el, a0) }; }
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Link>::tab_stop(el, a0) }; }

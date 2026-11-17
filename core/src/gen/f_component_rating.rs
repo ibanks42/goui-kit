@@ -45,7 +45,7 @@ pub fn apply_component_rating(dx: &mut Dx, mut el: gpui_kit::component::rating::
             256 => { el = { let a0 = genapi::color(r, &*dx.cx); <gpui_kit::component::rating::Rating>::color(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::rating::Rating>::disabled(el, a0) }; }
             258 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::rating::Rating>::max(el, a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::rating::Rating>::on_click(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::rating::Rating>::on_click(el, a0) }; }
             260 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::rating::Rating>::value(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some((in_23(r, dx)?,)))() else { continue }; <gpui_kit::component::rating::Rating>::with_size(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

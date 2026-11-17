@@ -3866,9 +3866,13 @@ type ImageSourceResource struct {
 
 func (ImageSourceResource) isImageSource() {}
 
+// Shows an image the library made from pixels. Make the gk.RenderImage once, with
+// gk.NewRenderImage, keep it while a view shows it and gk.Release it when no view does:
+// gpui keeps its texture on the graphics card until then.
+//
 // ImageSourceRender is gpui_kit::ImageSource::Render.
 type ImageSourceRender struct {
-	Value PixelImage
+	Value RenderImage
 }
 
 func (ImageSourceRender) isImageSource() {}
@@ -3880,9 +3884,12 @@ type ImageSourceImage struct {
 
 func (ImageSourceImage) isImageSource() {}
 
+// Upstream's loader, called while gpui draws, is the image itself here: a gk.RenderImage
+// made once with gk.NewRenderImage, as for gk.ImageSourceRender.
+//
 // ImageSourceCustom is gpui_kit::ImageSource::Custom.
 type ImageSourceCustom struct {
-	Value PixelImage
+	Value RenderImage
 }
 
 func (ImageSourceCustom) isImageSource() {}
@@ -3896,7 +3903,7 @@ func putImageSource(o *tape, v ImageSource) {
 	case ImageSourceRender:
 		_ = x
 		o.u16(1)
-		putPixelImage(o, x.Value)
+		putRenderImage(o, x.Value)
 	case ImageSourceImage:
 		_ = x
 		o.u16(2)
@@ -3905,7 +3912,7 @@ func putImageSource(o *tape, v ImageSource) {
 	case ImageSourceCustom:
 		_ = x
 		o.u16(3)
-		putPixelImage(o, x.Value)
+		putRenderImage(o, x.Value)
 	default:
 		stop("a nil or unknown ImageSource was given to a builder: give one of its variants (gk.ImageSource...)")
 	}
@@ -5272,7 +5279,7 @@ func putHighlightsMatchInto(o *tape, v HighlightsMatchInto) {
 	}
 }
 
-// ImageSourceInto is what `impl Into<gpui_kit::ImageSource>` accepts: one of ImageSource, string, PixelImage, ImageBytes.
+// ImageSourceInto is what `impl Into<gpui_kit::ImageSource>` accepts: one of ImageSource, string, RenderImage, ImageBytes.
 type ImageSourceInto interface{}
 
 func putImageSourceInto(o *tape, v ImageSourceInto) {
@@ -5285,17 +5292,17 @@ func putImageSourceInto(o *tape, v ImageSourceInto) {
 		o.u8(1)
 		_ = x
 		o.str(x)
-	case PixelImage:
+	case RenderImage:
 		o.u8(4)
 		_ = x
-		putPixelImage(o, x)
+		putRenderImage(o, x)
 	case ImageBytes:
 		o.u8(5)
 		_ = x
 		o.u16(uint16(x.Format))
 		putBytes(o, x.Bytes)
 	default:
-		stop("a %T was given where the kit takes a ImageSourceInto: give one of ImageSource, string, PixelImage, ImageBytes", v)
+		stop("a %T was given where the kit takes a ImageSourceInto: give one of ImageSource, string, RenderImage, ImageBytes", v)
 	}
 }
 

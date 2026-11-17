@@ -74,7 +74,7 @@ pub fn apply_component_breadcrumb_item(dx: &mut Dx, mut el: gpui_kit::component:
         let r = &mut r;
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::breadcrumb::BreadcrumbItem>::disabled(el, a0) }; }
-            257 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::breadcrumb::BreadcrumbItem>::on_click(el, a0) }; }
+            257 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::breadcrumb::BreadcrumbItem>::on_click(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }

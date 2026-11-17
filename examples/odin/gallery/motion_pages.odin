@@ -34,6 +34,7 @@ Motion_Pages :: struct {
 	focus:  gk.Focus_Handle,
 	// the elem-* pages
 	cache:  gk.Image_Cache,
+	pic:    gk.Render_Image, // made once from pixels: gpui keeps one texture for it
 	scroll: gk.Scroll_Handle,
 	anchor: gk.Scroll_Anchor,
 	scope:  gk.Text_Selection_Scope,
@@ -49,6 +50,7 @@ motion_pages_init :: proc(a: ^App, cx: ^gk.Cx) {
 	mp.state = gk.transition_state_default(cx)
 	mp.focus = gk.focus_handle(cx)
 	mp.cache = gk.image_cache(cx)
+	mp.pic = gk.render_image(cx, checker())
 	mp.scroll = gk.scroll_handle(cx)
 	mp.anchor = gk.scroll_anchor(cx, mp.scroll)
 	mp.scope = gk.text_selection_scope_id(cx)
@@ -179,7 +181,7 @@ elem_drop :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 }
 
 elem_image :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
-	pic := checker()
+	pic := mp.pic
 	return gk.h_flex(.Gap_2)->image_cache(gk.Retain_All_Images{"elem-images"})->
 		child(gk.img(gk.Image_Source_Render{pic})->size(gk.px(32)))->
 		child(gk.img(gk.Image_Source_Custom{pic})->size(gk.px(32))->image_cache(mp.cache))->

@@ -45,9 +45,9 @@ pub fn apply_base_combobox(dx: &mut Dx, mut el: gpui_kit::base::Combobox, first:
             256 => { el = { let a0 = genapi::shown_focus(r.u64()); <gpui_kit::base::Combobox>::content_focus_handle(el, &a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Combobox>::disabled(el, a0) }; }
             258 => { el = { let a0 = genapi::shown_focus(r.u64()); <gpui_kit::base::Combobox>::focus_handle(el, &a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::base::Combobox>::on_confirm(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::base::Combobox>::on_dismiss(el, a0) }; }
-            261 => { el = { let a0 = { let h = dx.handler(r); move |a0: bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, &a0, window, cx) } }; <gpui_kit::base::Combobox>::on_open_change(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::base::Combobox>::on_confirm(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::base::Combobox>::on_dismiss(el, a0) }; }
+            261 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, &a0, window, cx) } }; <gpui_kit::base::Combobox>::on_open_change(el, a0) }; }
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Combobox>::open(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

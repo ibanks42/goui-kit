@@ -32,6 +32,16 @@ type App struct {
 	quit, open   gk.Action
 	plotted      int
 	win          gk.Window
+	red          gk.RenderImage // made once from pixels (13.31)
+	redID        uint64
+	shown0       uint64 // gk.TestImagesShown when the checks began
+	images0      uint32
+	dropped0     uint64
+	menuTicks    int // menu-redraw: the view's redraws while the menu is open
+	menuA, menuB int // menu-redraw: clicks that reached item A's handler and item B's action
+	menuAct      gk.Action
+	ticks        gk.Timer
+	nTicks       int // shown by imagesView, so each tick is a new description
 }
 
 // A 2 x 2 PNG (red and green), a window's icon and an image of encoded bytes.
@@ -179,23 +189,85 @@ func (a *App) menuNoAction(cx *gk.Cx) {
 
 // --- image sources as bytes and pixels (13.31) ----------------------------------------------------------------
 
+// Where menu-redraw clicks: the dropdown's button, and its two items once it is open.
+const (
+	menuButton = "click 30 22\n"
+	menuAlpha  = "click 50 60\n"
+	menuBravo  = "click 50 88\n"
+)
+
 var redPixels = gk.PixelImage{Width: 2, Height: 1, RGBA: []byte{255, 0, 0, 255, 0, 0, 255, 255}}
 
+// imagesView is described again on every tick (its label changes): the same gk.RenderImage each time.
 func (a *App) imagesView(cx *gk.Cx) gk.Element {
-	return gk.HFlex(s.Gap2).
-		Child(gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: iconPNG}}).W(gk.Px(40)).H(gk.Px(40))).
-		Child(gk.Img(gk.ImageSourceRender{Value: redPixels}).W(gk.Px(40)).H(gk.Px(20))).
-		Child(gk.Img(gk.ImageSourceCustom{Value: redPixels}).W(gk.Px(40)).H(gk.Px(20)))
+	row := gk.HFlex(s.Gap2).Child(gk.Label(fmt.Sprintf("tick %d", a.nTicks))).
+		Child(gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: iconPNG}}).W(gk.Px(40)).H(gk.Px(40)))
+	if a.red != (gk.RenderImage{}) {
+		row = row.Child(gk.Img(gk.ImageSourceRender{Value: a.red}).W(gk.Px(40)).H(gk.Px(20))).
+			Child(gk.Img(gk.ImageSourceCustom{Value: a.red}).W(gk.Px(40)).H(gk.Px(20)))
+	}
+	return row
+}
+
+func (a *App) imagesInit(cx *gk.Cx) {
+	a.red = gk.NewRenderImage(cx, redPixels)
+	a.ticks = gk.Every(cx, 10e6, func(cx *gk.Cx) { a.nTicks++ }) // the view's own handler: it draws again
+	gk.After(cx, 10e6, a.imagesCheck)
+	gk.After(cx, 50e6, a.imagesKept)
+	gk.After(cx, 80e6, a.imagesGone)
 }
 
 func (a *App) imagesCheck(cx *gk.Cx) {
-	w, h, first := gk.TestPixelImage(cx, redPixels, false)
-	cw, ch, cfirst := gk.TestPixelImage(cx, redPixels, true)
-	fmt.Printf("port pixel image %dx%d first=%08x custom %dx%d first=%08x\n", w, h, first, cw, ch, cfirst)
+	w, h, first, id := gk.TestRenderImage(cx, a.red, false)
+	cw, ch, cfirst, cid := gk.TestRenderImage(cx, a.red, true)
+	a.redID = id
+	a.shown0, a.images0, a.dropped0 = gk.TestImagesShown(cx)
+	fmt.Printf("port pixel image %dx%d first=%08x custom %dx%d first=%08x same=%v\n", w, h, first, cw, ch, cfirst, id == cid)
 }
 
-func (a *App) badPixels(cx *gk.Cx) gk.Element {
-	return gk.Img(gk.ImageSourceRender{Value: gk.PixelImage{Width: 2, Height: 2, RGBA: []byte{1, 2, 3}}}) // stops: 3 bytes for 2x2
+// After frames that each named the image: gpui was handed the one image each time (one id, so one
+// texture), through ImageSourceRender and ImageSourceCustom alike; then released.
+func (a *App) imagesKept(cx *gk.Cx) {
+	times, images, _ := gk.TestImagesShown(cx)
+	_, _, _, id := gk.TestRenderImage(cx, a.red, false)
+	fmt.Printf("port image kept redrawn=%v same=%v new images=%d\n", times-a.shown0 >= 4, id == a.redID, images-a.images0)
+	gk.Release(cx, a.red)
+	gk.Release(cx, a.ticks)
+	a.red = gk.RenderImage{} // the view shows it no more
+}
+
+// After the release: its texture dropped from the window's atlas (Window::drop_image, one window).
+func (a *App) imagesGone(cx *gk.Cx) {
+	_, _, dropped := gk.TestImagesShown(cx)
+	fmt.Printf("port image released dropped=%d\n", dropped-a.dropped0)
+}
+
+// --- menu-redraw: a menu item's handler after its view has been described again many times ----------
+
+// menuView shows a dropdown with an item that has its own click handler (A) and one that runs an
+// action (B), beside a label that changes on every tick, so each redraw is a new description.
+func (a *App) menuView(cx *gk.Cx) gk.Element {
+	menu := gk.NewPopupMenu().
+		Item(gk.NewPopupMenuItem("Alpha").OnClick(func(cx *gk.Cx, _ gk.ClickEvent) { a.menuA++ })).
+		Menu("Bravo", a.menuAct)
+	return gk.HFlex(s.Gap2, s.P2).
+		Child(gk.DropdownMenu(gk.Button("menu").Label("Menu"), menu)).
+		Child(gk.Label(fmt.Sprintf("ticks %d", a.menuTicks)))
+}
+
+func (a *App) menuInit(cx *gk.Cx) {
+	a.menuAct = gk.NewAction(cx, "port.bravo")
+	gk.OnAppAction(cx, a.menuAct, func(cx *gk.Cx, _ gk.Action) { a.menuB++ })
+	gk.Every(cx, 10e6, func(cx *gk.Cx) { a.menuTicks++ }) // the view's own handler: it draws again
+}
+
+func (a *App) badPixels(cx *gk.Cx) {
+	gk.NewRenderImage(cx, gk.PixelImage{Width: 2, Height: 2, RGBA: []byte{1, 2, 3}}) // stops: 3 bytes for 2x2
+}
+
+func (a *App) imageInView(cx *gk.Cx) gk.Element {
+	gk.NewRenderImage(cx, redPixels) // stops: a view function may not make an image
+	return gk.Div()
 }
 
 // --- an element's tooltip (11.17) --------------------------------------------------------------------------------
@@ -274,7 +346,11 @@ func (a *App) init(cx *gk.Cx) {
 	case "menu-no-action":
 		gk.After(cx, 10e6, a.menuNoAction)
 	case "images":
-		gk.After(cx, 10e6, a.imagesCheck)
+		a.imagesInit(cx)
+	case "bad-pixels":
+		a.badPixels(cx)
+	case "menu-redraw", "menu-redraw-b":
+		a.menuInit(cx)
 	case "tooltip":
 		a.tip = gk.NewView(nil, a.tipView)
 	case "plot":
@@ -291,8 +367,10 @@ func (a *App) start(cx *gk.Cx) {
 		render = a.dragView
 	case "images":
 		render = a.imagesView
-	case "bad-pixels":
-		render = a.badPixels
+	case "image-in-view":
+		render = a.imageInView
+	case "menu-redraw", "menu-redraw-b":
+		render = a.menuView
 	case "tooltip":
 		render = a.tooltipView
 	case "plot":
@@ -316,10 +394,31 @@ func main() {
 		// rest on each element past the tooltip's delay
 		script += "frame\nmove 60 36\n" + strings.Repeat("advance 200\nframe\n", 4) + "shot tooltip-view.png\n" +
 			"move 60 92\n" + strings.Repeat("advance 200\nframe\n", 4) + "shot tooltip-kit.png\nstat\n"
+	case "menu-redraw", "menu-redraw-b":
+		// open the menu, let the view be described again ten times (a tick every 10 ms changes
+		// its label), then click item Alpha (menu-redraw) or Bravo (menu-redraw-b) once
+		item := menuAlpha
+		if a.mode == "menu-redraw-b" {
+			item = menuBravo
+		}
+		script = "size 640 480\nframe\n" + menuButton + "frame\n" + strings.Repeat("advance 10\nframe\n", 10) +
+			item + "frame\n" + strings.Repeat("advance 10\nframe\n", 3) + "stat\n"
+	case "images":
+		// a frame every 10 ms: the view names its image on each one
+		script = "size 640 480\n" + strings.Repeat("frame\nadvance 10\n", 10) + "frame\nstat\n"
 	default:
 		script += advance
 	}
+	if path := os.Getenv("GK_PORT_SCRIPT"); path != "" {
+		// a test's own script instead of the mode's (diagnosis: shots of what a mode draws)
+		if b, err := os.ReadFile(path); err == nil {
+			script = string(b)
+		}
+	}
 	gk.RunHeadless(script, a.start)
+	if strings.HasPrefix(a.mode, "menu-redraw") {
+		fmt.Printf("port menu fired alpha=%d bravo=%d redrawn=%v\n", a.menuA, a.menuB, a.menuTicks >= 10)
+	}
 	if a.mode == "quit-hook" {
 		fmt.Printf("port after the run quits=%d\n", a.quits) // the hook ran as the offscreen app shut down
 	}

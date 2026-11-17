@@ -101,7 +101,7 @@ pub fn apply_base_number_input(dx: &mut Dx, mut el: gpui_kit::base::NumberInput,
             257 => { el = { <gpui_kit::base::NumberInput>::controls_right(el) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::NumberInput>::disabled(el, a0) }; }
             259 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::base::NumberInput>::input(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: gpui_kit::base::StepAction, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 68, &a0, window, cx) } }; <gpui_kit::base::NumberInput>::on_step(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::base::StepAction, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 68, &a0, window, cx) } }; <gpui_kit::base::NumberInput>::on_step(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some(({ let s = if r.u8() != 0 { Some(build_gpui_style_refinement(dx, r.u32())?) } else { None }; let src = r.u64(); move |b: gpui_kit::base::Button| crate::editor_text::decorate(b, s, src) },)))() else { continue }; <gpui_kit::base::NumberInput>::decrement_button(el, a0) }; }
             262 => { el = { let Some((a0,)) = (|| Some(({ let s = if r.u8() != 0 { Some(build_gpui_style_refinement(dx, r.u32())?) } else { None }; let src = r.u64(); move |b: gpui_kit::base::Button| crate::editor_text::decorate(b, s, src) },)))() else { continue }; <gpui_kit::base::NumberInput>::increment_button(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }

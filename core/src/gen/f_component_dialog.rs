@@ -71,9 +71,9 @@ pub fn apply_component_alert_dialog(dx: &mut Dx, mut el: gpui_kit::component::di
             268 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::dialog::AlertDialog>::margin_top(el, a0) }; }
             269 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::dialog::AlertDialog>::ok_text(el, a0) }; }
             270 => { el = { let Some((a0,)) = (|| Some((de_40(r, dx)?,)))() else { continue }; <gpui_kit::component::dialog::AlertDialog>::ok_variant(el, a0) }; }
-            271 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::AlertDialog>::on_cancel(el, a0) }; }
-            272 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::dialog::AlertDialog>::on_close(el, a0) }; }
-            273 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::AlertDialog>::on_ok(el, a0) }; }
+            271 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::AlertDialog>::on_cancel(el, a0) }; }
+            272 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::dialog::AlertDialog>::on_close(el, a0) }; }
+            273 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::AlertDialog>::on_ok(el, a0) }; }
             274 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::AlertDialog>::show_cancel(el, a0) }; }
             275 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::title(el, a0) }; }
             276 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::AlertDialog>::trigger(el, a0) }; }
@@ -119,9 +119,9 @@ pub fn apply_component_dialog(dx: &mut Dx, mut el: gpui_kit::component::dialog::
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::Dialog>::keyboard(el, a0) }; }
             263 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::dialog::Dialog>::margin_top(el, a0) }; }
             264 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::dialog::Dialog>::max_w(el, a0) }; }
-            265 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::Dialog>::on_cancel(el, a0) }; }
-            266 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::dialog::Dialog>::on_close(el, a0) }; }
-            267 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::Dialog>::on_ok(el, a0) }; }
+            265 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::Dialog>::on_cancel(el, a0) }; }
+            266 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::dialog::Dialog>::on_close(el, a0) }; }
+            267 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::Dialog>::on_ok(el, a0) }; }
             268 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::Dialog>::overlay(el, a0) }; }
             269 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::Dialog>::overlay_closable(el, a0) }; }
             270 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::dialog::Dialog>::title(el, a0) }; }
@@ -191,8 +191,8 @@ pub fn apply_component_dialog_button_props(dx: &mut Dx, mut el: gpui_kit::compon
             257 => { el = { let Some((a0,)) = (|| Some((de_40(r, dx)?,)))() else { continue }; <gpui_kit::component::dialog::DialogButtonProps>::cancel_variant(el, a0) }; }
             258 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::dialog::DialogButtonProps>::ok_text(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some((de_40(r, dx)?,)))() else { continue }; <gpui_kit::component::dialog::DialogButtonProps>::ok_variant(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::DialogButtonProps>::on_cancel(el, a0) }; }
-            261 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::DialogButtonProps>::on_ok(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::DialogButtonProps>::on_cancel(el, a0) }; }
+            261 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::component::dialog::DialogButtonProps>::on_ok(el, a0) }; }
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::dialog::DialogButtonProps>::show_cancel(el, a0) }; }
             _ => bad_op("DialogButtonProps", op),
         }

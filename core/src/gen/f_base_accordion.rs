@@ -184,7 +184,7 @@ pub fn apply_base_accordion_trigger(dx: &mut Dx, mut el: gpui_kit::base::Accordi
         let r = &mut r;
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::AccordionTrigger>::disabled(el, a0) }; }
-            257 => { el = { let a0 = { let h = dx.handler(r); move |a0: bool, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 65, &(&a0, a1), window, cx) } }; <gpui_kit::base::AccordionTrigger>::on_change(el, a0) }; }
+            257 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: bool, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 65, &(&a0, a1), window, cx) } }; <gpui_kit::base::AccordionTrigger>::on_change(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::AccordionTrigger>::open(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

@@ -471,7 +471,7 @@ def odin_type(od, d, out):
     return {"dropaccept": "Drop_Accept", "dragpayload": "External_Drag_Payload", "prepaintorder": "[]int",
             "a11ychildren": "[]A11y_Child", "imagecache": "Image_Cache_Provider", "imagecacheref": "Image_Cache",
             "scrollanchor": "Scroll_Anchor", "uri": "string", "arcpath": "string", "imagebytes": "Image_Bytes",
-            "pixelimage": "Pixel_Image", "customimage": "Pixel_Image"}[k]
+            "pixelimage": "Render_Image", "customimage": "Render_Image"}[k]
 
 
 def odin_put(od, d, v):
@@ -490,8 +490,8 @@ def odin_put(od, d, v):
     if k == "imagebytes":
         return od.put(["enum", d[1]], f"{v}.format") + [f"put_bytes(o, {v}.bytes)"]
     return [{"dropaccept": f"put_drop_accept(o, {v})", "dragpayload": f"put_external_drag_payload(o, {v})",
-             "imagecache": f"put_image_cache_provider(o, {v})", "pixelimage": f"put_pixel_image(o, {v})",
-             "customimage": f"put_pixel_image(o, {v})"}[k]]
+             "imagecache": f"put_image_cache_provider(o, {v})", "pixelimage": f"put_render_image(o, {v})",
+             "customimage": f"put_render_image(o, {v})"}[k]]
 
 
 def call_safe(d):

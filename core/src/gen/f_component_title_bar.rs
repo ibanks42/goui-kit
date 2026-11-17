@@ -49,7 +49,7 @@ pub fn apply_component_title_bar(dx: &mut Dx, mut el: gpui_kit::component::Title
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::TitleBar>::on_close_window(el, a0) }; }
+            256 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::TitleBar>::on_close_window(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }

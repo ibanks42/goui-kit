@@ -304,7 +304,6 @@ bind_row :: proc(rec: ^Source_Rec, key: u64, view: u64) {
 	v.src = rec.h
 	v.last = make([dynamic]u8, 0, 0, runtime.heap_allocator())
 	v.cur = make([dynamic]Handler, 0, 0, runtime.heap_allocator())
-	v.prev = make([dynamic]Handler, 0, 0, runtime.heap_allocator())
 	if views == nil {
 		views = make(map[u64]^View_Rec, 64, runtime.heap_allocator())
 	}
@@ -326,7 +325,7 @@ unbind_row :: proc(view: u64) {
 		delete_key(&rec.rows, row_key(v.row_at))
 	}
 	free_handlers(v.cur[:])
-	free_handlers(v.prev[:])
+	free_old_tables(v)
 	v.dead = true
 	if dead_rows == nil {
 		dead_rows = make([dynamic]^View_Rec, 0, 64, runtime.heap_allocator())
@@ -381,7 +380,6 @@ release_source :: proc(t: ^Turn, src: Row_Source, loc: runtime.Source_Code_Locat
 sweep_rows :: proc() {
 	for v in dead_rows {
 		delete(v.cur)
-		delete(v.prev)
 		delete(v.last)
 		free(v, runtime.heap_allocator())
 	}

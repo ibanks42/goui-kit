@@ -48,7 +48,7 @@ pub fn apply_base_checkbox(dx: &mut Dx, mut el: gpui_kit::base::Checkbox, first:
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Checkbox>::checked(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Checkbox>::disabled(el, a0) }; }
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Checkbox>::indeterminate(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: gpui_kit::base::CheckboxState, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 67, &(&a0, a1), window, cx) } }; <gpui_kit::base::Checkbox>::on_change(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::base::CheckboxState, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 67, &(&a0, a1), window, cx) } }; <gpui_kit::base::Checkbox>::on_change(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some((de_20(r, dx)?,)))() else { continue }; <gpui_kit::base::Checkbox>::role(el, a0) }; }
             262 => { el = { let a0 = en_37(r.u16()); <gpui_kit::base::Checkbox>::state(el, a0) }; }
             263 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::CheckboxStyles| { let first = dx.node(n).2; apply_base_checkbox_styles(dx, v, first) } }; <gpui_kit::base::Checkbox>::styles(el, a0) }; }

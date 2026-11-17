@@ -48,7 +48,7 @@ pub fn apply_component_popover(dx: &mut Dx, mut el: gpui_kit::component::popover
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::popover::Popover>::default_open(el, a0) }; }
             260 => { el = { let Some((a0,)) = (|| Some((de_4(r, dx)?,)))() else { continue }; <gpui_kit::component::popover::Popover>::mouse_button(el, a0) }; }
             261 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::component::popover::Popover>::offset(el, a0) }; }
-            262 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::popover::Popover>::on_open_change(el, a0) }; }
+            262 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::popover::Popover>::on_open_change(el, a0) }; }
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::popover::Popover>::open(el, a0) }; }
             264 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::popover::Popover>::overlay_closable(el, a0) }; }
             265 => { el = { let a0 = genapi::shown_focus(r.u64()); <gpui_kit::component::popover::Popover>::track_focus(el, &a0) }; }

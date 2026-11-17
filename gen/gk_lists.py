@@ -97,7 +97,8 @@ def rust_dec(rs, d):
         return c6  # the components family's PROTOCOLS.md 11.19 to 11.22, 12.16
     if k == "handler" and rs.call:
         # A handler in a call op: a kept handler (slot, generation), fired like a subscription's.
-        return rs.handler(d).replace("dx.handler(r)", "crate::shim_editor::kept(r)")
+        return (rs.handler(d).replace("dx.handler(r)", "crate::shim_editor::kept(r)")
+                .replace("let k = dx.pin(); ", "").replace("let _ = &k; ", ""))  # a kept handler: no tape
     if k == "libval":
         return f"<{d[1]} as genapi::Unwire>::get(r)"
     if k == "char":

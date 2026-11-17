@@ -24,7 +24,7 @@ pub fn apply_gpui_div(dx: &mut Dx, mut el: gpui_kit::Div, first: u32) -> gpui_ki
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = { let h = dx.handler(r); move |a0: std::vec::Vec<gpui_kit::Bounds<gpui_kit::Pixels>>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 73, &a0, window, cx) } }; <gpui_kit::Div>::on_children_prepainted(el, a0) }; }
+            256 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: std::vec::Vec<gpui_kit::Bounds<gpui_kit::Pixels>>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 73, &a0, window, cx) } }; <gpui_kit::Div>::on_children_prepainted(el, a0) }; }
             257 => { el = { let a0 = crate::platform::cache_provider(r); <gpui_kit::Div>::image_cache(el, a0) }; }
             258 => { el = { let a0 = { let v = crate::platform::usizes(r); move |_: &mut gpui_kit::Window, _: &mut gpui_kit::App| v.iter().copied().collect() }; <gpui_kit::Div>::with_dynamic_prepaint_order(el, a0) }; }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }

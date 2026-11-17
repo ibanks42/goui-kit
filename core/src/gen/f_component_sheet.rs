@@ -43,7 +43,7 @@ pub fn apply_component_sheet(dx: &mut Dx, mut el: gpui_kit::component::sheet::Sh
         let r = &mut r;
         match op {
             256 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::sheet::Sheet>::footer(el, a0) }; }
-            257 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::sheet::Sheet>::on_close(el, a0) }; }
+            257 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::sheet::Sheet>::on_close(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::sheet::Sheet>::overlay(el, a0) }; }
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::sheet::Sheet>::overlay_closable(el, a0) }; }
             260 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::sheet::Sheet>::resizable(el, a0) }; }

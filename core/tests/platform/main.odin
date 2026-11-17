@@ -6,7 +6,7 @@
 //
 //   GK_PROTO=dialogs | cancel | race | view-released | menus | release-twice | request-in-view |
 //            wrong-payload | menu-no-action
-//            PROTOCOLS.md 13.31: elements | drag | vlist | cache-in-view | scope-zero
+//            PROTOCOLS.md 13.31: elements | drag | vlist | cache-in-view | scope-zero | image-in-view
 //            PROTOCOLS.md 11.32: real-dialogs | real-url | real-menus (a real window, the
 //            platform asked: run by bin/platform-real under gates/display.sh, GK_SCRIPTED_PLATFORM
 //            unset); context-menu | context-menu-kit (offscreen: an input's right click)
@@ -33,6 +33,12 @@ App :: struct {
 	save:      gk.Action,
 	// PROTOCOLS.md 13.31
 	cache:     gk.Image_Cache,
+	pic:       gk.Render_Image,
+	pic_id:    u64,
+	ticks:     gk.Timer,
+	shown0:    u64,
+	images0:   u32,
+	dropped0:  u64,
 	scroll:    gk.Scroll_Handle,
 	anchor:    gk.Scroll_Anchor,
 	scope:     gk.Text_Selection_Scope,
@@ -208,10 +214,16 @@ elements :: proc(a: ^App, cx: ^gk.Cx) {
 	fmt.printf("platform drag payload none n=%d\n", len(none))
 	order := gk.test_prepaint_order(cx, {2, 0, 1})
 	fmt.printf("platform prepaint order=%v\n", order)
-	red := []u8{255, 0, 0, 255, 0, 0, 255, 255}
-	w, h, first := gk.test_pixel_image(cx, {2, 1, red})
-	cw, ch, cfirst := gk.test_pixel_image(cx, {2, 1, red}, custom = true)
-	fmt.printf("platform pixel image %dx%d first=%08x custom %dx%d first=%08x\n", w, h, first, cw, ch, cfirst)
+	red := gk.render_image(cx, {2, 1, {255, 0, 0, 255, 0, 0, 255, 255}})
+	w, h, first, id := gk.test_render_image(cx, red)
+	cw, ch, cfirst, cid := gk.test_render_image(cx, red, custom = true)
+	fmt.printf("platform pixel image %dx%d first=%08x custom %dx%d first=%08x same=%v\n", w, h, first, cw, ch, cfirst, id == cid)
+	gk.release(cx, red)
+	// the image elements_view shows on every frame: one gpui image, its id kept (PROTOCOLS.md 13.31)
+	a.pic = gk.render_image(cx, {2, 2, {255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255}})
+	_, _, _, a.pic_id = gk.test_render_image(cx, a.pic)
+	a.shown0, a.images0, a.dropped0 = gk.test_images_shown(cx)
+	a.ticks = gk.every(cx, 5, gk.on(elements_tick)) // the view draws again on every tick
 	if e, ok := gk.test_file_drop_entered(cx).(gk.File_Drop_Event_Entered); ok {
 		fmt.printf("platform file drop entered at=%.0f,%.0f paths=%s\n", e.position.x, e.position.y,
 			strings.join(transmute([]string)e.paths, ",", context.temp_allocator))
@@ -229,11 +241,29 @@ elements :: proc(a: ^App, cx: ^gk.Cx) {
 }
 
 elements_drawn :: proc(a: ^App, cx: ^gk.Cx) {
+	// drawn again and again since elements: gpui was handed the one image each time (one texture)
+	times, images, _ := gk.test_images_shown(cx)
+	_, _, _, id := gk.test_render_image(cx, a.pic)
+	fmt.printf("platform image kept redrawn=%v same=%v new images=%d\n", times - a.shown0 >= 2, id == a.pic_id, images - a.images0)
+	gk.release(cx, a.pic)
+	gk.release(cx, a.ticks)
+	a.pic = {}
 	gk.scroll_anchor_to(cx, a.anchor)
 	gk.release(cx, a.anchor)
 	gk.release(cx, a.cache)
 	gk.release(cx, a.scope)
+	a.cache = {} // the view shows none of them from now on
 	fmt.printf("platform elements released described=%d\n", a.described)
+}
+
+// After the release: its texture dropped from the window's atlas (Window::drop_image, one window).
+elements_gone :: proc(a: ^App, cx: ^gk.Cx) {
+	_, _, dropped := gk.test_images_shown(cx)
+	fmt.printf("platform image released dropped=%d\n", dropped - a.dropped0)
+}
+
+elements_tick :: proc(a: ^App, cx: ^gk.Cx) {
+	a.fired += 1
 }
 
 // The elements of 13.31 drawn (a mode's view): a scope, a cache on a div and an img, an anchored
@@ -242,8 +272,10 @@ elements_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	if a.cache.h == 0 {
 		return gk.label("waiting")
 	}
-	px := gk.Pixel_Image{2, 2, {255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255}}
-	pic := gk.img(gk.Image_Source_Render{px})->w(gk.px(20))->h(gk.px(20))->image_cache(a.cache)
+	pic := gk.div()->w(gk.px(20))->h(gk.px(20)) // the image, until it is released
+	if a.pic.h != 0 {
+		pic = pic->child(gk.img(gk.Image_Source_Render{a.pic})->w(gk.px(20))->h(gk.px(20))->image_cache(a.cache))
+	}
 	inner := gk.div()->id("anchored")->anchor_scroll(a.anchor)->a11y_synthetic_children({{"q1", .List_Item, "first"}, {"q2", .List_Item, "second"}})->
 		child(gk.label("anchored"))
 	box := gk.div()->image_cache(a.cache)->with_dynamic_prepaint_order({1, 0})->child(pic)->child(inner)
@@ -457,6 +489,9 @@ view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
 	if a.mode == "cache-in-view" {
 		gk.image_cache(cx) // stops: a view procedure may not make an image cache
 	}
+	if a.mode == "image-in-view" {
+		gk.render_image(cx, {1, 1, {0, 0, 0, 255}}) // stops: a view procedure may not make an image
+	}
 	switch a.mode {
 	case "elements":
 		return elements_view(a, cx)
@@ -506,12 +541,13 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 	case "elements":
 		gk.after(cx, 10, gk.on(elements))
 		gk.after(cx, 40, gk.on(elements_drawn))
+		gk.after(cx, 60, gk.on(elements_gone))
 	case "drag":
 		gk.after(cx, 60, gk.on(drag_done))
 	case "vlist":
 		vlist_init(a, cx)
 		gk.after(cx, 60, gk.on(vlist_check))
-	case "cache-in-view":
+	case "cache-in-view", "image-in-view":
 		// misuse checked in view below
 	case "real-dialogs":
 		gk.after(cx, 100, gk.on(real_ask))

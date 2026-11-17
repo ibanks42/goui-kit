@@ -9,6 +9,7 @@ descriptor, in gen/out/go-report.md; nothing is left out silently.
 """
 import os
 import re
+import gk_doc
 
 from gk_model import INT_WIRE, SHORT, ada, is_fill, snake
 
@@ -285,7 +286,7 @@ class Go:
         if k == "imagebytes":
             return "ImageBytes"
         if k in ("pixelimage", "customimage"):
-            return "PixelImage"
+            return "RenderImage"
         raise Unsup(k)
 
     @staticmethod
@@ -452,7 +453,7 @@ class Go:
         if k == "imagebytes":
             return self.put(["enum", d[1]], f"{v}.Format", depth) + [f"putBytes(o, {v}.Bytes)"]
         if k in ("pixelimage", "customimage"):
-            return [f"putPixelImage(o, {v})"]
+            return [f"putRenderImage(o, {v})"]
         raise Unsup(k)
 
     # ------------------------------------------------------------ readers
@@ -1127,7 +1128,8 @@ class Go:
                 self.add(f"// {V} is {rt}::{v['name']}: not carried in Go yet ({ex}).", f"type {V} struct{{}}",
                          f"func ({V}) is{E}() {{}}", "")
                 continue
-            self.add(f"// {V} is {rt}::{v['name']}.", f"type {V} struct {{", *fields, "}", f"func ({V}) is{E}() {{}}", "")
+            self.add(*gk_doc.note(f"{rt}::{v['name']}", "go"), f"// {V} is {rt}::{v['name']}.", f"type {V} struct {{", *fields, "}",
+                     f"func ({V}) is{E}() {{}}", "")
             if e["in"]:
                 try:
                     if self.embeds(v):

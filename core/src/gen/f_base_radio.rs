@@ -46,7 +46,7 @@ pub fn apply_base_radio(dx: &mut Dx, mut el: gpui_kit::base::Radio, first: u32) 
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Radio>::checked(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Radio>::disabled(el, a0) }; }
             259 => { el = { let a0 = element_id(r); <gpui_kit::base::Radio>::id(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: bool, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 65, &(&a0, a1), window, cx) } }; <gpui_kit::base::Radio>::on_change(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: bool, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 65, &(&a0, a1), window, cx) } }; <gpui_kit::base::Radio>::on_change(el, a0) }; }
             261 => { el = { let a0 = r.u64() as usize; let a1 = r.u64() as usize; <gpui_kit::base::Radio>::set_position(el, a0, a1) }; }
             262 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::RadioStyles| { let first = dx.node(n).2; apply_base_radio_styles(dx, v, first) } }; <gpui_kit::base::Radio>::styles(el, a0) }; }
             263 => { el = { let a0 = r.i64() as isize; <gpui_kit::base::Radio>::tab_index(el, a0) }; }

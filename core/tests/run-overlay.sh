@@ -29,6 +29,12 @@ GK_PROTO_BIN=overlay-odin run questionnaire 0 \
 GK_PROTO_BIN=overlay-odin run release 2 'overlay released the open dialog.s view' 'through a handle that cannot be used'
 GK_PROTO_BIN=overlay-odin run wrong-root 2 'returned a node of type [0-9]+, not a Dialog'
 GK_PROTO_BIN=overlay-odin run questionnaire-dup 2 'a constructor refused its arguments: DuplicateItem'
+# A dropdown opened, its view described again ten times while it is open (a label that changes on
+# every tick), then one item clicked: an item's own click handler (Alpha) fires exactly once, as an
+# item that runs an action (Bravo) does. The open menu holds the description that made it, so its
+# handler table stays (PROTOCOLS.md section 4); before, a handler two descriptions old was dropped.
+GK_PROTO_BIN=overlay-odin run menu-redraw 0 'overlay menu fired alpha=1 bravo=0 redrawn=true'
+GK_PROTO_BIN=overlay-odin run menu-redraw-b 0 'overlay menu fired alpha=0 bravo=1 redrawn=true'
 # Dock panels (11.7): two Odin views as panels of the kit's styled dock, described when the dock
 # draws them; the dock tells them they were added and made active (Panel_Event, queued); the app
 # renames one and emits ZoomIn (delivered; the kit 0.9.1 zooms tab groups, never a panel, so the

@@ -280,7 +280,7 @@ func releaseSource(t *turn, src RowSource) {
 
 func sweepRows() {
 	for _, v := range deadRows {
-		v.cur, v.prev, v.last = nil, nil, nil
+		v.cur, v.old, v.last = nil, nil, nil
 	}
 	deadRows = deadRows[:0]
 }

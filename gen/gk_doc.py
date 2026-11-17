@@ -176,6 +176,33 @@ class Docs:
         return len(rows)
 
 
+# The binding's own notes on a type that has no upstream doc, or one the binding uses differently:
+# by upstream path, per language, lines without a comment marker. Written above the type's
+# "X is <path>" line.
+NOTES = {
+    "gpui_kit::ImageSource::Render": {
+        "go": ["Shows an image the library made from pixels. Make the gk.RenderImage once, with",
+               "gk.NewRenderImage, keep it while a view shows it and gk.Release it when no view does:",
+               "gpui keeps its texture on the graphics card until then."],
+        "odin": ["Shows an image the library made from pixels. Make the gk.Render_Image once, with",
+                 "gk.render_image, keep it while a view shows it and gk.release it when no view does:",
+                 "gpui keeps its texture on the graphics card until then."],
+    },
+    "gpui_kit::ImageSource::Custom": {
+        "go": ["Upstream's loader, called while gpui draws, is the image itself here: a gk.RenderImage",
+               "made once with gk.NewRenderImage, as for gk.ImageSourceRender."],
+        "odin": ["Upstream's loader, called while gpui draws, is the image itself here: a gk.Render_Image",
+                 "made once with gk.render_image, as for gk.Image_Source_Render."],
+    },
+}
+
+
+def note(path, lang):
+    """The binding's note on path (NOTES) as comment lines ending in a blank comment line, or []."""
+    lines = NOTES.get(path, {}).get(lang)
+    return [f"// {x}" for x in lines] + ["//"] if lines else []
+
+
 FACADE = {"gpui_component": "gpui_kit::component", "gpui_base": "gpui_kit::base", "gpui": "gpui_kit"}
 
 

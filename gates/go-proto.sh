@@ -147,9 +147,17 @@ port drag 0 'port drag preview described' 'port drop on seven id=7 text=seven dr
 port menus 0 'port menus Port:4,Edit:1 edit_disabled=true sub=More copy_os=true checked=true quit_same=true'
 port menu-no-action 2 'the item "Open" has no action' 'at .*port/main.go:[0-9]+'
 # Images from encoded bytes, from pixels and through the custom loader drawn; pixels as gpui keeps
-# them (BGRA); pixels of the wrong size stop.
-port images 0 'port pixel image 2x1 first=ffff0000 custom 2x1 first=ffff0000'
+# them (BGRA). An image made once and named on every redraw is handed to gpui as one image (one id,
+# so one texture); released, its texture is dropped from the window (no new texture per frame,
+# PROTOCOLS.md 13.31). Pixels of the wrong size stop; so does an image made in a view function.
+port images 0 'port pixel image 2x1 first=ffff0000 custom 2x1 first=ffff0000 same=true' \
+  'port image kept redrawn=true same=true new images=0' 'port image released dropped=1'
 port bad-pixels 2 'a gk.PixelImage of 2x2 pixels holds 3 bytes' 'at .*port/main.go:[0-9]+'
+port image-in-view 2 'a view function may not make an image' 'at .*port/main.go:[0-9]+'
+# A dropdown's item clicked after its view was described again ten times while the menu was open:
+# its own OnClick fires exactly once, as an action item does (PROTOCOLS.md section 4).
+port menu-redraw 0 'port menu fired alpha=1 bravo=0 redrawn=true'
+port menu-redraw-b 0 'port menu fired alpha=0 bravo=1 redrawn=true'
 # An element's tooltip: a view of the app's shown after resting on the element, the kit's tooltip
 # with an element of the app's, and with text.
 port tooltip 0 'port tooltip view described' 'gk-headless: wrote tooltip-kit.png'

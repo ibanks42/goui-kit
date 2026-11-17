@@ -394,20 +394,24 @@ func event(cx *Cx, r *reader) {
 			}
 		}
 	} else if v := views[view]; v != nil {
-		var table []handlerRec
-		if gen == v.gen {
-			table = v.cur
-		} else if gen+1 == v.gen {
-			table = v.prev
+		table, ok := v.cur, gen == v.gen
+		if !ok {
+			table, ok = v.old[gen]
 		}
-		if int(id) < len(table) {
+		if ok && int(id) < len(table) {
 			h, found, owner = table[id], true, view
 			t.owner = v
+		} else if libDiag {
+			// Every description the library holds keeps its table (retireTable), so an event
+			// for a live view always finds its handler: one that does not is a bug in the
+			// binding, which would otherwise drop a click without a word.
+			fmt.Fprintf(os.Stderr, "gk: an event came for handler %d of description %d of view %#x, whose handler table is gone (the view's description is %d): the library and the package disagree about which descriptions are alive. This is a bug in the binding; please report it\n", id, gen, view, v.gen)
+			os.Exit(1)
 		}
 	}
 	if !found {
-		// The tape that named this handler is two generations old, or its subscription was
-		// released. The library falls back to the default return value.
+		// The view was released, or the subscription or timer that named this handler. The
+		// library falls back to the default return value.
 		dropped++
 		if debug {
 			fmt.Fprintf(os.Stderr, "gk: dropped event for view %#x generation %d handler %d\n", view, gen, id)

@@ -2,10 +2,10 @@
 
 package gk
 
-const apiHash uint64 = 0x345f7befd1559cb1
+const apiHash uint64 = 0x36661b9bf191d41c
 
 const abiMajor = 0
-const abiMinor = 4
+const abiMinor = 5
 const featGpuiFast = 1
 const featDiag = 2
 const featAll = 4
@@ -191,6 +191,7 @@ const nAnimated = 48
 const nRowMenu = 38
 const cSearchRules = 164
 const cImageCacheNew = 90
+const cRenderImageNew = 100
 const cScrollAnchorNew = 91
 const cScrollAnchorTo = 92
 const cTextScopeNew = 93

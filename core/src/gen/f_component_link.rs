@@ -44,7 +44,7 @@ pub fn apply_component_link(dx: &mut Dx, mut el: gpui_kit::component::link::Link
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::link::Link>::disabled(el, a0) }; }
             257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::link::Link>::href(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::link::Link>::on_click(el, a0) }; }
+            258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::link::Link>::on_click(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18432..=18559 => { el = tr_theme_styled_54(el, op, r, dx); }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }

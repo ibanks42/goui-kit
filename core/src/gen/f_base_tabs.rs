@@ -47,7 +47,7 @@ pub fn apply_base_tab(dx: &mut Dx, mut el: gpui_kit::base::Tab, first: u32) -> g
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::Tab>::accessibility_label(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Tab>::disabled(el, a0) }; }
             258 => { el = { let a0 = element_id(r); <gpui_kit::base::Tab>::id(el, a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::base::Tab>::on_click(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::base::Tab>::on_click(el, a0) }; }
             260 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Tab>::selected(el, a0) }; }
             261 => { el = { let a0 = r.u64() as usize; let a1 = r.u64() as usize; <gpui_kit::base::Tab>::set_position(el, a0, a1) }; }
             262 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::TabStyles| { let first = dx.node(n).2; apply_base_tab_styles(dx, v, first) } }; <gpui_kit::base::Tab>::styles(el, a0) }; }

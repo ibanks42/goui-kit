@@ -139,9 +139,17 @@ func dispatch(kind uint32, in []byte) []byte {
 		}
 	case kViews:
 		t.window = r.u64()
-		n := int(r.u32())
-		for range n {
-			if v := views[r.u64()]; v != nil {
+		list := make([]uint64, r.u32())
+		for i := range list {
+			list[i] = r.u64()
+		}
+		// The descriptions the library dropped since the last VIEWS turn: their tables go.
+		for range r.u32() {
+			view := r.u64()
+			retireTable(view, r.u32())
+		}
+		for _, h := range list {
+			if v := views[h]; v != nil {
 				describe(cx, v)
 			}
 		}

@@ -22,8 +22,9 @@ type App struct {
 	savedAt string
 	ask     gk.Built[gk.AlertDialogEl]
 	count   gk.Model[int]
-	preview gk.View // a drag's preview (docs/GO.md section 10)
-	tipView gk.View // a view as a tooltip
+	preview gk.View        // a drag's preview (docs/GO.md section 10)
+	tipView gk.View        // a view as a tooltip
+	pic     gk.RenderImage // an image made once from pixels (docs/GO.md section 7)
 }
 
 func (a *App) init(cx *gk.Cx) {
@@ -35,6 +36,8 @@ func (a *App) init(cx *gk.Cx) {
 	// actions!, KeyBinding::new and on_action, in one call
 	a.save = gk.Shortcut(cx, "ctrl-s", a.saveNow)
 	a.ask = gk.NewBuilt(cx, a.confirm)
+	w, h, px := uint32(1), uint32(1), []byte{255, 0, 0, 255}
+	a.pic = gk.NewRenderImage(cx, gk.PixelImage{Width: w, Height: h, RGBA: px})
 	gk.After(cx, 500*time.Millisecond, a.tick)
 	gk.ThemeChange(cx, gk.ThemeModeDark)
 }
@@ -179,7 +182,7 @@ func (a *App) port(cx *gk.Cx) gk.Element {
 	cyan, violet := gk.HSLA(0.5, 0.75, 0.55, 1), gk.HSLA(0.75, 0.6, 0.65, 1)
 	g := gk.NewLinearGradient(0, gk.NewLinearColorStop(cyan, 0), gk.NewLinearColorStop(violet, 1)).InOklab()
 	el := gk.Label("custom")
-	w, h, px, b := uint32(1), uint32(1), []byte{255, 0, 0, 255}, pngBytes
+	b, img := pngBytes, a.pic
 	return gk.VFlex().
 		Child(gk.Div().H(gk.Px(8)).Bg(gk.NewLinearGradient(90, gk.NewLinearColorStop(cyan, 0), gk.NewLinearColorStop(violet, 1)))).
 		Child(gk.Div().H(gk.Px(8)).Bg(g)).
@@ -187,7 +190,7 @@ func (a *App) port(cx *gk.Cx) gk.Element {
 		Child(gk.Div().ID("saved").Tooltip(gk.NewKitTooltip("Saved"))).
 		Child(gk.Div().ID("custom").Tooltip(gk.NewKitTooltipElement(el))).
 		Child(gk.Div().ID("view").Tooltip(a.tipView)).
-		Child(gk.Img(gk.ImageSourceRender{Value: gk.PixelImage{Width: w, Height: h, RGBA: px}})).
+		Child(gk.Img(gk.ImageSourceRender{Value: img})).
 		Child(gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: b}}))
 }
 

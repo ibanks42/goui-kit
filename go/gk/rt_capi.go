@@ -62,6 +62,9 @@ func LibraryInfo() Info {
 	}
 }
 
+// libDiag: the library is the diagnostic one (tests), where a binding fault stops loudly.
+var libDiag bool
+
 func lastError() string {
 	var n C.size_t
 	p := C.gk_last_error(&n)
@@ -243,6 +246,7 @@ func checkLibrary() {
 			info.AbiMajor, info.AbiMinor, info.APIHash, info.Versions, abiMajor, abiMinor, expectHash, libFile, libPoint)
 		os.Exit(1)
 	}
+	libDiag = info.Diag
 	if os.Getenv("GK_INFO") != "" {
 		fmt.Printf("gk-info binding=go abi=%d.%d api_hash=%#x gpui_fast=%v diag=%v versions=%q\n",
 			info.AbiMajor, info.AbiMinor, info.APIHash, info.GpuiFast, info.Diag, info.Versions)

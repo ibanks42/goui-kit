@@ -65,6 +65,7 @@ pub fn call(
                     drop(row);
                 }
             }
+            crate::platform::released(&item, &mut c);
             drop(item);
             Ok(())
         }

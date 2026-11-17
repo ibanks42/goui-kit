@@ -875,15 +875,34 @@ fn pre_frame(wh: u64, window: &mut Window, cx: &mut App) {
     });
 }
 
+/// (view, generation) of the descriptions dropped since the last VIEWS turn (`GenPin`'s Drop,
+/// which may run on any thread).
+static RETIRED: std::sync::Mutex<Vec<(u64, u32)>> = std::sync::Mutex::new(Vec::new());
+
+/// A view's description of this generation is gone (`GenPin`'s Drop): its handler table can go.
+pub fn retire(view: u64, generation: u32) {
+    if let Ok(mut r) = RETIRED.lock() {
+        r.push((view, generation));
+    }
+}
+
 /// One VIEWS turn: the binding runs the view procedure of each listed view (and of views they
 /// slot that have no tape yet) and replies with the tapes that changed. Each changed tape is
 /// set on its entity and that entity alone is notified.
 pub fn describe(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
-    let mut req = Vec::with_capacity(12 + views.len() * 8);
+    let retired = RETIRED.lock().map(|mut r| std::mem::take(&mut *r)).unwrap_or_default();
+    let mut req = Vec::with_capacity(16 + views.len() * 8 + retired.len() * 12);
     req.put_u64(wh);
     req.put_u32(views.len() as u32);
     for v in views {
         req.put_u64(*v);
+    }
+    // The descriptions dropped since the last VIEWS turn (`GenPin`'s Drop): their handler tables
+    // can go.
+    req.put_u32(retired.len() as u32);
+    for (view, generation) in retired {
+        req.put_u64(view);
+        req.put_u32(generation);
     }
     let mut reply = turn(K_VIEWS, &req, Some(&mut *window), cx);
     // Sources whose watchers must draw again: rows they drew as placeholders arrived, or rows
@@ -923,7 +942,14 @@ pub fn describe(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
 fn accept(wh: u64, view: u64, generation: u32, bytes: Vec<u8>, cx: &mut App) -> GkResult<()> {
     trace(|| format!("tape view={view:#x} generation={generation} bytes={}", bytes.len()));
     let n = bytes.len() as u64;
-    let tape = Tape::parse(bytes, generation)?;
+    let mut tape = match Tape::parse(bytes, generation) {
+        Ok(tape) => tape,
+        Err(e) => {
+            retire(view, generation); // never held: its handlers cannot fire
+            return Err(e);
+        }
+    };
+    tape.pin = Some(std::sync::Arc::new(crate::tape::GenPin { view, generation }));
     let entity = with(|s| s.view(view))?;
     with(|s| {
         for slot in &tape.slots {

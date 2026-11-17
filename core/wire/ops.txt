@@ -6,7 +6,7 @@
 #
 # class  NAME  number
 abi MAJOR 0
-abi MINOR 4
+abi MINOR 5
 
 feat GPUI_FAST 1
 feat DIAG 2
@@ -434,6 +434,10 @@ call SEARCH_RULES 164
 # app block (call 64-111, node 16-23).
 # -> u64 image cache (kind OBJ, kept; immediate): gpui's RetainAllImageCache::new
 call IMAGE_CACHE_NEW 90
+# u32 width, u32 height, u32 n, n bytes of RGBA rows -> u64 image (kind OBJ, kept; immediate): gpui's
+# RenderImage of those pixels (BGRA), which ImageSource::Render and Custom name by handle; gk.release drops
+# its texture from every window's atlas (Window::drop_image)
+call RENDER_IMAGE_NEW 100
 # u64 scroll handle -> u64 scroll anchor (kind OBJ, kept; immediate): ScrollAnchor::for_handle
 call SCROLL_ANCHOR_NEW 91
 # u64 scroll anchor (immediate, with the turn's window): ScrollAnchor::scroll_to

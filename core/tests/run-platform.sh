@@ -43,19 +43,24 @@ GK_PROTO_BIN=platform-odin run menu-no-action 2 'the item "Open" has no action' 
 
 # Round 6 (docs/PROTOCOLS.md 13.31): gpui's element leftovers.
 # The decoders generated code uses, run by the library on what the package wrote (can_drop's ids and
-# files, a drag's files for the platform, a prepaint order, an image as pixels and through
-# ImageSource::Custom's loader, its first pixel in gpui's BGRA); the image cache, scroll anchor and
-# text selection scope made, the elements that take them drawn (a cache on a div and an img of
-# pixels, an anchored scrolled child with synthetic accessibility nodes, a prepaint order, a scope,
-# a drag's files), scroll_anchor_to run, then all three released.
+# files, a drag's files for the platform, a prepaint order, an image made from pixels and shown
+# through ImageSource::Custom's loader, its first pixel in gpui's BGRA); the image cache, scroll
+# anchor and text selection scope made, the elements that take them drawn (a cache on a div and an
+# img of an image made from pixels, an anchored scrolled child with synthetic accessibility nodes, a
+# prepaint order, a scope, a drag's files), scroll_anchor_to run, then all three released. The image
+# the view names on every redraw is handed to gpui as one image (one id, so one texture) however often
+# it is drawn; released, its texture is dropped from the window (the leak of a new texture per frame,
+# PROTOCOLS.md 13.31).
 GK_PROTO_BIN=platform-odin run elements 0 \
   'platform drop accept 7=true 8=false any=true none=false files=false,true' \
   'platform drag payload n=2 first=/tmp/a.txt dir=false,true' 'platform drag payload none n=0' \
   'platform prepaint order=\[2, 0, 1\]' \
-  'platform pixel image 2x1 first=ffff0000 custom 2x1 first=ffff0000' \
+  'platform pixel image 2x1 first=ffff0000 custom 2x1 first=ffff0000 same=true' \
   'platform file drop entered at=3,4 paths=/tmp/a.txt,/tmp/b dir' \
   'platform sequence steps=2 from=10 targets=40,80' \
-  'platform objects cache=true anchor=true scope=true' 'platform elements released described=[0-9]+'
+  'platform objects cache=true anchor=true scope=true' \
+  'platform image kept redrawn=true same=true new images=0' 'platform elements released described=[0-9]+' \
+  'platform image released dropped=1'
 # A drag of the library's value 7 onto a target whose can_drop takes 7: its drop runs and its
 # on_drag_move handler gets the value and the element's bounds; then onto one that takes only 8: no
 # drop (drops stays 1).
@@ -64,8 +69,10 @@ GK_PROTO_BIN=platform-odin run drag 0 'platform drag move id=7 text=seven bounds
 # A vertical and a horizontal virtual list over a row source of 1000 rows of three heights: rows in
 # view described after one frame of placeholders, not all of them.
 GK_PROTO_BIN=platform-odin run vlist 0 'platform vlist rows described=true of 1000 some=true'
-# Misuse: an image cache made in a view procedure; a text selection scope the library never made.
+# Misuse: an image cache or an image made in a view procedure; a text selection scope the library never
+# made.
 GK_PROTO_BIN=platform-odin run cache-in-view 2 'a view procedure may not make an image cache' 'at .*platform/main.odin:[0-9]+'
+GK_PROTO_BIN=platform-odin run image-in-view 2 'a view procedure may not make an image' 'at .*platform/main.odin:[0-9]+'
 GK_PROTO_BIN=platform-odin run scope-zero 2 'gk.text_selection_scope: a scope made by gk.text_selection_scope_id' 'platform/main.odin:[0-9]+'
 
 # Round 7 (docs/PROTOCOLS.md 11.32): the platform asked for real, not the script. bin/platform-real

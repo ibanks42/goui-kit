@@ -516,6 +516,11 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             c.out.put_u64(crate::genapi::obj_new(cache));
             Ok(())
         }
+        C_RENDER_IMAGE_NEW => {
+            let img = render_image_new(r);
+            c.out.put_u64(crate::genapi::obj_new(img));
+            Ok(())
+        }
         C_SCROLL_ANCHOR_NEW => (|| {
             let handle = crate::genapi::obj_clone::<gpui_kit::ScrollHandle>(r.u64())?;
             c.out.put_u64(crate::genapi::obj_new(gpui_kit::ScrollAnchor::for_handle(handle)));
@@ -708,9 +713,12 @@ pub fn scope_shown(h: u64) -> gpui_kit::base::TextSelectionScopeId {
     crate::genapi::obj_shown::<gpui_kit::base::TextSelectionScopeId>(h)
 }
 
-/// An image the app gives as pixels (ImageSource::Render, and Custom's answer): u32 width, u32
-/// height, u32 n, n bytes of RGBA rows (4 bytes a pixel), turned into gpui's BGRA frame.
-pub fn pixel_image(r: &mut R) -> std::sync::Arc<gpui_kit::RenderImage> {
+/// An image the app made from pixels (`gk.render_image`, RENDER_IMAGE_NEW): u32 width, u32 height,
+/// u32 n, n bytes of RGBA rows (4 bytes a pixel), turned into gpui's BGRA frame once. gpui keeps a
+/// RenderImage's texture in each window's atlas, by the image's id, until `Window::drop_image`: the
+/// image is a kept object so a view names the same one frame after frame, and `gk.release` drops it
+/// (`released`). Pixels given anew on every frame would be a new texture every frame.
+fn render_image_new(r: &mut R) -> std::sync::Arc<gpui_kit::RenderImage> {
     let (w, h) = (r.u32(), r.u32());
     let n = r.u32() as usize;
     let mut bytes = r.bytes(n).to_vec();
@@ -721,6 +729,49 @@ pub fn pixel_image(r: &mut R) -> std::sync::Arc<gpui_kit::RenderImage> {
     }
     let buf = image::RgbaImage::from_raw(w, h, bytes).unwrap_or_else(|| image::RgbaImage::new(w.max(1), h.max(1)));
     std::sync::Arc::new(gpui_kit::RenderImage::new(vec![image::Frame::new(buf)]))
+}
+
+/// An image the app made (ImageSource::Render, and Custom's answer): u64 image, where a view shows it.
+pub fn pixel_image(r: &mut R) -> std::sync::Arc<gpui_kit::RenderImage> {
+    let img = crate::genapi::obj_shown::<std::sync::Arc<gpui_kit::RenderImage>>(r.u64());
+    #[cfg(feature = "diag")]
+    IMAGES_SHOWN.with(|s| {
+        let mut s = s.borrow_mut();
+        s.0 += 1;
+        s.1.insert(img.id.0);
+    });
+    img
+}
+
+#[cfg(feature = "diag")]
+thread_local! {
+    /// The diagnostic library's count of the images views handed gpui (PLATFORM_TEST 7): how many
+    /// times, and gpui's distinct image ids among them. gpui keeps a texture per id, so a view
+    /// redrawn N times with one image is N times and one id; a new id each time was the leak.
+    static IMAGES_SHOWN: RefCell<(u64, HashSet<usize>)> = RefCell::new((0, HashSet::new()));
+    /// Window::drop_image calls made by releases.
+    static IMAGES_DROPPED: Cell<u64> = const { Cell::new(0) };
+}
+
+/// A released object: an image the app made leaves every window's sprite atlas (gpui frees the
+/// texture's space; a texture left with no image in it is reused). No view shows it by then (one
+/// that names it again stops), so no window is asked to draw again.
+pub fn released(item: &Option<Item>, c: &mut Call) {
+    let Some(Item::Obj(crate::objects::ObjItem::Owned { cell, .. })) = item else {
+        return;
+    };
+    let Some(img) = cell.downcast_ref::<RefCell<std::sync::Arc<gpui_kit::RenderImage>>>() else {
+        return;
+    };
+    let img = img.borrow().clone();
+    for any in c.cx.windows() {
+        let window = c.window_opt();
+        let _ = rt::with_window(any, window, c.cx, |window, _| {
+            let _ = window.drop_image(img.clone());
+            #[cfg(feature = "diag")]
+            IMAGES_DROPPED.with(|d| d.set(d.get() + 1));
+        });
+    }
 }
 
 /// ImageSource::Custom: upstream calls the loader while it draws; the image is data instead.
@@ -769,7 +820,10 @@ impl crate::genapi::Wire for DragMove {
 ///   1 drop accept: the Drop_Accept, u64 id of a library drag value -> u8 takes it, u8 takes files
 ///   2 drag payload: the payload -> u32 n, (str path, u8 directory) each
 ///   3 prepaint order: the list -> u32 n, u64 each
-///   4 image source: u8 kind (0 pixels, 1 custom), the image -> u32 width, u32 height, u32 first pixel as BGRA
+///   4 image source: u8 kind (0 render, 1 custom), u64 image -> u32 width, u32 height, u32 first pixel as
+///     BGRA, u64 gpui's image id
+///   7 -> u64 images views handed gpui, u32 distinct gpui image ids among them, u64 Window::drop_image
+///     calls made by releases (the diagnostic library only)
 ///   5 file drop -> FileDropEvent::Entered at (3, 4) with two paths, as a handler's payload is written
 fn test_call(r: &mut R, c: &mut Call) -> GkResult<()> {
     match r.u8() {
@@ -805,7 +859,8 @@ fn test_call(r: &mut R, c: &mut Call) -> GkResult<()> {
             }
         }
         4 => {
-            let img = if r.u8() == 0 {
+            let custom = r.u8() != 0;
+            let img = if !custom {
                 pixel_image(r)
             } else {
                 let f = custom_image(r);
@@ -820,6 +875,7 @@ fn test_call(r: &mut R, c: &mut Call) -> GkResult<()> {
             c.out.put_u32(size.height.0 as u32);
             let first = img.as_bytes(0).map(|b| u32::from_le_bytes([b[0], b[1], b[2], b[3]])).unwrap_or(0);
             c.out.put_u32(first);
+            c.out.put_u64(img.id.0 as u64);
         }
         5 => {
             // FileDropEvent::Entered as a handler would receive it (its ExternalPaths read back)
@@ -835,7 +891,20 @@ fn test_call(r: &mut R, c: &mut Call) -> GkResult<()> {
             let yes = crate::app::ask_should_close(wh, window, c.cx);
             c.out.put_u8(yes as u8);
         }
-        k => return err(ERR_BAD_ENUM, format!("platform test {k}: 1 drop accept, 2 drag payload, 3 prepaint order, 4 image, 5 file drop, 6 should close")),
+        #[cfg(feature = "diag")]
+        7 => {
+            // the images views handed gpui so far (times, distinct ids) and the drop_image calls
+            let (times, ids) = IMAGES_SHOWN.with(|s| {
+                let s = s.borrow();
+                (s.0, s.1.len())
+            });
+            c.out.put_u64(times);
+            c.out.put_u32(ids as u32);
+            c.out.put_u64(IMAGES_DROPPED.with(|d| d.get()));
+        }
+        #[cfg(not(feature = "diag"))]
+        7 => return err(ERR_UNSUPPORTED, "platform test 7 (the images shown) needs the diagnostic library"),
+        k => return err(ERR_BAD_ENUM, format!("platform test {k}: 1 drop accept, 2 drag payload, 3 prepaint order, 4 image, 5 file drop, 6 should close, 7 images shown")),
     }
     Ok(())
 }

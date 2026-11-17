@@ -33,8 +33,8 @@ pub fn build_component_setting_field_bool(dx: &mut Dx, n: u32) -> Option<gpui_ki
 pub fn make_component_setting_field_bool(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::setting::SettingField<bool>> {
     let r = &mut dx.args(args);
     let el: gpui_kit::component::setting::SettingField<bool> = match ty {
-        850 => { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); move |a0: bool, cx: &mut gpui_kit::App| { genapi::fire_app::<_, ()>(h, 4, &a0, cx) } }; <gpui_kit::component::setting::SettingField<bool>>::checkbox(a0, a1) }
-        851 => { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); move |a0: bool, cx: &mut gpui_kit::App| { genapi::fire_app::<_, ()>(h, 4, &a0, cx) } }; <gpui_kit::component::setting::SettingField<bool>>::switch(a0, a1) }
+        850 => { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |a0: bool, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire_app::<_, ()>(h, 4, &a0, cx) } }; <gpui_kit::component::setting::SettingField<bool>>::checkbox(a0, a1) }
+        851 => { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |a0: bool, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire_app::<_, ()>(h, 4, &a0, cx) } }; <gpui_kit::component::setting::SettingField<bool>>::switch(a0, a1) }
         _ => return bad_node("SettingFieldBool", ty),
     };
     Some(apply_component_setting_field_bool(dx, el, first))
@@ -46,7 +46,7 @@ pub fn apply_component_setting_field_bool(dx: &mut Dx, mut el: gpui_kit::compone
         let r = &mut r;
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::setting::SettingField<bool>>::default_value(el, a0) }; }
-            257 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingField<bool>>::on_reset(el, a0, a1) }; }
+            257 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingField<bool>>::on_reset(el, a0, a1) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
@@ -63,7 +63,7 @@ pub fn build_component_setting_field_number(dx: &mut Dx, n: u32) -> Option<gpui_
 pub fn make_component_setting_field_number(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::setting::SettingField<f64>> {
     let r = &mut dx.args(args);
     let el: gpui_kit::component::setting::SettingField<f64> = match ty {
-        852 => { let a0 = rc_99(r, dx)?; let a1 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> f64 { crate::values::cell_read(&cell, |r| r.f64()) } }; let a2 = { let h = dx.handler(r); move |a0: f64, cx: &mut gpui_kit::App| { genapi::fire_app::<_, ()>(h, 10, &a0, cx) } }; <gpui_kit::component::setting::SettingField<f64>>::number_input(a0, a1, a2) }
+        852 => { let a0 = rc_99(r, dx)?; let a1 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> f64 { crate::values::cell_read(&cell, |r| r.f64()) } }; let a2 = { let h = dx.handler(r); let k = dx.pin(); move |a0: f64, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire_app::<_, ()>(h, 10, &a0, cx) } }; <gpui_kit::component::setting::SettingField<f64>>::number_input(a0, a1, a2) }
         _ => return bad_node("SettingFieldNumber", ty),
     };
     Some(apply_component_setting_field_number(dx, el, first))
@@ -75,7 +75,7 @@ pub fn apply_component_setting_field_number(dx: &mut Dx, mut el: gpui_kit::compo
         let r = &mut r;
         match op {
             256 => { el = { let a0 = r.f64(); <gpui_kit::component::setting::SettingField<f64>>::default_value(el, a0) }; }
-            257 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingField<f64>>::on_reset(el, a0, a1) }; }
+            257 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingField<f64>>::on_reset(el, a0, a1) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
@@ -92,11 +92,11 @@ pub fn build_component_setting_field_text(dx: &mut Dx, n: u32) -> Option<gpui_ki
 pub fn make_component_setting_field_text(dx: &mut Dx, ty: u16, args: u32, first: u32) -> Option<gpui_kit::component::setting::SettingField<gpui_kit::SharedString>> {
     let r = &mut dx.args(args);
     let el: gpui_kit::component::setting::SettingField<gpui_kit::SharedString> = match ty {
-        853 => { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push((gpui_kit::SharedString::new(r.str()), gpui_kit::SharedString::new(r.str()))); } v }; let a1 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> gpui_kit::SharedString { crate::values::cell_read(&cell, |r| gpui_kit::SharedString::new(r.str())) } }; let a2 = { let h = dx.handler(r); move |a0: gpui_kit::SharedString, cx: &mut gpui_kit::App| { genapi::fire_app::<_, ()>(h, 6, &a0, cx) } }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::dropdown(a0, a1, a2) }
+        853 => { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push((gpui_kit::SharedString::new(r.str()), gpui_kit::SharedString::new(r.str()))); } v }; let a1 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> gpui_kit::SharedString { crate::values::cell_read(&cell, |r| gpui_kit::SharedString::new(r.str())) } }; let a2 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::SharedString, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire_app::<_, ()>(h, 6, &a0, cx) } }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::dropdown(a0, a1, a2) }
         854 => { let a0 = { let f = dx.frag(r.u32()); move |_a0: &gpui_kit::component::setting::RenderOptions, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::element(a0) }
-        855 => { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> gpui_kit::SharedString { crate::values::cell_read(&cell, |r| gpui_kit::SharedString::new(r.str())) } }; let a1 = { let h = dx.handler(r); move |a0: gpui_kit::SharedString, cx: &mut gpui_kit::App| { genapi::fire_app::<_, ()>(h, 6, &a0, cx) } }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::input(a0, a1) }
+        855 => { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> gpui_kit::SharedString { crate::values::cell_read(&cell, |r| gpui_kit::SharedString::new(r.str())) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::SharedString, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire_app::<_, ()>(h, 6, &a0, cx) } }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::input(a0, a1) }
         856 => { let a0 = { let f = dx.frag(r.u32()); move |_a0: &gpui_kit::component::setting::RenderOptions, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| f.with(window, cx, |dx, n| dx.child(n)) }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::render(a0) }
-        857 => { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push((gpui_kit::SharedString::new(r.str()), gpui_kit::SharedString::new(r.str()))); } v }; let a1 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> gpui_kit::SharedString { crate::values::cell_read(&cell, |r| gpui_kit::SharedString::new(r.str())) } }; let a2 = { let h = dx.handler(r); move |a0: gpui_kit::SharedString, cx: &mut gpui_kit::App| { genapi::fire_app::<_, ()>(h, 6, &a0, cx) } }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::scrollable_dropdown(a0, a1, a2) }
+        857 => { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push((gpui_kit::SharedString::new(r.str()), gpui_kit::SharedString::new(r.str()))); } v }; let a1 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> gpui_kit::SharedString { crate::values::cell_read(&cell, |r| gpui_kit::SharedString::new(r.str())) } }; let a2 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::SharedString, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire_app::<_, ()>(h, 6, &a0, cx) } }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::scrollable_dropdown(a0, a1, a2) }
         _ => return bad_node("SettingFieldText", ty),
     };
     Some(apply_component_setting_field_text(dx, el, first))
@@ -108,7 +108,7 @@ pub fn apply_component_setting_field_text(dx: &mut Dx, mut el: gpui_kit::compone
         let r = &mut r;
         match op {
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::default_value(el, a0) }; }
-            257 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::on_reset(el, a0, a1) }; }
+            257 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::on_reset(el, a0, a1) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             4 => { style_tokens(gpui_kit::Styled::style(&mut el), r); }
@@ -174,7 +174,7 @@ pub fn apply_component_setting_item(dx: &mut Dx, mut el: gpui_kit::component::se
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::setting::SettingItem>::disabled(el, a0) }; }
             258 => { el = { let a0 = { let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(gpui_kit::SharedString::new(r.str())); } v }; <gpui_kit::component::setting::SettingItem>::keywords(el, a0) }; }
             259 => { el = { let a0 = en_4(r.u16()); <gpui_kit::component::setting::SettingItem>::layout(el, a0) }; }
-            260 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingItem>::on_reset(el, a0, a1) }; }
+            260 => { el = { let a0 = { let cell = crate::values::cell_shown(r.u64()); move |_a0: &gpui_kit::App| -> bool { crate::values::cell_read(&cell, |r| r.u8() != 0) } }; let a1 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::component::setting::SettingItem>::on_reset(el, a0, a1) }; }
             _ => bad_op("SettingItem", op),
         }
     }

@@ -48,8 +48,8 @@ pub fn apply_component_radio(dx: &mut Dx, mut el: gpui_kit::component::radio::Ra
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::radio::Radio>::checked(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::radio::Radio>::disabled(el, a0) }; }
             259 => { el = { let Some((a0,)) = (|| Some((in_43(r, dx)?,)))() else { continue }; <gpui_kit::component::radio::Radio>::label(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::radio::Radio>::on_change(el, a0) }; }
-            261 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::radio::Radio>::on_click(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::radio::Radio>::on_change(el, a0) }; }
+            261 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::radio::Radio>::on_click(el, a0) }; }
             262 => { el = { let a0 = r.i64() as isize; <gpui_kit::component::radio::Radio>::tab_index(el, a0) }; }
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::radio::Radio>::tab_stop(el, a0) }; }
             264 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::radio::Radio>::tooltip(el, a0) }; }
@@ -96,8 +96,8 @@ pub fn apply_component_radio_group(dx: &mut Dx, mut el: gpui_kit::component::rad
             257 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(in_37(r, dx)?); } v },)))() else { continue }; <gpui_kit::component::radio::RadioGroup>::children(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::radio::RadioGroup>::disabled(el, a0) }; }
             259 => { el = { let a0 = en_4(r.u16()); <gpui_kit::component::radio::RadioGroup>::layout(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::radio::RadioGroup>::on_change(el, a0) }; }
-            261 => { el = { let a0 = { let h = dx.handler(r); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::radio::RadioGroup>::on_click(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::radio::RadioGroup>::on_change(el, a0) }; }
+            261 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::radio::RadioGroup>::on_click(el, a0) }; }
             262 => { el = { let a0 = if r.u8() != 0 { Some(r.u64() as usize) } else { None }; <gpui_kit::component::radio::RadioGroup>::selected_index(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

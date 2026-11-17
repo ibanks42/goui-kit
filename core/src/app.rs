@@ -154,8 +154,10 @@ fn action_new(name: &str, data: &str, cx: &App) -> GkResult<u32> {
 pub fn action_listener(
     id: u32,
     h: HandlerRef,
+    keep: genapi::TapePin,
 ) -> impl Fn(&GkAction, &mut Window, &mut App) + 'static {
     move |a, window, cx| {
+        let _ = &keep;
         if a.id == id {
             genapi::fire::<_, ()>(h, SHAPE_ACTION, &a.id, window, cx);
         } else {

@@ -446,6 +446,7 @@ pub struct BlockHost {
     context: Option<gpui_kit::base::text::editor_host::RenderContext>,
     decorations: HashMap<u64, Vec<(std::ops::Range<usize>, gpui_kit::Hsla)>>,
     handler: Option<genapi::HandlerRef>,
+    _keep: genapi::TapePin,
 }
 
 /// Node `EDITOR_HOST`: str id; u32 n, block each; u32 n, (u8 has, u32 FlowPosition value node)
@@ -475,7 +476,7 @@ pub fn host_node(dx: &mut genapi::Dx, args: u32, _first: u32) -> Option<AnyEleme
     }
     let handler = (r.u8() != 0).then(|| dx.handler(r));
     HOSTS.with(|h| h.set(h.get() + 1));
-    Some(BlockHost { id, blocks, flows, context, decorations, handler }.into_any_element())
+    Some(BlockHost { id, blocks, flows, context, decorations, handler, _keep: dx.pin() }.into_any_element())
 }
 
 impl IntoElement for BlockHost {

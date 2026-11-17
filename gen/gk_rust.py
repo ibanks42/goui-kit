@@ -360,7 +360,7 @@ class Rust:
             return "genapi::focus(r.u64())?" if self.call else "genapi::shown_focus(r.u64())"
         if k == "action" and d[1] == "listener":
             # an action listener (gen/gk_app.py): the action's id, then the handler
-            return "{ let a = r.u32(); let h = dx.handler(r); genapi::action_listener(a, h) }"
+            return "{ let a = r.u32(); let h = dx.handler(r); genapi::action_listener(a, h, dx.pin()) }"
         if k == "data":
             # A data table the app passes (docs/PROTOCOLS.md section 12): its rows.
             if self.call == "builder":
@@ -442,7 +442,9 @@ class Rust:
         return ", ".join(out)
 
     def handler(self, d):
-        """`{ let h = dx.handler(r); move |payload.., window, cx| genapi::fire(h, SHAPE, &payload, window, cx) }`"""
+        """`{ let h = dx.handler(r); let k = dx.pin(); move |payload.., window, cx| { let _ = &k; genapi::fire(h, SHAPE,
+        &payload, window, cx) } }`: the closure holds its tape (`Dx::pin`), so the binding keeps its handler table for as
+        long as upstream keeps the closure (PROTOCOLS.md section 4)."""
         sh = self.m.shapes[d[1]]
         names, refs, n = [], [], 0
         for p, t in zip(d[2], d[4]):
@@ -463,7 +465,7 @@ class Rust:
             call = f"genapi::fire::<_, {ret}>(h, {sh['num']}, {payload}, window, cx)"
         else:
             call = f"genapi::fire_app::<_, {ret}>(h, {sh['num']}, {payload}, cx)"
-        return self.wrap(d[3], "{ let h = dx.handler(r); move |%s| { %s } }" % (", ".join(names), call))
+        return self.wrap(d[3], "{ let h = dx.handler(r); let k = dx.pin(); move |%s| { let _ = &k; %s } }" % (", ".join(names), call))
 
     def passed(self, d, var):
         """How a decoded local is handed to the callee."""

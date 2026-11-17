@@ -7,6 +7,7 @@ package gk
 
 import "base:runtime"
 import "core:fmt"
+import "core:os"
 import "core:strings"
 import "core:sync"
 
@@ -747,19 +748,26 @@ event :: proc(cx: ^Cx, r: ^Reader) {
 		}
 	} else if v, ok := views[view]; ok {
 		table: []Handler
-		if gen == v.gen {
+		has := gen == v.gen
+		if has {
 			table = v.cur[:]
-		} else if gen + 1 == v.gen {
-			table = v.prev[:]
+		} else if t, in_old := v.old[gen]; in_old {
+			table, has = t[:], true
 		}
-		if int(id) < len(table) {
+		if has && int(id) < len(table) {
 			h, found, state, owner = table[id], true, v.state, view
 			cx.turn.owner = v
+		} else if lib_diag {
+			// Every description the library holds keeps its table (retire_table), so an event for
+			// a live view always finds its handler: one that does not is a bug in the binding,
+			// which would otherwise drop a click without a word.
+			fmt.eprintf("gk: an event came for handler %d of description %d of view %x, whose handler table is gone (the view's description is %d): the library and the package disagree about which descriptions are alive. This is a bug in the binding; please report it\n", id, gen, view, v.gen)
+			os.exit(1)
 		}
 	}
 	if !found {
-		// The tape that named this handler is two generations old, or its subscription was
-		// released. The library falls back to the default return value.
+		// The view was released, or the subscription or timer that named this handler. The
+		// library falls back to the default return value.
 		dropped += 1
 		if debug {
 			fmt.eprintf("gk: dropped event for view %x generation %d handler %d\n", view, gen, id)

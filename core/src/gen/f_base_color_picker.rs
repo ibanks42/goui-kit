@@ -111,7 +111,7 @@ pub fn apply_base_color_picker(dx: &mut Dx, mut el: gpui_kit::base::ColorPicker,
         match op {
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::ColorPicker>::accessibility_label(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::ColorPicker>::disabled(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, &a0, window, cx) } }; <gpui_kit::base::ColorPicker>::on_open_change(el, a0) }; }
+            258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, &a0, window, cx) } }; <gpui_kit::base::ColorPicker>::on_open_change(el, a0) }; }
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::ColorPicker>::open(el, a0) }; }
             260 => { el = { let Some((a0,)) = (|| Some((de_20(r, dx)?,)))() else { continue }; <gpui_kit::base::ColorPicker>::role(el, a0) }; }
             261 => { el = { let a0 = genapi::shown_focus(r.u64()); <gpui_kit::base::ColorPicker>::track_focus(el, &a0) }; }
@@ -149,8 +149,8 @@ pub fn apply_base_color_swatch(dx: &mut Dx, mut el: gpui_kit::base::ColorSwatch,
         match op {
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::ColorSwatch>::accessibility_label(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::ColorSwatch>::disabled(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: gpui_kit::Hsla, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 70, &(&a0, a1), window, cx) } }; <gpui_kit::base::ColorSwatch>::on_click(el, a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |a0: gpui_kit::Hsla, a1: bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 69, &(&a0, &a1), window, cx) } }; <gpui_kit::base::ColorSwatch>::on_hover(el, a0) }; }
+            258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::Hsla, a1: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 70, &(&a0, a1), window, cx) } }; <gpui_kit::base::ColorSwatch>::on_click(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::Hsla, a1: bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 69, &(&a0, &a1), window, cx) } }; <gpui_kit::base::ColorSwatch>::on_hover(el, a0) }; }
             260 => { el = { let Some((a0,)) = (|| Some((de_20(r, dx)?,)))() else { continue }; <gpui_kit::base::ColorSwatch>::role(el, a0) }; }
             261 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::ColorSwatch>::selected(el, a0) }; }
             262 => { el = { let a0 = r.i64() as isize; <gpui_kit::base::ColorSwatch>::tab_index(el, a0) }; }

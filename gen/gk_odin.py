@@ -22,6 +22,7 @@ import gk_overlay  # the overlays and dock families (PROTOCOLS.md sections 11.6,
 import gk_editor  # the editor family, PROTOCOLS.md sections 9.20 to 9.26
 
 import gk_model
+import gk_doc
 from gk_model import INT_WIRE, SHORT, ada, last, snake, walk_desc
 from gk_rust import OP_TEXT
 
@@ -1034,6 +1035,7 @@ class Odin:
                 if v["ok"] and v["shape"] != "unit":
                     V = f"{E}_{ada(v['name'])}"
                     v["odin"] = V
+                    lines += gk_doc.note(f"{rt}::{v['name']}", "odin")[:-1]
                     lines += [f"{V} :: struct {{"] + [decl(v, f, self.otype(f['desc'])) for f in v["fields"]] + ["}"]
                     members.append(V)
                     puts.append((V, [f"put_u16(o, {v['num']})"] + [x for f in v["fields"] for x in self.put(f["desc"], f"x.{fld(v, f)}")]))

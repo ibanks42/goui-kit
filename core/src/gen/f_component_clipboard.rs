@@ -39,8 +39,8 @@ pub fn apply_component_clipboard(dx: &mut Dx, mut el: gpui_kit::component::clipb
             257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::clipboard::Clipboard>::tooltip(el, a0) }; }
             258 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::component::clipboard::Clipboard>::tooltip_show_delay(el, a0) }; }
             259 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::clipboard::Clipboard>::value(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: gpui_kit::SharedString, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 6, &a0, window, cx) } }; <gpui_kit::component::clipboard::Clipboard>::on_copied(el, a0) }; }
-            261 => { el = { let a0 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, gpui_kit::SharedString>(h, 104, &(), window, cx) } }; <gpui_kit::component::clipboard::Clipboard>::value_fn(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::SharedString, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 6, &a0, window, cx) } }; <gpui_kit::component::clipboard::Clipboard>::on_copied(el, a0) }; }
+            261 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, gpui_kit::SharedString>(h, 104, &(), window, cx) } }; <gpui_kit::component::clipboard::Clipboard>::value_fn(el, a0) }; }
             18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }
             _ => bad_op("Clipboard", op),
         }

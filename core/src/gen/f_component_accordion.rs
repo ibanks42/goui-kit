@@ -48,7 +48,7 @@ pub fn apply_component_accordion(dx: &mut Dx, mut el: gpui_kit::component::accor
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::accordion::Accordion>::disabled(el, a0) }; }
             258 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::component::accordion::AccordionItem| { let first = dx.node(n).2; apply_component_accordion_item(dx, v, first) } }; <gpui_kit::component::accordion::Accordion>::item(el, a0) }; }
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::accordion::Accordion>::multiple(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &[usize], window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 72, &a0, window, cx) } }; <gpui_kit::component::accordion::Accordion>::on_toggle_click(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &[usize], window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 72, &a0, window, cx) } }; <gpui_kit::component::accordion::Accordion>::on_toggle_click(el, a0) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             18176..=18303 => { el = tr_sizable_51(el, op, r, dx); }

@@ -45,7 +45,7 @@ pub fn apply_component_hover_card(dx: &mut Dx, mut el: gpui_kit::component::hove
             256 => { el = { let a0 = en_2(r.u16()); <gpui_kit::component::hover_card::HoverCard>::anchor(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::hover_card::HoverCard>::appearance(el, a0) }; }
             258 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::component::hover_card::HoverCard>::close_delay(el, a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::hover_card::HoverCard>::on_open_change(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::hover_card::HoverCard>::on_open_change(el, a0) }; }
             260 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::component::hover_card::HoverCard>::open_delay(el, a0) }; }
             261 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::component::hover_card::HoverCard>::trigger(el, a0) }; }
             262 => { el = { let Some((a0,)) = (|| Some((build_gpui_style_refinement(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::hover_card::HoverCard>::trigger_style(el, a0) }; }

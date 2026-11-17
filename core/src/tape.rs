@@ -19,6 +19,10 @@ const NODE_SIZE: usize = 10;
 pub struct Tape {
     bytes: Vec<u8>,
     pub generation: u32,
+    /// The token every holder of this description shares (the tape, and each handler closure made
+    /// from it: `genapi::Dx::pin`); set when the library accepts a view's tape (`rt::accept`),
+    /// none for a tape of no view (a fragment a call op carries).
+    pub pin: Option<std::sync::Arc<GenPin>>,
     ops_at: usize,
     ops_len: usize,
     nodes_at: usize,
@@ -26,6 +30,22 @@ pub struct Tape {
     pub root: u32,
     pub deps: Vec<u64>,
     pub slots: Vec<u64>,
+}
+
+/// One view description's handlers, held by everything that may still fire one: the tape (its
+/// view, an element or kept value built from it, such as an open menu) and each handler closure
+/// made from it. When the last holder lets go its handlers can no longer fire, so the binding may
+/// forget their table: `rt::retire` hands (view, generation) to the next VIEWS turn (docs/
+/// PROTOCOLS.md section 4). Shared with an Arc: upstream may ask for a closure that is Send.
+pub struct GenPin {
+    pub view: u64,
+    pub generation: u32,
+}
+
+impl Drop for GenPin {
+    fn drop(&mut self) {
+        crate::rt::retire(self.view, self.generation);
+    }
 }
 
 impl Tape {
@@ -60,6 +80,7 @@ impl Tape {
         Ok(Tape {
             bytes,
             generation,
+            pin: None,
             ops_at,
             ops_len,
             nodes_at,

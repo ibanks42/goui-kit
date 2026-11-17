@@ -92,34 +92,74 @@ type ImageBytes struct {
 	Bytes  []byte
 }
 
-// PixelImage is an image as pixels for gk.ImageSourceRender and gk.ImageSourceCustom: Width x
-// Height pixels of 4 bytes each, red, green, blue, alpha, row by row.
+// PixelImage is an image as pixels, for gk.NewRenderImage: Width x Height pixels of 4 bytes each,
+// red, green, blue, alpha, row by row.
 type PixelImage struct {
 	Width, Height uint32
 	RGBA          []byte
 }
 
+// RenderImage is an image the library made from pixels (gpui's RenderImage), shown by
+// gk.ImageSourceRender and gk.ImageSourceCustom. Make it once, with gk.NewRenderImage, and keep it
+// while a view shows it: gpui keeps each image's texture on the graphics card until the image is
+// released, so pixels made into a new image on every frame would be a new texture on every frame.
+// gk.Release frees it in every window; a view that names it after that stops with a message. New
+// pixels are a new image: make it, show it, release the old one.
+type RenderImage struct{ h uint64 }
+
+func (i RenderImage) handle() uint64 { return i.h }
+
 func putBytes(o *tape, b []byte) { o.bytes(b) }
 
-func putPixelImage(o *tape, p PixelImage) {
+func putRenderImage(o *tape, i RenderImage) {
+	if i.h == 0 {
+		stop("a zero gk.RenderImage: make one with gk.NewRenderImage(cx, gk.PixelImage{..}) and keep it")
+	}
+	o.u64(i.h)
+}
+
+// NewRenderImage makes an image of p's pixels, converted once to the format gpui draws. Make it
+// in init or in a handler, not in a view function; gk.Release frees it.
+func NewRenderImage(cx *Cx, p PixelImage) RenderImage {
+	t := checkCx(cx)
+	if vb.active {
+		stop("a view function may not make an image: make it once, in init or in a handler, and keep it")
+	}
 	if int(p.Width)*int(p.Height)*4 != len(p.RGBA) {
 		stop("a gk.PixelImage of %dx%d pixels holds %d bytes: it needs width x height x 4 (red, green, blue, alpha per pixel)", p.Width, p.Height, len(p.RGBA))
 	}
+	t.flush()
+	o := newReq(cRenderImageNew)
 	o.u32(p.Width)
 	o.u32(p.Height)
 	o.bytes(p.RGBA)
+	r := reader{b: mustCall(*o)}
+	return RenderImage{r.u64()}
 }
 
-// TestPixelImage gives the library's image of p (custom: through ImageSourceCustom's loader): its
-// size and its first pixel as gpui keeps it (BGRA, a little-endian uint32). For tests.
-func TestPixelImage(cx *Cx, p PixelImage, custom bool) (w, h, first uint32) {
+// TestRenderImage gives the library's image behind i (custom: through ImageSourceCustom's loader):
+// its size, its first pixel as gpui keeps it (BGRA, a little-endian uint32) and gpui's id of it,
+// the same for as long as i is kept. For tests.
+func TestRenderImage(cx *Cx, i RenderImage, custom bool) (w, h, first uint32, id uint64) {
 	checkCx(cx).flush()
 	o := newReq(cPlatformTest)
 	o.u8(4)
 	o.bool(custom)
-	putPixelImage(o, p)
+	putRenderImage(o, i)
 	r := reader{b: mustCall(*o)}
-	return r.u32(), r.u32(), r.u32()
+	return r.u32(), r.u32(), r.u32(), r.u64()
+}
+
+// TestImagesShown tells how many times views have handed gpui an image (gk.ImageSourceRender or
+// gk.ImageSourceCustom), how many distinct images (gpui's ids, one texture each) those were, and
+// how many times a release dropped an image's texture from a window. For tests; the diagnostic
+// library only.
+func TestImagesShown(cx *Cx) (times uint64, images uint32, dropped uint64) {
+	checkCx(cx).flush()
+	o := newReq(cPlatformTest)
+	o.u8(7)
+	r := reader{b: mustCall(*o)}
+	return r.u64(), r.u32(), r.u64()
 }
 
 // TestDropAccept tells what a DropAccept takes, as the library decodes it: the app's drag value of

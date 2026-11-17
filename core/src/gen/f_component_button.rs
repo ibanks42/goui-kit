@@ -56,8 +56,8 @@ pub fn apply_component_button(dx: &mut Dx, mut el: gpui_kit::component::button::
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::button::Button>::dropdown_caret(el, a0) }; }
             260 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::button::Button>::label(el, a0) }; }
             261 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::button::Button>::loading(el, a0) }; }
-            262 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::button::Button>::on_click(el, a0) }; }
-            263 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::button::Button>::on_hover(el, a0) }; }
+            262 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::component::button::Button>::on_click(el, a0) }; }
+            263 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::button::Button>::on_hover(el, a0) }; }
             264 => { el = { <gpui_kit::component::button::Button>::outline(el) }; }
             265 => { el = { let Some((a0,)) = (|| Some((de_20(r, dx)?,)))() else { continue }; <gpui_kit::component::button::Button>::role(el, a0) }; }
             266 => { el = { let Some((a0,)) = (|| Some((in_26(r, dx)?,)))() else { continue }; <gpui_kit::component::button::Button>::rounded(el, a0) }; }
@@ -142,7 +142,7 @@ pub fn apply_component_button_group(dx: &mut Dx, mut el: gpui_kit::component::bu
             258 => { el = { <gpui_kit::component::button::ButtonGroup>::compact(el) }; }
             259 => { el = { let a0 = en_4(r.u16()); <gpui_kit::component::button::ButtonGroup>::layout(el, a0) }; }
             260 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::button::ButtonGroup>::multiple(el, a0) }; }
-            261 => { el = { let a0 = { let h = dx.handler(r); move |a0: &std::vec::Vec<usize>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 72, a0, window, cx) } }; <gpui_kit::component::button::ButtonGroup>::on_click(el, a0) }; }
+            261 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &std::vec::Vec<usize>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 72, a0, window, cx) } }; <gpui_kit::component::button::ButtonGroup>::on_click(el, a0) }; }
             262 => { el = { <gpui_kit::component::button::ButtonGroup>::outline(el) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
             17792..=17919 => { let _ = tr_styled_ext_18(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }
@@ -212,7 +212,7 @@ pub fn apply_component_toggle(dx: &mut Dx, mut el: gpui_kit::component::button::
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::button::Toggle>::checked(el, a0) }; }
             257 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::button::Toggle>::label(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::button::Toggle>::on_click(el, a0) }; }
+            258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::button::Toggle>::on_click(el, a0) }; }
             259 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::button::Toggle>::tooltip(el, a0) }; }
             260 => { el = { let a0 = std::time::Duration::from_millis(r.u32() as u64); <gpui_kit::component::button::Toggle>::tooltip_show_delay(el, a0) }; }
             261 => { el = { let a0 = <gpui_kit::component::Icon as From<gpui_kit::component::IconName>>::from(en_86(r.u16())); <gpui_kit::component::button::Toggle>::icon(el, a0) }; }
@@ -253,7 +253,7 @@ pub fn apply_component_toggle_group(dx: &mut Dx, mut el: gpui_kit::component::bu
         match op {
             256 => { el = { let Some((a0,)) = (|| Some((build_component_toggle(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::button::ToggleGroup>::child(el, a0) }; }
             257 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_toggle(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::button::ToggleGroup>::children(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |a0: &std::vec::Vec<bool>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 71, a0, window, cx) } }; <gpui_kit::component::button::ToggleGroup>::on_click(el, a0) }; }
+            258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &std::vec::Vec<bool>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 71, a0, window, cx) } }; <gpui_kit::component::button::ToggleGroup>::on_click(el, a0) }; }
             259 => { el = { <gpui_kit::component::button::ToggleGroup>::segmented(el) }; }
             260 => { el = { <gpui_kit::component::button::ToggleGroup>::single(el) }; }
             18304..=18431 => { let _ = tr_theme_styled_53(W(gpui_kit::Styled::style(&mut el)), op, r, dx); }

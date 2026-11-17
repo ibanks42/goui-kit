@@ -13,15 +13,20 @@ type View struct{ h uint64 }
 func (v View) handle() uint64 { return v.h }
 
 type viewRec struct {
-	h         uint64
-	init      func(*Cx)
-	render    func(*Cx) Element
-	last      tape   // the accepted tape
-	gen       uint32 // generation of last
-	cur, prev []handlerRec
-	buildNo   uint32 // counts runs of the view function (what a Model's reader list refers to)
-	described bool
-	dead      bool
+	h      uint64
+	init   func(*Cx)
+	render func(*Cx) Element
+	last   tape         // the accepted tape
+	gen    uint32       // generation of last
+	cur    []handlerRec // the handler table of gen
+	// The handler tables of older generations the library still holds (an open menu made from
+	// one, a closure upstream keeps): each goes when the library reports its description dropped
+	// (retireTable, from a VIEWS turn).
+	old        map[uint32][]handlerRec
+	curRetired bool   // the library dropped gen's description: its table is not kept when gen moves on
+	buildNo    uint32 // counts runs of the view function (what a Model's reader list refers to)
+	described  bool
+	dead       bool
 	// a row view (rt_source.go): the source's row function for one row
 	row   func(*Cx, RowAt) Element
 	rowAt RowAt
@@ -76,7 +81,7 @@ func releaseView(t *turn, v View) {
 	}
 	delete(views, v.h)
 	dropKeptOf(t, v.h)
-	rec.cur, rec.prev, rec.last = nil, nil, nil
+	rec.cur, rec.old, rec.last = nil, nil, nil
 	rec.dead = true
 	releaseHandle(t, v.h)
 }
@@ -104,13 +109,52 @@ func describe(cx *Cx, v *viewRec) {
 		return
 	}
 	v.last = append(v.last[:0], tapeBuf...)
+	if v.gen != 0 && !v.curRetired {
+		if v.old == nil {
+			v.old = map[uint32][]handlerRec{}
+		}
+		v.old[v.gen] = v.cur
+	}
+	v.curRetired = false
 	v.gen++
-	v.prev, v.cur = v.cur, append(v.prev[:0], vb.handlers...)
+	v.cur = append(newTable(), vb.handlers...)
 	t.tapes.u64(v.h)
 	t.tapes.u32(v.gen)
 	t.tapes.u32(uint32(len(v.last)))
 	t.tapes = append(t.tapes, v.last...)
 	t.nTapes++
+}
+
+// Handler tables no description uses any more, for reuse.
+var tablePool [][]handlerRec
+
+func newTable() []handlerRec {
+	if n := len(tablePool); n > 0 {
+		t := tablePool[n-1]
+		tablePool = tablePool[:n-1]
+		return t
+	}
+	return nil
+}
+
+// retireTable forgets the handler table of a view's description the library has dropped (no
+// element, open menu or closure upstream keeps holds it): none of its handlers can fire again.
+func retireTable(view uint64, gen uint32) {
+	v := views[view]
+	if v == nil {
+		return
+	}
+	if gen == v.gen {
+		v.curRetired = true
+		return
+	}
+	if t, ok := v.old[gen]; ok {
+		clear(t)
+		if len(tablePool) < 64 {
+			tablePool = append(tablePool, t[:0])
+		}
+		delete(v.old, gen)
+	}
 }
 
 // dep records that the view being built read this state: the library observes it and has the

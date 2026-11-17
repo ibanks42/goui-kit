@@ -60,10 +60,10 @@ pub fn apply_base_alert_dialog(dx: &mut Dx, mut el: gpui_kit::base::AlertDialog,
             256 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::base::AlertDialog>::backdrop(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::AlertDialog>::close_on_escape(el, a0) }; }
             258 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::base::AlertDialog>::dismiss_below_y(el, a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::base::AlertDialog>::on_cancel(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::base::AlertDialog>::on_close(el, a0) }; }
-            261 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::base::AlertDialog>::on_ok(el, a0) }; }
-            262 => { el = { let a0 = { let h = dx.handler(r); move |a0: bool, a1: gpui_kit::base::DialogChangeReason, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 64, &(&a0, &a1), window, cx) } }; <gpui_kit::base::AlertDialog>::on_open_change(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::base::AlertDialog>::on_cancel(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::base::AlertDialog>::on_close(el, a0) }; }
+            261 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, bool>(h, 8, a0, window, cx) } }; <gpui_kit::base::AlertDialog>::on_ok(el, a0) }; }
+            262 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: bool, a1: gpui_kit::base::DialogChangeReason, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 64, &(&a0, &a1), window, cx) } }; <gpui_kit::base::AlertDialog>::on_open_change(el, a0) }; }
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::AlertDialog>::open(el, a0) }; }
             264 => { el = { let a0 = dx.child(r.u32()); <gpui_kit::base::AlertDialog>::popup(el, a0) }; }
             265 => { el = { let a0 = genapi::obj_shown::<gpui_kit::base::DialogHandle>(r.u64()); <gpui_kit::base::AlertDialog>::handle(el, a0) }; }
@@ -314,7 +314,7 @@ pub fn apply_base_alert_dialog_trigger(dx: &mut Dx, mut el: gpui_kit::base::Aler
     while let Some((op, mut r)) = dx.op(&mut at) {
         let r = &mut r;
         match op {
-            256 => { el = { let a0 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::base::AlertDialogTrigger>::on_open(el, a0) }; }
+            256 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::base::AlertDialogTrigger>::on_open(el, a0) }; }
             257 => { el = { let a0 = genapi::obj_shown::<gpui_kit::base::DialogHandle>(r.u64()); <gpui_kit::base::AlertDialogTrigger>::handle(el, a0) }; }
             _ => bad_op("AlertDialogTrigger", op),
         }

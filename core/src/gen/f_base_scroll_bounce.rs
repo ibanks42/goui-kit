@@ -44,7 +44,7 @@ pub fn apply_base_scroll_bounce(dx: &mut Dx, mut el: gpui_kit::base::ScrollBounc
         match op {
             256 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::ScrollBounce>::enabled(el, a0) }; }
             257 => { el = { let Some((a0,)) = (|| Some((build_base_scroll_bounce_motion(dx, r.u32())?,)))() else { continue }; <gpui_kit::base::ScrollBounce>::motion(el, a0) }; }
-            258 => { el = { let a0 = { let h = dx.handler(r); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::base::ScrollBounce>::on_scroll(el, a0) }; }
+            258 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 3, &(), window, cx) } }; <gpui_kit::base::ScrollBounce>::on_scroll(el, a0) }; }
             259 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::ScrollBounce>::scroll_wheel(el, a0) }; }
             _ => bad_op("ScrollBounce", op),
         }

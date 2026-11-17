@@ -80,7 +80,7 @@ One callback, `gk_callback(user, cb, kind, req, len)`, on the UI thread.
 | `INIT 1` | empty | once, inside `gk_run` |
 | `WINDOW_INIT 2` | u64 window, u64 root view | inside `open_window`, window in hand |
 | `FRAME 3` | u64 window, u64 frame number | pre-frame hook, only if the app asked (`on_frame`) |
-| `VIEWS 4` | u64 window, u32 n, u64 view each | pre-frame hook, only if a mounted view is dirty |
+| `VIEWS 4` | u64 window, u32 n, u64 view each, u32 n, (u64 view, u32 generation) each: the descriptions dropped since the last `VIEWS` turn (section 4) | pre-frame hook, only if a mounted view is dirty |
 | `EVENT 5` | u64 view, u32 generation, u32 handler, u16 shape, payload | a listener, a subscription, a queued event |
 | `WAKE 7` | empty | after `gk_post`, at most one per turn of the main loop |
 | `PANIC 10` | str message | the library caught a Rust panic; the binding prints it and exits 1 |
@@ -152,7 +152,8 @@ payload argument is its own type, without a wrapping struct) and registers it.
 ```rust
 E_BUTTON_ON_CLICK => {
     let h = dx.handler(&mut r);                     // (view, tape generation, id)
-    el = el.on_click(move |ev, window, cx| genapi::fire(h, SHAPE_CLICK, ev, window, cx));
+    let k = dx.pin();                               // that generation's handlers stay while k does
+    el = el.on_click(move |ev, window, cx| { let _ = &k; genapi::fire(h, SHAPE_CLICK, ev, window, cx) });
 }
 // two payload arguments: a tuple of references
 el = el.on_toggle(move |on, ev, window, cx| genapi::fire(h, SHAPE_BOOL_CLICK, &(on, ev), window, cx));
@@ -166,7 +167,24 @@ genapi::fire_queued(h, SHAPE_USIZE, &row, cx);
 
 `fire` makes one synchronous `EVENT` turn with the real window and app in scope, applies the
 reply and returns the handler's return value. A handler that was registered without a return
-value, or an event whose handler table is gone, gives `Default::default()`.
+value, or an event for a released view, gives `Default::default()`.
+
+**How long a description's handlers live.** An element's handler is (view, generation of the
+tape that registered it, id), and upstream may keep its closure long after the view has been
+described again: an open dropdown's menu is built, when it opens, from the description that drew
+its button, and its items' closures are kept while it is open; a kit element keeps its listeners
+until it is built again. So the binding keeps every generation's handler table, not only the
+newest, until the library says nothing holds that description any more. Each accepted tape gets a
+`tape::GenPin` (an `Arc`: upstream may want a closure that is `Send`), shared by the tape and by
+every handler closure made from it (`Dx::pin`); when the last one is dropped, `rt::retire` lists
+(view, generation), and the next `VIEWS` turn carries the list. The binding then frees that table
+(Odin frees the handlers' data with it); a retired generation that is still the view's newest is
+only marked, and dropped when the view is next described anew. An event for a live view whose
+table is gone cannot happen this way: with the diagnostic library the binding stops (exit 1,
+"whose handler table is gone") rather than drop the event in silence. Until 17 Nov 2026 the
+binding kept two tables (the newest and the one before), and a menu item's `on_click` clicked
+after its view had been described twice more was dropped (`core/tests/run-overlay.sh
+menu-redraw`, `gates/go-proto.sh menu-redraw`).
 
 **Generated Odin**, per closure parameter:
 
@@ -2334,13 +2352,13 @@ first stop and says so.
 | described plots (12.6, 12.14) | `gk.plot(parts..)`, `gk.plot_with(opts, parts..)`, `gk.Plot_Part` | `gk.Plot(parts...)`, `gk.PlotWith(gk.PlotOptions{ID: "x", NotInteractive: true, Appear: 2}, parts...)`; `gk.PlotPart`, generated in `gen_plot.go` from the same list as Odin's union |
 | drag and drop (13.20) | `->on_drag(gk.Drag_Value{id, text}, preview)`, `->on_drop(gk.on(dropped))`, `->drag_over(style)`, `->can_drop(gk.Drop_Accept{..})` | `.OnDrag(gk.DragValue{ID: 7, Text: ".."}, preview)`, `.OnDrop(func(cx *gk.Cx, d gk.DragValue))`, `.DragOver(gk.NewStyleRefinementDefault().Bg(..))`, `.CanDrop(gk.DropAccept{IDs: []uint64{7}})` (descriptors `libval` `Drag_Value`, `dragview`, `dragstyle`, `dropaccept`) |
 | an element's tooltip (11.17) | `->tooltip(view)` or `->tooltip(gk.kit_tooltip_new(..))` (`gk.View_Or_Tooltip`) | `.Tooltip(v)` with `gk.ViewOrTooltip`: a `gk.View`, `gk.NewKitTooltip(text)` or `gk.NewKitTooltipElement(el)` (descriptor `viewany`) |
-| image sources (13.31) | `gk.Image_Bytes{format, bytes}`, `gk.Pixel_Image{width, height, rgba}` | `gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: b}}`, `gk.ImageSourceRender{Value: gk.PixelImage{..}}`, `gk.ImageSourceCustom`, `gk.ResourceURI`, `gk.ResourcePath` (descriptors `imagebytes`, `pixelimage`, `customimage`, `uri`, `arcpath`); a `gk.PixelImage` whose bytes are not width x height x 4 stops |
+| image sources (13.31) | `gk.Image_Bytes{format, bytes}`, `gk.render_image(cx, gk.Pixel_Image{width, height, rgba}) -> gk.Render_Image` | `gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: b}}`, `gk.ImageSourceRender{Value: img}` of `img := gk.NewRenderImage(cx, gk.PixelImage{..})`, `gk.ImageSourceCustom`, `gk.ResourceURI`, `gk.ResourcePath` (descriptors `imagebytes`, `pixelimage`, `customimage`, `uri`, `arcpath`); a `gk.PixelImage` whose bytes are not width x height x 4 stops, and so does an image made in a view function |
 | the menu bar (11.30) | `gk.set_menus(cx, menus..)`, `gk.menus(cx)` | `gk.SetMenus(cx, gk.Menu{Name: .., Items: []gk.MenuItem{gk.MenuAction{..}, gk.MenuSeparator{}, gk.MenuSubmenu{..}, gk.MenuServices{..}}})`, `gk.Menus(cx)` |
 
 Not ported to Go yet (listed in `gen/out/go-report.md`): `on_drag_move` (its `gk.Drag_Move_Event`),
 `external_drag_payload`, image caches, scroll anchors, a prepaint order and synthetic accessibility children.
 Tests: `core/tests/run-app.sh` modes `close-veto`, `quit-hook`, `reduce-motion`, `window-icon`, `bad-icon`
-(Odin); `gates/go-proto.sh` runs the same five and `drag`, `menus`, `menu-no-action`, `images`, `bad-pixels`,
+(Odin); `gates/go-proto.sh` runs the same five and `drag`, `menus`, `menu-no-action`, `images`, `bad-pixels`, `image-in-view`,
 `tooltip`, `plot`, `fill-nil` of `examples/go/port` (Go); `gates/pixels.sh paint` (gradients and plot parts,
 Rust against Odin and Go, 12.17); `gates/go-misuse.sh` cases `fill_token` and `gradient_color`.
 
@@ -3109,7 +3127,8 @@ The dock renderers of 11.9 get it from the TabGroupContext they are handed (11.9
 | `SCROLL_ANCHOR_NEW 91` | `gk.scroll_anchor(cx, scroll_handle) -> gk.Scroll_Anchor` | `ScrollAnchor::for_handle` | `anchor_scroll(Option<ScrollAnchor>)` (`scrollanchor`) |
 | `SCROLL_ANCHOR_TO 92` | `gk.scroll_anchor_to(cx, anchor)` | `ScrollAnchor::scroll_to` (immediate, the turn's window) | |
 | `TEXT_SCOPE_NEW 93` | `gk.text_selection_scope_id(cx) -> gk.Text_Selection_Scope` | `TextSelectionScopeId::new` | `gk.text_selection_scope(el, scope)` |
-| `PLATFORM_TEST 94` | `gk.test_drop_accept`, `test_drag_payload`, `test_prepaint_order`, `test_pixel_image` | the decoders above run on the package's bytes | tests only |
+| `RENDER_IMAGE_NEW 100` | `gk.render_image(cx, gk.Pixel_Image{width, height, rgba}) -> gk.Render_Image` | `RenderImage::new` of one BGRA frame | `ImageSource::Render` and `ImageSource::Custom` (`pixelimage`, `customimage`); `gk.release` calls `Window::drop_image` in every window |
+| `PLATFORM_TEST 94` | `gk.test_drop_accept`, `test_drag_payload`, `test_prepaint_order`, `test_render_image`, `test_images_shown` | the decoders above run on the package's bytes | tests only |
 
 A view procedure may not make one (`cache-in-view`). `ElementExt::text_selection_scope` (a type-changing
 wrapper over a ParentElement) is node `ANIMATED` kind 5 (`u64 scope`), one generated arm per parent element
@@ -3125,9 +3144,23 @@ code never runs mid-frame; one frame of gaps after a far jump). Sizes past the s
 **Image sources as bytes and pixels** (`gk_app.resolved`): every variant of `ImageSource` and `Resource` is
 built, so `img`, `Avatar::src`, `AvatarImage::new` and `AttachmentMedia::src` take all of them:
 `Resource::Uri` (`uri`: a string), `Resource::Path` (`arcpath`), `ImageSource::Image` (`imagebytes`:
-`gk.Image_Bytes{format, bytes}`, gpui's `Image::from_bytes`), `ImageSource::Render` (`pixelimage`:
-`gk.Pixel_Image{width, height, rgba}`, turned into gpui's BGRA frame) and `ImageSource::Custom` (`customimage`:
-the loader upstream calls while it draws is data: the same `gk.Pixel_Image`, handed back each time).
+`gk.Image_Bytes{format, bytes}`, gpui's `Image::from_bytes`), `ImageSource::Render` (`pixelimage`: a
+`gk.Render_Image`, `u64` on the wire) and `ImageSource::Custom` (`customimage`: the loader upstream calls while it
+draws is data: the same `gk.Render_Image`, handed back each time).
+
+**An image of pixels is an object, not a value.** gpui gives each `RenderImage` a unique id and keeps its texture
+in each window's sprite atlas, by that id, until `Window::drop_image`; an `Image` (encoded bytes) is cached by its
+content instead. Pixels carried by value would be decoded into a new `RenderImage` on every describe, so a view
+showing one would add a texture on every frame, never freed (the binding cannot keep upstream's `Arc` or call
+`drop_image`). So `gk.render_image` (`RENDER_IMAGE_NEW`) turns the pixels into one BGRA `RenderImage` once and
+hands out a kept object handle; a view names it frame after frame (one id, one texture); `gk.release` drops it from
+every window's atlas (`platform::released`); a view naming it after that exits 2
+with `released_shown`'s message. Made in a view procedure, it stops. New pixels are a new image: make it, show it,
+release the old one. `core/tests/run-platform.sh elements` and `gates/go-proto.sh images` check it: the image
+named on every redraw is handed to gpui as one image, one id however often it is drawn (`PLATFORM_TEST` 7,
+the diagnostic library's count of the images views handed gpui and of the `drop_image` calls; gpui's own
+`has_image_atlas_entry` cannot tell, since its wgpu atlas answers false for every key), and released, its
+texture is dropped from the window.
 `FileDropEvent::Entered`'s `ExternalPaths` is read back as `[]string` (`Wire for ExternalPaths`).
 
 **Menus.** `GlobalState::set_app_menus` and `GlobalState::app_menus` are bound through the runtime's

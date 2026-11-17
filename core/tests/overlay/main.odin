@@ -5,7 +5,7 @@
 // diag library) under a gk-meter script and prints lines core/tests/run-overlay.sh checks.
 //
 //   GK_PROTO=dialog | alert | sheet | questionnaire | release | wrong-root | questionnaire-dup
-//   (and the further modes below: dock, ..., popover, observe, values)
+//   (and the further modes below: dock, ..., popover, observe, values, menu-redraw, menu-redraw-b)
 package overlay_test
 
 import "core:fmt"
@@ -15,6 +15,11 @@ import gk "gpuikit:gk"
 
 App :: struct {
 	mode:      string,
+	// menu-redraw: the view's redraws while its menu is open, and the clicks that reached item
+	// Alpha's handler and item Bravo's action
+	menu_ticks: int,
+	menu_a, menu_b: int,
+	menu_act:  gk.Action,
 	root:      gk.View,
 	count:     int, // shown in the dialog; bumped while it is open
 	described: int, // runs of the dialog's procedure
@@ -609,6 +614,28 @@ value_calls :: proc(a: ^App, cx: ^gk.Cx) {
 	fmt.printf("overlay done mode=values ok=%v layers=%d bad_ok=%v bad_err=%v\n", g.ok, layers, bad.ok, len(bad.err) > 0)
 }
 
+// --- menu-redraw: a menu item's handler after its view has been described again many times --------
+
+// A dropdown with an item that has its own click handler (Alpha) and one that runs an action
+// (Bravo), beside a label that changes on every tick, so each redraw is a new description.
+menu_root :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
+	menu := gk.popup_menu()->item(gk.popup_menu_item("Alpha")->on_click(gk.on(menu_alpha)))->menu("Bravo", a.menu_act)
+	return gk.h_flex(.Gap_2, .P_2)->child(gk.dropdown_menu(gk.button("menu")->label("Menu"), menu))->
+		child(gk.label(fmt.tprintf("ticks %d", a.menu_ticks)))
+}
+
+menu_alpha :: proc(a: ^App, cx: ^gk.Cx, e: gk.Click_Event) {
+	a.menu_a += 1
+}
+
+menu_bravo :: proc(a: ^App, cx: ^gk.Cx, act: gk.Action) {
+	a.menu_b += 1
+}
+
+menu_tick :: proc(a: ^App, cx: ^gk.Cx) {
+	a.menu_ticks += 1 // the view's own handler: it draws again
+}
+
 // --- the app -----------------------------------------------------------------------------------
 
 root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
@@ -673,6 +700,10 @@ init :: proc(a: ^App, cx: ^gk.Cx) {
 		gk.after(cx, 70, gk.on(observe_done))
 	case "values":
 		gk.after(cx, 10, gk.on(value_calls))
+	case "menu-redraw", "menu-redraw-b":
+		a.menu_act = gk.action(cx, "overlay::Bravo")
+		gk.on_app_action(cx, a.menu_act, gk.on(menu_bravo))
+		gk.every(cx, 10, gk.on(menu_tick))
 	case "popover":
 		gk.after(cx, 10, gk.on(popover_open))
 		gk.after(cx, 30, gk.on(popover_close))
@@ -687,6 +718,7 @@ start :: proc(a: ^App, cx: ^gk.Cx) {
 	case "nav": root = nav_root
 	case "popover": root = popover_root
 	case "observe": root = observe_root
+	case "menu-redraw", "menu-redraw-b": root = menu_root
 	}
 	a.root = gk.view(a, init, root)
 	gk.open_window(cx, "overlay", {640, 480}, a.root)
@@ -705,6 +737,15 @@ main :: proc() {
 			"advance 20\n", step, "advance 20\n", step, "advance 20\n", step, "stat\n", sep = "")
 	case "alert":
 		script = fmt.aprint(script, "advance 10\n", step, "key enter\n", step, "advance 40\n", step, "stat\n", sep = "")
+	case "menu-redraw", "menu-redraw-b":
+		// open the menu, let the view be described again ten times (a tick every 10 ms changes its
+		// label), then click item Alpha (menu-redraw) or Bravo (menu-redraw-b) once
+		item := MENU_BRAVO if app.mode == "menu-redraw-b" else MENU_ALPHA
+		script = fmt.aprint(script, MENU_BUTTON, "frame\n", sep = "")
+		for _ in 0 ..< 10 {
+			script = fmt.aprint(script, "advance 10\nframe\n", sep = "")
+		}
+		script = fmt.aprint(script, item, "frame\nadvance 10\nframe\nadvance 10\nframe\nstat\n", sep = "")
 	case "dock-layout", "render":
 		script = fmt.aprint(script, "advance 10\n", step, "advance 20\n", step, "advance 20\n", step, "advance 20\n", step,
 			"advance 20\n", step, "stat\n", sep = "")
@@ -716,4 +757,12 @@ main :: proc() {
 		return
 	}
 	gk.run_headless(&app, script, start)
+	if app.mode == "menu-redraw" || app.mode == "menu-redraw-b" {
+		fmt.printf("overlay menu fired alpha=%d bravo=%d redrawn=%v\n", app.menu_a, app.menu_b, app.menu_ticks >= 10)
+	}
 }
+
+// Where menu-redraw clicks: the dropdown's button, and its two items once it is open.
+MENU_BUTTON :: "click 30 22\n"
+MENU_ALPHA :: "click 50 60\n"
+MENU_BRAVO :: "click 50 88\n"

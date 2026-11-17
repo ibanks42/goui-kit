@@ -1989,14 +1989,19 @@ put_Highlights_Match :: proc(o: ^Tape, v: Highlights_Match) {
 Image_Source_Resource :: struct {
 	v0: Resource,
 }
+// Shows an image the library made from pixels. Make the gk.Render_Image once, with
+// gk.render_image, keep it while a view shows it and gk.release it when no view does:
+// gpui keeps its texture on the graphics card until then.
 Image_Source_Render :: struct {
-	v0: Pixel_Image,
+	v0: Render_Image,
 }
 Image_Source_Image :: struct {
 	v0: Image_Bytes,
 }
+// Upstream's loader, called while gpui draws, is the image itself here: a gk.Render_Image
+// made once with gk.render_image, as for gk.Image_Source_Render.
 Image_Source_Custom :: struct {
-	v0: Pixel_Image,
+	v0: Render_Image,
 }
 Image_Source :: union #no_nil {
 	Image_Source_Resource,
@@ -2013,14 +2018,14 @@ put_Image_Source :: proc(o: ^Tape, v: Image_Source) {
 		put_Resource(o, x.v0)
 	case Image_Source_Render:
 		put_u16(o, 1)
-		put_pixel_image(o, x.v0)
+		put_render_image(o, x.v0)
 	case Image_Source_Image:
 		put_u16(o, 2)
 		put_u16(o, u16(x.v0.format))
 		put_bytes(o, x.v0.bytes)
 	case Image_Source_Custom:
 		put_u16(o, 3)
-		put_pixel_image(o, x.v0)
+		put_render_image(o, x.v0)
 	}
 }
 
@@ -4799,7 +4804,7 @@ Image_Source_Into :: union #no_nil {
 	Image_Source_Image,
 	Image_Source_Custom,
 	string,
-	Pixel_Image,
+	Render_Image,
 	Image_Bytes,
 }
 
@@ -4821,9 +4826,9 @@ put_Image_Source_Into :: proc(o: ^Tape, v: Image_Source_Into) {
 	case string:
 		put_u8(o, 1)
 		put_str(o, x)
-	case Pixel_Image:
+	case Render_Image:
 		put_u8(o, 4)
-		put_pixel_image(o, x)
+		put_render_image(o, x)
 	case Image_Bytes:
 		put_u8(o, 5)
 		put_u16(o, u16(x.format))

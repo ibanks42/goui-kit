@@ -154,7 +154,7 @@ func main() {
   `gk.NewLinearGradient(..)` (section 7).
 - **Drag and drop, tooltips, menus, images**: `.OnDrag(gk.DragValue{..}, preview)`, `.OnDrop`,
   `.DragOver`, `.CanDrop`; `.Tooltip(view or gk.NewKitTooltip..)`; `gk.SetMenus`; `gk.Img` of
-  `gk.ImageSourceImage`, `gk.ImageSourceRender` (section 7).
+  `gk.ImageSourceImage`, `gk.ImageSourceRender` of a `gk.RenderImage` made once (section 7).
 
 ## 5. Errors and safety
 
@@ -210,13 +210,13 @@ both packages:
 | a gradient where the kit takes a Fill (`.Bg`, plot paths and quads) | `gk.NewLinearGradient(angle float32, from, to gk.LinearColorStop) gk.LinearGradient`, `.InOklab()`, `gk.NewLinearColorStop(c gk.Color, at float32)`; `gk.Fill` is a `gk.Color` or a `gk.LinearGradient` | `gk.linear_gradient(angle, from, to, oklab = false)`, `gk.linear_color_stop(c, at)`; `gk.Fill :: union {Color, Linear_Gradient}` |
 | drag and drop | `.OnDrag(gk.DragValue{ID uint64; Text string}, preview gk.View)`, `.OnDrop(func(cx *gk.Cx, d gk.DragValue))`, `.DragOver(gk.StyleRefinement)`, `.CanDrop(gk.DropAccept{Values bool; IDs []uint64; Paths bool})` | `->on_drag(gk.Drag_Value{..}, view)`, `->on_drop`, `->drag_over`, `->can_drop` |
 | an element's tooltip | `.Tooltip(gk.ViewOrTooltip)`: a `gk.View`, `gk.NewKitTooltip(text)` or `gk.NewKitTooltipElement(el)`; `.HoverableTooltip` the same | `->tooltip(gk.View_Or_Tooltip)` |
-| images from bytes and pixels | `gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format, Bytes}})`, `gk.ImageSourceRender{Value: gk.PixelImage{Width, Height, RGBA}}`, `gk.ImageSourceCustom{..}` | `gk.Image_Bytes`, `gk.Pixel_Image` |
+| images from bytes and pixels | `gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format, Bytes}})`; `img := gk.NewRenderImage(cx, gk.PixelImage{Width, Height, RGBA})` once (in init or a handler), then `gk.ImageSourceRender{Value: img}` or `gk.ImageSourceCustom{Value: img}` on every frame, `gk.Release(cx, img)` when no view shows it (gpui keeps one texture per image until then) | `gk.Image_Bytes`; `gk.render_image(cx, gk.Pixel_Image{..}) -> gk.Render_Image` |
 | the menu bar | `gk.SetMenus(cx, menus ...gk.Menu)`, `gk.Menus(cx) []gk.Menu`; items `gk.MenuAction{Name, Action, OsAction, Checked, Disabled}`, `gk.MenuSeparator{}`, `gk.MenuSubmenu{Menu}`, `gk.MenuServices{Name}` | `gk.set_menus`, `gk.menus` |
 | ask before a window closes | `gk.OnWindowShouldClose(cx, w gk.Window, f func(cx *gk.Cx) bool) gk.ActionListener` | `gk.on_window_should_close(cx, w, gk.on(ask)) -> gk.Action_Listener` |
 | run code as the app quits | `gk.OnAppQuit(cx, f func(cx *gk.Cx)) gk.ActionListener` | `gk.on_app_quit(cx, gk.on(quitting))` |
 | reduced motion | `gk.ReduceMotion(cx) bool`, `gk.SetReduceMotion(cx, on bool)` | `gk.reduce_motion(cx)`, `gk.set_reduce_motion(cx, on)` |
 | the window's icon and app id | `gk.WindowConfig{.., AppID: "notes", Icon: pngBytes}` | `gk.Window_Config{.., app_id = "notes", icon = png}` |
-| tests' hooks | `gk.TestShouldClose(cx, w)`, `gk.TestPixelImage`, `gk.TestDropAccept` | `gk.test_should_close`, `gk.test_pixel_image`, `gk.test_drop_accept` |
+| tests' hooks | `gk.TestShouldClose(cx, w)`, `gk.TestRenderImage`, `gk.TestImagesShown`, `gk.TestDropAccept` | `gk.test_should_close`, `gk.test_render_image`, `gk.test_images_shown`, `gk.test_drop_accept` |
 
 For example, a draggable band, a plot with a gradient line, and asking before a window closes:
 

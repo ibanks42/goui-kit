@@ -21,7 +21,12 @@ View_Rec :: struct {
 	view_call:  proc(fn, state: rawptr, cx: ^Cx) -> Element,
 	last:       [dynamic]u8, // the accepted tape
 	gen:        u32, // generation of `last`
-	cur, prev:  [dynamic]Handler, // handler tables of `gen` and `gen - 1`
+	cur:        [dynamic]Handler, // the handler table of `gen`
+	// The handler tables of older generations the library still holds (an open menu made from one,
+	// a closure upstream keeps): each goes when the library reports its description dropped
+	// (retire_table, from a VIEWS turn).
+	old:        map[u32][dynamic]Handler,
+	cur_retired: bool, // the library dropped gen's description: its table is not kept when gen moves on
 	build_no:   u32, // counts runs of the view procedure (what a Model's reader list refers to)
 	described:  bool,
 	dead:       bool, // released; the record stays, so a stale pointer to it is harmless
@@ -72,7 +77,6 @@ view :: proc(
 	rec.loc = loc
 	rec.last = make([dynamic]u8, 0, 0, runtime.heap_allocator())
 	rec.cur = make([dynamic]Handler, 0, 0, runtime.heap_allocator())
-	rec.prev = make([dynamic]Handler, 0, 0, runtime.heap_allocator())
 	if views == nil {
 		views = make(map[u64]^View_Rec, 64, runtime.heap_allocator())
 	}
@@ -101,13 +105,43 @@ release_view :: proc(t: ^Turn, v: View, loc: runtime.Source_Code_Location) {
 	delete_key(&views, v.h)
 	drop_kept_of(t, v.h, loc)
 	free_handlers(rec.cur[:])
-	free_handlers(rec.prev[:])
+	free_old_tables(rec)
 	delete(rec.cur)
-	delete(rec.prev)
 	delete(rec.last)
-	rec.cur, rec.prev, rec.last = nil, nil, nil
+	rec.cur, rec.last = nil, nil
 	rec.dead = true
 	release_handle(t, v.h, loc)
+}
+
+// retire_table forgets the handler table of a view's description the library has dropped (no
+// element, open menu or closure upstream keeps holds it): none of its handlers can fire again, and
+// their data is freed.
+@(private)
+retire_table :: proc(view: u64, gen: u32) {
+	v, ok := views[view]
+	if !ok {
+		return
+	}
+	if gen == v.gen {
+		v.cur_retired = true
+		return
+	}
+	if t, has := v.old[gen]; has {
+		free_handlers(t[:])
+		delete(t)
+		delete_key(&v.old, gen)
+	}
+}
+
+// free_old_tables frees every older handler table of a view that goes.
+@(private)
+free_old_tables :: proc(v: ^View_Rec) {
+	for _, t in v.old {
+		free_handlers(t[:])
+		delete(t)
+	}
+	delete(v.old)
+	v.old = nil
 }
 
 @(private)
@@ -146,10 +180,18 @@ describe :: proc(cx: ^Cx, v: ^View_Rec) {
 	}
 	resize(&v.last, len(tape))
 	copy(v.last[:], tape[:])
+	if v.gen != 0 && !v.cur_retired {
+		if v.old == nil {
+			v.old = make(map[u32][dynamic]Handler, 4, runtime.heap_allocator())
+		}
+		v.old[v.gen] = v.cur
+		v.cur = make([dynamic]Handler, 0, len(build.handlers), runtime.heap_allocator())
+	} else {
+		free_handlers(v.cur[:])
+		clear(&v.cur)
+	}
+	v.cur_retired = false
 	v.gen += 1
-	free_handlers(v.prev[:])
-	v.prev, v.cur = v.cur, v.prev
-	clear(&v.cur)
 	append(&v.cur, ..build.handlers[:])
 	put_u64(&t.tapes, v.h)
 	put_u32(&t.tapes, v.gen)

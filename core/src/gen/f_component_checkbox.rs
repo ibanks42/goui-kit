@@ -45,8 +45,8 @@ pub fn apply_component_checkbox(dx: &mut Dx, mut el: gpui_kit::component::checkb
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::component::checkbox::Checkbox>::accessibility_label(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::checkbox::Checkbox>::checked(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some((in_43(r, dx)?,)))() else { continue }; <gpui_kit::component::checkbox::Checkbox>::label(el, a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::checkbox::Checkbox>::on_change(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::checkbox::Checkbox>::on_click(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::checkbox::Checkbox>::on_change(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &bool, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 4, a0, window, cx) } }; <gpui_kit::component::checkbox::Checkbox>::on_click(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some((de_20(r, dx)?,)))() else { continue }; <gpui_kit::component::checkbox::Checkbox>::role(el, a0) }; }
             262 => { el = { let a0 = r.i64() as isize; <gpui_kit::component::checkbox::Checkbox>::tab_index(el, a0) }; }
             263 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::checkbox::Checkbox>::tab_stop(el, a0) }; }

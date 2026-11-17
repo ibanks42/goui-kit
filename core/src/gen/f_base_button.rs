@@ -45,7 +45,7 @@ pub fn apply_base_button(dx: &mut Dx, mut el: gpui_kit::base::Button, first: u32
             256 => { el = { let a0 = gpui_kit::SharedString::new(r.str()); <gpui_kit::base::Button>::accessibility_label(el, a0) }; }
             257 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Button>::disabled(el, a0) }; }
             258 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Button>::focusable(el, a0) }; }
-            259 => { el = { let a0 = { let h = dx.handler(r); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::base::Button>::on_click(el, a0) }; }
+            259 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &gpui_kit::ClickEvent, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 1, a0, window, cx) } }; <gpui_kit::base::Button>::on_click(el, a0) }; }
             260 => { el = { let Some((a0,)) = (|| Some((de_20(r, dx)?,)))() else { continue }; <gpui_kit::base::Button>::role(el, a0) }; }
             261 => { el = { let a0 = r.u8() != 0; <gpui_kit::base::Button>::selected(el, a0) }; }
             262 => { el = { let a0 = { let n = r.u32(); let dx = &mut *dx; move |v: gpui_kit::base::ButtonStyles| { let first = dx.node(n).2; apply_base_button_styles(dx, v, first) } }; <gpui_kit::base::Button>::styles(el, a0) }; }

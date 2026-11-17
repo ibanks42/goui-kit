@@ -145,6 +145,14 @@ impl<'a> Dx<'a> {
         self.view
     }
 
+    /// Keeps this description's handler table in the binding for as long as the value holding the
+    /// pin (`tape::GenPin`): every handler closure made from the tape holds one, so a handler can
+    /// fire for as long as upstream keeps its closure (an open menu's items, made from the
+    /// description that drew the button, after the view has been described again many times).
+    pub fn pin(&self) -> TapePin {
+        TapePin(self.t.pin.clone())
+    }
+
     /// Reads a handler argument (u32 id) of an op.
     pub fn handler(&self, r: &mut R) -> HandlerRef {
         HandlerRef {
@@ -490,6 +498,10 @@ impl Wire for MouseMoveEvent {
 }
 
 // --- handlers -----------------------------------------------------------------------------
+
+/// A view description's handlers kept by a closure made from it (`Dx::pin`, `tape::GenPin`).
+#[derive(Clone)]
+pub struct TapePin(#[allow(dead_code)] Option<std::sync::Arc<crate::tape::GenPin>>);
 
 /// A handler of the app as a tape names it: the view, the tape generation it was registered
 /// in, and its id in that generation's table. View 0 is a kept handler (slot, generation).

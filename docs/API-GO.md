@@ -139,7 +139,7 @@ Rust's `.when(cond, |this| this.bg(..))` is an ordinary `if` in Go, since a chai
 | `.on_drag(value, \|v, _, _, cx\| cx.new(\|_\| Preview))`, `.drag_over::<T>(\|s, _, _, _\| s.bg(..))`, `.on_drop(\|v: &T, _, cx\| ..)` | `.OnDrag(gk.DragValue{ID: 7, Text: "seven"}, a.preview)`, `.DragOver(gk.NewStyleRefinementDefault().Bg(..))`, `.CanDrop(gk.DropAccept{IDs: []uint64{7}})`, `.OnDrop(func(cx *gk.Cx, d gk.DragValue) { .. })`; one value type, kinds told apart by ID |
 | `.tooltip(\|window, cx\| Tooltip::new("Saved").build(window, cx))` | `.Tooltip(gk.NewKitTooltip("Saved"))`, `.Tooltip(gk.NewKitTooltipElement(el))`, or `.Tooltip(a.tipView)` (a `gk.View`) |
 | `cx.set_menus(vec![Menu { name: "App".into(), items: vec![MenuItem::action("Quit", Quit)] }])` | `gk.SetMenus(cx, gk.Menu{Name: "App", Items: []gk.MenuItem{gk.MenuAction{Name: "Quit", Action: quit}}})` |
-| `img(ImageSource::Render(..))`, `img(Arc::new(Image::from_bytes(ImageFormat::Png, bytes)))` | `gk.Img(gk.ImageSourceRender{Value: gk.PixelImage{Width: w, Height: h, RGBA: px}})`, `gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: b}})` |
+| `img(ImageSource::Render(..))`, `img(Arc::new(Image::from_bytes(ImageFormat::Png, bytes)))` | `gk.Img(gk.ImageSourceRender{Value: img})`, `img` made once by `gk.NewRenderImage(cx, gk.PixelImage{Width: w, Height: h, RGBA: px})` and given back with `gk.Release`, `gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format: gk.ImageFormatPng, Bytes: b}})` |
 
 A handler is any Go function of the builder's shape: a method value (`a.clicked`) or a closure.
 Its first parameter is `cx`, then the event if the builder hands one (`gk.ClickEvent`, `bool` for a

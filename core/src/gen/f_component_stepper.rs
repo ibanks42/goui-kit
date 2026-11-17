@@ -48,7 +48,7 @@ pub fn apply_component_stepper(dx: &mut Dx, mut el: gpui_kit::component::stepper
             257 => { el = { let Some((a0,)) = (|| Some((build_component_stepper_item(dx, r.u32())?,)))() else { continue }; <gpui_kit::component::stepper::Stepper>::item(el, a0) }; }
             258 => { el = { let Some((a0,)) = (|| Some(({ let n = r.u32() as usize; let mut v = Vec::with_capacity(n.min(4096)); for _ in 0..n { v.push(build_component_stepper_item(dx, r.u32())?); } v },)))() else { continue }; <gpui_kit::component::stepper::Stepper>::items(el, a0) }; }
             259 => { el = { let a0 = en_4(r.u16()); <gpui_kit::component::stepper::Stepper>::layout(el, a0) }; }
-            260 => { el = { let a0 = { let h = dx.handler(r); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::stepper::Stepper>::on_click(el, a0) }; }
+            260 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: &usize, window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| { let _ = &k; genapi::fire::<_, ()>(h, 5, a0, window, cx) } }; <gpui_kit::component::stepper::Stepper>::on_click(el, a0) }; }
             261 => { el = { let a0 = r.u64() as usize; <gpui_kit::component::stepper::Stepper>::selected_index(el, a0) }; }
             262 => { el = { let a0 = r.u8() != 0; <gpui_kit::component::stepper::Stepper>::text_center(el, a0) }; }
             263 => { el = { <gpui_kit::component::stepper::Stepper>::vertical(el) }; }

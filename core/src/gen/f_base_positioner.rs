@@ -42,7 +42,7 @@ pub fn apply_base_positioner(dx: &mut Dx, mut el: gpui_kit::base::Positioner, fi
             259 => { el = { let a0 = gpui_kit::px(r.f32()); <gpui_kit::base::Positioner>::offset(el, a0) }; }
             260 => { el = { let a0 = en_47(r.u16()); <gpui_kit::base::Positioner>::placement(el, a0) }; }
             261 => { el = { let Some((a0,)) = (|| Some((rc_37(r, dx)?,)))() else { continue }; <gpui_kit::base::Positioner>::position(el, a0) }; }
-            262 => { el = { let a0 = { let h = dx.handler(r); move |a0: gpui_kit::base::ResolvedPosition| { crate::views_after::observe(h, 118, &a0) } }; <gpui_kit::base::Positioner>::on_position(el, a0) }; }
+            262 => { el = { let a0 = { let h = dx.handler(r); let k = dx.pin(); move |a0: gpui_kit::base::ResolvedPosition| { let _ = &k; crate::views_after::observe(h, 118, &a0) } }; <gpui_kit::base::Positioner>::on_position(el, a0) }; }
             17152..=17279 => { el = tr_element_ext_6(el, op, r, dx); }
             1 => { let c = dx.child(r.u32()); el = gpui_kit::ParentElement::child(el, c); }
             2 => { if let Some(v) = dx.child_view(r.u64()) { el = gpui_kit::ParentElement::child(el, v); } }
