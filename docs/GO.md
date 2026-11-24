@@ -219,7 +219,9 @@ chart.Plot(chart.NewGrid().X(xs).Y(ys).Stroke(theme.Border),
 	chart.NewPlotLine(curve, 2.5, gk.NewLinearGradient(90, gk.NewLinearColorStop(cyan, 0), gk.NewLinearColorStop(violet, 1))))
 
 gk.OnWindowShouldClose(cx, a.win, func(cx *gk.Cx) bool {
-	if !a.dirty { return true }
+	if !a.dirty {
+		return true
+	}
 	overlay.OpenAlertDialog(cx, a.askClose)
 	return false
 })

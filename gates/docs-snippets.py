@@ -32,10 +32,17 @@ def chunks(block):
         out.append(cur)
     return out
 
+def dedent(lines):
+    lines = [l.rstrip() for l in lines]
+    pads = [len(l) - len(l.lstrip()) for l in lines if l]
+    cut = min(pads) if pads else 0
+    return [l[cut:] for l in lines]
+
 def find(lines, chunk, start):
     n = len(chunk)
+    want = dedent(chunk)
     for i in range(start, len(lines) - n + 1):
-        if lines[i:i + n] == chunk:
+        if dedent(lines[i:i + n]) == want:
             return i + n
     return -1
 
