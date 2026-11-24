@@ -451,6 +451,34 @@ func (e BarChartEl) Fill(fill string) BarChartEl {
 	return e
 }
 
+// Set a per-datum auto-oriented linear gradient fill.
+//
+// The closure receives the datum, the chart's full data range (`chart_range`, derived from all
+// data values), and a `chart_to_bar` remap helper that maps a chart-value coordinate to a
+// bar-local gradient position (where `0.0` is the bar's base and `1.0` is its tip).
+//
+// Use bar-local positions directly for per-bar gradients (every bar looks the same regardless of
+// its value):
+// Or use `chart_to_bar` to position stops at chart-relative values, so each bar shows the slice of
+// a chart-wide gradient corresponding to its own `base, value` span:
+// Stop positions returned outside `0, 1` are clipped to the bar; the library interpolates colors
+// at the clip points so the on-bar gradient still matches the chart-wide one.
+//
+// The gradient angle is derived from `BarAlignment` so stop-0 is at the base and stop-1 at the
+// tip. Setting this clears any previously set `Fill`.
+//
+// FillGradient is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::fill_gradient.
+func (e BarChartEl) FillGradient(fill [][2]LinearColorStop) BarChartEl {
+	o := op(e.n, 286)
+	o.u32(uint32(len(fill)))
+	for _, x0 := range fill {
+		for _, x1 := range x0 {
+			putLinearColorStop(o, x1)
+		}
+	}
+	return e
+}
+
 // Grid is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::grid.
 func (e BarChartEl) Grid(grid bool) BarChartEl {
 	o := op(e.n, 264)
@@ -1775,6 +1803,25 @@ func (e SankeyChartEl) Iterations(iterations int) SankeyChartEl {
 func (e SankeyChartEl) LabelGap(gap float32) SankeyChartEl {
 	o := op(e.n, 261)
 	o.f32(gap)
+	return e
+}
+
+// Set fully custom node labels, one `SankeyLabel` per line, top to bottom. Takes precedence over
+// `node_label`/`value_label` when set; unset by default.
+//
+// The closure receives the datum and the node's raw computed throughput (max of incoming and
+// outgoing flow, in unscaled units).
+//
+// Labels is <gpui_kit::component::chart::SankeyChart<crate::data::Datum>>::labels.
+func (e SankeyChartEl) Labels(labels [][]SankeyLabel) SankeyChartEl {
+	o := op(e.n, 274)
+	o.u32(uint32(len(labels)))
+	for _, x0 := range labels {
+		o.u32(uint32(len(x0)))
+		for _, x1 := range x0 {
+			o.u32(takeValue(x1.n))
+		}
+	}
 	return e
 }
 

@@ -470,6 +470,17 @@ func (e TabEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) Tab
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e TabEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) TabEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -632,6 +643,19 @@ func (e TabEl) WindowControlArea(area WindowControlArea) TabEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e TabEl) A11ySyntheticChildren(f []A11yChild) TabEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -645,6 +669,12 @@ func (e TabEl) AccessibilityID(id string) TabEl {
 
 // Set the given styles to be applied when this element is active.
 func (e TabEl) Active(f StyleRefinement) TabEl { tStatefulInteractiveElementActive(e.n, f); return e }
+
+// Track the scroll state of this element with the given handle.
+func (e TabEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) TabEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
+	return e
+}
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
 // holds real keyboard focus — but only while one of its ancestors actually holds focus.
@@ -766,6 +796,15 @@ func (e TabEl) AriaSizeOfSet(size int) TabEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e TabEl) AriaValue(value string) TabEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e TabEl) ExternalDragPayload(resolver ExternalDragPayload) TabEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -936,6 +975,9 @@ func (e TabEl) FlexGrow(grow float32) TabEl { tStyledFlexGrow(e.n, grow); return
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TabEl) FlexShrink(shrink float32) TabEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e TabEl) Font(font Font) TabEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TabEl) FontFamily(familyName string) TabEl { tStyledFontFamily(e.n, familyName); return e }
@@ -1532,6 +1574,9 @@ func (e TabBarEl) FlexGrow(grow float32) TabBarEl { tStyledFlexGrow(e.n, grow); 
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TabBarEl) FlexShrink(shrink float32) TabBarEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e TabBarEl) Font(font Font) TabBarEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TabBarEl) FontFamily(familyName string) TabBarEl {

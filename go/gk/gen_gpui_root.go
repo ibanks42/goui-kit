@@ -44,6 +44,15 @@ func VFlex(st ...Style) DivEl {
 	return DivEl{n}
 }
 
+// Add an image cache at the location of this div in the element tree.
+//
+// ImageCache is <gpui_kit::Div>::image_cache.
+func (e DivEl) ImageCache(cache ImageCacheProvider) DivEl {
+	o := op(e.n, 257)
+	putImageCacheProvider(o, cache)
+	return e
+}
+
 // Add a listener to be called when the children of this `Div` are prepainted. This allows you to
 // store the `Bounds` of the children for later use.
 //
@@ -51,6 +60,25 @@ func VFlex(st ...Style) DivEl {
 func (e DivEl) OnChildrenPrepainted(listener func(cx *Cx, e []Bounds)) DivEl {
 	o := op(e.n, 256)
 	o.u32(register(listener, 73))
+	return e
+}
+
+// Specify a function that determines the order in which children are prepainted.
+//
+// The function is called at prepaint time and should return a vector of child indices in the
+// desired prepaint order. Each index should appear exactly once.
+//
+// This is useful when the prepaint of one child affects state that another child reads. For
+// example, in split editor views, the editor with an autoscroll request should be prepainted first
+// so its scroll position update is visible to the other editor.
+//
+// WithDynamicPrepaintOrder is <gpui_kit::Div>::with_dynamic_prepaint_order.
+func (e DivEl) WithDynamicPrepaintOrder(orderFn []int) DivEl {
+	o := op(e.n, 258)
+	o.u32(uint32(len(orderFn)))
+	for _, x := range orderFn {
+		o.u64(uint64(x))
+	}
 	return e
 }
 
@@ -169,6 +197,9 @@ func (e DivEl) FlexGrow(grow float32) DivEl { tStyledFlexGrow(e.n, grow); return
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e DivEl) FlexShrink(shrink float32) DivEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e DivEl) Font(font Font) DivEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e DivEl) FontFamily(familyName string) DivEl { tStyledFontFamily(e.n, familyName); return e }
@@ -571,6 +602,17 @@ func (e DivEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) Div
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e DivEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) DivEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -781,6 +823,24 @@ func Img(source ImageSourceInto, st ...Style) ImgEl {
 	return ImgEl{n}
 }
 
+// Sets the image cache for the current node.
+//
+// If the `image_cache` is not explicitly provided, the function will determine the image cache by:
+//  1. Checking if any ancestor node of the current node contains an `ImageCacheElement`, If such
+//     a node exists, the image cache specified by that ancestor will be used.
+//  2. If no ancestor node contains an `ImageCacheElement`, the global image cache will be used as
+//     a fallback.
+//
+// This mechanism provides a flexible way to manage image caching, allowing precise control when
+// needed, while ensuring a default behavior when no cache is explicitly specified.
+//
+// ImageCache is <gpui_kit::Img>::image_cache.
+func (e ImgEl) ImageCache(imageCache ImageCache) ImgEl {
+	o := op(e.n, 256)
+	o.u64(imageCache.h)
+	return e
+}
+
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e ImgEl) Style(st ...Style) ImgEl { tokens(e.n, st); return e }
 
@@ -845,6 +905,9 @@ func (e ImgEl) FlexGrow(grow float32) ImgEl { tStyledFlexGrow(e.n, grow); return
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ImgEl) FlexShrink(shrink float32) ImgEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e ImgEl) Font(font Font) ImgEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ImgEl) FontFamily(familyName string) ImgEl { tStyledFontFamily(e.n, familyName); return e }
@@ -1247,6 +1310,17 @@ func (e ImgEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) Img
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e ImgEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ImgEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -1409,6 +1483,19 @@ func (e ImgEl) WindowControlArea(area WindowControlArea) ImgEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e ImgEl) A11ySyntheticChildren(f []A11yChild) ImgEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -1422,6 +1509,12 @@ func (e ImgEl) AccessibilityID(id string) ImgEl {
 
 // Set the given styles to be applied when this element is active.
 func (e ImgEl) Active(f StyleRefinement) ImgEl { tStatefulInteractiveElementActive(e.n, f); return e }
+
+// Track the scroll state of this element with the given handle.
+func (e ImgEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) ImgEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
+	return e
+}
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
 // holds real keyboard focus — but only while one of its ancestors actually holds focus.
@@ -1549,6 +1642,15 @@ func (e ImgEl) AriaSizeOfSet(size int) ImgEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e ImgEl) AriaValue(value string) ImgEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e ImgEl) ExternalDragPayload(resolver ExternalDragPayload) ImgEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -1755,6 +1857,9 @@ func (e StatefulDivEl) FlexShrink(shrink float32) StatefulDivEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e StatefulDivEl) Font(font Font) StatefulDivEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e StatefulDivEl) FontFamily(familyName string) StatefulDivEl {
@@ -2033,6 +2138,19 @@ func (e StatefulDivEl) Top(length Length) StatefulDivEl { tStyledTop(e.n, length
 // Sets the width of the element. Docs (https://tailwindcss.com/docs/width)
 func (e StatefulDivEl) W(length Length) StatefulDivEl { tStyledW(e.n, length); return e }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e StatefulDivEl) A11ySyntheticChildren(f []A11yChild) StatefulDivEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -2047,6 +2165,12 @@ func (e StatefulDivEl) AccessibilityID(id string) StatefulDivEl {
 // Set the given styles to be applied when this element is active.
 func (e StatefulDivEl) Active(f StyleRefinement) StatefulDivEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e StatefulDivEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) StatefulDivEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -2179,6 +2303,15 @@ func (e StatefulDivEl) AriaSizeOfSet(size int) StatefulDivEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e StatefulDivEl) AriaValue(value string) StatefulDivEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e StatefulDivEl) ExternalDragPayload(resolver ExternalDragPayload) StatefulDivEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -2487,6 +2620,17 @@ func (e StatefulDivEl) OnBoxedAction(action Action, listener func(cx *Cx, e Acti
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e StatefulDivEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) StatefulDivEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -2778,6 +2922,9 @@ func (e StyleRefinement) FlexShrink(shrink float32) StyleRefinement {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e StyleRefinement) Font(font Font) StyleRefinement { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e StyleRefinement) FontFamily(familyName string) StyleRefinement {
@@ -3128,6 +3275,33 @@ func (e SVGEl) Path(path string) SVGEl {
 	return e
 }
 
+// Continuously animate the SVG between two transformations, phase-locked to the app's shared
+// animation clock like `repeat_synced`.
+//
+// The SVG is painted once. On later frames the window moves it in the scene it already has and
+// presents that again, instead of re-rendering this view.
+//
+// This replaces `WithTransformation`, and like it doesn't affect layout or hit testing. The SVG is
+// still clipped and ordered by the bounds of its starting transformation, so keep its motion close
+// to them.
+//
+// WithTimedTransformation is <gpui_kit::Svg>::with_timed_transformation.
+func (e SVGEl) WithTimedTransformation(transformation TimedTransformation) SVGEl {
+	o := op(e.n, 260)
+	putTimedTransformation(o, transformation)
+	return e
+}
+
+// Transform the SVG element with the given transformation. Note that this won't effect the hitbox
+// or layout of the element, only the rendering.
+//
+// WithTransformation is <gpui_kit::Svg>::with_transformation.
+func (e SVGEl) WithTransformation(transformation Transformation) SVGEl {
+	o := op(e.n, 259)
+	putTransformation(o, transformation)
+	return e
+}
+
 // Style adds style tokens (s.Gap2, s.SizeFull).
 func (e SVGEl) Style(st ...Style) SVGEl { tokens(e.n, st); return e }
 
@@ -3192,6 +3366,9 @@ func (e SVGEl) FlexGrow(grow float32) SVGEl { tStyledFlexGrow(e.n, grow); return
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SVGEl) FlexShrink(shrink float32) SVGEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e SVGEl) Font(font Font) SVGEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SVGEl) FontFamily(familyName string) SVGEl { tStyledFontFamily(e.n, familyName); return e }
@@ -3591,6 +3768,17 @@ func (e SVGEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) SVGEl {
 // See `listener` to get access to a view's state from this callback.
 func (e SVGEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) SVGEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
+	return e
+}
+
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e SVGEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) SVGEl {
+	tInteractiveElementOnDragMove(e.n, listener)
 	return e
 }
 

@@ -73,6 +73,15 @@ func (e IconEl) Rotate(radians RadiansInto) IconEl {
 	return e
 }
 
+// Set the SVG transformation, replacing any previous transformation or rotation.
+//
+// Transform is <gpui_kit::component::Icon>::transform.
+func (e IconEl) Transform(transformation Transformation) IconEl {
+	o := op(e.n, 259)
+	putTransformation(o, transformation)
+	return e
+}
+
 // Give this element the surface, edge, shadow and radius of a popover.
 //
 // This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
@@ -249,6 +258,9 @@ func (e IconEl) FlexGrow(grow float32) IconEl { tStyledFlexGrow(e.n, grow); retu
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e IconEl) FlexShrink(shrink float32) IconEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e IconEl) Font(font Font) IconEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e IconEl) FontFamily(familyName string) IconEl { tStyledFontFamily(e.n, familyName); return e }
@@ -807,6 +819,9 @@ func (e TitleBarEl) FlexGrow(grow float32) TitleBarEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TitleBarEl) FlexShrink(shrink float32) TitleBarEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e TitleBarEl) Font(font Font) TitleBarEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TitleBarEl) FontFamily(familyName string) TitleBarEl {

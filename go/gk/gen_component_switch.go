@@ -305,6 +305,9 @@ func (e SwitchEl) FlexGrow(grow float32) SwitchEl { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SwitchEl) FlexShrink(shrink float32) SwitchEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e SwitchEl) Font(font Font) SwitchEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SwitchEl) FontFamily(familyName string) SwitchEl {
 	tStyledFontFamily(e.n, familyName)

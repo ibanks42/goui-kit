@@ -272,6 +272,12 @@ func tInteractiveElementOnBoxedAction(n *node, action Action, listener func(cx *
 	o.u32(register(listener, 20))
 }
 
+// tInteractiveElementOnDragMove: gpui_kit::InteractiveElement::on_drag_move.
+func tInteractiveElementOnDragMove(n *node, listener func(cx *Cx, e DragMoveEvent)) {
+	o := op(n, 16554)
+	o.u32(register(listener, 119))
+}
+
 // tInteractiveElementOnDrop: gpui_kit::InteractiveElement::on_drop.
 func tInteractiveElementOnDrop(n *node, listener func(cx *Cx, e DragValue)) {
 	o := op(n, 16551)
@@ -541,6 +547,17 @@ func tSizableXsmall(n *node) {
 	op(n, 18179)
 }
 
+// tStatefulInteractiveElementA11ySyntheticChildren: gpui_kit::StatefulInteractiveElement::a11y_synthetic_children.
+func tStatefulInteractiveElementA11ySyntheticChildren(n *node, f []A11yChild) {
+	o := op(n, 16805)
+	o.u32(uint32(len(f)))
+	for _, x0 := range f {
+		o.str(x0.Key)
+		o.u16(uint16(x0.Role))
+		o.str(x0.Label)
+	}
+}
+
 // tStatefulInteractiveElementAccessibilityID: gpui_kit::StatefulInteractiveElement::accessibility_id.
 func tStatefulInteractiveElementAccessibilityID(n *node, id string) {
 	o := op(n, 16768)
@@ -551,6 +568,17 @@ func tStatefulInteractiveElementAccessibilityID(n *node, id string) {
 func tStatefulInteractiveElementActive(n *node, f StyleRefinement) {
 	o := op(n, 16769)
 	o.u32(takeValue(f.n))
+}
+
+// tStatefulInteractiveElementAnchorScroll: gpui_kit::StatefulInteractiveElement::anchor_scroll.
+func tStatefulInteractiveElementAnchorScroll(n *node, scrollAnchor Option[ScrollAnchor]) {
+	o := op(n, 16806)
+	if x0, ok := scrollAnchor.Get(); ok {
+		o.u8(1)
+		o.u64(x0.h)
+	} else {
+		o.u8(0)
+	}
 }
 
 // tStatefulInteractiveElementAriaActiveDescendant: gpui_kit::StatefulInteractiveElement::aria_active_descendant.
@@ -664,6 +692,12 @@ func tStatefulInteractiveElementAriaSizeOfSet(n *node, size int) {
 func tStatefulInteractiveElementAriaValue(n *node, value string) {
 	o := op(n, 16788)
 	o.str(value)
+}
+
+// tStatefulInteractiveElementExternalDragPayload: gpui_kit::StatefulInteractiveElement::external_drag_payload.
+func tStatefulInteractiveElementExternalDragPayload(n *node, resolver ExternalDragPayload) {
+	o := op(n, 16807)
+	putExternalDragPayload(o, resolver)
 }
 
 // tStatefulInteractiveElementFocusable: gpui_kit::StatefulInteractiveElement::focusable.
@@ -975,6 +1009,12 @@ func tStyledFlexGrow(n *node, grow float32) {
 func tStyledFlexShrink(n *node, shrink float32) {
 	o := op(n, 16913)
 	o.f32(shrink)
+}
+
+// tStyledFont: gpui_kit::Styled::font.
+func tStyledFont(n *node, font Font) {
+	o := op(n, 16975)
+	putFont(o, font)
 }
 
 // tStyledFontFamily: gpui_kit::Styled::font_family.

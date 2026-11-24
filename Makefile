@@ -18,8 +18,8 @@ SCENE ?= panels 60 64 2
 LOGS  ?= gates/out/logs
 
 .PHONY: help odin gen status coverage lib lib-release dist cross check-windows examples \
-        gates gates-quick proto docs fps pixels gallery memory misuse counter rebuild \
-        go-test go-apps go-static go-fps clean
+        gates gates-quick proto docs fps pixels gallery gallery-go memory misuse counter rebuild \
+        go-test go-proto-all go-apps go-static go-fps clean
 
 help:
 	@echo "Setup"
@@ -49,11 +49,13 @@ help:
 	@echo "  make docs           every snippet in the guides builds and both tutorials run"
 	@echo "  make cross          compile both front ends for macOS and Windows from Linux (under a minute)"
 	@echo "  make pixels | gallery | misuse | counter | rebuild | memory    one check each"
+	@echo "  make gallery-go     the gallery pixel gate for Go: every page against the Rust reference"
 	@echo "  make fps            one frame-cost run: HZ=$(HZ) SCENE='$(SCENE)'"
 	@echo "  make go-test        the Go front end: examples, protocol tests, misuse cases, pixels"
-	@echo "  make go-apps        the Go apps and tutorial against their Odin twins, image by image"
+	@echo "  make go-proto-all   every protocol test in Go: examples/go/proto and the families (core/tests/go)"
+	@echo "  make go-apps        the Go apps and tutorial: notes against Rust, the others against themselves"
 	@echo "  make go-static      the Go and Odin apps built as an app is: static, only the component families used"
-	@echo "  make go-fps         frame cost of Go against Rust and Odin (about ten minutes)"
+	@echo "  make go-fps         frame cost of Go against Rust (about ten minutes)"
 	@echo ""
 	@echo "  make clean          delete bin/ and gates/out/ (keeps lib/ and target/)"
 
@@ -125,6 +127,9 @@ pixels:
 gallery:
 	gates/gallery.sh
 
+gallery-go:
+	gates/gallery.sh go
+
 memory:
 	gates/memory.sh
 
@@ -139,6 +144,12 @@ rebuild:
 
 go-test:
 	gates/go.sh build hello proto misuse pixels rebuild
+
+# The protocol tests in Go (core/tests/go/README.md): the core ones (gates/go-proto.sh, after
+# building bin/proto-go), every family's (core/tests/go/run.sh) and the sample by generation.
+go-proto-all:
+	examples/go/build.sh proto port
+	gates/go-proto.sh; a=$$?; core/tests/go/run.sh; b=$$?; gates/go-gensample.sh; c=$$?; [ $$a = 0 ] && [ $$b = 0 ] && [ $$c = 0 ]
 
 go-apps:
 	gates/go-apps.sh

@@ -52,15 +52,15 @@ not counted here.
 <!-- coverage:begin (written by tools/status.py; do not edit) -->
 Pin: gpui-kit 0.11.0, gpui-fast 0.1.19, features gpui-fast, syntect.
 
-**Real functions (style tokens left out): 4635. Usable (bound or bridged): 3950 (85.2 %). Not attempted yet: 3. Skipped on purpose: 682. Failed: 0. Verified by a byte-identical gallery page: 1219.**
+**Real functions (style tokens left out): 4635. Usable (bound or bridged): 3950 (85.2 %). Not attempted yet: 3. Skipped on purpose: 682. Failed: 0. Verified by a byte-identical gallery page: 1221.**
 
 - **builder: 512 of 777 functions bound or bridged (65.9 %)**: 389 bound, 123 bridged, 265 skipped, 0 failed, 0 not attempted yet; 136 verified by a run.
-- **component: 1471 of 1484 functions bound or bridged (99.1 %)**: 1127 bound, 344 bridged, 11 skipped, 0 failed, 2 not attempted yet; 777 verified by a run.
+- **component: 1471 of 1484 functions bound or bridged (99.1 %)**: 1127 bound, 344 bridged, 11 skipped, 0 failed, 2 not attempted yet; 779 verified by a run.
 - **data: 0 of 187 functions bound or bridged (0.0 %)**: 0 bound, 0 bridged, 187 skipped, 0 failed, 0 not attempted yet; 0 verified by a run.
 - **function: 328 of 340 functions bound or bridged (96.5 %)**: 316 bound, 12 bridged, 12 skipped, 0 failed, 0 not attempted yet; 20 verified by a run.
 - **generic: 4 of 18 functions bound or bridged (22.2 %)**: 0 bound, 4 bridged, 14 skipped, 0 failed, 0 not attempted yet; 0 verified by a run.
 - **gpui: 180 of 193 functions bound or bridged (93.3 %)**: 133 bound, 47 bridged, 13 skipped, 0 failed, 0 not attempted yet; 130 verified by a run.
-- **state: 1179 of 1256 functions bound or bridged (93.9 %)**: 0 bound, 1179 bridged, 77 skipped, 0 failed, 0 not attempted yet; 52 verified by a run.
+- **state: 1179 of 1256 functions bound or bridged (93.9 %)**: 1 bound, 1178 bridged, 77 skipped, 0 failed, 0 not attempted yet; 52 verified by a run.
 - **style: 3130 of 3130 functions bound or bridged (100.0 %)**: 3130 bound, 0 bridged, 0 skipped, 0 failed, 0 not attempted yet; 11 verified by a run.
 - **trait: 276 of 380 functions bound or bridged (72.6 %)**: 103 bound, 173 bridged, 103 skipped, 0 failed, 1 not attempted yet; 104 verified by a run.
 
@@ -70,9 +70,9 @@ What remains, by family (style tokens left out; a row is an upstream type, trait
 
 | family | rows | functions | bound or bridged | verified | skipped | remaining | what the remaining ones need (functions) |
 |---|---|---|---|---|---|---|---|
-| editor and text input | 125 | 1007 | 785 | 108 | 220 | 2 | data (a closure that returns a value) 2 |
+| editor and text input | 125 | 1007 | 785 | 109 | 220 | 2 | data (a closure that returns a value) 2 |
 | tables and lists with delegates | 67 | 451 | 370 | 100 | 80 | 1 | delegates (a trait the app implements: one bridge per trait) 1 |
-| other components and values | 307 | 1706 | 1466 | 629 | 240 | 0 |  |
+| other components and values | 307 | 1706 | 1466 | 630 | 240 | 0 |  |
 | ambient context, theme and window | 14 | 394 | 373 | 19 | 21 | 0 |  |
 | menus, actions and commands | 22 | 153 | 124 | 33 | 29 | 0 |  |
 | charts and plots | 41 | 358 | 313 | 220 | 45 | 0 |  |
@@ -248,7 +248,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::DialogPopup | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::DialogTitle | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::DialogTrigger | component | 3 | 1 | 2 | 0 | 0 | 0 | 100.0 % | 1 |
-| base::Editor | component | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
+| base::Editor | component | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 1 |
 | base::GridLayout | component | 12 | 6 | 6 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::HoverCard | component | 7 | 5 | 2 | 0 | 0 | 0 | 100.0 % | 5 |
 | base::Input | component | 4 | 0 | 4 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -332,7 +332,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::BubbleContent | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::BubbleGroup | component | 1 | 1 | 0 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::BubbleReactions | component | 4 | 4 | 0 | 0 | 0 | 0 | 100.0 % | 3 |
-| component::Button | component | 23 | 19 | 4 | 0 | 0 | 0 | 100.0 % | 15 |
+| component::Button | component | 23 | 19 | 4 | 0 | 0 | 0 | 100.0 % | 16 |
 | component::ButtonGroup | component | 8 | 7 | 1 | 0 | 0 | 0 | 100.0 % | 5 |
 | component::Calendar | component | 3 | 2 | 1 | 0 | 0 | 0 | 100.0 % | 1 |
 | component::CandlestickChart | component | 21 | 11 | 10 | 0 | 0 | 0 | 100.0 % | 17 |
@@ -634,7 +634,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | base::RenderedText | state | 5 | 0 | 5 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::ResizableState | state | 8 | 0 | 8 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::ResizeHandleContext | state | 4 | 0 | 4 | 0 | 0 | 0 | 100.0 % | 1 |
-| base::Root | state | 6 | 0 | 2 | 4 (rust-only-extension 4) | 0 | 0 | 33.3 % | 0 |
+| base::Root | state | 6 | 1 | 1 | 4 (rust-only-extension 4) | 0 | 0 | 33.3 % | 0 |
 | base::SankeyGraph | state | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::ScaleBand | state | 7 | 0 | 7 | 0 | 0 | 0 | 100.0 % | 0 |
 | base::ScaleLinear | state | 1 | 0 | 1 | 0 | 0 | 0 | 100.0 % | 0 |
@@ -776,7 +776,7 @@ Skipped on purpose, by family and reason (the reasons are DESIGN.md section 13's
 | component::ThemeStyled | trait | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 0 |
 | component::ToggleVariants | trait | 3 | 3 | 0 | 0 | 0 | 0 | 100.0 % | 3 |
 | component::WindowExt | trait | 16 | 14 | 0 | 2 (rust-only-extension 2) | 0 | 0 | 87.5 % | 4 |
-| **all** | | **7765** | **5198** | **1882** | **682** | **0** | **3** | **91.2 %** | **1230** |
+| **all** | | **7765** | **5199** | **1881** | **682** | **0** | **3** | **91.2 %** | **1232** |
 
 Not attempted yet, by what is missing:
 

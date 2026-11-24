@@ -1,4 +1,4 @@
-# The todo example's scripted session (gates/todo.sh): no Rust twin; the images are looked at by eye
+# The todo example's scripted session (gates/todo.sh; gates/go-apps.sh compares the Go app with its Rust twin, ref-todo)
 # and gates/todo-check.py checks the state the session saved. Window coordinates (the images are twice
 # the size): the File button 30,24; the filters All 244,73, Active 292,73, Done 350,73; the search box
 # 596,73; the task rows y = 113, 146, 177 (checkboxes at x 248); the projects y = 99, 127, 155;

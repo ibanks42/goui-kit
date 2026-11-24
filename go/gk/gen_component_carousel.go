@@ -273,6 +273,9 @@ func (e CarouselEl) FlexGrow(grow float32) CarouselEl { tStyledFlexGrow(e.n, gro
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CarouselEl) FlexShrink(shrink float32) CarouselEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e CarouselEl) Font(font Font) CarouselEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e CarouselEl) FontFamily(familyName string) CarouselEl {
 	tStyledFontFamily(e.n, familyName)
@@ -894,6 +897,9 @@ func (e CarouselContentEl) FlexShrink(shrink float32) CarouselContentEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e CarouselContentEl) Font(font Font) CarouselContentEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e CarouselContentEl) FontFamily(familyName string) CarouselContentEl {
@@ -1532,6 +1538,9 @@ func (e CarouselItemEl) FlexShrink(shrink float32) CarouselItemEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e CarouselItemEl) Font(font Font) CarouselItemEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e CarouselItemEl) FontFamily(familyName string) CarouselItemEl {
 	tStyledFontFamily(e.n, familyName)
@@ -2128,6 +2137,9 @@ func (e CarouselNextEl) FlexShrink(shrink float32) CarouselNextEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e CarouselNextEl) Font(font Font) CarouselNextEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e CarouselNextEl) FontFamily(familyName string) CarouselNextEl {
@@ -2811,6 +2823,9 @@ func (e CarouselPaginationEl) FlexShrink(shrink float32) CarouselPaginationEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e CarouselPaginationEl) Font(font Font) CarouselPaginationEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e CarouselPaginationEl) FontFamily(familyName string) CarouselPaginationEl {
@@ -3647,6 +3662,12 @@ func (e CarouselPaginationItemEl) FlexShrink(shrink float32) CarouselPaginationI
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e CarouselPaginationItemEl) Font(font Font) CarouselPaginationItemEl {
+	tStyledFont(e.n, font)
+	return e
+}
+
 // Sets the font family of this element and its children.
 func (e CarouselPaginationItemEl) FontFamily(familyName string) CarouselPaginationItemEl {
 	tStyledFontFamily(e.n, familyName)
@@ -4423,6 +4444,9 @@ func (e CarouselPreviousEl) FlexShrink(shrink float32) CarouselPreviousEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e CarouselPreviousEl) Font(font Font) CarouselPreviousEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e CarouselPreviousEl) FontFamily(familyName string) CarouselPreviousEl {

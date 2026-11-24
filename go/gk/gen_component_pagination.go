@@ -307,6 +307,9 @@ func (e PaginationEl) FlexShrink(shrink float32) PaginationEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e PaginationEl) Font(font Font) PaginationEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e PaginationEl) FontFamily(familyName string) PaginationEl {
 	tStyledFontFamily(e.n, familyName)

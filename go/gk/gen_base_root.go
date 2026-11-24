@@ -281,6 +281,9 @@ func (e BaseAccordionEl) FlexShrink(shrink float32) BaseAccordionEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseAccordionEl) Font(font Font) BaseAccordionEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseAccordionEl) FontFamily(familyName string) BaseAccordionEl {
 	tStyledFontFamily(e.n, familyName)
@@ -783,6 +786,17 @@ func (e BaseAccordionEl) OnBoxedAction(action Action, listener func(cx *Cx, e Ac
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseAccordionEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseAccordionEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -951,6 +965,19 @@ func (e BaseAccordionEl) WindowControlArea(area WindowControlArea) BaseAccordion
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseAccordionEl) A11ySyntheticChildren(f []A11yChild) BaseAccordionEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -965,6 +992,12 @@ func (e BaseAccordionEl) AccessibilityID(id string) BaseAccordionEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseAccordionEl) Active(f StyleRefinement) BaseAccordionEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseAccordionEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseAccordionEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -1097,6 +1130,15 @@ func (e BaseAccordionEl) AriaSizeOfSet(size int) BaseAccordionEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseAccordionEl) AriaValue(value string) BaseAccordionEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseAccordionEl) ExternalDragPayload(resolver ExternalDragPayload) BaseAccordionEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -1531,6 +1573,9 @@ func (e AccordionHeaderEl) FlexShrink(shrink float32) AccordionHeaderEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e AccordionHeaderEl) Font(font Font) AccordionHeaderEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e AccordionHeaderEl) FontFamily(familyName string) AccordionHeaderEl {
@@ -2205,6 +2250,9 @@ func (e BaseAccordionItemEl) FlexShrink(shrink float32) BaseAccordionItemEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseAccordionItemEl) Font(font Font) BaseAccordionItemEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseAccordionItemEl) FontFamily(familyName string) BaseAccordionItemEl {
@@ -2885,6 +2933,9 @@ func (e AccordionPanelEl) FlexShrink(shrink float32) AccordionPanelEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AccordionPanelEl) Font(font Font) AccordionPanelEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AccordionPanelEl) FontFamily(familyName string) AccordionPanelEl {
 	tStyledFontFamily(e.n, familyName)
@@ -3541,6 +3592,9 @@ func (e AccordionTriggerEl) FlexShrink(shrink float32) AccordionTriggerEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AccordionTriggerEl) Font(font Font) AccordionTriggerEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AccordionTriggerEl) FontFamily(familyName string) AccordionTriggerEl {
 	tStyledFontFamily(e.n, familyName)
@@ -4091,6 +4145,17 @@ func (e AccordionTriggerEl) OnBoxedAction(action Action, listener func(cx *Cx, e
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e AccordionTriggerEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) AccordionTriggerEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -4259,6 +4324,19 @@ func (e AccordionTriggerEl) WindowControlArea(area WindowControlArea) AccordionT
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e AccordionTriggerEl) A11ySyntheticChildren(f []A11yChild) AccordionTriggerEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -4273,6 +4351,12 @@ func (e AccordionTriggerEl) AccessibilityID(id string) AccordionTriggerEl {
 // Set the given styles to be applied when this element is active.
 func (e AccordionTriggerEl) Active(f StyleRefinement) AccordionTriggerEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e AccordionTriggerEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) AccordionTriggerEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -4405,6 +4489,15 @@ func (e AccordionTriggerEl) AriaSizeOfSet(size int) AccordionTriggerEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e AccordionTriggerEl) AriaValue(value string) AccordionTriggerEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e AccordionTriggerEl) ExternalDragPayload(resolver ExternalDragPayload) AccordionTriggerEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -4893,6 +4986,9 @@ func (e BaseAlertDialogEl) FlexShrink(shrink float32) BaseAlertDialogEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseAlertDialogEl) Font(font Font) BaseAlertDialogEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseAlertDialogEl) FontFamily(familyName string) BaseAlertDialogEl {
@@ -5564,6 +5660,9 @@ func (e AlertDialogActionEl) FlexShrink(shrink float32) AlertDialogActionEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e AlertDialogActionEl) Font(font Font) AlertDialogActionEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e AlertDialogActionEl) FontFamily(familyName string) AlertDialogActionEl {
@@ -6264,6 +6363,12 @@ func (e AlertDialogBackdropEl) FlexGrow(grow float32) AlertDialogBackdropEl {
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AlertDialogBackdropEl) FlexShrink(shrink float32) AlertDialogBackdropEl {
 	tStyledFlexShrink(e.n, shrink)
+	return e
+}
+
+// Sets the font of this element and its children.
+func (e AlertDialogBackdropEl) Font(font Font) AlertDialogBackdropEl {
+	tStyledFont(e.n, font)
 	return e
 }
 
@@ -7005,6 +7110,9 @@ func (e AlertDialogCancelEl) FlexShrink(shrink float32) AlertDialogCancelEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AlertDialogCancelEl) Font(font Font) AlertDialogCancelEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AlertDialogCancelEl) FontFamily(familyName string) AlertDialogCancelEl {
 	tStyledFontFamily(e.n, familyName)
@@ -7682,6 +7790,9 @@ func (e AlertDialogCloseEl) FlexShrink(shrink float32) AlertDialogCloseEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e AlertDialogCloseEl) Font(font Font) AlertDialogCloseEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e AlertDialogCloseEl) FontFamily(familyName string) AlertDialogCloseEl {
@@ -8406,6 +8517,12 @@ func (e AlertDialogDescriptionEl) FlexGrow(grow float32) AlertDialogDescriptionE
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AlertDialogDescriptionEl) FlexShrink(shrink float32) AlertDialogDescriptionEl {
 	tStyledFlexShrink(e.n, shrink)
+	return e
+}
+
+// Sets the font of this element and its children.
+func (e AlertDialogDescriptionEl) Font(font Font) AlertDialogDescriptionEl {
+	tStyledFont(e.n, font)
 	return e
 }
 
@@ -9141,6 +9258,9 @@ func (e AlertDialogPopupEl) FlexShrink(shrink float32) AlertDialogPopupEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AlertDialogPopupEl) Font(font Font) AlertDialogPopupEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AlertDialogPopupEl) FontFamily(familyName string) AlertDialogPopupEl {
 	tStyledFontFamily(e.n, familyName)
@@ -9813,6 +9933,9 @@ func (e AlertDialogTitleEl) FlexShrink(shrink float32) AlertDialogTitleEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AlertDialogTitleEl) Font(font Font) AlertDialogTitleEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AlertDialogTitleEl) FontFamily(familyName string) AlertDialogTitleEl {
 	tStyledFontFamily(e.n, familyName)
@@ -10429,6 +10552,9 @@ func (e BaseAvatarEl) FlexShrink(shrink float32) BaseAvatarEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseAvatarEl) Font(font Font) BaseAvatarEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseAvatarEl) FontFamily(familyName string) BaseAvatarEl {
 	tStyledFontFamily(e.n, familyName)
@@ -10866,6 +10992,17 @@ func (e BaseAvatarEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) B
 // See `listener` to get access to a view's state from this callback.
 func (e BaseAvatarEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) BaseAvatarEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
+	return e
+}
+
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseAvatarEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseAvatarEl {
+	tInteractiveElementOnDragMove(e.n, listener)
 	return e
 }
 
@@ -11327,6 +11464,9 @@ func (e AvatarFallbackEl) FlexShrink(shrink float32) AvatarFallbackEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e AvatarFallbackEl) Font(font Font) AvatarFallbackEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e AvatarFallbackEl) FontFamily(familyName string) AvatarFallbackEl {
@@ -11880,6 +12020,9 @@ func (e AvatarImageEl) FlexShrink(shrink float32) AvatarImageEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AvatarImageEl) Font(font Font) AvatarImageEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AvatarImageEl) FontFamily(familyName string) AvatarImageEl {
 	tStyledFontFamily(e.n, familyName)
@@ -12335,6 +12478,17 @@ func (e AvatarImageEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) 
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarImageEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) AvatarImageEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
+	return e
+}
+
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e AvatarImageEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) AvatarImageEl {
+	tInteractiveElementOnDragMove(e.n, listener)
 	return e
 }
 
@@ -12856,6 +13010,9 @@ func (e BaseButtonEl) FlexShrink(shrink float32) BaseButtonEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseButtonEl) Font(font Font) BaseButtonEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseButtonEl) FontFamily(familyName string) BaseButtonEl {
 	tStyledFontFamily(e.n, familyName)
@@ -13310,6 +13467,17 @@ func (e BaseButtonEl) OnBoxedAction(action Action, listener func(cx *Cx, e Actio
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseButtonEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseButtonEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -13454,6 +13622,19 @@ func (e BaseButtonEl) WindowControlArea(area WindowControlArea) BaseButtonEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseButtonEl) A11ySyntheticChildren(f []A11yChild) BaseButtonEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -13468,6 +13649,12 @@ func (e BaseButtonEl) AccessibilityID(id string) BaseButtonEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseButtonEl) Active(f StyleRefinement) BaseButtonEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseButtonEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseButtonEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -13600,6 +13787,15 @@ func (e BaseButtonEl) AriaSizeOfSet(size int) BaseButtonEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseButtonEl) AriaValue(value string) BaseButtonEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseButtonEl) ExternalDragPayload(resolver ExternalDragPayload) BaseButtonEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -13750,6 +13946,27 @@ func BaseCalendar(id ID, state CalendarState, st ...Style) BaseCalendarEl {
 	o.u64(state.h)
 	tokens(n, st)
 	return BaseCalendarEl{n}
+}
+
+// FirstDayOfWeek is <gpui_kit::base::Calendar>::first_day_of_week.
+func (e BaseCalendarEl) FirstDayOfWeek(day Weekday) BaseCalendarEl {
+	o := op(e.n, 257)
+	putWeekday(o, day)
+	return e
+}
+
+// Item is <gpui_kit::base::Calendar>::item.
+func (e BaseCalendarEl) Item(render RowSource) BaseCalendarEl {
+	o := op(e.n, 259)
+	o.u64(itemsCheck(render, 2))
+	return e
+}
+
+// Label is <gpui_kit::base::Calendar>::label.
+func (e BaseCalendarEl) Label(label Ask[TupleCalendarItemKindInt32, string]) BaseCalendarEl {
+	o := op(e.n, 258)
+	o.u64(label.Src.h)
+	return e
 }
 
 // NumberOfMonths is <gpui_kit::base::Calendar>::number_of_months.
@@ -13968,6 +14185,9 @@ func (e BaseCalendarEl) FlexShrink(shrink float32) BaseCalendarEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseCalendarEl) Font(font Font) BaseCalendarEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseCalendarEl) FontFamily(familyName string) BaseCalendarEl {
@@ -14529,6 +14749,9 @@ func (e CalendarItemEl) FlexShrink(shrink float32) CalendarItemEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e CalendarItemEl) Font(font Font) CalendarItemEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e CalendarItemEl) FontFamily(familyName string) CalendarItemEl {
 	tStyledFontFamily(e.n, familyName)
@@ -15002,6 +15225,17 @@ func (e CalendarItemEl) OnBoxedAction(action Action, listener func(cx *Cx, e Act
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e CalendarItemEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) CalendarItemEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -15170,6 +15404,19 @@ func (e CalendarItemEl) WindowControlArea(area WindowControlArea) CalendarItemEl
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e CalendarItemEl) A11ySyntheticChildren(f []A11yChild) CalendarItemEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -15184,6 +15431,12 @@ func (e CalendarItemEl) AccessibilityID(id string) CalendarItemEl {
 // Set the given styles to be applied when this element is active.
 func (e CalendarItemEl) Active(f StyleRefinement) CalendarItemEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e CalendarItemEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) CalendarItemEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -15316,6 +15569,15 @@ func (e CalendarItemEl) AriaSizeOfSet(size int) CalendarItemEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e CalendarItemEl) AriaValue(value string) CalendarItemEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e CalendarItemEl) ExternalDragPayload(resolver ExternalDragPayload) CalendarItemEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -15796,6 +16058,9 @@ func (e BaseCheckboxEl) FlexShrink(shrink float32) BaseCheckboxEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseCheckboxEl) Font(font Font) BaseCheckboxEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseCheckboxEl) FontFamily(familyName string) BaseCheckboxEl {
@@ -16287,6 +16552,17 @@ func (e BaseCheckboxEl) OnBoxedAction(action Action, listener func(cx *Cx, e Act
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseCheckboxEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseCheckboxEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -16431,6 +16707,19 @@ func (e BaseCheckboxEl) WindowControlArea(area WindowControlArea) BaseCheckboxEl
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseCheckboxEl) A11ySyntheticChildren(f []A11yChild) BaseCheckboxEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -16445,6 +16734,12 @@ func (e BaseCheckboxEl) AccessibilityID(id string) BaseCheckboxEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseCheckboxEl) Active(f StyleRefinement) BaseCheckboxEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseCheckboxEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseCheckboxEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -16577,6 +16872,15 @@ func (e BaseCheckboxEl) AriaSizeOfSet(size int) BaseCheckboxEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseCheckboxEl) AriaValue(value string) BaseCheckboxEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseCheckboxEl) ExternalDragPayload(resolver ExternalDragPayload) BaseCheckboxEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -17035,6 +17339,9 @@ func (e CheckboxIndicatorEl) FlexShrink(shrink float32) CheckboxIndicatorEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e CheckboxIndicatorEl) Font(font Font) CheckboxIndicatorEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e CheckboxIndicatorEl) FontFamily(familyName string) CheckboxIndicatorEl {
@@ -17802,6 +18109,9 @@ func (e BaseCollapsibleEl) FlexShrink(shrink float32) BaseCollapsibleEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseCollapsibleEl) Font(font Font) BaseCollapsibleEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseCollapsibleEl) FontFamily(familyName string) BaseCollapsibleEl {
 	tStyledFontFamily(e.n, familyName)
@@ -18494,6 +18804,9 @@ func (e BaseColorPickerEl) FlexShrink(shrink float32) BaseColorPickerEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseColorPickerEl) Font(font Font) BaseColorPickerEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseColorPickerEl) FontFamily(familyName string) BaseColorPickerEl {
 	tStyledFontFamily(e.n, familyName)
@@ -19020,6 +19333,17 @@ func (e BaseColorPickerEl) OnBoxedAction(action Action, listener func(cx *Cx, e 
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseColorPickerEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseColorPickerEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -19181,6 +19505,19 @@ func (e BaseColorPickerEl) WindowControlArea(area WindowControlArea) BaseColorPi
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseColorPickerEl) A11ySyntheticChildren(f []A11yChild) BaseColorPickerEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -19195,6 +19532,12 @@ func (e BaseColorPickerEl) AccessibilityID(id string) BaseColorPickerEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseColorPickerEl) Active(f StyleRefinement) BaseColorPickerEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseColorPickerEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseColorPickerEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -19327,6 +19670,15 @@ func (e BaseColorPickerEl) AriaSizeOfSet(size int) BaseColorPickerEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseColorPickerEl) AriaValue(value string) BaseColorPickerEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseColorPickerEl) ExternalDragPayload(resolver ExternalDragPayload) BaseColorPickerEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -19755,6 +20107,9 @@ func (e ColorSwatchEl) FlexShrink(shrink float32) ColorSwatchEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e ColorSwatchEl) Font(font Font) ColorSwatchEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ColorSwatchEl) FontFamily(familyName string) ColorSwatchEl {
@@ -20228,6 +20583,17 @@ func (e ColorSwatchEl) OnBoxedAction(action Action, listener func(cx *Cx, e Acti
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e ColorSwatchEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ColorSwatchEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -20379,6 +20745,19 @@ func (e ColorSwatchEl) WindowControlArea(area WindowControlArea) ColorSwatchEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e ColorSwatchEl) A11ySyntheticChildren(f []A11yChild) ColorSwatchEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -20393,6 +20772,12 @@ func (e ColorSwatchEl) AccessibilityID(id string) ColorSwatchEl {
 // Set the given styles to be applied when this element is active.
 func (e ColorSwatchEl) Active(f StyleRefinement) ColorSwatchEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e ColorSwatchEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) ColorSwatchEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -20525,6 +20910,15 @@ func (e ColorSwatchEl) AriaSizeOfSet(size int) ColorSwatchEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e ColorSwatchEl) AriaValue(value string) ColorSwatchEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e ColorSwatchEl) ExternalDragPayload(resolver ExternalDragPayload) ColorSwatchEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -20919,6 +21313,9 @@ func (e BaseComboboxEl) FlexShrink(shrink float32) BaseComboboxEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseComboboxEl) Font(font Font) BaseComboboxEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseComboboxEl) FontFamily(familyName string) BaseComboboxEl {
@@ -21536,6 +21933,9 @@ func (e BaseDatePickerEl) FlexShrink(shrink float32) BaseDatePickerEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseDatePickerEl) Font(font Font) BaseDatePickerEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseDatePickerEl) FontFamily(familyName string) BaseDatePickerEl {
 	tStyledFontFamily(e.n, familyName)
@@ -22053,6 +22453,17 @@ func (e BaseDatePickerEl) OnBoxedAction(action Action, listener func(cx *Cx, e A
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseDatePickerEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseDatePickerEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -22221,6 +22632,19 @@ func (e BaseDatePickerEl) WindowControlArea(area WindowControlArea) BaseDatePick
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseDatePickerEl) A11ySyntheticChildren(f []A11yChild) BaseDatePickerEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -22235,6 +22659,12 @@ func (e BaseDatePickerEl) AccessibilityID(id string) BaseDatePickerEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseDatePickerEl) Active(f StyleRefinement) BaseDatePickerEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseDatePickerEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseDatePickerEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -22367,6 +22797,15 @@ func (e BaseDatePickerEl) AriaSizeOfSet(size int) BaseDatePickerEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseDatePickerEl) AriaValue(value string) BaseDatePickerEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseDatePickerEl) ExternalDragPayload(resolver ExternalDragPayload) BaseDatePickerEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -22826,6 +23265,9 @@ func (e BaseDialogEl) FlexShrink(shrink float32) BaseDialogEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseDialogEl) Font(font Font) BaseDialogEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseDialogEl) FontFamily(familyName string) BaseDialogEl {
@@ -23390,6 +23832,9 @@ func (e DialogBackdropEl) FlexShrink(shrink float32) DialogBackdropEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e DialogBackdropEl) Font(font Font) DialogBackdropEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e DialogBackdropEl) FontFamily(familyName string) DialogBackdropEl {
@@ -24053,6 +24498,9 @@ func (e BaseDialogCloseEl) FlexShrink(shrink float32) BaseDialogCloseEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseDialogCloseEl) Font(font Font) BaseDialogCloseEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseDialogCloseEl) FontFamily(familyName string) BaseDialogCloseEl {
@@ -24736,6 +25184,12 @@ func (e BaseDialogDescriptionEl) FlexShrink(shrink float32) BaseDialogDescriptio
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseDialogDescriptionEl) Font(font Font) BaseDialogDescriptionEl {
+	tStyledFont(e.n, font)
+	return e
+}
+
 // Sets the font family of this element and its children.
 func (e BaseDialogDescriptionEl) FontFamily(familyName string) BaseDialogDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
@@ -25408,6 +25862,9 @@ func (e DialogPopupEl) FlexShrink(shrink float32) DialogPopupEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e DialogPopupEl) Font(font Font) DialogPopupEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e DialogPopupEl) FontFamily(familyName string) DialogPopupEl {
 	tStyledFontFamily(e.n, familyName)
@@ -25995,6 +26452,9 @@ func (e BaseDialogTitleEl) FlexShrink(shrink float32) BaseDialogTitleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseDialogTitleEl) Font(font Font) BaseDialogTitleEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseDialogTitleEl) FontFamily(familyName string) BaseDialogTitleEl {
@@ -26676,6 +27136,9 @@ func (e GridItem) FlexGrow(grow float32) GridItem { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e GridItem) FlexShrink(shrink float32) GridItem { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e GridItem) Font(font Font) GridItem { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e GridItem) FontFamily(familyName string) GridItem {
 	tStyledFontFamily(e.n, familyName)
@@ -27290,6 +27753,9 @@ func (e GridLayoutEl) FlexShrink(shrink float32) GridLayoutEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e GridLayoutEl) Font(font Font) GridLayoutEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e GridLayoutEl) FontFamily(familyName string) GridLayoutEl {
 	tStyledFontFamily(e.n, familyName)
@@ -27578,6 +28044,13 @@ func (e BaseHoverCardEl) CloseDelay(duration time.Duration) BaseHoverCardEl {
 	return e
 }
 
+// Content is <gpui_kit::base::HoverCard>::content.
+func (e BaseHoverCardEl) Content(content RowSource) BaseHoverCardEl {
+	o := op(e.n, 261)
+	o.u64(itemsCheck(content, 3))
+	return e
+}
+
 // OnOpenChange is <gpui_kit::base::HoverCard>::on_open_change.
 func (e BaseHoverCardEl) OnOpenChange(callback func(cx *Cx, e bool)) BaseHoverCardEl {
 	o := op(e.n, 258)
@@ -27838,6 +28311,9 @@ func (e BaseHoverCardEl) FlexShrink(shrink float32) BaseHoverCardEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseHoverCardEl) Font(font Font) BaseHoverCardEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseHoverCardEl) FontFamily(familyName string) BaseHoverCardEl {
@@ -28187,6 +28663,15 @@ func (e BaseInputEl) OnTokenHover(listener func(cx *Cx, e InlineTokenHoverEvent)
 	return e
 }
 
+// The element each atomic token renders as; the input keeps editing and history.
+//
+// Token is <gpui_kit::base::Input>::token.
+func (e BaseInputEl) Token(render RowSource) BaseInputEl {
+	o := op(e.n, 258)
+	o.u64(itemsCheck(render, 4))
+	return e
+}
+
 // InputBaseEl is gpui_kit::base::InputBase.
 type InputBaseEl struct{ n *node }
 
@@ -28227,6 +28712,25 @@ func (e InputBaseEl) Focused(focused bool) InputBaseEl {
 func (e InputBaseEl) Role(role RoleOverride) InputBaseEl {
 	o := op(e.n, 259)
 	putRoleOverride(o, role)
+	return e
+}
+
+// Exposes an editor's native semantics through this frame's component ID.
+//
+// `editor` must identify the input, textarea or editor state rendered below this frame, without
+// intervening element IDs. Anonymous layout wrappers are allowed. ID queries retain the frame's
+// path, bounds and visibility. Role, label, value, checked/indeterminate, selected, expanded,
+// disabled and focus facts come from the editor's existing native node and observed focus scope,
+// not independently focusable addon controls. Native snapshot enumeration is unchanged, so
+// role/label queries do not duplicate editors.
+//
+// This only declares an observation relationship with `test-support`; it never adds a native
+// accessibility node or registers a focus handle.
+//
+// SemanticOwner is <gpui_kit::base::InputBase>::semantic_owner.
+func (e InputBaseEl) SemanticOwner(editor EntityID) InputBaseEl {
+	o := op(e.n, 261)
+	o.u64(uint64(editor))
 	return e
 }
 
@@ -28446,6 +28950,9 @@ func (e InputBaseEl) FlexGrow(grow float32) InputBaseEl { tStyledFlexGrow(e.n, g
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e InputBaseEl) FlexShrink(shrink float32) InputBaseEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e InputBaseEl) Font(font Font) InputBaseEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e InputBaseEl) FontFamily(familyName string) InputBaseEl {
@@ -28892,6 +29399,17 @@ func (e InputBaseEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e InputBaseEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) InputBaseEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -29060,6 +29578,19 @@ func (e InputBaseEl) WindowControlArea(area WindowControlArea) InputBaseEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e InputBaseEl) A11ySyntheticChildren(f []A11yChild) InputBaseEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -29074,6 +29605,12 @@ func (e InputBaseEl) AccessibilityID(id string) InputBaseEl {
 // Set the given styles to be applied when this element is active.
 func (e InputBaseEl) Active(f StyleRefinement) InputBaseEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e InputBaseEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) InputBaseEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -29206,6 +29743,15 @@ func (e InputBaseEl) AriaSizeOfSet(size int) InputBaseEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e InputBaseEl) AriaValue(value string) InputBaseEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e InputBaseEl) ExternalDragPayload(resolver ExternalDragPayload) InputBaseEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -29633,6 +30179,9 @@ func (e BaseLinkEl) FlexGrow(grow float32) BaseLinkEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BaseLinkEl) FlexShrink(shrink float32) BaseLinkEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e BaseLinkEl) Font(font Font) BaseLinkEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseLinkEl) FontFamily(familyName string) BaseLinkEl {
@@ -30079,6 +30628,17 @@ func (e BaseLinkEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseLinkEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseLinkEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -30230,6 +30790,19 @@ func (e BaseLinkEl) WindowControlArea(area WindowControlArea) BaseLinkEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseLinkEl) A11ySyntheticChildren(f []A11yChild) BaseLinkEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -30244,6 +30817,12 @@ func (e BaseLinkEl) AccessibilityID(id string) BaseLinkEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseLinkEl) Active(f StyleRefinement) BaseLinkEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseLinkEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseLinkEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -30376,6 +30955,15 @@ func (e BaseLinkEl) AriaSizeOfSet(size int) BaseLinkEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseLinkEl) AriaValue(value string) BaseLinkEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseLinkEl) ExternalDragPayload(resolver ExternalDragPayload) BaseLinkEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -30540,6 +31128,52 @@ func NewMarkdownExtensionsDefault() MarkdownExtensions {
 	return MarkdownExtensions{n}
 }
 
+// Register a renderer for a custom block node name.
+//
+// BlockRenderer is <gpui_kit::base::MarkdownExtensions>::block_renderer.
+func (e MarkdownExtensions) BlockRenderer(name string, renderer RowSource) MarkdownExtensions {
+	o := op(e.n, 259)
+	o.str(name)
+	o.u64(itemsCheck(renderer, 5))
+	return e
+}
+
+// Draw a top-level blockquote that opens with the marker `!name` inside a container.
+//
+// This is the syntax of GitHub alerts, with names of your own, and other renderers show it as a
+// blockquote. Names match ASCII-case-insensitively, so `!NOTE` opens a surface registered as
+// `note`. The marker is alone on the first line, and is not document text; the lines after it are
+// the first paragraph.
+//
+// `render` runs each time the document renders and returns the container with its background,
+// shape, padding and text style, and any children to show before the blocks, such as an icon and a
+// title. The blocks are appended to it and bring the view's paragraph gap, so a `gap` on the
+// container adds to that. Read theme colors in `render`, so a theme change needs no new parse.
+// What the container shows itself is not document text. Unless the container sets a width, it
+// takes the row's.
+//
+// The blocks remain the document's: selection, range highlights and reveals go across and inside
+// the container, and `RenderedText` has them without the marker. A select-all copies the source
+// verbatim. A partial source copy is quoted under the marker line, as a blockquote's is quoted.
+//
+// Only a blockquote at the top level of a Markdown view, with a registered name, is a surface. A
+// nested one stays a blockquote, and so does one with text after the marker on its line, such as
+// Obsidian's `> !note Title`: the container shows its own title. Surfaces do not nest. The marker
+// is markup, so escape text you don't control, as with any other Markdown.
+//
+// A surface is one row of a scrollable view, so keep it to what fits a few screens. While it is
+// the last block of a streaming view, each append parses and measures all of it again, so
+// streaming one costs time quadratic in its length. Until its marker line is complete, it shows as
+// a blockquote.
+//
+// BlockSurface is <gpui_kit::base::MarkdownExtensions>::block_surface.
+func (e MarkdownExtensions) BlockSurface(name string, render DivEl) MarkdownExtensions {
+	o := op(e.n, 260)
+	o.str(name)
+	o.u32(takeNode(render.n, false))
+	return e
+}
+
 // Enable YAML frontmatter parsing.
 //
 // Frontmatter is disabled by default because it is not part of CommonMark or GFM. Register a block
@@ -30570,6 +31204,25 @@ func (e MarkdownExtensions) Mdx() MarkdownExtensions {
 func (e MarkdownExtensions) ParserRevision(revision uint64) MarkdownExtensions {
 	o := op(e.n, 258)
 	o.u64(uint64(revision))
+	return e
+}
+
+// Apply a reusable Markdown plugin.
+//
+// Plugin is <gpui_kit::base::MarkdownExtensions>::plugin.
+func (e MarkdownExtensions) Plugin(plugin MarkdownPluginAny) MarkdownExtensions {
+	o := op(e.n, 261)
+	switch x := plugin.(type) {
+	case FrontmatterPlugin:
+		o.u8(0)
+		o.u32(takeValue(x.n))
+	case MarkdownPlugin:
+		o.u8(1)
+		putMarkdownPlugin(o, x)
+	default:
+		o.u8(1)
+		putMarkdownPlugin(o, MarkdownPlugin{})
+	}
 	return e
 }
 
@@ -30794,6 +31447,9 @@ func (e NavPageEl) FlexGrow(grow float32) NavPageEl { tStyledFlexGrow(e.n, grow)
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e NavPageEl) FlexShrink(shrink float32) NavPageEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e NavPageEl) Font(font Font) NavPageEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e NavPageEl) FontFamily(familyName string) NavPageEl {
@@ -31066,6 +31722,16 @@ func NavStack(state NavStackState, st ...Style) NavStackEl {
 	return NavStackEl{n}
 }
 
+// Renders each mounted view. The item is already positioned to fill the container; refine it to
+// move or fade the view by its phase and progress, then return it.
+//
+// Item is <gpui_kit::base::NavStack>::item.
+func (e NavStackEl) Item(render RowSource) NavStackEl {
+	o := op(e.n, 257)
+	o.u64(itemsCheck(render, 6))
+	return e
+}
+
 // The timing every push, pop and replace runs under.
 //
 // Transition is <gpui_kit::base::NavStack>::transition.
@@ -31251,6 +31917,9 @@ func (e NavStackEl) FlexGrow(grow float32) NavStackEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e NavStackEl) FlexShrink(shrink float32) NavStackEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e NavStackEl) Font(font Font) NavStackEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e NavStackEl) FontFamily(familyName string) NavStackEl {
@@ -31546,10 +32215,28 @@ func (e BaseNumberInputEl) ControlsRight() BaseNumberInputEl {
 	return e
 }
 
+// Decorate the built-in decrement button with application-owned content and styles.
+//
+// DecrementButton is <gpui_kit::base::NumberInput>::decrement_button.
+func (e BaseNumberInputEl) DecrementButton(decorate Decorate) BaseNumberInputEl {
+	o := op(e.n, 261)
+	putDecorate(o, decorate)
+	return e
+}
+
 // Disabled is <gpui_kit::base::NumberInput>::disabled.
 func (e BaseNumberInputEl) Disabled(disabled bool) BaseNumberInputEl {
 	o := op(e.n, 258)
 	o.bool(disabled)
+	return e
+}
+
+// Decorate the built-in increment button with application-owned content and styles.
+//
+// IncrementButton is <gpui_kit::base::NumberInput>::increment_button.
+func (e BaseNumberInputEl) IncrementButton(decorate Decorate) BaseNumberInputEl {
+	o := op(e.n, 262)
+	putDecorate(o, decorate)
 	return e
 }
 
@@ -31856,6 +32543,9 @@ func (e BaseNumberInputEl) FlexShrink(shrink float32) BaseNumberInputEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseNumberInputEl) Font(font Font) BaseNumberInputEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseNumberInputEl) FontFamily(familyName string) BaseNumberInputEl {
@@ -32499,6 +33189,9 @@ func (e NumberInputTextEl) FlexShrink(shrink float32) NumberInputTextEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e NumberInputTextEl) Font(font Font) NumberInputTextEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e NumberInputTextEl) FontFamily(familyName string) NumberInputTextEl {
 	tStyledFontFamily(e.n, familyName)
@@ -33093,6 +33786,9 @@ func (e BaseOtpInputEl) FlexShrink(shrink float32) BaseOtpInputEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseOtpInputEl) Font(font Font) BaseOtpInputEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseOtpInputEl) FontFamily(familyName string) BaseOtpInputEl {
@@ -33713,6 +34409,9 @@ func (e BasePaginationEl) FlexShrink(shrink float32) BasePaginationEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BasePaginationEl) Font(font Font) BasePaginationEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BasePaginationEl) FontFamily(familyName string) BasePaginationEl {
 	tStyledFontFamily(e.n, familyName)
@@ -34213,6 +34912,17 @@ func (e BasePaginationEl) OnBoxedAction(action Action, listener func(cx *Cx, e A
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BasePaginationEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BasePaginationEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -34381,6 +35091,19 @@ func (e BasePaginationEl) WindowControlArea(area WindowControlArea) BasePaginati
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BasePaginationEl) A11ySyntheticChildren(f []A11yChild) BasePaginationEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -34395,6 +35118,12 @@ func (e BasePaginationEl) AccessibilityID(id string) BasePaginationEl {
 // Set the given styles to be applied when this element is active.
 func (e BasePaginationEl) Active(f StyleRefinement) BasePaginationEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BasePaginationEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BasePaginationEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -34527,6 +35256,15 @@ func (e BasePaginationEl) AriaSizeOfSet(size int) BasePaginationEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BasePaginationEl) AriaValue(value string) BasePaginationEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BasePaginationEl) ExternalDragPayload(resolver ExternalDragPayload) BasePaginationEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -34787,6 +35525,13 @@ func BasePopover(id ID, st ...Style) BasePopoverEl {
 func (e BasePopoverEl) Anchor(anchor Anchor) BasePopoverEl {
 	o := op(e.n, 256)
 	o.u16(uint16(anchor))
+	return e
+}
+
+// Content is <gpui_kit::base::Popover>::content.
+func (e BasePopoverEl) Content(content RowSource) BasePopoverEl {
+	o := op(e.n, 266)
+	o.u64(itemsCheck(content, 7))
 	return e
 }
 
@@ -35057,6 +35802,9 @@ func (e BasePopoverEl) FlexShrink(shrink float32) BasePopoverEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BasePopoverEl) Font(font Font) BasePopoverEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BasePopoverEl) FontFamily(familyName string) BasePopoverEl {
@@ -35548,6 +36296,9 @@ func (e PopupEl) FlexGrow(grow float32) PopupEl { tStyledFlexGrow(e.n, grow); re
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e PopupEl) FlexShrink(shrink float32) PopupEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e PopupEl) Font(font Font) PopupEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e PopupEl) FontFamily(familyName string) PopupEl { tStyledFontFamily(e.n, familyName); return e }
 
@@ -35961,6 +36712,17 @@ func (e PopupEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) P
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e PopupEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) PopupEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -36123,6 +36885,19 @@ func (e PopupEl) WindowControlArea(area WindowControlArea) PopupEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e PopupEl) A11ySyntheticChildren(f []A11yChild) PopupEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -36137,6 +36912,12 @@ func (e PopupEl) AccessibilityID(id string) PopupEl {
 // Set the given styles to be applied when this element is active.
 func (e PopupEl) Active(f StyleRefinement) PopupEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e PopupEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) PopupEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -36269,6 +37050,15 @@ func (e PopupEl) AriaSizeOfSet(size int) PopupEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e PopupEl) AriaValue(value string) PopupEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e PopupEl) ExternalDragPayload(resolver ExternalDragPayload) PopupEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -36803,6 +37593,9 @@ func (e BaseProgressEl) FlexShrink(shrink float32) BaseProgressEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseProgressEl) Font(font Font) BaseProgressEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseProgressEl) FontFamily(familyName string) BaseProgressEl {
 	tStyledFontFamily(e.n, familyName)
@@ -37293,6 +38086,17 @@ func (e BaseProgressEl) OnBoxedAction(action Action, listener func(cx *Cx, e Act
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseProgressEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseProgressEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -37461,6 +38265,19 @@ func (e BaseProgressEl) WindowControlArea(area WindowControlArea) BaseProgressEl
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseProgressEl) A11ySyntheticChildren(f []A11yChild) BaseProgressEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -37475,6 +38292,12 @@ func (e BaseProgressEl) AccessibilityID(id string) BaseProgressEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseProgressEl) Active(f StyleRefinement) BaseProgressEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseProgressEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseProgressEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -37607,6 +38430,15 @@ func (e BaseProgressEl) AriaSizeOfSet(size int) BaseProgressEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseProgressEl) AriaValue(value string) BaseProgressEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseProgressEl) ExternalDragPayload(resolver ExternalDragPayload) BaseProgressEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -38037,6 +38869,9 @@ func (e ProgressIndicatorEl) FlexShrink(shrink float32) ProgressIndicatorEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e ProgressIndicatorEl) Font(font Font) ProgressIndicatorEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ProgressIndicatorEl) FontFamily(familyName string) ProgressIndicatorEl {
@@ -38684,6 +39519,9 @@ func (e ProgressTrackEl) FlexShrink(shrink float32) ProgressTrackEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e ProgressTrackEl) Font(font Font) ProgressTrackEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ProgressTrackEl) FontFamily(familyName string) ProgressTrackEl {
 	tStyledFontFamily(e.n, familyName)
@@ -39320,6 +40158,9 @@ func (e BaseRadioEl) FlexGrow(grow float32) BaseRadioEl { tStyledFlexGrow(e.n, g
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BaseRadioEl) FlexShrink(shrink float32) BaseRadioEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e BaseRadioEl) Font(font Font) BaseRadioEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseRadioEl) FontFamily(familyName string) BaseRadioEl {
 	tStyledFontFamily(e.n, familyName)
@@ -39765,6 +40606,17 @@ func (e BaseRadioEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseRadioEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseRadioEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -39909,6 +40761,19 @@ func (e BaseRadioEl) WindowControlArea(area WindowControlArea) BaseRadioEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseRadioEl) A11ySyntheticChildren(f []A11yChild) BaseRadioEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -39923,6 +40788,12 @@ func (e BaseRadioEl) AccessibilityID(id string) BaseRadioEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseRadioEl) Active(f StyleRefinement) BaseRadioEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseRadioEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseRadioEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -40055,6 +40926,15 @@ func (e BaseRadioEl) AriaSizeOfSet(size int) BaseRadioEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseRadioEl) AriaValue(value string) BaseRadioEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseRadioEl) ExternalDragPayload(resolver ExternalDragPayload) BaseRadioEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -40475,6 +41355,9 @@ func (e BaseRadioGroupEl) FlexShrink(shrink float32) BaseRadioGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseRadioGroupEl) Font(font Font) BaseRadioGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseRadioGroupEl) FontFamily(familyName string) BaseRadioGroupEl {
@@ -40993,6 +41876,17 @@ func (e BaseRadioGroupEl) OnBoxedAction(action Action, listener func(cx *Cx, e A
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseRadioGroupEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseRadioGroupEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -41161,6 +42055,19 @@ func (e BaseRadioGroupEl) WindowControlArea(area WindowControlArea) BaseRadioGro
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseRadioGroupEl) A11ySyntheticChildren(f []A11yChild) BaseRadioGroupEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -41175,6 +42082,12 @@ func (e BaseRadioGroupEl) AccessibilityID(id string) BaseRadioGroupEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseRadioGroupEl) Active(f StyleRefinement) BaseRadioGroupEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseRadioGroupEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseRadioGroupEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -41307,6 +42220,15 @@ func (e BaseRadioGroupEl) AriaSizeOfSet(size int) BaseRadioGroupEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseRadioGroupEl) AriaValue(value string) BaseRadioGroupEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseRadioGroupEl) ExternalDragPayload(resolver ExternalDragPayload) BaseRadioGroupEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -41790,6 +42712,9 @@ func (e ResizablePanelEl) FlexShrink(shrink float32) ResizablePanelEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e ResizablePanelEl) Font(font Font) ResizablePanelEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ResizablePanelEl) FontFamily(familyName string) ResizablePanelEl {
 	tStyledFontFamily(e.n, familyName)
@@ -42235,6 +43160,27 @@ func (e ResizablePanelGroupEl) OnResize(onResize func(cx *Cx, e ResizableState))
 func (e ResizablePanelGroupEl) Size(size float32) ResizablePanelGroupEl {
 	o := op(e.n, 260)
 	o.f32(size)
+	return e
+}
+
+// Hand the painted part of every divider in this group to `appearance`.
+//
+// The hit area, the cursor and the drag stay here; a renderer that returns `None` for a given
+// handle leaves the built-in line on it.
+//
+// WithHandleAppearance is <gpui_kit::base::ResizablePanelGroup>::with_handle_appearance.
+func (e ResizablePanelGroupEl) WithHandleAppearance(appearance ResizeHandleRenderer) ResizablePanelGroupEl {
+	o := op(e.n, 262)
+	switch x := appearance.(type) {
+	case RowSource:
+		o.u8(0)
+		o.u64(x.h)
+	case ResizeHandleRendererKit:
+		o.u8(1)
+		o.u16(uint16(x))
+	default:
+		stop("a nil gk.ResizeHandleRenderer was given to a builder: give a gk.RowSource (gk.Items) or one of the gk.ResizeHandleRendererKit values")
+	}
 	return e
 }
 
@@ -43092,6 +44038,9 @@ func (e BaseSelectEl) FlexShrink(shrink float32) BaseSelectEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseSelectEl) Font(font Font) BaseSelectEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseSelectEl) FontFamily(familyName string) BaseSelectEl {
 	tStyledFontFamily(e.n, familyName)
@@ -43408,7 +44357,7 @@ func (e SelectableTextEl) DocumentOrder(order uint64) SelectableTextEl {
 // ranges are UTF-8 offsets, in order and without overlap.
 //
 // Highlights is <gpui_kit::base::SelectableText>::highlights.
-func (e SelectableTextEl) Highlights(highlights []TupleRangeHighlightstyle) SelectableTextEl {
+func (e SelectableTextEl) Highlights(highlights []TupleRangeHighlightStyle) SelectableTextEl {
 	o := op(e.n, 259)
 	o.u32(uint32(len(highlights)))
 	for _, x0 := range highlights {
@@ -43702,6 +44651,9 @@ func (e BaseSheetEl) FlexGrow(grow float32) BaseSheetEl { tStyledFlexGrow(e.n, g
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BaseSheetEl) FlexShrink(shrink float32) BaseSheetEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e BaseSheetEl) Font(font Font) BaseSheetEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseSheetEl) FontFamily(familyName string) BaseSheetEl {
@@ -44255,6 +45207,9 @@ func (e BaseSliderEl) FlexShrink(shrink float32) BaseSliderEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseSliderEl) Font(font Font) BaseSliderEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseSliderEl) FontFamily(familyName string) BaseSliderEl {
@@ -44823,6 +45778,9 @@ func (e SliderIndicatorEl) FlexShrink(shrink float32) SliderIndicatorEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e SliderIndicatorEl) Font(font Font) SliderIndicatorEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SliderIndicatorEl) FontFamily(familyName string) SliderIndicatorEl {
 	tStyledFontFamily(e.n, familyName)
@@ -45332,6 +46290,17 @@ func (e SliderIndicatorEl) OnBoxedAction(action Action, listener func(cx *Cx, e 
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e SliderIndicatorEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) SliderIndicatorEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -45500,6 +46469,19 @@ func (e SliderIndicatorEl) WindowControlArea(area WindowControlArea) SliderIndic
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e SliderIndicatorEl) A11ySyntheticChildren(f []A11yChild) SliderIndicatorEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -45514,6 +46496,12 @@ func (e SliderIndicatorEl) AccessibilityID(id string) SliderIndicatorEl {
 // Set the given styles to be applied when this element is active.
 func (e SliderIndicatorEl) Active(f StyleRefinement) SliderIndicatorEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e SliderIndicatorEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) SliderIndicatorEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -45646,6 +46634,15 @@ func (e SliderIndicatorEl) AriaSizeOfSet(size int) SliderIndicatorEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e SliderIndicatorEl) AriaValue(value string) SliderIndicatorEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e SliderIndicatorEl) ExternalDragPayload(resolver ExternalDragPayload) SliderIndicatorEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -46044,6 +47041,9 @@ func (e SliderThumbEl) FlexShrink(shrink float32) SliderThumbEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e SliderThumbEl) Font(font Font) SliderThumbEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SliderThumbEl) FontFamily(familyName string) SliderThumbEl {
@@ -46503,6 +47503,17 @@ func (e SliderThumbEl) OnBoxedAction(action Action, listener func(cx *Cx, e Acti
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e SliderThumbEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) SliderThumbEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -46671,6 +47682,19 @@ func (e SliderThumbEl) WindowControlArea(area WindowControlArea) SliderThumbEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e SliderThumbEl) A11ySyntheticChildren(f []A11yChild) SliderThumbEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -46685,6 +47709,12 @@ func (e SliderThumbEl) AccessibilityID(id string) SliderThumbEl {
 // Set the given styles to be applied when this element is active.
 func (e SliderThumbEl) Active(f StyleRefinement) SliderThumbEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e SliderThumbEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) SliderThumbEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -46817,6 +47847,15 @@ func (e SliderThumbEl) AriaSizeOfSet(size int) SliderThumbEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e SliderThumbEl) AriaValue(value string) SliderThumbEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e SliderThumbEl) ExternalDragPayload(resolver ExternalDragPayload) SliderThumbEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -47205,6 +48244,9 @@ func (e SliderTrackEl) FlexShrink(shrink float32) SliderTrackEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e SliderTrackEl) Font(font Font) SliderTrackEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SliderTrackEl) FontFamily(familyName string) SliderTrackEl {
@@ -47664,6 +48706,17 @@ func (e SliderTrackEl) OnBoxedAction(action Action, listener func(cx *Cx, e Acti
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e SliderTrackEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) SliderTrackEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -48108,6 +49161,9 @@ func (e StateStyle) FlexGrow(grow float32) StateStyle { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e StateStyle) FlexShrink(shrink float32) StateStyle { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e StateStyle) Font(font Font) StateStyle { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e StateStyle) FontFamily(familyName string) StateStyle {
@@ -48677,6 +49733,9 @@ func (e BaseSwitchEl) FlexShrink(shrink float32) BaseSwitchEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BaseSwitchEl) Font(font Font) BaseSwitchEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BaseSwitchEl) FontFamily(familyName string) BaseSwitchEl {
 	tStyledFontFamily(e.n, familyName)
@@ -49131,6 +50190,17 @@ func (e BaseSwitchEl) OnBoxedAction(action Action, listener func(cx *Cx, e Actio
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseSwitchEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseSwitchEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -49275,6 +50345,19 @@ func (e BaseSwitchEl) WindowControlArea(area WindowControlArea) BaseSwitchEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseSwitchEl) A11ySyntheticChildren(f []A11yChild) BaseSwitchEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -49289,6 +50372,12 @@ func (e BaseSwitchEl) AccessibilityID(id string) BaseSwitchEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseSwitchEl) Active(f StyleRefinement) BaseSwitchEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseSwitchEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseSwitchEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -49421,6 +50510,15 @@ func (e BaseSwitchEl) AriaSizeOfSet(size int) BaseSwitchEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseSwitchEl) AriaValue(value string) BaseSwitchEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseSwitchEl) ExternalDragPayload(resolver ExternalDragPayload) BaseSwitchEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -49820,6 +50918,9 @@ func (e SwitchThumbEl) FlexShrink(shrink float32) SwitchThumbEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e SwitchThumbEl) Font(font Font) SwitchThumbEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SwitchThumbEl) FontFamily(familyName string) SwitchThumbEl {
@@ -50392,6 +51493,9 @@ func (e SwitchTrackEl) FlexShrink(shrink float32) SwitchTrackEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e SwitchTrackEl) Font(font Font) SwitchTrackEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SwitchTrackEl) FontFamily(familyName string) SwitchTrackEl {
 	tStyledFontFamily(e.n, familyName)
@@ -50864,6 +51968,17 @@ func (e SwitchTrackEl) OnBoxedAction(action Action, listener func(cx *Cx, e Acti
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e SwitchTrackEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) SwitchTrackEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -51032,6 +52147,19 @@ func (e SwitchTrackEl) WindowControlArea(area WindowControlArea) SwitchTrackEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e SwitchTrackEl) A11ySyntheticChildren(f []A11yChild) SwitchTrackEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -51046,6 +52174,12 @@ func (e SwitchTrackEl) AccessibilityID(id string) SwitchTrackEl {
 // Set the given styles to be applied when this element is active.
 func (e SwitchTrackEl) Active(f StyleRefinement) SwitchTrackEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e SwitchTrackEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) SwitchTrackEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -51178,6 +52312,15 @@ func (e SwitchTrackEl) AriaSizeOfSet(size int) SwitchTrackEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e SwitchTrackEl) AriaValue(value string) SwitchTrackEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e SwitchTrackEl) ExternalDragPayload(resolver ExternalDragPayload) SwitchTrackEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -51594,6 +52737,9 @@ func (e BaseTabEl) FlexGrow(grow float32) BaseTabEl { tStyledFlexGrow(e.n, grow)
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BaseTabEl) FlexShrink(shrink float32) BaseTabEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e BaseTabEl) Font(font Font) BaseTabEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTabEl) FontFamily(familyName string) BaseTabEl {
@@ -52034,6 +53180,17 @@ func (e BaseTabEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action))
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseTabEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseTabEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -52199,6 +53356,19 @@ func (e BaseTabEl) WindowControlArea(area WindowControlArea) BaseTabEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseTabEl) A11ySyntheticChildren(f []A11yChild) BaseTabEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -52213,6 +53383,12 @@ func (e BaseTabEl) AccessibilityID(id string) BaseTabEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseTabEl) Active(f StyleRefinement) BaseTabEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseTabEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseTabEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -52345,6 +53521,15 @@ func (e BaseTabEl) AriaSizeOfSet(size int) BaseTabEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseTabEl) AriaValue(value string) BaseTabEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseTabEl) ExternalDragPayload(resolver ExternalDragPayload) BaseTabEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -52740,6 +53925,9 @@ func (e BaseTableEl) FlexGrow(grow float32) BaseTableEl { tStyledFlexGrow(e.n, g
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BaseTableEl) FlexShrink(shrink float32) BaseTableEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e BaseTableEl) Font(font Font) BaseTableEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTableEl) FontFamily(familyName string) BaseTableEl {
@@ -53186,6 +54374,17 @@ func (e BaseTableEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseTableEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseTableEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -53354,6 +54553,19 @@ func (e BaseTableEl) WindowControlArea(area WindowControlArea) BaseTableEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseTableEl) A11ySyntheticChildren(f []A11yChild) BaseTableEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -53368,6 +54580,12 @@ func (e BaseTableEl) AccessibilityID(id string) BaseTableEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseTableEl) Active(f StyleRefinement) BaseTableEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseTableEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseTableEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -53500,6 +54718,15 @@ func (e BaseTableEl) AriaSizeOfSet(size int) BaseTableEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseTableEl) AriaValue(value string) BaseTableEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseTableEl) ExternalDragPayload(resolver ExternalDragPayload) BaseTableEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -53901,6 +55128,9 @@ func (e BaseTableBodyEl) FlexShrink(shrink float32) BaseTableBodyEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseTableBodyEl) Font(font Font) BaseTableBodyEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTableBodyEl) FontFamily(familyName string) BaseTableBodyEl {
@@ -54404,6 +55634,17 @@ func (e BaseTableBodyEl) OnBoxedAction(action Action, listener func(cx *Cx, e Ac
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseTableBodyEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseTableBodyEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -54572,6 +55813,19 @@ func (e BaseTableBodyEl) WindowControlArea(area WindowControlArea) BaseTableBody
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseTableBodyEl) A11ySyntheticChildren(f []A11yChild) BaseTableBodyEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -54586,6 +55840,12 @@ func (e BaseTableBodyEl) AccessibilityID(id string) BaseTableBodyEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseTableBodyEl) Active(f StyleRefinement) BaseTableBodyEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseTableBodyEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseTableBodyEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -54718,6 +55978,15 @@ func (e BaseTableBodyEl) AriaSizeOfSet(size int) BaseTableBodyEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseTableBodyEl) AriaValue(value string) BaseTableBodyEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseTableBodyEl) ExternalDragPayload(resolver ExternalDragPayload) BaseTableBodyEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -55146,6 +56415,9 @@ func (e BaseTableCaptionEl) FlexShrink(shrink float32) BaseTableCaptionEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseTableCaptionEl) Font(font Font) BaseTableCaptionEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTableCaptionEl) FontFamily(familyName string) BaseTableCaptionEl {
@@ -55697,6 +56969,17 @@ func (e BaseTableCaptionEl) OnBoxedAction(action Action, listener func(cx *Cx, e
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseTableCaptionEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseTableCaptionEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -55865,6 +57148,19 @@ func (e BaseTableCaptionEl) WindowControlArea(area WindowControlArea) BaseTableC
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseTableCaptionEl) A11ySyntheticChildren(f []A11yChild) BaseTableCaptionEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -55879,6 +57175,12 @@ func (e BaseTableCaptionEl) AccessibilityID(id string) BaseTableCaptionEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseTableCaptionEl) Active(f StyleRefinement) BaseTableCaptionEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseTableCaptionEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseTableCaptionEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -56011,6 +57313,15 @@ func (e BaseTableCaptionEl) AriaSizeOfSet(size int) BaseTableCaptionEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseTableCaptionEl) AriaValue(value string) BaseTableCaptionEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseTableCaptionEl) ExternalDragPayload(resolver ExternalDragPayload) BaseTableCaptionEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -56416,6 +57727,9 @@ func (e BaseTableCellEl) FlexShrink(shrink float32) BaseTableCellEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseTableCellEl) Font(font Font) BaseTableCellEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTableCellEl) FontFamily(familyName string) BaseTableCellEl {
@@ -56919,6 +58233,17 @@ func (e BaseTableCellEl) OnBoxedAction(action Action, listener func(cx *Cx, e Ac
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseTableCellEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseTableCellEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -57087,6 +58412,19 @@ func (e BaseTableCellEl) WindowControlArea(area WindowControlArea) BaseTableCell
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseTableCellEl) A11ySyntheticChildren(f []A11yChild) BaseTableCellEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -57101,6 +58439,12 @@ func (e BaseTableCellEl) AccessibilityID(id string) BaseTableCellEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseTableCellEl) Active(f StyleRefinement) BaseTableCellEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseTableCellEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseTableCellEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -57233,6 +58577,15 @@ func (e BaseTableCellEl) AriaSizeOfSet(size int) BaseTableCellEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseTableCellEl) AriaValue(value string) BaseTableCellEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseTableCellEl) ExternalDragPayload(resolver ExternalDragPayload) BaseTableCellEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -57638,6 +58991,9 @@ func (e BaseTableHeadEl) FlexShrink(shrink float32) BaseTableHeadEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseTableHeadEl) Font(font Font) BaseTableHeadEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTableHeadEl) FontFamily(familyName string) BaseTableHeadEl {
@@ -58141,6 +59497,17 @@ func (e BaseTableHeadEl) OnBoxedAction(action Action, listener func(cx *Cx, e Ac
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseTableHeadEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseTableHeadEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -58309,6 +59676,19 @@ func (e BaseTableHeadEl) WindowControlArea(area WindowControlArea) BaseTableHead
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseTableHeadEl) A11ySyntheticChildren(f []A11yChild) BaseTableHeadEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -58323,6 +59703,12 @@ func (e BaseTableHeadEl) AccessibilityID(id string) BaseTableHeadEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseTableHeadEl) Active(f StyleRefinement) BaseTableHeadEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseTableHeadEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseTableHeadEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -58455,6 +59841,15 @@ func (e BaseTableHeadEl) AriaSizeOfSet(size int) BaseTableHeadEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseTableHeadEl) AriaValue(value string) BaseTableHeadEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseTableHeadEl) ExternalDragPayload(resolver ExternalDragPayload) BaseTableHeadEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -58877,6 +60272,9 @@ func (e BaseTableHeaderEl) FlexShrink(shrink float32) BaseTableHeaderEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseTableHeaderEl) Font(font Font) BaseTableHeaderEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTableHeaderEl) FontFamily(familyName string) BaseTableHeaderEl {
@@ -59404,6 +60802,17 @@ func (e BaseTableHeaderEl) OnBoxedAction(action Action, listener func(cx *Cx, e 
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseTableHeaderEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseTableHeaderEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -59572,6 +60981,19 @@ func (e BaseTableHeaderEl) WindowControlArea(area WindowControlArea) BaseTableHe
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseTableHeaderEl) A11ySyntheticChildren(f []A11yChild) BaseTableHeaderEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -59586,6 +61008,12 @@ func (e BaseTableHeaderEl) AccessibilityID(id string) BaseTableHeaderEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseTableHeaderEl) Active(f StyleRefinement) BaseTableHeaderEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseTableHeaderEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseTableHeaderEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -59718,6 +61146,15 @@ func (e BaseTableHeaderEl) AriaSizeOfSet(size int) BaseTableHeaderEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseTableHeaderEl) AriaValue(value string) BaseTableHeaderEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseTableHeaderEl) ExternalDragPayload(resolver ExternalDragPayload) BaseTableHeaderEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -60093,6 +61530,9 @@ func (e BaseTableRowEl) FlexShrink(shrink float32) BaseTableRowEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseTableRowEl) Font(font Font) BaseTableRowEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTableRowEl) FontFamily(familyName string) BaseTableRowEl {
@@ -60584,6 +62024,17 @@ func (e BaseTableRowEl) OnBoxedAction(action Action, listener func(cx *Cx, e Act
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseTableRowEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseTableRowEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -60752,6 +62203,19 @@ func (e BaseTableRowEl) WindowControlArea(area WindowControlArea) BaseTableRowEl
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseTableRowEl) A11ySyntheticChildren(f []A11yChild) BaseTableRowEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -60766,6 +62230,12 @@ func (e BaseTableRowEl) AccessibilityID(id string) BaseTableRowEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseTableRowEl) Active(f StyleRefinement) BaseTableRowEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseTableRowEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseTableRowEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -60898,6 +62368,15 @@ func (e BaseTableRowEl) AriaSizeOfSet(size int) BaseTableRowEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseTableRowEl) AriaValue(value string) BaseTableRowEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseTableRowEl) ExternalDragPayload(resolver ExternalDragPayload) BaseTableRowEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -61229,6 +62708,9 @@ func (e TabsEl) FlexGrow(grow float32) TabsEl { tStyledFlexGrow(e.n, grow); retu
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TabsEl) FlexShrink(shrink float32) TabsEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e TabsEl) Font(font Font) TabsEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TabsEl) FontFamily(familyName string) TabsEl { tStyledFontFamily(e.n, familyName); return e }
@@ -61657,6 +63139,17 @@ func (e TabsEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) Ta
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e TabsEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) TabsEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -61819,6 +63312,19 @@ func (e TabsEl) WindowControlArea(area WindowControlArea) TabsEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e TabsEl) A11ySyntheticChildren(f []A11yChild) TabsEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -61832,6 +63338,12 @@ func (e TabsEl) AccessibilityID(id string) TabsEl {
 
 // Set the given styles to be applied when this element is active.
 func (e TabsEl) Active(f StyleRefinement) TabsEl { tStatefulInteractiveElementActive(e.n, f); return e }
+
+// Track the scroll state of this element with the given handle.
+func (e TabsEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) TabsEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
+	return e
+}
 
 // Report this element as the focused node in the accessibility tree, overriding the element that
 // holds real keyboard focus — but only while one of its ancestors actually holds focus.
@@ -61962,6 +63474,15 @@ func (e TabsEl) AriaSizeOfSet(size int) TabsEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e TabsEl) AriaValue(value string) TabsEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e TabsEl) ExternalDragPayload(resolver ExternalDragPayload) TabsEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -62154,6 +63675,42 @@ func (e BaseTextViewEl) BlockquoteStyle(style StyleRefinement) BaseTextViewEl {
 	return e
 }
 
+// Set custom block actions for code blocks.
+//
+// The closure receives the `BaseCodeBlock`, and returns an element to display.
+//
+// CodeBlockActions is <gpui_kit::base::TextView>::code_block_actions.
+func (e BaseTextViewEl) CodeBlockActions(f RowSource) BaseTextViewEl {
+	o := op(e.n, 272)
+	o.u64(itemsCheck(f, 8))
+	return e
+}
+
+// Adds opt-in syntax highlighting for fenced code blocks.
+//
+// Returned byte ranges are relative to `code`. Invalid ranges are discarded. Without this
+// callback, code is unhighlighted.
+//
+// CodeBlockHighlighter is <gpui_kit::base::TextView>::code_block_highlighter.
+func (e BaseTextViewEl) CodeBlockHighlighter(highlighter Ask[CodeBlock, []TupleRangeHighlightStyle]) BaseTextViewEl {
+	o := op(e.n, 270)
+	o.u64(highlighter.Src.h)
+	return e
+}
+
+// Overrides the source of every document image, including embedded data URLs.
+//
+// Used for both rendering and intrinsic-size measurement. The returned source is authoritative:
+// pending or failed loads never fall back to the document URL. Without this override, images use
+// Base's default URI and data URL handling.
+//
+// ImageSource is <gpui_kit::base::TextView>::image_source.
+func (e BaseTextViewEl) ImageSource(resolver Ask[string, string]) BaseTextViewEl {
+	o := op(e.n, 271)
+	o.u64(resolver.Src.h)
+	return e
+}
+
 // Refines inline code typography, background, border, radius, and padding over the resolved style.
 // See `WithInlineCodeStyle` for the supported properties. Unspecified properties are inherited.
 //
@@ -62164,6 +63721,18 @@ func (e BaseTextViewEl) InlineCodeStyle(style StyleRefinement) BaseTextViewEl {
 	return e
 }
 
+// Show a tooltip that follows the pointer while it is over a link.
+//
+// The builder receives the link's URL. The view caches the tooltip until a different destination
+// is shown.
+//
+// LinkTooltip is <gpui_kit::base::TextView>::link_tooltip.
+func (e BaseTextViewEl) LinkTooltip(builder RowSource) BaseTextViewEl {
+	o := op(e.n, 275)
+	o.u64(builder.h)
+	return e
+}
+
 // Refines list markers over the resolved style. See `WithListStyle` for where it applies.
 // Unspecified properties are inherited.
 //
@@ -62171,6 +63740,16 @@ func (e BaseTextViewEl) InlineCodeStyle(style StyleRefinement) BaseTextViewEl {
 func (e BaseTextViewEl) ListStyle(style StyleRefinement) BaseTextViewEl {
 	o := op(e.n, 258)
 	o.u32(takeValue(style.n))
+	return e
+}
+
+// Register a renderer for a custom block-level Markdown node name.
+//
+// MarkdownBlockRenderer is <gpui_kit::base::TextView>::markdown_block_renderer.
+func (e BaseTextViewEl) MarkdownBlockRenderer(name string, renderer RowSource) BaseTextViewEl {
+	o := op(e.n, 273)
+	o.str(name)
+	o.u64(itemsCheck(renderer, 5))
 	return e
 }
 
@@ -62277,6 +63856,25 @@ func (e BaseTextViewEl) OnTaskToggle(handler func(cx *Cx, e TaskToggleEvent)) Ba
 	return e
 }
 
+// Apply a reusable text view plugin.
+//
+// Plugin is <gpui_kit::base::TextView>::plugin.
+func (e BaseTextViewEl) Plugin(plugin MarkdownPluginAny) BaseTextViewEl {
+	o := op(e.n, 276)
+	switch x := plugin.(type) {
+	case FrontmatterPlugin:
+		o.u8(0)
+		o.u32(takeValue(x.n))
+	case MarkdownPlugin:
+		o.u8(1)
+		putMarkdownPlugin(o, x)
+	default:
+		o.u8(1)
+		putMarkdownPlugin(o, MarkdownPlugin{})
+	}
+	return e
+}
+
 // Set the text view to be scrollable, default is false.
 //
 // If true for `scrollable`:
@@ -62325,6 +63923,17 @@ func (e BaseTextViewEl) SelectionFormat(selectionFormat SelectionFormat) BaseTex
 func (e BaseTextViewEl) Style(style BaseTextViewStyle) BaseTextViewEl {
 	o := op(e.n, 267)
 	o.u32(takeValue(style.n))
+	return e
+}
+
+// Set custom actions to be rendered below each Markdown table.
+//
+// The closure receives the `TableData`, and returns an element to display.
+//
+// TableActions is <gpui_kit::base::TextView>::table_actions.
+func (e BaseTextViewEl) TableActions(f RowSource) BaseTextViewEl {
+	o := op(e.n, 274)
+	o.u64(itemsCheck(f, 10))
 	return e
 }
 
@@ -62534,6 +64143,9 @@ func (e BaseTextViewEl) FlexShrink(shrink float32) BaseTextViewEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseTextViewEl) Font(font Font) BaseTextViewEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTextViewEl) FontFamily(familyName string) BaseTextViewEl {
@@ -62953,6 +64565,18 @@ func (e BaseTextViewStyle) WithForeground(color Color) BaseTextViewStyle {
 	return e
 }
 
+// Sets the style refinement for headings, selected by heading level (1-6).
+//
+// WithHeading is <gpui_kit::base::TextViewStyle>::with_heading.
+func (e BaseTextViewStyle) WithHeading(heading []StyleRefinement) BaseTextViewStyle {
+	o := op(e.n, 273)
+	o.u32(uint32(len(heading)))
+	for _, x0 := range heading {
+		o.u32(takeValue(x0.n))
+	}
+	return e
+}
+
 // Sets the highlight style for inline code spans.
 //
 // When `background_color` is `None`, the neutral code background is used, which keeps `default`
@@ -63115,6 +64739,15 @@ func (e BaseTextareaEl) OnTokenHover(listener func(cx *Cx, e InlineTokenHoverEve
 	return e
 }
 
+// The element each atomic token renders as; the input keeps editing and history.
+//
+// Token is <gpui_kit::base::Textarea>::token.
+func (e BaseTextareaEl) Token(render RowSource) BaseTextareaEl {
+	o := op(e.n, 258)
+	o.u64(itemsCheck(render, 4))
+	return e
+}
+
 // BaseTimeFieldEl is gpui_kit::base::TimeField.
 type BaseTimeFieldEl struct{ n *node }
 
@@ -63135,6 +64768,15 @@ func BaseTimeField(id ID, state TimeFieldState, st ...Style) BaseTimeFieldEl {
 func (e BaseTimeFieldEl) Disabled(disabled bool) BaseTimeFieldEl {
 	o := op(e.n, 256)
 	o.bool(disabled)
+	return e
+}
+
+// Decorate each segment. The segment already carries its label: two digits, or `AM`/`PM`.
+//
+// RenderSegment is <gpui_kit::base::TimeField>::render_segment.
+func (e BaseTimeFieldEl) RenderSegment(render RowSource) BaseTimeFieldEl {
+	o := op(e.n, 258)
+	o.u64(itemsCheck(render, 11))
 	return e
 }
 
@@ -63387,6 +65029,9 @@ func (e BaseTimeFieldEl) FlexShrink(shrink float32) BaseTimeFieldEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseTimeFieldEl) Font(font Font) BaseTimeFieldEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTimeFieldEl) FontFamily(familyName string) BaseTimeFieldEl {
@@ -64014,6 +65659,9 @@ func (e TimeFieldSegmentEl) FlexShrink(shrink float32) TimeFieldSegmentEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e TimeFieldSegmentEl) Font(font Font) TimeFieldSegmentEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e TimeFieldSegmentEl) FontFamily(familyName string) TimeFieldSegmentEl {
 	tStyledFontFamily(e.n, familyName)
@@ -64547,6 +66195,17 @@ func (e TimeFieldSegmentEl) OnBoxedAction(action Action, listener func(cx *Cx, e
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e TimeFieldSegmentEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) TimeFieldSegmentEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -64715,6 +66374,19 @@ func (e TimeFieldSegmentEl) WindowControlArea(area WindowControlArea) TimeFieldS
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e TimeFieldSegmentEl) A11ySyntheticChildren(f []A11yChild) TimeFieldSegmentEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -64729,6 +66401,12 @@ func (e TimeFieldSegmentEl) AccessibilityID(id string) TimeFieldSegmentEl {
 // Set the given styles to be applied when this element is active.
 func (e TimeFieldSegmentEl) Active(f StyleRefinement) TimeFieldSegmentEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e TimeFieldSegmentEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) TimeFieldSegmentEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -64861,6 +66539,15 @@ func (e TimeFieldSegmentEl) AriaSizeOfSet(size int) TimeFieldSegmentEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e TimeFieldSegmentEl) AriaValue(value string) TimeFieldSegmentEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e TimeFieldSegmentEl) ExternalDragPayload(resolver ExternalDragPayload) TimeFieldSegmentEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -65237,6 +66924,9 @@ func (e ToastEl) FlexGrow(grow float32) ToastEl { tStyledFlexGrow(e.n, grow); re
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ToastEl) FlexShrink(shrink float32) ToastEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e ToastEl) Font(font Font) ToastEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ToastEl) FontFamily(familyName string) ToastEl { tStyledFontFamily(e.n, familyName); return e }
@@ -65665,6 +67355,17 @@ func (e ToastEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) T
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e ToastEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ToastEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -65827,6 +67528,19 @@ func (e ToastEl) WindowControlArea(area WindowControlArea) ToastEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e ToastEl) A11ySyntheticChildren(f []A11yChild) ToastEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -65841,6 +67555,12 @@ func (e ToastEl) AccessibilityID(id string) ToastEl {
 // Set the given styles to be applied when this element is active.
 func (e ToastEl) Active(f StyleRefinement) ToastEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e ToastEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) ToastEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -65973,6 +67693,15 @@ func (e ToastEl) AriaSizeOfSet(size int) ToastEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e ToastEl) AriaValue(value string) ToastEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e ToastEl) ExternalDragPayload(resolver ExternalDragPayload) ToastEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -66361,6 +68090,9 @@ func (e ToastStackEl) FlexShrink(shrink float32) ToastStackEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e ToastStackEl) Font(font Font) ToastStackEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ToastStackEl) FontFamily(familyName string) ToastStackEl {
@@ -66816,6 +68548,17 @@ func (e ToastStackEl) OnBoxedAction(action Action, listener func(cx *Cx, e Actio
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e ToastStackEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ToastStackEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -66984,6 +68727,19 @@ func (e ToastStackEl) WindowControlArea(area WindowControlArea) ToastStackEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e ToastStackEl) A11ySyntheticChildren(f []A11yChild) ToastStackEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -66998,6 +68754,12 @@ func (e ToastStackEl) AccessibilityID(id string) ToastStackEl {
 // Set the given styles to be applied when this element is active.
 func (e ToastStackEl) Active(f StyleRefinement) ToastStackEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e ToastStackEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) ToastStackEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -67130,6 +68892,15 @@ func (e ToastStackEl) AriaSizeOfSet(size int) ToastStackEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e ToastStackEl) AriaValue(value string) ToastStackEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e ToastStackEl) ExternalDragPayload(resolver ExternalDragPayload) ToastStackEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -67550,6 +69321,9 @@ func (e BaseToggleEl) FlexShrink(shrink float32) BaseToggleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseToggleEl) Font(font Font) BaseToggleEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseToggleEl) FontFamily(familyName string) BaseToggleEl {
@@ -68005,6 +69779,17 @@ func (e BaseToggleEl) OnBoxedAction(action Action, listener func(cx *Cx, e Actio
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseToggleEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseToggleEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -68149,6 +69934,19 @@ func (e BaseToggleEl) WindowControlArea(area WindowControlArea) BaseToggleEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseToggleEl) A11ySyntheticChildren(f []A11yChild) BaseToggleEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -68163,6 +69961,12 @@ func (e BaseToggleEl) AccessibilityID(id string) BaseToggleEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseToggleEl) Active(f StyleRefinement) BaseToggleEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseToggleEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseToggleEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -68295,6 +70099,15 @@ func (e BaseToggleEl) AriaSizeOfSet(size int) BaseToggleEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseToggleEl) AriaValue(value string) BaseToggleEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseToggleEl) ExternalDragPayload(resolver ExternalDragPayload) BaseToggleEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -68721,6 +70534,9 @@ func (e BaseToggleGroupEl) FlexShrink(shrink float32) BaseToggleGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseToggleGroupEl) Font(font Font) BaseToggleGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseToggleGroupEl) FontFamily(familyName string) BaseToggleGroupEl {
@@ -69248,6 +71064,17 @@ func (e BaseToggleGroupEl) OnBoxedAction(action Action, listener func(cx *Cx, e 
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseToggleGroupEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseToggleGroupEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -69416,6 +71243,19 @@ func (e BaseToggleGroupEl) WindowControlArea(area WindowControlArea) BaseToggleG
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseToggleGroupEl) A11ySyntheticChildren(f []A11yChild) BaseToggleGroupEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -69430,6 +71270,12 @@ func (e BaseToggleGroupEl) AccessibilityID(id string) BaseToggleGroupEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseToggleGroupEl) Active(f StyleRefinement) BaseToggleGroupEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseToggleGroupEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseToggleGroupEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -69562,6 +71408,15 @@ func (e BaseToggleGroupEl) AriaSizeOfSet(size int) BaseToggleGroupEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseToggleGroupEl) AriaValue(value string) BaseToggleGroupEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseToggleGroupEl) ExternalDragPayload(resolver ExternalDragPayload) BaseToggleGroupEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -69969,6 +71824,9 @@ func (e BaseToolbarEl) FlexShrink(shrink float32) BaseToolbarEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseToolbarEl) Font(font Font) BaseToolbarEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseToolbarEl) FontFamily(familyName string) BaseToolbarEl {
@@ -70442,6 +72300,17 @@ func (e BaseToolbarEl) OnBoxedAction(action Action, listener func(cx *Cx, e Acti
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseToolbarEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseToolbarEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -70610,6 +72479,19 @@ func (e BaseToolbarEl) WindowControlArea(area WindowControlArea) BaseToolbarEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseToolbarEl) A11ySyntheticChildren(f []A11yChild) BaseToolbarEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -70624,6 +72506,12 @@ func (e BaseToolbarEl) AccessibilityID(id string) BaseToolbarEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseToolbarEl) Active(f StyleRefinement) BaseToolbarEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseToolbarEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseToolbarEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -70756,6 +72644,15 @@ func (e BaseToolbarEl) AriaSizeOfSet(size int) BaseToolbarEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseToolbarEl) AriaValue(value string) BaseToolbarEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseToolbarEl) ExternalDragPayload(resolver ExternalDragPayload) BaseToolbarEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -71188,6 +73085,9 @@ func (e BaseToolbarGroupEl) FlexShrink(shrink float32) BaseToolbarGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseToolbarGroupEl) Font(font Font) BaseToolbarGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseToolbarGroupEl) FontFamily(familyName string) BaseToolbarGroupEl {
@@ -71739,6 +73639,17 @@ func (e BaseToolbarGroupEl) OnBoxedAction(action Action, listener func(cx *Cx, e
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e BaseToolbarGroupEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) BaseToolbarGroupEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -71907,6 +73818,19 @@ func (e BaseToolbarGroupEl) WindowControlArea(area WindowControlArea) BaseToolba
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e BaseToolbarGroupEl) A11ySyntheticChildren(f []A11yChild) BaseToolbarGroupEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -71921,6 +73845,12 @@ func (e BaseToolbarGroupEl) AccessibilityID(id string) BaseToolbarGroupEl {
 // Set the given styles to be applied when this element is active.
 func (e BaseToolbarGroupEl) Active(f StyleRefinement) BaseToolbarGroupEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e BaseToolbarGroupEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) BaseToolbarGroupEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -72053,6 +73983,15 @@ func (e BaseToolbarGroupEl) AriaSizeOfSet(size int) BaseToolbarGroupEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e BaseToolbarGroupEl) AriaValue(value string) BaseToolbarGroupEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e BaseToolbarGroupEl) ExternalDragPayload(resolver ExternalDragPayload) BaseToolbarGroupEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -72416,6 +74355,9 @@ func (e BaseTooltipEl) FlexShrink(shrink float32) BaseTooltipEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BaseTooltipEl) Font(font Font) BaseTooltipEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTooltipEl) FontFamily(familyName string) BaseTooltipEl {
@@ -72845,6 +74787,13 @@ func (e Transition) Delay(delay SignedDurationInto) Transition {
 	return e
 }
 
+// Ease is <gpui_kit::base::Transition>::ease.
+func (e Transition) Ease(easing string) Transition {
+	o := op(e.n, 259)
+	putExpr(o, easing, 1)
+	return e
+}
+
 // Easing is <gpui_kit::base::Transition>::easing.
 func (e Transition) Easing(easing Easing) Transition {
 	o := op(e.n, 257)
@@ -72878,6 +74827,15 @@ func BaseTree(state TreeState, st ...Style) BaseTreeEl {
 	o.u64(state.h)
 	tokens(n, st)
 	return BaseTreeEl{n}
+}
+
+// Supplies the application-owned content for each visible entry.
+//
+// Item is <gpui_kit::base::Tree>::item.
+func (e BaseTreeEl) Item(renderItem RowSource) BaseTreeEl {
+	o := op(e.n, 257)
+	o.u64(itemsCheck(renderItem, 12))
+	return e
 }
 
 // Applies caller-owned presentation to the internal virtual list.
@@ -73065,6 +75023,9 @@ func (e BaseTreeEl) FlexGrow(grow float32) BaseTreeEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BaseTreeEl) FlexShrink(shrink float32) BaseTreeEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e BaseTreeEl) Font(font Font) BaseTreeEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BaseTreeEl) FontFamily(familyName string) BaseTreeEl {

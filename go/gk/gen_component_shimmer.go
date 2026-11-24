@@ -374,6 +374,9 @@ func (e ShimmerTextEl) FlexShrink(shrink float32) ShimmerTextEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e ShimmerTextEl) Font(font Font) ShimmerTextEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ShimmerTextEl) FontFamily(familyName string) ShimmerTextEl {
 	tStyledFontFamily(e.n, familyName)

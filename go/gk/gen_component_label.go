@@ -246,6 +246,9 @@ func (e LabelEl) FlexGrow(grow float32) LabelEl { tStyledFlexGrow(e.n, grow); re
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e LabelEl) FlexShrink(shrink float32) LabelEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e LabelEl) Font(font Font) LabelEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e LabelEl) FontFamily(familyName string) LabelEl { tStyledFontFamily(e.n, familyName); return e }
 

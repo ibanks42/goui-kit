@@ -268,6 +268,9 @@ func (e SliderEl) FlexGrow(grow float32) SliderEl { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SliderEl) FlexShrink(shrink float32) SliderEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e SliderEl) Font(font Font) SliderEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SliderEl) FontFamily(familyName string) SliderEl {
 	tStyledFontFamily(e.n, familyName)

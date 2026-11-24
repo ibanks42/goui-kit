@@ -546,6 +546,9 @@ func version() {
 
 func main() {
 	a := &App{mode: os.Getenv("GK_PROTO"), described: map[int]int{}}
+	if kindsMain(a.mode) || runBridges(a.mode) { // kinds.go: the generator's descriptor kinds; bridges.go: the Go ports of Odin's hand-written bridges
+		return
+	}
 	if os.Getenv("GK_PROTO_STALE_HASH") != "" {
 		gk.TestExpectHash(1)
 	}

@@ -275,6 +275,8 @@ func releaseSource(t *turn, src RowSource) {
 		dropHandler(rec.events - 1)
 	}
 	delete(sources, src.h)
+	delete(tables, src.h)
+	delete(searches, src.h)
 	releaseHandle(t, src.h)
 }
 
@@ -383,3 +385,50 @@ func Text(s string) Element {
 type textEl struct{ n *node }
 
 func (e textEl) node() *node { return e.n }
+
+// VirtualListEl is gpui-kit's virtual list over a row source (docs/PROTOCOLS.md 13.31): rows of
+// different sizes, each a view described by the source's row function, only those in view drawn.
+type VirtualListEl struct{ n *node }
+
+func (e VirtualListEl) node() *node { return e.n }
+
+// Style adds style tokens (s.SizeFull, s.H64).
+func (e VirtualListEl) Style(st ...Style) VirtualListEl { tokens(e.n, st); return e }
+
+// W sets the width.
+func (e VirtualListEl) W(l Length) VirtualListEl { tStyledW(e.n, l); return e }
+
+// H sets the height.
+func (e VirtualListEl) H(l Length) VirtualListEl { tStyledH(e.n, l); return e }
+
+// VVirtualList lays a source's rows out top to bottom, row i sizes[i][1] high (the width is the
+// list's). One size per row: rows beyond the sizes are not drawn, sizes beyond the rows neither. A
+// row without a view yet is a gap of its size for one frame (the rows protocol).
+//
+//	gk.VVirtualList("log", a.rows, a.heights, s.SizeFull)
+func VVirtualList(id string, src RowSource, sizes [][2]float32, st ...Style) VirtualListEl {
+	return virtualList(id, src, 0, sizes, st)
+}
+
+// HVirtualList lays a source's rows out left to right, row i sizes[i][0] wide.
+func HVirtualList(id string, src RowSource, sizes [][2]float32, st ...Style) VirtualListEl {
+	return virtualList(id, src, 1, sizes, st)
+}
+
+func virtualList(id string, src RowSource, axis uint8, sizes [][2]float32, st []Style) VirtualListEl {
+	if src.h == 0 {
+		stop("a virtual list needs a row source (gk.NewRowSource)")
+	}
+	n := newNode(nVirtualList)
+	o := nodeArgs(n)
+	o.str(id)
+	o.u64(src.h)
+	o.u8(axis)
+	o.u32(uint32(len(sizes)))
+	for _, s := range sizes {
+		o.f32(s[0])
+		o.f32(s[1])
+	}
+	tokens(n, st)
+	return VirtualListEl{n}
+}

@@ -467,6 +467,17 @@ func (e CheckboxEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e CheckboxEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) CheckboxEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -618,6 +629,19 @@ func (e CheckboxEl) WindowControlArea(area WindowControlArea) CheckboxEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e CheckboxEl) A11ySyntheticChildren(f []A11yChild) CheckboxEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -632,6 +656,12 @@ func (e CheckboxEl) AccessibilityID(id string) CheckboxEl {
 // Set the given styles to be applied when this element is active.
 func (e CheckboxEl) Active(f StyleRefinement) CheckboxEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e CheckboxEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) CheckboxEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -764,6 +794,15 @@ func (e CheckboxEl) AriaSizeOfSet(size int) CheckboxEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e CheckboxEl) AriaValue(value string) CheckboxEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e CheckboxEl) ExternalDragPayload(resolver ExternalDragPayload) CheckboxEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 
@@ -925,6 +964,9 @@ func (e CheckboxEl) FlexGrow(grow float32) CheckboxEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CheckboxEl) FlexShrink(shrink float32) CheckboxEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e CheckboxEl) Font(font Font) CheckboxEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e CheckboxEl) FontFamily(familyName string) CheckboxEl {

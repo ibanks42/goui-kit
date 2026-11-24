@@ -350,6 +350,9 @@ func (e MarkerEl) FlexGrow(grow float32) MarkerEl { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e MarkerEl) FlexShrink(shrink float32) MarkerEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e MarkerEl) Font(font Font) MarkerEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e MarkerEl) FontFamily(familyName string) MarkerEl {
 	tStyledFontFamily(e.n, familyName)
@@ -946,6 +949,9 @@ func (e MarkerContentEl) FlexShrink(shrink float32) MarkerContentEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e MarkerContentEl) Font(font Font) MarkerContentEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e MarkerContentEl) FontFamily(familyName string) MarkerContentEl {
 	tStyledFontFamily(e.n, familyName)
@@ -1538,6 +1544,9 @@ func (e MarkerIconEl) FlexShrink(shrink float32) MarkerIconEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e MarkerIconEl) Font(font Font) MarkerIconEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e MarkerIconEl) FontFamily(familyName string) MarkerIconEl {

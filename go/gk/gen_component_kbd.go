@@ -212,6 +212,9 @@ func (e KbdEl) FlexGrow(grow float32) KbdEl { tStyledFlexGrow(e.n, grow); return
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e KbdEl) FlexShrink(shrink float32) KbdEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e KbdEl) Font(font Font) KbdEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e KbdEl) FontFamily(familyName string) KbdEl { tStyledFontFamily(e.n, familyName); return e }
 

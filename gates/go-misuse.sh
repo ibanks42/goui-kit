@@ -3,7 +3,14 @@
 # (examples/go/misuse, offscreen with the diag library): each must behave correctly or stop with
 # its message; exit 0 with wrong content fails. Compile-time cases (examples/go/misuse_compile):
 # each must fail to build, with the compiler's message naming the mistake. Prints
-# "GATE misuse go ...". Needs bin/misuse-go (examples/go/build.sh misuse).
+# "GATE misuse go ...". Needs bin/misuse-go, bin/misuse_rows-go, bin/misuse_data-go,
+# bin/misuse_overlay-go, bin/misuse_values-go, bin/misuse_lists-go, bin/misuse_editor-go and
+# bin/misuse_review-go (examples/go/build.sh misuse misuse_rows misuse_data misuse_overlay
+# misuse_values misuse_lists misuse_editor misuse_review).
+#
+# Every case of gates/misuse.sh (Odin) has a Go line here: a run or compile case, a comment
+# naming the Go case that covers it, a comment saying why Go makes the mistake impossible, or a
+# PENDING line (a Go binding is missing; not counted; listed in gates/go-pending.txt).
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 . "$repo/go/env.sh"
 out=$here/out/go/misuse
@@ -11,16 +18,29 @@ rm -rf "$out"; mkdir -p "$out"
 export LD_LIBRARY_PATH=${GK_LIB_ROOT:-$repo/lib}/diag
 unset WAYLAND_DISPLAY DISPLAY
 pass=0; total=0
-run() { # mode expected-exit pattern
+run() { # mode expected-exit pattern (the program is $NEG_BIN, default misuse)
   total=$((total + 1))
-  GK_NEG=$1 timeout 60 "${GK_BIN:-$repo/bin}/misuse-go" > "$out/$1.log" 2>&1
+  bin=${NEG_BIN:-misuse}
+  log=$out/$1.log
+  [ "$bin" = misuse ] || log=$out/$bin-$1.log
+  GK_NEG=$1 timeout 60 "${GK_BIN:-$repo/bin}/$bin-go" > "$log" 2>&1
   rc=$?
-  if [ $rc -eq "$2" ] && grep -Eq -- "$3" "$out/$1.log"; then
-    pass=$((pass + 1)); echo "PASS $1: exit $rc; $(grep -Em1 -- "$3" "$out/$1.log" | cut -c1-150)"
+  if [ $rc -eq "$2" ] && grep -Eq -- "$3" "$log"; then
+    pass=$((pass + 1)); echo "PASS $1: exit $rc; $(grep -Em1 -- "$3" "$log" | cut -c1-150)"
   else
-    echo "FAIL $1: exit $rc (wanted $2 and /$3/)"; tail -5 "$out/$1.log"
+    echo "FAIL $1: exit $rc (wanted $2 and /$3/)"; tail -5 "$log"
   fi
 }
+pending() { # case what-is-missing: not run, not counted (gates/go-pending.txt lists it)
+  echo "GATE misuse $1 PENDING needs $2"
+}
+# examples/odin/negative (Odin) maps here as: rune58, keep, cx, element, self, view, usize: the
+# Go modes of the same name. Odin's twice (one handler with a value given to two builders, its
+# value freed twice) and stored (a handler with a value kept past its turn): impossible in Go, a
+# handler is a closure the collector keeps alive, so it may be given to any number of builders,
+# in any turn; Go's twice is the element form of the mistake. Odin's cast (lent text kept through
+# a string(x) cast) and pointer (a pointer as handler data): impossible in Go, InputState.Value
+# returns a Go string (a copy, kept by the collector) and a closure may capture any pointer.
 run rune58 0 'done mode=rune58 clicks=3 selected="item 0 of build after 2 clicks"'
 run keep 0 'done mode=keep clicks=3 selected="" kept="typed text"'
 run cx 2 'a \*gk.Cx was used after the function it was given to returned'
@@ -50,6 +70,85 @@ if grep -lE 'at .*misuse/main.go:[0-9]+' "$out"/{cx,element,twice,self,view,nil,
 else
   echo "FAIL lines: a stop does not name main.go:LINE"; grep -L 'misuse/main.go:' "$out"/*.log
 fi
+# The delegate protocol and InputState (examples/go/misuse_rows, the port of
+# examples/odin/negative_rows; its nul and utf8 are the nul and utf8 modes above).
+NEG_BIN=misuse_rows
+run table-freed 2 'a view shows a row source through a handle that cannot be used'
+run row-reenter 2 'a view function may not write: it only describes \(gk.Release\)'
+run row-handler 0 'gk-neg row-handler clicked text="row 0 of a list"'
+run huge-count 2 'gk.NewTableSource was given 3000000000 rows of 2 columns; a table holds at most'
+run input-release 2 'a view shows a .*InputBaseState<.*InputMode> through a handle that cannot be used'
+# The data protocol (examples/go/misuse_data, the port of examples/odin/negative_data). A column
+# is an exported field, named as the field is (Month, Desktop).
+NEG_BIN=misuse_data
+run data-ok 0 'gk-neg done mode=data-ok drawn=1'
+run data-column 2 'names the column "Dekstop", which the rows of this data \(main.month\) do not have: Month, Desktop'
+run data-kind 2 'reads the column "Month" of main.month as a number, and it holds text'
+run data-number 2 'asks for number 2, and this builder hands it 1'
+run data-brace 2 'has a \{ that is not closed'
+run data-row 2 'names the column "Month", and this builder has no row to read it from'
+run data-field 2 'the field Parts of main.bad is a \[\]int, which a data table cannot carry'
+# View-built closures (examples/go/misuse_overlay, the port of examples/odin/negative_overlay).
+# Odin's built-root (a function returning a node that is not a Dialog) does not compile in Go:
+# compile built_root below.
+NEG_BIN=misuse_overlay
+run built-ok 0 'gk-neg done mode=built-ok built=[1-9][0-9]* active=true'
+run built-freed 2 'a view shows a Dialog \(the view gk.(NewBuilt|built) made\) through a handle that cannot be used'
+run built-view 2 'gk.NewBuilt in a view function'
+run built-none 2 'no view given: make it with gk.NewBuilt'
+run dock-node 2 'node id 424242 was never handed out by the dock'
+run dock-register 2 'gk.RegisterPanel in a view function'
+# The values family (examples/go/misuse_values, the port of examples/odin/negative_values).
+NEG_BIN=misuse_values
+run val-ok 0 'gk-neg done mode=val-ok drawn=[0-9]* clicks=2'
+run val-self 2 'a value was given as an argument to its own builder'
+run val-self-view 2 'a value was given as an argument to its own builder'
+run val-write-view 2 'a view function may not write'
+run val-action-view 2 'gk.ActionOf in a view function'
+run val-bad-time 2 'the time 24:00:00.000000000 does not exist'
+run val-scroll-freed 2 'a view shows a .*ScrollHandle through a handle that cannot be used'
+run c6-rules-source 2 'gk.SearchWillChange was given a row source gk.NewSearchSource did not make'
+run c6-rules-limits 2 'min 3 and max 1 cannot both hold'
+run c6-tooltip-kept 2 'was used after the function that made it returned'
+# The lists family (examples/go/misuse_lists, the port of examples/odin/negative_lists2).
+NEG_BIN=misuse_lists
+run sel-ok 0 'gk-neg sel-ok value="b" ok=true'
+run sel-foreign 2 'gk.SetSearchItems was given a row source gk.NewSearchSource did not make'
+run sel-view 2 'a view function may not write'
+run expr-syntax 2 'the expression "x <" does not parse'
+run expr-arg 2 'the expression "z \* 2" uses z, but the closure is handed 2 argument'
+run expr-func 2 'the expression "clamp\(x, 1\)" calls clamp with 2 argument\(s\); it takes 3'
+run nonzero 2 '0 was given where the kit takes a number that is never 0'
+run kept-view 2 'a view function may not write'
+# The editor family (examples/go/misuse_editor, the port of examples/odin/negative_editor,
+# docs/PROTOCOLS.md 9.20 to 9.40).
+NEG_BIN=misuse_editor
+run ed-ok 0 'gk-neg done mode=ed-ok drawn=[1-9][0-9]* rows=[1-9]'
+run ed-owner 2 'is not an input, a textarea or an editor'
+run ed-owner-released 2 'a view shows a kit state \(as an entity id\) through a handle that cannot be used'
+run ed-plugin-freed 2 'a view shows a row source through a handle that cannot be used'
+# Round 6 (9.30 to 9.37): the editor host's held values and leaves, decorators, lent edits.
+run ed6-ok 0 'gk-neg done mode=ed6-ok drawn=[1-9][0-9]* rows=[1-9][0-9]* leaves=[1-9][0-9]*'
+run ed6-held-stale 2 'cannot be used'
+run ed6-leaf-stale 2 'is temporary: it lives until the next frame begins'
+run ed6-decorate-freed 2 'a view shows a row source through a handle that cannot be used'
+run ed6-lent-view 2 'a value made in a view function was given to a call'
+# Round 7 (9.38 to 9.40): a parsed Custom block placed with its flow; kept, and not kept.
+run ed7-ok 0 'gk-neg done mode=ed7-ok drawn=[1-9][0-9]* rows=0 leaves=[1-9][0-9]*'
+run ed7-custom-unretained 2 'is temporary|cannot be used'
+# Attacks on later protocols (examples/go/misuse_review, the port of examples/odin/negative_review3).
+# Odin's rv-action-forged (an action id the library never made) does not compile in Go: compile
+# action_forged below. Odin's rv-timer-state (a timer whose handler takes another state than the
+# view's): impossible in Go, a handler is a closure and has no state type.
+NEG_BIN=misuse_review
+run rv-ok 0 'gk-neg done mode=rv-ok drawn=[0-9]* clicks=2 fired=1 closed=1 acted=[1-9]'
+run rv-timer-view 2 'a view function may not start timers'
+run rv-timer-zero 2 'a timer of 0s: give 1 ms'
+run rv-window-stale 2 '\(window\) was released'
+run rv-keys-view 2 'a view function may not write'
+run rv-temp-later 2 'temporary: it lives until the next frame begins'
+run rv-panel-released 2 'was released'
+NEG_BIN=misuse
 compile() { # case pattern
   total=$((total + 1))
   (cd "$repo/examples/go" && go build -o /dev/null "./misuse_compile/$1") > "$out/compile-$1.log" 2>&1
@@ -72,6 +171,11 @@ compile shortcut_type 'does not satisfy gk.ShortcutHandler'
 # nowhere a single colour goes.
 compile fill_token 'cannot use s.Gap2 .* as gk.Fill value.*does not implement gk.Fill'
 compile gradient_color 'cannot use g .* as gk.Color value'
+# The port of examples/odin/negative_compile (lent text assigned to a string, refused as a
+# gk.Temp_String): impossible in Go, InputState.Value returns a string (a copy), so keeping it is
+# correct (the keep mode above).
+compile built_root 'cannot use gk.NewBuilt\(cx, .*\) .*gk.Built\[gk.LabelEl\].* as gk.Built\[gk.DialogEl\] value'
+compile action_forged 'cannot refer to unexported field id in struct literal of type gk.Action'
 # No display and no script: GPUI would wait without a word; gk.Run says so (exit 1).
 total=$((total + 1))
 timeout 30 "${GK_BIN:-$repo/bin}/hello-go" > "$out/no-display.log" 2>&1; rc=$?

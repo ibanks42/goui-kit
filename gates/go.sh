@@ -1,12 +1,14 @@
 #!/bin/bash
 # go.sh [PHASE...]: the Go front end's gate rows (docs/GO.md). Phases:
-#   build    examples/go/build.sh hello counter panels proto misuse paint port (timed; GOCACHE reused)
+#   build    examples/go/build.sh: every Go example app, the twins of the Odin examples (timed;
+#            GOCACHE reused)
 #   hello    the README's app in Go offscreen, 30 frames, exit 0
 #   proto    gates/go-proto.sh, the protocol tests in Go
 #   misuse   gates/go-misuse.sh, the misuse cases (run time and compile time)
-#   pixels   counter, panels and paint, Rust against Go, byte for byte (gates/pixels.sh)
-#   fps      frame cost, panels 60 64 2 and the counter's click on every frame: Rust, Go, Odin
-#            -o:speed, Rust again (gates/fps.sh, judged at 1.15 x Rust: docs/GO.md)
+#   pixels   counter, panels, paint, writerule and files, Rust against Go, byte for byte
+#            (gates/pixels.sh; notes is gates/go-apps.sh's)
+#   fps      frame cost, panels 60 64 2 and the counter's click on every frame: Rust, Go, Rust
+#            again (gates/fps.sh, judged as Odin was: DESIGN.md 18, 1.03 x Rust; GK_BAR overrides)
 #   rebuild  go build after a one-line edit of an app (the edit loop)
 # Default: build hello proto misuse pixels. Each phase prints lines starting with GATE.
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
@@ -18,9 +20,9 @@ rc=0
 for phase in "$@"; do
   case "$phase" in
   build)
-    t0=$(date +%s.%N)
-    if GK_LIB=$lib/ship "$repo/examples/go/build.sh" hello counter panels proto misuse paint port > "$out/build.log" 2>&1; then
-      echo "GATE build go PASS 7 programs in $(printf %.1f "$(echo "$(date +%s.%N) - $t0" | bc)") s (go build, GOCACHE kept)"
+    t0=$(date +%s.%N); apps="hello counter panels proto misuse misuse_rows misuse_data misuse_overlay misuse_values misuse_lists misuse_editor misuse_review paint port writerule table files notes todo reader expenses"
+    if GK_LIB=$lib/ship "$repo/examples/go/build.sh" $apps > "$out/build.log" 2>&1; then
+      echo "GATE build go PASS $(echo $apps | wc -w) programs in $(printf %.1f "$(echo "$(date +%s.%N) - $t0" | bc)") s (go build, GOCACHE kept)"
     else
       echo "GATE build go FAIL"; tail -20 "$out/build.log"; rc=1
     fi ;;
@@ -39,16 +41,17 @@ for phase in "$@"; do
   misuse)
     "$here/go-misuse.sh" | tee "$out/misuse.txt" | grep -E '^(FAIL|GATE)'; [ "${PIPESTATUS[0]}" = 0 ] || rc=1 ;;
   pixels)
-    for app in counter panels paint; do
+    for app in counter panels paint writerule files; do
+      if [ ! -x "${GK_BIN:-$repo/bin}/$app-go" ]; then
+        echo "GATE pixels $app-go PENDING bin/$app-go was not built (gates/go-pending.txt)"; continue
+      fi
       GK_PIXEL_CANDS=go "$here/pixels.sh" "$app" > "$out/pixels-$app.txt" 2>&1; r=$?
       grep '^GATE' "$out/pixels-$app.txt"; [ $r = 0 ] || { grep -v '^GATE' "$out/pixels-$app.txt" | tail -8; rc=1; }
     done ;;
   fps)
-    # The Odin apps of the same scenes, -o:speed, against this library (the comparison column).
-    OPT=-o:speed SUFFIX=-speed GK_LIB=$lib/ship "$repo/examples/odin/build.sh" panels counter > "$out/odin-build.log" 2>&1 || { echo "GATE fps go FAIL the Odin apps do not build"; rc=1; }
-    GK_NAME=panels-go-60-64-2 BINS="rust go odin-speed rust2" GK_JUDGED=go GK_BAR=1.15 "$here/fps.sh" --rounds ${GK_ROUNDS:-6} panels 60 64 2 > "$out/fps-panels.txt" 2>&1 || rc=1
+    GK_NAME=panels-go-60-64-2 BINS="rust go rust2" GK_JUDGED=go "$here/fps.sh" --rounds ${GK_ROUNDS:-6} panels 60 64 2 > "$out/fps-panels.txt" 2>&1 || rc=1
     grep -E '^GATE|^\| (cpu_p50_us|cpu_p95_us) ' "$out/fps-panels.txt"
-    GK_NAME=counter-go-click GK_CLICK=40,32,90,1 BINS="rust go odin-speed rust2" GK_JUDGED=go GK_BAR=1.15 "$here/fps.sh" --rounds ${GK_ROUNDS:-6} counter > "$out/fps-counter.txt" 2>&1 || rc=1
+    GK_NAME=counter-go-click GK_CLICK=40,32,90,1 BINS="rust go rust2" GK_JUDGED=go "$here/fps.sh" --rounds ${GK_ROUNDS:-6} counter > "$out/fps-counter.txt" 2>&1 || rc=1
     grep -E '^GATE|^\| (cpu_p50_us|cpu_p95_us) ' "$out/fps-counter.txt" ;;
   rebuild)
     "$here/go-rebuild.sh" | tee "$out/rebuild.txt" | grep '^GATE' ;;

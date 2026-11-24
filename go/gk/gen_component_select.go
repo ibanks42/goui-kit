@@ -351,6 +351,9 @@ func (e SelectEl) FlexGrow(grow float32) SelectEl { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SelectEl) FlexShrink(shrink float32) SelectEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e SelectEl) Font(font Font) SelectEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SelectEl) FontFamily(familyName string) SelectEl {
 	tStyledFontFamily(e.n, familyName)

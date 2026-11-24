@@ -300,6 +300,9 @@ func (e DatePickerEl) FlexShrink(shrink float32) DatePickerEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e DatePickerEl) Font(font Font) DatePickerEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e DatePickerEl) FontFamily(familyName string) DatePickerEl {
 	tStyledFontFamily(e.n, familyName)
@@ -584,5 +587,28 @@ func NewDateRangePresetDateTime(label string, value DateTime) DateRangePreset {
 	o := nodeArgs(n)
 	o.str(label)
 	putDateTime(o, value)
+	return DateRangePreset{n}
+}
+
+// Creates a new DateRangePreset with a range of dates.
+//
+// NewDateRangePresetRange is <gpui_kit::component::date_picker::DateRangePreset>::range.
+func NewDateRangePresetRange(label string, start CivilDate, end CivilDate) DateRangePreset {
+	n := newValue(837)
+	o := nodeArgs(n)
+	o.str(label)
+	putCivilDate(o, start)
+	putCivilDate(o, end)
+	return DateRangePreset{n}
+}
+
+// Creates a new DateRangePreset with a date.
+//
+// NewDateRangePresetSingle is <gpui_kit::component::date_picker::DateRangePreset>::single.
+func NewDateRangePresetSingle(label string, date CivilDate) DateRangePreset {
+	n := newValue(838)
+	o := nodeArgs(n)
+	o.str(label)
+	putCivilDate(o, date)
 	return DateRangePreset{n}
 }

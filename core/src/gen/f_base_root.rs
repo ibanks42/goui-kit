@@ -111,6 +111,7 @@ pub fn c_1031(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let cx 
 pub fn c_1446(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = gpui_kit::px(r.f32()); let a1 = gpui_kit::px(r.f32()); let a2 = gpui_kit::px(r.f32()); let a3 = gpui_kit::px(r.f32()); let a4 = genapi::color(r, &*c.cx); let cx = &mut *c.cx; let v = gpui_kit::base::box_shadow(a0, a1, a2, a3, a4); let _ = cx; let mut out = Vec::new(); genapi::Wire::put(&v, &mut out); c.out.extend_from_slice(&out); Ok(()) }
 pub fn c_1777(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = en_2(r.u16()); let a1 = en_41(r.u16()); let cx = &mut *c.cx; let v = gpui_kit::base::logical_anchor(a0, a1); let _ = cx; let mut out = Vec::new(); genapi::Wire::put(&v, &mut out); c.out.extend_from_slice(&out); Ok(()) }
 pub fn c_1778(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let a0 = en_51(r.u16()); let cx = &mut *c.cx; gpui_kit::base::set_reduce_motion_preference(a0, cx); let _ = cx; Ok(()) }
+pub fn c_1807(r: &mut R, c: &mut genapi::Call) -> genapi::GkResult<()> { let window = c.window()?; let cx = &mut *c.cx; let v = crate::values::window_root::<gpui_kit::base::Root>(window, cx); let _ = cx; let mut out = Vec::new(); genapi::Wire::put(&v, &mut out); c.out.extend_from_slice(&out); Ok(()) }
 pub fn call__base_root(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<genapi::GkResult<()>> {
     Some(match op {
         726 => c_726(r, c),
@@ -170,6 +171,7 @@ pub fn call__base_root(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<genap
         1662 => c_1662(r, c),
         1777 => c_1777(r, c),
         1778 => c_1778(r, c),
+        1807 => c_1807(r, c),
         _ => return None,
     })
 }

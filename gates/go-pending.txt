@@ -1,0 +1,5 @@
+# Go gates that cannot run yet because the Go package lacks a binding the Odin package has,
+# one per line: "gate subject | the missing Go binding (its Odin name) | who adds it". The gate
+# prints PENDING; gates/summary.py shows it as PENDING and lets the run pass only when it is
+# listed here. A listed gate that runs and passes fails the run until its line is deleted, so
+# this list only shrinks. Odin is deleted once it is empty.

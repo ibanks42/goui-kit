@@ -59,6 +59,7 @@ such case, so none of them is silent.
 
 ## 3. What app code looks like
 
+<!-- from: docs/snippets-go/gomd/main.go -->
 ```go
 type App struct {
 	count int
@@ -138,6 +139,26 @@ func main() {
 - **Menus**: `gk.DropdownMenu(gk.Button("file").Label("File"), gk.NewPopupMenu().Menu("New", a.newAction))`.
 - **Docks**: `gk.NewDockAreaSkinned(cx, id)`, `gk.NewPanel(cx, view, gk.PanelData{Name: .., Title: ..})`,
   `dock.SetCenter(cx, gk.NewDockLayoutTabs().PanelView(p))`, `gk.DockView(dock)` in a view.
+- **Saved layouts and the rest of the dock** (go/gk/rt_dock.go, from rt_dock.odin): `dock.Dump(cx)`
+  gives a `gk.DockAreaState`, `dock.Load(cx, saved)` rebuilds panels through `gk.RegisterPanel(cx,
+  name, f)` (f gets a `gk.PanelBuild` and answers with `gk.PanelFill`); `gk.PanelGroup`, `gk.PanelID`,
+  `gk.PaneNodeKind`, `gk.PaneNodeWalk`, `gk.PaneTreeToState`, `gk.PaneTreeFromState`, `gk.BuildPanel`;
+  the skin's settings `gk.DockSkinPanelStyle`, `gk.SetDockSkinToggleButtonVisible`,
+  `gk.SetDockSkinCollapsedTabBarVisible`, `gk.SetDockSkinSplitDividerLineVisible`, ...; renderers
+  `gk.NewDockRenderer(cx, gk.DockHooks(gk.HookDock), f)`, `gk.DockRenderAnswer`, `gk.DockSlot()`;
+  `gk.OnDockToggle`.
+- **Tables and trees** (go/gk/rt_table.go, from kit_rows.odin): `gk.NewTableSource(cx, rows,
+  []gk.TableColumn{gk.NewTableColumn("name", "Name")}, cell, gk.TableEvents(f))`, `gk.SetTableRows`,
+  `gk.InvalidateTable`, `gk.SetTableColumns`, `gk.SetTableTexts`, `gk.SetTableRowLabels`,
+  `gk.SetTableLook`, `gk.RowMenu(el, menu)`; `gk.SetTreeItems`, `gk.TreeEntryAt`, `gk.NewTreeSource`;
+  `gk.SearchWillChange(cx, src, gk.SearchRules{..})` for selects.
+- **Motion** (go/gk/rt_motion.go): `gk.WithAnimation(el, id, gk.Animation{..}, gk.Track{..})`,
+  `gk.Motion(el, gk.MotionValue{Prop, Src: gk.ToTransition{..}})`, `gk.FocusTrap`,
+  `gk.TextSelectionScopeOf(el, gk.NewTextSelectionScopeID(cx))`.
+- **Editors** (go/gk/rt_editor.go): `gk.CodeEditor(state, gk.CodeEditorOptions{..})`;
+  `gk.EditorProviders(cx, editor, f, gk.ProvidersOptions{..})` asks f a `gk.ProviderEvent`, answered
+  with `gk.AnswerCompletions`, `gk.AnswerHover`, `gk.AnswerDefinitions`, ... Also `gk.KbdForAction`,
+  `gk.NewAppMenuBar`/`gk.AppMenuBarView`, `gk.ClockNow`, `gk.VVirtualList`/`gk.HVirtualList`.
 - **Charts over the app's rows**: `gk.BarChart(gk.NewData(rows)).Band("Month").Value("Total")`:
   `gk.NewData` takes a slice of structs; each exported field is a column named as the field is.
 - **Effects**: `gk.Effect(el, gk.NewEffectTransition(d).Fade(0, 1), key)`; el is a
@@ -220,6 +241,7 @@ both packages:
 
 For example, a draggable band, a plot with a gradient line, and asking before a window closes:
 
+<!-- from: docs/snippets-go/gomd/main.go -->
 ```go
 gk.Div().ID(gk.Key("band", i)).
 	OnDrag(gk.DragValue{ID: uint64(i), Text: name}, a.bandPreview).   // a.bandPreview: a gk.View made in init

@@ -1769,8 +1769,13 @@ type ClipboardString struct {
 	Metadata Option[string]
 }
 
-// ComboboxTriggerContext is crate::items::Reads<'_, gpui_kit::component::combobox::ComboboxTriggerContext<'_, crate::shim_select::GkSearchDelegate>>: not carried in Go yet (libval).
-type ComboboxTriggerContext struct{}
+// ComboboxTriggerContext is crate::items::Reads<'_, gpui_kit::component::combobox::ComboboxTriggerContext<'_, crate::shim_select::GkSearchDelegate>>. Only the fields the binding can carry.
+type ComboboxTriggerContext struct {
+	Selection   []TupleBaseIndexPathSearchItem
+	Placeholder Option[string]
+	IsOpen      bool
+	IsDisabled  bool
+}
 
 // CommandStateReads is crate::items::Reads<'_, gpui_kit::component::command::CommandState>. Only the fields the binding can carry.
 type CommandStateReads struct {
@@ -2068,16 +2073,60 @@ func putInputEdit(o *tape, v InputEdit) {
 	putPoint(o, v.NewEndPosition)
 }
 
-// InputEditorStyle is gpui_kit::base::input::InputEditorStyle: not carried in Go yet (askdyn).
-type InputEditorStyle struct{}
+// InputEditorStyle is gpui_kit::base::input::InputEditorStyle.
+type InputEditorStyle struct {
+	Foreground             Color
+	MutedForeground        Color
+	Background             Color
+	Border                 Color
+	Selection              Color
+	Caret                  Color
+	Diagnostics            DiagnosticColors
+	HighlightStyles        Ask[string, Option[HighlightStyle]]
+	EditorInvisible        Option[Color]
+	EditorActiveLine       Option[Color]
+	EditorGutterBackground Option[Color]
+	FoldIconRenderer       Option[RowSource]
+}
 
 func putInputEditorStyle(o *tape, v InputEditorStyle) {
-	stop("InputEditorStyle is not carried by the Go package yet: leave out the builder that takes it (docs/API-GO.md, section Not in Go yet)")
+	putColor(o, v.Foreground)
+	putColor(o, v.MutedForeground)
+	putColor(o, v.Background)
+	putColor(o, v.Border)
+	putColor(o, v.Selection)
+	putColor(o, v.Caret)
+	putDiagnosticColors(o, v.Diagnostics)
+	o.u64(v.HighlightStyles.Src.h)
+	if x0, ok := v.EditorInvisible.Get(); ok {
+		o.u8(1)
+		putColor(o, x0)
+	} else {
+		o.u8(0)
+	}
+	if x0, ok := v.EditorActiveLine.Get(); ok {
+		o.u8(1)
+		putColor(o, x0)
+	} else {
+		o.u8(0)
+	}
+	if x0, ok := v.EditorGutterBackground.Get(); ok {
+		o.u8(1)
+		putColor(o, x0)
+	} else {
+		o.u8(0)
+	}
+	if x0, ok := v.FoldIconRenderer.Get(); ok {
+		o.u8(1)
+		o.u64(x0.h)
+	} else {
+		o.u8(0)
+	}
 }
 
 // InputEditsEvent is gpui_kit::base::input::InputEditsEvent. Only the fields the binding can carry.
 type InputEditsEvent struct {
-	Edits []TupleInputeditString
+	Edits []TupleInputEditString
 }
 
 // KeyDownEvent is gpui_kit::KeyDownEvent.
@@ -2295,8 +2344,11 @@ type KitThemeColor2 struct {
 	CyanLight                      Hsla
 }
 
-// KitThemeToken is gpui_kit::component::ThemeToken: not carried in Go yet (libval).
-type KitThemeToken struct{}
+// KitThemeToken is gpui_kit::component::ThemeToken. Only the fields the binding can carry.
+type KitThemeToken struct {
+	Color      Hsla
+	Background BackgroundValue
+}
 
 // LinearColorStop is gpui_kit::LinearColorStop.
 type LinearColorStop struct {
@@ -3156,6 +3208,14 @@ type BlockNodeDefinition struct {
 
 func (BlockNodeDefinition) isBlockNode() {}
 
+// BlockNodeHeld is a BlockNode the library holds (a function's result, PROTOCOLS.md 9.30): temporary until
+// gk.Retain, as any object a call hands out.
+type BlockNodeHeld struct{ h uint64 }
+
+func (v BlockNodeHeld) handle() uint64 { return v.h }
+
+func (BlockNodeHeld) isBlockNode() {}
+
 func putBlockNode(o *tape, v BlockNode) {
 	switch x := v.(type) {
 	case BlockNodeKind:
@@ -3306,6 +3366,10 @@ func putBlockNode(o *tape, v BlockNode) {
 		} else {
 			o.u8(0)
 		}
+	case BlockNodeHeld:
+		_ = x
+		o.u16(0xfffe)
+		putObj(o, x.h)
 	default:
 		stop("a nil or unknown BlockNode was given to a builder: give one of its variants (gk.BlockNode...)")
 	}
@@ -3463,18 +3527,47 @@ func (ComboboxEventConfirm) isComboboxEvent() {}
 // Date is gpui_kit::base::Date: one struct type per variant.
 type Date interface{ isDate() }
 
-// DateSingle is gpui_kit::base::Date::Single: not carried in Go yet (civil).
-type DateSingle struct{}
+// DateSingle is gpui_kit::base::Date::Single.
+type DateSingle struct {
+	Value Option[CivilDate]
+}
 
 func (DateSingle) isDate() {}
 
-// DateRange is gpui_kit::base::Date::Range: not carried in Go yet (civil).
-type DateRange struct{}
+// DateRange is gpui_kit::base::Date::Range.
+type DateRange struct {
+	V0 Option[CivilDate]
+	V1 Option[CivilDate]
+}
 
 func (DateRange) isDate() {}
 
 func putDate(o *tape, v Date) {
-	switch v.(type) {
+	switch x := v.(type) {
+	case DateSingle:
+		_ = x
+		o.u16(0)
+		if x0, ok := x.Value.Get(); ok {
+			o.u8(1)
+			putCivilDate(o, x0)
+		} else {
+			o.u8(0)
+		}
+	case DateRange:
+		_ = x
+		o.u16(1)
+		if x0, ok := x.V0.Get(); ok {
+			o.u8(1)
+			putCivilDate(o, x0)
+		} else {
+			o.u8(0)
+		}
+		if x0, ok := x.V1.Get(); ok {
+			o.u8(1)
+			putCivilDate(o, x0)
+		} else {
+			o.u8(0)
+		}
 	default:
 		stop("a nil or unknown Date was given to a builder: give one of its variants (gk.Date...)")
 	}
@@ -3493,18 +3586,47 @@ func (DatePickerEventChange) isDatePickerEvent() {}
 // DateTime is gpui_kit::component::date_picker::DateTime: one struct type per variant.
 type DateTime interface{ isDateTime() }
 
-// DateTimeSingle is gpui_kit::component::date_picker::DateTime::Single: not carried in Go yet (civil).
-type DateTimeSingle struct{}
+// DateTimeSingle is gpui_kit::component::date_picker::DateTime::Single.
+type DateTimeSingle struct {
+	Value Option[CivilDateTime]
+}
 
 func (DateTimeSingle) isDateTime() {}
 
-// DateTimeRange is gpui_kit::component::date_picker::DateTime::Range: not carried in Go yet (civil).
-type DateTimeRange struct{}
+// DateTimeRange is gpui_kit::component::date_picker::DateTime::Range.
+type DateTimeRange struct {
+	V0 Option[CivilDateTime]
+	V1 Option[CivilDateTime]
+}
 
 func (DateTimeRange) isDateTime() {}
 
 func putDateTime(o *tape, v DateTime) {
-	switch v.(type) {
+	switch x := v.(type) {
+	case DateTimeSingle:
+		_ = x
+		o.u16(0)
+		if x0, ok := x.Value.Get(); ok {
+			o.u8(1)
+			putCivilDateTime(o, x0)
+		} else {
+			o.u8(0)
+		}
+	case DateTimeRange:
+		_ = x
+		o.u16(1)
+		if x0, ok := x.V0.Get(); ok {
+			o.u8(1)
+			putCivilDateTime(o, x0)
+		} else {
+			o.u8(0)
+		}
+		if x0, ok := x.V1.Get(); ok {
+			o.u8(1)
+			putCivilDateTime(o, x0)
+		} else {
+			o.u8(0)
+		}
 	default:
 		stop("a nil or unknown DateTime was given to a builder: give one of its variants (gk.DateTime...)")
 	}
@@ -3694,8 +3816,10 @@ type EasingLinearStops struct {
 
 func (EasingLinearStops) isEasing() {}
 
-// EasingCustom is gpui_kit::base::Easing::Custom: not carried in Go yet (expr).
-type EasingCustom struct{}
+// EasingCustom is gpui_kit::base::Easing::Custom.
+type EasingCustom struct {
+	Value string
+}
 
 func (EasingCustom) isEasing() {}
 
@@ -3724,6 +3848,10 @@ func putEasing(o *tape, v Easing) {
 			o.f32(x0.V0)
 			o.f32(x0.V1)
 		}
+	case EasingCustom:
+		_ = x
+		o.u16(8)
+		putExpr(o, x.Value, 1)
 	default:
 		stop("a nil or unknown Easing was given to a builder: give one of its variants (gk.Easing...)")
 	}
@@ -3746,8 +3874,10 @@ type FieldBuilderElement struct {
 
 func (FieldBuilderElement) isFieldBuilder() {}
 
-// FieldBuilderView is gpui_kit::component::form::FieldBuilder::View: not carried in Go yet (dock).
-type FieldBuilderView struct{}
+// FieldBuilderView is gpui_kit::component::form::FieldBuilder::View.
+type FieldBuilderView struct {
+	Value View
+}
 
 func (FieldBuilderView) isFieldBuilder() {}
 
@@ -3761,6 +3891,10 @@ func putFieldBuilder(o *tape, v FieldBuilder) {
 		_ = x
 		o.u16(1)
 		o.u32(take(x.Value))
+	case FieldBuilderView:
+		_ = x
+		o.u16(2)
+		o.u64(x.Value.h)
 	default:
 		stop("a nil or unknown FieldBuilder was given to a builder: give one of its variants (gk.FieldBuilder...)")
 	}
@@ -3990,18 +4124,48 @@ func (InputEventBlur) isInputEvent() {}
 // InsertTarget is gpui_kit::base::dock::InsertTarget: one struct type per variant.
 type InsertTarget interface{ isInsertTarget() }
 
-// InsertTargetTabs is gpui_kit::base::dock::InsertTarget::Tabs: not carried in Go yet (dock).
-type InsertTargetTabs struct{}
+// InsertTargetTabs is gpui_kit::base::dock::InsertTarget::Tabs.
+type InsertTargetTabs struct {
+	Node     NodeID
+	Ix       Option[int]
+	Activate bool
+}
 
 func (InsertTargetTabs) isInsertTarget() {}
 
-// InsertTargetSplit is gpui_kit::base::dock::InsertTarget::Split: not carried in Go yet (dock).
-type InsertTargetSplit struct{}
+// InsertTargetSplit is gpui_kit::base::dock::InsertTarget::Split.
+type InsertTargetSplit struct {
+	Node      NodeID
+	Placement Placement
+	Size      Option[float32]
+}
 
 func (InsertTargetSplit) isInsertTarget() {}
 
 func putInsertTarget(o *tape, v InsertTarget) {
-	switch v.(type) {
+	switch x := v.(type) {
+	case InsertTargetTabs:
+		_ = x
+		o.u16(0)
+		o.u64(uint64(x.Node))
+		if x0, ok := x.Ix.Get(); ok {
+			o.u8(1)
+			putUsize(o, x0)
+		} else {
+			o.u8(0)
+		}
+		o.bool(x.Activate)
+	case InsertTargetSplit:
+		_ = x
+		o.u16(1)
+		o.u64(uint64(x.Node))
+		o.u16(uint16(x.Placement))
+		if x0, ok := x.Size.Get(); ok {
+			o.u8(1)
+			o.f32(x0)
+		} else {
+			o.u8(0)
+		}
 	default:
 		stop("a nil or unknown InsertTarget was given to a builder: give one of its variants (gk.InsertTarget...)")
 	}
@@ -4155,18 +4319,24 @@ type MatcherDayOfWeek struct {
 
 func (MatcherDayOfWeek) isMatcher() {}
 
-// MatcherInterval is gpui_kit::base::Matcher::Interval: not carried in Go yet (libval).
-type MatcherInterval struct{}
+// MatcherInterval is gpui_kit::base::Matcher::Interval.
+type MatcherInterval struct {
+	Value IntervalMatcher
+}
 
 func (MatcherInterval) isMatcher() {}
 
-// MatcherRange is gpui_kit::base::Matcher::Range: not carried in Go yet (libval).
-type MatcherRange struct{}
+// MatcherRange is gpui_kit::base::Matcher::Range.
+type MatcherRange struct {
+	Value RangeMatcher
+}
 
 func (MatcherRange) isMatcher() {}
 
-// MatcherCustom is gpui_kit::base::Matcher::Custom: not carried in Go yet (valset).
-type MatcherCustom struct{}
+// MatcherCustom is gpui_kit::base::Matcher::Custom.
+type MatcherCustom struct {
+	Value []CivilDate
+}
 
 func (MatcherCustom) isMatcher() {}
 
@@ -4178,6 +4348,21 @@ func putMatcher(o *tape, v Matcher) {
 		o.u32(uint32(len(x.Value)))
 		for _, x0 := range x.Value {
 			o.u32(uint32(x0))
+		}
+	case MatcherInterval:
+		_ = x
+		o.u16(1)
+		putIntervalMatcher(o, x.Value)
+	case MatcherRange:
+		_ = x
+		o.u16(2)
+		putRangeMatcher(o, x.Value)
+	case MatcherCustom:
+		_ = x
+		o.u16(3)
+		o.u32(uint32(len(x.Value)))
+		for _, x0 := range x.Value {
+			putCivilDate(o, x0)
 		}
 	default:
 		stop("a nil or unknown Matcher was given to a builder: give one of its variants (gk.Matcher...)")
@@ -4247,8 +4432,10 @@ type NumberStepFixed struct {
 
 func (NumberStepFixed) isNumberStep() {}
 
-// NumberStepByValue is gpui_kit::base::NumberStep::ByValue: not carried in Go yet (expr).
-type NumberStepByValue struct{}
+// NumberStepByValue is gpui_kit::base::NumberStep::ByValue.
+type NumberStepByValue struct {
+	Value string
+}
 
 func (NumberStepByValue) isNumberStep() {}
 
@@ -4258,6 +4445,10 @@ func putNumberStep(o *tape, v NumberStep) {
 		_ = x
 		o.u16(0)
 		o.f64(x.Value)
+	case NumberStepByValue:
+		_ = x
+		o.u16(1)
+		putExpr(o, x.Value, 2)
 	default:
 		stop("a nil or unknown NumberStep was given to a builder: give one of its variants (gk.NumberStep...)")
 	}
@@ -4364,8 +4555,11 @@ type PaneRefSplit struct {
 
 func (PaneRefSplit) isPaneRef() {}
 
-// PaneRefTabs is gpui_kit::base::dock::PaneRef::Tabs: not carried in Go yet (dock).
-type PaneRefTabs struct{}
+// PaneRefTabs is gpui_kit::base::dock::PaneRef::Tabs.
+type PaneRefTabs struct {
+	Panels   []DockPanelID
+	ActiveIx int
+}
 
 func (PaneRefTabs) isPaneRef() {}
 
@@ -4776,8 +4970,12 @@ func putStaggerOrigin(o *tape, v StaggerOrigin) {
 // TabGroupEvent is gpui_kit::base::dock::TabGroupEvent: one struct type per variant.
 type TabGroupEvent interface{ isTabGroupEvent() }
 
-// TabGroupEventDrop is gpui_kit::base::dock::TabGroupEvent::Drop: not carried in Go yet (dock).
-type TabGroupEventDrop struct{}
+// TabGroupEventDrop is gpui_kit::base::dock::TabGroupEvent::Drop.
+type TabGroupEventDrop struct {
+	Panel  DockPanelID
+	Source NodeID
+	Target InsertTarget
+}
 
 func (TabGroupEventDrop) isTabGroupEvent() {}
 
@@ -4789,8 +4987,10 @@ type TabGroupEventDragDrop struct {
 
 func (TabGroupEventDragDrop) isTabGroupEvent() {}
 
-// TabGroupEventClosePanel is gpui_kit::base::dock::TabGroupEvent::ClosePanel: not carried in Go yet (dock).
-type TabGroupEventClosePanel struct{}
+// TabGroupEventClosePanel is gpui_kit::base::dock::TabGroupEvent::ClosePanel.
+type TabGroupEventClosePanel struct {
+	Panel DockPanelID
+}
 
 func (TabGroupEventClosePanel) isTabGroupEvent() {}
 
@@ -5045,8 +5245,10 @@ func putTextOverflow(o *tape, v TextOverflow) {
 // TimeFieldEvent is gpui_kit::base::TimeFieldEvent: one struct type per variant.
 type TimeFieldEvent interface{ isTimeFieldEvent() }
 
-// TimeFieldEventChange is gpui_kit::base::TimeFieldEvent::Change: not carried in Go yet (civil).
-type TimeFieldEventChange struct{}
+// TimeFieldEventChange is gpui_kit::base::TimeFieldEvent::Change.
+type TimeFieldEventChange struct {
+	Value CivilTime
+}
 
 func (TimeFieldEventChange) isTimeFieldEvent() {}
 
@@ -5225,7 +5427,7 @@ func putCornersInto(o *tape, v CornersInto) {
 	}
 }
 
-// DateInto is what `impl Into<gpui_kit::base::Date>` accepts: one of Date.
+// DateInto is what `impl Into<gpui_kit::base::Date>` accepts: one of Date, CivilDate, TupleCivilDateCivilDate.
 type DateInto interface{}
 
 func putDateInto(o *tape, v DateInto) {
@@ -5234,8 +5436,17 @@ func putDateInto(o *tape, v DateInto) {
 		o.u8(0)
 		_ = x
 		putDate(o, x)
+	case CivilDate:
+		o.u8(1)
+		_ = x
+		putCivilDate(o, x)
+	case TupleCivilDateCivilDate:
+		o.u8(2)
+		_ = x
+		putCivilDate(o, x.V0)
+		putCivilDate(o, x.V1)
 	default:
-		stop("a %T was given where the kit takes a DateInto: give one of Date", v)
+		stop("a %T was given where the kit takes a DateInto: give one of Date, CivilDate, TupleCivilDateCivilDate", v)
 	}
 }
 
@@ -5283,7 +5494,7 @@ func putEdgesInto(o *tape, v EdgesInto) {
 	}
 }
 
-// FieldBuilderInto is what `impl Into<gpui_kit::component::form::FieldBuilder>` accepts: one of FieldBuilder, string.
+// FieldBuilderInto is what `impl Into<gpui_kit::component::form::FieldBuilder>` accepts: one of FieldBuilder, View, string.
 type FieldBuilderInto interface{}
 
 func putFieldBuilderInto(o *tape, v FieldBuilderInto) {
@@ -5292,12 +5503,16 @@ func putFieldBuilderInto(o *tape, v FieldBuilderInto) {
 		o.u8(0)
 		_ = x
 		putFieldBuilder(o, x)
+	case View:
+		o.u8(1)
+		_ = x
+		o.u64(x.h)
 	case string:
 		o.u8(2)
 		_ = x
 		o.str(x)
 	default:
-		stop("a %T was given where the kit takes a FieldBuilderInto: give one of FieldBuilder, string", v)
+		stop("a %T was given where the kit takes a FieldBuilderInto: give one of FieldBuilder, View, string", v)
 	}
 }
 
@@ -6282,6 +6497,14 @@ func init() {
 		f(cx, rdResolvedPosition(r))
 		return true
 	}}
+	shapes[119] = shapeInfo{name: "func(cx *Cx, e DragMoveEvent)", call: func(h any, cx *Cx, r *reader, ret *tape) bool {
+		f, ok := h.(func(cx *Cx, e DragMoveEvent))
+		if !ok {
+			return false
+		}
+		f(cx, rdDragMoveEvent(r))
+		return true
+	}}
 	shapes[120] = shapeInfo{name: "func(cx *Cx, e InputEditsEvent)", call: func(h any, cx *Cx, r *reader, ret *tape) bool {
 		f, ok := h.(func(cx *Cx, e InputEditsEvent))
 		if !ok {
@@ -6308,17 +6531,32 @@ func init() {
 	}}
 }
 
+type TupleBaseIndexPathSearchItem struct {
+	V0 BaseIndexPath
+	V1 SearchItem
+}
+
+type TupleCalendarItemKindInt32 struct {
+	V0 CalendarItemKind
+	V1 int32
+}
+
+type TupleCivilDateCivilDate struct {
+	V0 CivilDate
+	V1 CivilDate
+}
+
 type TupleFloat32Float32 struct {
 	V0 float32
 	V1 float32
 }
 
-type TupleInputeditString struct {
+type TupleInputEditString struct {
 	V0 InputEdit
 	V1 string
 }
 
-type TupleInputoverlaykindString struct {
+type TupleInputOverlayKindString struct {
 	V0 InputOverlayKind
 	V1 string
 }
@@ -6343,7 +6581,12 @@ type TupleIntString struct {
 	V1 string
 }
 
-type TupleRangeBasetextmark struct {
+type TupleListStringListListString struct {
+	V0 []string
+	V1 [][]string
+}
+
+type TupleRangeBaseTextMark struct {
 	V0 Range
 	V1 BaseTextMark
 }
@@ -6353,27 +6596,32 @@ type TupleRangeColor struct {
 	V1 Color
 }
 
-type TupleRangeHighlightstyle struct {
+type TupleRangeHighlightStyle struct {
 	V0 Range
 	V1 HighlightStyle
 }
 
-type TupleRangeTextmark struct {
+type TupleRangeTextMark struct {
 	V0 Range
 	V1 TextMark
 }
 
-type TupleStringQuestionnaireanswerread struct {
+type TupleStringCompletionItem struct {
+	V0 string
+	V1 CompletionItem
+}
+
+type TupleStringQuestionnaireAnswerRead struct {
 	V0 string
 	V1 QuestionnaireAnswerRead
 }
 
 type TupleStringString struct {
-	V0 []string
-	V1 [][]string
+	V0 string
+	V1 string
 }
 
-type TupleStringThemeconfigrc struct {
+type TupleStringThemeConfigRc struct {
 	V0 string
 	V1 ThemeConfigRc
 }
@@ -6383,7 +6631,7 @@ type TupleStringUint32 struct {
 	V1 uint32
 }
 
-type TupleThememodeThemeconfigrc struct {
+type TupleThemeModeThemeConfigRc struct {
 	V0 ThemeMode
 	V1 ThemeConfigRc
 }
@@ -6393,7 +6641,7 @@ type TupleUint64Uint64 struct {
 	V1 uint64
 }
 
-type TupleUint64Uint64Toasttransitionstatus struct {
+type TupleUint64Uint64ToastTransitionStatus struct {
 	V0 uint64
 	V1 uint64
 	V2 ToastTransitionStatus
@@ -6791,9 +7039,9 @@ func rdColorPickerEvent(r *reader) ColorPickerEvent {
 func rdDate(r *reader) Date {
 	switch r.u16() {
 	case 0:
-		stop("DateSingle cannot be read by the Go package yet (civil): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return DateSingle{Value: rdOpt(r, func(r *reader) CivilDate { return rdCivilDate(r) })}
 	case 1:
-		stop("DateRange cannot be read by the Go package yet (civil): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return DateRange{V0: rdOpt(r, func(r *reader) CivilDate { return rdCivilDate(r) }), V1: rdOpt(r, func(r *reader) CivilDate { return rdCivilDate(r) })}
 	}
 	stop("an event of type Date arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
 	return nil
@@ -6815,11 +7063,11 @@ func rdMatcher(r *reader) Matcher {
 	case 0:
 		return MatcherDayOfWeek{Value: rdList(r, func(r *reader) uint32 { return uint32(r.u32()) })}
 	case 1:
-		stop("MatcherInterval cannot be read by the Go package yet (libval read back): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return MatcherInterval{Value: rdIntervalMatcher(r)}
 	case 2:
-		stop("MatcherRange cannot be read by the Go package yet (libval read back): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return MatcherRange{Value: rdRangeMatcher(r)}
 	case 3:
-		stop("MatcherCustom cannot be read by the Go package yet (valset read back): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return MatcherCustom{Value: rdList(r, func(r *reader) CivilDate { return rdCivilDate(r) })}
 	}
 	stop("an event of type Matcher arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
 	return nil
@@ -6828,9 +7076,20 @@ func rdMatcher(r *reader) Matcher {
 func rdTimeFieldEvent(r *reader) TimeFieldEvent {
 	switch r.u16() {
 	case 0:
-		stop("TimeFieldEventChange cannot be read by the Go package yet (civil read back): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return TimeFieldEventChange{Value: rdCivilTime(r)}
 	}
 	stop("an event of type TimeFieldEvent arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	return nil
+}
+
+func rdTooltipTransition(r *reader) TooltipTransition {
+	switch r.u16() {
+	case 0:
+		return TooltipTransitionEnter{Epoch: int(r.u64())}
+	case 1:
+		return TooltipTransitionSwitch{Epoch: int(r.u64()), Previous: rdBounds(r), Current: rdBounds(r)}
+	}
+	stop("an event of type TooltipTransition arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
 	return nil
 }
 
@@ -6859,11 +7118,11 @@ func rdDockEvent(r *reader) DockEvent {
 func rdTabGroupEvent(r *reader) TabGroupEvent {
 	switch r.u16() {
 	case 0:
-		stop("TabGroupEventDrop cannot be read by the Go package yet (dock read back): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return TabGroupEventDrop{Panel: DockPanelID(r.u64()), Source: NodeID(r.u64()), Target: rdInsertTarget(r)}
 	case 1:
 		return TabGroupEventDragDrop{Item: AnyDrag{h: r.u64()}, Target: DropTarget{h: r.u64()}}
 	case 2:
-		stop("TabGroupEventClosePanel cannot be read by the Go package yet (dock read back): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return TabGroupEventClosePanel{Panel: DockPanelID(r.u64())}
 	case 3:
 		return TabGroupEventActiveChanged{Ix: int(r.u64())}
 	case 4:
@@ -6972,9 +7231,9 @@ func rdDatePickerEvent(r *reader) DatePickerEvent {
 func rdDateTime(r *reader) DateTime {
 	switch r.u16() {
 	case 0:
-		stop("DateTimeSingle cannot be read by the Go package yet (civil): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return DateTimeSingle{Value: rdOpt(r, func(r *reader) CivilDateTime { return rdCivilDateTime(r) })}
 	case 1:
-		stop("DateTimeRange cannot be read by the Go package yet (civil): leave out the call or handler that hands it (docs/API-GO.md, section Not in Go yet)")
+		return DateTimeRange{V0: rdOpt(r, func(r *reader) CivilDateTime { return rdCivilDateTime(r) }), V1: rdOpt(r, func(r *reader) CivilDateTime { return rdCivilDateTime(r) })}
 	}
 	stop("an event of type DateTime arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
 	return nil
@@ -7095,6 +7354,75 @@ func rdTableSelection(r *reader) TableSelection {
 	return nil
 }
 
+func rdBaseCalendarItemState(r *reader) (v BaseCalendarItemState) {
+	v.Kind = CalendarItemKind(r.u16())
+	v.IsActive = r.bool()
+	v.IsInRange = r.bool()
+	v.IsMuted = r.bool()
+	v.IsDisabled = r.bool()
+	v.IsToday = r.bool()
+	return
+}
+
+func rdHoverCardStateReads(r *reader) (v HoverCardStateReads) {
+	v.IsOpen = r.bool()
+	return
+}
+
+func rdNavPageReads(r *reader) (v NavPageReads) {
+	v.Index = int(r.u64())
+	v.Phase = PresencePhase(r.u16())
+	v.Operation = rdOpt(r, func(r *reader) NavOperation { return NavOperation(r.u16()) })
+	v.Progress = r.f32()
+	return
+}
+
+func rdPopoverStateReads(r *reader) (v PopoverStateReads) {
+	v.IsOpen = r.bool()
+	return
+}
+
+func rdTimeFieldSegmentState(r *reader) (v TimeFieldSegmentState) {
+	v.Segment = TimeSegment(r.u16())
+	v.Value = uint32(r.u32())
+	v.IsSelected = r.bool()
+	v.IsDisabled = r.bool()
+	return
+}
+
+func rdTreeEntryReads(r *reader) (v TreeEntryReads) {
+	v.Item = rdBaseTreeItem(r)
+	v.Depth = int(r.u64())
+	v.IsRoot = r.bool()
+	v.IsFolder = r.bool()
+	v.IsExpanded = r.bool()
+	v.IsDisabled = r.bool()
+	return
+}
+
+func rdBaseTreeEntryState(r *reader) (v BaseTreeEntryState) {
+	v.IsSelected = r.bool()
+	v.IsRightClicked = r.bool()
+	return
+}
+
+func rdComboboxTriggerContext(r *reader) (v ComboboxTriggerContext) {
+	v.Selection = rdList(r, func(r *reader) TupleBaseIndexPathSearchItem {
+		return TupleBaseIndexPathSearchItem{rdBaseIndexPath(r), rdSearchItem(r)}
+	})
+	v.Placeholder = rdOpt(r, func(r *reader) string { return r.str() })
+	v.IsOpen = r.bool()
+	v.IsDisabled = r.bool()
+	return
+}
+
+func rdCommandStateReads(r *reader) (v CommandStateReads) {
+	v.SelectedIndex = rdOpt(r, func(r *reader) BaseIndexPath { return rdBaseIndexPath(r) })
+	v.MatchedCount = int(r.u64())
+	v.IsLoading = r.bool()
+	return
+}
+
 func rdBackGestureEvent(r *reader) (v BackGestureEvent) {
 	v.Phase = BackGesturePhase(r.u16())
 	v.StartPosition = rdGpuiPoint(r)
@@ -7109,7 +7437,7 @@ func rdBounds(r *reader) (v Bounds) {
 }
 
 func rdBoxShadow(r *reader) (v BoxShadow) {
-	v.Color = rdHsla(r).Color()
+	v.Color = rdColorField(r)
 	v.Offset = rdGpuiPoint(r)
 	v.BlurRadius = r.f32()
 	v.SpreadRadius = r.f32()
@@ -7316,6 +7644,14 @@ func rdBaseResizableTheme(r *reader) (v BaseResizableTheme) {
 	return
 }
 
+func rdResizeHandleContext(r *reader) (v ResizeHandleContext) {
+	v.Axis = Axis(r.u16())
+	v.Edge = rdOpt(r, func(r *reader) HandleEdge { return HandleEdge(r.u16()) })
+	v.IsActive = r.bool()
+	v.State = ResizeHandleState(r.u16())
+	return
+}
+
 func rdResolvedPosition(r *reader) (v ResolvedPosition) {
 	v.Bounds = rdBounds(r)
 	v.Placement = rdOpt(r, func(r *reader) Placement { return Placement(r.u16()) })
@@ -7349,12 +7685,28 @@ func rdBaseSpacingTokens(r *reader) (v BaseSpacingTokens) {
 	return
 }
 
+func rdTableData(r *reader) (v TableData) {
+	v.Headers = rdList(r, func(r *reader) string { return r.str() })
+	v.Rows = rdList(r, func(r *reader) []string { return rdList(r, func(r *reader) string { return r.str() }) })
+	v.Markdown = r.str()
+	v.Span = rdOpt(r, func(r *reader) Range { return rdRange(r) })
+	return
+}
+
 func rdTimingSample(r *reader) (v TimingSample) {
 	v.Phase = MotionPhase(r.u16())
 	v.DirectedProgress = r.f32()
 	v.Iteration = uint64(r.u64())
 	v.Active = r.bool()
 	v.Finished = r.bool()
+	return
+}
+
+func rdToastAdvanceU64U64(r *reader) (v ToastAdvanceU64U64) {
+	v.Changed = r.bool()
+	v.Presented = rdList(r, func(r *reader) uint64 { return uint64(r.u64()) })
+	v.Ending = rdList(r, func(r *reader) uint64 { return uint64(r.u64()) })
+	v.Removed = rdList(r, func(r *reader) TupleUint64Uint64 { return TupleUint64Uint64{uint64(r.u64()), uint64(r.u64())} })
 	return
 }
 
@@ -7406,7 +7758,7 @@ func rdHoverPopoverState(r *reader) (v HoverPopoverState) {
 }
 
 func rdInputEditsEvent(r *reader) (v InputEditsEvent) {
-	v.Edits = rdList(r, func(r *reader) TupleInputeditString { return TupleInputeditString{rdInputEdit(r), r.str()} })
+	v.Edits = rdList(r, func(r *reader) TupleInputEditString { return TupleInputEditString{rdInputEdit(r), r.str()} })
 	return
 }
 
@@ -7835,6 +8187,17 @@ func rdEasing(r *reader) Easing {
 	return nil
 }
 
+func rdInsertTarget(r *reader) InsertTarget {
+	switch r.u16() {
+	case 0:
+		return InsertTargetTabs{Node: NodeID(r.u64()), Ix: rdOpt(r, func(r *reader) int { return int(r.u64()) }), Activate: r.bool()}
+	case 1:
+		return InsertTargetSplit{Node: NodeID(r.u64()), Placement: Placement(r.u16()), Size: rdOpt(r, func(r *reader) float32 { return r.f32() })}
+	}
+	stop("an event of type InsertTarget arrived with a variant this package does not know: the library and the package disagree. Build the app against the go/ folder of the download its libgpuikit.so came from")
+	return nil
+}
+
 func rdNativeMenuItem(r *reader) NativeMenuItem {
 	switch r.u16() {
 	case 0:
@@ -7938,7 +8301,8 @@ func rdLinkMark(r *reader) (v LinkMark) {
 }
 
 func rdKitThemeToken(r *reader) (v KitThemeToken) {
-	stop("KitThemeToken cannot be read by the Go package yet (libval read back): leave out the call that returns it (docs/API-GO.md, section Not in Go yet)")
+	v.Color = rdHsla(r)
+	v.Background = rdBackgroundValue(r)
 	return
 }
 

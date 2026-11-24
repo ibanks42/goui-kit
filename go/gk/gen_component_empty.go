@@ -269,6 +269,9 @@ func (e EmptyEl) FlexGrow(grow float32) EmptyEl { tStyledFlexGrow(e.n, grow); re
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e EmptyEl) FlexShrink(shrink float32) EmptyEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e EmptyEl) Font(font Font) EmptyEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e EmptyEl) FontFamily(familyName string) EmptyEl { tStyledFontFamily(e.n, familyName); return e }
 
@@ -819,6 +822,9 @@ func (e EmptyContentEl) FlexShrink(shrink float32) EmptyContentEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e EmptyContentEl) Font(font Font) EmptyContentEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e EmptyContentEl) FontFamily(familyName string) EmptyContentEl {
@@ -1473,6 +1479,9 @@ func (e EmptyDescriptionEl) FlexShrink(shrink float32) EmptyDescriptionEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e EmptyDescriptionEl) Font(font Font) EmptyDescriptionEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e EmptyDescriptionEl) FontFamily(familyName string) EmptyDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
@@ -2091,6 +2100,9 @@ func (e EmptyHeaderEl) FlexShrink(shrink float32) EmptyHeaderEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e EmptyHeaderEl) Font(font Font) EmptyHeaderEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e EmptyHeaderEl) FontFamily(familyName string) EmptyHeaderEl {
 	tStyledFontFamily(e.n, familyName)
@@ -2666,6 +2678,9 @@ func (e EmptyMediaEl) FlexShrink(shrink float32) EmptyMediaEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e EmptyMediaEl) Font(font Font) EmptyMediaEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e EmptyMediaEl) FontFamily(familyName string) EmptyMediaEl {
 	tStyledFontFamily(e.n, familyName)
@@ -3213,6 +3228,9 @@ func (e EmptyTitleEl) FlexShrink(shrink float32) EmptyTitleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e EmptyTitleEl) Font(font Font) EmptyTitleEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e EmptyTitleEl) FontFamily(familyName string) EmptyTitleEl {

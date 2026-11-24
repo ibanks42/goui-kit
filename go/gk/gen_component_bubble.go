@@ -290,6 +290,9 @@ func (e BubbleEl) FlexGrow(grow float32) BubbleEl { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e BubbleEl) FlexShrink(shrink float32) BubbleEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e BubbleEl) Font(font Font) BubbleEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BubbleEl) FontFamily(familyName string) BubbleEl {
 	tStyledFontFamily(e.n, familyName)
@@ -876,6 +879,9 @@ func (e BubbleContentEl) FlexShrink(shrink float32) BubbleContentEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BubbleContentEl) Font(font Font) BubbleContentEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BubbleContentEl) FontFamily(familyName string) BubbleContentEl {
@@ -1469,6 +1475,9 @@ func (e BubbleGroupEl) FlexShrink(shrink float32) BubbleGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BubbleGroupEl) Font(font Font) BubbleGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BubbleGroupEl) FontFamily(familyName string) BubbleGroupEl {
@@ -2130,6 +2139,9 @@ func (e BubbleReactionsEl) FlexShrink(shrink float32) BubbleReactionsEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BubbleReactionsEl) Font(font Font) BubbleReactionsEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BubbleReactionsEl) FontFamily(familyName string) BubbleReactionsEl {

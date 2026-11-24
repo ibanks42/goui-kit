@@ -146,6 +146,15 @@ func (e ComboboxEl) Placeholder(placeholder string) ComboboxEl {
 	return e
 }
 
+// Override the entire trigger element.
+//
+// RenderTrigger is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::render_trigger.
+func (e ComboboxEl) RenderTrigger(f RowSource) ComboboxEl {
+	o := op(e.n, 267)
+	o.u64(itemsCheck(f, 13))
+	return e
+}
+
 // Set the placeholder text for the search input.
 //
 // SearchPlaceholder is <gpui_kit::component::combobox::Combobox<crate::shim_select::GkSearchDelegate>>::search_placeholder.
@@ -366,6 +375,9 @@ func (e ComboboxEl) FlexGrow(grow float32) ComboboxEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ComboboxEl) FlexShrink(shrink float32) ComboboxEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e ComboboxEl) Font(font Font) ComboboxEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ComboboxEl) FontFamily(familyName string) ComboboxEl {

@@ -20,7 +20,7 @@ name = args[args.index("--name") + 1]
 zero = "--zero-crossings" in args
 d = args[-1]
 period_ns = 1e9 / hz
-BAR = float(os.environ.get("GK_BAR", "1.03"))  # the pass mark: within 3 % of pure Rust (Go: 1.15, docs/GO.md)
+BAR = float(os.environ.get("GK_BAR", "1.03"))  # the pass mark: within 3 % of pure Rust (DESIGN.md 18), for Odin and Go alike
 JUDGED = os.environ.get("GK_JUDGED", "odin-speed")  # the build an app ships with; gates/go.sh judges go
 
 runs = {}
@@ -85,7 +85,7 @@ if stalls:
 
 judged = JUDGED if JUDGED in runs else ("odin" if "odin" in runs else None)
 if judged is None:
-    print(f"GATE fps {name} FAIL no Odin run")
+    print(f"GATE fps {name} FAIL no run of {JUDGED}, the build judged")
     sys.exit(1)
 # The verdict is paired by round: within a round the four binaries ran one after another,
 # so their ratio is free of whatever the machine was doing in that minute. A round in which
@@ -137,13 +137,13 @@ if stalls.get(judged, 0) > max(stalls.get("rust", 0), stalls.get("rust2", 0)) + 
 if len(runs[judged]) < len(runs["rust"]):
     why.append(f"only {len(runs[judged])} of {len(runs['rust'])} rounds completed")
 if zero:
-    c = max(med(l, "callbacks_per_frame") + med(l, "calls_per_frame") for l in labels if l.startswith("odin"))
+    c = max(med(l, "callbacks_per_frame") + med(l, "calls_per_frame") for l in labels if not l.startswith("rust"))
     detail.append(f"crossings per frame {c:g}")
     if c != 0:
         why.append("crossings on frames with nothing changing")
 print()
 if disturbed:
-    # No verdict on the Odin app: exit 3, and gates/fps.sh measures the scene once more.
+    # No verdict on the judged app: exit 3, and gates/fps.sh measures the scene once more.
     print(f"GATE fps {name} FAIL {judged}: the measurement was disturbed, only {len(quiet)} of {n_rounds} rounds had the two "
           f"Rust runs within {QUIET:.0%} of each other (another job was running): run it again; " + ", ".join(detail))
     sys.exit(3)

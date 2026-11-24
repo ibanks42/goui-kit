@@ -309,6 +309,9 @@ func (e GroupBoxEl) FlexGrow(grow float32) GroupBoxEl { tStyledFlexGrow(e.n, gro
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e GroupBoxEl) FlexShrink(shrink float32) GroupBoxEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e GroupBoxEl) Font(font Font) GroupBoxEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e GroupBoxEl) FontFamily(familyName string) GroupBoxEl {
 	tStyledFontFamily(e.n, familyName)

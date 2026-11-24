@@ -255,6 +255,9 @@ func (e TimeFieldEl) FlexGrow(grow float32) TimeFieldEl { tStyledFlexGrow(e.n, g
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TimeFieldEl) FlexShrink(shrink float32) TimeFieldEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e TimeFieldEl) Font(font Font) TimeFieldEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e TimeFieldEl) FontFamily(familyName string) TimeFieldEl {
 	tStyledFontFamily(e.n, familyName)

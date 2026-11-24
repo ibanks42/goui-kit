@@ -252,6 +252,9 @@ func (e KitTooltip) FlexGrow(grow float32) KitTooltip { tStyledFlexGrow(e.n, gro
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e KitTooltip) FlexShrink(shrink float32) KitTooltip { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e KitTooltip) Font(font Font) KitTooltip { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e KitTooltip) FontFamily(familyName string) KitTooltip {
 	tStyledFontFamily(e.n, familyName)

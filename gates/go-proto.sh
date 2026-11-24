@@ -165,6 +165,48 @@ port tooltip 0 'port tooltip view described' 'gk-headless: wrote tooltip-kit.png
 # and options; a nil gk.Fill stops.
 port plot 0 'port plot described=true'
 port fill-nil 2 'a nil gk.Fill was given to a builder' 'at .*port/main.go:[0-9]+'
+# The generator's descriptor kinds beyond the core ones (gen/gk_go_kinds.py; examples/go/proto/kinds.go,
+# the Odin twins in core/tests/values, items and lists2): jiff's calendar values both ways, value
+# cells, results that may fail, the expression check, a date that does not exist, item functions
+# (a calendar's days, a tree's entries; one of the wrong kind stops), asks, transformations and
+# gpui's element leftovers decoded by the library.
+run kinds-values 0 \
+  'kinds calendar date=2024-02-29 today_ok=true weeks=[56] week_len=7' \
+  'kinds calendar range applied=(true|false) start=2026-01-05 end=9' \
+  'kinds calendar select=true date=2026-03-14' 'kinds time 23:59:00' \
+  'kinds cells made b=true s=first f=1.5' 'kinds cells again b=false s=second f=2.25' \
+  'kinds background solid ok=true kind=0 l=0.50 a=1.00' 'kinds background bad ok=false has=false err=true' \
+  'kinds color h=0.00 s=1.00 l=0.50 err=<nil>' 'kinds color bad err=true' 'kinds diff count=2 err=<nil>' \
+  'kinds expr ok="" bad="does not parse: it ends where a number, an argument or a function was due at byte 3" args="uses y, but the closure is handed 1 argument\(s\)"'
+run kinds-bad-date 2 'kinds writing February 30' 'the date 2026-02-30 does not exist' 'at .*proto/kinds.go:[0-9]+'
+run kinds-bad-expr 2 'the expression "x \+" does not parse' 'at .*proto/kinds.go:[0-9]+'
+run kinds-items 0 'kinds calendar described=(2[89]|[3-4][0-9]) days=(2[89]|3[0-9]|4[0-2]) weekdays=7 active=[01] labels=0'
+run kinds-label 0 'kinds calendar described=[0-9]+ days=[0-9]+ weekdays=[0-9]+ active=[0-9]+ labels=([1-9][0-9]+)'
+run kinds-tree 0 'kinds tree row ix=0 label=Alpha depth=0 folder=false selected=false' \
+  'kinds tree row ix=1 label=Beta depth=0 folder=false selected=false' 'kinds done mode=kinds-tree described=2 '
+run kinds-wrong-kind 2 'gk.Items was given a function of the kind func\(cx \*Cx, v0 int, v1 TreeEntryReads' 'at .*proto/kinds.go:[0-9]+'
+run kinds-elements 0 'kinds ask highlight lang=go code="func x"' 'kinds ask image uri=pic.png' \
+  'kinds ask counts asked=2 answered=2 gets_more=true' 'kinds asks highlight=1 image=1'
+# The Go ports of Odin's hand-written bridges (examples/go/proto/bridges.go), smoke tests beside
+# core/tests/overlay and core/tests/rows. The dock: the skin's settings (with the collapsed tab bar
+# and the split divider line) set buffered and read back, a panel's tab group and id, the pane
+# tree's kinds and walk, a saved layout (a panel's own JSON in it) loaded back through the
+# registry (a PanelBuild per panel, filled with gk.PanelFill) and dumped again the same, a pane
+# tree written out and read back, PanelRegistry::build_panel known and unknown, a renderer made
+# and its counts read, a toggle subscription: 5 PanelBuild requests in all.
+run bridge-dock 0 'bridges dock made sub=true' 'bridges skin style=1 toggle=false collapsed=true divider=false' \
+  'bridges ids group=true panels=2 same=true found=true' 'bridges tree split=true children=1 last_tabs=true panels=2 walk=2 nodes=2' \
+  'bridges layout saved .*first:panel.\{"file":"a.go"\}' 'bridges layout loaded err=<nil>' \
+  'bridges layout build first n=1 dock=true' 'bridges layout build second n=2 dock=true' \
+  'bridges layout again same=true builds=2 described=true' 'bridges layout tree to_state=.*first.*second.* from_state_panels=2' \
+  'bridges layout build_panel known=true unknown=false' 'bridges renderer sent=0 answers=0 drawn=0' \
+  'bridges dock builds=5' 'bridges done mode=bridge-dock frames=12'
+# The kit: a table over a table source (cells described, texts, row labels and looks pushed, a
+# per-row menu, rows changed and invalidated), a tree's source and entries, a virtual list, an
+# animation, a motion value, a focus trap, a text selection scope, Kbd for an action, the app
+# menu bar, the code editor with its providers, select rules, the library clock.
+run bridge-kit 0 'bridges kit cells=true tree=true entry="main.go" depth=1 virtual=3 providers=true' \
+  'bridges kit table visible=true clock_moves=true' 'bridges done mode=bridge-kit frames=12'
 mode_name=version-lib
 if wanted; then
   log=$out/version-lib.log

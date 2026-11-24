@@ -1,7 +1,9 @@
 #!/bin/bash
 # all.sh [quick]: every gate, one after the other, and one summary table at the end
 # (gates/out/summary.md). No Rust is built: it needs the library and the Rust reference apps in
-# lib/ship and lib/diag (make lib), the Odin compiler and Go. Linux only: the gates draw offscreen
+# lib/ship and lib/diag (make lib), the Odin compiler and Go. Every Odin row has a Go row beside it
+# (NAME-go) that checks the same thing against Rust; gates/go-pending.txt lists the Go gates that
+# wait for a binding. Linux only: the gates draw offscreen
 # and in a private display (gates/display.sh).
 #
 #   quick   the tier to run after every change, under two minutes: the Odin builds, the
@@ -43,23 +45,39 @@ step() { # name command...
 echo "machine: $(free -g | awk 'NR==2{print "available " $7 " GB"}'), load$(uptime | sed 's/.*load average://'); tier $tier" | tee -a "$log"
 echo "judged: library $from/ship/libgpuikit.so of $(date -r "$from/ship/libgpuikit.so" '+%-d %b %H:%M') (sha256 $(sha256sum "$snap/ship/libgpuikit.so" | cut -c1-12)), copied at $(date +%H:%M); Odin package and examples at commit $(git -C "$repo" rev-parse --short HEAD 2>/dev/null || echo "${GK_COMMIT:-unknown} (a copy without git)")$(git -C "$repo" diff --quiet -- odin examples 2>/dev/null || [ -n "${GK_COMMIT:-}" ] || echo ' with uncommitted changes')" | tee -a "$log"
 step build bash -c '"$0" panels counter negative negative_rows negative_data negative_overlay negative_values negative_lists2 negative_review3 negative_editor gallery writerule table && OPT=-o:speed SUFFIX=-speed "$0" panels counter gallery table; "$0" notes; "$0" files; "$0" paint' "$repo/examples/odin/build.sh"
+# Go rows (beside each Odin row, the gate that measures or checks the same thing with the Go
+# front end; the Odin rows go when Odin does). A Go gate that waits for a binding the Go package
+# lacks prints PENDING and is listed in gates/go-pending.txt.
+step build-go "$here/go.sh" build
 step rebuild "$here/rebuild.sh"
 step misuse "$here/misuse.sh"
+step misuse-go "$here/go-misuse.sh"
 step proto "$repo/core/tests/run.sh"
 step gensample "$here/gensample.sh"
 step pixels bash -c '"$0" counter; "$0" writerule; "$0" notes; "$0" files; "$0" paint' "$here/pixels.sh"
+step pixels-go "$here/go.sh" pixels
 step todo "$here/todo.sh"
+step todo-go env GK_FRONT=go "$here/todo.sh"
 step reader "$here/reader.sh"
+step reader-go env GK_FRONT=go "$here/reader.sh"
 step docs "$here/docs.sh"
+step docs-go "$here/docs-go.sh"
 step conformance python3 "$here/conformance.py" --check
-# GK_GALLERY_RECORD=1: the gallery gate records gates/verified.json from a passing run (--record).
+# GK_GALLERY_RECORD=1: the gallery gates record gates/verified.json from a passing run (--record).
 step gallery "$here/gallery.sh" ${GK_GALLERY_RECORD:+--record}
+step gallery-go "$here/gallery.sh" go ${GK_GALLERY_RECORD:+--record}
 step counter "$here/counter.sh"
+step counter-go env GK_FRONT=go "$here/counter.sh"
 step readme "$here/readme.sh"
+step readme-go "$here/readme-go.sh"
 for hz in $rates; do
   step "fps-$hz" bash -c '
     "$0" --hz "$1" --rounds "$2" --zero-crossings panels 60 64 0
     "$0" --hz "$1" --rounds "$2" panels 60 64 2' "$here/fps.sh" "$hz" "$rounds"
+  # The same scenes with the Go app judged against Rust, at the same bar as Odin (DESIGN.md 18).
+  step "fps-go-$hz" env BINS="rust go rust2" GK_JUDGED=go bash -c '
+    GK_NAME=panels-60-64-0-go "$0" --hz "$1" --rounds "$2" --zero-crossings panels 60 64 0
+    GK_NAME=panels-60-64-2-go "$0" --hz "$1" --rounds "$2" panels 60 64 2' "$here/fps.sh" "$hz" "$rounds"
 done
 # A click on every frame: one EVENT turn and one re-described view per frame, against the same
 # listener in Rust. At 60 Hz, where the meter's click lands between two frames. Twice the
@@ -67,22 +85,31 @@ done
 # largest share of them.
 [ $tier = full ] && step fps-click env GK_CLICK=40,32,61,1 GK_NAME=counter-click-every-frame \
   "$here/fps.sh" --hz 60 --rounds "$((rounds * 2))" counter
+[ $tier = full ] && step fps-click-go env GK_CLICK=40,32,61,1 GK_NAME=counter-click-every-frame-go \
+  BINS="rust go rust2" GK_JUDGED=go "$here/fps.sh" --hz 60 --rounds "$((rounds * 2))" counter
 # A table of 100,000 rows scrolled by 24 px before every frame (the rows family, PROTOCOLS.md
 # 9.8): the kit's DataTable over a Rust delegate against the same table whose cells are views
 # over a row source, bound ahead in batches. At the highest rate this machine paces.
 step fps-table env GK_SCROLL=450,300,-24 GK_NAME=table-scroll \
   "$here/fps.sh" --hz "${rates##* }" --rounds "$rounds" table
-# The Go front end (docs/GO.md): its builds, the README's app, the protocol tests and misuse
-# cases in Go, counter and panels pixels against Rust, the edit loop; frame cost in the full tier
-# (judged at 1.15 x Rust).
-step go "$here/go.sh" build hello proto misuse pixels rebuild $([ $tier = full ] && echo fps)
-# The Go apps and the tutorial against their Odin twins (gates/go-apps.sh).
+step fps-table-go env GK_SCROLL=450,300,-24 GK_NAME=table-scroll-go BINS="rust go rust2" GK_JUDGED=go \
+  "$here/fps.sh" --hz "${rates##* }" --rounds "$rounds" table
+# The Go front end (docs/GO.md): the README's app offscreen, the protocol tests in Go, the edit
+# loop (its builds, misuse cases, pixels and frame cost are the Go rows above).
+step go "$here/go.sh" hello proto rebuild
+# The protocol tests of the families in Go (core/tests/go, the twins of core/tests/run-*.sh) and the
+# sample by generation in Go.
+step go-proto-families "$repo/core/tests/go/run.sh"
+step go-gensample "$here/go-gensample.sh"
+# The Go apps and the tutorial: notes against Rust, the others against themselves (gates/go-apps.sh).
 step go-apps "$here/go-apps.sh"
 # The same Go apps built the way an app is: the static library, each linking only the
 # component families it calls into (docs/GO.md section 8); the scripted sessions find a missing one.
 step go-apps-static env GK_STATIC=1 "$here/go-apps.sh" build notes todo reader expenses tutorial
 step memory "$here/memory.sh" $mem
+step memory-go env GK_FRONT=go "$here/memory.sh" $mem
 [ $tier = full ] && step memory-selftest "$here/memory.sh" --selftest
+[ $tier = full ] && step memory-selftest-go env GK_FRONT=go "$here/memory.sh" --selftest
 step coverage "$here/coverage.sh"
 echo "all $(echo "$(date +%s.%N) - $began" | bc)" >> "$here/out/times.txt"
 python3 "$here/summary.py" "$tier" "$log" "$here/expected.txt" "$here/out/times.txt" | tee "$here/out/summary.md"

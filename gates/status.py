@@ -3,8 +3,8 @@
 
 Between the markers <!-- gates:begin --> and <!-- gates:end --> it puts: the summary table
 gates/all.sh printed (gates/out/summary.md), the frame-cost table of every scene measured
-(gates/out/fps/*/rounds.txt, medians over all rounds), and the gallery's page tables
-(gates/out/gallery/result.json). Nothing in that block is typed by hand. Run it after
+(gates/out/fps/*/rounds.txt, medians over all rounds), and the galleries' page tables
+(gates/out/gallery-go/result.json for Go, gates/out/gallery/result.json for Odin). Nothing in that block is typed by hand. Run it after
 `make gates`; it refuses a summary older than an hour unless given --any-age.
 Standard library only."""
 import datetime
@@ -80,14 +80,18 @@ def main():
           "`rust2` is the Rust reference run a second time in each round; the verdict is paired by round "
           "and leaves out rounds another job disturbed, so it can differ from these columns):", ""]
     o += fps_table() + [""]
-    if os.path.exists(f"{OUT}/gallery/result.json"):
-        sys.path.insert(0, HERE)
-        import gallery
+    # The gallery of each front end that ran: Go (gates/out/gallery-go), then Odin (gates/out/gallery)
+    # while it is still kept.
+    sys.path.insert(0, HERE)
+    import gallery
+    for sub, name in (("gallery-go", "Go"), ("gallery", "Odin")):
+        if not os.path.exists(f"{OUT}/{sub}/result.json"):
+            continue
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
-            gallery.report(f"{OUT}/gallery")
-        o += ["The gallery, page by page (hand-written pages, then the pages `gates/conformance.py` generates, "
-              "one per bound function):", "", buf.getvalue().strip(), ""]
+            gallery.report(f"{OUT}/{sub}")
+        o += [f"The {name} gallery, page by page (hand-written pages, then the pages `gates/conformance.py` "
+              "generates, one per bound function):", "", buf.getvalue().strip(), ""]
     doc = open(DOC).read()
     a, b = doc.index(BEGIN) + len(BEGIN), doc.index(END)
     open(DOC, "w").write(doc[:a] + "\n" + "\n".join(o) + doc[b:])

@@ -305,6 +305,9 @@ func (e MessageEl) FlexGrow(grow float32) MessageEl { tStyledFlexGrow(e.n, grow)
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e MessageEl) FlexShrink(shrink float32) MessageEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e MessageEl) Font(font Font) MessageEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e MessageEl) FontFamily(familyName string) MessageEl {
 	tStyledFontFamily(e.n, familyName)
@@ -894,6 +897,9 @@ func (e MessageAvatarEl) FlexShrink(shrink float32) MessageAvatarEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e MessageAvatarEl) Font(font Font) MessageAvatarEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e MessageAvatarEl) FontFamily(familyName string) MessageAvatarEl {
@@ -1557,6 +1563,9 @@ func (e MessageContentEl) FlexShrink(shrink float32) MessageContentEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e MessageContentEl) Font(font Font) MessageContentEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e MessageContentEl) FontFamily(familyName string) MessageContentEl {
 	tStyledFontFamily(e.n, familyName)
@@ -2219,6 +2228,9 @@ func (e MessageFooterEl) FlexShrink(shrink float32) MessageFooterEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e MessageFooterEl) Font(font Font) MessageFooterEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e MessageFooterEl) FontFamily(familyName string) MessageFooterEl {
 	tStyledFontFamily(e.n, familyName)
@@ -2826,6 +2838,9 @@ func (e MessageGroupEl) FlexShrink(shrink float32) MessageGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e MessageGroupEl) Font(font Font) MessageGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e MessageGroupEl) FontFamily(familyName string) MessageGroupEl {
@@ -3461,6 +3476,9 @@ func (e MessageHeaderEl) FlexShrink(shrink float32) MessageHeaderEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e MessageHeaderEl) Font(font Font) MessageHeaderEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e MessageHeaderEl) FontFamily(familyName string) MessageHeaderEl {

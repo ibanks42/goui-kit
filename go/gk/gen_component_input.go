@@ -316,6 +316,9 @@ func (e EditorEl) FlexGrow(grow float32) EditorEl { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e EditorEl) FlexShrink(shrink float32) EditorEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e EditorEl) Font(font Font) EditorEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e EditorEl) FontFamily(familyName string) EditorEl {
 	tStyledFontFamily(e.n, familyName)
@@ -861,6 +864,16 @@ func (e InputEl) TabIndex(index int) InputEl {
 	return e
 }
 
+// The element each atomic inline token renders as, in place of the default `InputTokenEl`; editing
+// and history stay with the input.
+//
+// Token is <gpui_kit::component::input::Input>::token.
+func (e InputEl) Token(render RowSource) InputEl {
+	o := op(e.n, 277)
+	o.u64(itemsCheck(render, 4))
+	return e
+}
+
 // Give this element the surface, edge, shadow and radius of a popover.
 //
 // This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
@@ -1068,6 +1081,9 @@ func (e InputEl) FlexGrow(grow float32) InputEl { tStyledFlexGrow(e.n, grow); re
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e InputEl) FlexShrink(shrink float32) InputEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e InputEl) Font(font Font) InputEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e InputEl) FontFamily(familyName string) InputEl { tStyledFontFamily(e.n, familyName); return e }
@@ -1617,6 +1633,9 @@ func (e InputGroupEl) FlexShrink(shrink float32) InputGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e InputGroupEl) Font(font Font) InputGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e InputGroupEl) FontFamily(familyName string) InputGroupEl {
@@ -2227,6 +2246,9 @@ func (e InputGroupAddonEl) FlexShrink(shrink float32) InputGroupAddonEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e InputGroupAddonEl) Font(font Font) InputGroupAddonEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e InputGroupAddonEl) FontFamily(familyName string) InputGroupAddonEl {
@@ -3110,6 +3132,17 @@ func (e InputGroupButtonEl) OnBoxedAction(action Action, listener func(cx *Cx, e
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e InputGroupButtonEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) InputGroupButtonEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -3382,6 +3415,9 @@ func (e InputGroupButtonEl) FlexShrink(shrink float32) InputGroupButtonEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e InputGroupButtonEl) Font(font Font) InputGroupButtonEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e InputGroupButtonEl) FontFamily(familyName string) InputGroupButtonEl {
@@ -4094,6 +4130,9 @@ func (e InputGroupTextEl) FlexShrink(shrink float32) InputGroupTextEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e InputGroupTextEl) Font(font Font) InputGroupTextEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e InputGroupTextEl) FontFamily(familyName string) InputGroupTextEl {
 	tStyledFontFamily(e.n, familyName)
@@ -4650,6 +4689,9 @@ func (e InputTokenEl) FlexShrink(shrink float32) InputTokenEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e InputTokenEl) Font(font Font) InputTokenEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e InputTokenEl) FontFamily(familyName string) InputTokenEl {
@@ -5228,6 +5270,9 @@ func (e NumberInputEl) FlexShrink(shrink float32) NumberInputEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e NumberInputEl) Font(font Font) NumberInputEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e NumberInputEl) FontFamily(familyName string) NumberInputEl {
 	tStyledFontFamily(e.n, familyName)
@@ -5682,6 +5727,16 @@ func (e TextareaEl) TabIndex(index int) TextareaEl {
 	return e
 }
 
+// The element each atomic inline token renders as, in place of the default `InputTokenEl`; editing
+// and history stay with the input.
+//
+// Token is <gpui_kit::component::input::Textarea>::token.
+func (e TextareaEl) Token(render RowSource) TextareaEl {
+	o := op(e.n, 269)
+	o.u64(itemsCheck(render, 4))
+	return e
+}
+
 // Give this element the surface, edge, shadow and radius of a popover.
 //
 // This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker
@@ -5888,6 +5943,9 @@ func (e TextareaEl) FlexGrow(grow float32) TextareaEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TextareaEl) FlexShrink(shrink float32) TextareaEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e TextareaEl) Font(font Font) TextareaEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TextareaEl) FontFamily(familyName string) TextareaEl {

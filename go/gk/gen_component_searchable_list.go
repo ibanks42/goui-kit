@@ -487,6 +487,12 @@ func (e SearchableListItemElementEl) FlexShrink(shrink float32) SearchableListIt
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e SearchableListItemElementEl) Font(font Font) SearchableListItemElementEl {
+	tStyledFont(e.n, font)
+	return e
+}
+
 // Sets the font family of this element and its children.
 func (e SearchableListItemElementEl) FontFamily(familyName string) SearchableListItemElementEl {
 	tStyledFontFamily(e.n, familyName)

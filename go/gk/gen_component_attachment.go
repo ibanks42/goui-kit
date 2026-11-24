@@ -370,6 +370,9 @@ func (e AttachmentEl) FlexShrink(shrink float32) AttachmentEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AttachmentEl) Font(font Font) AttachmentEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AttachmentEl) FontFamily(familyName string) AttachmentEl {
 	tStyledFontFamily(e.n, familyName)
@@ -995,6 +998,9 @@ func (e AttachmentActionsEl) FlexShrink(shrink float32) AttachmentActionsEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e AttachmentActionsEl) Font(font Font) AttachmentActionsEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e AttachmentActionsEl) FontFamily(familyName string) AttachmentActionsEl {
@@ -1739,6 +1745,9 @@ func (e AttachmentContentEl) FlexShrink(shrink float32) AttachmentContentEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AttachmentContentEl) Font(font Font) AttachmentContentEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AttachmentContentEl) FontFamily(familyName string) AttachmentContentEl {
 	tStyledFontFamily(e.n, familyName)
@@ -2456,6 +2465,12 @@ func (e AttachmentDescriptionEl) FlexGrow(grow float32) AttachmentDescriptionEl 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AttachmentDescriptionEl) FlexShrink(shrink float32) AttachmentDescriptionEl {
 	tStyledFlexShrink(e.n, shrink)
+	return e
+}
+
+// Sets the font of this element and its children.
+func (e AttachmentDescriptionEl) Font(font Font) AttachmentDescriptionEl {
+	tStyledFont(e.n, font)
 	return e
 }
 
@@ -3242,6 +3257,9 @@ func (e AttachmentGroupEl) FlexShrink(shrink float32) AttachmentGroupEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AttachmentGroupEl) Font(font Font) AttachmentGroupEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AttachmentGroupEl) FontFamily(familyName string) AttachmentGroupEl {
 	tStyledFontFamily(e.n, familyName)
@@ -3958,6 +3976,9 @@ func (e AttachmentMediaEl) FlexShrink(shrink float32) AttachmentMediaEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AttachmentMediaEl) Font(font Font) AttachmentMediaEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AttachmentMediaEl) FontFamily(familyName string) AttachmentMediaEl {
 	tStyledFontFamily(e.n, familyName)
@@ -4596,6 +4617,9 @@ func (e AttachmentTitleEl) FlexShrink(shrink float32) AttachmentTitleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e AttachmentTitleEl) Font(font Font) AttachmentTitleEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e AttachmentTitleEl) FontFamily(familyName string) AttachmentTitleEl {

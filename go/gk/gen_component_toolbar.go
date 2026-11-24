@@ -304,6 +304,9 @@ func (e ToolbarEl) FlexGrow(grow float32) ToolbarEl { tStyledFlexGrow(e.n, grow)
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ToolbarEl) FlexShrink(shrink float32) ToolbarEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e ToolbarEl) Font(font Font) ToolbarEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ToolbarEl) FontFamily(familyName string) ToolbarEl {
 	tStyledFontFamily(e.n, familyName)
@@ -897,6 +900,9 @@ func (e ToolbarGroupEl) FlexShrink(shrink float32) ToolbarGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e ToolbarGroupEl) Font(font Font) ToolbarGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ToolbarGroupEl) FontFamily(familyName string) ToolbarGroupEl {

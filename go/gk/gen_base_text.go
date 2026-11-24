@@ -192,7 +192,7 @@ func NewInlineNodeImage(image ImageNode) InlineNode {
 // Sets the marks, each a byte range of the text and its style.
 //
 // Marks is <gpui_kit::base::text::editor_host::InlineNode>::marks.
-func (e InlineNode) Marks(marks []TupleRangeTextmark) InlineNode {
+func (e InlineNode) Marks(marks []TupleRangeTextMark) InlineNode {
 	o := op(e.n, 256)
 	o.u32(uint32(len(marks)))
 	for _, x0 := range marks {
@@ -276,6 +276,15 @@ func (e RenderContext) WithBodyFontSize(size float32) RenderContext {
 	return e
 }
 
+// Replaces code highlighting for this context only.
+//
+// WithCodeBlockHighlighter is <gpui_kit::base::text::editor_host::RenderContext>::with_code_block_highlighter.
+func (e RenderContext) WithCodeBlockHighlighter(highlighter Ask[CodeBlock, []TupleRangeHighlightStyle]) RenderContext {
+	o := op(e.n, 262)
+	o.u64(highlighter.Src.h)
+	return e
+}
+
 // Supplies this render's foreground ranges for a keyed paragraph leaf, including a heading or
 // table cell. Replaces any ranges for the same key.
 //
@@ -298,6 +307,15 @@ func (e RenderContext) WithForegroundRanges(key uint64, ranges []TupleRangeColor
 		putRange(o, x0.V0)
 		putColor(o, x0.V1)
 	}
+	return e
+}
+
+// Resolves document image URIs. The host owns resource access policy.
+//
+// WithImageSource is <gpui_kit::base::text::editor_host::RenderContext>::with_image_source.
+func (e RenderContext) WithImageSource(resolver Ask[string, string]) RenderContext {
+	o := op(e.n, 263)
+	o.u64(resolver.Src.h)
 	return e
 }
 

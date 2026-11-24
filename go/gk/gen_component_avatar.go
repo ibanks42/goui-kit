@@ -239,6 +239,9 @@ func (e AvatarEl) FlexGrow(grow float32) AvatarEl { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AvatarEl) FlexShrink(shrink float32) AvatarEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e AvatarEl) Font(font Font) AvatarEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AvatarEl) FontFamily(familyName string) AvatarEl {
 	tStyledFontFamily(e.n, familyName)
@@ -655,6 +658,17 @@ func (e AvatarEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) Avata
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) AvatarEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
+	return e
+}
+
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e AvatarEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) AvatarEl {
+	tInteractiveElementOnDragMove(e.n, listener)
 	return e
 }
 
@@ -1103,6 +1117,9 @@ func (e AvatarGroupEl) FlexShrink(shrink float32) AvatarGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e AvatarGroupEl) Font(font Font) AvatarGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e AvatarGroupEl) FontFamily(familyName string) AvatarGroupEl {
@@ -1559,6 +1576,17 @@ func (e AvatarGroupEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) 
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarGroupEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) AvatarGroupEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
+	return e
+}
+
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e AvatarGroupEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) AvatarGroupEl {
+	tInteractiveElementOnDragMove(e.n, listener)
 	return e
 }
 

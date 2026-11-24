@@ -19,6 +19,15 @@ func Calendar(state CalendarState, st ...Style) CalendarEl {
 	return CalendarEl{n}
 }
 
+// Set the first day of the week for the calendar.
+//
+// FirstDayOfWeek is <gpui_kit::component::calendar::Calendar>::first_day_of_week.
+func (e CalendarEl) FirstDayOfWeek(day Weekday) CalendarEl {
+	o := op(e.n, 257)
+	putWeekday(o, day)
+	return e
+}
+
 // NumberOfMonths is <gpui_kit::component::calendar::Calendar>::number_of_months.
 func (e CalendarEl) NumberOfMonths(count int) CalendarEl {
 	o := op(e.n, 256)
@@ -232,6 +241,9 @@ func (e CalendarEl) FlexGrow(grow float32) CalendarEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CalendarEl) FlexShrink(shrink float32) CalendarEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e CalendarEl) Font(font Font) CalendarEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e CalendarEl) FontFamily(familyName string) CalendarEl {

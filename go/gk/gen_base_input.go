@@ -222,6 +222,16 @@ type Diagnostic struct{ n *node }
 
 func (e Diagnostic) valueNode() *node { return e.n }
 
+// NewDiagnostic is <gpui_kit::base::input::Diagnostic>::new.
+func NewDiagnostic(range_ [2]LspPosition, message string) Diagnostic {
+	n := newValue(846)
+	o := nodeArgs(n)
+	putLspPosition(o, range_[0])
+	putLspPosition(o, range_[1])
+	o.str(message)
+	return Diagnostic{n}
+}
+
 // NewDiagnosticDefault is <gpui_kit::base::input::Diagnostic as Default>::default.
 func NewDiagnosticDefault() Diagnostic {
 	n := newValue(475)
@@ -440,6 +450,15 @@ func (e Lsp) valueNode() *node { return e.n }
 func NewLspDefault() Lsp {
 	n := newValue(488)
 	return Lsp{n}
+}
+
+// Set the completion label highlighter when constructing the LSP configuration.
+//
+// WithCompletionHighlighter is <gpui_kit::base::input::Lsp>::with_completion_highlighter.
+func (e Lsp) WithCompletionHighlighter(highlighter Ask[TupleStringCompletionItem, []Range]) Lsp {
+	o := op(e.n, 256)
+	o.u64(highlighter.Src.h)
+	return e
 }
 
 // BaseMoveDown is gpui_kit::base::input::MoveDown.

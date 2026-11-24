@@ -449,6 +449,21 @@ func (e BarShape) Fill(fill string) BarShape {
 	return e
 }
 
+// Set the label of the Bar.
+//
+// Label is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::label.
+func (e BarShape) Label(label [][]BaseText) BarShape {
+	o := op(e.n, 264)
+	o.u32(uint32(len(label)))
+	for _, x0 := range label {
+		o.u32(uint32(len(x0)))
+		for _, x1 := range x0 {
+			o.u32(takeValue(x1.n))
+		}
+	}
+	return e
+}
+
 // Set the value-end position of each bar (in pixels along the value axis).
 //
 // Value is <gpui_kit::base::plot::shape::Bar<crate::data::Datum>>::value.

@@ -58,6 +58,18 @@ func (e PopoverEl) Arrow(arrow bool) PopoverEl {
 	return e
 }
 
+// Set the content builder for content of the Popover.
+//
+// This callback will called every time on render the popover. So, you should avoid creating new
+// elements or entities in the content closure.
+//
+// Content is <gpui_kit::component::popover::Popover>::content.
+func (e PopoverEl) Content(content RowSource) PopoverEl {
+	o := op(e.n, 268)
+	o.u64(itemsCheck(content, 7))
+	return e
+}
+
 // Set the default open state of the popover, default is `false`.
 //
 // This is only used to initialize the open state of the popover.
@@ -396,6 +408,9 @@ func (e PopoverEl) FlexGrow(grow float32) PopoverEl { tStyledFlexGrow(e.n, grow)
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e PopoverEl) FlexShrink(shrink float32) PopoverEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e PopoverEl) Font(font Font) PopoverEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e PopoverEl) FontFamily(familyName string) PopoverEl {

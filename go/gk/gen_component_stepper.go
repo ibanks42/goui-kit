@@ -306,6 +306,9 @@ func (e StepperEl) FlexGrow(grow float32) StepperEl { tStyledFlexGrow(e.n, grow)
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e StepperEl) FlexShrink(shrink float32) StepperEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e StepperEl) Font(font Font) StepperEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e StepperEl) FontFamily(familyName string) StepperEl {
 	tStyledFontFamily(e.n, familyName)
@@ -877,6 +880,9 @@ func (e StepperItemEl) FlexShrink(shrink float32) StepperItemEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e StepperItemEl) Font(font Font) StepperItemEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e StepperItemEl) FontFamily(familyName string) StepperItemEl {

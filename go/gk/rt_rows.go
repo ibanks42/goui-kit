@@ -14,6 +14,13 @@ import "slices"
 //	}
 //	view: gk.Div().H(gk.Px(300)).Child(gk.List(a.list))
 
+// HeaderRow and FooterRow are the RowAt.Row of a list section's header and footer rows (drawn when
+// the list's DelegateData asks for them). Odin: gk.HEADER, gk.FOOTER.
+const (
+	HeaderRow = 0xffff_fffe
+	FooterRow = 0xffff_ffff
+)
+
 // ListIndex is a row of a list: its section and row (Column is always 0 for a list).
 type ListIndex struct{ Section, Row, Column int }
 

@@ -229,6 +229,9 @@ func (e TreeEl) FlexGrow(grow float32) TreeEl { tStyledFlexGrow(e.n, grow); retu
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TreeEl) FlexShrink(shrink float32) TreeEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e TreeEl) Font(font Font) TreeEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e TreeEl) FontFamily(familyName string) TreeEl { tStyledFontFamily(e.n, familyName); return e }
 

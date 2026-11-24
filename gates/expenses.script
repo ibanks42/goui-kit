@@ -1,4 +1,4 @@
-# The expenses example's scripted session (examples/odin/expenses against examples/go/expenses,
+# The expenses example's scripted session (examples/go/expenses against its Rust twin ref-expenses,
 # gates/go-apps.sh expenses): every image must be byte-identical between the two. Window
 # coordinates (the images are twice the size): What 146,92, Amount 430,92, the Category select
 # 714,92, Add expense 791,134 (lower once the fields show messages), the rows' delete buttons x 526.

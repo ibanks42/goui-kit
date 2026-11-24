@@ -3,6 +3,7 @@
 
     memory.py sample OUT.csv -- CMD ARGS...    run CMD, write its resident set every 20 ms
     memory.py verdict NAME FRAMES DIR          judge DIR/rust.csv against DIR/odin.csv
+                                               (DIR/go.csv with GK_FRONT=go)
 
 sample follows the process it starts (not its children) through /proc/PID/statm and exits
 with CMD's status; the command's output goes to OUT.log.
@@ -70,7 +71,9 @@ def windows(rows):
 def verdict(name, frames, d):
     slack = int(os.environ.get("SLACK_KB", "2048"))
     why, growth, cells = [], {}, []
-    for b in ("rust", "odin"):
+    front = os.environ.get("GK_FRONT", "odin")
+    title = {"odin": "Odin", "go": "Go"}.get(front, front)
+    for b in ("rust", front):
         rows = read(f"{d}/{b}.csv")
         if len(rows) < 50:
             why.append(f"{b}: only {len(rows)} samples (the run failed or was too short)")
@@ -86,11 +89,11 @@ def verdict(name, frames, d):
         print(f"memory {name} {b}: frames={frames} seconds={secs:.1f} samples={len(rows)} "
               f"rss_mid_kb={mid:.0f} rss_end_kb={last:.0f} growth_kb={growth[b]:.0f} rss_peak_kb={peak}")
     if len(growth) == 2:
-        over = growth["odin"] - growth["rust"]
+        over = growth[front] - growth["rust"]
         per_frame = over * 1024 / (frames / 2) if frames else 0
-        cells.append(f"Odin over Rust {over:+.0f} kB ({per_frame:+.0f} bytes a frame; limit {slack} kB)")
+        cells.append(f"{title} over Rust {over:+.0f} kB ({per_frame:+.0f} bytes a frame; limit {slack} kB)")
         if over > slack:
-            why.append("the Odin app grows more than the Rust reference")
+            why.append(f"the {title} app grows more than the Rust reference")
     print(f"GATE memory {name} {'FAIL' if why else 'PASS'} {frames} frames: " + ", ".join(cells)
           + ("; " + "; ".join(why) if why else ""))
     return 1 if why else 0

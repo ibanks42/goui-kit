@@ -52,6 +52,15 @@ func (e HoverCardEl) CloseDelay(duration time.Duration) HoverCardEl {
 	return e
 }
 
+// Set the content builder of the hover card.
+//
+// Content is <gpui_kit::component::hover_card::HoverCard>::content.
+func (e HoverCardEl) Content(content RowSource) HoverCardEl {
+	o := op(e.n, 263)
+	o.u64(itemsCheck(content, 18))
+	return e
+}
+
 // Set a callback to be called when the open state changes.
 //
 // OnOpenChange is <gpui_kit::component::hover_card::HoverCard>::on_open_change.
@@ -333,6 +342,9 @@ func (e HoverCardEl) FlexGrow(grow float32) HoverCardEl { tStyledFlexGrow(e.n, g
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e HoverCardEl) FlexShrink(shrink float32) HoverCardEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e HoverCardEl) Font(font Font) HoverCardEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e HoverCardEl) FontFamily(familyName string) HoverCardEl {

@@ -51,7 +51,7 @@ skeleton |  | Skeleton.new Skeleton.secondary
 # The input family (ref/src/bin/gallery/input_pages.rs, examples/odin/gallery/input_pages.odin)
 input-edit | click 60 96; key ctrl-a; type Ada; key ctrl-a; key ctrl-c; key end; key ctrl-v; key ctrl-z; key ctrl-y; key shift-left | Input.new InputState.new InputState.placeholder
 textarea | click 60 100; type one; key enter; type two; key shift-up | Textarea.new TextareaState.new TextareaState.auto_grow TextareaState.placeholder
-editor | click 300 200; type x; key enter; type y | Editor.new EditorState.new EditorState.language EditorState.default_value EditorState.set_line_number
+editor | click 300 200; type x; key enter; type y | gpui_kit::base::Editor::new EditorState.new EditorState.language EditorState.default_value EditorState.set_line_number
 number-input | click 199 96; click 199 96; click 33 96 | NumberInput.new InputState.min InputState.max InputState.step InputState.default_value
 otp-input | click 338 96; type 1234 | OtpInput.new OtpState.new
 editor-completion | click 300 200; type a.; key down; key enter | Editor.new EditorState.new EditorState.language

@@ -258,6 +258,9 @@ func (e LinkEl) FlexGrow(grow float32) LinkEl { tStyledFlexGrow(e.n, grow); retu
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e LinkEl) FlexShrink(shrink float32) LinkEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e LinkEl) Font(font Font) LinkEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e LinkEl) FontFamily(familyName string) LinkEl { tStyledFontFamily(e.n, familyName); return e }
 

@@ -980,8 +980,11 @@ Correctness, all runnable without a display:
    library renders both offscreen (`HeadlessAppContext`, the real wgpu renderer and text
    system) and the images must be byte-identical. Rendering is exact on one machine and driver
    but not across machines, so reference and candidate are always rendered in the same run.
-   The gallery (`gates/gallery.sh`) adds hand-written pages; `gates/verified.json` records
-   which functions an identical page shows.
+   The gallery (`gates/gallery.sh go`, and `gates/gallery.sh` for Odin while it remains) adds
+   hand-written pages; the Go app (`examples/go/gallery`) has every page the Odin app has, and
+   the ones that wait for a Go binding are listed in `gates/gallery-go-pending.txt` and
+   reported as pending. `gates/verified.json` records, per front end, which pages were
+   identical and which functions they show; the coverage table counts their union.
 4. **Scripted interaction:** a script drives each example app and its Rust reference (click,
    press, type, drag); the pixels after each step must match (`gates/pixels.sh`).
 5. **Protocol tests and attacks:** `core/tests` runs the runtime's protocols, and attacks on the

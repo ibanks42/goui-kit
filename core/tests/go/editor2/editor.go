@@ -1,0 +1,138 @@
+// history, conflict, fold, owner, bad-owner and editor-style:
+//
+//	history       History.Retain (History<SharedString>::retain, a predicate as a key set)
+//	conflict      gk.ParseConflicts (DiffFile::parse_conflicts as gk.Fallible[gk.DiffFileRead])
+//	fold          EditorState.SetFoldPlaceholderRenderer over an item function of the folded line
+//	              (gk.Items), on the kit's code editor (gk.CodeEditor)
+//	owner         gk.EntityID, gk.EntityIDOf, InputBaseEl.SemanticOwner
+//	editor-style  gk.NewAsk, gk.NewHighlighter, gk.HighlightQuery, gk.HighlightRun and
+//	              gk.InputEditorStyle (its HighlightStyles is an ask)
+package main
+
+import (
+	"fmt"
+	"strings"
+
+	"gpuikit.dev/gk"
+	"gpuikit.dev/gk/theme"
+)
+
+// The state of these modes.
+var ed struct {
+	folds    gk.RowSource
+	foldRows int
+	hl       gk.Highlighter
+	styles   gk.Ask[string, gk.Option[gk.HighlightStyle]]
+}
+
+func init() {
+	modes["history"] = &mode{init: func(a *App, cx *gk.Cx) {
+		a.hist = gk.NewHistory(cx).Build()
+		for _, e := range []string{"a", "b", "c", "d"} {
+			a.hist.Push(cx, e)
+		}
+	}, step: func(a *App, cx *gk.Cx) {
+		a.hist.Retain(cx, []string{"b", "d", "x"})
+		es := a.hist.Entries(cx)
+		cur, _ := a.hist.Current(cx).Get()
+		fmt.Printf("editor2 history entries=%s current=%q\n", odinStrings(es), cur)
+	}, script: "frame\n" + stepScript}
+	modes["conflict"] = &mode{step: conflictStep, script: "frame\n" + stepScript}
+	modes["fold"] = &mode{init: foldInit, view: func(a *App, cx *gk.Cx) gk.Element {
+		return gk.Div().W(gk.Px(420)).Child(gk.CodeEditor(a.ed, gk.CodeEditorOptions{Height: 120}))
+	}, step: func(a *App, cx *gk.Cx) {
+		fmt.Printf("editor2 fold described=%d\n", ed.foldRows)
+	}, script: foldScript()}
+	modes["owner"] = &mode{init: func(a *App, cx *gk.Cx) {
+		a.ed = gk.NewEditorState(cx).DefaultValue("x").Build()
+	}, view: func(a *App, cx *gk.Cx) gk.Element {
+		body := gk.Div().W(gk.Px(220)).Child(gk.InputBase("ib").SemanticOwner(gk.EntityIDOf(a.ed)).AccessibilityLabel("owned"))
+		fmt.Printf("editor2 owner drawn\n")
+		return body
+	}, script: "frame\nframe\n"}
+	modes["bad-owner"] = &mode{init: func(a *App, cx *gk.Cx) {
+		a.hist = gk.NewHistory(cx).Build()
+	}, view: func(a *App, cx *gk.Cx) gk.Element {
+		return gk.Div().W(gk.Px(220)).Child(gk.InputBase("ib").SemanticOwner(gk.EntityID(gk.Handle(a.hist))))
+	}, script: "frame\nframe\n"}
+	modes["editor-style"] = &mode{init: styleInit, view: editorBox, script: "frame\nadvance 100\nframe\nadvance 100\nframe\nframe\n"}
+}
+
+func conflictStep(a *App, cx *gk.Cx) {
+	f := gk.ParseConflicts(cx, "a.txt", conflictText)
+	file, ok := f.Value.Get()
+	if !ok {
+		fmt.Printf("editor2 conflict parse failed: %s\n", f.Err)
+		return
+	}
+	cs := file.Conflicts(cx)
+	fmt.Printf("editor2 conflict n=%d\n", len(cs))
+	for _, c := range cs {
+		base, hasBase := c.BaseLines(cx).Get()
+		bl, hasBl := c.BaseLabel(cx).Get()
+		fmt.Printf("editor2 conflict lines=%v current=%v incoming=%v base=%v/%v current_label=%q incoming_label=%q base_label=%v/%q\n",
+			c.Lines(cx), c.CurrentLines(cx), c.IncomingLines(cx), hasBase, base, c.CurrentLabel(cx),
+			c.IncomingLabel(cx), hasBl, bl)
+	}
+}
+
+// Go: an item function is handed the folded line, not its row: the row printed is the line's
+// (one fold, row 0 in Odin as well as line 0).
+func (a *App) foldRow(cx *gk.Cx, line int) gk.Element {
+	ed.foldRows++
+	fmt.Printf("editor2 fold row=%d line=%d\n", line, line)
+	return gk.Label("...")
+}
+
+func foldInit(a *App, cx *gk.Cx) {
+	ed.folds = gk.Items(cx, a.foldRow)
+	a.ed = gk.NewEditorState(cx).DefaultValue(foldText).Build()
+	a.ed.SetFolding(cx, true)
+	a.ed.SetLineNumber(cx, true)
+	a.ed.SetFoldPlaceholderRenderer(cx, gk.Some(ed.folds))
+	a.ed.ApplyHighlighterFoldCandidates(cx, []gk.FoldRange{{StartLine: 0, EndLine: 2}})
+}
+
+// Clicks along the first line's gutter, each followed by a frame: the one on the fold icon folds
+// line 0 (a second one there unfolds it); a frame while it is folded draws the placeholder, the row
+// of the folded line.
+func foldScript() string {
+	var b strings.Builder
+	b.WriteString("frame\n")
+	for _, y := range []int{68, 74} {
+		for x := 16; x <= 96; x += 3 {
+			fmt.Fprintf(&b, "move %d %d\nclick %d %d\nframe\n", x, y, x, y)
+		}
+	}
+	b.WriteString(stepScript)
+	return b.String()
+}
+
+func (a *App) keywordRuns(cx *gk.Cx, q gk.HighlightQuery) []gk.HighlightRun {
+	var out []gk.HighlightRun
+	if i := strings.Index(q.Text, "proc"); i >= 0 {
+		out = append(out, gk.HighlightRun{Range: gk.Range{Lo: i, Hi: i + 4}, Name: "keyword"})
+	}
+	return out
+}
+
+func (a *App) styleFor(cx *gk.Cx, name string) gk.Option[gk.HighlightStyle] {
+	fmt.Printf("editor2 style asked name=%s\n", name)
+	if name == "keyword" {
+		return gk.Some(gk.HighlightStyle{Color: gk.Some(theme.Danger)})
+	}
+	return gk.Option[gk.HighlightStyle]{}
+}
+
+func styleInit(a *App, cx *gk.Cx) {
+	ed.styles = gk.NewAsk(cx, a.styleFor)
+	ed.hl = gk.NewHighlighter(cx, a.keywordRuns, nil, "odin")
+	a.ed = gk.NewEditorState(cx).Language("odin").DefaultValue("main :: proc() {}\n").Build()
+	a.ed.SetHighlighterFactory(cx, ed.hl.Src)
+	a.ed.SetEditorStyle(cx, gk.InputEditorStyle{
+		Foreground: theme.Foreground, MutedForeground: theme.MutedForeground,
+		Background: theme.Background, Border: theme.Border, Selection: theme.Selection,
+		Caret: theme.Caret, Diagnostics: gk.DiagnosticColors{Error: theme.Danger, Warning: theme.Warning, Info: theme.Info, Hint: theme.Info},
+		HighlightStyles: ed.styles,
+	})
+}

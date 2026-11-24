@@ -290,6 +290,9 @@ func (e AccordionEl) FlexGrow(grow float32) AccordionEl { tStyledFlexGrow(e.n, g
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AccordionEl) FlexShrink(shrink float32) AccordionEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e AccordionEl) Font(font Font) AccordionEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AccordionEl) FontFamily(familyName string) AccordionEl {
 	tStyledFontFamily(e.n, familyName)
@@ -954,6 +957,9 @@ func (e AccordionItemEl) FlexShrink(shrink float32) AccordionItemEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e AccordionItemEl) Font(font Font) AccordionItemEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e AccordionItemEl) FontFamily(familyName string) AccordionItemEl {

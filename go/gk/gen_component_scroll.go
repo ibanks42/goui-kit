@@ -325,6 +325,9 @@ func (e ScrollableDivEl) FlexShrink(shrink float32) ScrollableDivEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e ScrollableDivEl) Font(font Font) ScrollableDivEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ScrollableDivEl) FontFamily(familyName string) ScrollableDivEl {
 	tStyledFontFamily(e.n, familyName)
@@ -824,6 +827,17 @@ func (e ScrollableDivEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)
 // See `listener` to get access to a view's state from this callback.
 func (e ScrollableDivEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) ScrollableDivEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
+	return e
+}
+
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e ScrollableDivEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ScrollableDivEl {
+	tInteractiveElementOnDragMove(e.n, listener)
 	return e
 }
 

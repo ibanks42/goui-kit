@@ -256,6 +256,9 @@ func (e BreadcrumbEl) FlexShrink(shrink float32) BreadcrumbEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e BreadcrumbEl) Font(font Font) BreadcrumbEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e BreadcrumbEl) FontFamily(familyName string) BreadcrumbEl {
 	tStyledFontFamily(e.n, familyName)
@@ -815,6 +818,9 @@ func (e BreadcrumbItemEl) FlexShrink(shrink float32) BreadcrumbItemEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e BreadcrumbItemEl) Font(font Font) BreadcrumbItemEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e BreadcrumbItemEl) FontFamily(familyName string) BreadcrumbItemEl {

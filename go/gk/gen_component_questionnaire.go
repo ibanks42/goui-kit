@@ -331,6 +331,9 @@ func (e QuestionnaireEl) FlexShrink(shrink float32) QuestionnaireEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e QuestionnaireEl) Font(font Font) QuestionnaireEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e QuestionnaireEl) FontFamily(familyName string) QuestionnaireEl {
 	tStyledFontFamily(e.n, familyName)
@@ -1042,6 +1045,12 @@ func (e QuestionnaireActionsEl) FlexShrink(shrink float32) QuestionnaireActionsE
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e QuestionnaireActionsEl) Font(font Font) QuestionnaireActionsEl {
+	tStyledFont(e.n, font)
+	return e
+}
+
 // Sets the font family of this element and its children.
 func (e QuestionnaireActionsEl) FontFamily(familyName string) QuestionnaireActionsEl {
 	tStyledFontFamily(e.n, familyName)
@@ -1502,6 +1511,20 @@ func (e QuestionnaireChoiceEl) IndicatorStyle(style StyleRefinement) Questionnai
 	return e
 }
 
+// RenderIndicator is <gpui_kit::component::questionnaire::QuestionnaireChoice>::render_indicator.
+func (e QuestionnaireChoiceEl) RenderIndicator(renderer RowSource) QuestionnaireChoiceEl {
+	o := op(e.n, 259)
+	o.u64(itemsCheck(renderer, 20))
+	return e
+}
+
+// RenderShortcut is <gpui_kit::component::questionnaire::QuestionnaireChoice>::render_shortcut.
+func (e QuestionnaireChoiceEl) RenderShortcut(renderer RowSource) QuestionnaireChoiceEl {
+	o := op(e.n, 260)
+	o.u64(itemsCheck(renderer, 20))
+	return e
+}
+
 // ShortcutStyle is <gpui_kit::component::questionnaire::QuestionnaireChoice>::shortcut_style.
 func (e QuestionnaireChoiceEl) ShortcutStyle(style StyleRefinement) QuestionnaireChoiceEl {
 	o := op(e.n, 258)
@@ -1869,6 +1892,12 @@ func (e QuestionnaireChoiceEl) FlexGrow(grow float32) QuestionnaireChoiceEl {
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireChoiceEl) FlexShrink(shrink float32) QuestionnaireChoiceEl {
 	tStyledFlexShrink(e.n, shrink)
+	return e
+}
+
+// Sets the font of this element and its children.
+func (e QuestionnaireChoiceEl) Font(font Font) QuestionnaireChoiceEl {
+	tStyledFont(e.n, font)
 	return e
 }
 
@@ -2727,6 +2756,12 @@ func (e QuestionnaireChoiceDescriptionEl) FlexShrink(shrink float32) Questionnai
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e QuestionnaireChoiceDescriptionEl) Font(font Font) QuestionnaireChoiceDescriptionEl {
+	tStyledFont(e.n, font)
+	return e
+}
+
 // Sets the font family of this element and its children.
 func (e QuestionnaireChoiceDescriptionEl) FontFamily(familyName string) QuestionnaireChoiceDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
@@ -3550,6 +3585,12 @@ func (e QuestionnaireChoicesEl) FlexGrow(grow float32) QuestionnaireChoicesEl {
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireChoicesEl) FlexShrink(shrink float32) QuestionnaireChoicesEl {
 	tStyledFlexShrink(e.n, shrink)
+	return e
+}
+
+// Sets the font of this element and its children.
+func (e QuestionnaireChoicesEl) Font(font Font) QuestionnaireChoicesEl {
+	tStyledFont(e.n, font)
 	return e
 }
 
@@ -4397,6 +4438,12 @@ func (e QuestionnaireDescriptionEl) FlexShrink(shrink float32) QuestionnaireDesc
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e QuestionnaireDescriptionEl) Font(font Font) QuestionnaireDescriptionEl {
+	tStyledFont(e.n, font)
+	return e
+}
+
 // Sets the font family of this element and its children.
 func (e QuestionnaireDescriptionEl) FontFamily(familyName string) QuestionnaireDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
@@ -5199,6 +5246,9 @@ func (e QuestionnaireErrorEl) FlexShrink(shrink float32) QuestionnaireErrorEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e QuestionnaireErrorEl) Font(font Font) QuestionnaireErrorEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e QuestionnaireErrorEl) FontFamily(familyName string) QuestionnaireErrorEl {
 	tStyledFontFamily(e.n, familyName)
@@ -5943,6 +5993,9 @@ func (e QuestionnaireInputEl) FlexShrink(shrink float32) QuestionnaireInputEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e QuestionnaireInputEl) Font(font Font) QuestionnaireInputEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e QuestionnaireInputEl) FontFamily(familyName string) QuestionnaireInputEl {
@@ -6702,6 +6755,9 @@ func (e QuestionnaireItemEl) FlexShrink(shrink float32) QuestionnaireItemEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e QuestionnaireItemEl) Font(font Font) QuestionnaireItemEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e QuestionnaireItemEl) FontFamily(familyName string) QuestionnaireItemEl {
 	tStyledFontFamily(e.n, familyName)
@@ -7418,6 +7474,9 @@ func (e QuestionnaireNextEl) FlexShrink(shrink float32) QuestionnaireNextEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e QuestionnaireNextEl) Font(font Font) QuestionnaireNextEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e QuestionnaireNextEl) FontFamily(familyName string) QuestionnaireNextEl {
@@ -8196,6 +8255,12 @@ func (e QuestionnairePreviousEl) FlexGrow(grow float32) QuestionnairePreviousEl 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnairePreviousEl) FlexShrink(shrink float32) QuestionnairePreviousEl {
 	tStyledFlexShrink(e.n, shrink)
+	return e
+}
+
+// Sets the font of this element and its children.
+func (e QuestionnairePreviousEl) Font(font Font) QuestionnairePreviousEl {
+	tStyledFont(e.n, font)
 	return e
 }
 
@@ -9054,6 +9119,12 @@ func (e QuestionnaireProgressEl) FlexShrink(shrink float32) QuestionnaireProgres
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e QuestionnaireProgressEl) Font(font Font) QuestionnaireProgressEl {
+	tStyledFont(e.n, font)
+	return e
+}
+
 // Sets the font family of this element and its children.
 func (e QuestionnaireProgressEl) FontFamily(familyName string) QuestionnaireProgressEl {
 	tStyledFontFamily(e.n, familyName)
@@ -9828,6 +9899,9 @@ func (e QuestionnaireSkipEl) FlexShrink(shrink float32) QuestionnaireSkipEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e QuestionnaireSkipEl) Font(font Font) QuestionnaireSkipEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e QuestionnaireSkipEl) FontFamily(familyName string) QuestionnaireSkipEl {
 	tStyledFontFamily(e.n, familyName)
@@ -10578,6 +10652,12 @@ func (e QuestionnaireSubmitEl) FlexGrow(grow float32) QuestionnaireSubmitEl {
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e QuestionnaireSubmitEl) FlexShrink(shrink float32) QuestionnaireSubmitEl {
 	tStyledFlexShrink(e.n, shrink)
+	return e
+}
+
+// Sets the font of this element and its children.
+func (e QuestionnaireSubmitEl) Font(font Font) QuestionnaireSubmitEl {
+	tStyledFont(e.n, font)
 	return e
 }
 
@@ -11394,6 +11474,9 @@ func (e QuestionnaireTitleEl) FlexShrink(shrink float32) QuestionnaireTitleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e QuestionnaireTitleEl) Font(font Font) QuestionnaireTitleEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e QuestionnaireTitleEl) FontFamily(familyName string) QuestionnaireTitleEl {

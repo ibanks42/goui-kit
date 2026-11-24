@@ -9,6 +9,32 @@ type SettingFieldBool struct{ n *node }
 
 func (e SettingFieldBool) valueNode() *node { return e.n }
 
+// Create a new Checkbox field.
+//
+// NewSettingFieldBoolCheckbox is <gpui_kit::component::setting::SettingField<bool>>::checkbox.
+func NewSettingFieldBoolCheckbox(value Cell[bool], setValue func(cx *Cx, e bool), st ...Style) SettingFieldBool {
+	useComponentSetting()
+	n := newValue(850)
+	o := nodeArgs(n)
+	o.u64(value.h)
+	o.u32(register(setValue, 4))
+	tokens(n, st)
+	return SettingFieldBool{n}
+}
+
+// Create a new Switch field.
+//
+// NewSettingFieldBoolSwitch is <gpui_kit::component::setting::SettingField<bool>>::switch.
+func NewSettingFieldBoolSwitch(value Cell[bool], setValue func(cx *Cx, e bool), st ...Style) SettingFieldBool {
+	useComponentSetting()
+	n := newValue(851)
+	o := nodeArgs(n)
+	o.u64(value.h)
+	o.u32(register(setValue, 4))
+	tokens(n, st)
+	return SettingFieldBool{n}
+}
+
 // Set the default value for this setting field, default is None.
 //
 // If set, this value can be used to reset the setting to its default state. If not set, the
@@ -18,6 +44,26 @@ func (e SettingFieldBool) valueNode() *node { return e.n }
 func (e SettingFieldBool) DefaultValue(defaultValue bool) SettingFieldBool {
 	o := op(e.n, 256)
 	o.bool(defaultValue)
+	return e
+}
+
+// Provide custom reset behavior for this field.
+//
+// This is intended for `gk.NewSettingFieldTextElement` / `gk.NewSettingFieldTextRender` fields,
+// whose state is managed externally and therefore not covered by the typed `DefaultValue` reset
+// mechanism.
+//
+//   - `is_dirty` reports whether the field differs from its default and thus whether the reset
+//     button should appear.
+//   - `reset` performs the reset.
+//
+// When set, this takes precedence over the `default_value` based reset.
+//
+// OnReset is <gpui_kit::component::setting::SettingField<bool>>::on_reset.
+func (e SettingFieldBool) OnReset(isDirty Cell[bool], reset func(cx *Cx)) SettingFieldBool {
+	o := op(e.n, 257)
+	o.u64(isDirty.h)
+	o.u32(register(reset, 3))
 	return e
 }
 
@@ -290,6 +336,9 @@ func (e SettingFieldBool) FlexShrink(shrink float32) SettingFieldBool {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e SettingFieldBool) Font(font Font) SettingFieldBool { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SettingFieldBool) FontFamily(familyName string) SettingFieldBool {
@@ -615,6 +664,20 @@ type SettingFieldNumber struct{ n *node }
 
 func (e SettingFieldNumber) valueNode() *node { return e.n }
 
+// Create a new Number Input field with the given options.
+//
+// NewSettingFieldNumberNumberInput is <gpui_kit::component::setting::SettingField<f64>>::number_input.
+func NewSettingFieldNumberNumberInput(options NumberFieldOptions, value Cell[float64], setValue func(cx *Cx, e float64), st ...Style) SettingFieldNumber {
+	useComponentSetting()
+	n := newValue(852)
+	o := nodeArgs(n)
+	putNumberFieldOptions(o, options)
+	o.u64(value.h)
+	o.u32(register(setValue, 10))
+	tokens(n, st)
+	return SettingFieldNumber{n}
+}
+
 // Set the default value for this setting field, default is None.
 //
 // If set, this value can be used to reset the setting to its default state. If not set, the
@@ -624,6 +687,26 @@ func (e SettingFieldNumber) valueNode() *node { return e.n }
 func (e SettingFieldNumber) DefaultValue(defaultValue float64) SettingFieldNumber {
 	o := op(e.n, 256)
 	o.f64(defaultValue)
+	return e
+}
+
+// Provide custom reset behavior for this field.
+//
+// This is intended for `gk.NewSettingFieldTextElement` / `gk.NewSettingFieldTextRender` fields,
+// whose state is managed externally and therefore not covered by the typed `DefaultValue` reset
+// mechanism.
+//
+//   - `is_dirty` reports whether the field differs from its default and thus whether the reset
+//     button should appear.
+//   - `reset` performs the reset.
+//
+// When set, this takes precedence over the `default_value` based reset.
+//
+// OnReset is <gpui_kit::component::setting::SettingField<f64>>::on_reset.
+func (e SettingFieldNumber) OnReset(isDirty Cell[bool], reset func(cx *Cx)) SettingFieldNumber {
+	o := op(e.n, 257)
+	o.u64(isDirty.h)
+	o.u32(register(reset, 3))
 	return e
 }
 
@@ -911,6 +994,9 @@ func (e SettingFieldNumber) FlexShrink(shrink float32) SettingFieldNumber {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e SettingFieldNumber) Font(font Font) SettingFieldNumber { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SettingFieldNumber) FontFamily(familyName string) SettingFieldNumber {
@@ -1269,6 +1355,27 @@ type SettingFieldText struct{ n *node }
 
 func (e SettingFieldText) valueNode() *node { return e.n }
 
+// Create a new Dropdown field with the given options.
+//
+// The popup menu does not scroll. For long option lists that may exceed the viewport, use
+// `gk.NewSettingFieldTextScrollableDropdown` instead.
+//
+// NewSettingFieldTextDropdown is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::dropdown.
+func NewSettingFieldTextDropdown(options []TupleStringString, value Cell[string], setValue func(cx *Cx, e string), st ...Style) SettingFieldText {
+	useComponentSetting()
+	n := newValue(853)
+	o := nodeArgs(n)
+	o.u32(uint32(len(options)))
+	for _, x0 := range options {
+		o.str(x0.V0)
+		o.str(x0.V1)
+	}
+	o.u64(value.h)
+	o.u32(register(setValue, 6))
+	tokens(n, st)
+	return SettingFieldText{n}
+}
+
 // Create a new setting field with the given custom element that implements `SettingFieldElement`
 // trait.
 //
@@ -1280,6 +1387,19 @@ func NewSettingFieldTextElement(element Element, st ...Style) SettingFieldText {
 	n := newValue(854)
 	o := nodeArgs(n)
 	o.u32(take(element))
+	tokens(n, st)
+	return SettingFieldText{n}
+}
+
+// Create a new Input field.
+//
+// NewSettingFieldTextInput is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::input.
+func NewSettingFieldTextInput(value Cell[string], setValue func(cx *Cx, e string), st ...Style) SettingFieldText {
+	useComponentSetting()
+	n := newValue(855)
+	o := nodeArgs(n)
+	o.u64(value.h)
+	o.u32(register(setValue, 6))
 	tokens(n, st)
 	return SettingFieldText{n}
 }
@@ -1299,6 +1419,26 @@ func NewSettingFieldTextRender(elementRender Element, st ...Style) SettingFieldT
 	return SettingFieldText{n}
 }
 
+// Create a new Dropdown field whose popup menu scrolls when its content exceeds the viewport. Use
+// this for long option lists where the non-scrolling `gk.NewSettingFieldTextDropdown` would push
+// items below the fold.
+//
+// NewSettingFieldTextScrollableDropdown is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::scrollable_dropdown.
+func NewSettingFieldTextScrollableDropdown(options []TupleStringString, value Cell[string], setValue func(cx *Cx, e string), st ...Style) SettingFieldText {
+	useComponentSetting()
+	n := newValue(857)
+	o := nodeArgs(n)
+	o.u32(uint32(len(options)))
+	for _, x0 := range options {
+		o.str(x0.V0)
+		o.str(x0.V1)
+	}
+	o.u64(value.h)
+	o.u32(register(setValue, 6))
+	tokens(n, st)
+	return SettingFieldText{n}
+}
+
 // Set the default value for this setting field, default is None.
 //
 // If set, this value can be used to reset the setting to its default state. If not set, the
@@ -1308,6 +1448,26 @@ func NewSettingFieldTextRender(elementRender Element, st ...Style) SettingFieldT
 func (e SettingFieldText) DefaultValue(defaultValue string) SettingFieldText {
 	o := op(e.n, 256)
 	o.str(defaultValue)
+	return e
+}
+
+// Provide custom reset behavior for this field.
+//
+// This is intended for `gk.NewSettingFieldTextElement` / `gk.NewSettingFieldTextRender` fields,
+// whose state is managed externally and therefore not covered by the typed `DefaultValue` reset
+// mechanism.
+//
+//   - `is_dirty` reports whether the field differs from its default and thus whether the reset
+//     button should appear.
+//   - `reset` performs the reset.
+//
+// When set, this takes precedence over the `default_value` based reset.
+//
+// OnReset is <gpui_kit::component::setting::SettingField<gpui_kit::SharedString>>::on_reset.
+func (e SettingFieldText) OnReset(isDirty Cell[bool], reset func(cx *Cx)) SettingFieldText {
+	o := op(e.n, 257)
+	o.u64(isDirty.h)
+	o.u32(register(reset, 3))
 	return e
 }
 
@@ -1580,6 +1740,9 @@ func (e SettingFieldText) FlexShrink(shrink float32) SettingFieldText {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e SettingFieldText) Font(font Font) SettingFieldText { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SettingFieldText) FontFamily(familyName string) SettingFieldText {
@@ -2195,6 +2358,9 @@ func (e SettingGroup) FlexShrink(shrink float32) SettingGroup {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e SettingGroup) Font(font Font) SettingGroup { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SettingGroup) FontFamily(familyName string) SettingGroup {
 	tStyledFontFamily(e.n, familyName)
@@ -2459,6 +2625,26 @@ type SettingItem struct{ n *node }
 
 func (e SettingItem) valueNode() *node { return e.n }
 
+// Create a new setting item.
+//
+// NewSettingItem is <gpui_kit::component::setting::SettingItem>::new.
+func NewSettingItem(title string, field AnySettingField) SettingItem {
+	n := newValue(858)
+	o := nodeArgs(n)
+	o.str(title)
+	switch x := field.(type) {
+	case SettingFieldBool:
+		o.u32(takeValue(x.n))
+	case SettingFieldNumber:
+		o.u32(takeValue(x.n))
+	case SettingFieldText:
+		o.u32(takeValue(x.n))
+	default:
+		stop("a nil gk.AnySettingField was given to a builder: make it with one of its constructors before giving it")
+	}
+	return SettingItem{n}
+}
+
 // Create a new custom element setting item with a render closure.
 //
 // NewSettingItemRender is <gpui_kit::component::setting::SettingItem>::render.
@@ -2517,6 +2703,22 @@ func (e SettingItem) Keywords(keywords []string) SettingItem {
 func (e SettingItem) Layout(layout Axis) SettingItem {
 	o := op(e.n, 259)
 	o.u16(uint16(layout))
+	return e
+}
+
+// Provide custom reset behavior for a custom element item.
+//
+// Only applies to `Element` (created via `gk.NewSettingItemRender`). When set, the page-level
+// reset button will appear while `is_dirty` returns true, and clicking it invokes `reset`.
+//
+// - `is_dirty` reports whether the item differs from its default state.
+// - `reset` performs the reset.
+//
+// OnReset is <gpui_kit::component::setting::SettingItem>::on_reset.
+func (e SettingItem) OnReset(isDirty Cell[bool], reset func(cx *Cx)) SettingItem {
+	o := op(e.n, 260)
+	o.u64(isDirty.h)
+	o.u32(register(reset, 3))
 	return e
 }
 

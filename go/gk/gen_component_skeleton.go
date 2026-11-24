@@ -219,6 +219,9 @@ func (e SkeletonEl) FlexGrow(grow float32) SkeletonEl { tStyledFlexGrow(e.n, gro
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SkeletonEl) FlexShrink(shrink float32) SkeletonEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e SkeletonEl) Font(font Font) SkeletonEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SkeletonEl) FontFamily(familyName string) SkeletonEl {
 	tStyledFontFamily(e.n, familyName)

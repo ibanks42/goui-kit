@@ -494,6 +494,9 @@ func (e TooltipEl) FlexGrow(grow float32) TooltipEl { tStyledFlexGrow(e.n, grow)
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TooltipEl) FlexShrink(shrink float32) TooltipEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e TooltipEl) Font(font Font) TooltipEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e TooltipEl) FontFamily(familyName string) TooltipEl {
 	tStyledFontFamily(e.n, familyName)

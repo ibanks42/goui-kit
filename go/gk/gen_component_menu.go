@@ -119,6 +119,9 @@ func (e ContextMenuDivEl) FlexShrink(shrink float32) ContextMenuDivEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e ContextMenuDivEl) Font(font Font) ContextMenuDivEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ContextMenuDivEl) FontFamily(familyName string) ContextMenuDivEl {
 	tStyledFontFamily(e.n, familyName)

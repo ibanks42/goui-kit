@@ -10,6 +10,9 @@ descriptor, in gen/out/go-report.md; nothing is left out silently.
 import os
 import re
 import gk_doc
+import gk_go_kinds  # the descriptor kinds beyond the core ones (gen/gk_go_kinds.py)
+import gk_go_bridges  # Odin's hand-written bridges as ported to Go (docs/GO.md, gen/gk_go_bridges.py)
+import gk_values
 
 from gk_model import INT_WIRE, SHORT, ada, is_fill, snake
 
@@ -174,6 +177,11 @@ class Go:
 
     def gtype(self, d, out=False):
         m, k = self.m, d[0]
+        x = gk_go_kinds.gtype(self, d, out)
+        if x is not None:
+            return x
+        if k == "dock":
+            return gk_go_bridges.gtype(self, d, out)  # PROTOCOLS.md 11.8
         if k == "bool":
             return "bool"
         if k == "int":
@@ -219,7 +227,10 @@ class Go:
             return "rune"
         if k == "tuple":
             ts = [self.gtype(x, out) for x in d[1]]
-            name = "Tuple" + "".join(re.sub(r"\W+", "", t.title()) for t in ts)
+            # each element type's name with its first letter and every letter after a non-letter
+            # upper case, the rest kept (TupleRangeHighlightStyle, TupleListStringListListString)
+            up = lambda t: re.sub(r"(^|[^A-Za-z0-9])([a-z])", lambda x: x.group(1) + x.group(2).upper(), t)  # noqa: E731
+            name = "Tuple" + "".join(re.sub(r"\W+", "", up(t.replace("[]", "List "))) for t in ts)
             self.tuples[name] = (ts, d[1])
             return name
         if k in ("child", "fragment"):
@@ -333,6 +344,11 @@ class Go:
     def put(self, d, v, depth=0):
         """Go statements that write `v` (of descriptor d) to the op stream `o`."""
         m, k = self.m, d[0]
+        x = gk_go_kinds.put(self, d, v, depth)
+        if x is not None:
+            return x
+        if k == "dock":
+            return gk_go_bridges.put(self, d, v)  # PROTOCOLS.md 11.8
         if k == "bool":
             return [f"o.bool({v})"]
         if k in ("int", "nonzero"):
@@ -462,6 +478,11 @@ class Go:
         """A Go expression reading a value of descriptor d from the reader `r`, as gtype(d, out)
         (a record that also travels in holds the in-types: a colour is then a Color)."""
         m, k = self.m, d[0]
+        x = gk_go_kinds.rd(self, d, out)
+        if x is not None:
+            return x
+        if k == "dock":
+            return gk_go_bridges.rd(self, d, out)  # PROTOCOLS.md 11.8
         if k == "bool":
             return "r.bool()"
         if k in ("int", "nonzero"):
@@ -623,6 +644,10 @@ class Go:
         self.ambient()
         # ---- parts of a described plot (gk.Plot, rt_data.go; PROTOCOLS.md 12.6, 12.17)
         self.plot_parts()
+        # ---- item functions, asks and the kinds' interfaces (gen/gk_go_kinds.py)
+        gk_go_kinds.emit_files(self)
+        # ---- what the bridges add (gen/gk_go_bridges.py)
+        gk_go_bridges.emit(self)
         # ---- types (last: the items above asked for tuples, readers and handle types)
         self.types()
         self.tokens()
@@ -1048,7 +1073,10 @@ class Go:
             R = rc["go"]
             fname = lambda f: ("V" + f["name"]) if rc["tuple"] else camel(f["name"])  # noqa: E731
             try:
-                body = [f"\tv.{fname(f)} = {self.rd(f['desc'], not rc['in'])}" for f in rc["fields"]]
+                # A colour field the library writes in gk.Color's layout (theme u16 first): the
+                # same test as the Rust side's Wire impl (gk_values.rust_field_put).
+                body = [f"\tv.{fname(f)} = rdColorField(r)" if "put_color_field" in gk_values.rust_field_put(rc, f)
+                        else f"\tv.{fname(f)} = {self.rd(f['desc'], not rc['in'])}" for f in rc["fields"]]
             except Unsup as e:
                 body = [f"\tstop(\"{R} cannot be read by the Go package yet ({e}): leave out the call that returns it (docs/API-GO.md, section Not in Go yet)\")"]
             return [f"func rd{R}(r *reader) (v {R}) {{", *body, "\treturn", "}", ""]
@@ -1139,6 +1167,7 @@ class Go:
                     puts.append((V, [f"o.u16({v['num']})"] + body))
                 except Unsup as ex:
                     puts.append((V, [f"stop(\"{V} cannot be written by the Go package yet ({ex}): give another variant (docs/API-GO.md, section Not in Go yet)\")"]))
+        gk_go_kinds.denum_held(self, e, puts)  # a value the library holds (PROTOCOLS.md 9.30)
         if e["in"]:
             lines = [f"func put{E}(o *tape, v {E}) {{", "\tswitch x := v.(type) {" if puts else "\tswitch v.(type) {"]
             for V, body in puts:
@@ -1216,9 +1245,11 @@ class Go:
             r[0] += 1
             if it["id"] in self.mapped:
                 r[1] += 1
+            elif it["id"] not in why and gk_go_bridges.covered(self, it, self.mapped) is None:
+                r[1] += 1  # ported by hand, or derived from generated items (gen/gk_go_bridges.py)
             else:
                 r[2] += 1
-                why.setdefault(it["id"], f"kind {it.get('kind')}: an Odin hand-written bridge or protocol the Go runtime has not ported yet")
+                why.setdefault(it["id"], gk_go_bridges.covered(self, it, self.mapped))
         tot = [sum(r[i] for r in rows.values()) for i in range(3)]
         out = ["# Go coverage against Odin", "", f"Generated by gen/gk_go.py. Odin: bound or bridged; Go: generated into go/gk.", "",
                "| family | Odin | Go | not yet in Go |", "|---|---:|---:|---:|"]

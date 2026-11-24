@@ -1216,6 +1216,17 @@ resolve_icon_path :: proc(cx: ^Cx, path: string, loc := #caller_location) -> (v:
 	return
 }
 
+// root_read is crate::values::window_root::<gpui_kit::base::Root>.
+root_read :: proc(cx: ^Cx, loc := #caller_location) -> (v: Maybe(Root)) {
+	req := make(Tape, 0, 32, context.temp_allocator)
+	o := &req
+	use_base_root()
+	put_op(o, 1807)
+	r := ambient_call(cx, req[:], true, loc)
+	rd_into(&r, &v)
+	return
+}
+
 // Get color by scale number.
 //
 // The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950

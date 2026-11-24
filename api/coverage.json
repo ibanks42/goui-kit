@@ -534,7 +534,7 @@
    "path": "gpui_kit::component::button::Button",
    "group": "component",
    "total": 23,
-   "verified": 15,
+   "verified": 16,
    "todo_reasons": {},
    "skip_reasons": {},
    "family": "other components and values",
@@ -5192,7 +5192,7 @@
    "path": "gpui_kit::base::Editor",
    "group": "component",
    "total": 1,
-   "verified": 0,
+   "verified": 1,
    "todo_reasons": {},
    "skip_reasons": {},
    "family": "editor and text input",
@@ -6203,8 +6203,8 @@
     "rust-only-extension": 4
    },
    "family": "ambient context, theme and window",
-   "bound": 0,
-   "bridged": 2,
+   "bound": 1,
+   "bridged": 1,
    "skipped": 4,
    "failed": 0,
    "todo": 0

@@ -1,4 +1,4 @@
-# The reader example's scripted session (gates/reader.sh) over a feed of 3,000 articles: no Rust twin;
+# The reader example's scripted session (gates/reader.sh) over a feed of 3,000 articles; gates/go-apps.sh compares Go with ref-reader;
 # the images are looked at by eye. Window coordinates (the images are twice the size): the toolbar's
 # icon buttons at y 24, reload 24, previous 60, next 96, star 132, close 168, theme 940, settings 976;
 # the search box 150,73; the list's rows (with summaries) y = 157, 225, 293, 361, ...; the first tab

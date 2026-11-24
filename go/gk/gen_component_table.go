@@ -535,6 +535,9 @@ func (e TableEl) FlexGrow(grow float32) TableEl { tStyledFlexGrow(e.n, grow); re
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableEl) FlexShrink(shrink float32) TableEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e TableEl) Font(font Font) TableEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e TableEl) FontFamily(familyName string) TableEl { tStyledFontFamily(e.n, familyName); return e }
 
@@ -1035,6 +1038,9 @@ func (e TableBodyEl) FlexGrow(grow float32) TableBodyEl { tStyledFlexGrow(e.n, g
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableBodyEl) FlexShrink(shrink float32) TableBodyEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e TableBodyEl) Font(font Font) TableBodyEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TableBodyEl) FontFamily(familyName string) TableBodyEl {
@@ -1622,6 +1628,9 @@ func (e TableCaptionEl) FlexShrink(shrink float32) TableCaptionEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e TableCaptionEl) Font(font Font) TableCaptionEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TableCaptionEl) FontFamily(familyName string) TableCaptionEl {
@@ -2224,6 +2233,9 @@ func (e TableCellEl) FlexGrow(grow float32) TableCellEl { tStyledFlexGrow(e.n, g
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableCellEl) FlexShrink(shrink float32) TableCellEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e TableCellEl) Font(font Font) TableCellEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e TableCellEl) FontFamily(familyName string) TableCellEl {
 	tStyledFontFamily(e.n, familyName)
@@ -2728,6 +2740,9 @@ func (e TableFooterEl) FlexShrink(shrink float32) TableFooterEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e TableFooterEl) Font(font Font) TableFooterEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TableFooterEl) FontFamily(familyName string) TableFooterEl {
@@ -3332,6 +3347,9 @@ func (e TableHeadEl) FlexGrow(grow float32) TableHeadEl { tStyledFlexGrow(e.n, g
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableHeadEl) FlexShrink(shrink float32) TableHeadEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e TableHeadEl) Font(font Font) TableHeadEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e TableHeadEl) FontFamily(familyName string) TableHeadEl {
 	tStyledFontFamily(e.n, familyName)
@@ -3836,6 +3854,9 @@ func (e TableHeaderEl) FlexShrink(shrink float32) TableHeaderEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e TableHeaderEl) Font(font Font) TableHeaderEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TableHeaderEl) FontFamily(familyName string) TableHeaderEl {
@@ -4369,6 +4390,9 @@ func (e TableRowEl) FlexGrow(grow float32) TableRowEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TableRowEl) FlexShrink(shrink float32) TableRowEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e TableRowEl) Font(font Font) TableRowEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TableRowEl) FontFamily(familyName string) TableRowEl {

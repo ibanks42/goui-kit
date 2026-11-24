@@ -183,3 +183,39 @@ func putSearch(cx *Cx, src RowSource, groups []SearchGroup, grouped bool) {
 	}
 	t.deferOp(*o)
 }
+
+// --- rules for a selection change (docs/PROTOCOLS.md 11.25) -------------------------------------
+
+// SearchRules is what a select's or combobox's selection may become, given in advance: upstream
+// asks its delegate (SearchableListDelegate::on_will_change) while the list handles a click, where
+// app code may not run, so the library applies upstream's change and then these rules. Blocked
+// values are never added; Locked values are never taken out once selected; a change that would
+// leave fewer than Min or more than Max values selected (0: no limit) is refused whole.
+type SearchRules struct {
+	Min, Max int
+	Locked   []string
+	Blocked  []string
+}
+
+// SearchWillChange gives a select's or combobox's source its rules (buffered; replaces the
+// source's rules; the zero SearchRules is upstream's default alone).
+func SearchWillChange(cx *Cx, src RowSource, rules SearchRules) {
+	t := checkCx(cx)
+	if _, ok := searches[src.h]; !ok {
+		stop("gk.SearchWillChange was given a row source gk.NewSearchSource did not make")
+	}
+	if rules.Min < 0 || rules.Max < 0 || (rules.Max > 0 && rules.Min > rules.Max) {
+		stop("gk.SearchWillChange: min %d and max %d cannot both hold: min must not be greater than max", rules.Min, rules.Max)
+	}
+	o := newReq(cSearchRules)
+	o.u64(src.h)
+	o.u32(uint32(rules.Min))
+	o.u32(uint32(rules.Max))
+	for _, list := range [2][]string{rules.Locked, rules.Blocked} {
+		o.u32(uint32(len(list)))
+		for _, v := range list {
+			o.str(v)
+		}
+	}
+	t.deferOp(*o)
+}

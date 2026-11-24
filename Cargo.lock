@@ -2168,12 +2168,16 @@ version = "0.0.2"
 dependencies = [
  "accesskit",
  "anyhow",
+ "futures",
  "gk-meter",
  "gpui-kit",
  "image",
  "jiff",
+ "libc",
  "lsp-types",
  "ropey",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

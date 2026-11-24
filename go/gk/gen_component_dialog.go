@@ -509,6 +509,9 @@ func (e AlertDialogEl) FlexShrink(shrink float32) AlertDialogEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e AlertDialogEl) Font(font Font) AlertDialogEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AlertDialogEl) FontFamily(familyName string) AlertDialogEl {
 	tStyledFontFamily(e.n, familyName)
@@ -1235,6 +1238,9 @@ func (e DialogEl) FlexGrow(grow float32) DialogEl { tStyledFlexGrow(e.n, grow); 
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e DialogEl) FlexShrink(shrink float32) DialogEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e DialogEl) Font(font Font) DialogEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e DialogEl) FontFamily(familyName string) DialogEl {
@@ -1987,6 +1993,9 @@ func (e DialogContentEl) FlexShrink(shrink float32) DialogContentEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e DialogContentEl) Font(font Font) DialogContentEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e DialogContentEl) FontFamily(familyName string) DialogContentEl {
 	tStyledFontFamily(e.n, familyName)
@@ -2648,6 +2657,9 @@ func (e DialogDescriptionEl) FlexShrink(shrink float32) DialogDescriptionEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e DialogDescriptionEl) Font(font Font) DialogDescriptionEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e DialogDescriptionEl) FontFamily(familyName string) DialogDescriptionEl {
 	tStyledFontFamily(e.n, familyName)
@@ -3300,6 +3312,9 @@ func (e DialogFooterEl) FlexShrink(shrink float32) DialogFooterEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e DialogFooterEl) Font(font Font) DialogFooterEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e DialogFooterEl) FontFamily(familyName string) DialogFooterEl {
 	tStyledFontFamily(e.n, familyName)
@@ -3886,6 +3901,9 @@ func (e DialogHeaderEl) FlexShrink(shrink float32) DialogHeaderEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e DialogHeaderEl) Font(font Font) DialogHeaderEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e DialogHeaderEl) FontFamily(familyName string) DialogHeaderEl {
 	tStyledFontFamily(e.n, familyName)
@@ -4456,6 +4474,9 @@ func (e DialogTitleEl) FlexShrink(shrink float32) DialogTitleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e DialogTitleEl) Font(font Font) DialogTitleEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e DialogTitleEl) FontFamily(familyName string) DialogTitleEl {

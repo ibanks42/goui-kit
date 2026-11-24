@@ -306,6 +306,9 @@ func (e SheetEl) FlexGrow(grow float32) SheetEl { tStyledFlexGrow(e.n, grow); re
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SheetEl) FlexShrink(shrink float32) SheetEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e SheetEl) Font(font Font) SheetEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SheetEl) FontFamily(familyName string) SheetEl { tStyledFontFamily(e.n, familyName); return e }
 

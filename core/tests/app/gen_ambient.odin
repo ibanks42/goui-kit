@@ -299,6 +299,11 @@ ambient_all :: proc(a: ^App, cx: ^gk.Cx) -> (called: int) {
 	}
 	called += 1
 	{
+		v := gk.root_read(cx)
+		fmt.printf("ambient root_read %v\n", v)
+	}
+	called += 1
+	{
 		v := gk.rose(cx, 3)
 		fmt.printf("ambient rose %v\n", v)
 	}
@@ -373,4 +378,4 @@ ambient_all :: proc(a: ^App, cx: ^gk.Cx) -> (called: int) {
 }
 
 // The ambient calls this test runs, and those it cannot (an argument is kit state): base_handle_key_down, base_highlight_characters, base_highlight_contains, base_highlight_prefix, base_parse_markdown, base_sankey_layout_from, base_set_language_provider, kit_panel_handle, open_alert_dialog, open_dialog, open_sheet, open_sheet_at, set_icon_resolver.
-AMBIENT_CALLS :: 76
+AMBIENT_CALLS :: 77

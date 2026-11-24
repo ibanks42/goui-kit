@@ -254,6 +254,9 @@ func (e ProgressEl) FlexGrow(grow float32) ProgressEl { tStyledFlexGrow(e.n, gro
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ProgressEl) FlexShrink(shrink float32) ProgressEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e ProgressEl) Font(font Font) ProgressEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ProgressEl) FontFamily(familyName string) ProgressEl {
 	tStyledFontFamily(e.n, familyName)
@@ -891,6 +894,9 @@ func (e ProgressCircleEl) FlexShrink(shrink float32) ProgressCircleEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e ProgressCircleEl) Font(font Font) ProgressCircleEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ProgressCircleEl) FontFamily(familyName string) ProgressCircleEl {

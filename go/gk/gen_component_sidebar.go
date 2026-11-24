@@ -361,6 +361,9 @@ func (e GroupedSidebarEl) FlexShrink(shrink float32) GroupedSidebarEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e GroupedSidebarEl) Font(font Font) GroupedSidebarEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e GroupedSidebarEl) FontFamily(familyName string) GroupedSidebarEl {
 	tStyledFontFamily(e.n, familyName)
@@ -958,6 +961,9 @@ func (e SidebarEl) FlexGrow(grow float32) SidebarEl { tStyledFlexGrow(e.n, grow)
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SidebarEl) FlexShrink(shrink float32) SidebarEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e SidebarEl) Font(font Font) SidebarEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SidebarEl) FontFamily(familyName string) SidebarEl {
@@ -1560,6 +1566,9 @@ func (e SidebarFooterEl) FlexShrink(shrink float32) SidebarFooterEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e SidebarFooterEl) Font(font Font) SidebarFooterEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SidebarFooterEl) FontFamily(familyName string) SidebarFooterEl {
 	tStyledFontFamily(e.n, familyName)
@@ -2042,6 +2051,17 @@ func (e SidebarFooterEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)
 // See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) SidebarFooterEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
+	return e
+}
+
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e SidebarFooterEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) SidebarFooterEl {
+	tInteractiveElementOnDragMove(e.n, listener)
 	return e
 }
 
@@ -2622,6 +2642,9 @@ func (e SidebarHeaderEl) FlexShrink(shrink float32) SidebarHeaderEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e SidebarHeaderEl) Font(font Font) SidebarHeaderEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SidebarHeaderEl) FontFamily(familyName string) SidebarHeaderEl {
 	tStyledFontFamily(e.n, familyName)
@@ -3107,6 +3130,17 @@ func (e SidebarHeaderEl) OnBoxedAction(action Action, listener func(cx *Cx, e Ac
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e SidebarHeaderEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) SidebarHeaderEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -3523,6 +3557,9 @@ func (e SidebarMenu) FlexGrow(grow float32) SidebarMenu { tStyledFlexGrow(e.n, g
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SidebarMenu) FlexShrink(shrink float32) SidebarMenu { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e SidebarMenu) Font(font Font) SidebarMenu { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SidebarMenu) FontFamily(familyName string) SidebarMenu {
@@ -4186,6 +4223,9 @@ func (e SidebarMenuItem) FlexShrink(shrink float32) SidebarMenuItem {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e SidebarMenuItem) Font(font Font) SidebarMenuItem { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SidebarMenuItem) FontFamily(familyName string) SidebarMenuItem {

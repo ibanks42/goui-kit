@@ -173,6 +173,50 @@ func BaseHandleKeyDown(cx *Cx, state QuestionnaireState, event KeyDownEvent) {
 	ambientCall(cx, o, false)
 }
 
+// Highlight each character of `query` in order, skipping characters in between.
+//
+// Matching is case-insensitive. Adjacent hits merge into one range, so a contiguous match still
+// paints as a single span. A query that cannot be matched in full paints nothing.
+//
+// BaseHighlightCharacters is gpui_kit::base::input::highlight_characters.
+func BaseHighlightCharacters(cx *Cx, query string, item CompletionItem) []Range {
+	useBaseInput()
+	o := newReq(1652)
+	o.str(query)
+	putCompletionItem(o, item)
+	r := ambientCall(cx, o, true)
+	return rdList(r, func(r *reader) Range { return rdRange(r) })
+}
+
+// Highlight the first case-insensitive occurrence of `query` in the label.
+//
+// An empty query, or a query that does not occur as a contiguous span, paints nothing.
+//
+// BaseHighlightContains is gpui_kit::base::input::highlight_contains.
+func BaseHighlightContains(cx *Cx, query string, item CompletionItem) []Range {
+	useBaseInput()
+	o := newReq(1653)
+	o.str(query)
+	putCompletionItem(o, item)
+	r := ambientCall(cx, o, true)
+	return rdList(r, func(r *reader) Range { return rdRange(r) })
+}
+
+// Highlight a prefix of the completion label, matching today's menu.
+//
+// The painted length is `filter_text` when the item sets one, otherwise the query. It is shortened
+// so the range never splits a character. An empty length paints nothing.
+//
+// BaseHighlightPrefix is gpui_kit::base::input::highlight_prefix.
+func BaseHighlightPrefix(cx *Cx, query string, item CompletionItem) []Range {
+	useBaseInput()
+	o := newReq(1654)
+	o.str(query)
+	putCompletionItem(o, item)
+	r := ambientCall(cx, o, true)
+	return rdList(r, func(r *reader) Range { return rdRange(r) })
+}
+
 // Returns whether the application is compiled for iOS or Android.
 //
 // This is a compile-time platform check, not a screen-size or input-device check.
@@ -229,6 +273,21 @@ func BaseMeasureTextWidth(cx *Cx, text string, fontSize float32) float32 {
 	return r.f32()
 }
 
+// Parses Markdown with the parser `BaseTextViewEl` uses, including the given extensions, into the
+// block tree.
+//
+// BaseParseMarkdown is gpui_kit::base::text::editor_host::parse_markdown.
+func BaseParseMarkdown(cx *Cx, source string, extensions MarkdownExtensionsArc) Fallible[[]BlockNodeHeld] {
+	useBaseText()
+	o := newReq(1764)
+	o.str(source)
+	o.u64(extensions.h)
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) []BlockNodeHeld {
+		return rdList(r, func(r *reader) BlockNodeHeld { return BlockNodeHeld{h: r.u64()} })
+	})
+}
+
 // BaseResolvedCorner is gpui_kit::base::Popup::resolved_corner.
 func BaseResolvedCorner(cx *Cx, anchor Anchor, triggerBounds Bounds) GpuiPoint {
 	useBasePopup()
@@ -237,6 +296,22 @@ func BaseResolvedCorner(cx *Cx, anchor Anchor, triggerBounds Bounds) GpuiPoint {
 	putBounds(o, triggerBounds)
 	r := ambientCall(cx, o, true)
 	return rdGpuiPoint(r)
+}
+
+// Compute the full layout: `Topology` plus the vertical node placement and link breadths.
+//
+// BaseSankeyLayout is (|value: gpui_kit::base::plot::shape::Sankey, node_count, links| <gpui_kit::base::plot::shape::Sankey>::layout(&value, node_count, links)).
+func BaseSankeyLayout(cx *Cx, value Sankey, nodeCount int, links []SankeyLink) Fallible[SankeyGraph] {
+	useBasePlot()
+	o := newReq(1659)
+	putVtape(o, value.n)
+	putUsize(o, nodeCount)
+	o.u32(uint32(len(links)))
+	for _, x0 := range links {
+		putVtape(o, x0.n)
+	}
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) SankeyGraph { return SankeyGraph{h: r.u64()} })
 }
 
 // Complete the layout for a graph produced by `Topology`, avoiding a second topology pass when the
@@ -253,6 +328,28 @@ func BaseSankeyLayoutFrom(cx *Cx, value Sankey, graph SankeyGraph) SankeyGraph {
 	o.u64(graph.h)
 	r := ambientCall(cx, o, true)
 	return SankeyGraph{h: r.u64()}
+}
+
+// Compute the topology only: node `value`, `depth`, `height`, `layer` and horizontal positions,
+// without the vertical placement. Much cheaper than `gk.BaseSankeyLayout` when only the column
+// structure is needed (e.g. to measure labels before fixing the extent).
+//
+// `node_count` is the number of nodes; links reference nodes by index (d3-sankey's default
+// `nodeId`). Returns an error if a link references a node out of range or the graph contains a
+// cycle.
+//
+// BaseSankeyTopology is (|value: gpui_kit::base::plot::shape::Sankey, node_count, links| <gpui_kit::base::plot::shape::Sankey>::topology(&value, node_count, links)).
+func BaseSankeyTopology(cx *Cx, value Sankey, nodeCount int, links []SankeyLink) Fallible[SankeyGraph] {
+	useBasePlot()
+	o := newReq(1661)
+	putVtape(o, value.n)
+	putUsize(o, nodeCount)
+	o.u32(uint32(len(links)))
+	for _, x0 := range links {
+		putVtape(o, x0.n)
+	}
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) SankeyGraph { return SankeyGraph{h: r.u64()} })
 }
 
 // Replace a language's editing configuration for this application. Existing editors read the
@@ -430,6 +527,15 @@ func Dark(cx *Cx) ThemeColorArc {
 	return ThemeColorArc{h: r.u64()}
 }
 
+// DiffFileParseCount is (|patch| <gpui_kit::component::diff::DiffFile>::parse(patch).map(|v| v.len())).
+func DiffFileParseCount(cx *Cx, patch string) Fallible[int] {
+	useComponentDiff()
+	o := newReq(1516)
+	o.str(patch)
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) int { return int(r.u64()) })
+}
+
 // DiffFileParseError is (|patch| <gpui_kit::component::diff::DiffFile>::parse(patch).err()).
 func DiffFileParseError(cx *Cx, patch string) Option[DiffParseError] {
 	useComponentDiff()
@@ -437,6 +543,16 @@ func DiffFileParseError(cx *Cx, patch string) Option[DiffParseError] {
 	o.str(patch)
 	r := ambientCall(cx, o, true)
 	return rdOpt(r, func(r *reader) DiffParseError { return DiffParseError{h: r.u64()} })
+}
+
+// DiffFileParseWithCount is (|patch, options| <gpui_kit::component::diff::DiffFile>::parse_with(patch, options).map(|v| v.len())).
+func DiffFileParseWithCount(cx *Cx, patch string, options DiffParseOptions) Fallible[int] {
+	useComponentDiff()
+	o := newReq(1517)
+	o.str(patch)
+	putVtape(o, options.n)
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) int { return int(r.u64()) })
 }
 
 // DiffFileParseWithError is (|patch, options| <gpui_kit::component::diff::DiffFile>::parse_with(patch, options).err()).
@@ -600,6 +716,27 @@ func Indigo(cx *Cx, scale int) Hsla {
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
 	return rdHsla(r)
+}
+
+// Wrap `panel` so base carries its presentation across the renderer seam.
+//
+// This is what every entry point into the dock wants:
+// `DockLayout::tabs().panel_view(panel_handle(story), cx)`,
+// `DockArea::add_panel_view(panel_handle(story), ..)`, and the closure a `register_panel` builder
+// returns.
+//
+// Base's own `DockLayout::panel` and `DockArea::add_panel` also accept a panel — a
+// `gpui_component::dock::Panel` is a `gpui_base::dock::Panel` — but they store the bare entity,
+// and a skin cannot recover presentation from one. Such a panel still docks, drags and persists;
+// it just draws its `panel_name` where its title would be.
+//
+// KitPanelHandle is gpui_kit::component::dock::panel_handle.
+func KitPanelHandle(cx *Cx, panel DockPanel) DockPanel {
+	useComponentDock()
+	o := newReq(1591)
+	o.u64(panel.h)
+	r := ambientCall(cx, o, true)
+	return DockPanel{h: r.u64()}
 }
 
 // KitTheme is <gpui_kit::App as gpui_kit::component::ActiveTheme>::theme.
@@ -772,6 +909,49 @@ func Orange(cx *Cx, scale int) Hsla {
 	return rdHsla(r)
 }
 
+// Parses every file in a unified or Git diff, in patch order, without computing differences.
+// Syntax emphasis is prepared later by `DiffState` on a background thread.
+//
+// Parse is gpui_kit::component::diff::DiffFile::parse.
+func Parse(cx *Cx, patch string) Fallible[[]DiffFileRead] {
+	useComponentDiff()
+	o := newReq(1425)
+	o.str(patch)
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) []DiffFileRead {
+		return rdList(r, func(r *reader) DiffFileRead { return DiffFileRead{h: r.u64()} })
+	})
+}
+
+// Parses a working file containing Git conflict markers, including the `|||||||` base section of
+// `diff3` style. Lines keep their numbers in the working file; marker lines are shown as conflict
+// headings instead.
+//
+// ParseConflicts is gpui_kit::component::diff::DiffFile::parse_conflicts.
+func ParseConflicts(cx *Cx, path string, text string) Fallible[DiffFileRead] {
+	useComponentDiff()
+	o := newReq(1426)
+	o.str(path)
+	o.str(text)
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) DiffFileRead { return DiffFileRead{h: r.u64()} })
+}
+
+// Parses like `gk.Parse`, applying the relaxations `options` enables. Malformed headers, invalid
+// paths and unordered hunks are still errors.
+//
+// ParseWith is gpui_kit::component::diff::DiffFile::parse_with.
+func ParseWith(cx *Cx, patch string, options DiffParseOptions) Fallible[[]DiffFileRead] {
+	useComponentDiff()
+	o := newReq(1427)
+	o.str(patch)
+	putVtape(o, options.n)
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) []DiffFileRead {
+		return rdList(r, func(r *reader) DiffFileRead { return DiffFileRead{h: r.u64()} })
+	})
+}
+
 // Get color by scale number.
 //
 // The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
@@ -839,6 +1019,14 @@ func ResolveIconPath(cx *Cx, path string) string {
 	return r.str()
 }
 
+// RootRead is crate::values::window_root::<gpui_kit::base::Root>.
+func RootRead(cx *Cx) Option[Root] {
+	useBaseRoot()
+	o := newReq(1807)
+	r := ambientCall(cx, o, true)
+	return rdOpt(r, func(r *reader) Root { return Root{h: r.u64()} })
+}
+
 // Get color by scale number.
 //
 // The possible scale numbers are: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
@@ -852,6 +1040,25 @@ func Rose(cx *Cx, scale int) Hsla {
 	putUsize(o, scale)
 	r := ambientCall(cx, o, true)
 	return rdHsla(r)
+}
+
+// Set the hook every `IconEl` drawn from an asset path asks for the path to draw, including the
+// icons components draw inside their own controls.
+//
+// The resolver receives the icon's path (for example `icons/check.svg`) and returns the path to
+// draw in its place, or `None` to keep it. GPUI caches a rendered SVG by its path, so returning a
+// new path is how an application switches icon styles at runtime; the application's `AssetSource`
+// must load the returned path. Icons created with `Data` are not resolved.
+//
+// The resolver runs every time an icon is drawn and should be cheap. Call `refresh_windows` after
+// changing what it returns.
+//
+// SetIconResolver is gpui_kit::component::set_icon_resolver.
+func SetIconResolver(cx *Cx, resolver Ask[string, Option[string]]) {
+	useComponentRoot()
+	o := newReq(1515)
+	o.u64(resolver.Src.h)
+	ambientCall(cx, o, false)
 }
 
 // SetLocale is gpui_kit::component::set_locale.
@@ -946,6 +1153,41 @@ func TitleBarOptions(cx *Cx) TitlebarOptions {
 	o := newReq(1178)
 	r := ambientCall(cx, o, true)
 	return rdTitlebarOptions(r)
+}
+
+// Try to parse a theme background value.
+//
+// Supports all values accepted by `TryParseColor` and CSS-style two-stop `linear-gradient(...)`
+// values.
+//
+// TryParseBackground is gpui_kit::component::try_parse_background.
+func TryParseBackground(cx *Cx, background string) Fallible[BackgroundValue] {
+	useComponentRoot()
+	o := newReq(1765)
+	o.str(background)
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) BackgroundValue { return rdBackgroundValue(r) })
+}
+
+// Try to parse the color, HEX or Tailwind Color (https://tailwindcss.com/docs/colors) expression.
+//
+// Parameter `color` should be one string value listed below::
+// - `#RRGGBB` - The HEX color string.
+// - `#RRGGBBAA` - The HEX color string with alpha.
+//
+// Or the Tailwind Color format:
+//   - `name-scale` - The color name with scale.
+//   - `name/opacity` - The color name with opacity, `opacity` should be an integer between 0 and
+//     100.
+//   - `name-scale/opacity` - The color name with scale and opacity.
+//
+// TryParseColor is gpui_kit::component::try_parse_color.
+func TryParseColor(cx *Cx, color string) Fallible[Hsla] {
+	useComponentRoot()
+	o := newReq(1180)
+	o.str(color)
+	r := ambientCall(cx, o, true)
+	return rdFallible(r, func(r *reader) Hsla { return rdHsla(r) })
 }
 
 // Get color by scale number.

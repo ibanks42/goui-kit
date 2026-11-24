@@ -21,6 +21,15 @@ func NewEffectTransition(duration time.Duration) EffectTransition {
 	return EffectTransition{n}
 }
 
+// Set the easing function.
+//
+// Ease is <gpui_kit::base::animation::EffectTransition>::ease.
+func (e EffectTransition) Ease(easing string) EffectTransition {
+	o := op(e.n, 261)
+	putExpr(o, easing, 1)
+	return e
+}
+
 // Animate opacity from `from` to `to`.
 //
 // Fade is <gpui_kit::base::animation::EffectTransition>::fade.

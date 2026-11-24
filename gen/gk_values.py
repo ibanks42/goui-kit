@@ -777,7 +777,7 @@ def window_roots(m):
         for it in m.items:
             if it["id"] != f"{path}::read" or it["status"] not in ("todo", "norule"):
                 continue
-            it.update(kind="ambient", status="bridged", reason="", detail="the window's own, made by the library",
+            it.update(kind="ambient", status="bound", reason="", detail="the window's own, made by the library",
                       odin_base=f"{_snake(name)}_read",
                       callee=f"crate::values::window_root::<{path}>", crate=st["crate"], borrowed_ret=False,
                       args=[{"name": "window", "desc": ["ctx", "window_ref"]}, {"name": "cx", "desc": ["ctx", "app_ref"]}],

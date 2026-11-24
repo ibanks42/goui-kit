@@ -13,6 +13,20 @@ type MessageScrollerEl struct{ n *node }
 
 func (e MessageScrollerEl) node() *node { return e.n }
 
+// Create a message scroller with a renderer for each row.
+//
+// MessageScroller is <gpui_kit::component::message_scroller::MessageScroller>::new.
+func MessageScroller(id ID, state MessageScrollerState, renderer RowSource, st ...Style) MessageScrollerEl {
+	useComponentMessageScroller()
+	n := newNode(849)
+	o := nodeArgs(n)
+	putID(o, id)
+	o.u64(state.h)
+	o.u64(itemsCheck(renderer, 19))
+	tokens(n, st)
+	return MessageScrollerEl{n}
+}
+
 // Enable or disable the built-in jump-to-latest button.
 //
 // JumpButton is <gpui_kit::component::message_scroller::MessageScroller>::jump_button.
@@ -60,6 +74,18 @@ func (e MessageScrollerEl) WithContentStyle(style StyleRefinement) MessageScroll
 func (e MessageScrollerEl) WithJumpButtonLabel(label string) MessageScrollerEl {
 	o := op(e.n, 260)
 	o.str(label)
+	return e
+}
+
+// Customize the built-in jump button without replacing its scroll action.
+//
+// The callback receives the fully configured Button, so its variant, semantic size, icon, tooltip,
+// or instance styling may be adjusted.
+//
+// WithJumpButtonRenderer is <gpui_kit::component::message_scroller::MessageScroller>::with_jump_button_renderer.
+func (e MessageScrollerEl) WithJumpButtonRenderer(renderer Decorate) MessageScrollerEl {
+	o := op(e.n, 265)
+	putDecorate(o, renderer)
 	return e
 }
 
@@ -377,6 +403,9 @@ func (e MessageScrollerEl) FlexShrink(shrink float32) MessageScrollerEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e MessageScrollerEl) Font(font Font) MessageScrollerEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e MessageScrollerEl) FontFamily(familyName string) MessageScrollerEl {

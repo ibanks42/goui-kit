@@ -561,6 +561,8 @@ def gen(argv):
     go = gk_go.Go(m, od, go_out)
     go.docs, go.doc_names = docs, doc_names
     go.emit()
+    import gk_tests_go  # noqa: PLC0415 (the generated protocol tests in Go: core/tests/go/gensample, gen, app)
+    gk_tests_go.emit(m, go, REPO)
     n = docs.report()
     print(f"gen: docs: {len(docs.found):,} of {len(docs.asked):,} upstream items have a doc comment, carried into "
           f"both languages; {n} sentences left out as Rust-only (gen/out/doc-rust-only.md)")

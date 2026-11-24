@@ -528,6 +528,9 @@ func (e ButtonEl) FlexGrow(grow float32) ButtonEl { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ButtonEl) FlexShrink(shrink float32) ButtonEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e ButtonEl) Font(font Font) ButtonEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ButtonEl) FontFamily(familyName string) ButtonEl {
 	tStyledFontFamily(e.n, familyName)
@@ -953,6 +956,17 @@ func (e ButtonEl) OnBackGesture(listener func(cx *Cx, e BackGestureEvent)) Butto
 // See `listener` to get access to a view's state from this callback.
 func (e ButtonEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)) ButtonEl {
 	tInteractiveElementOnBoxedAction(e.n, action, listener)
+	return e
+}
+
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e ButtonEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ButtonEl {
+	tInteractiveElementOnDragMove(e.n, listener)
 	return e
 }
 
@@ -1485,6 +1499,9 @@ func (e ButtonGroupEl) FlexShrink(shrink float32) ButtonGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e ButtonGroupEl) Font(font Font) ButtonGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ButtonGroupEl) FontFamily(familyName string) ButtonGroupEl {
@@ -2146,6 +2163,9 @@ func (e DropdownButtonEl) FlexShrink(shrink float32) DropdownButtonEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e DropdownButtonEl) Font(font Font) DropdownButtonEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e DropdownButtonEl) FontFamily(familyName string) DropdownButtonEl {
@@ -2863,6 +2883,9 @@ func (e ToggleEl) FlexGrow(grow float32) ToggleEl { tStyledFlexGrow(e.n, grow); 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ToggleEl) FlexShrink(shrink float32) ToggleEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e ToggleEl) Font(font Font) ToggleEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ToggleEl) FontFamily(familyName string) ToggleEl {
 	tStyledFontFamily(e.n, familyName)
@@ -3436,6 +3459,9 @@ func (e ToggleGroupEl) FlexShrink(shrink float32) ToggleGroupEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e ToggleGroupEl) Font(font Font) ToggleGroupEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ToggleGroupEl) FontFamily(familyName string) ToggleGroupEl {

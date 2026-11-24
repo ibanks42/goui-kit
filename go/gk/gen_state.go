@@ -404,6 +404,15 @@ func (s CalendarState) Date(cx *Cx) Date {
 	return rdDate(r)
 }
 
+// Days is <gpui_kit::base::CalendarState>::days.
+func (s CalendarState) Days(cx *Cx) [][]CivilDate {
+	useBaseCalendar()
+	o := newReq(1324)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdList(r, func(r *reader) []CivilDate { return rdList(r, func(r *reader) CivilDate { return rdCivilDate(r) }) })
+}
+
 // DisabledMatcherRef is <gpui_kit::base::CalendarState>::disabled_matcher_ref.
 func (s CalendarState) DisabledMatcherRef(cx *Cx) Option[Matcher] {
 	useBaseCalendar()
@@ -431,6 +440,20 @@ func (s CalendarState) HasPrevYearPage(cx *Cx) bool {
 	return r.bool()
 }
 
+// Calendar weeks grouped by visible month. This preserves six-week months and is the preferred
+// rendering API.
+//
+// MonthDays is <gpui_kit::base::CalendarState>::month_days.
+func (s CalendarState) MonthDays(cx *Cx) [][][]CivilDate {
+	useBaseCalendar()
+	o := newReq(1325)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdList(r, func(r *reader) [][]CivilDate {
+		return rdList(r, func(r *reader) []CivilDate { return rdList(r, func(r *reader) CivilDate { return rdCivilDate(r) }) })
+	})
+}
+
 // NumberOfMonths is <gpui_kit::base::CalendarState>::number_of_months.
 func (s CalendarState) NumberOfMonths(cx *Cx) int {
 	useBaseCalendar()
@@ -450,6 +473,15 @@ func (s CalendarState) OffsetYearMonth(cx *Cx, offset int) TupleInt32Uint32 {
 	return TupleInt32Uint32{int32(r.u32()), uint32(r.u32())}
 }
 
+// Today is <gpui_kit::base::CalendarState>::today.
+func (s CalendarState) Today(cx *Cx) CivilDate {
+	useBaseCalendar()
+	o := newReq(1328)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdCivilDate(r)
+}
+
 // View is <gpui_kit::base::CalendarState>::view.
 func (s CalendarState) View(cx *Cx) CalendarView {
 	useBaseCalendar()
@@ -466,6 +498,19 @@ func (s CalendarState) YearsOnPage(cx *Cx) []int32 {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return rdList(r, func(r *reader) int32 { return int32(r.u32()) })
+}
+
+// Activates a day item and emits `Selected` once the controlled value is complete. This is the
+// single pointer/keyboard activation path used by the calendar root.
+//
+// ActivateDate is <gpui_kit::base::CalendarState>::activate_date.
+func (s CalendarState) ActivateDate(cx *Cx, value CivilDate) bool {
+	useBaseCalendar()
+	o := newReq(1322)
+	o.u64(s.h)
+	putCivilDate(o, value)
+	r := stateCall(s.h, cx, o)
+	return r.bool()
 }
 
 // ApplyDate is <gpui_kit::base::CalendarState>::apply_date.
@@ -492,6 +537,16 @@ func (s CalendarState) PrevYearPage(cx *Cx) bool {
 	useBaseCalendar()
 	o := newReq(592)
 	o.u64(s.h)
+	r := stateCall(s.h, cx, o)
+	return r.bool()
+}
+
+// SelectDate is <gpui_kit::base::CalendarState>::select_date.
+func (s CalendarState) SelectDate(cx *Cx, value CivilDate) bool {
+	useBaseCalendar()
+	o := newReq(1326)
+	o.u64(s.h)
+	putCivilDate(o, value)
 	r := stateCall(s.h, cx, o)
 	return r.bool()
 }
@@ -1157,6 +1212,19 @@ func (s ComboboxState) SelectedValues(cx *Cx) []string {
 	return rdList(r, func(r *reader) string { return r.str() })
 }
 
+// Return the currently selected `(IndexPath, Item)` pairs.
+//
+// Selection is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::selection.
+func (s ComboboxState) Selection(cx *Cx) []TupleBaseIndexPathSearchItem {
+	useComponentCombobox()
+	o := newReq(1112)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdList(r, func(r *reader) TupleBaseIndexPathSearchItem {
+		return TupleBaseIndexPathSearchItem{rdBaseIndexPath(r), rdSearchItem(r)}
+	})
+}
+
 // Add a single index to the selection, if not already present, returning whether it was added.
 //
 // AddSelectedIndex is <gpui_kit::component::combobox::ComboboxState<crate::shim_select::GkSearchDelegate>>::add_selected_index.
@@ -1566,9 +1634,21 @@ func (b DatePickerStateBuilder) DateFormat(format string) DatePickerStateBuilder
 	return b
 }
 
+func (b DatePickerStateBuilder) DefaultTime(time CivilTime) DatePickerStateBuilder {
+	o := b.sb.op(6)
+	putCivilTime(o, time)
+	return b
+}
+
 func (b DatePickerStateBuilder) DisabledMatcher(disabled MatcherInto) DatePickerStateBuilder {
 	o := b.sb.op(5)
 	putMatcherInto(o, disabled)
+	return b
+}
+
+func (b DatePickerStateBuilder) FirstDayOfWeek(day Weekday) DatePickerStateBuilder {
+	o := b.sb.op(7)
+	putWeekday(o, day)
 	return b
 }
 
@@ -2564,6 +2644,18 @@ func (s DiffState) SetSelectedLines(cx *Cx, range_ Option[DiffLineRange]) {
 	stateSet(cx, o)
 }
 
+// Replaces the application's highlighter, preparing syntax again without resetting selection or
+// scrolling. See `WithSyntaxHighlighter`.
+//
+// SetSyntaxHighlighter is <gpui_kit::component::diff::DiffState>::set_syntax_highlighter.
+func (s DiffState) SetSyntaxHighlighter(cx *Cx, highlighter Ask[TupleStringString, []TupleRangeHighlightStyle]) {
+	useComponentDiff()
+	o := newReq(1488)
+	o.u64(s.h)
+	o.u64(highlighter.Src.h)
+	stateSet(cx, o)
+}
+
 // Changes the syntax emphasis line limit in bytes without resetting selection or scrolling.
 //
 // SetSyntaxMaxLineLength is <gpui_kit::component::diff::DiffState>::set_syntax_max_line_length.
@@ -2632,6 +2724,12 @@ func (b DiffStateBuilder) WithMinCollapsedLines(lines int) DiffStateBuilder {
 func (b DiffStateBuilder) WithMode(mode DiffMode) DiffStateBuilder {
 	o := b.sb.op(6)
 	o.u16(uint16(mode))
+	return b
+}
+
+func (b DiffStateBuilder) WithSyntaxHighlighter(highlighter Ask[TupleStringString, []TupleRangeHighlightStyle]) DiffStateBuilder {
+	o := b.sb.op(8)
+	o.u64(highlighter.Src.h)
 	return b
 }
 
@@ -2710,6 +2808,16 @@ func (s Discrete) Sample(cx *Cx, progress float32) float32 {
 	o.f32(progress)
 	r := objGet(s.h, cx, o)
 	return r.f32()
+}
+
+// SwitchAt is <gpui_kit::base::Discrete<f32>>::switch_at.
+func (s Discrete) SwitchAt(cx *Cx, progress float32) Fallible[Discrete] {
+	useBaseMotion()
+	o := newReq(1130)
+	o.u64(s.h)
+	o.f32(progress)
+	r := stateCall(s.h, cx, o)
+	return rdFallible(r, func(r *reader) Discrete { return Discrete{h: r.u64()} })
 }
 
 // NewDiscrete is <gpui_kit::base::Discrete<f32>>::new.
@@ -2979,6 +3087,18 @@ func (s DisplayMap) SetFolded(cx *Cx, startLine int, folded bool) {
 	stateSet(cx, o)
 }
 
+// Set font parameters
+//
+// SetFont is <gpui_kit::base::input::DisplayMap>::set_font.
+func (s DisplayMap) SetFont(cx *Cx, font Font, fontSize float32) {
+	useBaseInput()
+	o := newReq(1260)
+	o.u64(s.h)
+	putFont(o, font)
+	o.f32(fontSize)
+	stateSet(cx, o)
+}
+
 // Set the wrapping indent for continuation lines.
 //
 // SetWrappingIndent is <gpui_kit::base::input::DisplayMap>::set_wrapping_indent.
@@ -2999,6 +3119,22 @@ func (s DisplayMap) ToggleFold(cx *Cx, startLine int) {
 	o.u64(s.h)
 	putUsize(o, startLine)
 	stateSet(cx, o)
+}
+
+// NewDisplayMap is <gpui_kit::base::input::DisplayMap>::new.
+func NewDisplayMap(cx *Cx, font Font, fontSize float32, wrapWidth Option[float32]) DisplayMap {
+	useBaseInput()
+	o := newReq(1256)
+	putFont(o, font)
+	o.f32(fontSize)
+	if x0, ok := wrapWidth.Get(); ok {
+		o.u8(1)
+		o.f32(x0)
+	} else {
+		o.u8(0)
+	}
+	o.u16(0) // no builder ops follow
+	return DisplayMap{stateMake(cx, o)}
 }
 
 // Dock is a handle to gpui_kit::base::dock::Dock, a library object (PROTOCOLS.md section 13).
@@ -3121,6 +3257,32 @@ func (s DockArea) DockSize(cx *Cx, placement DockPlacement) Option[float32] {
 	return rdOpt(r, func(r *reader) float32 { return r.f32() })
 }
 
+// Write the layout out.
+//
+// Slot sizes are resolved to concrete pixels first. The tree represents an unconstrained slot as
+// `None` and the writer emits `0.0` for it, which *this* reader maps back to `None` — but an older
+// build has no notion of the sentinel and would construct a real zero-pixel panel from it.
+// Preference order is the split's measured size, then the tree's own size, then `PANEL_MIN_SIZE`
+// for a slot nothing has ever measured.
+//
+// The measurement wins because the tree does not track every change to it. `ResizableState` only
+// emits `Resized` from a finished drag, so that is all the subscription in `split_entity` writes
+// back; `adjust_to_container_size` rescales every slot silently on each window resize, insert and
+// remove. Preferring the tree would persist load-time or last-drag pixels after a window resize,
+// and worse, mix them: a slot left `None` by a later insert would be filled from the current
+// measurement while its untouched siblings kept file-era numbers, so the written ratio would match
+// neither the file nor the screen. Reading the measurement for every slot of a split writes one
+// internally consistent set, which is what the old `StackPanel::dump` did.
+//
+// Dump is <gpui_kit::base::dock::DockArea>::dump.
+func (s DockArea) Dump(cx *Cx) DockAreaState {
+	useBaseDock()
+	o := newReq(328)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdDockAreaState(r)
+}
+
 // HasDock is <gpui_kit::base::dock::DockArea>::has_dock.
 func (s DockArea) HasDock(cx *Cx, placement DockPlacement) bool {
 	useBaseDock()
@@ -3216,6 +3378,18 @@ func (s DockArea) Layout(cx *Cx, placement DockPlacement) Option[PaneTree] {
 	return rdOpt(r, func(r *reader) PaneTree { return PaneTree{h: r.u64()} })
 }
 
+// The live view for a panel, if the dock still holds it.
+//
+// Panel is <gpui_kit::base::dock::DockArea>::panel.
+func (s DockArea) Panel(cx *Cx, panel DockPanelID) Option[DockPanel] {
+	useBaseDock()
+	o := newReq(1537)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	r := stateGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) DockPanel { return DockPanel{h: r.u64()} })
+}
+
 // Version is <gpui_kit::base::dock::DockArea>::version.
 func (s DockArea) Version(cx *Cx) Option[int] {
 	useBaseDock()
@@ -3223,6 +3397,31 @@ func (s DockArea) Version(cx *Cx) Option[int] {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
+}
+
+// The tab group filling the area, if a group is what is zoomed.
+//
+// ZoomedGroup is <gpui_kit::base::dock::DockArea>::zoomed_group.
+func (s DockArea) ZoomedGroup(cx *Cx) Option[NodeID] {
+	useBaseDock()
+	o := newReq(1538)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) NodeID { return NodeID(r.u64()) })
+}
+
+// Read a persisted layout, rebuilding every panel through `PanelRegistry`. A panel this build does
+// not know about becomes a placeholder that carries the original `PanelState` forward, so the next
+// save does not erase it.
+//
+// Load is <gpui_kit::base::dock::DockArea>::load.
+func (s DockArea) Load(cx *Cx, state DockAreaState) error {
+	useBaseDock()
+	o := newReq(1535)
+	o.u64(s.h)
+	putDockAreaState(o, state)
+	r := stateCall(s.h, cx, o)
+	return rdResult(r)
 }
 
 // Add a panel to a region, merging it into the first tab group there, or starting a group when the
@@ -3266,6 +3465,18 @@ func (s DockArea) AddPanelView(cx *Cx, panel DockPanel, placement DockPlacement,
 	stateSet(cx, o)
 }
 
+// Move a panel to a new home. The panel never leaves the dock, so it is never told it was removed.
+//
+// MovePanel is <gpui_kit::base::dock::DockArea>::move_panel.
+func (s DockArea) MovePanel(cx *Cx, panel DockPanelID, target InsertTarget) {
+	useBaseDock()
+	o := newReq(1536)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	putInsertTarget(o, target)
+	stateSet(cx, o)
+}
+
 // Take a dock away entirely, panels and all. Distinct from `ToggleDock`, which only takes it off
 // screen.
 //
@@ -3286,6 +3497,22 @@ func (s DockArea) RemovePanel(cx *Cx, panel DockPanel) {
 	o := newReq(1279)
 	o.u64(s.h)
 	o.u64(panel.h)
+	stateSet(cx, o)
+}
+
+// Display `panel` in the tab group that holds it, wherever that is.
+//
+// A host that is handed a file already open, or restores the tab a layout recorded as active,
+// wants that tab shown where it sits. `MovePanel` with `activate` would also move it, and the
+// group entities are the dock's own, so this is the one way to select a panel by identity. Nothing
+// happens for a panel the dock does not hold, or one already displayed.
+//
+// SelectPanel is <gpui_kit::base::dock::DockArea>::select_panel.
+func (s DockArea) SelectPanel(cx *Cx, panel DockPanelID) {
+	useBaseDock()
+	o := newReq(858)
+	o.u64(s.h)
+	o.u64(uint64(panel))
 	stateSet(cx, o)
 }
 
@@ -3349,6 +3576,21 @@ func (s DockArea) SetLocked(cx *Cx, locked bool) {
 	stateSet(cx, o)
 }
 
+// Replace the slot sizes of the split at `node` in place.
+//
+// SetSplitSizes is <gpui_kit::base::dock::DockArea>::set_split_sizes.
+func (s DockArea) SetSplitSizes(cx *Cx, node NodeID, sizes []float32) {
+	useBaseDock()
+	o := newReq(861)
+	o.u64(s.h)
+	o.u64(uint64(node))
+	o.u32(uint32(len(sizes)))
+	for _, x0 := range sizes {
+		o.f32(x0)
+	}
+	stateSet(cx, o)
+}
+
 // Change the schema version a later `Dump` writes.
 //
 // Set at construction for an area whose layout never changes shape. A host that installs one of
@@ -3369,6 +3611,20 @@ func (s DockArea) SetVersion(cx *Cx, version Option[int]) {
 	stateSet(cx, o)
 }
 
+// Zoom the tab group at `node` in, as if its own zoom control had been used.
+//
+// Nothing happens for a node that is not a live tab group, or when the group refuses — the group
+// is the one that knows.
+//
+// SetZoomedIn is <gpui_kit::base::dock::DockArea>::set_zoomed_in.
+func (s DockArea) SetZoomedIn(cx *Cx, node NodeID) {
+	useBaseDock()
+	o := newReq(862)
+	o.u64(s.h)
+	o.u64(uint64(node))
+	stateSet(cx, o)
+}
+
 // Clear the zoom, putting the zoomed container's own flag back with it.
 //
 // A container toggles its zoom itself and only reports it, so an area that dropped the view
@@ -3380,6 +3636,19 @@ func (s DockArea) SetZoomedOut(cx *Cx) {
 	useBaseDock()
 	o := newReq(342)
 	o.u64(s.h)
+	stateSet(cx, o)
+}
+
+// Put `panel` in a new tab group beside `node`.
+//
+// SplitAt is <gpui_kit::base::dock::DockArea>::split_at.
+func (s DockArea) SplitAt(cx *Cx, node NodeID, panel DockPanelID, placement Placement) {
+	useBaseDock()
+	o := newReq(863)
+	o.u64(s.h)
+	o.u64(uint64(node))
+	o.u64(uint64(panel))
+	o.u16(uint16(placement))
 	stateSet(cx, o)
 }
 
@@ -3408,6 +3677,12 @@ func (s DockArea) OnDockEvent(cx *Cx, h func(cx *Cx, e DockEvent)) Subscription 
 
 // DockAreaBuilder is the chain of DockArea's `self -> Self` methods; Build makes it, in one crossing.
 type DockAreaBuilder struct{ sb *stateBuilder }
+
+func (b DockAreaBuilder) WithRenderer(renderer DockRenderer) DockAreaBuilder {
+	o := b.sb.op(1)
+	o.u64(renderer.h)
+	return b
+}
 
 // Build makes the DockArea.
 func (b DockAreaBuilder) Build() DockArea { return DockArea{b.sb.build()} }
@@ -3521,6 +3796,15 @@ func (s DockState) Open(cx *Cx) bool {
 	return r.bool()
 }
 
+// Panel is <gpui_kit::base::dock::DockState>::panel.
+func (s DockState) Panel(cx *Cx) PanelState {
+	useBaseDock()
+	o := newReq(1541)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return rdPanelState(r)
+}
+
 // Placement is <gpui_kit::base::dock::DockState>::placement.
 func (s DockState) Placement(cx *Cx) DockPlacement {
 	useBaseDock()
@@ -3537,6 +3821,18 @@ func (s DockState) Size(cx *Cx) float32 {
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
 	return r.f32()
+}
+
+// NewDockState is <gpui_kit::base::dock::DockState>::new.
+func NewDockState(cx *Cx, panel PanelState, placement DockPlacement, size float32, open bool) DockState {
+	useBaseDock()
+	o := newReq(1539)
+	putPanelState(o, panel)
+	o.u16(uint16(placement))
+	o.f32(size)
+	o.bool(open)
+	o.u16(0) // no builder ops follow
+	return DockState{stateMake(cx, o)}
 }
 
 // DragPanel is a handle to gpui_kit::base::dock::DragPanel, a library object (PROTOCOLS.md section 13).
@@ -3562,6 +3858,15 @@ func (s DragPanel) DragSessionID(cx *Cx) uint64 {
 	return uint64(r.u64())
 }
 
+// Panel is <gpui_kit::base::dock::DragPanel>::panel.
+func (s DragPanel) Panel(cx *Cx) DockPanelID {
+	useBaseDock()
+	o := newReq(1544)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return DockPanelID(r.u64())
+}
+
 // How large the drag preview is on screen.
 //
 // The dock reads it to decide where a drop placeholder flies in from, which is hit geometry rather
@@ -3576,6 +3881,17 @@ func (s DragPanel) PreviewSize(cx *Cx) GpuiSize {
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
 	return rdGpuiSize(r)
+}
+
+// The tab group this panel was dragged out of.
+//
+// Source is <gpui_kit::base::dock::DragPanel>::source.
+func (s DragPanel) Source(cx *Cx) NodeID {
+	useBaseDock()
+	o := newReq(1545)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return NodeID(r.u64())
 }
 
 // Records where inside the panel the drag started, so a preview can be positioned relative to the
@@ -3597,6 +3913,16 @@ func (s DragPanel) SetPreviewSize(cx *Cx, size GpuiSize) {
 	o.u64(s.h)
 	putGpuiSize(o, size)
 	stateSet(cx, o)
+}
+
+// NewDragPanel is <gpui_kit::base::dock::DragPanel>::new.
+func NewDragPanel(cx *Cx, panel DockPanelID, source NodeID) DragPanel {
+	useBaseDock()
+	o := newReq(866)
+	o.u64(uint64(panel))
+	o.u64(uint64(source))
+	o.u16(0) // no builder ops follow
+	return DragPanel{stateMake(cx, o)}
 }
 
 // DropIndicator is a handle to gpui_kit::base::dock::DropIndicator, a library object (PROTOCOLS.md section 13).
@@ -3714,6 +4040,15 @@ func NewDropPlaceholderBoundsForPlacement(cx *Cx, bounds Bounds, placement Optio
 type DropTarget struct{ h uint64 }
 
 func (s DropTarget) handle() uint64 { return s.h }
+
+// Node is <gpui_kit::base::dock::DropTarget>::node.
+func (s DropTarget) Node(cx *Cx) NodeID {
+	useBaseDock()
+	o := newReq(1552)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return NodeID(r.u64())
+}
 
 // Placement is <gpui_kit::base::dock::DropTarget>::placement.
 func (s DropTarget) Placement(cx *Cx) Option[Placement] {
@@ -3859,6 +4194,17 @@ func (s EditorState) Cursor(cx *Cx) int {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return int(r.u64())
+}
+
+// Return the (0-based) `Position` of the cursor.
+//
+// CursorPosition is <gpui_kit::base::input::EditorState>::cursor_position.
+func (s EditorState) CursorPosition(cx *Cx) LspPosition {
+	useBaseInput()
+	o := newReq(1467)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdLspPosition(r)
 }
 
 // DiagnosticPopover is <gpui_kit::base::input::EditorState>::diagnostic_popover.
@@ -4532,6 +4878,15 @@ func (s EditorState) CreateRangeDecorationsCollection(cx *Cx, decorations []Rang
 	return RangeDecorationCollection{h: r.u64()}
 }
 
+// DiagnosticsMut is <gpui_kit::base::input::EditorState>::diagnostics_mut.
+func (s EditorState) DiagnosticsMut(cx *Cx) Option[DiagnosticSet] {
+	useBaseInput()
+	o := newReq(1602)
+	o.u64(s.h)
+	r := stateCall(s.h, cx, o)
+	return rdOpt(r, func(r *reader) DiagnosticSet { return DiagnosticSet{h: r.u64()} })
+}
+
 // Whether the input or its associated selection popup has focus.
 //
 // HasSelectionFocus is <gpui_kit::base::input::EditorState>::has_selection_focus.
@@ -4606,6 +4961,27 @@ func (s EditorState) SetFolded(cx *Cx, startLine int, folded bool) bool {
 	o.u64(s.h)
 	putUsize(o, startLine)
 	o.bool(folded)
+	r := stateCall(s.h, cx, o)
+	return r.bool()
+}
+
+// Unfold any folded ranges that hide the given position.
+//
+// Use this to reveal a position before acting on it (e.g. before `SetCursorPosition`, which stops
+// at a fold boundary), without touching folds elsewhere in the buffer. Fold candidates are kept,
+// so the opened ranges can be folded again from the gutter.
+//
+// A fold keeps its own first and last line visible, so a position on either of them opens nothing.
+// Nested folds all open, since opening only the outermost would leave the position hidden.
+//
+// Returns whether any fold was opened.
+//
+// UnfoldAt is <gpui_kit::base::input::EditorState>::unfold_at.
+func (s EditorState) UnfoldAt(cx *Cx, position LspPosition) bool {
+	useBaseInput()
+	o := newReq(1469)
+	o.u64(s.h)
+	putLspPosition(o, position)
 	r := stateCall(s.h, cx, o)
 	return r.bool()
 }
@@ -4803,6 +5179,27 @@ func (s EditorState) Insert(cx *Cx, text string) {
 	stateSet(cx, o)
 }
 
+// InsertCompletion is <gpui_kit::base::input::EditorState>::insert_completion.
+func (s EditorState) InsertCompletion(cx *Cx, item CompletionItem, fallbackRange Range) {
+	useBaseInput()
+	o := newReq(1650)
+	o.u64(s.h)
+	putCompletionItem(o, item)
+	putRange(o, fallbackRange)
+	stateSet(cx, o)
+}
+
+// The LSP providers, mutably. Configure the providers through this.
+//
+// LspMut is (|s: &mut gpui_kit::base::input::EditorState, e: crate::editor_text::LentEdit<gpui_kit::base::input::Lsp>, window: &mut gpui_kit::Window, cx: &mut gpui_kit::Context<gpui_kit::base::input::EditorState>| e.apply(s.lsp_mut(), window, cx)).
+func (s EditorState) LspMut(cx *Cx, edit Lsp) {
+	useBaseInput()
+	o := newReq(1747)
+	o.u64(s.h)
+	putVtape(o, edit.n)
+	stateSet(cx, o)
+}
+
 // OnContextMenu is <gpui_kit::base::input::EditorState>::on_context_menu.
 func (s EditorState) OnContextMenu(cx *Cx, handler func(cx *Cx, e Event114)) {
 	useBaseInput()
@@ -4829,6 +5226,20 @@ func (s EditorState) OpenSearch(cx *Cx, replaceMode bool) {
 	stateSet(cx, o)
 }
 
+// PresentCompletionItems is <gpui_kit::base::input::EditorState>::present_completion_items.
+func (s EditorState) PresentCompletionItems(cx *Cx, triggerStartOffset int, query string, items []CompletionItem) {
+	useBaseInput()
+	o := newReq(1651)
+	o.u64(s.h)
+	putUsize(o, triggerStartOffset)
+	o.str(query)
+	o.u32(uint32(len(items)))
+	for _, x0 := range items {
+		putCompletionItem(o, x0)
+	}
+	stateSet(cx, o)
+}
+
 // PresentDiagnostic is (|s: &mut gpui_kit::base::input::EditorState, a0, a1, cx: &mut gpui_kit::Context<gpui_kit::base::input::EditorState>| s.present_diagnostic(gpui_kit::base::input::DiagnosticEntry { range: a0, diagnostic: a1 }, cx)).
 func (s EditorState) PresentDiagnostic(cx *Cx, range_ Range, diagnostic Diagnostic) {
 	useBaseInput()
@@ -4836,6 +5247,26 @@ func (s EditorState) PresentDiagnostic(cx *Cx, range_ Range, diagnostic Diagnost
 	o.u64(s.h)
 	putRange(o, range_)
 	putVtape(o, diagnostic.n)
+	stateSet(cx, o)
+}
+
+// Wrap the text for `font`, `font_size` and `width` before the first layout, so that
+// `WrapRowCount` is known on the first frame.
+//
+// Call it after setting the value and the wrapping indent. `width` is the width of the input's
+// text area: its width less its padding, and less the line-number gutter for an editor with line
+// numbers. It wraps as layout does, a little short of that width and with the state's wrapping
+// indent. Once the input has been laid out this does nothing, and layout keeps the wrap up to
+// date. The font and font size must match the input's actual text style.
+//
+// Prewrap is <gpui_kit::base::input::EditorState>::prewrap.
+func (s EditorState) Prewrap(cx *Cx, font Font, fontSize float32, width float32) {
+	useBaseInput()
+	o := newReq(1267)
+	o.u64(s.h)
+	putFont(o, font)
+	o.f32(fontSize)
+	o.f32(width)
 	stateSet(cx, o)
 }
 
@@ -4965,6 +5396,19 @@ func (s EditorState) SetContextMenuEnabled(cx *Cx, enabled bool) {
 	stateSet(cx, o)
 }
 
+// Set (0-based) `Position` of the cursor.
+//
+// This will move the cursor to the specified line and column, and update the selection range.
+//
+// SetCursorPosition is <gpui_kit::base::input::EditorState>::set_cursor_position.
+func (s EditorState) SetCursorPosition(cx *Cx, position LspPosition) {
+	useBaseInput()
+	o := newReq(1468)
+	o.u64(s.h)
+	putLspPosition(o, position)
+	stateSet(cx, o)
+}
+
 // Update `CursorSurroundingLines` after construction.
 //
 // SetCursorSurroundingLines is <gpui_kit::base::input::EditorState>::set_cursor_surrounding_lines.
@@ -5009,6 +5453,23 @@ func (s EditorState) SetFoldBackground(cx *Cx, color Option[Color]) {
 	if x0, ok := color.Get(); ok {
 		o.u8(1)
 		putColor(o, x0)
+	} else {
+		o.u8(0)
+	}
+	stateSet(cx, o)
+}
+
+// Draws a placeholder right after the text of each folded line, given its buffer row. Clicking it
+// unfolds the line.
+//
+// SetFoldPlaceholderRenderer is <gpui_kit::base::input::EditorState>::set_fold_placeholder_renderer.
+func (s EditorState) SetFoldPlaceholderRenderer(cx *Cx, renderer Option[RowSource]) {
+	useBaseInput()
+	o := newReq(1676)
+	o.u64(s.h)
+	if x0, ok := renderer.Get(); ok {
+		o.u8(1)
+		o.u64(x0.h)
 	} else {
 		o.u8(0)
 	}
@@ -5093,7 +5554,7 @@ func (s EditorState) SetMaskPattern(cx *Cx, pattern MaskPatternInto) {
 }
 
 // SetOverlayActionHandler is (|s: &mut gpui_kit::base::input::EditorState, keys: Vec<(gpui_kit::base::input::InputOverlayKind, String)>| s.set_overlay_action_handler(move |k, a, _, _| keys.iter().any(|(kk, n)| std::mem::discriminant(kk) == std::mem::discriminant(&k) && n.as_str() == a.name()))).
-func (s EditorState) SetOverlayActionHandler(cx *Cx, taken []TupleInputoverlaykindString) {
+func (s EditorState) SetOverlayActionHandler(cx *Cx, taken []TupleInputOverlayKindString) {
 	useBaseInput()
 	o := newReq(1749)
 	o.u64(s.h)
@@ -5185,6 +5646,25 @@ func (s EditorState) SetScrollbarPlacement(cx *Cx, placement ScrollbarPlacement)
 	o := newReq(1792)
 	o.u64(s.h)
 	o.u16(uint16(placement))
+	stateSet(cx, o)
+}
+
+// Supply the element painted in place of the editor's scrollbar, or `None` to keep Base's. The
+// renderer is called where the editor paints its scrollbar, with that frame's
+// `EditorScrollbarContext`. Like `SetEditorStyle`, this does not notify, so it can be called while
+// rendering.
+//
+// SetScrollbarRenderer is <gpui_kit::base::input::EditorState>::set_scrollbar_renderer.
+func (s EditorState) SetScrollbarRenderer(cx *Cx, renderer Option[RowSource]) {
+	useBaseInput()
+	o := newReq(1603)
+	o.u64(s.h)
+	if x0, ok := renderer.Get(); ok {
+		o.u8(1)
+		o.u64(itemsCheck(x0, 21))
+	} else {
+		o.u8(0)
+	}
 	stateSet(cx, o)
 }
 
@@ -6107,6 +6587,20 @@ func (s History) ReplaceCurrent(cx *Cx, entry string) {
 	stateSet(cx, o)
 }
 
+// Keeps only entries accepted by `keep` on both sides of the current position.
+//
+// Retain is <gpui_kit::base::History<gpui_kit::SharedString>>::retain.
+func (s History) Retain(cx *Cx, keep []string) {
+	useBaseRoot()
+	o := newReq(1662)
+	o.u64(s.h)
+	o.u32(uint32(len(keep)))
+	for _, x0 := range keep {
+		o.str(x0)
+	}
+	stateSet(cx, o)
+}
+
 // HistoryBuilder is the chain of History's `self -> Self` methods; Build makes it, in one crossing.
 type HistoryBuilder struct{ sb *stateBuilder }
 
@@ -6130,6 +6624,17 @@ func NewHistory(cx *Cx) HistoryBuilder {
 type HorizontalScrollClaim struct{ h uint64 }
 
 func (s HorizontalScrollClaim) handle() uint64 { return s.h }
+
+// When the step was handled.
+//
+// At is <gpui_kit::base::HorizontalScrollClaim>::at.
+func (s HorizontalScrollClaim) At(cx *Cx) time.Duration {
+	useBaseScrollableMask()
+	o := newReq(1592)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return time.Duration(int64(r.u64()))
+}
 
 // How far the content moved: positive moves it right, negative moves it left.
 //
@@ -6243,12 +6748,12 @@ func (s InlineNodeRead) AsImage(cx *Cx) Option[ImageNode] {
 // The marks, each a byte range of the text and its style.
 //
 // MarkRuns is <gpui_kit::base::text::editor_host::InlineNode>::mark_runs.
-func (s InlineNodeRead) MarkRuns(cx *Cx) []TupleRangeBasetextmark {
+func (s InlineNodeRead) MarkRuns(cx *Cx) []TupleRangeBaseTextMark {
 	useBaseText()
 	o := newReq(1405)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
-	return rdList(r, func(r *reader) TupleRangeBasetextmark { return TupleRangeBasetextmark{rdRange(r), rdBaseTextMark(r)} })
+	return rdList(r, func(r *reader) TupleRangeBaseTextMark { return TupleRangeBaseTextMark{rdRange(r), rdBaseTextMark(r)} })
 }
 
 // The text of the run (the fallback text of a custom node, empty for an image).
@@ -6556,6 +7061,20 @@ func (s InputContent) Tokens(cx *Cx) []InlineTokenSpan {
 	return rdList(r, func(r *reader) InlineTokenSpan { return InlineTokenSpan{h: r.u64()} })
 }
 
+// Attach a token to a half-open UTF-8 byte range of the text. The range must be nonempty, sit on
+// grapheme boundaries, contain exactly the token's text and not overlap another token.
+//
+// WithToken is <gpui_kit::base::input::InputContent>::with_token.
+func (s InputContent) WithToken(cx *Cx, range_ Range, token InlineToken) Fallible[InputContent] {
+	useBaseInput()
+	o := newReq(1143)
+	o.u64(s.h)
+	putRange(o, range_)
+	putVtape(o, token.n)
+	r := stateCall(s.h, cx, o)
+	return rdFallible(r, func(r *reader) InputContent { return InputContent{h: r.u64()} })
+}
+
 // NewInputContent is <gpui_kit::base::input::InputContent>::new.
 func NewInputContent(cx *Cx, text string) InputContent {
 	useBaseInput()
@@ -6833,6 +7352,17 @@ func (s InputState) Cursor(cx *Cx) int {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return int(r.u64())
+}
+
+// Return the (0-based) `Position` of the cursor.
+//
+// CursorPosition is <gpui_kit::base::input::InputState>::cursor_position.
+func (s InputState) CursorPosition(cx *Cx) LspPosition {
+	useBaseInput()
+	o := newReq(1471)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdLspPosition(r)
 }
 
 // DiagnosticPopover is <gpui_kit::base::input::InputState>::diagnostic_popover.
@@ -7339,6 +7869,15 @@ func (s InputState) VisibleRowRange(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// DiagnosticsMut is <gpui_kit::base::input::InputState>::diagnostics_mut.
+func (s InputState) DiagnosticsMut(cx *Cx) Option[DiagnosticSet] {
+	useBaseInput()
+	o := newReq(1611)
+	o.u64(s.h)
+	r := stateCall(s.h, cx, o)
+	return rdOpt(r, func(r *reader) DiagnosticSet { return DiagnosticSet{h: r.u64()} })
+}
+
 // Whether the input or its associated selection popup has focus.
 //
 // HasSelectionFocus is <gpui_kit::base::input::InputState>::has_selection_focus.
@@ -7593,6 +8132,26 @@ func (s InputState) OpenSearch(cx *Cx, replaceMode bool) {
 	stateSet(cx, o)
 }
 
+// Wrap the text for `font`, `font_size` and `width` before the first layout, so that
+// `WrapRowCount` is known on the first frame.
+//
+// Call it after setting the value and the wrapping indent. `width` is the width of the input's
+// text area: its width less its padding, and less the line-number gutter for an editor with line
+// numbers. It wraps as layout does, a little short of that width and with the state's wrapping
+// indent. Once the input has been laid out this does nothing, and layout keeps the wrap up to
+// date. The font and font size must match the input's actual text style.
+//
+// Prewrap is <gpui_kit::base::input::InputState>::prewrap.
+func (s InputState) Prewrap(cx *Cx, font Font, fontSize float32, width float32) {
+	useBaseInput()
+	o := newReq(1270)
+	o.u64(s.h)
+	putFont(o, font)
+	o.f32(fontSize)
+	o.f32(width)
+	stateSet(cx, o)
+}
+
 // Refresh the input, so the next render re-runs syntax highlighting and the LSP providers, not
 // just a redraw.
 //
@@ -7697,6 +8256,19 @@ func (s InputState) SetContextMenuEnabled(cx *Cx, enabled bool) {
 	stateSet(cx, o)
 }
 
+// Set (0-based) `Position` of the cursor.
+//
+// This will move the cursor to the specified line and column, and update the selection range.
+//
+// SetCursorPosition is <gpui_kit::base::input::InputState>::set_cursor_position.
+func (s InputState) SetCursorPosition(cx *Cx, position LspPosition) {
+	useBaseInput()
+	o := newReq(1472)
+	o.u64(s.h)
+	putLspPosition(o, position)
+	stateSet(cx, o)
+}
+
 // Update `CursorSurroundingLines` after construction.
 //
 // SetCursorSurroundingLines is <gpui_kit::base::input::InputState>::set_cursor_surrounding_lines.
@@ -7741,6 +8313,23 @@ func (s InputState) SetFoldBackground(cx *Cx, color Option[Color]) {
 	if x0, ok := color.Get(); ok {
 		o.u8(1)
 		putColor(o, x0)
+	} else {
+		o.u8(0)
+	}
+	stateSet(cx, o)
+}
+
+// Draws a placeholder right after the text of each folded line, given its buffer row. Clicking it
+// unfolds the line.
+//
+// SetFoldPlaceholderRenderer is <gpui_kit::base::input::InputState>::set_fold_placeholder_renderer.
+func (s InputState) SetFoldPlaceholderRenderer(cx *Cx, renderer Option[RowSource]) {
+	useBaseInput()
+	o := newReq(1677)
+	o.u64(s.h)
+	if x0, ok := renderer.Get(); ok {
+		o.u8(1)
+		o.u64(x0.h)
 	} else {
 		o.u8(0)
 	}
@@ -7889,6 +8478,25 @@ func (s InputState) SetScrollYF64(cx *Cx, y float64) {
 	o := newReq(1797)
 	o.u64(s.h)
 	o.f64(y)
+	stateSet(cx, o)
+}
+
+// Supply the element painted in place of the editor's scrollbar, or `None` to keep Base's. The
+// renderer is called where the editor paints its scrollbar, with that frame's
+// `EditorScrollbarContext`. Like `SetEditorStyle`, this does not notify, so it can be called while
+// rendering.
+//
+// SetScrollbarRenderer is <gpui_kit::base::input::InputState>::set_scrollbar_renderer.
+func (s InputState) SetScrollbarRenderer(cx *Cx, renderer Option[RowSource]) {
+	useBaseInput()
+	o := newReq(1612)
+	o.u64(s.h)
+	if x0, ok := renderer.Get(); ok {
+		o.u8(1)
+		o.u64(itemsCheck(x0, 21))
+	} else {
+		o.u8(0)
+	}
 	stateSet(cx, o)
 }
 
@@ -8188,6 +8796,12 @@ func (b InputStateBuilder) Step(step NumberStepInto) InputStateBuilder {
 	return b
 }
 
+func (b InputStateBuilder) StepBy(f string) InputStateBuilder {
+	o := b.sb.op(16)
+	putExpr(o, f, 2)
+	return b
+}
+
 func (b InputStateBuilder) Validate(f func(cx *Cx, e string) bool) InputStateBuilder {
 	o := b.sb.op(15)
 	putKeptHandler(o, f, 98)
@@ -8237,6 +8851,18 @@ func (s Keyframes) Sample(cx *Cx, progress float32) float32 {
 	o.f32(progress)
 	r := objGet(s.h, cx, o)
 	return r.f32()
+}
+
+// KeyframesTryNew is <gpui_kit::base::Keyframes<f32>>::try_new.
+func KeyframesTryNew(cx *Cx, frames []KeyframeF32) Fallible[Keyframes] {
+	useBaseMotion()
+	o := newReq(1241)
+	o.u32(uint32(len(frames)))
+	for _, x0 := range frames {
+		putKeyframeF32(o, x0)
+	}
+	r := stateCall(0, cx, o)
+	return rdFallible(r, func(r *reader) Keyframes { return Keyframes{h: r.u64()} })
 }
 
 // LeafGeometry is a handle to gpui_kit::base::text::editor_host::LeafGeometry, a library object (PROTOCOLS.md section 13).
@@ -8815,6 +9441,17 @@ type NavStackState struct{ h uint64 }
 
 func (s NavStackState) handle() uint64 { return s.h }
 
+// The view on top of the stack, which is the one shown once any transition has finished.
+//
+// Current is <gpui_kit::base::NavStackState>::current.
+func (s NavStackState) Current(cx *Cx) Option[View] {
+	useBaseNavStack()
+	o := newReq(1518)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) View { return View{h: r.u64()} })
+}
+
 // The number of views on the stack.
 //
 // Depth is <gpui_kit::base::NavStackState>::depth.
@@ -8826,6 +9463,18 @@ func (s NavStackState) Depth(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The views popped since the last push, nearest first: the one `forward` would bring back is the
+// first.
+//
+// ForwardViews is <gpui_kit::base::NavStackState>::forward_views.
+func (s NavStackState) ForwardViews(cx *Cx) []View {
+	useBaseNavStack()
+	o := newReq(1520)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdList(r, func(r *reader) View { return View{h: r.u64()} })
+}
+
 // IsEmpty is <gpui_kit::base::NavStackState>::is_empty.
 func (s NavStackState) IsEmpty(cx *Cx) bool {
 	useBaseNavStack()
@@ -8835,6 +9484,72 @@ func (s NavStackState) IsEmpty(cx *Cx) bool {
 	return r.bool()
 }
 
+// Every view on the stack, root first.
+//
+// Views is <gpui_kit::base::NavStackState>::views.
+func (s NavStackState) Views(cx *Cx) []View {
+	useBaseNavStack()
+	o := newReq(1525)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdList(r, func(r *reader) View { return View{h: r.u64()} })
+}
+
+// Brings back the most recently popped view, starting a `Push` transition over the current top,
+// and returns it. `None` when nothing has been popped since the last push.
+//
+// Forward is <gpui_kit::base::NavStackState>::forward.
+func (s NavStackState) Forward(cx *Cx, motion NavMotion) Option[View] {
+	useBaseNavStack()
+	o := newReq(1519)
+	o.u64(s.h)
+	o.u16(uint16(motion))
+	r := stateCall(s.h, cx, o)
+	return rdOpt(r, func(r *reader) View { return View{h: r.u64()} })
+}
+
+// Pops the top view and returns it, starting a `Pop` transition to the view below. The view waits
+// in `forward_views`.
+//
+// The root is never popped: this returns `None` at a depth of one or less.
+//
+// Pop is <gpui_kit::base::NavStackState>::pop.
+func (s NavStackState) Pop(cx *Cx, motion NavMotion) Option[View] {
+	useBaseNavStack()
+	o := newReq(1521)
+	o.u64(s.h)
+	o.u16(uint16(motion))
+	r := stateCall(s.h, cx, o)
+	return rdOpt(r, func(r *reader) View { return View{h: r.u64()} })
+}
+
+// Pops every view above the root in one `Pop` transition from the previous top, and returns them
+// root-side first.
+//
+// PopToRoot is <gpui_kit::base::NavStackState>::pop_to_root.
+func (s NavStackState) PopToRoot(cx *Cx, motion NavMotion) []View {
+	useBaseNavStack()
+	o := newReq(1522)
+	o.u64(s.h)
+	o.u16(uint16(motion))
+	r := stateCall(s.h, cx, o)
+	return rdList(r, func(r *reader) View { return View{h: r.u64()} })
+}
+
+// Swaps the top view for `view` and returns the one replaced, starting a `Replace` transition. The
+// forward views are kept. On an empty stack this is a push.
+//
+// Replace is <gpui_kit::base::NavStackState>::replace.
+func (s NavStackState) Replace(cx *Cx, view View, motion NavMotion) Option[View] {
+	useBaseNavStack()
+	o := newReq(1524)
+	o.u64(s.h)
+	o.u64(view.h)
+	o.u16(uint16(motion))
+	r := stateCall(s.h, cx, o)
+	return rdOpt(r, func(r *reader) View { return View{h: r.u64()} })
+}
+
 // Empties the stack and the forward views immediately, abandoning any running transition.
 //
 // Clear is <gpui_kit::base::NavStackState>::clear.
@@ -8842,6 +9557,21 @@ func (s NavStackState) Clear(cx *Cx) {
 	useBaseNavStack()
 	o := newReq(288)
 	o.u64(s.h)
+	stateSet(cx, o)
+}
+
+// Pushes `view` on top of the stack and discards the forward views.
+//
+// Into an empty stack this is immediate, like Qt's `initialItem`. Over an existing top it starts a
+// `Push` transition, unless `motion` is `Immediate`.
+//
+// Push is <gpui_kit::base::NavStackState>::push.
+func (s NavStackState) Push(cx *Cx, view View, motion NavMotion) {
+	useBaseNavStack()
+	o := newReq(1523)
+	o.u64(s.h)
+	o.u64(view.h)
+	o.u16(uint16(motion))
 	stateSet(cx, o)
 }
 
@@ -8882,9 +9612,21 @@ func (s Notification) Dismiss(cx *Cx) {
 // NotificationBuilder is the chain of Notification's `self -> Self` methods; Build makes it, in one crossing.
 type NotificationBuilder struct{ sb *stateBuilder }
 
+func (b NotificationBuilder) Action(action RowSource) NotificationBuilder {
+	o := b.sb.op(14)
+	o.u64(itemsCheck(action, 22))
+	return b
+}
+
 func (b NotificationBuilder) Autohide(autohide bool) NotificationBuilder {
 	o := b.sb.op(1)
 	o.bool(autohide)
+	return b
+}
+
+func (b NotificationBuilder) Content(content RowSource) NotificationBuilder {
+	o := b.sb.op(15)
+	o.u64(itemsCheck(content, 23))
 	return b
 }
 
@@ -9241,10 +9983,75 @@ type PaneNode struct{ h uint64 }
 
 func (s PaneNode) handle() uint64 { return s.h }
 
+// ID is <gpui_kit::base::dock::PaneNode>::id.
+func (s PaneNode) ID(cx *Cx) NodeID {
+	useBaseDock()
+	o := newReq(1553)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return NodeID(r.u64())
+}
+
 // PaneTree is a handle to gpui_kit::base::dock::PaneTree, a library object (PROTOCOLS.md section 13).
 type PaneTree struct{ h uint64 }
 
 func (s PaneTree) handle() uint64 { return s.h }
+
+// Whether `panel` is anywhere in this tree.
+//
+// ContainsPanel is <gpui_kit::base::dock::PaneTree>::contains_panel.
+func (s PaneTree) ContainsPanel(cx *Cx, panel DockPanelID) bool {
+	useBaseDock()
+	o := newReq(872)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	r := objGet(s.h, cx, o)
+	return r.bool()
+}
+
+// FindNode is <gpui_kit::base::dock::PaneTree>::find_node.
+func (s PaneTree) FindNode(cx *Cx, id NodeID) Option[PaneNode] {
+	useBaseDock()
+	o := newReq(873)
+	o.u64(s.h)
+	o.u64(uint64(id))
+	r := objGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) PaneNode { return PaneNode{h: r.u64()} })
+}
+
+// The tab node holding `panel`.
+//
+// FindPanelNode is <gpui_kit::base::dock::PaneTree>::find_panel_node.
+func (s PaneTree) FindPanelNode(cx *Cx, panel DockPanelID) Option[NodeID] {
+	useBaseDock()
+	o := newReq(1554)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	r := objGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) NodeID { return NodeID(r.u64()) })
+}
+
+// Every container id in the tree, in pre-order.
+//
+// NodeIDs is <gpui_kit::base::dock::PaneTree>::node_ids.
+func (s PaneTree) NodeIDs(cx *Cx) []NodeID {
+	useBaseDock()
+	o := newReq(1557)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return rdList(r, func(r *reader) NodeID { return NodeID(r.u64()) })
+}
+
+// Every panel in the tree, in pre-order.
+//
+// Panels is <gpui_kit::base::dock::PaneTree>::panels.
+func (s PaneTree) Panels(cx *Cx) []DockPanelID {
+	useBaseDock()
+	o := newReq(1558)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return rdList(r, func(r *reader) DockPanelID { return DockPanelID(r.u64()) })
+}
 
 // Root is <gpui_kit::base::dock::PaneTree>::root.
 func (s PaneTree) Root(cx *Cx) PaneNode {
@@ -9262,6 +10069,95 @@ func (s PaneTree) RootKind(cx *Cx) RootKind {
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
 	return RootKind(r.u16())
+}
+
+// InsertPanel is <gpui_kit::base::dock::PaneTree>::insert_panel.
+func (s PaneTree) InsertPanel(cx *Cx, panel DockPanelID, target InsertTarget) EditResult {
+	useBaseDock()
+	o := newReq(1555)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	putInsertTarget(o, target)
+	r := stateCall(s.h, cx, o)
+	return EditResult{h: r.u64()}
+}
+
+// Move a panel to a new home without ever removing it from the tree's perspective, so the caller
+// never fires `on_removed` for a drag.
+//
+// MovePanel is <gpui_kit::base::dock::PaneTree>::move_panel.
+func (s PaneTree) MovePanel(cx *Cx, panel DockPanelID, target InsertTarget) EditResult {
+	useBaseDock()
+	o := newReq(1556)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	putInsertTarget(o, target)
+	r := stateCall(s.h, cx, o)
+	return EditResult{h: r.u64()}
+}
+
+// RemovePanel is <gpui_kit::base::dock::PaneTree>::remove_panel.
+func (s PaneTree) RemovePanel(cx *Cx, panel DockPanelID) EditResult {
+	useBaseDock()
+	o := newReq(876)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	r := stateCall(s.h, cx, o)
+	return EditResult{h: r.u64()}
+}
+
+// SetActive is <gpui_kit::base::dock::PaneTree>::set_active.
+func (s PaneTree) SetActive(cx *Cx, node NodeID, ix int) EditResult {
+	useBaseDock()
+	o := newReq(879)
+	o.u64(s.h)
+	o.u64(uint64(node))
+	putUsize(o, ix)
+	r := stateCall(s.h, cx, o)
+	return EditResult{h: r.u64()}
+}
+
+// Replace a split's slot sizes wholesale.
+//
+// A no-op, like every other operation given input it cannot resolve, if `new_sizes.len()` does not
+// match the split's child count: no rule in `normalize` repairs a length mismatch, so applying it
+// would otherwise leave `children.len() != sizes.len()` and trip `normalize`'s `debug_assert!`.
+//
+// SetSizes is <gpui_kit::base::dock::PaneTree>::set_sizes.
+func (s PaneTree) SetSizes(cx *Cx, node NodeID, newSizes []Option[float32]) EditResult {
+	useBaseDock()
+	o := newReq(880)
+	o.u64(s.h)
+	o.u64(uint64(node))
+	o.u32(uint32(len(newSizes)))
+	for _, x0 := range newSizes {
+		if x1, ok := x0.Get(); ok {
+			o.u8(1)
+			o.f32(x1)
+		} else {
+			o.u8(0)
+		}
+	}
+	r := stateCall(s.h, cx, o)
+	return EditResult{h: r.u64()}
+}
+
+// Split is <gpui_kit::base::dock::PaneTree>::split.
+func (s PaneTree) Split(cx *Cx, at NodeID, panel DockPanelID, placement Placement, size Option[float32]) EditResult {
+	useBaseDock()
+	o := newReq(881)
+	o.u64(s.h)
+	o.u64(uint64(at))
+	o.u64(uint64(panel))
+	o.u16(uint16(placement))
+	if x0, ok := size.Get(); ok {
+		o.u8(1)
+		o.f32(x0)
+	} else {
+		o.u8(0)
+	}
+	r := stateCall(s.h, cx, o)
+	return EditResult{h: r.u64()}
 }
 
 // Collapse the tree to canonical shape.
@@ -9303,6 +10199,17 @@ func NewPaneTree(cx *Cx, rootKind RootKind) PaneTree {
 type PanelHandle struct{ h uint64 }
 
 func (s PanelHandle) handle() uint64 { return s.h }
+
+// The presentation handle, cloned out.
+//
+// Panel is <gpui_kit::component::dock::PanelHandle>::panel.
+func (s PanelHandle) Panel(cx *Cx) DockPanel {
+	useComponentDock()
+	o := newReq(1588)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return DockPanel{h: r.u64()}
+}
 
 // NewPanelHandle is <gpui_kit::component::dock::PanelHandle>::new.
 func NewPanelHandle(cx *Cx, panel DockPanel) PanelHandle {
@@ -9422,6 +10329,18 @@ func NewPathCachesDefault(cx *Cx) PathCaches {
 type Pie struct{ h uint64 }
 
 func (s Pie) handle() uint64 { return s.h }
+
+// Get the arcs of the Pie.
+//
+// Arcs is <gpui_kit::base::plot::shape::Pie<crate::data::Datum>>::arcs.
+func (s Pie) Arcs(cx *Cx, data Data) []ArcData {
+	useBasePlot()
+	o := newReq(1636)
+	o.u64(s.h)
+	putData(o, data)
+	r := objGet(s.h, cx, o)
+	return rdList(r, func(r *reader) ArcData { return rdArcData(r) })
+}
 
 // PieBuilder is the chain of Pie's `self -> Self` methods; Build makes it, in one crossing.
 type PieBuilder struct{ sb *stateBuilder }
@@ -9690,13 +10609,13 @@ func (s QuestionnaireAnswers) IsEmpty(cx *Cx) bool {
 }
 
 // Iter is <gpui_kit::base::questionnaire::QuestionnaireAnswers>::iter.
-func (s QuestionnaireAnswers) Iter(cx *Cx) []TupleStringQuestionnaireanswerread {
+func (s QuestionnaireAnswers) Iter(cx *Cx) []TupleStringQuestionnaireAnswerRead {
 	useBaseQuestionnaire()
 	o := newReq(1354)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
-	return rdList(r, func(r *reader) TupleStringQuestionnaireanswerread {
-		return TupleStringQuestionnaireanswerread{r.str(), QuestionnaireAnswerRead{h: r.u64()}}
+	return rdList(r, func(r *reader) TupleStringQuestionnaireAnswerRead {
+		return TupleStringQuestionnaireAnswerRead{r.str(), QuestionnaireAnswerRead{h: r.u64()}}
 	})
 }
 
@@ -9926,6 +10845,15 @@ func (s QuestionnaireItemDefinitionRead) Name(cx *Cx) string {
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
 	return r.str()
+}
+
+// Validator is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::validator.
+func (s QuestionnaireItemDefinitionRead) Validator(cx *Cx) Option[QuestionnaireValidator] {
+	useBaseQuestionnaire()
+	o := newReq(1763)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) QuestionnaireValidator { return rdQuestionnaireValidator(r) })
 }
 
 // QuestionnaireItemState is a handle to gpui_kit::base::questionnaire::QuestionnaireItemState, a library object (PROTOCOLS.md section 13).
@@ -11008,6 +11936,17 @@ func NewResizableState(cx *Cx) ResizableState {
 type Root struct{ h uint64 }
 
 func (s Root) handle() uint64 { return s.h }
+
+// The original application content entity.
+//
+// View is <gpui_kit::base::Root>::view.
+func (s Root) View(cx *Cx) View {
+	useBaseRoot()
+	o := newReq(1645)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return View{h: r.u64()}
+}
 
 // SankeyGraph is a handle to gpui_kit::base::plot::shape::SankeyGraph, a library object (PROTOCOLS.md section 13).
 type SankeyGraph struct{ h uint64 }
@@ -12157,6 +13096,17 @@ type Stack struct{ h uint64 }
 
 func (s Stack) handle() uint64 { return s.h }
 
+// Compute the stacked series
+//
+// Series is <gpui_kit::base::plot::shape::Stack<crate::data::Datum>>::series.
+func (s Stack) Series(cx *Cx) []StackSeries {
+	useBasePlot()
+	o := newReq(1639)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return rdList(r, func(r *reader) StackSeries { return rdStackSeries(r) })
+}
+
 // StackBuilder is the chain of Stack's `self -> Self` methods; Build makes it, in one crossing.
 type StackBuilder struct{ sb *stateBuilder }
 
@@ -12471,6 +13421,18 @@ func (s TabGroup) ActiveIx(cx *Cx) int {
 	return int(r.u64())
 }
 
+// The panel currently on screen, which is the displayed tab unless it has gone invisible, in which
+// case rendering falls back to the first visible panel.
+//
+// ActivePanel is <gpui_kit::base::dock::TabGroup>::active_panel.
+func (s TabGroup) ActivePanel(cx *Cx) Option[DockPanel] {
+	useBaseDock()
+	o := newReq(1560)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) DockPanel { return DockPanel{h: r.u64()} })
+}
+
 // A snapshot of everything a skin needs to draw this group.
 //
 // Context is <gpui_kit::base::dock::TabGroup>::context.
@@ -12514,6 +13476,38 @@ func (s TabGroup) IsZoomed(cx *Cx) bool {
 	return r.bool()
 }
 
+// The `Tabs` node this group mirrors.
+//
+// Node is <gpui_kit::base::dock::TabGroup>::node.
+func (s TabGroup) Node(cx *Cx) NodeID {
+	useBaseDock()
+	o := newReq(1566)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return NodeID(r.u64())
+}
+
+// Panels is <gpui_kit::base::dock::TabGroup>::panels.
+func (s TabGroup) Panels(cx *Cx) []DockPanel {
+	useBaseDock()
+	o := newReq(1567)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdList(r, func(r *reader) DockPanel { return DockPanel{h: r.u64()} })
+}
+
+// Ask the container to close `panel`. Nothing happens for a panel that is not in this group, or
+// when either the group or the panel refuses.
+//
+// ClosePanel is <gpui_kit::base::dock::TabGroup>::close_panel.
+func (s TabGroup) ClosePanel(cx *Cx, panel DockPanelID) {
+	useBaseDock()
+	o := newReq(1561)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	stateSet(cx, o)
+}
+
 // Display `ix`, if it names a tab that is not already displayed.
 //
 // SelectTab is <gpui_kit::base::dock::TabGroup>::select_tab.
@@ -12547,6 +13541,12 @@ func (s TabGroup) OnTabGroupEvent(cx *Cx, h func(cx *Cx, e TabGroupEvent)) Subsc
 // TabGroupBuilder is the chain of TabGroup's `self -> Self` methods; Build makes it, in one crossing.
 type TabGroupBuilder struct{ sb *stateBuilder }
 
+func (b TabGroupBuilder) WithRenderer(renderer DockRenderer) TabGroupBuilder {
+	o := b.sb.op(1)
+	o.u64(renderer.h)
+	return b
+}
+
 // Build makes the TabGroup.
 func (b TabGroupBuilder) Build() TabGroup { return TabGroup{b.sb.build()} }
 
@@ -12562,6 +13562,17 @@ func (s TabGroupContext) ActiveIx(cx *Cx) int {
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
 	return int(r.u64())
+}
+
+// The panel on screen, which is the displayed tab unless that panel has gone invisible.
+//
+// ActivePanel is <gpui_kit::base::dock::TabGroupContext>::active_panel.
+func (s TabGroupContext) ActivePanel(cx *Cx) Option[DockPanel] {
+	useBaseDock()
+	o := newReq(1572)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return rdOpt(r, func(r *reader) DockPanel { return DockPanel{h: r.u64()} })
 }
 
 // The drag payload for the tab at `ix`, for a skin wiring `on_drag` onto its tabs. `None` when
@@ -12633,6 +13644,19 @@ func (s TabGroupContext) IsLocked(cx *Cx) bool {
 	return r.bool()
 }
 
+// Whether `panel` can be closed from this group. Uses the same constraints as `ClosePanel`,
+// including the panel's own `closable` flag.
+//
+// IsPanelClosable is <gpui_kit::base::dock::TabGroupContext>::is_panel_closable.
+func (s TabGroupContext) IsPanelClosable(cx *Cx, panel DockPanelID) bool {
+	useBaseDock()
+	o := newReq(1581)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	r := objGet(s.h, cx, o)
+	return r.bool()
+}
+
 // IsZoomed is <gpui_kit::base::dock::TabGroupContext>::is_zoomed.
 func (s TabGroupContext) IsZoomed(cx *Cx) bool {
 	useBaseDock()
@@ -12640,6 +13664,39 @@ func (s TabGroupContext) IsZoomed(cx *Cx) bool {
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
 	return r.bool()
+}
+
+// The `Tabs` node this group mirrors, for a skin that needs to name the group in a drag payload or
+// a drop target.
+//
+// Node is <gpui_kit::base::dock::TabGroupContext>::node.
+func (s TabGroupContext) Node(cx *Cx) NodeID {
+	useBaseDock()
+	o := newReq(1583)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return NodeID(r.u64())
+}
+
+// Every panel in the group, in tab order — visible or not. A skin filters with `Visible` when it
+// draws.
+//
+// Panels is <gpui_kit::base::dock::TabGroupContext>::panels.
+func (s TabGroupContext) Panels(cx *Cx) []DockPanel {
+	useBaseDock()
+	o := newReq(1584)
+	o.u64(s.h)
+	r := objGet(s.h, cx, o)
+	return rdList(r, func(r *reader) DockPanel { return DockPanel{h: r.u64()} })
+}
+
+// Close is <gpui_kit::base::dock::TabGroupContext>::close.
+func (s TabGroupContext) Close(cx *Cx, panel DockPanelID) {
+	useBaseDock()
+	o := newReq(1573)
+	o.u64(s.h)
+	o.u64(uint64(panel))
+	stateSet(cx, o)
 }
 
 // A host-owned drag dropped on the tab bar. `placement` is `None` to merge into this group rather
@@ -12735,12 +13792,12 @@ func (s TableState) Delegate(cx *Cx) RowSource {
 // rows in batches.
 //
 // Dump is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump.
-func (s TableState) Dump(cx *Cx) TupleStringString {
+func (s TableState) Dump(cx *Cx) TupleListStringListListString {
 	useComponentTable()
 	o := newReq(702)
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
-	return TupleStringString{rdList(r, func(r *reader) string { return r.str() }), rdList(r, func(r *reader) []string { return rdList(r, func(r *reader) string { return r.str() }) })}
+	return TupleListStringListListString{rdList(r, func(r *reader) string { return r.str() }), rdList(r, func(r *reader) []string { return rdList(r, func(r *reader) string { return r.str() }) })}
 }
 
 // Dump table data for the specified row range.
@@ -12751,13 +13808,13 @@ func (s TableState) Dump(cx *Cx) TupleStringString {
 // invoke this repeatedly with bounded ranges.
 //
 // DumpRange is <gpui_kit::component::table::TableState<crate::shim_rows::GkTableDelegate>>::dump_range.
-func (s TableState) DumpRange(cx *Cx, range_ Range) TupleStringString {
+func (s TableState) DumpRange(cx *Cx, range_ Range) TupleListStringListListString {
 	useComponentTable()
 	o := newReq(703)
 	o.u64(s.h)
 	putRange(o, range_)
 	r := stateGet(s.h, cx, o)
-	return TupleStringString{rdList(r, func(r *reader) string { return r.str() }), rdList(r, func(r *reader) []string { return rdList(r, func(r *reader) string { return r.str() }) })}
+	return TupleListStringListListString{rdList(r, func(r *reader) string { return r.str() }), rdList(r, func(r *reader) []string { return rdList(r, func(r *reader) string { return r.str() }) })}
 }
 
 // Dump the header row of the table.
@@ -13474,6 +14531,12 @@ func (s TextViewDefaults) Install(cx *Cx) {
 // TextViewDefaultsBuilder is the chain of TextViewDefaults's `self -> Self` methods; Build makes it, in one crossing.
 type TextViewDefaultsBuilder struct{ sb *stateBuilder }
 
+func (b TextViewDefaultsBuilder) WithCodeBlockHighlighter(highlighter Ask[CodeBlock, []TupleRangeHighlightStyle]) TextViewDefaultsBuilder {
+	o := b.sb.op(2)
+	o.u64(highlighter.Src.h)
+	return b
+}
+
 func (b TextViewDefaultsBuilder) WithInheritTextColor(inherit bool) TextViewDefaultsBuilder {
 	o := b.sb.op(1)
 	o.bool(inherit)
@@ -13845,6 +14908,17 @@ func (s TextareaState) Cursor(cx *Cx) int {
 	o.u64(s.h)
 	r := stateGet(s.h, cx, o)
 	return int(r.u64())
+}
+
+// Return the (0-based) `Position` of the cursor.
+//
+// CursorPosition is <gpui_kit::base::input::TextareaState>::cursor_position.
+func (s TextareaState) CursorPosition(cx *Cx) LspPosition {
+	useBaseInput()
+	o := newReq(1476)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdLspPosition(r)
 }
 
 // The textarea's text decorations, as last set and moved by edits since.
@@ -14362,6 +15436,15 @@ func (s TextareaState) VisibleRowRange(cx *Cx) Option[Range] {
 	return rdOpt(r, func(r *reader) Range { return rdRange(r) })
 }
 
+// DiagnosticsMut is <gpui_kit::base::input::TextareaState>::diagnostics_mut.
+func (s TextareaState) DiagnosticsMut(cx *Cx) Option[DiagnosticSet] {
+	useBaseInput()
+	o := newReq(1613)
+	o.u64(s.h)
+	r := stateCall(s.h, cx, o)
+	return rdOpt(r, func(r *reader) DiagnosticSet { return DiagnosticSet{h: r.u64()} })
+}
+
 // Whether the input or its associated selection popup has focus.
 //
 // HasSelectionFocus is <gpui_kit::base::input::TextareaState>::has_selection_focus.
@@ -14616,6 +15699,26 @@ func (s TextareaState) OpenSearch(cx *Cx, replaceMode bool) {
 	stateSet(cx, o)
 }
 
+// Wrap the text for `font`, `font_size` and `width` before the first layout, so that
+// `WrapRowCount` is known on the first frame.
+//
+// Call it after setting the value and the wrapping indent. `width` is the width of the input's
+// text area: its width less its padding, and less the line-number gutter for an editor with line
+// numbers. It wraps as layout does, a little short of that width and with the state's wrapping
+// indent. Once the input has been laid out this does nothing, and layout keeps the wrap up to
+// date. The font and font size must match the input's actual text style.
+//
+// Prewrap is <gpui_kit::base::input::TextareaState>::prewrap.
+func (s TextareaState) Prewrap(cx *Cx, font Font, fontSize float32, width float32) {
+	useBaseInput()
+	o := newReq(1273)
+	o.u64(s.h)
+	putFont(o, font)
+	o.f32(fontSize)
+	o.f32(width)
+	stateSet(cx, o)
+}
+
 // Refresh the input, so the next render re-runs syntax highlighting and the LSP providers, not
 // just a redraw.
 //
@@ -14730,6 +15833,19 @@ func (s TextareaState) SetContextMenuEnabled(cx *Cx, enabled bool) {
 	stateSet(cx, o)
 }
 
+// Set (0-based) `Position` of the cursor.
+//
+// This will move the cursor to the specified line and column, and update the selection range.
+//
+// SetCursorPosition is <gpui_kit::base::input::TextareaState>::set_cursor_position.
+func (s TextareaState) SetCursorPosition(cx *Cx, position LspPosition) {
+	useBaseInput()
+	o := newReq(1477)
+	o.u64(s.h)
+	putLspPosition(o, position)
+	stateSet(cx, o)
+}
+
 // Update `CursorSurroundingLines` after construction.
 //
 // SetCursorSurroundingLines is <gpui_kit::base::input::TextareaState>::set_cursor_surrounding_lines.
@@ -14789,6 +15905,23 @@ func (s TextareaState) SetFoldBackground(cx *Cx, color Option[Color]) {
 	if x0, ok := color.Get(); ok {
 		o.u8(1)
 		putColor(o, x0)
+	} else {
+		o.u8(0)
+	}
+	stateSet(cx, o)
+}
+
+// Draws a placeholder right after the text of each folded line, given its buffer row. Clicking it
+// unfolds the line.
+//
+// SetFoldPlaceholderRenderer is <gpui_kit::base::input::TextareaState>::set_fold_placeholder_renderer.
+func (s TextareaState) SetFoldPlaceholderRenderer(cx *Cx, renderer Option[RowSource]) {
+	useBaseInput()
+	o := newReq(1678)
+	o.u64(s.h)
+	if x0, ok := renderer.Get(); ok {
+		o.u8(1)
+		o.u64(x0.h)
 	} else {
 		o.u8(0)
 	}
@@ -14915,6 +16048,25 @@ func (s TextareaState) SetScrollbarPlacement(cx *Cx, placement ScrollbarPlacemen
 	o := newReq(1802)
 	o.u64(s.h)
 	o.u16(uint16(placement))
+	stateSet(cx, o)
+}
+
+// Supply the element painted in place of the editor's scrollbar, or `None` to keep Base's. The
+// renderer is called where the editor paints its scrollbar, with that frame's
+// `EditorScrollbarContext`. Like `SetEditorStyle`, this does not notify, so it can be called while
+// rendering.
+//
+// SetScrollbarRenderer is <gpui_kit::base::input::TextareaState>::set_scrollbar_renderer.
+func (s TextareaState) SetScrollbarRenderer(cx *Cx, renderer Option[RowSource]) {
+	useBaseInput()
+	o := newReq(1614)
+	o.u64(s.h)
+	if x0, ok := renderer.Get(); ok {
+		o.u8(1)
+		o.u64(itemsCheck(x0, 21))
+	} else {
+		o.u8(0)
+	}
 	stateSet(cx, o)
 }
 
@@ -15630,6 +16782,18 @@ func (s Theme) ApplySemanticConfig(cx *Cx, config SemanticThemeConfig) BaseSeman
 	return rdBaseSemanticThemeTokens(r)
 }
 
+// Parses and applies a standalone `{ "tokens": ... }` semantic theme file.
+//
+// ApplySemanticConfigStr is <gpui_kit::component::Theme>::apply_semantic_config_str.
+func (s Theme) ApplySemanticConfigStr(cx *Cx, content string) Fallible[BaseSemanticThemeTokens] {
+	useComponentTheme()
+	o := newReq(1162)
+	o.u64(s.h)
+	o.str(content)
+	r := stateCall(s.h, cx, o)
+	return rdFallible(r, func(r *reader) BaseSemanticThemeTokens { return rdBaseSemanticThemeTokens(r) })
+}
+
 // Apply the given theme configuration to the current theme.
 //
 // ApplyConfig is <gpui_kit::component::Theme>::apply_config.
@@ -15977,13 +17141,13 @@ func (s ThemeRegistry) DefaultLightTheme(cx *Cx) ThemeConfigRc {
 // Returns a reference to the map of default themes.
 //
 // DefaultThemes is <gpui_kit::component::ThemeRegistry>::default_themes.
-func (s ThemeRegistry) DefaultThemes(cx *Cx) []TupleThememodeThemeconfigrc {
+func (s ThemeRegistry) DefaultThemes(cx *Cx) []TupleThemeModeThemeConfigRc {
 	useComponentTheme()
 	o := newReq(1167)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
-	return rdList(r, func(r *reader) TupleThememodeThemeconfigrc {
-		return TupleThememodeThemeconfigrc{ThemeMode(r.u16()), ThemeConfigRc{h: r.u64()}}
+	return rdList(r, func(r *reader) TupleThemeModeThemeConfigRc {
+		return TupleThemeModeThemeConfigRc{ThemeMode(r.u16()), ThemeConfigRc{h: r.u64()}}
 	})
 }
 
@@ -16001,13 +17165,13 @@ func (s ThemeRegistry) SortedThemes(cx *Cx) []ThemeConfigRc {
 // Returns a reference to the map of themes (including default themes).
 //
 // Themes is <gpui_kit::component::ThemeRegistry>::themes.
-func (s ThemeRegistry) Themes(cx *Cx) []TupleStringThemeconfigrc {
+func (s ThemeRegistry) Themes(cx *Cx) []TupleStringThemeConfigRc {
 	useComponentTheme()
 	o := newReq(1170)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
-	return rdList(r, func(r *reader) TupleStringThemeconfigrc {
-		return TupleStringThemeconfigrc{r.str(), ThemeConfigRc{h: r.u64()}}
+	return rdList(r, func(r *reader) TupleStringThemeConfigRc {
+		return TupleStringThemeConfigRc{r.str(), ThemeConfigRc{h: r.u64()}}
 	})
 }
 
@@ -16067,6 +17231,15 @@ func (s TimeFieldState) SelectedSegment(cx *Cx) TimeSegment {
 	return TimeSegment(r.u16())
 }
 
+// Time is <gpui_kit::base::TimeFieldState>::time.
+func (s TimeFieldState) Time(cx *Cx) CivilTime {
+	useBaseTimeField()
+	o := newReq(1330)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return rdCivilTime(r)
+}
+
 // Focus is <gpui_kit::base::TimeFieldState>::focus.
 func (s TimeFieldState) Focus(cx *Cx) {
 	useBaseTimeField()
@@ -16090,6 +17263,17 @@ func (s TimeFieldState) SetPrecision(cx *Cx, precision TimePrecision) {
 	o := newReq(321)
 	o.u64(s.h)
 	o.u16(uint16(precision))
+	stateSet(cx, o)
+}
+
+// Replace the time without emitting `Change`.
+//
+// SetTime is <gpui_kit::base::TimeFieldState>::set_time.
+func (s TimeFieldState) SetTime(cx *Cx, time CivilTime) {
+	useBaseTimeField()
+	o := newReq(1329)
+	o.u64(s.h)
+	putCivilTime(o, time)
 	stateSet(cx, o)
 }
 
@@ -16160,13 +17344,13 @@ func (s ToastManager) IsEmpty(cx *Cx) bool {
 // Iterate over mounted toast ids, values, and phases in display order.
 //
 // Iter is <gpui_kit::base::ToastManager<u64, u64>>::iter.
-func (s ToastManager) Iter(cx *Cx) []TupleUint64Uint64Toasttransitionstatus {
+func (s ToastManager) Iter(cx *Cx) []TupleUint64Uint64ToastTransitionStatus {
 	useBaseToast()
 	o := newReq(1630)
 	o.u64(s.h)
 	r := objGet(s.h, cx, o)
-	return rdList(r, func(r *reader) TupleUint64Uint64Toasttransitionstatus {
-		return TupleUint64Uint64Toasttransitionstatus{uint64(r.u64()), uint64(r.u64()), ToastTransitionStatus(r.u16())}
+	return rdList(r, func(r *reader) TupleUint64Uint64ToastTransitionStatus {
+		return TupleUint64Uint64ToastTransitionStatus{uint64(r.u64()), uint64(r.u64()), ToastTransitionStatus(r.u16())}
 	})
 }
 
@@ -16184,15 +17368,68 @@ func (s ToastManager) Len(cx *Cx) int {
 // Iterate over newest visible active toasts plus ending toasts.
 //
 // Visible is <gpui_kit::base::ToastManager<u64, u64>>::visible.
-func (s ToastManager) Visible(cx *Cx, limit int) []TupleUint64Uint64Toasttransitionstatus {
+func (s ToastManager) Visible(cx *Cx, limit int) []TupleUint64Uint64ToastTransitionStatus {
 	useBaseToast()
 	o := newReq(1634)
 	o.u64(s.h)
 	putUsize(o, limit)
 	r := objGet(s.h, cx, o)
-	return rdList(r, func(r *reader) TupleUint64Uint64Toasttransitionstatus {
-		return TupleUint64Uint64Toasttransitionstatus{uint64(r.u64()), uint64(r.u64()), ToastTransitionStatus(r.u16())}
+	return rdList(r, func(r *reader) TupleUint64Uint64ToastTransitionStatus {
+		return TupleUint64Uint64ToastTransitionStatus{uint64(r.u64()), uint64(r.u64()), ToastTransitionStatus(r.u16())}
 	})
+}
+
+// Advance lifecycle time; active timers pause while `paused` is true.
+//
+// Advance is <gpui_kit::base::ToastManager<u64, u64>>::advance.
+func (s ToastManager) Advance(cx *Cx, now time.Duration, paused bool) ToastAdvanceU64U64 {
+	useBaseToast()
+	o := newReq(1625)
+	o.u64(s.h)
+	o.u64(uint64(now))
+	o.bool(paused)
+	r := stateCall(s.h, cx, o)
+	return rdToastAdvanceU64U64(r)
+}
+
+// Begin a toast's exit transition, returning whether its state changed.
+//
+// Dismiss is <gpui_kit::base::ToastManager<u64, u64>>::dismiss.
+func (s ToastManager) Dismiss(cx *Cx, id uint64, now time.Duration) bool {
+	useBaseToast()
+	o := newReq(1626)
+	o.u64(s.h)
+	o.u64(uint64(id))
+	o.u64(uint64(now))
+	r := stateCall(s.h, cx, o)
+	return r.bool()
+}
+
+// Begin the exit transition for every active toast.
+//
+// DismissAll is <gpui_kit::base::ToastManager<u64, u64>>::dismiss_all.
+func (s ToastManager) DismissAll(cx *Cx, now time.Duration) []uint64 {
+	useBaseToast()
+	o := newReq(1627)
+	o.u64(s.h)
+	o.u64(uint64(now))
+	r := stateCall(s.h, cx, o)
+	return rdList(r, func(r *reader) uint64 { return uint64(r.u64()) })
+}
+
+// Add a newest toast, replacing an existing toast with the same id.
+//
+// Push is <gpui_kit::base::ToastManager<u64, u64>>::push.
+func (s ToastManager) Push(cx *Cx, id uint64, value uint64, options ToastOptions, now time.Duration) Option[uint64] {
+	useBaseToast()
+	o := newReq(1633)
+	o.u64(s.h)
+	o.u64(uint64(id))
+	o.u64(uint64(value))
+	putToastOptions(o, options)
+	o.u64(uint64(now))
+	r := stateCall(s.h, cx, o)
+	return rdOpt(r, func(r *reader) uint64 { return uint64(r.u64()) })
 }
 
 // Create a manager using the supplied motion duration for enter and exit.
@@ -16335,6 +17572,12 @@ func (s TooltipOverlay) RequestShow(cx *Cx, content TooltipRequest) {
 
 // TooltipOverlayBuilder is the chain of TooltipOverlay's `self -> Self` methods; Build makes it, in one crossing.
 type TooltipOverlayBuilder struct{ sb *stateBuilder }
+
+func (b TooltipOverlayBuilder) RenderWith(renderer RowSource) TooltipOverlayBuilder {
+	o := b.sb.op(1)
+	o.u64(itemsCheck(renderer, 24))
+	return b
+}
 
 // Build makes the TooltipOverlay.
 func (b TooltipOverlayBuilder) Build() TooltipOverlay { return TooltipOverlay{b.sb.build()} }
@@ -16497,6 +17740,15 @@ func (s TreeState) IndexOf(cx *Cx, id string) Option[int] {
 	o.str(id)
 	r := stateGet(s.h, cx, o)
 	return rdOpt(r, func(r *reader) int { return int(r.u64()) })
+}
+
+// ScrollHandle is <gpui_kit::base::TreeState>::scroll_handle.
+func (s TreeState) ScrollHandle(cx *Cx) ScrollHandle {
+	useBaseTree()
+	o := newReq(1640)
+	o.u64(s.h)
+	r := stateGet(s.h, cx, o)
+	return ScrollHandle{h: r.u64()}
 }
 
 // SelectedEntry is <gpui_kit::base::TreeState>::selected_entry.

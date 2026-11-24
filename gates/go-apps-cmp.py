@@ -11,8 +11,16 @@ import struct
 import sys
 import zlib
 
-d, name = sys.argv[1], sys.argv[2]
-boxes = [tuple(int(v) for v in b.split(",")) for b in sys.argv[3].split(";")] if len(sys.argv) > 3 else []
+args = sys.argv[1:]
+# --labels REF,REF2,CAND: the folders compared (default odin,odin2,go; gates/go-apps.sh without
+# Odin passes go,go2,go3: the Go app against itself, three runs of one session).
+ref, ref2, cand = "odin", "odin2", "go"
+if "--labels" in args:
+    i = args.index("--labels")
+    ref, ref2, cand = args[i + 1].split(",")
+    del args[i:i + 2]
+d, name = args[0], args[1]
+boxes = [tuple(int(v) for v in b.split(",")) for b in args[2].split(";")] if len(args) > 2 else []
 
 
 def png(path):
@@ -74,31 +82,31 @@ def inside(p, outer):
     return outer and outer[0] <= p[0] < outer[2] and outer[1] <= p[1] < outer[3]
 
 
-files = sorted(f for f in os.listdir(os.path.join(d, "odin")) if f.endswith(".png"))
+files = sorted(f for f in os.listdir(os.path.join(d, ref)) if f.endswith(".png"))
 same, ok, bad = 0, 0, []
 for f in files:
-    g = os.path.join(d, "go", f)
+    g = os.path.join(d, cand, f)
     if not os.path.exists(g):
-        bad.append(f"{f}: missing in go")
+        bad.append(f"{f}: missing in {cand}")
         continue
-    px = diff(os.path.join(d, "odin", f), g)
+    px = diff(os.path.join(d, ref, f), g)
     if px is None:
         same += 1
         ok += 1
         continue
-    noise = diff(os.path.join(d, "odin", f), os.path.join(d, "odin2", f)) or set()
+    noise = diff(os.path.join(d, ref, f), os.path.join(d, ref2, f)) or set()
     # each differing pixel lies in the load time's text, or near where Odin differs from itself
     nb = bbox(noise)
     rest = [p for p in px if not any(inside(p, b) for b in boxes) and not (noise and inside(p, nb))]
     if not rest:
         ok += 1
-        why = f" or where the two Odin runs differ too ({nb})" if noise else ""
+        why = f" or where the two {ref} runs differ too ({nb})" if noise else ""
         print(f"{f}: differs at {bbox(px)}, only inside {boxes}{why}")
     else:
-        bad.append(f"{f}: differs at {bbox(rest)} besides the load time and Odin's own noise")
+        bad.append(f"{f}: differs at {bbox(rest)} besides the load time and {ref}'s own noise")
 for b in bad:
     print(b)
 verdict = "PASS" if not bad and files else "FAIL"
 print(f"GATE go-apps {name} {verdict} {same} of {len(files)} images byte-identical, "
-      f"{ok - same} differing only in the boxes of wall-clock time or where Odin differs from itself, {len(bad)} otherwise")
+      f"{ok - same} differing only in the boxes of wall-clock time or where {ref} differs from itself, {len(bad)} otherwise")
 sys.exit(0 if verdict == "PASS" else 1)

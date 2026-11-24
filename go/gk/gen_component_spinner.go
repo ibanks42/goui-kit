@@ -27,6 +27,15 @@ func (e SpinnerEl) Color(color Color) SpinnerEl {
 	return e
 }
 
+// Set the easing function.
+//
+// Ease is <gpui_kit::component::spinner::Spinner>::ease.
+func (e SpinnerEl) Ease(easing string) SpinnerEl {
+	o := op(e.n, 258)
+	putExpr(o, easing, 1)
+	return e
+}
+
 // Set specified icon for the spinner.
 //
 // Default is `Loader`.

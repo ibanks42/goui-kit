@@ -159,3 +159,10 @@ func (e QuestionnaireItemDefinition) WithRequired(required bool) QuestionnaireIt
 	o.bool(required)
 	return e
 }
+
+// WithValidator is <gpui_kit::base::questionnaire::QuestionnaireItemDefinition>::with_validator.
+func (e QuestionnaireItemDefinition) WithValidator(validator QuestionnaireRules) QuestionnaireItemDefinition {
+	o := op(e.n, 263)
+	putQuestionnaireRules(o, validator)
+	return e
+}

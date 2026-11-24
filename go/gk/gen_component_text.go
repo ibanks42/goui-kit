@@ -109,6 +109,28 @@ func (e TextViewEl) BlockquoteStyle(style StyleRefinement) TextViewEl {
 	return e
 }
 
+// Renders an element in the corner of every fenced code block.
+//
+// CodeBlockActions is <gpui_kit::component::text::TextView>::code_block_actions.
+func (e TextViewEl) CodeBlockActions(f RowSource) TextViewEl {
+	o := op(e.n, 272)
+	o.u64(itemsCheck(f, 8))
+	return e
+}
+
+// Overrides the source of every document image, including embedded data URLs.
+//
+// Used for both rendering and intrinsic-size measurement. The returned source is authoritative:
+// pending or failed loads never fall back to the document URL. Without this override, images use
+// Base's default URI and data URL handling.
+//
+// ImageSource is <gpui_kit::component::text::TextView>::image_source.
+func (e TextViewEl) ImageSource(resolver Ask[string, string]) TextViewEl {
+	o := op(e.n, 271)
+	o.u64(resolver.Src.h)
+	return e
+}
+
 // Refines inline code typography, background, border, radius, and padding over the resolved theme
 // or explicit style. Other layout properties are ignored. Unspecified properties are inherited.
 //
@@ -119,6 +141,16 @@ func (e TextViewEl) InlineCodeStyle(style StyleRefinement) TextViewEl {
 	return e
 }
 
+// Shows an application-supplied tooltip beside the pointer over a link. The tooltip is cached
+// until a different destination is shown.
+//
+// LinkTooltip is <gpui_kit::component::text::TextView>::link_tooltip.
+func (e TextViewEl) LinkTooltip(builder RowSource) TextViewEl {
+	o := op(e.n, 275)
+	o.u64(builder.h)
+	return e
+}
+
 // Refines bullet and number list markers over the resolved theme or explicit style. The text color
 // also outlines unchecked task-list checkboxes. Unspecified properties are inherited.
 //
@@ -126,6 +158,16 @@ func (e TextViewEl) InlineCodeStyle(style StyleRefinement) TextViewEl {
 func (e TextViewEl) ListStyle(style StyleRefinement) TextViewEl {
 	o := op(e.n, 258)
 	o.u32(takeValue(style.n))
+	return e
+}
+
+// Renders the custom block nodes named `name`.
+//
+// MarkdownBlockRenderer is <gpui_kit::component::text::TextView>::markdown_block_renderer.
+func (e TextViewEl) MarkdownBlockRenderer(name string, renderer RowSource) TextViewEl {
+	o := op(e.n, 273)
+	o.str(name)
+	o.u64(itemsCheck(renderer, 5))
 	return e
 }
 
@@ -193,6 +235,25 @@ func (e TextViewEl) OnTaskToggle(f func(cx *Cx, e TaskToggleEvent)) TextViewEl {
 	return e
 }
 
+// Applies a plugin, which may install any of the hooks above.
+//
+// Plugin is <gpui_kit::component::text::TextView>::plugin.
+func (e TextViewEl) Plugin(plugin MarkdownPluginAny) TextViewEl {
+	o := op(e.n, 276)
+	switch x := plugin.(type) {
+	case FrontmatterPlugin:
+		o.u8(0)
+		o.u32(takeValue(x.n))
+	case MarkdownPlugin:
+		o.u8(1)
+		putMarkdownPlugin(o, x)
+	default:
+		o.u8(1)
+		putMarkdownPlugin(o, MarkdownPlugin{})
+	}
+	return e
+}
+
 // Sets whether the view scrolls its own content.
 //
 // Scrollable is <gpui_kit::component::text::TextView>::scrollable.
@@ -239,6 +300,15 @@ func (e TextViewEl) StreamFade(value bool) TextViewEl {
 func (e TextViewEl) Style(style TextViewStyle) TextViewEl {
 	o := op(e.n, 268)
 	o.u32(takeValue(style.n))
+	return e
+}
+
+// Renders an element in the corner of every table.
+//
+// TableActions is <gpui_kit::component::text::TextView>::table_actions.
+func (e TextViewEl) TableActions(f RowSource) TextViewEl {
+	o := op(e.n, 274)
+	o.u64(itemsCheck(f, 10))
 	return e
 }
 
@@ -430,6 +500,9 @@ func (e TextViewEl) FlexGrow(grow float32) TextViewEl { tStyledFlexGrow(e.n, gro
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e TextViewEl) FlexShrink(shrink float32) TextViewEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e TextViewEl) Font(font Font) TextViewEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e TextViewEl) FontFamily(familyName string) TextViewEl {
@@ -710,6 +783,16 @@ func NewTextViewStyleDefault() TextViewStyle {
 func (e TextViewStyle) CodeBlock(style StyleRefinement) TextViewStyle {
 	o := op(e.n, 256)
 	o.u32(takeValue(style.n))
+	return e
+}
+
+// Set the function that resolves a heading's font size from its level (1-6) and
+// `heading_base_font_size`.
+//
+// HeadingFontSize is <gpui_kit::component::text::TextViewStyle>::heading_font_size.
+func (e TextViewStyle) HeadingFontSize(f string) TextViewStyle {
+	o := op(e.n, 262)
+	putExpr(o, f, 2)
 	return e
 }
 

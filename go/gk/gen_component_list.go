@@ -230,6 +230,9 @@ func (e ListEl) FlexGrow(grow float32) ListEl { tStyledFlexGrow(e.n, grow); retu
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ListEl) FlexShrink(shrink float32) ListEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e ListEl) Font(font Font) ListEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ListEl) FontFamily(familyName string) ListEl { tStyledFontFamily(e.n, familyName); return e }
 
@@ -830,6 +833,9 @@ func (e ListItemEl) FlexGrow(grow float32) ListItemEl { tStyledFlexGrow(e.n, gro
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e ListItemEl) FlexShrink(shrink float32) ListItemEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e ListItemEl) Font(font Font) ListItemEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ListItemEl) FontFamily(familyName string) ListItemEl {
 	tStyledFontFamily(e.n, familyName)
@@ -1275,6 +1281,17 @@ func (e ListItemEl) OnBoxedAction(action Action, listener func(cx *Cx, e Action)
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e ListItemEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ListItemEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -1431,6 +1448,19 @@ func (e ListItemEl) WindowControlArea(area WindowControlArea) ListItemEl {
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e ListItemEl) A11ySyntheticChildren(f []A11yChild) ListItemEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -1445,6 +1475,12 @@ func (e ListItemEl) AccessibilityID(id string) ListItemEl {
 // Set the given styles to be applied when this element is active.
 func (e ListItemEl) Active(f StyleRefinement) ListItemEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e ListItemEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) ListItemEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -1577,6 +1613,15 @@ func (e ListItemEl) AriaSizeOfSet(size int) ListItemEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e ListItemEl) AriaValue(value string) ListItemEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e ListItemEl) ExternalDragPayload(resolver ExternalDragPayload) ListItemEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 

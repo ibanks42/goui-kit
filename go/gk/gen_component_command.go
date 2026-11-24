@@ -32,6 +32,15 @@ func (e CommandEl) Bordered(bordered bool) CommandEl {
 	return e
 }
 
+// Render custom content when no command matches the query.
+//
+// Empty is <gpui_kit::component::command::Command>::empty.
+func (e CommandEl) Empty(f RowSource) CommandEl {
+	o := op(e.n, 270)
+	o.u64(itemsCheck(f, 14))
+	return e
+}
+
 // Keep the query field but toggle the local filtering, default: `true`.
 //
 // Turn it off when an external source already answers the query, such as an async search: every
@@ -45,12 +54,30 @@ func (e CommandEl) Filterable(filterable bool) CommandEl {
 	return e
 }
 
+// Render a custom element below the command list.
+//
+// Footer is <gpui_kit::component::command::Command>::footer.
+func (e CommandEl) Footer(f RowSource) CommandEl {
+	o := op(e.n, 271)
+	o.u64(itemsCheck(f, 14))
+	return e
+}
+
 // Add a group of command items.
 //
 // Group is <gpui_kit::component::command::Command>::group.
 func (e CommandEl) Group(group CommandGroup) CommandEl {
 	o := op(e.n, 258)
 	o.u32(takeValue(group.n))
+	return e
+}
+
+// Render a custom element above the search field and command list.
+//
+// Header is <gpui_kit::component::command::Command>::header.
+func (e CommandEl) Header(f RowSource) CommandEl {
+	o := op(e.n, 272)
+	o.u64(itemsCheck(f, 14))
 	return e
 }
 
@@ -366,6 +393,9 @@ func (e CommandEl) FlexGrow(grow float32) CommandEl { tStyledFlexGrow(e.n, grow)
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e CommandEl) FlexShrink(shrink float32) CommandEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e CommandEl) Font(font Font) CommandEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e CommandEl) FontFamily(familyName string) CommandEl {

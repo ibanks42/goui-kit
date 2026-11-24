@@ -363,6 +363,9 @@ func (e FieldEl) FlexGrow(grow float32) FieldEl { tStyledFlexGrow(e.n, grow); re
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e FieldEl) FlexShrink(shrink float32) FieldEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e FieldEl) Font(font Font) FieldEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e FieldEl) FontFamily(familyName string) FieldEl { tStyledFontFamily(e.n, familyName); return e }
 
@@ -934,6 +937,9 @@ func (e FormEl) FlexGrow(grow float32) FormEl { tStyledFlexGrow(e.n, grow); retu
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e FormEl) FlexShrink(shrink float32) FormEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e FormEl) Font(font Font) FormEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e FormEl) FontFamily(familyName string) FormEl { tStyledFontFamily(e.n, familyName); return e }

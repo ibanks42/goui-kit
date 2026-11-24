@@ -313,6 +313,9 @@ func (e ColorPickerEl) FlexShrink(shrink float32) ColorPickerEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e ColorPickerEl) Font(font Font) ColorPickerEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e ColorPickerEl) FontFamily(familyName string) ColorPickerEl {
 	tStyledFontFamily(e.n, familyName)
@@ -869,6 +872,9 @@ func (e ColorSelectEl) FlexShrink(shrink float32) ColorSelectEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e ColorSelectEl) Font(font Font) ColorSelectEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e ColorSelectEl) FontFamily(familyName string) ColorSelectEl {

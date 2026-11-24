@@ -123,7 +123,9 @@ make gates           # everything, about 25 minutes
 
 Both print one summary table at the end (also written to `gates/out/summary.md`), with the full
 log in `gates/out/logs/gates.log`. A few known failures are listed in `gates/expected.txt` with the
-reason; they show as XFAIL and don't fail the run.
+reason; they show as XFAIL and don't fail the run. Every Odin gate has a Go gate beside it (named
+`NAME-go`) that checks the same thing against Rust; a Go gate that waits for a binding the Go package
+does not have yet shows as PENDING, and is allowed only while `gates/go-pending.txt` lists it.
 
 The tests are also available one at a time:
 
@@ -140,9 +142,10 @@ The tests are also available one at a time:
 | `make memory` | memory stays flat over long runs | a few minutes |
 | `make rebuild` | an app rebuilds quickly after a one-line edit | under a minute |
 | `make go-test` | the Go examples, protocol tests, misuse cases and pixels | about a minute |
-| `make go-apps` | the Go apps and tutorial draw the same images as their Odin twins | a few minutes |
-| `make go-static` | the Go and Odin apps built the way an app is (static, only the families each one uses) | a few minutes |
-| `make go-fps` | frame cost of Go against Rust and Odin | about ten minutes |
+| `make go-proto-all` | every protocol test in Go: the core ones, each family's (core/tests/go, the twins of `make proto`'s families) and the sample by generation | a few minutes |
+| `make go-apps` | the Go notes, todo, reader and expenses apps and the tutorial's scripted last step draw the same images as their Rust twins; the other tutorial steps draw the same images in two runs | a few minutes |
+| `make go-static` | the Go apps built the way an app is (static, only the families each one uses) | a few minutes |
+| `make go-fps` | frame cost of Go against Rust, at the same bar as Odin | about ten minutes |
 | `make cross` | both front ends compile for macOS and Windows (checked from Linux) | under a minute |
 
 The tests link the shared library (Go: the build tag `gkshared`, set in `go/env.sh`; Odin:

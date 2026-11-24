@@ -282,6 +282,9 @@ func (e SeparatorEl) FlexGrow(grow float32) SeparatorEl { tStyledFlexGrow(e.n, g
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e SeparatorEl) FlexShrink(shrink float32) SeparatorEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e SeparatorEl) Font(font Font) SeparatorEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SeparatorEl) FontFamily(familyName string) SeparatorEl {
 	tStyledFontFamily(e.n, familyName)

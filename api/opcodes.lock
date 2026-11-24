@@ -1551,6 +1551,7 @@ call		gpui_kit::component::diff::DiffState::has_line	1803
 call		gpui_kit::component::diff::DiffTextPosition::offset	1804
 call		gpui_kit::component::diff::DiffTextPosition::position	1805
 call		gpui_kit::component::diff::DiffTextPosition::text	1806
+call		gpui_kit::base::Root::read	1807
 node		gpui_kit::base::h_flex	256
 node		gpui_kit::base::v_flex	257
 node		gpui_kit::div	258

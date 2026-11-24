@@ -325,6 +325,9 @@ func (e AlertEl) FlexGrow(grow float32) AlertEl { tStyledFlexGrow(e.n, grow); re
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e AlertEl) FlexShrink(shrink float32) AlertEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e AlertEl) Font(font Font) AlertEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e AlertEl) FontFamily(familyName string) AlertEl { tStyledFontFamily(e.n, familyName); return e }
 

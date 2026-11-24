@@ -300,6 +300,9 @@ func (e CollapsibleEl) FlexShrink(shrink float32) CollapsibleEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e CollapsibleEl) Font(font Font) CollapsibleEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e CollapsibleEl) FontFamily(familyName string) CollapsibleEl {
 	tStyledFontFamily(e.n, familyName)

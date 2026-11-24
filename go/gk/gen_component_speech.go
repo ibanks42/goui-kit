@@ -274,6 +274,9 @@ func (e SpeechButtonEl) FlexShrink(shrink float32) SpeechButtonEl {
 	return e
 }
 
+// Sets the font of this element and its children.
+func (e SpeechButtonEl) Font(font Font) SpeechButtonEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e SpeechButtonEl) FontFamily(familyName string) SpeechButtonEl {
 	tStyledFontFamily(e.n, familyName)
@@ -927,6 +930,9 @@ func (e SpeechWaveformEl) FlexShrink(shrink float32) SpeechWaveformEl {
 	tStyledFlexShrink(e.n, shrink)
 	return e
 }
+
+// Sets the font of this element and its children.
+func (e SpeechWaveformEl) Font(font Font) SpeechWaveformEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e SpeechWaveformEl) FontFamily(familyName string) SpeechWaveformEl {

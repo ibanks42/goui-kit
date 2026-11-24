@@ -19,6 +19,15 @@ func Diff(state DiffState, st ...Style) DiffEl {
 	return DiffEl{n}
 }
 
+// Compatibility alias for `RenderAnnotation`.
+//
+// AnnotationContent is <gpui_kit::component::diff::Diff>::annotation_content.
+func (e DiffEl) AnnotationContent(render RowSource) DiffEl {
+	o := op(e.n, 270)
+	o.u64(itemsCheck(render, 15))
+	return e
+}
+
 // Supplies annotations with stable identities and targets.
 //
 // Rows re-measure when annotations are added, removed or replaced, and whenever they are visible,
@@ -77,6 +86,42 @@ func (e DiffEl) GutterMarkers(markers []DiffGutterMarker) DiffEl {
 	for _, x0 := range markers {
 		o.u32(takeValue(x0.n))
 	}
+	return e
+}
+
+// Compatibility alias for `RenderHeader`.
+//
+// Header is <gpui_kit::component::diff::Diff>::header.
+func (e DiffEl) Header(render RowSource) DiffEl {
+	o := op(e.n, 271)
+	o.u64(itemsCheck(render, 16))
+	return e
+}
+
+// Compatibility alias for `RenderHeaderPrefix`.
+//
+// HeaderPrefix is <gpui_kit::component::diff::Diff>::header_prefix.
+func (e DiffEl) HeaderPrefix(render RowSource) DiffEl {
+	o := op(e.n, 272)
+	o.u64(itemsCheck(render, 16))
+	return e
+}
+
+// Compatibility alias for `RenderHeaderSuffix`.
+//
+// HeaderSuffix is <gpui_kit::component::diff::Diff>::header_suffix.
+func (e DiffEl) HeaderSuffix(render RowSource) DiffEl {
+	o := op(e.n, 273)
+	o.u64(itemsCheck(render, 16))
+	return e
+}
+
+// Compatibility alias for `RenderHeaderTitleSuffix`.
+//
+// HeaderTitleSuffix is <gpui_kit::component::diff::Diff>::header_title_suffix.
+func (e DiffEl) HeaderTitleSuffix(render RowSource) DiffEl {
+	o := op(e.n, 274)
+	o.u64(itemsCheck(render, 16))
 	return e
 }
 
@@ -165,6 +210,63 @@ func (e DiffEl) OnTextClick(handler func(cx *Cx, e Event121) bool) DiffEl {
 func (e DiffEl) OnTextHover(handler func(cx *Cx, e Event122)) DiffEl {
 	o := op(e.n, 285)
 	o.u32(register(handler, 122))
+	return e
+}
+
+// Renders each supplied annotation. Application state and commands stay with the owner.
+//
+// RenderAnnotation is <gpui_kit::component::diff::Diff>::render_annotation.
+func (e DiffEl) RenderAnnotation(render RowSource) DiffEl {
+	o := op(e.n, 275)
+	o.u64(itemsCheck(render, 15))
+	return e
+}
+
+// Renders each gutter marker within a lane one row high and wide.
+//
+// Return a focusable control such as a small ghost button labeled with `Label`, so the marker
+// works with the pointer and keyboard. Presses inside the lane do not start a selection.
+//
+// RenderGutterMarker is <gpui_kit::component::diff::Diff>::render_gutter_marker.
+func (e DiffEl) RenderGutterMarker(render RowSource) DiffEl {
+	o := op(e.n, 276)
+	o.u64(itemsCheck(render, 17))
+	return e
+}
+
+// Replaces the content of each file header, keeping its shell, separator and collapse control.
+//
+// RenderHeader is <gpui_kit::component::diff::Diff>::render_header.
+func (e DiffEl) RenderHeader(render RowSource) DiffEl {
+	o := op(e.n, 277)
+	o.u64(itemsCheck(render, 16))
+	return e
+}
+
+// Inserts content before the path in the default header.
+//
+// RenderHeaderPrefix is <gpui_kit::component::diff::Diff>::render_header_prefix.
+func (e DiffEl) RenderHeaderPrefix(render RowSource) DiffEl {
+	o := op(e.n, 278)
+	o.u64(itemsCheck(render, 16))
+	return e
+}
+
+// Inserts trailing content after the change statistics in the default header.
+//
+// RenderHeaderSuffix is <gpui_kit::component::diff::Diff>::render_header_suffix.
+func (e DiffEl) RenderHeaderSuffix(render RowSource) DiffEl {
+	o := op(e.n, 279)
+	o.u64(itemsCheck(render, 16))
+	return e
+}
+
+// Inserts compact content immediately after the path in the default header.
+//
+// RenderHeaderTitleSuffix is <gpui_kit::component::diff::Diff>::render_header_title_suffix.
+func (e DiffEl) RenderHeaderTitleSuffix(render RowSource) DiffEl {
+	o := op(e.n, 280)
+	o.u64(itemsCheck(render, 16))
 	return e
 }
 
@@ -395,6 +497,9 @@ func (e DiffEl) FlexGrow(grow float32) DiffEl { tStyledFlexGrow(e.n, grow); retu
 
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e DiffEl) FlexShrink(shrink float32) DiffEl { tStyledFlexShrink(e.n, shrink); return e }
+
+// Sets the font of this element and its children.
+func (e DiffEl) Font(font Font) DiffEl { tStyledFont(e.n, font); return e }
 
 // Sets the font family of this element and its children.
 func (e DiffEl) FontFamily(familyName string) DiffEl { tStyledFontFamily(e.n, familyName); return e }

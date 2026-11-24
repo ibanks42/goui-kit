@@ -294,6 +294,9 @@ func (e StatusBarEl) FlexGrow(grow float32) StatusBarEl { tStyledFlexGrow(e.n, g
 // Sets the flex item's shrink factor. Docs (https://tailwindcss.com/docs/flex-shrink)
 func (e StatusBarEl) FlexShrink(shrink float32) StatusBarEl { tStyledFlexShrink(e.n, shrink); return e }
 
+// Sets the font of this element and its children.
+func (e StatusBarEl) Font(font Font) StatusBarEl { tStyledFont(e.n, font); return e }
+
 // Sets the font family of this element and its children.
 func (e StatusBarEl) FontFamily(familyName string) StatusBarEl {
 	tStyledFontFamily(e.n, familyName)

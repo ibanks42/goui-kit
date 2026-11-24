@@ -373,6 +373,14 @@ type Color struct {
 // HSLA is a colour by hue, saturation, lightness and alpha, each 0 to 1.
 func HSLA(h, s, l, a float32) Color { return Color{0, h, s, l, a} }
 
+// Theme is the theme colour number c names (package theme), 0 for a colour given by its parts.
+// Odin: color.theme.
+func (c Color) Theme() uint16 { return c.theme }
+
+// Hsla is c's hue, saturation, lightness and alpha (zero for a theme colour, which the theme
+// resolves where it is drawn). Odin: color.h, .s, .l, .a.
+func (c Color) Hsla() Hsla { return Hsla{c.h, c.s, c.l, c.a} }
+
 // ThemeColor is the theme's colour number n (package theme names them all).
 func ThemeColor(n uint16) Color { return Color{theme: n} }
 
@@ -386,6 +394,14 @@ type Hsla struct{ H, S, L, A float32 }
 func (c Hsla) Color() Color { return HSLA(c.H, c.S, c.L, c.A) }
 
 func rdHsla(r *reader) Hsla { return Hsla{r.f32(), r.f32(), r.f32(), r.f32()} }
+
+// rdColorField reads a colour field of a record the app also writes, which the library writes
+// in Color's own layout (a theme u16, then h, s, l, a; gk_values.rust_field_put).
+func rdColorField(r *reader) Color {
+	c := Color{theme: r.u16()}
+	c.h, c.s, c.l, c.a = r.f32(), r.f32(), r.f32(), r.f32()
+	return c
+}
 
 func putColor(o *tape, c Color) {
 	if c.theme != 0 {

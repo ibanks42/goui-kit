@@ -79,6 +79,24 @@ func (e ResizeHandleEl) OnDrag(value DragValue, f View) ResizeHandleEl {
 	return e
 }
 
+// Hand the painted part of this handle to `appearance`.
+//
+// WithAppearance is <gpui_kit::base::ResizeHandle<crate::values::Drag, crate::rt::GkView>>::with_appearance.
+func (e ResizeHandleEl) WithAppearance(appearance ResizeHandleRenderer) ResizeHandleEl {
+	o := op(e.n, 258)
+	switch x := appearance.(type) {
+	case RowSource:
+		o.u8(0)
+		o.u64(x.h)
+	case ResizeHandleRendererKit:
+		o.u8(1)
+		o.u16(uint16(x))
+	default:
+		stop("a nil gk.ResizeHandleRenderer was given to a builder: give a gk.RowSource (gk.Items) or one of the gk.ResizeHandleRendererKit values")
+	}
+	return e
+}
+
 // Block non-scroll mouse interactions with elements behind this element's hitbox. The fluent API
 // equivalent to `block_mouse_except_scroll`.
 //
@@ -260,6 +278,17 @@ func (e ResizeHandleEl) OnBoxedAction(action Action, listener func(cx *Cx, e Act
 	return e
 }
 
+// Bind the given callback to the mouse drag event of the given type. Note that this will be called
+// for all move events, inside or outside of this element, as long as the drag was started with
+// this element under the mouse. Useful for implementing draggable UIs that don't conform to a drag
+// and drop style interaction, like resizing. The fluent API equivalent to `on_drag_move`.
+//
+// See `listener` to get access to a view's state from this callback.
+func (e ResizeHandleEl) OnDragMove(listener func(cx *Cx, e DragMoveEvent)) ResizeHandleEl {
+	tInteractiveElementOnDragMove(e.n, listener)
+	return e
+}
+
 // Bind the given callback to drop events of the given type, whether or not the drag started on
 // this element. The fluent API equivalent to `on_drop`.
 //
@@ -428,6 +457,19 @@ func (e ResizeHandleEl) WindowControlArea(area WindowControlArea) ResizeHandleEl
 	return e
 }
 
+// Contribute synthetic accessibility nodes — nodes that don't correspond to any element — as
+// children of this element's a11y node. For example, text runs describing an editor's text
+// content.
+//
+// The closure is called after this element is prepainted, and only if it contributed a node to the
+// accessibility tree (i.e. it has an id and a `Role`).
+//
+// See `a11y_synthetic_children` for details.
+func (e ResizeHandleEl) A11ySyntheticChildren(f []A11yChild) ResizeHandleEl {
+	tStatefulInteractiveElementA11ySyntheticChildren(e.n, f)
+	return e
+}
+
 // Set the author-provided identifier exposed to accessibility clients.
 //
 // Unlike the GPUI element ID, this value is visible outside the process. Keep it stable and unique
@@ -442,6 +484,12 @@ func (e ResizeHandleEl) AccessibilityID(id string) ResizeHandleEl {
 // Set the given styles to be applied when this element is active.
 func (e ResizeHandleEl) Active(f StyleRefinement) ResizeHandleEl {
 	tStatefulInteractiveElementActive(e.n, f)
+	return e
+}
+
+// Track the scroll state of this element with the given handle.
+func (e ResizeHandleEl) AnchorScroll(scrollAnchor Option[ScrollAnchor]) ResizeHandleEl {
+	tStatefulInteractiveElementAnchorScroll(e.n, scrollAnchor)
 	return e
 }
 
@@ -574,6 +622,15 @@ func (e ResizeHandleEl) AriaSizeOfSet(size int) ResizeHandleEl {
 // Set the string value of this element, e.g. the text content of a simple text input.
 func (e ResizeHandleEl) AriaValue(value string) ResizeHandleEl {
 	tStatefulInteractiveElementAriaValue(e.n, value)
+	return e
+}
+
+// Registers a callback resolving a payload to offer the platform if a drag started by this element
+// leaves the window. It is invoked at most once per drag gesture, when the pointer exits the
+// viewport. Must be called after `OnDrag`, with the same dragged value type `T`. The fluent API
+// equivalent to `external_drag_payload`.
+func (e ResizeHandleEl) ExternalDragPayload(resolver ExternalDragPayload) ResizeHandleEl {
+	tStatefulInteractiveElementExternalDragPayload(e.n, resolver)
 	return e
 }
 

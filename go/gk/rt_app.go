@@ -43,6 +43,25 @@ func NewAction(cx *Cx, name string, data ...string) Action {
 	return Action{r.u32()}
 }
 
+// KitActionValue is one of the kit's own action values (gk.NewCancelDefault(),
+// gk.NewSelectDownDefault()): a value node gk.ActionOf names as an Action.
+type KitActionValue interface{ valueNode() *node }
+
+// ActionOf names one of the kit's own action values as an Action, which menus, key bindings and
+// Kbd take (PROTOCOLS.md 13.11). Make the value in the handler or init that calls; the same action
+// value always gives the same Action. Odin: gk.action_of.
+func ActionOf(cx *Cx, v KitActionValue) Action {
+	t := checkCx(cx)
+	if vb.active {
+		stop("gk.ActionOf in a view function: name the action in init or a handler and keep the gk.Action")
+	}
+	t.flush()
+	o := newReq(cValueAction)
+	putVtape(o, v.valueNode())
+	r := reader{b: mustCall(*o)}
+	return Action{r.u32()}
+}
+
 // ActionHandler is what an element's OnAction takes: the action to listen for and the handler.
 type ActionHandler struct {
 	action Action
