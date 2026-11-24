@@ -9,6 +9,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -377,7 +378,9 @@ func main() {
 	default:
 		script += "frame\nframe\n"
 	}
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	if a.mode == "quit-hook" {
 		fmt.Printf("app after the run quits=%d\n", a.quits) // the hook ran as the offscreen app shut down
 	}

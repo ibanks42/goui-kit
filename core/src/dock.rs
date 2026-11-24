@@ -1161,11 +1161,10 @@ impl GkRenderer {
             match ty {
                 256..=258 => crate::generated::make_gpui_div(dx, ty, args, first),
                 _ => {
-                    eprintln!(
-                        "gk: the view a dock renderer gave for a frame hook returned a node of type {ty}: a frame is a \
+                    crate::rt::app_stop(format!(
+                        "the view a dock renderer gave for a frame hook returned a node of type {ty}: a frame is a \
                          gk.Div() (or gk.HFlex(), gk.VFlex()), whose styles and children upstream's frame takes"
-                    );
-                    std::process::exit(2);
+                    ))
                 }
             }
         });

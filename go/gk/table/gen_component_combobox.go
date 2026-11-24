@@ -38,7 +38,7 @@ func Combobox(state ComboboxState, st ...gk.Style) ComboboxEl {
 	rt.UseComponentCombobox()
 	n := rt.NewNode(830)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return ComboboxEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }

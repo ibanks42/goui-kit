@@ -18,7 +18,7 @@ func Questionnaire(state base.QuestionnaireState, st ...gk.Style) QuestionnaireE
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(718)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return QuestionnaireEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -834,7 +834,7 @@ func QuestionnaireActions(state base.QuestionnaireState, st ...gk.Style) Questio
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(719)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return QuestionnaireActionsEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -1707,7 +1707,7 @@ func QuestionnaireChoice(state base.QuestionnaireState, item string, value strin
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(720)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.Str(item)
 	o.Str(value)
 	rt.Tokens(n, st)
@@ -3493,7 +3493,7 @@ func QuestionnaireChoices(state base.QuestionnaireState, item string, st ...gk.S
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(723)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.Str(item)
 	rt.Tokens(n, st)
 	return QuestionnaireChoicesEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
@@ -4367,7 +4367,7 @@ func QuestionnaireDescription(state base.QuestionnaireState, item string, st ...
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(724)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.Str(item)
 	rt.Tokens(n, st)
 	return QuestionnaireDescriptionEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
@@ -5247,7 +5247,7 @@ func QuestionnaireError(state base.QuestionnaireState, item string, st ...gk.Sty
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(725)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.Str(item)
 	rt.Tokens(n, st)
 	return QuestionnaireErrorEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
@@ -6112,7 +6112,7 @@ func QuestionnaireInput(state base.QuestionnaireState, item string, st ...gk.Sty
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(726)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.Str(item)
 	rt.Tokens(n, st)
 	return QuestionnaireInputEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
@@ -6918,7 +6918,7 @@ func QuestionnaireItem(state base.QuestionnaireState, item string, st ...gk.Styl
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(727)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.Str(item)
 	rt.Tokens(n, st)
 	return QuestionnaireItemEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
@@ -7783,7 +7783,7 @@ func QuestionnaireNext(state base.QuestionnaireState, st ...gk.Style) Questionna
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(728)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return QuestionnaireNextEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -8647,7 +8647,7 @@ func QuestionnairePrevious(state base.QuestionnaireState, st ...gk.Style) Questi
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(729)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return QuestionnairePreviousEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -9526,7 +9526,7 @@ func QuestionnaireProgress(state base.QuestionnaireState, st ...gk.Style) Questi
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(730)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return QuestionnaireProgressEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -10405,7 +10405,7 @@ func QuestionnaireSkip(state base.QuestionnaireState, st ...gk.Style) Questionna
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(731)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return QuestionnaireSkipEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -11269,7 +11269,7 @@ func QuestionnaireSubmit(state base.QuestionnaireState, st ...gk.Style) Question
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(732)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return QuestionnaireSubmitEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -12133,7 +12133,7 @@ func QuestionnaireTitle(state base.QuestionnaireState, item string, st ...gk.Sty
 	rt.UseComponentQuestionnaire()
 	n := rt.NewNode(733)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.Str(item)
 	rt.Tokens(n, st)
 	return QuestionnaireTitleEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}

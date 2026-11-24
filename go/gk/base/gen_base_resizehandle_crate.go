@@ -130,12 +130,24 @@ func (e ResizeHandleEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseE
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ResizeHandleEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -257,6 +269,12 @@ func (e ResizeHandleEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -345,6 +363,12 @@ func (e ResizeHandleEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -352,6 +376,12 @@ func (e ResizeHandleEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.
 // See `listener` to get access to a view's state from this callback.
 func (e ResizeHandleEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -364,12 +394,24 @@ func (e ResizeHandleEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnMouseExitDo(listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ResizeHandleEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -391,6 +433,12 @@ func (e ResizeHandleEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -398,6 +446,12 @@ func (e ResizeHandleEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx
 // See `listener` to get access to a view's state from this callback.
 func (e ResizeHandleEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ResizeHandleEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -673,12 +727,24 @@ func (e ResizeHandleEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Re
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnAuxClickDo(listener func(cx *gk.Cx)) ResizeHandleEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ResizeHandleEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ResizeHandleEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnClickDo(listener func(cx *gk.Cx)) ResizeHandleEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -755,6 +821,12 @@ func (e ResizeHandleEl) TrackScroll(scrollHandle gk.ScrollHandle) ResizeHandleEl
 // Set the listener for a double click event.
 func (e ResizeHandleEl) OnDoubleClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ResizeHandleEl {
 	tInteractiveElementExtOnDoubleClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnDoubleClickDo is OnDoubleClick with a handler that takes no event (docs/GO.md section 4).
+func (e ResizeHandleEl) OnDoubleClickDo(listener func(cx *gk.Cx)) ResizeHandleEl {
+	tInteractiveElementExtOnDoubleClickDo(rt.N(e.Core), listener)
 	return e
 }
 

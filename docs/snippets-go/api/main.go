@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"gpuikit.dev/gk"
@@ -201,7 +202,9 @@ func (a *App) port(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{count: gk.NewModel(0)}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "API", 640, 480, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

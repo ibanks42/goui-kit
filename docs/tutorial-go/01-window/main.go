@@ -2,6 +2,8 @@
 package main
 
 import (
+	"log"
+
 	"gpuikit.dev/gk"
 	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
@@ -15,7 +17,9 @@ func view(cx *gk.Cx) gk.Element {
 }
 
 func main() {
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(nil, view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

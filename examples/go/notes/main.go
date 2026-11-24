@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"slices"
 
 	"gpuikit.dev/gk"
@@ -33,10 +34,9 @@ type App struct {
 	made     int // notes made so far, for "Untitled N"
 	dark     bool
 
-	title   gkeditor.InputState // kit state that lives in the library
-	list    table.ListState
-	dock    gkdock.Area
-	confirm gk.Built[overlay.AlertDialogEl]
+	title gkeditor.InputState // kit state that lives in the library
+	list  table.ListState
+	dock  gkdock.Area
 
 	newNote, deleteNote, toggleTheme gk.Action // shortcuts, also in the menu (it shows their keys)
 }
@@ -53,7 +53,6 @@ func (a *App) init(cx *gk.Cx) {
 	a.title.OnInputEvent(cx, a.titleChanged)
 	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.notes) }, a.noteRow)).Build()
 	a.list.OnListEvent(cx, a.listEvent)
-	a.confirm = gk.NewBuilt(cx, a.confirmView)
 
 	a.dock = gkdock.NewAreaSkinned(cx, "notes")
 	notes := gkdock.NewPanel(cx, gk.NewView(nil, a.notesView), gkdock.PanelData{Name: "notes", Title: "Notes"})
@@ -83,7 +82,7 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 		Child(kit.DropdownMenu(kit.Button("file").Label("File"), a.fileMenu())).
 		Child(kit.Label(fmt.Sprintf("%d notes", len(a.notes)))).
 		Child(gk.Div(s.Flex1)).
-		Child(kit.Button("theme").Label(themeLabel).OnClick(a.switchTheme))
+		Child(kit.Button("theme").Label(themeLabel).OnClickDo(a.switchTheme))
 	return gk.VFlex(s.SizeFull).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(bar).
 		Child(gk.Div(s.Flex1, s.WFull, s.MinH0).Child(gkdock.View(a.dock)))
@@ -111,7 +110,7 @@ func (a *App) editorView(cx *gk.Cx) gk.Element {
 		Child(gkeditor.Input(a.title)).
 		Child(kit.Label(fmt.Sprintf("%d words", n.Words))).
 		Child(gk.HFlex(s.Gap2).
-			Child(kit.Button("delete").Danger().Label("Delete").OnClick(a.askDelete)))
+			Child(kit.Button("delete").Danger().Label("Delete").OnClickDo(a.askDelete)))
 }
 
 func (a *App) confirmView(cx *gk.Cx) overlay.AlertDialogEl {
@@ -163,9 +162,9 @@ func (a *App) addNote(cx *gk.Cx) {
 	a.selectNote(cx, len(a.notes)-1)
 }
 
-func (a *App) askDelete(cx *gk.Cx, _ gk.ClickEvent) {
+func (a *App) askDelete(cx *gk.Cx) {
 	if a.selected >= 0 {
-		overlay.OpenAlertDialog(cx, a.confirm)
+		overlay.OpenAlertDialog(cx, a.confirmView)
 	}
 }
 
@@ -177,7 +176,7 @@ func (a *App) confirmDelete(cx *gk.Cx, _ gk.ClickEvent) bool {
 	return true // close the dialog
 }
 
-func (a *App) switchTheme(cx *gk.Cx, _ gk.ClickEvent) {
+func (a *App) switchTheme(cx *gk.Cx) {
 	a.dark = !a.dark
 	mode := gk.ThemeModeLight
 	if a.dark {
@@ -189,7 +188,9 @@ func (a *App) switchTheme(cx *gk.Cx, _ gk.ClickEvent) {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Notes", 800, 600, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

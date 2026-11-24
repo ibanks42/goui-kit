@@ -22,16 +22,12 @@ package you download.
   - **Windows** 10 or newer on x86_64, with Direct3D 11 (any Windows 10 machine).
 - Go 1.27 or newer ([go.dev/doc/install](https://go.dev/doc/install)); the package was tested with
   Go 1.27.3. `go version` tells you which one you have.
-- A C compiler, because the package calls the library through cgo. Without one, Go turns cgo off
-  by itself and the build stops with
-  `undefined: gk_needs_cgo__install_gcc_or_clang_and_build_with_CGO_ENABLED_1`.
-  - Linux: **gcc**, which Go uses by default (`sudo dnf install gcc` on Fedora, `sudo apt install
-    gcc` on Debian and Ubuntu), or clang with `CC=clang` set.
-  - macOS: the Xcode command-line tools (`xcode-select --install`), whose `clang` Go finds as `gcc`.
-  - Windows: MinGW-w64 **gcc** on `PATH` (Go's cgo does not use Visual Studio's compiler): MSYS2's
-    `pacman -S mingw-w64-ucrt-x86_64-gcc`, then `C:\msys64\ucrt64\bin` on `PATH`, or w64devkit.
-    `examples/go/build.sh` is an `sh` script: run it in Git Bash or MSYS2 (the `go build` it runs
-    is shown below, for PowerShell or cmd).
+- No C compiler: the program loads the prebuilt library when it starts (through
+  [purego](https://github.com/ebitengine/purego), with cgo off). The first build downloads purego,
+  the one Go module the package needs, from Go's module proxy (it is pinned in `go/go.sum`).
+  Only a program that links the library into itself (`-tags gkstatic`, "One file" below) needs a
+  C compiler. `examples/go/build.sh` is an `sh` script: on Windows run it in Git Bash or MSYS2
+  (the `go build` it runs is shown below, for PowerShell or cmd).
 - No Rust. The Rust half (GPUI, GPUI-kit and the binding's runtime) is one prebuilt library in the
   download. (If you want to build that library yourself, see [CONTRIBUTING.md](CONTRIBUTING.md).)
 
@@ -55,8 +51,9 @@ library's:
 
 | path | what |
 |---|---|
-| `lib/libgpuikit_static.a` | the library (GPUI-kit 0.11.0 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel, on Windows in MinGW's format |
-| `lib/libgpuikit_sys.so`, `lib/libgpuikit_sys.a` | Linux: a small linker script naming the system libraries it needs; Windows: the import library of the Windows API it uses |
+| `lib/libgpuikit.so` | the library (GPUI-kit 0.11.0 on the gpui-fast engine), which your program loads when it starts; `libgpuikit.dylib` on macOS (one universal file for Apple silicon and Intel), `gpuikit.dll` on Windows |
+| `lib/libgpuikit_static.a` | the same library, static, for a program that links it into itself (`-tags gkstatic`); on Windows in MinGW's format |
+| `lib/libgpuikit_sys.so`, `lib/libgpuikit_sys.a` | for the static library: Linux, a small linker script naming the system libraries it needs; Windows, the import library of the Windows API it uses |
 | `windows/` | Windows: the manifest a program embeds, and `gpuikit.rc`, which embeds it |
 | `go/` | the Go module `gpuikit.dev`: the package `gpuikit.dev/gk` your app imports, and `s`, `theme`, `palette` beside it |
 | `README.md` | where to start |
@@ -73,22 +70,21 @@ examples/go/hello.bin           # a window with a button, a label and an input (
 ```
 
 `build.sh` is one `go build` command, and builds any app folder too
-(`examples/go/build.sh ../groceries`); the command itself is below. If the window opens,
-everything works: Go, cgo, the package and the library. The other examples are built the same way
+(`examples/go/build.sh ../groceries`); the command itself is below. It also puts a link to the
+library beside the program (a copy on Windows), where the program looks for it. If the window
+opens, everything works: Go, the package and the library. The other examples are built the same way
 (`examples/go/build.sh todo`, `reader`, `notes`, `counter`, `expenses`). The first build compiles
-package `gk` (a few megabytes of generated Go and its cgo part) into Go's build cache (about 200 MB):
-about 15 s with an empty cache, then about 1.5 s for the next example and half a second for a
-rebuild after a one-line edit. Every build after the first reuses it, as long as `CGO_LDFLAGS` is
-the same: the link flags are part of cgo's cache key, so an app built with other flags compiles the
-package once more (about 12 s) for itself.
+package `gk` (a few megabytes of generated Go) into Go's build cache: about 15 s with an empty
+cache, then about 1.5 s for the next example and half a second for a rebuild after a one-line edit.
 
 If it does not start, the first line it prints starts with `gk:` and says why. The usual ones:
 
 - `the library and this package are from different versions`: the app was built against the `go/`
   folder of one download and the `lib/` of another. Build against the `go/` folder that came with
   the library.
-- `cannot find -lgpuikit_static` when building: `CGO_LDFLAGS` does not name the download's `lib/`
-  folder.
+- `the library libgpuikit.so was not found`: the program looked beside itself, in its `lib/` and
+  `../lib/` folders and where the system loader looks, and lists those places. Put the library
+  beside the program, or set `GK_LIB` to the download's `lib/` folder.
 - `the app has no display to open its window on` (Linux): neither `DISPLAY` nor `WAYLAND_DISPLAY` is set
   (an ssh session, a container). Run it in a desktop session, or offscreen (Part 3, "Testing
   without a display").
@@ -112,26 +108,24 @@ and build it with:
 
 ```sh
 G=$PWD/../gpuikit-0.0.2-linux-x86_64
-CGO_LDFLAGS="-L$G/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o groceries.bin .
+go mod tidy                     # once: adds purego, the one module the package needs, to go.mod
+go build -ldflags="-s -w" -o groceries.bin .
+ln -s $G/lib/libgpuikit.so .    # or copy it: the program looks for the library beside itself
 ./groceries.bin
 ```
 
 - `require` and `replace` are the two lines that matter: `gpuikit.dev` is not fetched from the
   network, the `replace` names a folder (relative to `go.mod`, or absolute), and no `go.sum` entry
-  is needed for it. `go build` works offline.
+  is needed for it. Only purego is fetched, once; after that `go build` works offline.
 - To keep the package in the app's repository instead (a vendored copy), copy the download's
   `go/` folder into it, say as `third_party/gpuikit`, and write
   `replace gpuikit.dev => ./third_party/gpuikit`. Copy the whole folder: package `gk` includes its
   C header (`gk/include/`), which `go mod vendor` would leave out.
-- `CGO_LDFLAGS` tells the linker where the library is. Use the same value for every build (a
-  script or a Makefile): the first build of the app compiles package `gk` for those flags, about
-  12 s, and every rebuild after an edit then takes half a second.
-- The library is linked into the program, and only the components your app actually calls end
-  up in it. Use `kit.Button` and the button code comes along; never touch the charts and
-  they stay out. You don't list or import anything for this. The `-ldflags` part is what tells the
-  linker to drop the unused parts: without it the app still works but carries every component
-  (about 100 MB instead of about 50 MB for a small app). The program is one file, so shipping it
-  means copying that file. [GO.md](GO.md) section 8 explains the details.
+- The program is small (a few megabytes); the library beside it holds all of GPUI-kit. Ship the
+  two together: the program looks for the library in `GK_LIB` (a folder or the file), beside
+  itself, in its `lib/` or `../lib/` folder, then where the system loader looks
+  ([GO.md](GO.md) section 8). `GOOS=windows go build` or `GOOS=darwin go build` build for the
+  other systems from this one, since no C compiler is involved.
 - The app imports `"gpuikit.dev/gk"` (the app, views, windows, `gk.Div` and the styles), the
   package of each area it uses (`"gpuikit.dev/gk/kit"` for buttons and labels,
   `"gpuikit.dev/gk/editor"` for inputs, `"gpuikit.dev/gk/table"` for lists and tables, and
@@ -139,34 +133,22 @@ CGO_LDFLAGS="-L$G/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -
   `"gpuikit.dev/gk/s"`, `"gpuikit.dev/gk/theme"` or `"gpuikit.dev/gk/palette"` when it uses style
   tokens or colors. A program compiles only the packages it imports.
 
-**macOS.** The same, with Apple's spelling of the flag:
-`go build -ldflags="-s -w -extldflags=-Wl,-dead_strip"`. The program has the library inside it,
-so an app bundle needs nothing in `Contents/Frameworks` for it. `go build` builds for the Mac it
-runs on; the library is universal, so the same `CGO_LDFLAGS` build for the other
-kind too: `GOARCH=amd64 CC='clang -arch x86_64' go build -o groceries-x86_64.bin .` on Apple
-silicon (`GOARCH=arm64 CC='clang -arch arm64'` on Intel), and `lipo -create -output groceries.bin
-groceries-arm64.bin groceries-x86_64.bin` makes one program for both. `examples/go/build.sh` passes
-`GOARCH` and `CC` on. `gk.Run` must be
+**macOS.** The same, with `libgpuikit.dylib`. In an app bundle the library goes in
+`Contents/Frameworks` (the program looks there). The library is universal: `GOARCH=amd64 go build
+-o groceries-x86_64.bin .` builds for Intel on Apple silicon (`GOARCH=arm64` on Intel), and
+`lipo -create -output groceries.bin groceries-arm64.bin groceries-x86_64.bin` makes one program for
+both. `examples/go/build.sh` passes `GOARCH` on. `gk.Run` must be
 called from `main` on every system, and on macOS it may not return when the app quits (GPUI can
 end the process inside it there), so put nothing after it that must run.
 
-**Windows.** You need MinGW-w64's gcc and LLVM's linker, lld, on `PATH`: MSYS2's UCRT64
-environment with the `mingw-w64-ucrt-x86_64-gcc` and `mingw-w64-ucrt-x86_64-lld` packages,
-llvm-mingw, or WinLibs' build "with LLVM". In PowerShell:
+**Windows.** The same in PowerShell, with `gpuikit.dll` beside the program:
 
 ```powershell
 $G = "$PWD/../gpuikit-0.0.2-windows-x86_64"
-$env:CGO_ENABLED = "1"; $env:CGO_LDFLAGS = "-L$G/lib"
-go build -ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'" -o groceries.exe .
+go build -ldflags="-s -w" -o groceries.exe .
+Copy-Item "$G/lib/gpuikit.dll" .
 .\groceries.exe
 ```
-
-The `.exe` has the library and the Windows manifest inside it; there is nothing to ship next to it.
-`-fuse-ld=lld` is what lets the linker drop the components you don't use: MinGW's own linker (GNU
-ld) can't on Windows, so without lld the program still works but carries all of them (about 72 MB
-instead of about 51 for a small app). `-Xlink=-force:multipleres` lets the gpuikit manifest replace
-the default one MinGW's gcc adds to every program; lld prints a warning about it, which is
-expected.
 
 - The manifest (in `windows/gpuikit.manifest`, embedded by package `gk`) asks for common controls 6,
   which the library needs: without it Windows refuses to start the program. It also makes the
@@ -175,6 +157,25 @@ expected.
   main package (`windres -O coff -i app.rc -o rsrc_windows_amd64.syso`); `go build` links every
   `.syso` there by itself. `windows/gpuikit.rc` shows the line.
 - `-ldflags "-H windowsgui"` builds a program without a console window.
+
+**One file with the library inside (`-tags gkstatic`).** A program built with `-tags gkstatic`
+links the static library into itself through cgo, so there is nothing to ship next to it, and only
+the components it calls end up in it: use `kit.Button` and the button code comes along; never
+touch the charts and they stay out. This needs a C compiler for cgo (Linux: gcc, or clang with
+`CC=clang`; macOS: the Xcode command-line tools; Windows: MinGW-w64 gcc and LLVM's linker, lld, on
+`PATH`, such as MSYS2's UCRT64 `mingw-w64-ucrt-x86_64-gcc` and `mingw-w64-ucrt-x86_64-lld`), and
+builds for the system it runs on. `GK_STATIC=1 examples/go/build.sh APP` does it, or:
+
+```sh
+CGO_LDFLAGS="-L$G/lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o groceries.bin .
+```
+
+The `-ldflags` part is what tells the linker to drop the unused parts (`-Wl,-dead_strip` on macOS;
+on Windows `'-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'`, which lld
+warns about, as expected): without it the app still works but carries every component (about
+100 MB instead of about 50 MB for a small app). Without a C compiler the build stops with
+`undefined: gk_static_needs_cgo__install_gcc_or_clang_and_build_with_CGO_ENABLED_1_or_drop_tag_gkstatic`.
+[GO.md](GO.md) section 8 explains the details.
 
 ## Part 2: the tutorial
 
@@ -209,6 +210,8 @@ Five ideas carry the whole binding, and the steps introduce them one at a time:
 package main
 
 import (
+	"log"
+
 	"gpuikit.dev/gk"
 	"gpuikit.dev/gk/kit"
 	"gpuikit.dev/gk/s"
@@ -222,9 +225,11 @@ func view(cx *gk.Cx) gk.Element {
 }
 
 func main() {
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(nil, view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }
 ```
 
@@ -232,7 +237,9 @@ func main() {
 "Groceries", 520 by 560 pixels, whose content is a view (`gk.OpenWindowWith` takes the other
 options: a minimum size, a position, ...). `gk.NewView(nil, view)` makes that view from an
 optional `init` function (none yet) and the view function. Call `gk.Run` from `main`: the main
-goroutine becomes the UI thread.
+goroutine becomes the UI thread. It returns when the app quits: `nil`, or the mistake in your code
+that stopped it (a `*gk.Error` naming your file and line), which `log.Fatal` prints. Nothing in
+`gk` exits the process, so your deferred functions run.
 
 `view` returns one element tree. `gk.VFlex` is a column; the arguments after it are **style
 tokens** from package `s`: `s.SizeFull` (fill the window), `s.P4` (padding), `s.Gap3` (space
@@ -260,7 +267,7 @@ type App struct {
 func (a *App) view(cx *gk.Cx) gk.Element {
 	col := gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
-		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClick(a.addMilk)).
+		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClickDo(a.addMilk)).
 		Child(kit.Label(fmt.Sprintf("%d items", len(a.items))))
 	for _, it := range a.items {
 		col = col.Child(kit.Label(fmt.Sprintf("%s ×%d", it.Name, it.Amount)))
@@ -268,23 +275,26 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	return col
 }
 
-func (a *App) addMilk(cx *gk.Cx, _ gk.ClickEvent) {
+func (a *App) addMilk(cx *gk.Cx) {
 	a.items = append(a.items, Item{Name: "Milk", Amount: 1})
 	// nothing else: a handler redraws the view it was given in
 }
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(nil, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }
 ```
 
 `kit.Button("add-milk")` takes an id: a name that is unique among its siblings, which GPUI uses to
 keep track of the element between redraws (`gk.Key("item", 3)` makes one from a name and a
-number). `.OnClick(a.addMilk)` gives it a handler: a method value, whose type is the builder's,
-`func(cx *gk.Cx, e gk.ClickEvent)`; a handler that does not fit does not compile. `addMilk`
+number). `.OnClickDo(a.addMilk)` gives it a handler: a method value, `func(cx *gk.Cx)`. `.OnClick`
+takes the same with the click's details, `func(cx *gk.Cx, e gk.ClickEvent)`; the `Do` form is for
+a handler that does not read them. A handler that does not fit does not compile. `addMilk`
 appends and returns: the view it was given in is then redrawn, so the label shows the new count.
 There is no `notify` to call and no state to copy into the view.
 
@@ -323,16 +333,18 @@ and in the view, and the handler and `main`:
 ```go
 		Child(gk.Div(s.Flex1, s.MinH0).Child(table.List(a.list))).
 // ...
-func (a *App) addMilk(cx *gk.Cx, _ gk.ClickEvent) {
+func (a *App) addMilk(cx *gk.Cx) {
 	a.items = append(a.items, Item{"Milk", 1})
 	gk.Refresh(cx) // the rows show data this handler changed: describe them again
 }
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }
 ```
 
@@ -408,7 +420,7 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 		})).
 		Child(gk.Div(s.Flex1).Child(name)).
 		Child(kit.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))).
-		Child(kit.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+		Child(kit.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClickDo(func(cx *gk.Cx) {
 			gk.StopPropagation(cx)
 			a.items = slices.Delete(a.items, row, row+1)
 			gk.Refresh(cx)
@@ -417,8 +429,8 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 ```
 
 A handler in a row is a closure that captures what it needs, here the row's number. A checkbox's
-`OnClick` hands the new state (`bought bool`) where a button's hands a `gk.ClickEvent`; the types
-say which, and the compiler checks them.
+`OnClick` hands the new state (`bought bool`) where a button's hands a `gk.ClickEvent` (which the
+delete button's `OnClickDo` leaves out); the types say which, and the compiler checks them.
 
 A click on the checkbox would also be a click on the row under it; `gk.StopPropagation(cx)` keeps
 it for the checkbox. `.Icon(gk.IconDelete)` is one of the kit's icons (`gk.IconName`).
@@ -431,7 +443,6 @@ that edits the item:
 <!-- from: docs/tutorial-go/06-dialog/main.go -->
 ```go
 	a.list.OnListEvent(cx, a.listEvent)
-	a.editDialog = gk.NewBuilt(cx, a.editView)
 // ...
 func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
 	if c, ok := e.(table.ListEventConfirm); ok { // a click on a row, or Enter
@@ -440,17 +451,17 @@ func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
 }
 
 func (a *App) editView(cx *gk.Cx) overlay.DialogEl {
-	amountBy := func(by int) func(*gk.Cx, gk.ClickEvent) {
-		return func(*gk.Cx, gk.ClickEvent) { a.editAmount = max(1, a.editAmount+by) }
+	amountBy := func(by int) func(*gk.Cx) {
+		return func(*gk.Cx) { a.editAmount = max(1, a.editAmount+by) }
 	}
 	return overlay.Dialog().Title(kit.Label("Edit item")).
 		Child(gk.VFlex(s.Gap3).
 			Child(editor.Input(a.editName)).
 			Child(gk.HFlex(s.Gap2, s.ItemsCenter).
 				Child(kit.Label("Amount")).
-				Child(kit.Button("less").Small().Icon(gk.IconMinus).OnClick(amountBy(-1))).
+				Child(kit.Button("less").Small().Icon(gk.IconMinus).OnClickDo(amountBy(-1))).
 				Child(kit.Label(fmt.Sprint(a.editAmount))).
-				Child(kit.Button("more").Small().Icon(gk.IconPlus).OnClick(amountBy(1))))).
+				Child(kit.Button("more").Small().Icon(gk.IconPlus).OnClickDo(amountBy(1))))).
 		Footer(overlay.DialogFooter().
 			Child(overlay.DialogClose().Trigger(kit.Button("cancel").Label("Cancel"))).
 			Child(overlay.DialogAction().Child(kit.Button("save").Primary().Label("Save")))).
@@ -461,7 +472,7 @@ func (a *App) openEditor(cx *gk.Cx, row int) {
 	a.editing = row
 	a.editAmount = a.items[row].Amount
 	a.editName.SetValue(cx, a.items[row].Name)
-	overlay.OpenDialog(cx, a.editDialog)
+	overlay.OpenDialog(cx, a.editView)
 	a.editName.Focus(cx)
 }
 
@@ -479,9 +490,10 @@ func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 ```
 
 - A dialog is described by a function like a view's, which returns a `overlay.DialogEl`.
-  `gk.NewBuilt(cx, a.editView)`, made once in `init` and kept as a `gk.Built[overlay.DialogEl]`, makes
-  it a small view of its own, and `overlay.OpenDialog` shows it. It is redrawn like any view: the `+`
-  and `-` buttons change `a.editAmount` and the dialog shows the new number.
+  `overlay.OpenDialog(cx, a.editView)` makes it a small view of its own and shows it. It is redrawn
+  like any view: the `+` and `-` buttons change `a.editAmount` and the dialog shows the new number.
+  (`gk.NewBuilt(cx, a.editView)`, made once in `init` and kept as a `gk.Built[overlay.DialogEl]`, is
+  the same view made ahead; `OpenDialog` takes either.)
 - `.Footer(..)` holds the buttons: `overlay.DialogClose().Trigger(button)` closes the dialog, and the
   button inside `overlay.DialogAction()` runs `OnOk`. `OnOk`'s handler returns a `bool`: `true` closes
   the dialog, `false` keeps it open (an empty name here). Escape closes it too.
@@ -544,10 +556,10 @@ func (a *App) toolbar() gk.Element {
 		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
 		Child(gk.Div(s.Flex1)).
 		Child(kit.DropdownMenu(kit.Button("menu").Ghost().Icon(gk.IconMenu), menu)).
-		Child(kit.Button("theme").Ghost().Icon(icon).Tooltip("Toggle the theme").OnClick(a.switchTheme))
+		Child(kit.Button("theme").Ghost().Icon(icon).Tooltip("Toggle the theme").OnClickDo(a.switchTheme))
 }
 // ...
-func (a *App) switchTheme(cx *gk.Cx, _ gk.ClickEvent) {
+func (a *App) switchTheme(cx *gk.Cx) {
 	a.dark = !a.dark
 	mode := gk.ThemeModeLight
 	if a.dark {
@@ -728,7 +740,7 @@ so the program runs there as it is.
 
 - [API-GO.md](API-GO.md): how the Go names map from GPUI-kit's Rust documentation, and an index of
   every component with its constructor and builders.
-- [GO.md](GO.md): how the Go front end works (handlers, `gk.Model[T]`, goroutines, cgo rules).
+- [GO.md](GO.md): how the Go front end works (handlers, `gk.Model[T]`, goroutines, the C interface).
 - The examples in `examples/go/`: `expenses` (a form with checks, a select, a bar chart), `todo`
   (projects, a task list, filters, search, a JSON file, a goroutine that syncs) and `reader` (3,000
   articles in a virtual list, tabs of Markdown views, a settings dialog with a slider and selects)

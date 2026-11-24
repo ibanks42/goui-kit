@@ -4,6 +4,8 @@
 package main
 
 import (
+	"log"
+
 	"gpuikit.dev/gk"
 	"gpuikit.dev/gk/chart"
 	"gpuikit.dev/gk/s"
@@ -50,8 +52,10 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		a.root = gk.NewView(nil, a.view)
 		gk.OpenWindow(cx, "Paint", 640, 400, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

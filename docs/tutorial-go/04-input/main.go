@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"gpuikit.dev/gk"
@@ -63,7 +64,9 @@ func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

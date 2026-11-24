@@ -16,7 +16,7 @@ export LD_LIBRARY_PATH=$lib
 unset WAYLAND_DISPLAY DISPLAY
 start=$(date +%s.%N)
 rm -f "$bin/gensample-go"
-if ! (cd "$repo/core/tests/go" && CGO_LDFLAGS="-L$lib -Wl,-rpath,\$ORIGIN/../lib/diag" go build -o "$bin/gensample-go" ./gensample) \
+if ! (cd "$repo/core/tests/go" && go build -o "$bin/gensample-go" ./gensample) \
     > "$out/build.log" 2>&1; then
   echo "GATE gensample go FAIL the sample does not compile: $(grep -c ': ' "$out/build.log") errors"; head -5 "$out/build.log"; exit 1
 fi

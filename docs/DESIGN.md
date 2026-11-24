@@ -237,7 +237,8 @@ Conventions:
 - **Memory.** Neither side keeps or frees the other's memory. `req` belongs to the library
   and is valid during the callback. `gk_reply` copies before it returns. `*res` from
   `gk_call` belongs to the library and is valid until the next `gk_call`; both packages copy
-  it out at once. This satisfies cgo's pointer rules without pinning.
+  it out at once. This satisfies cgo's pointer rules without pinning (the Go package's static
+  build; its default build calls the same functions through purego, GO.md section 8).
 - **Strings.** UTF-8; on the wire a u32 length then the bytes, never NUL-terminated.
 - **Enums.** Numbers assigned by the generator and fixed in `api/opcodes.lock`, never Rust
   discriminants. Decoders have a catch-all that returns `GK_ERR_BAD_ENUM`.
@@ -245,14 +246,19 @@ Conventions:
   is a u16 tag followed by its fields.
 - **Handles.** A u64 made of a kind (8 bits), a generation (24) and an index (32); 0 is nil.
   A stale or wrong-kind handle gives `GK_ERR_STALE_HANDLE`, never undefined behaviour.
-  Release is explicit; with `GK_DEBUG=1` the library prints live handles by kind at exit.
+  The library releases a handle only when asked (`RELEASE`); the Go package asks for
+  `gk.Release`, for what a released view made in its turns, and for kit state the collector
+  found unreachable (GO.md section 4). With `GK_DEBUG=1` the library prints live handles by kind
+  at exit.
 - **Errors.** Every export returns an i32 status; the message comes from `gk_last_error`.
   The packages turn a non-zero status into a panic with the message and the app's call site,
   except for operations upstream declares fallible, which return an error value.
-- **Panics.** Every export and every Rust closure that enters the app runs inside
-  `catch_unwind`. A caught Rust panic poisons the library (`GK_ERR_POISONED` from then on),
-  and the package prints it and exits 1. Nothing unwinds across C: the Go callback recovers,
-  prints the stack and exits 2.
+- **Panics and stops.** Every export and every Rust closure that enters the app runs inside
+  `catch_unwind`. A caught Rust panic poisons the library (`GK_ERR_POISONED` from then on, but
+  `QUIT` is still taken). Nothing unwinds across C and nothing exits the process: the Go
+  callback recovers a stop or a panic, records it, asks the library to quit, and `gk.Run`
+  returns the failure (a `*gk.Error` or `*gk.LibraryError`) or panics again with a
+  `*gk.PanicError` once `gk_run` has returned (PROTOCOLS.md section 3, GO.md section 5).
 - **Threads.** The thread that calls `gk_run` is the UI thread. `gk_call` and `gk_reply`
   check the thread and that a callback is active (`GK_ERR_WRONG_THREAD`,
   `GK_ERR_NO_CONTEXT`). The callback is only ever invoked on the UI thread. Nested callbacks
@@ -729,9 +735,12 @@ The Go front end is described in [GO.md](GO.md). In short:
 - An element handle is a one-pointer struct into a node block allocated per view build and left
   to the collector; a kept handle keeps its generation and is always detected.
 - Background work is goroutines with `gk.Post` and `gk.Go`.
-- The package uses cgo over the seven functions and one exported callback, so a build needs a C
-  compiler. A panic in app code inside a turn prints the Go stack and exits 2. Go's wasm targets
-  have no cgo and are out of scope.
+- The package loads the shared library at start-up and calls the seven functions through purego,
+  with one callback made by `purego.NewCallback`, so a build needs no C compiler and
+  cross-compiles; `-tags gkstatic` links the static library through cgo and one exported callback
+  instead. A panic in app code inside a turn ends the app and `gk.Run` panics again with it (a
+  `*gk.PanicError` with the original stack); a mistake is `gk.Run`'s error. Go's wasm targets
+  can load no library and are out of scope.
 
 ## 16. Distribution: what lands on the developer's disk
 
@@ -769,15 +778,16 @@ Delivery:
 
 - Go: the app's `go.mod` requires `gpuikit.dev` and replaces it with the download's `go/`
   folder.
-- Linking: the static library, into the program. The library's dispatchers are
+- Linking: by default the program loads the shared library at start-up (purego: no C compiler,
+  and GOOS cross-compiles), and ships beside it. With `-tags gkstatic`, the static library, into
+  the program: the library's dispatchers are
   split by component family, and each generated function links the family
   it uses (`gen/gk_fam.py`), so a program keeps only the families it calls into: one file, about
   50 to 60 MB for a small app, where a program plus the shared library was 76 MB. Go can't carry
   the linker flags in the package, so a Go build passes `-ldflags=-extldflags=-Wl,--gc-sections` (`-Wl,-dead_strip` on macOS; on
   Windows `-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres`, since GNU ld keeps every
-  function with unwind data there; package `gk` embeds the manifest as a .syso). The shared library
-  is still built, for the repository's tests (`-tags gkshared`), but not
-  shipped (GO.md section 8).
+  function with unwind data there; package `gk` embeds the manifest as a .syso). The download
+  ships both libraries (GO.md section 8).
 
 How the libraries are built: CI (`.github/workflows/platforms.yml`) runs `tools/build-lib.sh` on
 each system. Linux is linked by zig against glibc 2.28 (`tools/zigbuild.sh`, with a pinned zig

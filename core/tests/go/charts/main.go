@@ -12,6 +12,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -44,8 +45,10 @@ func main() {
 		fmt.Printf("charts: mode %q is unknown\n", a.mode)
 		os.Exit(3)
 	}
-	gk.RunHeadless("size 320 240\nframe\nadvance 10\nframe\nframe\nadvance 20\nframe\nstat\n", func(cx *gk.Cx) {
+	if err := gk.RunHeadless("size 320 240\nframe\nadvance 10\nframe\nframe\nadvance 20\nframe\nstat\n", func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.rootView)
 		gk.OpenWindow(cx, "charts", 320, 240, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

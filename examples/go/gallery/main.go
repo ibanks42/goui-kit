@@ -18,6 +18,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -164,8 +165,10 @@ func main() {
 	if leak, ok := os.LookupEnv("GALLERY_LEAK"); ok {
 		a.leak, _ = strconv.Atoi(leak)
 	}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "Gallery", 800, 600, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

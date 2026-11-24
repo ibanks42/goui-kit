@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"gpuikit.dev/gk"
 	"gpuikit.dev/gk/kit"
@@ -22,7 +23,7 @@ type App struct {
 func (a *App) view(cx *gk.Cx) gk.Element {
 	col := gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
-		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClick(a.addMilk)).
+		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClickDo(a.addMilk)).
 		Child(kit.Label(fmt.Sprintf("%d items", len(a.items))))
 	for _, it := range a.items {
 		col = col.Child(kit.Label(fmt.Sprintf("%s ×%d", it.Name, it.Amount)))
@@ -30,14 +31,16 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 	return col
 }
 
-func (a *App) addMilk(cx *gk.Cx, _ gk.ClickEvent) {
+func (a *App) addMilk(cx *gk.Cx) {
 	a.items = append(a.items, Item{Name: "Milk", Amount: 1})
 	// nothing else: a handler redraws the view it was given in
 }
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(nil, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

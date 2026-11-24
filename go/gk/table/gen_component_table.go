@@ -204,7 +204,7 @@ func DataTable(state State) DataTableEl {
 	rt.UseComponentTable()
 	n := rt.NewNode(805)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	return DataTableEl{El: rt.MkEl(n)}
 }
 

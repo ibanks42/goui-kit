@@ -50,12 +50,11 @@ func runtimeInit() {
 // checkCx checks that cx is the current turn's, on the UI thread, and returns the turn.
 func CheckCx(cx *Cx) *turn {
 	if osThread() != uiThread {
-		// No callback boundary is below another goroutine to recover a panic: print the stop the
-		// way the boundary does (message and the app's line, exit 2), without Go's goroutine dump.
+		// No callback boundary is below another goroutine to recover a panic: the stop is
+		// recorded, the UI thread asks the library to quit, and this goroutine ends (rt_fail.go).
 		e := &Error{Msg: "the gk package was called from a goroutine that is not on the UI thread: only gk.Post may be called there. Post what the goroutine computed, as in gk.Post(func(cx *gk.Cx) { a.items = items }); the posted function runs on the UI thread with a cx"}
 		e.File, e.Line, e.Func = appFrame(2)
-		fmt.Fprintln(os.Stderr, e.Error())
-		os.Exit(2)
+		failOffThread(e)
 	}
 	if cx == nil || cur == nil || cx.t != cur || cx.serial != cur.serial {
 		Stop("a *gk.Cx was used after the function it was given to returned: a cx is valid only during that call. Do not store it; use the cx your handler, init or view function is given")
@@ -172,6 +171,7 @@ func dispatch(kind uint32, in []byte) []byte {
 	case KEvent:
 		event(cx, &r)
 	case KWake:
+		releaseCollected(t) // what the collector found unreachable (rt_life.go)
 		drainPosts(cx, -1)
 	case KDone:
 		doneTurn(cx, &r)
@@ -204,6 +204,7 @@ func endTurn() {
 	depth--
 	if cur == nil {
 		sweepRows()
+		endTurnLife()
 	}
 }
 

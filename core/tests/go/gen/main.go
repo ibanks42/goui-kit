@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"log"
 	"math"
 	"os"
 	"reflect"
@@ -2412,9 +2413,11 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 func main() {
 	app.mode = os.Getenv("GK_PROTO")
 	script := "size 320 200\nframe\nclick 100 100\nframe\nframe\nclick 100 100\nframe\nframe\nstat\n"
-	gk.RunHeadless(script, func(cx *gk.Cx) {
+	if err := gk.RunHeadless(script, func(cx *gk.Cx) {
 		app.root = gk.NewView(nil, app.rootView)
 		gk.OpenWindow(cx, "gen", 320, 200, app.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("gen done mode=%s clicks=%d ok=%d failed=%d events=%d\n", app.mode, app.clicks, app.ok, app.failed, app.events)
 }

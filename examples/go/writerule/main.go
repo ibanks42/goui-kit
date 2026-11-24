@@ -12,6 +12,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"gpuikit.dev/gk"
 	"gpuikit.dev/gk/editor"
@@ -50,9 +51,11 @@ func (a *App) echoView(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		a.echo = gk.NewView(nil, a.echoView)
 		a.root = gk.NewView(a.init, a.rootView)
 		gk.OpenWindow(cx, "Write rule", 480, 200, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

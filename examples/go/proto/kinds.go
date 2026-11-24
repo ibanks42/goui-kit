@@ -9,6 +9,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -49,10 +50,12 @@ func kindsMain(mode string) bool {
 		script += "frame\nadvance 100\nframe\nadvance 100\nframe\nframe\n"
 	}
 	script += "frame\nframe\nframe\nstat\n"
-	gk.RunHeadless(script, func(cx *gk.Cx) {
+	if err := gk.RunHeadless(script, func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "kinds", 640, 480, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	switch mode {
 	case "kinds-items", "kinds-label":
 		fmt.Printf("kinds calendar described=%d days=%d weekdays=%d active=%d labels=%d\n", a.described, a.days, a.wdays, a.active, a.labels)

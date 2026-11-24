@@ -146,7 +146,7 @@ func (e PopoverEl) OverlayClosable(closable bool) PopoverEl {
 // TrackFocus is <gpui_kit::component::popover::Popover>::track_focus.
 func (e PopoverEl) TrackFocus(handle gk.FocusHandle) PopoverEl {
 	o := rt.Op(rt.N(e.Core), 265)
-	o.U64(rt.H(handle.HCore))
+	o.U64(rt.Held(rt.H(handle.HCore)))
 	return e
 }
 

@@ -51,6 +51,9 @@ pub fn call(
             Ok(())
         }
         C_QUIT => {
+            // Offscreen, quitting ends the script (the test platform has no loop to end).
+            #[cfg(feature = "diag")]
+            gk_meter::headless::stop();
             c.cx.quit();
             Ok(())
         }

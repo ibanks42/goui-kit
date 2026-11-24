@@ -8,6 +8,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"gpuikit.dev/gk"
@@ -35581,10 +35582,12 @@ func (a *App) rootView(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{}
-	gk.RunHeadless("frame\nframe\n", func(cx *gk.Cx) {
+	if err := gk.RunHeadless("frame\nframe\n", func(cx *gk.Cx) {
 		sampleAct = gk.NewAction(cx, "gensample.sample")
 		a.root = gk.NewView(nil, a.rootView)
 		gk.OpenWindow(cx, "gensample", 640, 480, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("gensample: done runs=%d\n", a.runs)
 }

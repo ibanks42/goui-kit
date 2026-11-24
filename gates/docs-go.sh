@@ -4,7 +4,7 @@
 # and every call docs/API-GO.md names in its text against its snippet program); README.md's Go
 # block is gates/readme-go.sh's. This builds every program those guides cut from (every folder of
 # docs/tutorial-go and docs/snippets-go, and the examples they cite) with go build against the
-# ship library, runs each of them offscreen (the diag library) for a few frames with a screenshot,
+# package (the default build, which loads the library at start-up), runs each of them offscreen (the diag library) for a few frames with a screenshot,
 # drives the tutorial's last step through gates/docs-tutorial.script, and checks that the
 # component index of docs/API-GO.md is the one the generated package gives (gen/gk_apidoc.py).
 # Images in gates/out/docs-go/. Prints one line "GATE docs guides-go ...".
@@ -26,7 +26,7 @@ progs=()
 for d in "$repo"/docs/tutorial-go/*/ "$repo"/docs/snippets-go/*/ $cited; do
   [ -f "$d/main.go" ] || continue
   name=docs-go-$(basename "$(dirname "$d")")-$(basename "$d")
-  if ! (cd "$d" && CGO_LDFLAGS="-L$root/ship -Wl,-rpath,$root/ship" go build -o "$bin/$name" .) \
+  if ! (cd "$d" && go build -o "$bin/$name" .) \
       > "$out/$name.build.log" 2>&1; then
     head -20 "$out/$name.build.log"; fail "$d does not build"
   fi

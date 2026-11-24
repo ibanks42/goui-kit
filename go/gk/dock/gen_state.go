@@ -301,7 +301,7 @@ func (s Area) AddPanel(cx *gk.Cx, panel Panel, placement Placement, size gk.Opti
 	rt.UseBaseDock()
 	o := rt.NewReq(1277)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(panel.HCore))
+	o.U64(rt.Held(rt.H(panel.HCore)))
 	o.U16(uint16(placement))
 	if x0, ok := size.Get(); ok {
 		o.U8(1)
@@ -323,7 +323,7 @@ func (s Area) AddPanelView(cx *gk.Cx, panel Panel, placement Placement, size gk.
 	rt.UseBaseDock()
 	o := rt.NewReq(1278)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(panel.HCore))
+	o.U64(rt.Held(rt.H(panel.HCore)))
 	o.U16(uint16(placement))
 	if x0, ok := size.Get(); ok {
 		o.U8(1)
@@ -365,7 +365,7 @@ func (s Area) RemovePanel(cx *gk.Cx, panel Panel) {
 	rt.UseBaseDock()
 	o := rt.NewReq(1279)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(panel.HCore))
+	o.U64(rt.Held(rt.H(panel.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -1167,7 +1167,7 @@ func (s PanelHandle) Panel(cx *gk.Cx) Panel {
 func NewPanelHandle(cx *gk.Cx, panel Panel) PanelHandle {
 	rt.UseComponentDock()
 	o := rt.NewReq(1281)
-	o.U64(rt.H(panel.HCore))
+	o.U64(rt.Held(rt.H(panel.HCore)))
 	o.U16(0) // no builder ops follow
 	return PanelHandle{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
@@ -1178,7 +1178,7 @@ func NewPanelHandle(cx *gk.Cx, panel Panel) PanelHandle {
 func NewPanelHandleFromView(cx *gk.Cx, panel Panel) PanelHandle {
 	rt.UseComponentDock()
 	o := rt.NewReq(1280)
-	o.U64(rt.H(panel.HCore))
+	o.U64(rt.Held(rt.H(panel.HCore)))
 	o.U16(0) // no builder ops follow
 	return PanelHandle{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
@@ -1190,7 +1190,7 @@ func NewPanelHandleFromView(cx *gk.Cx, panel Panel) PanelHandle {
 func PanelHandleOf(cx *gk.Cx, panel Panel) gk.Option[PanelHandle] {
 	rt.UseComponentDock()
 	o := rt.NewReq(1282)
-	o.U64(rt.H(panel.HCore))
+	o.U64(rt.Held(rt.H(panel.HCore)))
 	r := rt.StateCall(0, cx, o)
 	return rt.RdOpt(r, func(r *rt.Reader) PanelHandle { return PanelHandle{HCore: rt.MkH(r.U64())} })
 }
@@ -1518,7 +1518,7 @@ func (s TabGroupContext) DropItem(cx *gk.Cx, item AnyDrag, placement gk.Option[g
 	rt.UseBaseDock()
 	o := rt.NewReq(1575)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(item.HCore))
+	o.U64(rt.Held(rt.H(item.HCore)))
 	if x0, ok := placement.Get(); ok {
 		o.U8(1)
 		o.U16(uint16(x0))
@@ -1536,7 +1536,7 @@ func (s TabGroupContext) DropPanel(cx *gk.Cx, drag DragPanel, ix gk.Option[int],
 	rt.UseBaseDock()
 	o := rt.NewReq(1746)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(drag.HCore))
+	o.U64(rt.Held(rt.H(drag.HCore)))
 	if x0, ok := ix.Get(); ok {
 		o.U8(1)
 		rt.PutUsize(o, x0)

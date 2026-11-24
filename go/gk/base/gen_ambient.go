@@ -16,7 +16,7 @@ import (
 func HandleKeyDown(cx *gk.Cx, state QuestionnaireState, event gk.KeyDownEvent) {
 	rt.UseBaseQuestionnaire()
 	o := rt.NewReq(733)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	putKeyDownEvent(o, event)
 	rt.AmbientCall(cx, o, false)
 }

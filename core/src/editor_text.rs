@@ -61,8 +61,7 @@ impl<T> MainThread<T> {
 /// A typed fragment whose root is not of the type upstream asked for: a mistake in app code (the
 /// Go type of the argument prevents it; a tape written by hand could do it). Exit 2.
 pub fn bad_fragment(what: &str) -> ! {
-    eprintln!("gk: a fragment given where upstream wants a {what} is not a {what}");
-    std::process::exit(2);
+    crate::rt::app_stop(format!("a fragment given where upstream wants a {what} is not a {what}"))
 }
 
 // ---------------------------------------------------------------- 9.22 rows without a window

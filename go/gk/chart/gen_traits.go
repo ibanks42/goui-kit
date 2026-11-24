@@ -218,7 +218,7 @@ func tStyledExtDebugBlue(n *rt.Node) {
 // tStyledExtDebugFocused: gpui_kit::base::StyledExt::debug_focused.
 func tStyledExtDebugFocused(n *rt.Node, focusHandle gk.FocusHandle) {
 	o := rt.Op(n, 17794)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 }
 
 // tStyledExtDebugGreen: gpui_kit::base::StyledExt::debug_green.

@@ -39,12 +39,11 @@ pub fn handed<T: 'static>(i: u8) -> T {
     match v.map(|b| b.downcast::<T>()) {
         Some(Ok(b)) => *b,
         _ => {
-            eprintln!(
-                "gk: the {} an item function is handed was placed twice, or outside its own row: \
+            crate::rt::app_stop(format!(
+                "the {} an item function is handed was placed twice, or outside its own row: \
                  an item's element can be used once, in the function that received it",
                 std::any::type_name::<T>()
-            );
-            std::process::exit(2);
+            ))
         }
     }
 }

@@ -38,6 +38,13 @@ func (e SheetEl) OnClose(onClose func(cx *gk.Cx, e gk.ClickEvent)) SheetEl {
 	return e
 }
 
+// OnCloseDo is OnClose with a handler that takes no event (docs/GO.md section 4).
+func (e SheetEl) OnCloseDo(onClose func(cx *gk.Cx)) SheetEl {
+	o := rt.Op(rt.N(e.Core), 257)
+	o.U32(rt.Register(onClose, 1))
+	return e
+}
+
 // Set whether the sheet should have an overlay, default is `true`.
 //
 // Overlay is <gpui_kit::component::sheet::Sheet>::overlay.

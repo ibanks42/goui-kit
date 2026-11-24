@@ -10,10 +10,12 @@
 # cargo-zigbuild and link setup; the Rust of rust-toolchain.toml). Then the download
 # (tools/dist.sh), then what a newcomer does
 # first, from the unpacked download (tools/dist-test.sh): the hello example built in Go with the
-# download's own build script, and the program run in a window for 30 frames
-# (Linux: under Xvfb, drawn by Mesa's lavapipe). On macOS also for the other architecture:
-# an x86_64 build of hello, run under Rosetta 2 when the runner has it, else built
-# and linked only (the log says which). The diagnostic library (offscreen rendering, scripted
+# download's own build script, both ways (the default, which loads the shared library and needs
+# no C compiler, and -tags gkstatic, which links the static one), and each program run in a
+# window for 30 frames (Linux: under Xvfb, drawn by Mesa's lavapipe). On macOS also for the other
+# architecture: x86_64 builds of hello, run under Rosetta 2 when the runner has it, else built
+# only (the log says which). On Linux, gates/cross.sh first builds the Go package for macOS and
+# Windows without cgo. The diagnostic library (offscreen rendering, scripted
 # input) is not built here: it is for the repository's own tests (docs/CONTRIBUTING.md). Each
 # platform's archive is the artifact gpuikit-PLATFORM; the test output is test-PLATFORM.
 #
@@ -115,8 +117,9 @@ jobs:
           echo "GK_ZIG=$zig" >> "$GITHUB_ENV"
           echo "$bin" >> "$GITHUB_PATH"
 
-      # Go's cgo on Windows needs MinGW-w64 gcc; tools/win-implib.sh a dlltool; the static library
-      # (built for Rust's MinGW target by tools/build-lib.sh) dlltool and windres. The image's own
+      # The static library (built for Rust's MinGW target by tools/build-lib.sh) needs MinGW-w64's
+      # dlltool and windres, and a Go app built with -tags gkstatic MinGW-w64 gcc (cgo); the
+      # default Go build needs no C compiler. The image's own
       # MinGW is used when it has all three; otherwise MSYS2's (preinstalled on the image).
       - name: MinGW-w64 gcc, dlltool and windres
         if: runner.os == 'Windows'
@@ -186,6 +189,12 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: false
+
+      # The Go package for macOS (arm64, x86_64), Windows and Linux arm64, built from Linux without
+      # cgo, and type-checked both ways (gates/cross.sh; zig cc runs cgo for the static way).
+      - name: Go cross-compile
+        if: runner.os == 'Linux'
+        run: ZIG=$GK_ZIG gates/cross.sh
 
       - name: Download (tools/dist.sh)
         run: |

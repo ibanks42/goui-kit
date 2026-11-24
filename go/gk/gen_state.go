@@ -1188,7 +1188,7 @@ func (s Theme) ApplyConfig(cx *Cx, config ThemeConfigRc) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1161)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(config.HCore))
+	o.U64(rt.Held(rt.H(config.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -1228,7 +1228,7 @@ func (s Theme) SetDarkTheme(cx *Cx, value ThemeConfigRc) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1212)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(value.HCore))
+	o.U64(rt.Held(rt.H(value.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -1264,7 +1264,7 @@ func (s Theme) SetHighlightTheme(cx *Cx, value HighlightThemeArc) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1216)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(value.HCore))
+	o.U64(rt.Held(rt.H(value.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -1273,7 +1273,7 @@ func (s Theme) SetLightTheme(cx *Cx, value ThemeConfigRc) {
 	rt.UseComponentTheme()
 	o := rt.NewReq(1217)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(value.HCore))
+	o.U64(rt.Held(rt.H(value.HCore)))
 	rt.StateSet(cx, o)
 }
 

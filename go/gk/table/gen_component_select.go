@@ -15,7 +15,7 @@ func Select(state SelectState, st ...gk.Style) SelectEl {
 	rt.UseComponentSelect()
 	n := rt.NewNode(833)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return SelectEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }

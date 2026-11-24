@@ -84,6 +84,7 @@ func NewView(init func(cx *Cx), render func(cx *Cx) Element) View {
 	rec := &viewRec{h: r.U64(), init: init, render: render}
 	rec.file, rec.line, _ = appFrame(2)
 	views.set(rec.h, rec)
+	own(rec.h, ownView)
 	return View{MkH(rec.h)}
 }
 
@@ -107,6 +108,9 @@ func releaseView(t *turn, v View) {
 		Stop("this gk.View was released already: release a view once")
 	}
 	views.del(v.h)
+	disown(v.h)
+	releaseOwned(t, v.h) // what the view made: its states, views, sources, overlays (rt_life.go)
+	forgetBuiltSites(v.h)
 	dropKeptOf(t, v.h)
 	rec.cur, rec.old, rec.last = nil, nil, nil
 	rec.dead = true

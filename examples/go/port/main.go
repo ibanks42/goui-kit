@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -417,7 +418,9 @@ func main() {
 			script = string(b)
 		}
 	}
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	if strings.HasPrefix(a.mode, "menu-redraw") {
 		fmt.Printf("port menu fired alpha=%d bravo=%d redrawn=%v\n", a.menuA, a.menuB, a.menuTicks >= 10)
 	}

@@ -17,6 +17,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -395,7 +396,9 @@ func main() {
 		sb.WriteString(openMenu)
 	}
 	sb.WriteString("frame\n")
-	gk.RunHeadless(sb.String(), a.start)
+	if err := gk.RunHeadless(sb.String(), a.start); err != nil {
+		log.Fatal(err)
+	}
 	again := 0
 	for _, n := range a.rows {
 		if n > 1 {

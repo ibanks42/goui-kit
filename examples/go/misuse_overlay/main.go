@@ -17,6 +17,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -80,8 +81,10 @@ func (a *App) init(cx *gk.Cx) {
 
 func main() {
 	a := &App{mode: os.Getenv("GK_NEG")}
-	gk.RunHeadless("size 640 480\nframe\nadvance 10\nframe\nframe\nadvance 20\nframe\nframe\nadvance 20\nframe\nstat\n", func(cx *gk.Cx) {
+	if err := gk.RunHeadless("size 640 480\nframe\nadvance 10\nframe\nframe\nadvance 20\nframe\nframe\nadvance 20\nframe\nstat\n", func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "misuse_overlay", 640, 480, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

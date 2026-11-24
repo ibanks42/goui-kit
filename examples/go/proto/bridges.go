@@ -9,6 +9,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -57,7 +58,9 @@ func runBridges(mode string) bool {
 	}
 	b := &bridges{mode: mode, described: map[string]int{}}
 	script := "size 640 480\n" + strings.Repeat("frame\n", 12) + "stat\n"
-	gk.RunHeadless(script, b.start)
+	if err := gk.RunHeadless(script, b.start); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("bridges done mode=%s frames=%d\n", mode, b.frame)
 	return true
 }

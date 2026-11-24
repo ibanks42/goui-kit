@@ -19,13 +19,14 @@
 # expenses.rs), and so has the tutorial's last step (tutorial.rs, its scripted session); the
 # tutorial's other steps are judged by their own runs (a run that is not deterministic fails) and by gates/docs-go.sh. Default: all of them. Prints lines starting with GATE.
 # Images in gates/out/go-apps/.
-# GK_STATIC=1: the Go programs are built the way an app is, against the static library
-# (lib/diag's, for the offscreen runs), so each links only the component families it calls into;
-# every scripted session then shows whether one is missing.
+# GK_STATIC=1: the Go programs are built the static way (build tag gkstatic, cgo), against the
+# static library (lib/diag's, for the offscreen runs), so each links only the component families
+# it calls into; every scripted session then shows whether one is missing, and the build prints
+# their sizes. Without it they are built the default way, which loads the library at start-up.
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
 root=${GK_LIB_ROOT:-$repo/lib}; bin=${GK_BIN:-$repo/bin}; mkdir -p "$bin"
 if [ "${GK_STATIC:-}" = 1 ]; then
-  export GOFLAGS="-mod=mod" GOBUILDFLAGS="-ldflags=-extldflags=-Wl,--gc-sections"
+  export GOBUILDFLAGS="-ldflags=-extldflags=-Wl,--gc-sections"
   golib=$root/diag; tag=" (static)"; out=$here/out/go-apps-static
 else
   golib=$root/ship; tag=""; out=$here/out/go-apps
@@ -83,7 +84,7 @@ for phase in "$@"; do
     fi
     for d in "$repo"/docs/tutorial-go/*/; do
       n=$(basename "$d" | cut -c1-2)
-      ( cd "$repo/docs/tutorial-go" && CGO_LDFLAGS="-L$golib -Wl,-rpath,$root/ship" \
+      ( cd "$repo/docs/tutorial-go" && CGO_LDFLAGS="-L$golib" \
         go build ${GOBUILDFLAGS:-} -o "$bin/tut-$n-go" "./$(basename "$d")" ) >> "$out/build-go.log" 2>&1 \
         || { echo "GATE go-apps build FAIL docs/tutorial-go/$(basename "$d")"; cat "$out/build-go.log"; rc=1; continue 2; }
     done

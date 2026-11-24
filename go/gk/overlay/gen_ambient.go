@@ -121,10 +121,10 @@ func Notifications(cx *gk.Cx) []Notification {
 // the builder.
 //
 // OpenAlertDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_alert_dialog.
-func OpenAlertDialog(cx *gk.Cx, build gk.Built[AlertDialogEl]) {
+func OpenAlertDialog[B gk.Builder[AlertDialogEl]](cx *gk.Cx, build B) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(1124)
-	rt.PutBuilt(o, build.View)
+	rt.PutBuilt(o, rt.BuiltView[AlertDialogEl](cx, build))
 	rt.AmbientCall(cx, o, false)
 }
 
@@ -143,10 +143,10 @@ func OpenAlertDialog(cx *gk.Cx, build gk.Built[AlertDialogEl]) {
 // would steal focus from another control or a nested dialog.
 //
 // OpenDialog is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_dialog.
-func OpenDialog(cx *gk.Cx, build gk.Built[DialogEl]) {
+func OpenDialog[B gk.Builder[DialogEl]](cx *gk.Cx, build B) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(1125)
-	rt.PutBuilt(o, build.View)
+	rt.PutBuilt(o, rt.BuiltView[DialogEl](cx, build))
 	rt.AmbientCall(cx, o, false)
 }
 
@@ -157,10 +157,10 @@ func OpenDialog(cx *gk.Cx, build gk.Built[DialogEl]) {
 // the builder.
 //
 // OpenSheet is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet.
-func OpenSheet(cx *gk.Cx, build gk.Built[SheetEl]) {
+func OpenSheet[B gk.Builder[SheetEl]](cx *gk.Cx, build B) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(1126)
-	rt.PutBuilt(o, build.View)
+	rt.PutBuilt(o, rt.BuiltView[SheetEl](cx, build))
 	rt.AmbientCall(cx, o, false)
 }
 
@@ -171,11 +171,11 @@ func OpenSheet(cx *gk.Cx, build gk.Built[SheetEl]) {
 // the builder.
 //
 // OpenSheetAt is <gpui_kit::Window as gpui_kit::component::WindowExt>::open_sheet_at.
-func OpenSheetAt(cx *gk.Cx, placement gk.Placement, build gk.Built[SheetEl]) {
+func OpenSheetAt[B gk.Builder[SheetEl]](cx *gk.Cx, placement gk.Placement, build B) {
 	rt.UseComponentWindowExt()
 	o := rt.NewReq(1127)
 	o.U16(uint16(placement))
-	rt.PutBuilt(o, build.View)
+	rt.PutBuilt(o, rt.BuiltView[SheetEl](cx, build))
 	rt.AmbientCall(cx, o, false)
 }
 

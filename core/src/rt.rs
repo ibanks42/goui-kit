@@ -515,6 +515,7 @@ pub fn panic_message() -> String {
 pub fn guard<T>(what: &'static str, f: impl FnOnce() -> T) -> Option<T> {
     match catch_unwind(AssertUnwindSafe(f)) {
         Ok(v) => Some(v),
+        Err(e) if e.is::<AppStop>() => None, // the binding was told (app_stop); the app quits
         Err(_) => {
             fatal(what);
             None
@@ -522,8 +523,38 @@ pub fn guard<T>(what: &'static str, f: impl FnOnce() -> T) -> Option<T> {
     }
 }
 
-/// The library panicked outside a `gk_call`: poison it, tell the binding (the PANIC turn;
-/// the binding prints the message and exits 1), and if the binding returns, exit here.
+/// What `app_stop` unwinds with: not a panic of the library, which goes on until the app quits.
+pub struct AppStop;
+
+static APP_STOPPED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// A mistake in app code the library found where no call returns an error to the app (a view's
+/// tape names a released handle, a buffered write failed after its handler returned). The binding
+/// is told (the PANIC turn, kind 1: a stop, not a fault of the library; PROTOCOLS.md section 3),
+/// the app quits, and the drawing unwinds to the nearest `guard`, which draws nothing more of it.
+/// A binding that exits there never returns. With no binding to tell: the message, exit 2.
+pub fn app_stop(msg: String) -> ! {
+    let session = SESSION.with(|s| s.try_borrow().ok().and_then(|s| s.as_ref().map(|s| (s.callback, s.user))));
+    let Some((callback, user)) = session else {
+        eprintln!("gk: {msg}");
+        std::process::exit(2);
+    };
+    if !APP_STOPPED.swap(true, Ordering::SeqCst) {
+        let mut req = Vec::with_capacity(msg.len() + 5);
+        req.put_str(&msg);
+        req.put_u8(1);
+        let mut cb = GkCb { reply: Vec::new() };
+        // SAFETY: the callback is the app's, given to gk_run; req and cb live across the call.
+        unsafe { callback(user, &mut cb, K_PANIC, req.as_ptr(), req.len()) };
+        crate::quit_soon();
+    }
+    std::panic::resume_unwind(Box::new(AppStop))
+}
+
+/// The library panicked outside a `gk_call`: poison it and tell the binding (the PANIC turn).
+/// A binding that exits there never returns; one that returns (Go: it reports the panic from
+/// gk_run's caller) gets the app ended as `QUIT` would end it, and gk_run returns. With no
+/// binding to tell, exit here.
 pub fn fatal(what: &str) {
     POISONED.store(true, Ordering::SeqCst);
     let msg = format!("{} (while {what})", panic_message());
@@ -534,6 +565,8 @@ pub fn fatal(what: &str) {
         let mut cb = GkCb { reply: Vec::new() };
         // SAFETY: the callback is the app's, given to gk_run; req and cb live across the call.
         unsafe { callback(user, &mut cb, K_PANIC, req.as_ptr(), req.len()) };
+        crate::quit_soon();
+        return;
     }
     eprintln!("gk: the library panicked: {msg}");
     std::process::exit(1);
@@ -730,18 +763,18 @@ fn apply_ops(ops: Vec<Vec<u8>>, mut window: Option<&mut Window>, cx: &mut App) {
         if let Err(GkErr(code, msg)) =
             crate::calls::call(&op, window.as_deref_mut(), cx, &mut out, true)
         {
-            eprintln!("gk: a change a handler asked for could not be made: {msg}");
             if code == ERR_STALE_HANDLE || code == ERR_BAD_OP {
                 // A mistake in app code (a released or wrong handle, an op this library does
                 // not know), found after the handler that made it has returned. It stops
                 // here, like every other misuse; it is not left to show wrong content.
-                eprintln!(
-                    "    The write was buffered by a handler and applied after it returned, so its \
-                     line is not known here. Run with GK_DEBUG=1: every write is then sent at \
-                     once and the program stops at the line that made it."
-                );
-                std::process::exit(2);
+                app_stop(format!(
+                    "a change a handler asked for could not be made: {msg}\n    The write was \
+                     buffered by a handler and applied after it returned, so its line is not known \
+                     here. Run with GK_DEBUG=1: every write is then sent at once and the program \
+                     stops at the line that made it."
+                ));
             }
+            eprintln!("gk: a change a handler asked for could not be made: {msg}");
         }
     }
 }

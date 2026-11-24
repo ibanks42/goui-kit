@@ -17,9 +17,9 @@
 # and scripted input, for the tests. Results, in the layout tools/dist.sh and the gates read:
 #   lib/ship/  lib/diag/       libgpuikit.so | libgpuikit.dylib (universal, install name
 #                              @rpath/libgpuikit.dylib) | gpuikit.dll, gpuikit.dll.lib (MSVC import
-#                              library), libgpuikit.dll.a and gpuikit.def (MinGW import
-#                              library, for Go's cgo; tools/win-implib.sh)
-#   lib/VARIANT/libgpuikit_static.a   the same library, static, which Go apps link (universal on
+#                              library): what Go apps load at start-up (purego, the default)
+#   lib/VARIANT/libgpuikit_static.a   the same library, static, which Go apps built with -tags
+#                              gkstatic link (universal on
 #                              macOS; built for Rust's MinGW target on Windows); on Linux beside
 #                              libgpuikit_sys.so and on Windows beside libgpuikit_sys.a, which name
 #                              the system libraries it needs
@@ -99,8 +99,8 @@ for v in "$@"; do
   if [ "$v" = ship ]; then echo "$engine" > "$out/$v/ENGINE"; else echo gpui-fast > "$out/$v/ENGINE"; fi
   case $os in
     linux) cp $rd/libgpuikit.so "$out/$v/"
-      # The static library, for Go apps that opt into the component families they use (docs/GO.md
-      # section 8), and a linker script naming the system libraries it needs by their run-time
+      # The static library, for Go apps built with -tags gkstatic, which keep only the component
+      # families they use (docs/GO.md section 8), and a linker script naming the system libraries it needs by their run-time
       # names, so linking it needs no -dev packages (the same libraries the shared one loads).
       cp $rd/libgpuikit.a "$out/$v/libgpuikit_static.a"
       printf '%s\n' '/* GNU ld script: the system libraries libgpuikit_static.a needs (tools/build-lib.sh). */' \
@@ -127,7 +127,7 @@ for v in "$@"; do
       f=$out/$v/libgpuikit.dylib
       lipo -create -output "$f" "$sl"/*.dylib
       rm -rf "$sl"
-      # The static library, universal too, for Go apps (docs/GO.md section 8).
+      # The static library, universal too, for Go apps built with -tags gkstatic (docs/GO.md section 8).
       statics=(); for t in "${mac_targets[@]}"; do statics+=("target/$t/release/libgpuikit.a"); done
       lipo -create -output "$out/$v/libgpuikit_static.a" "${statics[@]}"
       lipo -info "$f"
@@ -138,8 +138,7 @@ for v in "$@"; do
       done ;;
     windows)
       cp $rd/gpuikit.dll $rd/gpuikit.dll.lib "$out/$v/"
-      tools/win-implib.sh "$out/$v"
-      # The static library for Go apps (docs/GO.md section 8). Go's cgo links with MinGW-w64, which
+      # The static library for Go apps built with -tags gkstatic (docs/GO.md section 8). Go's cgo links with MinGW-w64, which
       # cannot link MSVC's objects, so this one is built for Rust's MinGW target, by the toolchain
       # hosted on MinGW (with the MSVC-hosted one, gpui's build script compiles its resources with
       # MSVC's rc.exe, in a format MinGW's linker cannot read). Needs MinGW-w64's gcc, dlltool and

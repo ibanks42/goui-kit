@@ -202,6 +202,13 @@ func (e AlertDialogEl) OnClose(onClose func(cx *gk.Cx, e gk.ClickEvent)) AlertDi
 	return e
 }
 
+// OnCloseDo is OnClose with a handler that takes no event (docs/GO.md section 4).
+func (e AlertDialogEl) OnCloseDo(onClose func(cx *gk.Cx)) AlertDialogEl {
+	o := rt.Op(rt.N(e.Core), 272)
+	o.U32(rt.Register(onClose, 1))
+	return e
+}
+
 // Sets the callback for when the OK/action button is clicked.
 //
 // The callback should return `true` to close the dialog, if return `false` the dialog will not be
@@ -1098,6 +1105,13 @@ func (e DialogEl) OnCancel(onCancel func(cx *gk.Cx, e gk.ClickEvent) bool) Dialo
 //
 // OnClose is <gpui_kit::component::dialog::Dialog>::on_close.
 func (e DialogEl) OnClose(onClose func(cx *gk.Cx, e gk.ClickEvent)) DialogEl {
+	o := rt.Op(rt.N(e.Core), 266)
+	o.U32(rt.Register(onClose, 1))
+	return e
+}
+
+// OnCloseDo is OnClose with a handler that takes no event (docs/GO.md section 4).
+func (e DialogEl) OnCloseDo(onClose func(cx *gk.Cx)) DialogEl {
 	o := rt.Op(rt.N(e.Core), 266)
 	o.U32(rt.Register(onClose, 1))
 	return e

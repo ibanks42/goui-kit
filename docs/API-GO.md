@@ -191,7 +191,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 ### component
 
 - **`gk.IconEl`** (Icon, element): `gk.IconDefault()` or `gk.IconEmpty()` or `gk.Icon(icon)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.Data`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 15 more
-- **`kit.TitleBarEl`** (TitleBar, element): `kit.TitleBar()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
+- **`kit.TitleBarEl`** (TitleBar, element): `kit.TitleBar()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 9 more
 - **`kit.WindowBorderEl`** (WindowBorder, element): `kit.KitWindowBorder()` or `kit.WindowBorder()` or `kit.WindowBorderDefault()`; `.ResizeHitSize`, `.ShadowSize`
 - **`gk.Theme`** (Theme, kit state): `gk.KitTheme(cx)` or `gk.ThemeGlobal(cx)` or `gk.ThemeGlobalMut(cx)`; reads `.ApplySemanticConfig`, `.ApplySemanticConfigStr`, `.ColorTokens`, `.Colors`, `.CursorBlink`, `.DarkTheme`, `.FocusRing`, `.FontFamily` and 31 more; writes `.ApplyConfig`, `.ApplySemanticTokens`, `.SetColors`, `.SetCursorBlink`, `.SetDarkTheme`, `.SetFocusRing`, `.SetFontFamily`, `.SetFontSize` and 14 more
 - **`gk.ThemeRegistry`** (ThemeRegistry, kit state): `gk.ThemeRegistryGlobal(cx)` or `gk.ThemeRegistryGlobalMut(cx)`; reads `.DefaultDarkTheme`, `.DefaultLightTheme`, `.DefaultThemes`, `.LoadThemesFromStr`, `.SortedThemes`, `.Themes`
@@ -203,14 +203,14 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::alert
 
-- **`kit.AlertEl`** (Alert, element): `kit.Alert(id, message)` or `kit.AlertError(id, message)` or `kit.AlertInfo(id, message)` (and 2 more); `.Title`, `.Icon`, `.Small`, `.Large`, `.Banner`, `.BorderE`, `.BorderS`, `.FlexRowDir` and 17 more
+- **`kit.AlertEl`** (Alert, element): `kit.Alert(id, message)` or `kit.AlertError(id, message)` or `kit.AlertInfo(id, message)` (and 2 more); `.Title`, `.Icon`, `.Small`, `.Large`, `.Banner`, `.BorderE`, `.BorderS`, `.FlexRowDir` and 18 more
 
 ### component::attachment
 
 - **`kit.AttachmentActionsEl`** (AttachmentActions, element): `kit.AttachmentActions()` or `kit.AttachmentActionsDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`kit.AttachmentContentEl`** (AttachmentContent, element): `kit.AttachmentContent()` or `kit.AttachmentContentDefault()`; `.Title`, `.Description`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
 - **`kit.AttachmentDescriptionEl`** (AttachmentDescription, element): `kit.AttachmentDescription(text)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
-- **`kit.AttachmentEl`** (Attachment, element): `kit.Attachment()` or `kit.AttachmentDefault()`; `.OnClick`, `.Tooltip`, `.Content`, `.Small`, `.Large`, `.Actions`, `.Axis`, `.BorderE` and 21 more
+- **`kit.AttachmentEl`** (Attachment, element): `kit.Attachment()` or `kit.AttachmentDefault()`; `.OnClick`, `.Tooltip`, `.Content`, `.Small`, `.Large`, `.Actions`, `.Axis`, `.BorderE` and 23 more
 - **`kit.AttachmentGroupEl`** (AttachmentGroup, element): `kit.AttachmentGroup(id)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
 - **`kit.AttachmentMediaEl`** (AttachmentMedia, element): `kit.AttachmentMedia()` or `kit.AttachmentMediaDefault()`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 13 more
 - **`kit.AttachmentTitleEl`** (AttachmentTitle, element): `kit.AttachmentTitle(text)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 9 more
@@ -313,12 +313,12 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::dialog
 
-- **`overlay.AlertDialogEl`** (AlertDialog, element): `overlay.AlertDialog()`; `.Title`, `.Icon`, `.Description`, `.Content`, `.Footer`, `.BorderE`, `.BorderS`, `.ButtonProps` and 29 more
+- **`overlay.AlertDialogEl`** (AlertDialog, element): `overlay.AlertDialog()`; `.Title`, `.Icon`, `.Description`, `.Content`, `.Footer`, `.BorderE`, `.BorderS`, `.ButtonProps` and 30 more
 - **`overlay.DialogActionEl`** (DialogAction, element): `overlay.DialogAction()`
 - **`overlay.DialogCloseEl`** (DialogClose, element): `overlay.DialogClose()`; `.Trigger`
 - **`overlay.DialogContentEl`** (DialogContent, element): `overlay.DialogContent()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`overlay.DialogDescriptionEl`** (DialogDescription, element): `overlay.DialogDescription()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
-- **`overlay.DialogEl`** (Dialog, element): `overlay.Dialog()`; `.Title`, `.Content`, `.Footer`, `.BorderE`, `.BorderS`, `.ButtonProps`, `.Centered`, `.CloseButton` and 23 more
+- **`overlay.DialogEl`** (Dialog, element): `overlay.Dialog()`; `.Title`, `.Content`, `.Footer`, `.BorderE`, `.BorderS`, `.ButtonProps`, `.Centered`, `.CloseButton` and 24 more
 - **`overlay.DialogFooterEl`** (DialogFooter, element): `overlay.DialogFooter()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`overlay.DialogHeaderEl`** (DialogHeader, element): `overlay.DialogHeader()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`overlay.DialogTitleEl`** (DialogTitle, element): `overlay.DialogTitle()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
@@ -404,7 +404,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 ### component::list
 
 - **`table.ListEl`** (List<GkListDelegate>, element): `table.List(state)`; `.Small`, `.Large`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 14 more
-- **`table.ListItemEl`** (ListItem, element): `table.ListItem(id)`; `.Selected`, `.OnClick`, `.Suffix`, `.Disabled`, `.BorderE`, `.BorderS`, `.CheckIcon`, `.Confirmed` and 17 more
+- **`table.ListItemEl`** (ListItem, element): `table.ListItem(id)`; `.Selected`, `.OnClick`, `.Suffix`, `.Disabled`, `.BorderE`, `.BorderS`, `.CheckIcon`, `.Confirmed` and 18 more
 - **`table.ListState`** (ListState<GkListDelegate>, kit state): `table.NewListState(cx, table.NewListSource(cx, count, row))….Build()`; shown by `table.List(state)`; built with `.Searchable`, `.Selectable`; reads `.Delegate`, `.DelegateMut`, `.RightClickedIndex`, `.ScrollHandle`, `.SelectedIndex`; writes `.Focus`, `.ScrollToItem`, `.ScrollToSelectedItem`, `.SetItemToMeasureIndex`, `.SetQuery`, `.SetRightClickedIndex`, `.SetSearchable`, `.SetSelectable` and 1 more; events `.OnListEvent(cx, f)`
 
 ### component::marker
@@ -417,7 +417,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 - **`kit.AppMenuBar`** (AppMenuBar, kit state): handed out by the kit (no constructor); writes `.Reload`
 - **`kit.PopupMenu`** (PopupMenu, value): `kit.NewPopupMenu()`; `.Label`, `.ActionContext`, `.CheckSide`, `.ExternalLinkIcon`, `.Item`, `.Link`, `.LinkWithDisabled`, `.LinkWithIcon` and 18 more
-- **`kit.PopupMenuItem`** (PopupMenuItem, value): `kit.NewPopupMenuItemSeparator()` or `kit.NewPopupMenuItem(label)` or `kit.NewPopupMenuItemElement(builder)` (and 2 more); `.Checked`, `.Icon`, `.OnClick`, `.Disabled`, `.Action`
+- **`kit.PopupMenuItem`** (PopupMenuItem, value): `kit.NewPopupMenuItemSeparator()` or `kit.NewPopupMenuItem(label)` or `kit.NewPopupMenuItemElement(builder)` (and 2 more); `.Checked`, `.Icon`, `.OnClick`, `.Disabled`, `.Action`, `.OnClickDo`
 
 ### component::message
 
@@ -513,7 +513,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 
 ### component::sheet
 
-- **`overlay.SheetEl`** (Sheet, element): `overlay.Sheet()`; `.Title`, `.Footer`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 13 more
+- **`overlay.SheetEl`** (Sheet, element): `overlay.Sheet()`; `.Title`, `.Footer`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 14 more
 
 ### component::shimmer
 
@@ -529,7 +529,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`kit.SidebarToggleButtonEl`** (SidebarToggleButton, element): `kit.SidebarToggleButton()`; `.OnClick`, `.Collapsed`, `.Side`
 - **`kit.SidebarGroup`** (SidebarGroup<SidebarMenu>, value): `kit.NewSidebarGroup(label)`; `.Child`, `.Children`, `.Suffix`, `.Collapsed`
 - **`kit.SidebarMenu`** (SidebarMenu, value): `kit.NewSidebarMenu()`; `.Child`, `.Children`, `.BorderE`, `.BorderS`, `.Collapsed`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 11 more
-- **`kit.SidebarMenuItem`** (SidebarMenuItem, value): `kit.NewSidebarMenuItem(label)`; `.Children`, `.Icon`, `.OnClick`, `.Suffix`, `.AccessibilityLabel`, `.Active`, `.BorderE`, `.BorderS` and 21 more
+- **`kit.SidebarMenuItem`** (SidebarMenuItem, value): `kit.NewSidebarMenuItem(label)`; `.Children`, `.Icon`, `.OnClick`, `.Suffix`, `.AccessibilityLabel`, `.Active`, `.BorderE`, `.BorderS` and 22 more
 
 ### component::skeleton
 
@@ -628,7 +628,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`base.AvatarImageEl`** (AvatarImage, element): `base.AvatarImage(source)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`base.AccordionEl`** (Accordion, element): `base.Accordion(id)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`base.AccordionItemEl`** (AccordionItem, element): `base.AccordionItem()`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Header`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 11 more
-- **`overlay.BaseAlertDialogEl`** (AlertDialog, element): `overlay.BaseAlertDialog()`; `.Backdrop`, `.BorderE`, `.BorderS`, `.CloseOnEscape`, `.DismissBelowY`, `.FlexRowDir`, `.Handle`, `.InsetE` and 17 more
+- **`overlay.BaseAlertDialogEl`** (AlertDialog, element): `overlay.BaseAlertDialog()`; `.Backdrop`, `.BorderE`, `.BorderS`, `.CloseOnEscape`, `.DismissBelowY`, `.FlexRowDir`, `.Handle`, `.InsetE` and 18 more
 - **`base.AvatarEl`** (Avatar, element): `base.Avatar()` or `base.AvatarDefault()`; `.BorderE`, `.BorderS`, `.Fallback`, `.FlexRowDir`, `.Image`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 9 more
 - **`base.ButtonEl`** (Button, element): `base.Button(id)`; `.Selected`, `.OnClick`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 13 more
 - **`base.CalendarEl`** (Calendar, element): `base.Calendar(id, state)`; `.Label`, `.BorderE`, `.BorderS`, `.FirstDayOfWeek`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.Item` and 11 more
@@ -639,11 +639,11 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`base.DatePickerEl`** (DatePicker, element): `base.DatePicker(id, focusHandle)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 10 more
 - **`overlay.BaseDialogCloseEl`** (DialogClose, element): `overlay.BaseDialogClose()` or `overlay.BaseDialogCloseDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 8 more
 - **`overlay.BaseDialogDescriptionEl`** (DialogDescription, element): `overlay.BaseDialogDescription()` or `overlay.BaseDialogDescriptionDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
-- **`overlay.BaseDialogEl`** (Dialog, element): `overlay.BaseDialog()`; `.Backdrop`, `.BorderE`, `.BorderS`, `.CloseOnBackdropPress`, `.CloseOnEscape`, `.DismissBelowY`, `.FlexRowDir`, `.Handle` and 18 more
+- **`overlay.BaseDialogEl`** (Dialog, element): `overlay.BaseDialog()`; `.Backdrop`, `.BorderE`, `.BorderS`, `.CloseOnBackdropPress`, `.CloseOnEscape`, `.DismissBelowY`, `.FlexRowDir`, `.Handle` and 19 more
 - **`overlay.BaseDialogTitleEl`** (DialogTitle, element): `overlay.BaseDialogTitle()` or `overlay.BaseDialogTitleDefault()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
 - **`overlay.BaseHoverCardEl`** (HoverCard, element): `overlay.BaseHoverCard(id)`; `.Content`, `.Anchor`, `.BorderE`, `.BorderS`, `.CloseDelay`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 13 more
 - **`editor.BaseInputEl`** (Input, element): `editor.BaseInput(state)`; `.OnTokenClick`, `.OnTokenHover`, `.Token`
-- **`base.LinkEl`** (Link, element): `base.Link(id)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Href`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 12 more
+- **`base.LinkEl`** (Link, element): `base.Link(id)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Href`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd` and 13 more
 - **`editor.BaseNumberInputEl`** (NumberInput, element): `editor.BaseNumberInput(state)`; `.Disabled`, `.BorderE`, `.BorderS`, `.ControlsRight`, `.DecrementButton`, `.FlexRowDir`, `.IncrementButton`, `.Input` and 14 more
 - **`editor.BaseOtpInputEl`** (OtpInput, element): `editor.BaseOtpInput(state)`; `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
 - **`base.PaginationEl`** (Pagination, element): `base.Pagination(id, state)`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 7 more
@@ -652,7 +652,7 @@ methods, with parameter types, is in its generated file and in `go doc`.
 - **`base.RadioEl`** (Radio, element): `base.Radio(id)`; `.Checked`, `.OnChange`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 12 more
 - **`base.RadioGroupEl`** (RadioGroup, element): `base.RadioGroup(id)`; `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart` and 8 more
 - **`table.BaseSelectEl`** (Select, element): `table.BaseSelect(id)`; `.Disabled`, `.BorderE`, `.BorderS`, `.ContentFocusHandle`, `.FlexRowDir`, `.FocusHandle`, `.InsetE`, `.InsetS` and 14 more
-- **`overlay.BaseSheetEl`** (Sheet, element): `overlay.BaseSheet()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 11 more
+- **`overlay.BaseSheetEl`** (Sheet, element): `overlay.BaseSheet()`; `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS`, `.JustifyFlexEnd`, `.JustifyFlexStart`, `.Me` and 12 more
 - **`base.SliderEl`** (Slider, element): `base.Slider(state)`; `.Disabled`, `.Axis`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.Horizontal`, `.InsetE`, `.InsetS` and 11 more
 - **`base.SwitchEl`** (Switch, element): `base.Switch(id)`; `.Checked`, `.OnChange`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 11 more
 - **`base.TabEl`** (Tab, element): `base.Tab(id)`; `.Selected`, `.OnClick`, `.Disabled`, `.BorderE`, `.BorderS`, `.FlexRowDir`, `.InsetE`, `.InsetS` and 12 more

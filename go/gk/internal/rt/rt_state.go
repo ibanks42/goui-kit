@@ -10,10 +10,15 @@ func StateMake(cx *Cx, o *Tape) uint64 {
 	r := Reader{B: MustCall(*o)}
 	h := r.U64()
 	keptAttach(h)
+	track(h)
+	own(h, ownState)
 	return h
 }
 
 func readResult(rc int32, res []byte) *Reader {
+	if failed.Load() {
+		panic(abortTurn{}) // a turn inside this call stopped the app (rt_fail.go)
+	}
 	switch rc {
 	case 0:
 		return &Reader{B: res}
@@ -364,7 +369,10 @@ func NewFocusHandle(cx *Cx) FocusHandle {
 	}
 	t.Flush()
 	r := Reader{B: MustCall(*NewReq(CFocusHandleNew))}
-	return FocusHandle{MkH(r.U64())}
+	h := r.U64()
+	track(h)
+	own(h, ownState)
+	return FocusHandle{MkH(h)}
 }
 
 // Focus moves keyboard focus to the element that tracks the handle.
@@ -396,6 +404,11 @@ func Release(cx *Cx, x any) {
 	if Vb.Active {
 		Stop("a view function may not write: it only describes (gk.Release). Release in a handler, in init or in a frame handler")
 	}
+	if hd, ok := x.(Handled); ok {
+		checkNotGone(hd.handle())
+		disown(hd.handle()) // released here: not again with its owner
+		forget(hd.handle())
+	}
 	switch v := x.(type) {
 	case View:
 		releaseView(t, v)
@@ -412,6 +425,7 @@ func Release(cx *Cx, x any) {
 		dropHandler(v.slot)
 		releaseHandle(t, v.h)
 	case Handled:
+		releaseOwned(t, v.handle()) // a panel's view, and what that view made
 		keptRelease(v.handle())
 		releaseHandle(t, v.handle())
 	default:

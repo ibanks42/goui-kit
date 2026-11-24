@@ -20,7 +20,7 @@ func Editor(state State, st ...gk.Style) EditorEl {
 	rt.UseComponentInput()
 	n := rt.NewNode(893)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return EditorEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -737,7 +737,7 @@ func Input(state InputState, st ...gk.Style) InputEl {
 	rt.UseComponentInput()
 	n := rt.NewNode(675)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return InputEl{ElAnimatableElementSelectableNodeSizableNode: rt.MkElAnimatableElementSelectableNodeSizableNode(n)}
 }
@@ -863,7 +863,7 @@ func (e InputEl) ID(id gk.ID) InputEl {
 // List is <gpui_kit::component::input::Input>::list.
 func (e InputEl) List(list table.ListState) InputEl {
 	o := rt.Op(rt.N(e.Core), 278)
-	o.U64(rt.H(list.HCore))
+	o.U64(rt.Held(rt.H(list.HCore)))
 	return e
 }
 
@@ -3140,6 +3140,13 @@ func (e InputGroupButtonEl) OnClick(handler func(cx *gk.Cx, e gk.ClickEvent)) In
 	return e
 }
 
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) OnClickDo(handler func(cx *gk.Cx)) InputGroupButtonEl {
+	o := rt.Op(rt.N(e.Core), 260)
+	o.U32(rt.Register(handler, 1))
+	return e
+}
+
 // Outline is <gpui_kit::component::input::InputGroupButton>::outline.
 func (e InputGroupButtonEl) Outline() InputGroupButtonEl {
 	rt.Op(rt.N(e.Core), 261)
@@ -3555,12 +3562,24 @@ func (e InputGroupButtonEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.Mo
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) InputGroupButtonEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) InputGroupButtonEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -3685,6 +3704,12 @@ func (e InputGroupButtonEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) InputGroupButtonEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -3773,6 +3798,12 @@ func (e InputGroupButtonEl) OnMouseDown(button gk.MouseButton, listener func(cx 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) InputGroupButtonEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -3780,6 +3811,12 @@ func (e InputGroupButtonEl) OnMouseDown(button gk.MouseButton, listener func(cx 
 // See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) InputGroupButtonEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -3792,12 +3829,24 @@ func (e InputGroupButtonEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitE
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) OnMouseExitDo(listener func(cx *gk.Cx)) InputGroupButtonEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) OnMouseMoveDo(listener func(cx *gk.Cx)) InputGroupButtonEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -3819,6 +3868,12 @@ func (e InputGroupButtonEl) OnMouseUp(button gk.MouseButton, listener func(cx *g
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) InputGroupButtonEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -3826,6 +3881,12 @@ func (e InputGroupButtonEl) OnMouseUp(button gk.MouseButton, listener func(cx *g
 // See `listener` to get access to a view's state from this callback.
 func (e InputGroupButtonEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) InputGroupButtonEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e InputGroupButtonEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) InputGroupButtonEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -5923,7 +5984,7 @@ func NumberInput(state InputState, st ...gk.Style) NumberInputEl {
 	rt.UseComponentInput()
 	n := rt.NewNode(681)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return NumberInputEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -6684,7 +6745,7 @@ func OtpInput(state OtpState) OtpInputEl {
 	rt.UseComponentInput()
 	n := rt.NewNode(682)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	return OtpInputEl{ElSizableNode: rt.MkElSizableNode(n)}
 }
 
@@ -6735,7 +6796,7 @@ func Textarea(state TextareaState, st ...gk.Style) TextareaEl {
 	rt.UseComponentInput()
 	n := rt.NewNode(683)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return TextareaEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }

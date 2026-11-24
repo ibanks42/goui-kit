@@ -73,9 +73,30 @@ fn settle(cx: &mut HeadlessAppContext, handle: &mut AnyWindowHandle) -> anyhow::
     Ok(())
 }
 
+static STOP: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+
+/// Ends the script early: the line running finishes, the rest are not run, and `run` returns.
+/// The offscreen platform has no loop that `App::quit` ends, so the app's quit (and a binding
+/// that stops the app after a mistake in its code) asks here. Any thread.
+pub fn stop() {
+    STOP.store(true, std::sync::atomic::Ordering::SeqCst);
+}
+
+/// Whether `stop` was called since the script started.
+pub fn stopped() -> bool {
+    STOP.load(std::sync::atomic::Ordering::SeqCst)
+}
+
 /// Runs `script`. `open` is called once inside the app, after `gpui_kit::init`, and returns
 /// the window to drive; it must build its window with `gk_meter::window_options`.
 pub fn run(script: &str, open: impl FnOnce(&mut App) -> AnyWindowHandle) -> anyhow::Result<()> {
+    run_opt(script, |cx| Some(open(cx)))
+}
+
+/// `run` for an app that may open no window: `open` returns none when the app stopped (`stop`)
+/// before it opened one, and the script is not run.
+pub fn run_opt(script: &str, open: impl FnOnce(&mut App) -> Option<AnyWindowHandle>) -> anyhow::Result<()> {
+    STOP.store(false, std::sync::atomic::Ordering::SeqCst);
     let mut lines = script.lines().map(str::trim).filter(|l| !l.is_empty() && !l.starts_with('#'));
     let mut pending = None;
     let (mut w, mut h) = (640., 480.);
@@ -96,10 +117,18 @@ pub fn run(script: &str, open: impl FnOnce(&mut App) -> AnyWindowHandle) -> anyh
         gpui_kit::platform::current_headless_renderer,
     );
     cx.update(gpui_kit::init);
-    let mut handle = cx.update(open);
+    let Some(mut handle) = cx.update(open) else {
+        if stopped() {
+            return Ok(());
+        }
+        anyhow::bail!("the app opened no window when it started");
+    };
     cx.run_until_parked();
 
     for line in pending.into_iter().chain(lines) {
+        if stopped() {
+            break;
+        }
         if tracing() {
             eprintln!("gk-trace: script {line}");
         }

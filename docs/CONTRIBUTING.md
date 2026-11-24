@@ -27,7 +27,7 @@ need a Rust build at all, as long as you have a library in `lib/`.
 |---|---|
 | regenerating the bindings | Python 3 (standard library only); `gofmt` if you want the Go output formatted |
 | building the library | Rust (`rustup` picks up the version in `rust-toolchain.toml`), a C compiler, and your platform's GUI development packages (below) |
-| the Go side | Go 1.27 or newer and a C compiler (the bindings use cgo) |
+| the Go side | Go 1.27 or newer (the bindings load the library through purego; a C compiler only for `make go-static`, the `-tags gkstatic` build) |
 | the tests | Linux, plus `gamescope` or `kwin_wayland` (or `Xvfb`) for the private display the tests draw in, and `bc` |
 
 On Debian or Ubuntu, the development packages for the library are:
@@ -49,8 +49,9 @@ make lib
 
 This runs `cargo build --release` in the normal `target/` folder and copies the results to `lib/`:
 
-- `lib/ship/` is the library apps link against. It also holds `libgpuikit_static.a`, the same
-  library as a static archive (Go apps link it and keep only the component families they use;
+- `lib/ship/` is the library apps load. It also holds `libgpuikit_static.a`, the same
+  library as a static archive (Go apps built with `-tags gkstatic` link it and keep only the
+  component families they use;
   [GO.md](GO.md) section 8), with, on Linux, `libgpuikit_sys.so`, a linker script naming the system
   libraries the archive needs, and on Windows `libgpuikit_sys.a`, the import library of the Windows
   API it links. On Windows the archive is built for Rust's MinGW target (Go's cgo links with
@@ -145,9 +146,10 @@ The tests are also available one at a time:
 | `make go-fps` | frame cost of Go against Rust | about ten minutes |
 | `make cross` | the Go front end compiles for macOS and Windows (checked from Linux) | under a minute |
 
-The tests link the shared library (the build tag `gkshared`, set in `go/env.sh`), so one program can run against either `lib/ship` or
-`lib/diag`. `make go-static` builds the Go apps the way a user's app is built, statically
-against `lib/diag`, and runs their scripted sessions: if a generated function forgot to link its
+The tests use the default build, which loads the shared library at start-up (`go/env.sh` turns
+cgo off), so one program can run against either `lib/ship` or `lib/diag` (`LD_LIBRARY_PATH`;
+`GK_LIB` overrides it, so leave it unset). `make go-static` builds the Go apps the static way
+(`-tags gkstatic`, cgo) against `lib/diag`, and runs their scripted sessions: if a generated function forgot to link its
 component family, the app stops and the check fails.
 
 Each test needs about 3 GB of memory at most. They run one after another, never in parallel.

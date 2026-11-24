@@ -29,7 +29,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"time"
 
 	"gpuikit.dev/gk"
 	"gpuikit.dev/gk/chart"
@@ -94,7 +96,7 @@ func (a *App) store(cx *gk.Cx, _ gk.ClickEvent) {
 			m["x"] = 1 // a nil map
 			return 0
 		}, func(cx *gk.Cx, n int) {})
-		select {} // the goroutine ends the program
+		time.Sleep(200 * time.Millisecond) // the goroutine's panic stops the app; gk.Run panics again with it
 	case "utf8":
 		a.name.SetValue(cx, "ab\xff\xfe")
 	case "nul":
@@ -170,9 +172,11 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 func main() {
 	a := &App{mode: os.Getenv("GK_NEG")}
 	script := "size 480 200\nframe\nclick 40 32\nframe\nclick 40 32\nframe\nclick 40 32\nframe\nframe\n"
-	gk.RunHeadless(script, func(cx *gk.Cx) {
+	if err := gk.RunHeadless(script, func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "misuse", 480, 200, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("gk-neg done mode=%s clicks=%d selected=%q kept=%q\n", a.mode, a.clicks, a.selected, a.kept)
 }

@@ -14,6 +14,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -502,10 +503,14 @@ func main() {
 		script += "advance 10\n" + step + "advance 20\n" + step + "advance 20\n" + step + "advance 20\n" + step + "stat\n"
 	}
 	if a.mode == "window-real" {
-		gk.Run(a.realStart)
+		if err := gk.Run(a.realStart); err != nil {
+			log.Fatal(err)
+		}
 		return
 	}
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	if a.mode == "menu-redraw" || a.mode == "menu-redraw-b" {
 		fmt.Printf("overlay menu fired alpha=%d bravo=%d redrawn=%v\n", a.menuA, a.menuB, a.menuTicks >= 10)
 	}

@@ -587,7 +587,7 @@ func NewPopupMenu() PopupMenu {
 // ActionContext is <gpui_kit::component::menu::PopupMenu>::action_context.
 func (e PopupMenu) ActionContext(handle gk.FocusHandle) PopupMenu {
 	o := rt.Op(rt.N(e.Core), 256)
-	o.U64(rt.H(handle.HCore))
+	o.U64(rt.Held(rt.H(handle.HCore)))
 	return e
 }
 
@@ -953,6 +953,13 @@ func (e PopupMenuItem) Icon(icon gk.IconName) PopupMenuItem {
 //
 // OnClick is <gpui_kit::component::menu::PopupMenuItem>::on_click.
 func (e PopupMenuItem) OnClick(handler func(cx *gk.Cx, e gk.ClickEvent)) PopupMenuItem {
+	o := rt.Op(rt.N(e.Core), 260)
+	o.U32(rt.Register(handler, 1))
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e PopupMenuItem) OnClickDo(handler func(cx *gk.Cx)) PopupMenuItem {
 	o := rt.Op(rt.N(e.Core), 260)
 	o.U32(rt.Register(handler, 1))
 	return e

@@ -48,9 +48,9 @@ GK_PROTO_BIN=lists2-go run table 0 'lists2 group view described' \
 # released source whose rows a menu still draws.
 # Go: the runtime's messages name the Go calls (gk.SetSearchItems, gk.NewSearchSource,
 # gk.SearchHeaders: "a row function"), and the app's line is in main.go.
-GK_PROTO_BIN=lists2-go run bad-source 2 'gk.SetSearchItems was given a row source gk.NewSearchSource did not make' 'at .*lists2/main.go:[0-9]+'
-GK_PROTO_BIN=lists2-go run bad-headers 2 'header rows need a row function' 'at .*lists2/main.go:[0-9]+'
-GK_PROTO_BIN=lists2-go run released 2 'lists2 released source' 'a view shows a row source through a handle that cannot be used'
+GK_PROTO_BIN=lists2-go run bad-source 1 'gk.SetSearchItems was given a row source gk.NewSearchSource did not make' 'at .*lists2/main.go:[0-9]+'
+GK_PROTO_BIN=lists2-go run bad-headers 1 'header rows need a row function' 'at .*lists2/main.go:[0-9]+'
+GK_PROTO_BIN=lists2-go run released 1 'lists2 released source' 'a view shows a row source through a handle that cannot be used'
 # Options the binding could not give before (docs/PROTOCOLS.md 9.12): a mask as upstream's string
 # pattern (an Into member From<&str>) and the Number variant with a char separator.
 GK_PROTO_BIN=lists2-go run mask 0 'lists2 mask pattern="123-456" number="1,234,567"'
@@ -70,7 +70,7 @@ GK_PROTO_BIN=lists2-go run providers 0 'lists2 provider completions id=' 'lists2
 # 9.12): StepBy steps 9 -> 10 -> 20, and NumberStep's ByValue variant ("y == 1 ? x : 0.5": an
 # increment doubles) 3 -> 6 -> 12. An expression that does not parse stops where it is given.
 GK_PROTO_BIN=lists2-go run expr 0 'lists2 expr step_by="20" by_value="12"'
-GK_PROTO_BIN=lists2-go run bad-expr 2 'the expression "x < 10 \? 1" does not parse: a \? without its :'
+GK_PROTO_BIN=lists2-go run bad-expr 1 'the expression "x < 10 \? 1" does not parse: a \? without its :'
 # Round 3 (docs/PROTOCOLS.md 9.13, 9.14).
 # A list, a table and a tree selected and scrolled from code (generated state calls, and the list's
 # scroll handle): the rows scrolled to are described, the selections read back.
@@ -110,7 +110,7 @@ GK_PROTO_BIN=lists2-go run highlight 0 'lists2 highlight lang=demo range=Range\{
 GK_PROTO_BIN=lists2-go run languages 0 'lists2 syntax asked lang=demo offset=[0-9]+' 'lists2 languages syntax_asked=true'
 # Misuse: a lent object used after the turn that lent it.
 # Go: the app's line is in round4.go.
-GK_PROTO_BIN=lists2-go run bad-lend 2 'lists2 bad-lend using the lent handle' 'was released' 'at .*lists2/round4.go:[0-9]+'
+GK_PROTO_BIN=lists2-go run bad-lend 1 'lists2 bad-lend using the lent handle' 'was released' 'at .*lists2/round4.go:[0-9]+'
 # There is no bad-ctx mode (a row's context read for a row no closure drew): an item function
 # is handed its context's values (overlay.Items), so there is no read of a context to misuse; not counted.
 # Small rules (PROTOCOLS.md 9.19): a patch that does not parse gives the kit's DiffParseError (its line

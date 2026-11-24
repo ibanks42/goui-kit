@@ -183,8 +183,7 @@ fn bad(msg: String) -> AnyElement {
     // A described animation the library cannot draw is the app's mistake (the Go package
     // refuses what it can see at the app's line), found while drawing: it stops, as a released
     // handle shown by a view does (genapi::released_shown), never draws something else.
-    eprintln!("gk: an animation cannot be drawn: {msg}");
-    std::process::exit(2);
+    crate::rt::app_stop(format!("an animation cannot be drawn: {msg}"))
 }
 
 fn obj_rc<T: 'static>(h: u64, what: &str) -> std::rc::Rc<std::cell::RefCell<T>> {

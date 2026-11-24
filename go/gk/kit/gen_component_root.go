@@ -29,6 +29,13 @@ func (e TitleBarEl) OnCloseWindow(f func(cx *gk.Cx, e gk.ClickEvent)) TitleBarEl
 	return e
 }
 
+// OnCloseWindowDo is OnCloseWindow with a handler that takes no event (docs/GO.md section 4).
+func (e TitleBarEl) OnCloseWindowDo(f func(cx *gk.Cx)) TitleBarEl {
+	o := rt.Op(rt.N(e.Core), 256)
+	o.U32(rt.Register(f, 1))
+	return e
+}
+
 // Give this element the surface, edge, shadow and radius of a popover.
 //
 // This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker

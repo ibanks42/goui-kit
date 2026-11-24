@@ -1,4 +1,6 @@
-// The C half of the Go front end's boundary (docs/GO.md section 5): it builds the gk_app the
+//go:build gkstatic
+
+// The C half of the static build's boundary (build tag gkstatic; docs/GO.md section 5): it builds the gk_app the
 // library is entered with, in C memory, pointing at the one exported Go callback. cgo forbids
 // definitions in the preamble of a file with //export, so this lives here.
 #include "include/gpuikit.h"

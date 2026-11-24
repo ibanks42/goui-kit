@@ -110,6 +110,18 @@ static INFO: GkInfo = GkInfo {
 
 static WAKE: Mutex<Option<UnboundedSender<()>>> = Mutex::new(None);
 static WAKE_PENDING: AtomicBool = AtomicBool::new(false);
+static QUIT_SOON: AtomicBool = AtomicBool::new(false);
+
+/// Ends the app from where no `App` is in hand (a panic caught outside a call): the wake task
+/// quits it at its next turn, and the offscreen driver stops after the line it runs.
+pub(crate) fn quit_soon() {
+    QUIT_SOON.store(true, Ordering::SeqCst);
+    #[cfg(feature = "diag")]
+    gk_meter::headless::stop();
+    if let Some(tx) = WAKE.lock().ok().and_then(|w| w.clone()) {
+        let _ = tx.unbounded_send(());
+    }
+}
 
 thread_local! {
     static LAST_ERROR: RefCell<String> = const { RefCell::new(String::new()) };
@@ -186,6 +198,10 @@ fn start(cx: &mut gpui_kit::App) {
     cx.spawn(async move |cx| {
         while rx.next().await.is_some() {
             WAKE_PENDING.store(false, Ordering::SeqCst);
+            if QUIT_SOON.load(Ordering::SeqCst) {
+                let _ = cx.update(|cx| cx.quit());
+                continue;
+            }
             let _ = cx.update(|cx| {
                 rt::guard("running a WAKE turn", || {
                     // The posted procedures run with the app's first window in scope, as a queued
@@ -222,6 +238,7 @@ fn finish(run: std::thread::Result<Result<(), String>>) -> i32 {
     match run {
         Ok(Ok(())) => ERR_OK,
         Ok(Err(e)) => fail(ERR_UNSUPPORTED, e),
+        Err(e) if e.is::<rt::AppStop>() => ERR_OK, // the binding was told (rt::app_stop)
         Err(_) => {
             POISONED.store(true, Ordering::SeqCst);
             fail(ERR_POISONED, rt::panic_message())
@@ -268,11 +285,11 @@ pub extern "C" fn gk_headless_run(app: *const GkApp, script: *const u8, len: usi
         let script = unsafe { std::slice::from_raw_parts(script, len) };
         let script = String::from_utf8_lossy(script).into_owned();
         let run = catch_unwind(AssertUnwindSafe(|| {
-            gk_meter::headless::run(&script, |cx| {
+            gk_meter::headless::run_opt(&script, |cx| {
                 start(cx);
-                let first = rt::with(|s| s.windows.first().copied());
-                let first = first.expect("gk_headless_run: the app opened no window in INIT");
-                rt::with(|s| s.window(first)).ok().expect("window handle")
+                // None: the app opened no window (it stopped first, or the script says so).
+                let first = rt::with(|s| s.windows.first().copied())?;
+                rt::with(|s| s.window(first)).ok()
             })
             .map_err(|e| format!("headless run: {e:#}"))
         }));
@@ -293,7 +310,14 @@ pub extern "C" fn gk_call(
     res: *mut *const u8,
     res_len: *mut usize,
 ) -> i32 {
-    if POISONED.load(Ordering::Relaxed) {
+    // A poisoned library refuses every call but QUIT, which a binding sends to end gk_run
+    // after the panic (it then reports the panic from gk_run's caller, PROTOCOLS.md 3.4).
+    let quit = !req.is_null() && len >= 2 && {
+        // SAFETY: the caller passes `len` readable bytes (not null, checked here).
+        let b = unsafe { std::slice::from_raw_parts(req, 2) };
+        u16::from_le_bytes([b[0], b[1]]) == ops::C_QUIT
+    };
+    if POISONED.load(Ordering::Relaxed) && !quit {
         return fail(
             ERR_POISONED,
             format!("{} (an earlier panic; the library stays poisoned)", rt::panic_message()),
@@ -317,6 +341,9 @@ pub extern "C" fn gk_call(
     let code = match done {
         Ok(Ok(())) => ERR_OK,
         Ok(Err(GkErr(code, msg))) => fail(code, msg),
+        // A mistake in app code the call found where it could not return it (rt::app_stop): the
+        // binding was told, the library is not poisoned.
+        Err(e) if e.is::<rt::AppStop>() => fail(ERR_BAD_OP, "the app is stopping after a mistake in its code"),
         Err(_) => {
             // Nothing unwinds into the app: the panic stops here, the library is poisoned
             // and the binding prints the message with the app's call site and exits.

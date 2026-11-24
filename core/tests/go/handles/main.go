@@ -4,13 +4,15 @@
 // and prints lines that core/tests/go/run-handles.sh checks, with the exit code.
 //
 //	GK_PROTO=obj-objects | obj-temps | obj-stale-temp | obj-global | obj-dialog | obj-list |
-//	         obj-given-away | obj-values | obj-stale-value | obj-columns
+//	         obj-given-away | obj-values | obj-stale-value | obj-columns |
+//	         life-view | life-view-again | life-gc | life-panel
 //
-// The modes that count handles and obj-columns are in objects.go.
+// The modes that count handles and obj-columns are in objects.go, the lifetimes in life.go.
 package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"gpuikit.dev/gk"
@@ -203,6 +205,8 @@ func main() {
 		os.Exit(3)
 	}
 	script := "size 640 480\nframe\nclick 600 400\nframe\nframe\nclick 600 400\nframe\nframe\nclick 600 400\nframe\nframe\nclick 600 400\nframe\nframe\nstat\n"
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("handles done mode=%s clicks=%d\n", a.mode, a.clicks)
 }

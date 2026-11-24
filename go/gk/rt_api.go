@@ -205,6 +205,12 @@ type Built[T any] = rt.Built[T]
 // function may not make views.
 func NewBuilt[T any](cx *Cx, render func(cx *Cx) T) Built[T] { return rt.NewBuilt[T](cx, render) }
 
+// Builder is what an overlay opens with: a Built[T] made once with NewBuilt, or the function that
+// describes the overlay, given right there (overlay.OpenDialog(cx, func(cx *gk.Cx) overlay.DialogEl {
+// ... })). A function gets one view per place in the app's code that opens it, released with the
+// view whose handler opened it.
+type Builder[T any] = rt.Builder[T]
+
 // ---- rt_capi.go
 
 // Info is what the library reports about itself (any goroutine may ask).
@@ -214,17 +220,37 @@ type Info = rt.Info
 func LibraryInfo() Info { return rt.LibraryInfo() }
 
 // Error is a mistake in app code the package found (an element used after its view returned, a
-// released handle, a write in a view, ...). gk panics with it; the boundary with the library
-// prints it with the app's line and exits 2. Nothing unwinds into the library.
+// released handle, a write in a view, ...), with the app's line. gk panics with it inside the
+// turn; the boundary with the library recovers it, the app is shut down, and Run returns it.
+// Nothing unwinds into the library.
 type Error = rt.Error
+
+// PanicError is a panic in app code (a handler, a view, init, a posted function, gk.Go's work
+// function): once the library has shut down, Run panics again with it. Value is what the app
+// panicked with (Unwrap gives it when it is an error), Stack the stack where it panicked.
+type PanicError = rt.PanicError
+
+// LibraryError is a fault inside the library, not in the app's Go code: Run returns it once the
+// library has shut down.
+type LibraryError = rt.LibraryError
 
 // Run enters the library and returns when the app quits. Call it from main; start runs in the
 // first turn (open a window there). With GK_SCRIPT=file in the environment the app runs
 // offscreen under that gk-meter script (RunHeadless; it needs the diagnostic library).
-func Run(start func(cx *Cx)) { rt.Run(start) }
+//
+// Run returns nil when the app quit, a *gk.Error when a mistake in app code stopped it (the
+// message names the app's line), a *gk.LibraryError for a fault in the library, or an error
+// when it could not start. A panic in app code shuts the app down and panics again from Run
+// with a *gk.PanicError. Nothing exits the process: main's deferred functions run.
+//
+//	if err := gk.Run(start); err != nil {
+//		log.Fatal(err)
+//	}
+func Run(start func(cx *Cx)) error { return rt.Run(start) }
 
-// RunHeadless runs the app offscreen under a gk-meter script (the diagnostic library only).
-func RunHeadless(script string, start func(cx *Cx)) { rt.RunHeadless(script, start) }
+// RunHeadless runs the app offscreen under a gk-meter script (the diagnostic library only). It
+// returns and panics as Run does.
+func RunHeadless(script string, start func(cx *Cx)) error { return rt.RunHeadless(script, start) }
 
 // TestRunRaw calls gk_run with a gk_app changed as the runtime's version test asks: the
 // library must refuse each with GK_ERR_VERSION. It returns the status and the library's message.
@@ -1144,6 +1170,13 @@ func Handle(x rt.Handled) uint64 { return rt.Handle(x) }
 // TestObjCounts returns the temporary handles waiting for the next frame and the live library
 // objects (core/tests/go/handles).
 func TestObjCounts(cx *Cx) (int, int) { return rt.TestObjCounts(cx) }
+
+// TestLiveCounts returns the library's live kit states, views and focus handles (tests).
+func TestLiveCounts(cx *Cx) (states, views, focus int) { return rt.TestLiveCounts(cx) }
+
+// TestLife returns how many handles the collector has released and how many the runtime follows
+// (tests).
+func TestLife() (released, tracked int) { return rt.TestLife() }
 
 // TestValuePins returns the temporary handles pinned by views and the ones waiting for the next
 // sweep (core/tests/go/values).

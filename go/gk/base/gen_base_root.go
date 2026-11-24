@@ -683,12 +683,24 @@ func (e AccordionEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEven
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AccordionEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) AccordionEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AccordionEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -810,6 +822,12 @@ func (e AccordionEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) A
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AccordionEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -898,6 +916,12 @@ func (e AccordionEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx,
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) AccordionEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -905,6 +929,12 @@ func (e AccordionEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx,
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) AccordionEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AccordionEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -917,12 +947,24 @@ func (e AccordionEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) 
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) OnMouseExitDo(listener func(cx *gk.Cx)) AccordionEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) AccordionEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AccordionEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -944,6 +986,12 @@ func (e AccordionEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) AccordionEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -951,6 +999,12 @@ func (e AccordionEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AccordionEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) AccordionEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -1223,12 +1277,24 @@ func (e AccordionEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Accor
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) OnAuxClickDo(listener func(cx *gk.Cx)) AccordionEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) AccordionEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionEl) OnClickDo(listener func(cx *gk.Cx)) AccordionEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -4529,12 +4595,24 @@ func (e AccordionTriggerEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.Mo
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionTriggerEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) AccordionTriggerEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -4659,6 +4737,12 @@ func (e AccordionTriggerEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -4747,6 +4831,12 @@ func (e AccordionTriggerEl) OnMouseDown(button gk.MouseButton, listener func(cx 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -4754,6 +4844,12 @@ func (e AccordionTriggerEl) OnMouseDown(button gk.MouseButton, listener func(cx 
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionTriggerEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) AccordionTriggerEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -4766,12 +4862,24 @@ func (e AccordionTriggerEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitE
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) OnMouseExitDo(listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionTriggerEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) AccordionTriggerEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -4793,6 +4901,12 @@ func (e AccordionTriggerEl) OnMouseUp(button gk.MouseButton, listener func(cx *g
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -4800,6 +4914,12 @@ func (e AccordionTriggerEl) OnMouseUp(button gk.MouseButton, listener func(cx *g
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionTriggerEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AccordionTriggerEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -5075,12 +5195,24 @@ func (e AccordionTriggerEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) OnAuxClickDo(listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AccordionTriggerEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) AccordionTriggerEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e AccordionTriggerEl) OnClickDo(listener func(cx *gk.Cx)) AccordionTriggerEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -5749,12 +5881,24 @@ func (e AvatarEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -5876,6 +6020,12 @@ func (e AvatarEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Avat
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -5964,6 +6114,12 @@ func (e AvatarEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -5971,6 +6127,12 @@ func (e AvatarEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -5983,12 +6145,24 @@ func (e AvatarEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) Ava
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseExitDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -6010,6 +6184,12 @@ func (e AvatarEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -6017,6 +6197,12 @@ func (e AvatarEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -7537,12 +7723,24 @@ func (e AvatarImageEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarImageEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarImageEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarImageEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarImageEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarImageEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AvatarImageEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -7664,6 +7862,12 @@ func (e AvatarImageEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarImageEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarImageEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -7752,6 +7956,12 @@ func (e AvatarImageEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarImageEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarImageEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -7759,6 +7969,12 @@ func (e AvatarImageEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarImageEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarImageEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarImageEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AvatarImageEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -7771,12 +7987,24 @@ func (e AvatarImageEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarImageEl) OnMouseExitDo(listener func(cx *gk.Cx)) AvatarImageEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarImageEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarImageEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarImageEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AvatarImageEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -7798,6 +8026,12 @@ func (e AvatarImageEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarImageEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarImageEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -7805,6 +8039,12 @@ func (e AvatarImageEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarImageEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarImageEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarImageEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarImageEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -7926,6 +8166,13 @@ func (e ButtonEl) OnClick(handler func(cx *gk.Cx, e gk.ClickEvent)) ButtonEl {
 	return e
 }
 
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) OnClickDo(handler func(cx *gk.Cx)) ButtonEl {
+	o := rt.Op(rt.N(e.Core), 259)
+	o.U32(rt.Register(handler, 1))
+	return e
+}
+
 // Overrides the accessibility role. The default is `Button`.
 //
 // Role is <gpui_kit::base::Button>::role.
@@ -7980,7 +8227,7 @@ func (e ButtonEl) TabStop(tabStop bool) ButtonEl {
 // TrackFocus is <gpui_kit::base::Button>::track_focus.
 func (e ButtonEl) TrackFocus(focusHandle gk.FocusHandle) ButtonEl {
 	o := rt.Op(rt.N(e.Core), 265)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 	return e
 }
 
@@ -8581,12 +8828,24 @@ func (e ButtonEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ButtonEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ButtonEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ButtonEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ButtonEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -8708,6 +8967,12 @@ func (e ButtonEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Butt
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ButtonEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -8796,6 +9061,12 @@ func (e ButtonEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ButtonEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -8803,6 +9074,12 @@ func (e ButtonEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 // See `listener` to get access to a view's state from this callback.
 func (e ButtonEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ButtonEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ButtonEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -8815,12 +9092,24 @@ func (e ButtonEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) But
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) OnMouseExitDo(listener func(cx *gk.Cx)) ButtonEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ButtonEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ButtonEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ButtonEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -8842,6 +9131,12 @@ func (e ButtonEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ButtonEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -8849,6 +9144,12 @@ func (e ButtonEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 // See `listener` to get access to a view's state from this callback.
 func (e ButtonEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ButtonEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ButtonEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -9091,6 +9392,12 @@ func (e ButtonEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ButtonEl
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e ButtonEl) OnAuxClickDo(listener func(cx *gk.Cx)) ButtonEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // On drag initiation, this callback will be used to create a new view to render the dragged value
 // for a drag and drop operation. This API should also be used as the equivalent of 'on drag start'
 // with the `OnDragMove` API. The callback also has access to the offset of triggering click from
@@ -9200,7 +9507,7 @@ func Calendar(id gk.ID, state CalendarState, st ...gk.Style) CalendarEl {
 	n := rt.NewNode(291)
 	o := rt.NodeArgs(n)
 	rt.PutID(o, id)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return CalendarEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -10579,12 +10886,24 @@ func (e CalendarItemEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseE
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) CalendarItemEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e CalendarItemEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) CalendarItemEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) CalendarItemEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -10706,6 +11025,12 @@ func (e CalendarItemEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) CalendarItemEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -10794,6 +11119,12 @@ func (e CalendarItemEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) CalendarItemEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -10801,6 +11132,12 @@ func (e CalendarItemEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.
 // See `listener` to get access to a view's state from this callback.
 func (e CalendarItemEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) CalendarItemEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) CalendarItemEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -10813,12 +11150,24 @@ func (e CalendarItemEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) OnMouseExitDo(listener func(cx *gk.Cx)) CalendarItemEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e CalendarItemEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) CalendarItemEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) OnMouseMoveDo(listener func(cx *gk.Cx)) CalendarItemEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -10840,6 +11189,12 @@ func (e CalendarItemEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) CalendarItemEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -10847,6 +11202,12 @@ func (e CalendarItemEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx
 // See `listener` to get access to a view's state from this callback.
 func (e CalendarItemEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) CalendarItemEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) CalendarItemEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -11122,12 +11483,24 @@ func (e CalendarItemEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Ca
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) OnAuxClickDo(listener func(cx *gk.Cx)) CalendarItemEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e CalendarItemEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) CalendarItemEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e CalendarItemEl) OnClickDo(listener func(cx *gk.Cx)) CalendarItemEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -11329,7 +11702,7 @@ func (e CheckboxEl) TabStop(tabStop bool) CheckboxEl {
 // TrackFocus is <gpui_kit::base::Checkbox>::track_focus.
 func (e CheckboxEl) TrackFocus(focusHandle gk.FocusHandle) CheckboxEl {
 	o := rt.Op(rt.N(e.Core), 266)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 	return e
 }
 
@@ -11976,12 +12349,24 @@ func (e CheckboxEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -12103,6 +12488,12 @@ func (e CheckboxEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Ch
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -12191,6 +12582,12 @@ func (e CheckboxEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -12198,6 +12595,12 @@ func (e CheckboxEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, 
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -12210,12 +12613,24 @@ func (e CheckboxEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) C
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseExitDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseMoveDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -12237,6 +12652,12 @@ func (e CheckboxEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e 
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -12244,6 +12665,12 @@ func (e CheckboxEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e 
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -12492,12 +12919,24 @@ func (e CheckboxEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Checkb
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnAuxClickDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) CheckboxEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnClickDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -14262,7 +14701,7 @@ func (e ColorPickerEl) Role(role gk.RoleOverride) ColorPickerEl {
 // TrackFocus is <gpui_kit::base::ColorPicker>::track_focus.
 func (e ColorPickerEl) TrackFocus(focusHandle gk.FocusHandle) ColorPickerEl {
 	o := rt.Op(rt.N(e.Core), 261)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 	return e
 }
 
@@ -14975,12 +15414,24 @@ func (e ColorPickerEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ColorPickerEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ColorPickerEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ColorPickerEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ColorPickerEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -15102,6 +15553,12 @@ func (e ColorPickerEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ColorPickerEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -15190,6 +15647,12 @@ func (e ColorPickerEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ColorPickerEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -15197,6 +15660,12 @@ func (e ColorPickerEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e ColorPickerEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ColorPickerEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ColorPickerEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -15209,12 +15678,24 @@ func (e ColorPickerEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) OnMouseExitDo(listener func(cx *gk.Cx)) ColorPickerEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ColorPickerEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ColorPickerEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ColorPickerEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -15236,6 +15717,12 @@ func (e ColorPickerEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ColorPickerEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -15243,6 +15730,12 @@ func (e ColorPickerEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 // See `listener` to get access to a view's state from this callback.
 func (e ColorPickerEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ColorPickerEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ColorPickerEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -15508,12 +16001,24 @@ func (e ColorPickerEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Col
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) OnAuxClickDo(listener func(cx *gk.Cx)) ColorPickerEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ColorPickerEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ColorPickerEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e ColorPickerEl) OnClickDo(listener func(cx *gk.Cx)) ColorPickerEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -16385,12 +16890,24 @@ func (e ColorSwatchEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ColorSwatchEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ColorSwatchEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ColorSwatchEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ColorSwatchEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -16512,6 +17029,12 @@ func (e ColorSwatchEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ColorSwatchEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -16600,6 +17123,12 @@ func (e ColorSwatchEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ColorSwatchEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -16607,6 +17136,12 @@ func (e ColorSwatchEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e ColorSwatchEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ColorSwatchEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ColorSwatchEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -16619,12 +17154,24 @@ func (e ColorSwatchEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) OnMouseExitDo(listener func(cx *gk.Cx)) ColorSwatchEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ColorSwatchEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ColorSwatchEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ColorSwatchEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -16646,6 +17193,12 @@ func (e ColorSwatchEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ColorSwatchEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -16653,6 +17206,12 @@ func (e ColorSwatchEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 // See `listener` to get access to a view's state from this callback.
 func (e ColorSwatchEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ColorSwatchEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ColorSwatchEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -16908,6 +17467,12 @@ func (e ColorSwatchEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Col
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e ColorSwatchEl) OnAuxClickDo(listener func(cx *gk.Cx)) ColorSwatchEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // On drag initiation, this callback will be used to create a new view to render the dragged value
 // for a drag and drop operation. This API should also be used as the equivalent of 'on drag start'
 // with the `OnDragMove` API. The callback also has access to the offset of triggering click from
@@ -16976,7 +17541,7 @@ func DatePicker(id gk.ID, focusHandle gk.FocusHandle, st ...gk.Style) DatePicker
 	n := rt.NewNode(306)
 	o := rt.NodeArgs(n)
 	rt.PutID(o, id)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 	rt.Tokens(n, st)
 	return DatePickerEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -17693,12 +18258,24 @@ func (e DatePickerEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEve
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) DatePickerEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e DatePickerEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) DatePickerEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) DatePickerEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -17820,6 +18397,12 @@ func (e DatePickerEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) 
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) DatePickerEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -17908,6 +18491,12 @@ func (e DatePickerEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) DatePickerEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -17915,6 +18504,12 @@ func (e DatePickerEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx
 // See `listener` to get access to a view's state from this callback.
 func (e DatePickerEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) DatePickerEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) DatePickerEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -17927,12 +18522,24 @@ func (e DatePickerEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent))
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) OnMouseExitDo(listener func(cx *gk.Cx)) DatePickerEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e DatePickerEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) DatePickerEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) OnMouseMoveDo(listener func(cx *gk.Cx)) DatePickerEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -17954,6 +18561,12 @@ func (e DatePickerEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, 
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) DatePickerEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -17961,6 +18574,12 @@ func (e DatePickerEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, 
 // See `listener` to get access to a view's state from this callback.
 func (e DatePickerEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) DatePickerEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) DatePickerEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -18233,12 +18852,24 @@ func (e DatePickerEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Date
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) OnAuxClickDo(listener func(cx *gk.Cx)) DatePickerEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e DatePickerEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) DatePickerEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e DatePickerEl) OnClickDo(listener func(cx *gk.Cx)) DatePickerEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -18988,7 +19619,7 @@ func GridLayout(id gk.ID, state GridLayoutState, st ...gk.Style) GridLayoutEl {
 	n := rt.NewNode(323)
 	o := rt.NodeArgs(n)
 	rt.PutID(o, id)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return GridLayoutEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -19010,7 +19641,7 @@ func KitGridLayout(id gk.ID, state GridLayoutState, st ...gk.Style) GridLayoutEl
 	n := rt.NewNode(324)
 	o := rt.NodeArgs(n)
 	rt.PutID(o, id)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return GridLayoutEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -19799,6 +20430,13 @@ func (e LinkEl) OnActivate(handler func(cx *gk.Cx, e gk.ClickEvent)) LinkEl {
 	return e
 }
 
+// OnActivateDo is OnActivate with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnActivateDo(handler func(cx *gk.Cx)) LinkEl {
+	o := rt.Op(rt.N(e.Core), 259)
+	o.U32(rt.Register(handler, 1))
+	return e
+}
+
 // Injects the strategy used to open `href` on activation.
 //
 // Base never calls `open_url` on its own.
@@ -20375,12 +21013,24 @@ func (e LinkEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) L
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) LinkEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e LinkEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) LinkEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) LinkEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -20499,6 +21149,12 @@ func (e LinkEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) LinkEl
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) LinkEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -20587,6 +21243,12 @@ func (e LinkEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) LinkEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -20594,6 +21256,12 @@ func (e LinkEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 // See `listener` to get access to a view's state from this callback.
 func (e LinkEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) LinkEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) LinkEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -20606,12 +21274,24 @@ func (e LinkEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) LinkE
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnMouseExitDo(listener func(cx *gk.Cx)) LinkEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e LinkEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) LinkEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnMouseMoveDo(listener func(cx *gk.Cx)) LinkEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -20633,6 +21313,12 @@ func (e LinkEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.M
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) LinkEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -20640,6 +21326,12 @@ func (e LinkEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.M
 // See `listener` to get access to a view's state from this callback.
 func (e LinkEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) LinkEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) LinkEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -20892,12 +21584,24 @@ func (e LinkEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) LinkEl {
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnAuxClickDo(listener func(cx *gk.Cx)) LinkEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e LinkEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) LinkEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e LinkEl) OnClickDo(listener func(cx *gk.Cx)) LinkEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -21584,7 +22288,7 @@ func NavStack(state NavStackState, st ...gk.Style) NavStackEl {
 	rt.UseBaseNavStack()
 	n := rt.NewNode(339)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return NavStackEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -22894,12 +23598,24 @@ func (e PaginationEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEve
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) PaginationEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e PaginationEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) PaginationEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) PaginationEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -23021,6 +23737,12 @@ func (e PaginationEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) 
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) PaginationEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -23109,6 +23831,12 @@ func (e PaginationEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) PaginationEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -23116,6 +23844,12 @@ func (e PaginationEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx
 // See `listener` to get access to a view's state from this callback.
 func (e PaginationEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) PaginationEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) PaginationEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -23128,12 +23862,24 @@ func (e PaginationEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent))
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) OnMouseExitDo(listener func(cx *gk.Cx)) PaginationEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e PaginationEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) PaginationEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) OnMouseMoveDo(listener func(cx *gk.Cx)) PaginationEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -23155,6 +23901,12 @@ func (e PaginationEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, 
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) PaginationEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -23162,6 +23914,12 @@ func (e PaginationEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, 
 // See `listener` to get access to a view's state from this callback.
 func (e PaginationEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) PaginationEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) PaginationEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -23434,12 +24192,24 @@ func (e PaginationEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Pagi
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) OnAuxClickDo(listener func(cx *gk.Cx)) PaginationEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e PaginationEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) PaginationEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e PaginationEl) OnClickDo(listener func(cx *gk.Cx)) PaginationEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -24241,12 +25011,24 @@ func (e ProgressEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ProgressEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ProgressEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ProgressEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ProgressEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -24368,6 +25150,12 @@ func (e ProgressEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Pr
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ProgressEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -24456,6 +25244,12 @@ func (e ProgressEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ProgressEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -24463,6 +25257,12 @@ func (e ProgressEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, 
 // See `listener` to get access to a view's state from this callback.
 func (e ProgressEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ProgressEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ProgressEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -24475,12 +25275,24 @@ func (e ProgressEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) P
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) OnMouseExitDo(listener func(cx *gk.Cx)) ProgressEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ProgressEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ProgressEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ProgressEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -24502,6 +25314,12 @@ func (e ProgressEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e 
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ProgressEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -24509,6 +25327,12 @@ func (e ProgressEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e 
 // See `listener` to get access to a view's state from this callback.
 func (e ProgressEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ProgressEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ProgressEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -24781,12 +25605,24 @@ func (e ProgressEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Progre
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) OnAuxClickDo(listener func(cx *gk.Cx)) ProgressEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ProgressEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ProgressEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e ProgressEl) OnClickDo(listener func(cx *gk.Cx)) ProgressEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -26528,7 +27364,7 @@ func (e RadioEl) TabStop(tabStop bool) RadioEl {
 // TrackFocus is <gpui_kit::base::Radio>::track_focus.
 func (e RadioEl) TrackFocus(focusHandle gk.FocusHandle) RadioEl {
 	o := rt.Op(rt.N(e.Core), 265)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 	return e
 }
 
@@ -27097,12 +27933,24 @@ func (e RadioEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) 
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) RadioEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e RadioEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) RadioEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) RadioEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -27221,6 +28069,12 @@ func (e RadioEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Radio
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) RadioEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -27309,6 +28163,12 @@ func (e RadioEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e g
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) RadioEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -27316,6 +28176,12 @@ func (e RadioEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e g
 // See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) RadioEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) RadioEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -27328,12 +28194,24 @@ func (e RadioEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) Radi
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) OnMouseExitDo(listener func(cx *gk.Cx)) RadioEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) RadioEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) OnMouseMoveDo(listener func(cx *gk.Cx)) RadioEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -27355,6 +28233,12 @@ func (e RadioEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) RadioEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -27362,6 +28246,12 @@ func (e RadioEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.
 // See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) RadioEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) RadioEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -27607,12 +28497,24 @@ func (e RadioEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) RadioEl {
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) OnAuxClickDo(listener func(cx *gk.Cx)) RadioEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e RadioEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) RadioEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e RadioEl) OnClickDo(listener func(cx *gk.Cx)) RadioEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -28410,12 +29312,24 @@ func (e RadioGroupEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEve
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) RadioGroupEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e RadioGroupEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) RadioGroupEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) RadioGroupEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -28537,6 +29451,12 @@ func (e RadioGroupEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) 
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) RadioGroupEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -28625,6 +29545,12 @@ func (e RadioGroupEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) RadioGroupEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -28632,6 +29558,12 @@ func (e RadioGroupEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx
 // See `listener` to get access to a view's state from this callback.
 func (e RadioGroupEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) RadioGroupEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) RadioGroupEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -28644,12 +29576,24 @@ func (e RadioGroupEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent))
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) OnMouseExitDo(listener func(cx *gk.Cx)) RadioGroupEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e RadioGroupEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) RadioGroupEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) OnMouseMoveDo(listener func(cx *gk.Cx)) RadioGroupEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -28671,6 +29615,12 @@ func (e RadioGroupEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, 
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) RadioGroupEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -28678,6 +29628,12 @@ func (e RadioGroupEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, 
 // See `listener` to get access to a view's state from this callback.
 func (e RadioGroupEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) RadioGroupEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) RadioGroupEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -28950,12 +29906,24 @@ func (e RadioGroupEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Radi
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) OnAuxClickDo(listener func(cx *gk.Cx)) RadioGroupEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e RadioGroupEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) RadioGroupEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e RadioGroupEl) OnClickDo(listener func(cx *gk.Cx)) RadioGroupEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -30010,7 +30978,7 @@ func (e ResizablePanelGroupEl) WithHandleAppearance(appearance gk.ResizeHandleRe
 // WithState is <gpui_kit::base::ResizablePanelGroup>::with_state.
 func (e ResizablePanelGroupEl) WithState(state ResizableState) ResizablePanelGroupEl {
 	o := rt.Op(rt.N(e.Core), 261)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	return e
 }
 
@@ -30057,7 +31025,7 @@ func Slider(state SliderState, st ...gk.Style) SliderEl {
 	rt.UseBaseSlider()
 	n := rt.NewNode(377)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return SliderEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -30098,7 +31066,7 @@ func (e SliderEl) Horizontal() SliderEl {
 // TrackFocus is <gpui_kit::base::Slider>::track_focus.
 func (e SliderEl) TrackFocus(focus gk.FocusHandle) SliderEl {
 	o := rt.Op(rt.N(e.Core), 260)
-	o.U64(rt.H(focus.HCore))
+	o.U64(rt.Held(rt.H(focus.HCore)))
 	return e
 }
 
@@ -30668,7 +31636,7 @@ func SliderIndicator(state SliderState, st ...gk.Style) SliderIndicatorEl {
 	rt.UseBaseSlider()
 	n := rt.NewNode(378)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return SliderIndicatorEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -31475,12 +32443,24 @@ func (e SliderIndicatorEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.Mou
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SliderIndicatorEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) SliderIndicatorEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -31605,6 +32585,12 @@ func (e SliderIndicatorEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEve
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -31693,6 +32679,12 @@ func (e SliderIndicatorEl) OnMouseDown(button gk.MouseButton, listener func(cx *
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -31700,6 +32692,12 @@ func (e SliderIndicatorEl) OnMouseDown(button gk.MouseButton, listener func(cx *
 // See `listener` to get access to a view's state from this callback.
 func (e SliderIndicatorEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) SliderIndicatorEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -31712,12 +32710,24 @@ func (e SliderIndicatorEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEv
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) OnMouseExitDo(listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SliderIndicatorEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) SliderIndicatorEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -31739,6 +32749,12 @@ func (e SliderIndicatorEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -31746,6 +32762,12 @@ func (e SliderIndicatorEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk
 // See `listener` to get access to a view's state from this callback.
 func (e SliderIndicatorEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SliderIndicatorEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -32021,12 +33043,24 @@ func (e SliderIndicatorEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent))
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) OnAuxClickDo(listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SliderIndicatorEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) SliderIndicatorEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e SliderIndicatorEl) OnClickDo(listener func(cx *gk.Cx)) SliderIndicatorEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -32119,7 +33153,7 @@ func SliderThumb(state SliderState, st ...gk.Style) SliderThumbEl {
 	rt.UseBaseSlider()
 	n := rt.NewNode(379)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return SliderThumbEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -32854,12 +33888,24 @@ func (e SliderThumbEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) SliderThumbEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SliderThumbEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) SliderThumbEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SliderThumbEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -32981,6 +34027,12 @@ func (e SliderThumbEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SliderThumbEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -33069,6 +34121,12 @@ func (e SliderThumbEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) SliderThumbEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -33076,6 +34134,12 @@ func (e SliderThumbEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e SliderThumbEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) SliderThumbEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SliderThumbEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -33088,12 +34152,24 @@ func (e SliderThumbEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) OnMouseExitDo(listener func(cx *gk.Cx)) SliderThumbEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SliderThumbEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) SliderThumbEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SliderThumbEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -33115,6 +34191,12 @@ func (e SliderThumbEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) SliderThumbEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -33122,6 +34204,12 @@ func (e SliderThumbEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 // See `listener` to get access to a view's state from this callback.
 func (e SliderThumbEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SliderThumbEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) SliderThumbEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -33394,12 +34482,24 @@ func (e SliderThumbEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Sli
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) OnAuxClickDo(listener func(cx *gk.Cx)) SliderThumbEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SliderThumbEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) SliderThumbEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e SliderThumbEl) OnClickDo(listener func(cx *gk.Cx)) SliderThumbEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -33492,7 +34592,7 @@ func SliderTrack(state SliderState, st ...gk.Style) SliderTrackEl {
 	rt.UseBaseSlider()
 	n := rt.NewNode(380)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return SliderTrackEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -34220,12 +35320,24 @@ func (e SliderTrackEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SliderTrackEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) SliderTrackEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SliderTrackEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) SliderTrackEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SliderTrackEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SliderTrackEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -34347,6 +35459,12 @@ func (e SliderTrackEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SliderTrackEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SliderTrackEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -34435,6 +35553,12 @@ func (e SliderTrackEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SliderTrackEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) SliderTrackEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -34442,6 +35566,12 @@ func (e SliderTrackEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e SliderTrackEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) SliderTrackEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e SliderTrackEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SliderTrackEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -34454,12 +35584,24 @@ func (e SliderTrackEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e SliderTrackEl) OnMouseExitDo(listener func(cx *gk.Cx)) SliderTrackEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SliderTrackEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) SliderTrackEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e SliderTrackEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SliderTrackEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -34481,6 +35623,12 @@ func (e SliderTrackEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SliderTrackEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) SliderTrackEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -34488,6 +35636,12 @@ func (e SliderTrackEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 // See `listener` to get access to a view's state from this callback.
 func (e SliderTrackEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SliderTrackEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e SliderTrackEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) SliderTrackEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -34630,7 +35784,7 @@ func (e SwitchEl) TabStop(tabStop bool) SwitchEl {
 // TrackFocus is <gpui_kit::base::Switch>::track_focus.
 func (e SwitchEl) TrackFocus(focusHandle gk.FocusHandle) SwitchEl {
 	o := rt.Op(rt.N(e.Core), 263)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 	return e
 }
 
@@ -35220,12 +36374,24 @@ func (e SwitchEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) SwitchEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) SwitchEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SwitchEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -35347,6 +36513,12 @@ func (e SwitchEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Swit
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SwitchEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -35435,6 +36607,12 @@ func (e SwitchEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) SwitchEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -35442,6 +36620,12 @@ func (e SwitchEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) SwitchEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SwitchEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -35454,12 +36638,24 @@ func (e SwitchEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) Swi
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) OnMouseExitDo(listener func(cx *gk.Cx)) SwitchEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) SwitchEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SwitchEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -35481,6 +36677,12 @@ func (e SwitchEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) SwitchEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -35488,6 +36690,12 @@ func (e SwitchEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SwitchEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) SwitchEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -35733,12 +36941,24 @@ func (e SwitchEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) SwitchEl
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) OnAuxClickDo(listener func(cx *gk.Cx)) SwitchEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) SwitchEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchEl) OnClickDo(listener func(cx *gk.Cx)) SwitchEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -37314,12 +38534,24 @@ func (e SwitchTrackEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) SwitchTrackEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchTrackEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) SwitchTrackEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SwitchTrackEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -37441,6 +38673,12 @@ func (e SwitchTrackEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SwitchTrackEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -37529,6 +38767,12 @@ func (e SwitchTrackEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) SwitchTrackEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -37536,6 +38780,12 @@ func (e SwitchTrackEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchTrackEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) SwitchTrackEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SwitchTrackEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -37548,12 +38798,24 @@ func (e SwitchTrackEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) OnMouseExitDo(listener func(cx *gk.Cx)) SwitchTrackEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchTrackEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) SwitchTrackEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SwitchTrackEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -37575,6 +38837,12 @@ func (e SwitchTrackEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) SwitchTrackEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -37582,6 +38850,12 @@ func (e SwitchTrackEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchTrackEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SwitchTrackEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) SwitchTrackEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -37854,12 +39128,24 @@ func (e SwitchTrackEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Swi
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) OnAuxClickDo(listener func(cx *gk.Cx)) SwitchTrackEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SwitchTrackEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) SwitchTrackEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e SwitchTrackEl) OnClickDo(listener func(cx *gk.Cx)) SwitchTrackEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -38005,6 +39291,13 @@ func (e TabEl) ID(id gk.ID) TabEl {
 
 // OnClick is <gpui_kit::base::Tab>::on_click.
 func (e TabEl) OnClick(handler func(cx *gk.Cx, e gk.ClickEvent)) TabEl {
+	o := rt.Op(rt.N(e.Core), 259)
+	o.U32(rt.Register(handler, 1))
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnClickDo(handler func(cx *gk.Cx)) TabEl {
 	o := rt.Op(rt.N(e.Core), 259)
 	o.U32(rt.Register(handler, 1))
 	return e
@@ -38573,12 +39866,24 @@ func (e TabEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Ta
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -38691,6 +39996,12 @@ func (e TabEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -38779,6 +40090,12 @@ func (e TabEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -38786,6 +40103,12 @@ func (e TabEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -38798,12 +40121,24 @@ func (e TabEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) TabEl 
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseExitDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseMoveDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -38825,6 +40160,12 @@ func (e TabEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.Mo
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -38832,6 +40173,12 @@ func (e TabEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.Mo
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -39095,6 +40442,12 @@ func (e TabEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) TabEl {
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) TabEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnAuxClickDo(listener func(cx *gk.Cx)) TabEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -39763,12 +41116,24 @@ func (e TabsEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) T
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) TabsEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TabsEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) TabsEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) TabsEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -39887,6 +41252,12 @@ func (e TabsEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) TabsEl
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) TabsEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -39975,6 +41346,12 @@ func (e TabsEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) TabsEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -39982,6 +41359,12 @@ func (e TabsEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 // See `listener` to get access to a view's state from this callback.
 func (e TabsEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) TabsEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) TabsEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -39994,12 +41377,24 @@ func (e TabsEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) TabsE
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) OnMouseExitDo(listener func(cx *gk.Cx)) TabsEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TabsEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) TabsEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) OnMouseMoveDo(listener func(cx *gk.Cx)) TabsEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -40021,6 +41416,12 @@ func (e TabsEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.M
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) TabsEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -40028,6 +41429,12 @@ func (e TabsEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.M
 // See `listener` to get access to a view's state from this callback.
 func (e TabsEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) TabsEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) TabsEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -40297,12 +41704,24 @@ func (e TabsEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) TabsEl {
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) OnAuxClickDo(listener func(cx *gk.Cx)) TabsEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TabsEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) TabsEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e TabsEl) OnClickDo(listener func(cx *gk.Cx)) TabsEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -40396,7 +41815,7 @@ func TimeField(id gk.ID, state TimeFieldState, st ...gk.Style) TimeFieldEl {
 	n := rt.NewNode(414)
 	o := rt.NodeArgs(n)
 	rt.PutID(o, id)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return TimeFieldEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -41854,12 +43273,24 @@ func (e TimeFieldSegmentEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.Mo
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TimeFieldSegmentEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) TimeFieldSegmentEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -41984,6 +43415,12 @@ func (e TimeFieldSegmentEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -42072,6 +43509,12 @@ func (e TimeFieldSegmentEl) OnMouseDown(button gk.MouseButton, listener func(cx 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -42079,6 +43522,12 @@ func (e TimeFieldSegmentEl) OnMouseDown(button gk.MouseButton, listener func(cx 
 // See `listener` to get access to a view's state from this callback.
 func (e TimeFieldSegmentEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) TimeFieldSegmentEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -42091,12 +43540,24 @@ func (e TimeFieldSegmentEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitE
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) OnMouseExitDo(listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TimeFieldSegmentEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) TimeFieldSegmentEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) OnMouseMoveDo(listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -42118,6 +43579,12 @@ func (e TimeFieldSegmentEl) OnMouseUp(button gk.MouseButton, listener func(cx *g
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -42125,6 +43592,12 @@ func (e TimeFieldSegmentEl) OnMouseUp(button gk.MouseButton, listener func(cx *g
 // See `listener` to get access to a view's state from this callback.
 func (e TimeFieldSegmentEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) TimeFieldSegmentEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -42400,12 +43873,24 @@ func (e TimeFieldSegmentEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) OnAuxClickDo(listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TimeFieldSegmentEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) TimeFieldSegmentEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e TimeFieldSegmentEl) OnClickDo(listener func(cx *gk.Cx)) TimeFieldSegmentEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -42559,7 +44044,7 @@ func (e ToggleEl) TabStop(tabStop bool) ToggleEl {
 // TrackFocus is <gpui_kit::base::Toggle>::track_focus.
 func (e ToggleEl) TrackFocus(focusHandle gk.FocusHandle) ToggleEl {
 	o := rt.Op(rt.N(e.Core), 263)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 	return e
 }
 
@@ -43149,12 +44634,24 @@ func (e ToggleEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ToggleEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ToggleEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ToggleEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -43276,6 +44773,12 @@ func (e ToggleEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Togg
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ToggleEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -43364,6 +44867,12 @@ func (e ToggleEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToggleEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -43371,6 +44880,12 @@ func (e ToggleEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ToggleEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ToggleEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -43383,12 +44898,24 @@ func (e ToggleEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) Tog
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) OnMouseExitDo(listener func(cx *gk.Cx)) ToggleEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ToggleEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ToggleEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -43410,6 +44937,12 @@ func (e ToggleEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToggleEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -43417,6 +44950,12 @@ func (e ToggleEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ToggleEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToggleEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -43662,12 +45201,24 @@ func (e ToggleEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ToggleEl
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) OnAuxClickDo(listener func(cx *gk.Cx)) ToggleEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ToggleEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleEl) OnClickDo(listener func(cx *gk.Cx)) ToggleEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -44483,12 +46034,24 @@ func (e ToggleGroupEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ToggleGroupEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleGroupEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ToggleGroupEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ToggleGroupEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -44610,6 +46173,12 @@ func (e ToggleGroupEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ToggleGroupEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -44698,6 +46267,12 @@ func (e ToggleGroupEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToggleGroupEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -44705,6 +46280,12 @@ func (e ToggleGroupEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleGroupEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ToggleGroupEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ToggleGroupEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -44717,12 +46298,24 @@ func (e ToggleGroupEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) OnMouseExitDo(listener func(cx *gk.Cx)) ToggleGroupEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleGroupEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ToggleGroupEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ToggleGroupEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -44744,6 +46337,12 @@ func (e ToggleGroupEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToggleGroupEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -44751,6 +46350,12 @@ func (e ToggleGroupEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleGroupEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ToggleGroupEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToggleGroupEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -45023,12 +46628,24 @@ func (e ToggleGroupEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Tog
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) OnAuxClickDo(listener func(cx *gk.Cx)) ToggleGroupEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToggleGroupEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ToggleGroupEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e ToggleGroupEl) OnClickDo(listener func(cx *gk.Cx)) ToggleGroupEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -45802,12 +47419,24 @@ func (e ToolbarEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ToolbarEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ToolbarEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ToolbarEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -45929,6 +47558,12 @@ func (e ToolbarEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Too
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ToolbarEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -46017,6 +47652,12 @@ func (e ToolbarEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToolbarEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -46024,6 +47665,12 @@ func (e ToolbarEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ToolbarEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ToolbarEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -46036,12 +47683,24 @@ func (e ToolbarEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) To
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) OnMouseExitDo(listener func(cx *gk.Cx)) ToolbarEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ToolbarEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ToolbarEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -46063,6 +47722,12 @@ func (e ToolbarEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e g
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToolbarEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -46070,6 +47735,12 @@ func (e ToolbarEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e g
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ToolbarEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToolbarEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -46342,12 +48013,24 @@ func (e ToolbarEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) Toolbar
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) OnAuxClickDo(listener func(cx *gk.Cx)) ToolbarEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ToolbarEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarEl) OnClickDo(listener func(cx *gk.Cx)) ToolbarEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -47205,12 +48888,24 @@ func (e ToolbarGroupEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseE
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarGroupEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ToolbarGroupEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -47332,6 +49027,12 @@ func (e ToolbarGroupEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -47420,6 +49121,12 @@ func (e ToolbarGroupEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -47427,6 +49134,12 @@ func (e ToolbarGroupEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarGroupEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ToolbarGroupEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -47439,12 +49152,24 @@ func (e ToolbarGroupEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) OnMouseExitDo(listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarGroupEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ToolbarGroupEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -47466,6 +49191,12 @@ func (e ToolbarGroupEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -47473,6 +49204,12 @@ func (e ToolbarGroupEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarGroupEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ToolbarGroupEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -47748,12 +49485,24 @@ func (e ToolbarGroupEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) To
 	return e
 }
 
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) OnAuxClickDo(listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to click events of this element. The fluent API equivalent to
 // `on_click`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ToolbarGroupEl) OnClick(listener func(cx *gk.Cx, e gk.ClickEvent)) ToolbarGroupEl {
 	tStatefulInteractiveElementOnClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e ToolbarGroupEl) OnClickDo(listener func(cx *gk.Cx)) ToolbarGroupEl {
+	tStatefulInteractiveElementOnClickDo(rt.N(e.Core), listener)
 	return e
 }
 

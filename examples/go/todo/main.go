@@ -11,6 +11,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"slices"
 	"strings"
@@ -457,7 +458,9 @@ func main() {
 	if p, ok := os.LookupEnv("TODO_FILE"); ok {
 		a.path = p
 	}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Todo", 900, 600, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

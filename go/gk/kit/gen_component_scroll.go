@@ -849,12 +849,24 @@ func (e ScrollableDivEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.Mouse
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ScrollableDivEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) ScrollableDivEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ScrollableDivEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ScrollableDivEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) ScrollableDivEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -979,6 +991,12 @@ func (e ScrollableDivEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ScrollableDivEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) ScrollableDivEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -1067,6 +1085,12 @@ func (e ScrollableDivEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e ScrollableDivEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) ScrollableDivEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -1074,6 +1098,12 @@ func (e ScrollableDivEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk
 // See `listener` to get access to a view's state from this callback.
 func (e ScrollableDivEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e ScrollableDivEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) ScrollableDivEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -1086,12 +1116,24 @@ func (e ScrollableDivEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEven
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e ScrollableDivEl) OnMouseExitDo(listener func(cx *gk.Cx)) ScrollableDivEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e ScrollableDivEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e ScrollableDivEl) OnMouseMoveDo(listener func(cx *gk.Cx)) ScrollableDivEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -1113,6 +1155,12 @@ func (e ScrollableDivEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e ScrollableDivEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) ScrollableDivEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -1120,6 +1168,12 @@ func (e ScrollableDivEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e ScrollableDivEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) ScrollableDivEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e ScrollableDivEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) ScrollableDivEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 

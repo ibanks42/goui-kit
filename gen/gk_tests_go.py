@@ -466,13 +466,13 @@ def gensample(m, go, path):
     rest += ["func (a *App) rootView(cx *gk.Cx) gk.Element {"] + [f"\t{f}()" for f in fns]
     rest += ["\ta.runs++", f'\tfmt.Printf("gensample: {calls} calls in {len(fns)} node types, run %d\\n", a.runs)',
              '\treturn gk.Div(s.SizeFull).Text("gensample")', "}", "",
-             "func main() {", "\ta := &App{}", '\tgk.RunHeadless("frame\\nframe\\n", func(cx *gk.Cx) {']
+             "func main() {", "\ta := &App{}", '\tif err := gk.RunHeadless("frame\\nframe\\n", func(cx *gk.Cx) {']
     if "action" in sm.uses:
         rest.append('\t\tsampleAct = gk.NewAction(cx, "gensample.sample")')
-    rest += ["\t\ta.root = gk.NewView(nil, a.rootView)", '\t\tgk.OpenWindow(cx, "gensample", 640, 480, a.root)', "\t})",
+    rest += ["\t\ta.root = gk.NewView(nil, a.rootView)", '\t\tgk.OpenWindow(cx, "gensample", 640, 480, a.root)', "\t}); err != nil {", "\t\tlog.Fatal(err)", "\t}",
              '\tfmt.Printf("gensample: done runs=%d\\n", a.runs)', "}"]
     text = "\n".join(rest)
-    write(path, o + imports(text, ["fmt"]) + rest)
+    write(path, o + imports(text, ["fmt", "log"]) + rest)
     return calls, skipped
 
 
@@ -848,12 +848,12 @@ def gen_test(m, go, path, skip):
              '\treturn gk.Div(s.SizeFull).ID("all").OnClick(a.clicked).Text("gen")', "}", "",
              "func main() {", "\tapp.mode = os.Getenv(\"GK_PROTO\")",
              '\tscript := "size 320 200\\nframe\\nclick 100 100\\nframe\\nframe\\nclick 100 100\\nframe\\nframe\\nstat\\n"',
-             "\tgk.RunHeadless(script, func(cx *gk.Cx) {", "\t\tapp.root = gk.NewView(nil, app.rootView)",
-             '\t\tgk.OpenWindow(cx, "gen", 320, 200, app.root)', "\t})",
+             "\tif err := gk.RunHeadless(script, func(cx *gk.Cx) {", "\t\tapp.root = gk.NewView(nil, app.rootView)",
+             '\t\tgk.OpenWindow(cx, "gen", 320, 200, app.root)', "\t}); err != nil {", "\t\tlog.Fatal(err)", "\t}",
              '\tfmt.Printf("gen done mode=%s clicks=%d ok=%d failed=%d events=%d\\n", app.mode, app.clicks, app.ok, app.failed, app.events)',
              "}"]
     text = "\n".join(rest)
-    write(path, o + imports(text, ["fmt", "bytes", "math", "reflect", "encoding/binary", "os"]) + rest)
+    write(path, o + imports(text, ["fmt", "bytes", "math", "reflect", "encoding/binary", "os", "log"]) + rest)
     go.names, go.collisions, go.tuples, go.handles, go.oneofs, go.need_readers = saved
     return {"shapes": n, "shape_skips": skips, "typed": typed, "states": made, "state_skips": [s for s in st if "skip" in s],
             "notread": notread}

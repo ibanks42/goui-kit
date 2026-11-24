@@ -19,7 +19,7 @@ func SpeechButton(state SpeechState, st ...gk.Style) SpeechButtonEl {
 	rt.UseComponentSpeech()
 	n := rt.NewNode(761)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return SpeechButtonEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -770,7 +770,7 @@ func SpeechIndicator(state SpeechState) SpeechIndicatorEl {
 	rt.UseComponentSpeech()
 	n := rt.NewNode(762)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	return SpeechIndicatorEl{ElSizableNode: rt.MkElSizableNode(n)}
 }
 
@@ -804,7 +804,7 @@ func SpeechWaveform(state SpeechState, st ...gk.Style) SpeechWaveformEl {
 	rt.UseComponentSpeech()
 	n := rt.NewNode(763)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return SpeechWaveformEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }

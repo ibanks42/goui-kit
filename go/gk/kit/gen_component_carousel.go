@@ -18,7 +18,7 @@ func Carousel(id gk.ID, state CarouselState, st ...gk.Style) CarouselEl {
 	n := rt.NewNode(612)
 	o := rt.NodeArgs(n)
 	rt.PutID(o, id)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return CarouselEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -692,7 +692,7 @@ func CarouselContent(state CarouselState, st ...gk.Style) CarouselContentEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(613)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return CarouselContentEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -1528,7 +1528,7 @@ func CarouselItem(id gk.ID, index int, state CarouselState, st ...gk.Style) Caro
 	o := rt.NodeArgs(n)
 	rt.PutID(o, id)
 	rt.PutUsize(o, index)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return CarouselItemEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -2310,7 +2310,7 @@ func CarouselNext(state CarouselState, st ...gk.Style) CarouselNextEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(615)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return CarouselNextEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -3965,7 +3965,7 @@ func CarouselPaginationItem(id gk.ID, index int, state CarouselState, st ...gk.S
 	o := rt.NodeArgs(n)
 	rt.PutID(o, id)
 	rt.PutUsize(o, index)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return CarouselPaginationItemEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -4855,7 +4855,7 @@ func CarouselPrevious(state CarouselState, st ...gk.Style) CarouselPreviousEl {
 	rt.UseComponentCarousel()
 	n := rt.NewNode(618)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return CarouselPreviousEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }

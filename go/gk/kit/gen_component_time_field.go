@@ -18,7 +18,7 @@ func TimeField(state base.TimeFieldState, st ...gk.Style) TimeFieldEl {
 	rt.UseComponentTime()
 	n := rt.NewNode(799)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return TimeFieldEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }

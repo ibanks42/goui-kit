@@ -10,16 +10,17 @@
 #                   x86_64 (Apple silicon and Intel); .tar.zst
 #   windows-x86_64  built by tools/build-lib.sh on Windows; .zip
 # Every platform's download holds the same folders and files; only the library's files differ:
-#   lib/libgpuikit.so                      Linux: the library (release, no grammars, no speech)
-#   lib/libgpuikit_static.a                Linux: the same as a static library, which Go apps link
-#                                          (each keeps only the component families it uses)
-#   lib/libgpuikit_sys.so                  Linux: a linker script naming the system libraries it needs
-#   lib/libgpuikit_static.a                macOS (universal) and Windows (MinGW's format) too; on
-#   lib/libgpuikit_sys.a                   Windows beside the import library of the Windows API it links
+#   lib/libgpuikit.so                      Linux: the library (release, no grammars, no speech),
+#                                          which a Go app loads at start-up (the default build)
 #   lib/libgpuikit.dylib                   macOS: the same, universal (arm64 and x86_64 slices, each
 #                                          with install name @rpath/libgpuikit.dylib)
-#   lib/gpuikit.dll                        Windows: the same, and its import libraries:
-#   lib/libgpuikit.dll.a, lib/gpuikit.def  MinGW's, which Go's cgo links (gcc)
+#   lib/gpuikit.dll                        Windows: the same
+#   lib/libgpuikit_static.a                the same as a static library, for a Go app built with
+#                                          -tags gkstatic (cgo), which keeps only the component
+#                                          families it uses; universal on macOS, MinGW's format on
+#                                          Windows
+#   lib/libgpuikit_sys.so                  Linux: a linker script naming the system libraries it needs
+#   lib/libgpuikit_sys.a                   Windows: the import library of the Windows API it links
 #   windows/gpuikit.manifest, gpuikit.rc   Windows: the manifest a program embeds (DPI awareness)
 #   go/                      the Go module gpuikit.dev (package gk, and s, theme, palette): an app's
 #                            go.mod requires it and replaces it with this folder
@@ -50,11 +51,12 @@ if [ -z "${GK_PLATFORM:-}" ]; then
   esac
 fi
 case "$GK_PLATFORM" in
-  # Apps link the library into the program (only the component families they use); the shared
-  # library is built too (lib/ship) but not shipped: what the library needs is read from it.
-  linux-x86_64) libs=(libgpuikit_static.a libgpuikit_sys.so); main=libgpuikit_static.a; probe=libgpuikit.so; ext=.bin ;;
-  macos-universal) libs=(libgpuikit_static.a); main=libgpuikit_static.a; probe=libgpuikit.dylib; ext=.bin ;;
-  windows-x86_64) libs=(libgpuikit_static.a libgpuikit_sys.a); main=libgpuikit_static.a; probe=gpuikit.dll; ext=.exe ;;
+  # Apps load the shared library (the default) or link the static one into the program
+  # (-tags gkstatic, only the component families they use). What the library needs is read from
+  # the shared one.
+  linux-x86_64) libs=(libgpuikit.so libgpuikit_static.a libgpuikit_sys.so); main=libgpuikit_static.a; probe=libgpuikit.so; ext=.bin ;;
+  macos-universal) libs=(libgpuikit.dylib libgpuikit_static.a); main=libgpuikit_static.a; probe=libgpuikit.dylib; ext=.bin ;;
+  windows-x86_64) libs=(gpuikit.dll libgpuikit_static.a libgpuikit_sys.a); main=libgpuikit_static.a; probe=gpuikit.dll; ext=.exe ;;
   *) echo "dist.sh: GK_PLATFORM is linux-x86_64, macos-universal or windows-x86_64" >&2; exit 2 ;;
 esac
 ver=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
@@ -66,8 +68,10 @@ for f in "${libs[@]}"; do
 done
 # The macOS download is named universal: the library must hold exactly the arm64 and x86_64 slices.
 if [ "$GK_PLATFORM" = macos-universal ]; then
-  got=$(lipo -archs "$root/ship/libgpuikit_static.a" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' ')
-  [ "$got" = "arm64 x86_64 " ] || { echo "dist.sh: $root/ship/libgpuikit_static.a has the slices '$got', not arm64 and x86_64 (tools/build-lib.sh builds both)" >&2; exit 1; }
+  for f in libgpuikit_static.a libgpuikit.dylib; do
+    got=$(lipo -archs "$root/ship/$f" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' ')
+    [ "$got" = "arm64 x86_64 " ] || { echo "dist.sh: $root/ship/$f has the slices '$got', not arm64 and x86_64 (tools/build-lib.sh builds both)" >&2; exit 1; }
+  done
 fi
 # The licence texts of every crate linked into the library (tools/build-lib.sh writes them).
 [ -f "$lic/THIRD_PARTY.md" ] || { echo "dist.sh: $lic/THIRD_PARTY.md is missing (make lib writes it)" >&2; exit 1; }
@@ -80,10 +84,10 @@ fi
 cp -r "$lic" "$out/licences"
 cp "$lic/THIRD_PARTY.md" "$out/THIRD_PARTY.md"
 # The Go module as the repository has it.
-cp go/go.mod "$out/go/" && cp -r go/gk "$out/go/"
+cp go/go.mod go/go.sum "$out/go/" && cp -r go/gk "$out/go/"
 cp core/include/gpuikit.h core/include/gk_ops.h "$out/include/"
 # The Go examples: one module whose go.mod replaces gpuikit.dev with ../../go, the download's go/.
-cp examples/go/go.mod "$out/examples/go/"
+cp examples/go/go.mod examples/go/go.sum "$out/examples/go/"
 cp -r examples/go/hello examples/go/counter examples/go/notes examples/go/todo examples/go/reader \
   examples/go/expenses "$out/examples/go/"
 # The guides and the programs every snippet in them is cut from (gates/docs-go.sh builds them); the
@@ -92,60 +96,74 @@ cp docs/GETTING-STARTED-GO.md docs/API-GO.md docs/GO.md "$out/docs/"
 cp -r docs/tutorial-go docs/snippets-go "$out/docs/"
 cat > "$out/examples/go/build.sh" <<'B'
 #!/bin/sh
-# build.sh [APP]: build a Go app against the prebuilt library. Needs Go 1.27 or newer and a C
-# compiler for cgo: gcc or clang on Linux (CC=clang), the Xcode command-line tools on macOS,
-# MinGW-w64 gcc on Windows (MSYS2's ucrt64 or w64devkit), where this runs in Git Bash or MSYS2.
+# build.sh [APP]: build a Go app against the prebuilt library. Needs Go 1.27 or newer, and nothing
+# else: the program loads the shared library (lib/) when it starts, through purego, so no C
+# compiler is involved (cgo is off). The first build downloads purego, the one module the package
+# needs (pinned in go/go.sum), from Go's module proxy.
 #   APP   an example's name (hello, counter, notes, todo, reader, expenses; default hello), built into
 #         examples/go/APP.bin (APP.exe on Windows), or the path of any folder that holds a main
 #         package of a module requiring gpuikit.dev (docs/tutorial-go/03-list, ../myapp), built into
 #         FOLDER.bin (FOLDER.exe) beside it
-# The library is linked into the binary (lib/libgpuikit_static.a), keeping only the component
-# families the app calls into (-Wl,--gc-sections; -Wl,-dead_strip on macOS): one file, nothing to
-# ship beside it (on Windows, the manifest: see below). Go's own
-# settings pass through: on macOS GOARCH=amd64 CC='clang -arch x86_64' builds for Intel on Apple
-# silicon (the library is universal), GOARCH=arm64 CC='clang -arch arm64' the other way.
+# The library is put beside the program (a link to lib/'s; a copy on Windows), where the program
+# finds it: ship the two together. GOOS and GOARCH pass through, so this builds for another system
+# too (put that system's library beside the program there).
+# GK_STATIC=1 links the static library into the program instead (build tag gkstatic): one file,
+# keeping only the component families the app calls into (-Wl,--gc-sections; -Wl,-dead_strip on
+# macOS). That needs a C compiler for cgo: gcc or clang on Linux (CC=clang), the Xcode command-line
+# tools on macOS (GOARCH=amd64 CC='clang -arch x86_64' builds for Intel on Apple silicon),
+# MinGW-w64 gcc on Windows, with lld to leave out unused components (MSYS2's ucrt64 or w64devkit),
+# where this runs in Git Bash or MSYS2.
 set -e
 here=$(cd "$(dirname "$0")" && pwd); lib=$(cd "$here/../../lib" && pwd); app=${1:-hello}
 case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) win=1; ext=.exe ;; *) win=; ext=.bin ;; esac
+case "${GOOS:-}" in windows) ext=.exe ;; linux|darwin) ext=.bin ;; esac
 case "$app" in
   */*) src=$(cd "${app%/}" && pwd); bin=$src$ext ;;
   *) src=$here/$app; bin=$here/$app$ext ;;
 esac
 cd "$src"
-if [ -n "$win" ]; then
+if [ "${GK_STATIC:-}" != 1 ]; then
+  CGO_ENABLED=0 go build -ldflags="-s -w" -o "$bin" .
+  dir=$(dirname "$bin")
+  case "${GOOS:-$(go env GOOS)}" in windows) so=gpuikit.dll ;; darwin) so=libgpuikit.dylib ;; *) so=libgpuikit.so ;; esac
+  if [ -f "$lib/$so" ] && [ ! -e "$dir/$so" ]; then
+    if [ -n "$win" ]; then cp "$lib/$so" "$dir/"; else ln -s "$lib/$so" "$dir/$so"; fi
+  fi
+elif [ -n "$win" ]; then
   # With lld (llvm-mingw, MSYS2's mingw-w64-ucrt-x86_64-lld) the linker drops the component families
   # the app does not use; GNU ld cannot on Windows (it keeps every function that has unwind data),
   # so without lld the program holds all of them. The manifest comes with package gk (a .syso);
   # -force:multipleres lets it replace the default one MinGW's gcc adds.
   if command -v ld.lld > /dev/null; then x="-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres"; else x="-Wl,--gc-sections"; fi
-  CGO_ENABLED=1 CGO_LDFLAGS="-L$(cygpath -m "$lib")" go build -ldflags="-s -w '-extldflags=$x'" -o "$(cygpath -m "$bin")" .
+  CGO_ENABLED=1 CGO_LDFLAGS="-L$(cygpath -m "$lib")" go build -tags gkstatic -ldflags="-s -w '-extldflags=$x'" -o "$(cygpath -m "$bin")" .
 elif [ "$(uname -s)" = Darwin ]; then
-  CGO_ENABLED=1 CGO_LDFLAGS="-L$lib" go build -ldflags="-s -w -extldflags=-Wl,-dead_strip" -o "$bin" .
+  CGO_ENABLED=1 CGO_LDFLAGS="-L$lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,-dead_strip" -o "$bin" .
 else
-  CGO_ENABLED=1 CGO_LDFLAGS="-L$lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o "$bin" .
+  CGO_ENABLED=1 CGO_LDFLAGS="-L$lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o "$bin" .
 fi
 echo "built $bin"
 B
 chmod +x "$out/examples/go/build.sh"
 # What differs per platform in the README: the system, what to install, how an app links.
 case "$GK_PLATFORM" in
-  linux-x86_64) sys="Linux x86_64"; libdesc="the library"
-    go_needs="a C compiler for cgo (gcc, or clang with CC=clang)"
-    go_link='CGO_LDFLAGS="-L<this folder>/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections"'
-    ship_note='An app is one file: the library is linked into it, with only the component families the app calls into (a Go app without the -ldflags still works, but holds all of them).' ;;
-  macos-universal) sys="macOS, Apple silicon and Intel (universal)"
-    libdesc="the library, universal (arm64 and x86_64), which an app links into itself"
-    go_needs="the Xcode command-line tools (clang) for cgo"
-    go_link='CGO_LDFLAGS="-L<this folder>/lib" go build -ldflags="-s -w -extldflags=-Wl,-dead_strip"'
-    ship_note="An app is one file: the library is linked into it, with only the component families the app calls into. The build script builds for this Mac's architecture. For Intel on Apple silicon: GOARCH=amd64 CC='clang -arch x86_64' examples/go/build.sh APP (the other way round: GOARCH=arm64, -arch arm64); lipo -create joins the two programs into a universal one." ;;
-  windows-x86_64) sys="Windows x86_64"; libdesc="the library, which Go apps link into themselves (MinGW's format)"
-    go_needs="MinGW-w64 gcc and lld on PATH for cgo (MSYS2's ucrt64 with the mingw-w64-ucrt-x86_64-lld package, llvm-mingw, or WinLibs' LLVM build)"
-    go_link="CGO_LDFLAGS=\"-L<this folder>/lib\" go build -ldflags=\"-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'\" (with lld on PATH; without it, -extldflags=-Wl,--gc-sections, and the program holds every component)"
-    ship_note="An app is one .exe: the library is linked into it, with only the component families the app calls into. The manifest is linked in too: without it the program does not start (the library needs common controls 6) and the window is not DPI aware." ;;
+  linux-x86_64) sys="Linux x86_64"; libdesc="the static library"; so=libgpuikit.so
+    go_static='CGO_LDFLAGS="-L<this folder>/lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,--gc-sections"'
+    static_needs="a C compiler for cgo (gcc, or clang with CC=clang)"
+    ship_note="" ;;
+  macos-universal) sys="macOS, Apple silicon and Intel (universal)"; so=libgpuikit.dylib
+    libdesc="the static library, universal (arm64 and x86_64)"
+    go_static='CGO_LDFLAGS="-L<this folder>/lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,-dead_strip"'
+    static_needs="the Xcode command-line tools (clang) for cgo"
+    ship_note="The library is universal: GOARCH=amd64 examples/go/build.sh APP builds for Intel on Apple silicon (GOARCH=arm64 the other way round), and lipo -create joins the two programs into a universal one. In an app bundle the library goes in Contents/Frameworks." ;;
+  windows-x86_64) sys="Windows x86_64"; libdesc="the static library (MinGW's format)"; so=gpuikit.dll
+    go_static="CGO_LDFLAGS=\"-L<this folder>/lib\" go build -tags gkstatic -ldflags=\"-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'\" (with lld on PATH; without it, -extldflags=-Wl,--gc-sections, and the program holds every component)"
+    static_needs="MinGW-w64 gcc and lld on PATH for cgo (MSYS2's ucrt64 with the mingw-w64-ucrt-x86_64-lld package, llvm-mingw, or WinLibs' LLVM build)"
+    ship_note="The manifest is linked into the .exe (package gk carries it): without it the program does not start (the library needs common controls 6) and the window is not DPI aware. No C compiler is needed: GOOS=windows go build cross-compiles from any system." ;;
 esac
 librows=$(for f in "${libs[@]}"; do
   case $f in
-    ("$main") echo "| lib/$f | $libdesc; an app keeps only the component families it uses |" ;;
+    ("$so") echo "| lib/$f | the library, which an app loads at start-up (put it beside the program) |" ;;
+    ("$main") echo "| lib/$f | $libdesc, for an app built with -tags gkstatic, which links it into itself and keeps only the component families it uses |" ;;
     (libgpuikit_sys.so) echo "| lib/$f | a linker script that names the system libraries the static library needs |" ;;
     (libgpuikit_sys.a) echo "| lib/$f | the import library of the Windows API the static library links |" ;;
     (*) echo "| lib/$f | an import library of gpuikit.dll |" ;;
@@ -164,7 +182,7 @@ prebuilt library behind a C interface. No Rust is needed.
 
 Start with **docs/GETTING-STARTED-GO.md**: what to install, building the examples, and a
 tutorial. Then **docs/API-GO.md**.
-Needs Go 1.27 or newer and $go_needs.
+Needs Go 1.27 or newer, and no C compiler: an app loads lib/$so when it starts.
 
     examples/go/build.sh hello && examples/go/hello$ext
     examples/go/build.sh ../myapp                    builds any app folder into ../myapp$ext
@@ -174,7 +192,12 @@ An app's go.mod requires the module in go/ and points at it:
     require gpuikit.dev v0.0.0
     replace gpuikit.dev => ../$name/go
 
-and builds with $go_link as examples/go/build.sh does. $ship_note
+then \`go mod tidy\` (it fetches purego, the one module the package needs) and \`go build\`.
+The program looks for $so in GK_LIB (the folder that holds it), beside itself, in its lib/ or
+../lib/ folder, then where the system loader looks; ship it beside the program. $ship_note
+
+To link the library into the program instead (one file, only the component families it uses;
+needs $static_needs): $go_static, or GK_STATIC=1 examples/go/build.sh.
 
 | path | what |
 |---|---|
@@ -219,6 +242,7 @@ interface hash: $hash (the library and the package refuse each other when it dif
 needs: $needs${arch_line:-}
 licences: THIRD_PARTY.md (every crate linked into the library, its licence; texts in licences/texts)
 library sha256: $(sha256 "$out/lib/$main")
+shared library sha256: $(sha256 "$out/lib/$probe")
 source commit: $(git rev-parse --short HEAD 2>/dev/null || echo "${GK_COMMIT:-unknown} (a copy without git)")$(git diff --quiet 2>/dev/null || [ -n "${GK_COMMIT:-}" ] || echo ' with uncommitted changes')
 tested with: Go ${go_v:-not found}
 V

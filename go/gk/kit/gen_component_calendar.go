@@ -18,7 +18,7 @@ func Calendar(state base.CalendarState, st ...gk.Style) CalendarEl {
 	rt.UseComponentTime()
 	n := rt.NewNode(611)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return CalendarEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }

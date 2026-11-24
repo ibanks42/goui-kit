@@ -16,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"gpuikit.dev/gk"
@@ -93,12 +94,14 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{mode: os.Getenv("GK_NEG")}
-	gk.RunHeadless("size 400 300\nframe\nclick 200 150\nframe\nframe\nclick 200 150\nframe\nframe\nstat\n", func(cx *gk.Cx) {
+	if err := gk.RunHeadless("size 400 300\nframe\nclick 200 150\nframe\nframe\nclick 200 150\nframe\nframe\nstat\n", func(cx *gk.Cx) {
 		if a.mode == "val-scroll-freed" {
 			a.scroll = gk.NewScrollHandle(cx)
 		}
 		a.root = gk.NewView(nil, a.view)
 		gk.OpenWindow(cx, "misuse_values", 400, 300, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("gk-neg done mode=%s drawn=%d clicks=%d\n", a.mode, a.drawn, a.clicks)
 }

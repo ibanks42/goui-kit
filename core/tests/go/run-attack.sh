@@ -3,7 +3,8 @@
 # core/tests/go/run.sh, which defines build and run. Each must
 # end in an error code or a stop with the message: never a crash, a hang, or memory written where
 # it must not be.
-build attack-go attack
+# A raw cgo client of its own (it does not import the Go package): built with cgo, linked to lib/diag.
+CGO_ENABLED=1 CGO_LDFLAGS="-L$lib" build attack-go attack
 # A request cut short in its arguments: the library stops (poisoned) with the message, refuses
 # every later call, and the client exits 1.
 GK_PROTO_BIN=attack-go run truncated 1 'attack truncated rc=6 msg=".*out of range' 'attack truncated after rc=6'

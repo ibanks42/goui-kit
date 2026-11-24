@@ -77,11 +77,47 @@ func putPanelData(o *rt.Tape, d PanelData) {
 // PanelOption changes a panel made by NewPanel.
 type PanelOption func(*panelOpts)
 
-type panelOpts struct{ events func(cx *gk.Cx, e PanelEvent) }
+type panelOpts struct {
+	events func(cx *gk.Cx, e PanelEvent)
+	keep   bool
+}
 
 // PanelEvents gives a panel the handler of what the dock tells it.
 func PanelEvents(f func(cx *gk.Cx, e PanelEvent)) PanelOption {
 	return func(o *panelOpts) { o.events = f }
+}
+
+// KeepWhenClosed keeps a panel the dock removed (the user closed its tab) for the app to add
+// again: without it the panel is released once it is removed and not added back, and with it its
+// view and all the view made (docs/GO.md section 4). gk.Release ends a kept one.
+func KeepWhenClosed() PanelOption {
+	return func(o *panelOpts) { o.keep = true }
+}
+
+// panelLife follows a panel in and out of the dock: removed and not added back before the next
+// WAKE turn, it is closed.
+type panelLife struct {
+	h       uint64
+	removed bool
+}
+
+func (pl *panelLife) event(cx *gk.Cx, e PanelEvent, keep bool) {
+	switch e.Kind {
+	case PanelAdded:
+		pl.removed = false
+	case PanelRemoved:
+		if keep || pl.removed {
+			return
+		}
+		pl.removed = true
+		// Moved to another tab group, the panel is added back by the dock's same update: the
+		// posted check runs after it.
+		gk.Post(func(cx *gk.Cx) {
+			if pl.removed && rt.Tracked(pl.h) {
+				gk.Release(cx, Panel{HCore: rt.MkH(pl.h)})
+			}
+		})
+	}
 }
 
 // handle makes a panel something gk.Release takes.
@@ -104,17 +140,28 @@ func NewPanel(cx *gk.Cx, v gk.View, d PanelData, opts ...PanelOption) Panel {
 		o(&po)
 	}
 	t.Flush()
-	var slot, gen uint32
-	if po.events != nil {
-		slot, gen = rt.KeepHandler(cx, po.events, rt.ShapePanelEvent)
-	}
+	// The panel hears what the dock tells it, for its own lifetime (panelLife) and the app's
+	// handler; with none, the event marks no view.
+	pl := &panelLife{}
+	user, keep := po.events, po.keep
+	slot, gen := rt.KeepHandler(cx, func(cx *gk.Cx, e PanelEvent) {
+		pl.event(cx, e, keep)
+		if user != nil {
+			user(cx, e)
+		} else {
+			gk.Quiet(cx)
+		}
+	}, rt.ShapePanelEvent)
 	o := rt.NewReq(rt.CPanelNew)
 	o.U64(rt.H(v.HCore))
 	putPanelData(o, d)
 	o.U32(slot)
 	o.U32(gen)
 	r := rt.Reader{B: rt.MustCall(*o)}
-	return Panel{HCore: rt.MkH(r.U64())}
+	pl.h = r.U64()
+	rt.Made(pl.h)         // owned by the turn's view, released when unreachable (rt_life.go)
+	rt.AdoptView(pl.h, v) // the panel owns its view: releasing it releases the view
+	return Panel{HCore: rt.MkH(pl.h)}
 }
 
 // SetPanel changes what the dock reads of a panel; the dock draws it again.

@@ -176,7 +176,7 @@ func (s ComboboxState) SetItems(cx *gk.Cx, items gk.RowSource) {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1113)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(items.HCore))
+	o.U64(rt.Held(rt.H(items.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -259,7 +259,7 @@ func (b ComboboxStateBuilder) Build() ComboboxState {
 func NewComboboxState(cx *gk.Cx, delegate gk.RowSource, selectedIndices []BaseIndexPath) ComboboxStateBuilder {
 	rt.UseComponentCombobox()
 	o := rt.NewReq(1107)
-	o.U64(rt.H(delegate.HCore))
+	o.U64(rt.Held(rt.H(delegate.HCore)))
 	o.U32(uint32(len(selectedIndices)))
 	for _, x0 := range selectedIndices {
 		putBaseIndexPath(o, x0)
@@ -576,7 +576,7 @@ func (b ListStateBuilder) Build() ListState { return ListState{HCore: rt.MkH(b.s
 func NewListState(cx *gk.Cx, delegate gk.RowSource) ListStateBuilder {
 	rt.UseComponentList()
 	o := rt.NewReq(691)
-	o.U64(rt.H(delegate.HCore))
+	o.U64(rt.Held(rt.H(delegate.HCore)))
 	return ListStateBuilder{rt.NewStateBuilder(cx, o)}
 }
 
@@ -622,7 +622,7 @@ func (s SelectState) SetItems(cx *gk.Cx, items gk.RowSource) {
 	rt.UseComponentSelect()
 	o := rt.NewReq(1121)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(items.HCore))
+	o.U64(rt.Held(rt.H(items.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -688,7 +688,7 @@ func (b SelectStateBuilder) Build() SelectState { return SelectState{HCore: rt.M
 func NewSelectState(cx *gk.Cx, delegate gk.RowSource, selectedIndex gk.Option[BaseIndexPath]) SelectStateBuilder {
 	rt.UseComponentSelect()
 	o := rt.NewReq(1119)
-	o.U64(rt.H(delegate.HCore))
+	o.U64(rt.Held(rt.H(delegate.HCore)))
 	if x0, ok := selectedIndex.Get(); ok {
 		o.U8(1)
 		putBaseIndexPath(o, x0)
@@ -1098,7 +1098,7 @@ func (b StateBuilder) Build() State { return State{HCore: rt.MkH(b.sb.Build())} 
 func NewState(cx *gk.Cx, delegate gk.RowSource) StateBuilder {
 	rt.UseComponentTable()
 	o := rt.NewReq(706)
-	o.U64(rt.H(delegate.HCore))
+	o.U64(rt.Held(rt.H(delegate.HCore)))
 	return StateBuilder{rt.NewStateBuilder(cx, o)}
 }
 

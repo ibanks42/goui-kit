@@ -55,6 +55,6 @@ GK_PROTO_BIN=rows-go run tree 0 \
   'rows tree row=3 id=docs depth=0 folder=true expanded=true' 'rows tree row=4 id=docs/c depth=1' \
   'rows tree-state TreeEventExpanded\{Value:"docs"\} selected ok=true ix=3' \
   'rows done mode=tree '
-# A row source released while a view still draws its list stops the program (exit 2).
-GK_PROTO_BIN=rows-go run released 2 'rows released source' \
+# A row source released while a view still draws its list stops the program (gk.Run returns it: exit 1).
+GK_PROTO_BIN=rows-go run released 1 'rows released source' \
   'a view shows a row source through a handle that cannot be used'

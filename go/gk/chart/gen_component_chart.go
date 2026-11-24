@@ -183,7 +183,7 @@ func (e AreaChartEl) TickMargin(tickMargin int) AreaChartEl {
 // TooltipContent is <gpui_kit::component::chart::AreaChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_content.
 func (e AreaChartEl) TooltipContent(content gk.RowSource) AreaChartEl {
 	o := rt.Op(rt.N(e.Core), 272)
-	o.U64(rt.H(content.HCore))
+	o.U64(rt.Held(rt.H(content.HCore)))
 	return e
 }
 
@@ -626,7 +626,7 @@ func (e BarChartEl) TickMargin(tickMargin int) BarChartEl {
 // TooltipContent is <gpui_kit::component::chart::BarChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_content.
 func (e BarChartEl) TooltipContent(content gk.RowSource) BarChartEl {
 	o := rt.Op(rt.N(e.Core), 277)
-	o.U64(rt.H(content.HCore))
+	o.U64(rt.Held(rt.H(content.HCore)))
 	return e
 }
 
@@ -878,7 +878,7 @@ func (e CandlestickChartEl) TickMargin(tickMargin int) CandlestickChartEl {
 // TooltipContent is <gpui_kit::component::chart::CandlestickChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_content.
 func (e CandlestickChartEl) TooltipContent(content gk.RowSource) CandlestickChartEl {
 	o := rt.Op(rt.N(e.Core), 270)
-	o.U64(rt.H(content.HCore))
+	o.U64(rt.Held(rt.H(content.HCore)))
 	return e
 }
 
@@ -1106,7 +1106,7 @@ func (e LineChartEl) TickMargin(tickMargin int) LineChartEl {
 // TooltipContent is <gpui_kit::component::chart::LineChart<crate::data::Datum, gpui_kit::SharedString, f64>>::tooltip_content.
 func (e LineChartEl) TooltipContent(content gk.RowSource) LineChartEl {
 	o := rt.Op(rt.N(e.Core), 272)
-	o.U64(rt.H(content.HCore))
+	o.U64(rt.Held(rt.H(content.HCore)))
 	return e
 }
 
@@ -1658,7 +1658,7 @@ func (e RadarChartEl) Stroke(stroke gk.Color) RadarChartEl {
 // TooltipContent is <gpui_kit::component::chart::RadarChart<crate::data::Datum, f64>>::tooltip_content.
 func (e RadarChartEl) TooltipContent(content gk.RowSource) RadarChartEl {
 	o := rt.Op(rt.N(e.Core), 271)
-	o.U64(rt.H(content.HCore))
+	o.U64(rt.Held(rt.H(content.HCore)))
 	return e
 }
 

@@ -59,7 +59,7 @@ func BaseDockSizingSizeFromPointer(cx *gk.Cx, value Sizing, pointer gk.GpuiPoint
 func KitPanelHandle(cx *gk.Cx, panel Panel) Panel {
 	rt.UseComponentDock()
 	o := rt.NewReq(1591)
-	o.U64(rt.H(panel.HCore))
+	o.U64(rt.Held(rt.H(panel.HCore)))
 	r := rt.AmbientCall(cx, o, true)
 	return Panel{HCore: rt.MkH(r.U64())}
 }

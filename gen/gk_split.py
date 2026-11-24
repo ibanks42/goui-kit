@@ -596,7 +596,7 @@ class Split:
             if not os.path.isdir(d):
                 continue
             for f in os.listdir(d):
-                if f.startswith("gen_") and f.endswith(".go") and f not in keep.get(p, set()) and f not in ("gen_ops.go", "gen_use.go"):
+                if f.startswith("gen_") and f.endswith(".go") and f not in keep.get(p, set()) and f not in ("gen_ops.go", "gen_use.go", "gen_use_dyn.go"):
                     os.remove(os.path.join(d, f))
         self.written = written
         self.write_table()

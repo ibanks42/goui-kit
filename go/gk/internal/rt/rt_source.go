@@ -109,6 +109,7 @@ func NewRowSource(cx *Cx, count int, row func(cx *Cx, at RowAt) Element, opts ..
 		rec.events = slot + 1
 	}
 	sources[rec.h] = rec
+	own(rec.h, ownSource)
 	n := r.U32()
 	for range n {
 		key := r.U64()
@@ -264,6 +265,8 @@ func rowsTurn(r *Reader) {
 
 func releaseSource(t *turn, src RowSource) {
 	rec := sourceRecOf(src)
+	disown(src.h)
+	releaseOwned(t, src.h)
 	for _, view := range rec.rows {
 		unbindRow(view)
 	}

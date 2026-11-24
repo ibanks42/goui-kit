@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -85,7 +86,7 @@ func main() {
 		a.labels[i] = fmt.Sprintf("%02d", i)
 	}
 	a.panels = make([]*Panel, arg(1, 60))
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		for i := range a.panels {
 			p := &Panel{app: a, index: i, tick: i}
 			p.view = gk.NewView(nil, p.render)
@@ -93,5 +94,7 @@ func main() {
 		}
 		a.root = gk.NewView(a.rootInit, a.rootView)
 		gk.OpenWindow(cx, "Panels", 1400, 900, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

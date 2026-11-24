@@ -432,14 +432,16 @@ class Go:
                     return [f"putVtape(o, {v}.n)"]
                 return [f"o.u32(takeValue({v}.n))"]
             return [f"o.u32(takeNode({v}.n, false))"]
+        # A handle given as an argument is held(): outside a view's description the library may
+        # keep it, so the collector does not release it (rt_life.go).
         if k == "obj":
             self.gtype(d)
             if not self.in_call:
                 return [f"putObj(o, {v}.h)"]
-            return [f"o.u64({v}.h)"]
+            return [f"o.u64(held({v}.h))"]
         if k in ("entity", "handle", "shim", "rows", "datum_rows", "panelview"):
             self.gtype(d)
-            return [f"o.u64({v}.h)"]
+            return [f"o.u64(held({v}.h))"]
         if k == "data":
             return [f"putData(o, {v})"]
         if k == "field":
@@ -462,8 +464,8 @@ class Go:
             self.oneof(d)
             return [f"o.u32(take({v}))"]
         if k == "viewbuild":
-            self.gtype(d)
-            return [f"putBuilt(o, {v}.View)"]
+            X = self.gtype(d)[len("Built["):-1]
+            return [f"putBuilt(o, builtView[{X}](cx, {v}))"]
         if k == "libval" and d[2] in GO_LIBVALS:
             return [f"put{GO_LIBVALS[d[2]]}(o, {v})"]
         if k == "dragview":
@@ -580,13 +582,36 @@ class Go:
         self.mapped.add(it["id"])
         return lines
 
-    def params(self, it, extra=()):
+    def params(self, it, extra=(), do=False):
+        """The Go parameters of an item; do: its handler takes no event (do_handler)."""
         ps = []
-        for a in it["args"]:
+        at = self.do_handler(it) if do else None
+        for i, a in enumerate(it["args"]):
             if a["desc"][0] == "ctx":
                 continue
-            ps.append(f"{pname(a['name'])} {self.ptype(a['desc'])}")
+            ps.append(f"{pname(a['name'])} {'func(cx *Cx)' if i == at else self.ptype(a['desc'])}")
         return list(extra) + ps
+
+    # The event payloads a handler usually ignores: a click, a press or release, the pointer
+    # leaving. A builder whose one handler takes one of them, and returns nothing, has a twin
+    # NameDo whose handler takes only the cx (.OnClickDo(a.save)); the runtime calls a func(*Cx)
+    # handler for any shape (rt_handler.go). Payloads that say what happened (a key, a scroll
+    # delta, a kit state's event, a bool or an index) keep the one form.
+    DO_EVENTS = {"ClickEvent", "MouseEvent", "MouseExitEvent"}
+
+    def do_handler(self, it):
+        """The index of the item's handler argument when the item gets a NameDo twin, else None."""
+        hs = [i for i, a in enumerate(it["args"]) if a["desc"][0] == "handler"]
+        if len(hs) != 1:
+            return None
+        sh = self.m.shapes.get(it["args"][hs[0]]["desc"][1])
+        if not sh or self.ret_type(sh) is not None or len(self.shape_args(sh)) != 1:
+            return None
+        try:
+            ev = self.event_type(sh)
+        except Unsup:
+            return None
+        return hs[0] if ev in self.DO_EVENTS else None
 
     def shorthand(self, d):
         how = "one"
@@ -705,6 +730,12 @@ class Go:
             self.add(*self.try_item(it, ctor))
         # methods: own ops, converts, then the traits' (an inherent method shadows a trait's)
         seen = {"node", "valueNode"}
+        # every method name the node has from upstream: a NameDo twin never takes one of them
+        allnames = {camel(i["name"]) for i in node.get("ops", []) + node.get("converts", [])}
+        for tk in node["tables"]:
+            for t in self.m.traits.values():
+                if t["key"] == tk:
+                    allnames |= {camel(i["name"]) for i in t["ops"]}
         ops = sorted([i for i in node.get("ops", []) if bound(i)], key=lambda i: i["name"])
         for it in ops:
             name = camel(it["name"])
@@ -716,10 +747,17 @@ class Go:
                 body = self.body(it)
                 lines = [self.doc(it, name), f"func (e {T}) {name}({', '.join(ps)}) {T} {{"]
                 lines += ([f"\to := op(e.n, {it['op']})"] + ["\t" + s for s in body]) if body else [f"\top(e.n, {it['op']})"]
-                return lines + ["\treturn e", "}", ""]
+                lines += ["\treturn e", "}", ""]
+                if self.do_handler(it) is not None and name + "Do" not in allnames:
+                    lines += [f"// {name}Do is {name} with a handler that takes no event (docs/GO.md section 4).",
+                              f"func (e {T}) {name}Do({', '.join(self.params(it, do=True))}) {T} {{",
+                              f"\to := op(e.n, {it['op']})"] + ["\t" + s for s in body] + ["\treturn e", "}", ""]
+                return lines
             lines = self.try_item(it, meth)
             if lines:
                 seen.add(name)
+                if self.do_handler(it) is not None:
+                    seen.add(name + "Do")
                 self.add(*lines)
         convs = sorted([i for i in node.get("converts", []) if bound(i)], key=lambda i: (i["trait"] or "", i["name"]))
         for it in convs:
@@ -790,6 +828,16 @@ class Go:
                 body = self.docs.comment(it.get("doc"), "go", self.doc_names, it["id"]) if self.docs else []
                 self.add(*[("// " + x).rstrip() for x in body],
                          f"func (e {T}) {name}({', '.join(ps)}) {T} {{ {fn}({', '.join(['e.n'] + args)}); return e }}")
+                if not runtime_child and self.do_handler(it) is not None and name + "Do" not in seen and name + "Do" not in allnames:
+                    fdo = fn + "Do"
+                    if fdo not in trait_fns:
+                        dps = self.params(it, ["n *node"], do=True)
+                        dbody = self.body(it)
+                        trait_fns[fdo] = [f"// {fdo}: {it['id']}, a handler that takes no event.", f"func {fdo}({', '.join(dps)}) {{",
+                                          f"\to := op(n, {it['op']})"] + ["\t" + s for s in dbody] + ["}", ""]
+                    seen.add(name + "Do")
+                    self.add(f"// {name}Do is {name} with a handler that takes no event (docs/GO.md section 4).",
+                             f"func (e {T}) {name}Do({', '.join(self.params(it, do=True))}) {T} {{ {fdo}({', '.join(['e.n'] + args)}); return e }}")
             self.add("")
         if node.get("oneof_of"):
             pass
@@ -955,10 +1003,19 @@ class Go:
 
                 def amb(it=it):
                     ps = self.params(it, ["cx *Cx"])
+                    # A view-built closure is a Built[T] made once, or the function itself: the call
+                    # is generic over the two (rt_built.go, Builder).
+                    tps = ""
+                    vb = [a for a in it["args"] if a["desc"][0] == "viewbuild"]
+                    if vb:
+                        X = self.m.nodes[vb[0]["desc"][1]]["go"]
+                        tps = f"[B Builder[{X}]]"
+                        n = pname(vb[0]["name"])
+                        ps = [f"{n} B" if q == f"{n} Built[{X}]" else q for q in ps]
                     if it.get("ret") is None:
-                        lines = [self.doc(it, it["go"]), f"func {it['go']}({', '.join(ps)}) {{"]
+                        lines = [self.doc(it, it["go"]), f"func {it['go']}{tps}({', '.join(ps)}) {{"]
                     else:
-                        lines = [self.doc(it, it["go"]), f"func {it['go']}({', '.join(ps)}) {self.gtype(it['ret'], True)} {{"]
+                        lines = [self.doc(it, it["go"]), f"func {it['go']}{tps}({', '.join(ps)}) {self.gtype(it['ret'], True)} {{"]
                     lines += [f"\to := newReq({it['op']})"] + ["\t" + x for x in self.body(it)]
                     if it.get("ret") is None:
                         return lines + ["\tambientCall(cx, o, false)", "}", ""]

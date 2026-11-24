@@ -16,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"gpuikit.dev/gk"
@@ -379,6 +380,8 @@ func main() {
 	if s, ok := os.LookupEnv("GK_VALUES_SCRIPT"); ok {
 		script = s // a mode's clicks given by run-values.sh (positions in the kit's layout)
 	}
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("values done mode=%s clicks=%d builds=%d\n", a.mode, a.clicks, a.builds)
 }

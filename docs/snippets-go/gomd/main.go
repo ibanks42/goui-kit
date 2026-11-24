@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"gpuikit.dev/gk"
 	"gpuikit.dev/gk/chart"
@@ -24,12 +25,12 @@ type App struct {
 
 func (a *App) init(cx *gk.Cx) { a.name = editor.NewInputState(cx).Placeholder("Your name").Build() }
 
-func (a *App) add(cx *gk.Cx, _ gk.ClickEvent) { a.count++ } // marks its view for redraw on return
+func (a *App) add(cx *gk.Cx) { a.count++ } // marks its view for redraw on return
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(gk.HFlex(s.Gap2, s.ItemsCenter).
-			Child(kit.Button("add").Primary().Label("Add").OnClick(a.add)).
+			Child(kit.Button("add").Primary().Label("Add").OnClickDo(a.add)).
 			Child(kit.Label(fmt.Sprintf("clicked %d times", a.count)))).
 		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name))).
 		Child(kit.Label("hello " + a.name.Value(cx))) // a read in a view: redrawn when it changes
@@ -37,10 +38,12 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "Hello", 480, 320, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Bands holds what section 7's examples use: a draggable band, a plot with a gradient line, and

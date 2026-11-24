@@ -67,7 +67,7 @@ func TextView(state TextViewState, st ...gk.Style) TextViewEl {
 	rt.UseBaseText()
 	n := rt.NewNode(795)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return TextViewEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }

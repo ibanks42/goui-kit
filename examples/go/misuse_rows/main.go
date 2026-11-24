@@ -19,6 +19,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"gpuikit.dev/gk"
@@ -132,9 +133,11 @@ func main() {
 	case "input-release":
 		script = "size 400 300\nframe\nclick 60 72\ntype x\nframe\nframe\n"
 	}
-	gk.RunHeadless(script, func(cx *gk.Cx) {
+	if err := gk.RunHeadless(script, func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "misuse_rows", 400, 300, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("gk-neg done mode=%s clicks=%d described=%d max_row=%d got=%q\n", a.mode, a.clicks, a.described, a.maxRow, a.got)
 }

@@ -17,7 +17,7 @@ func Command(state CommandState, st ...gk.Style) CommandEl {
 	rt.UseComponentCommand()
 	n := rt.NewNode(626)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return CommandEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }

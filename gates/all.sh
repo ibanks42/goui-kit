@@ -33,7 +33,9 @@ cp -a --reflink=auto "$GK_LIB_ROOT/ship" "$GK_LIB_ROOT/diag" "$snap/" || { echo 
 if [ -n "${GK_REF:-}" ]; then cp -a "$GK_REF"/ref-* "$snap/diag/"; unset GK_REF; fi
 trap 'rm -rf "$snap"' EXIT
 from=$GK_LIB_ROOT
-export GK_LIB_ROOT=$snap GK_LIB=$snap/ship OUT=$GK_BIN
+# GK_LIB is not exported: a Go program loads the library GK_LIB names before any other, and the
+# gates choose ship or diag per run (LD_LIBRARY_PATH).
+export GK_LIB_ROOT=$snap OUT=$GK_BIN
 began=$(date +%s.%N)
 step() { # name command...
   local name=$1 t=$(date +%s.%N); shift

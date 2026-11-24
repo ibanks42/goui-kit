@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -273,7 +274,9 @@ func main() {
 		sb.WriteString("frame\n")
 	}
 	sb.WriteString("frame\nstat\n")
-	gk.RunHeadless(sb.String(), a.start)
+	if err := gk.RunHeadless(sb.String(), a.start); err != nil {
+		log.Fatal(err)
+	}
 	again := 0
 	for _, n := range a.described {
 		if n > 1 {

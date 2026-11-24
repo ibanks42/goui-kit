@@ -721,25 +721,20 @@ pub fn shown_focus(handle: u64) -> FocusHandle {
     }
 }
 
-/// Stops the program because a view's tape names a handle that cannot be used. Exit 2, the
-/// code of a mistake in app code.
+/// Stops the app because a view's tape names a handle that cannot be used: a mistake in app
+/// code (rt::app_stop).
 pub fn released_shown(msg: &str, what: &str) -> ! {
     let what = app_type_name(what);
-    eprintln!("gk: a view shows a {what} through a handle that cannot be used: {msg}");
-    if msg.contains("never made") {
-        eprintln!(
-            "    The handle is zero: the kit state (or row source) this element shows was never made. \
-             Make it once in init, keep the handle in your state struct, and give that field to the \
-             element, as in gk.Input(a.search)."
-        );
+    let hint = if msg.contains("never made") {
+        "The handle is zero: the kit state (or row source) this element shows was never made. \
+         Make it once in init, keep the handle in your state struct, and give that field to the \
+         element, as in editor.Input(a.search)."
     } else {
-        eprintln!(
-            "    The element cannot be drawn. Release kit state only after every view that shows it \
-             has been described without it: a handler that releases it marks its own view for \
-             redraw, gk.Notify marks any other."
-        );
-    }
-    std::process::exit(2);
+        "The element cannot be drawn. Release kit state only after every view that shows it \
+         has been described without it: a handler that releases it marks its own view for \
+         redraw, gk.Notify marks any other."
+    };
+    crate::rt::app_stop(format!("a view shows a {what} through a handle that cannot be used: {msg}\n    {hint}"))
 }
 
 /// A Rust type name as an app developer reads it: the module paths left out

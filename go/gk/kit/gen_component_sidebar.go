@@ -2352,12 +2352,24 @@ func (e SidebarFooterEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.Mouse
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarFooterEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarFooterEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarFooterEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SidebarFooterEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -2482,6 +2494,12 @@ func (e SidebarFooterEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarFooterEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarFooterEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -2570,6 +2588,12 @@ func (e SidebarFooterEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarFooterEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarFooterEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -2577,6 +2601,12 @@ func (e SidebarFooterEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk
 // See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarFooterEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SidebarFooterEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -2589,12 +2619,24 @@ func (e SidebarFooterEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEven
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarFooterEl) OnMouseExitDo(listener func(cx *gk.Cx)) SidebarFooterEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarFooterEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SidebarFooterEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -2616,6 +2658,12 @@ func (e SidebarFooterEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarFooterEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarFooterEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -2623,6 +2671,12 @@ func (e SidebarFooterEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e SidebarFooterEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarFooterEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarFooterEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarFooterEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -3602,12 +3656,24 @@ func (e SidebarHeaderEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.Mouse
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarHeaderEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarHeaderEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -3732,6 +3798,12 @@ func (e SidebarHeaderEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarHeaderEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -3820,6 +3892,12 @@ func (e SidebarHeaderEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarHeaderEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarHeaderEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -3827,6 +3905,12 @@ func (e SidebarHeaderEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk
 // See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarHeaderEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -3839,12 +3923,24 @@ func (e SidebarHeaderEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEven
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarHeaderEl) OnMouseExitDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarHeaderEl) OnMouseMoveDo(listener func(cx *gk.Cx)) SidebarHeaderEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -3866,6 +3962,12 @@ func (e SidebarHeaderEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarHeaderEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarHeaderEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -3873,6 +3975,12 @@ func (e SidebarHeaderEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e SidebarHeaderEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) SidebarHeaderEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarHeaderEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) SidebarHeaderEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -4719,6 +4827,13 @@ func (e SidebarMenuItem) OnClick(handler func(cx *gk.Cx, e gk.ClickEvent)) Sideb
 	return e
 }
 
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarMenuItem) OnClickDo(handler func(cx *gk.Cx)) SidebarMenuItem {
+	o := rt.Op(rt.N(e.Core), 265)
+	o.U32(rt.Register(handler, 1))
+	return e
+}
+
 // Set the suffix for the menu item.
 //
 // Suffix is <gpui_kit::component::sidebar::SidebarMenuItem>::suffix.
@@ -5494,6 +5609,13 @@ func (e SidebarToggleButtonEl) Collapsed(collapsed bool) SidebarToggleButtonEl {
 //
 // OnClick is <gpui_kit::component::sidebar::SidebarToggleButton>::on_click.
 func (e SidebarToggleButtonEl) OnClick(onClick func(cx *gk.Cx, e gk.ClickEvent)) SidebarToggleButtonEl {
+	o := rt.Op(rt.N(e.Core), 258)
+	o.U32(rt.Register(onClick, 1))
+	return e
+}
+
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e SidebarToggleButtonEl) OnClickDo(onClick func(cx *gk.Cx)) SidebarToggleButtonEl {
 	o := rt.Op(rt.N(e.Core), 258)
 	o.U32(rt.Register(onClick, 1))
 	return e

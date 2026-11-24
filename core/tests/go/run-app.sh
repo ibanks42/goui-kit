@@ -16,12 +16,12 @@ GK_PROTO_BIN=app-go run actions 0 \
   'app saved n=2 ' 'app cancel n=1 builtin=true same=true' \
   'app done mode=actions saves=2 others=2 cancels=1 '
 # Misuse: an app-wide listener for a built-in action, OnAction given a built-in action, and a
-# key binding whose context does not parse each stop with the message (exit 2); the binding's
+# key binding whose context does not parse each stop with the message (gk.Run returns it: exit 1); the binding's
 # write is sent with the next call that returns a value, so it stops at that line.
 # Go: the messages name the Go calls (OnAppAction, OnAction for on_app_action, on_action).
-GK_PROTO_BIN=app-go run builtin-app-listener 2 'OnAppAction takes the app.s own actions' 'at .*app/main.go:[0-9]+'
-GK_PROTO_BIN=app-go run builtin-on-action 2 'OnAction listens for the app.s own actions' 'at .*app/main.go:[0-9]+'
-GK_PROTO_BIN=app-go run bad-keys 2 'key binding "ctrl-b": context "Editor &&": ' 'at .*app/main.go:[0-9]+'
+GK_PROTO_BIN=app-go run builtin-app-listener 1 'OnAppAction takes the app.s own actions' 'at .*app/main.go:[0-9]+'
+GK_PROTO_BIN=app-go run builtin-on-action 1 'OnAction listens for the app.s own actions' 'at .*app/main.go:[0-9]+'
+GK_PROTO_BIN=app-go run bad-keys 1 'key binding "ctrl-b": context "Editor &&": ' 'at .*app/main.go:[0-9]+'
 # Timers fire between frames as handlers that redraw their view: a one-shot once, a repeating
 # one until its handler releases it at 3, one released before it fired never.
 GK_PROTO_BIN=app-go run timers 0 \
@@ -58,4 +58,4 @@ GK_PROTO_BIN=app-go run close-veto 0 'app asked may close n=1 answer=false' 'app
 GK_PROTO_BIN=app-go run quit-hook 0 'app quit hook ran n=1' 'app after the run quits=1'
 GK_PROTO_BIN=app-go run reduce-motion 0 'app reduce motion in view=' 'app reduce motion start=false set=true cleared=false'
 GK_PROTO_BIN=app-go run window-icon 0 'app icon window opened n=2' 'app second view described'
-GK_PROTO_BIN=app-go run bad-icon 2 'the window.s icon is not a PNG the library can read \(4 bytes\)' 'at .*app/main.go:[0-9]+'
+GK_PROTO_BIN=app-go run bad-icon 1 'the window.s icon is not a PNG the library can read \(4 bytes\)' 'at .*app/main.go:[0-9]+'

@@ -710,6 +710,13 @@ func (e BreadcrumbItemEl) OnClick(onClick func(cx *gk.Cx, e gk.ClickEvent)) Brea
 	return e
 }
 
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e BreadcrumbItemEl) OnClickDo(onClick func(cx *gk.Cx)) BreadcrumbItemEl {
+	o := rt.Op(rt.N(e.Core), 257)
+	o.U32(rt.Register(onClick, 1))
+	return e
+}
+
 // Give this element the surface, edge, shadow and radius of a popover.
 //
 // This is the one surface every popup shares — Popover, PopupMenu, Select, Combobox, DatePicker

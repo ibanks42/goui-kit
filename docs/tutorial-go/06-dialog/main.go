@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"slices"
 	"strings"
 
@@ -28,7 +29,6 @@ type App struct {
 
 	newName, editName editor.InputState // kit state lives in the library; the app keeps handles
 	list              table.ListState
-	editDialog        gk.Built[overlay.DialogEl]
 }
 
 func (a *App) init(cx *gk.Cx) {
@@ -37,7 +37,6 @@ func (a *App) init(cx *gk.Cx) {
 	a.editName = editor.NewInputState(cx).Build()
 	a.list = table.NewListState(cx, table.NewListSource(cx, func() int { return len(a.items) }, a.itemRow)).Build()
 	a.list.OnListEvent(cx, a.listEvent)
-	a.editDialog = gk.NewBuilt(cx, a.editView)
 	a.items = append(a.items, Item{Name: "Milk", Amount: 2}, Item{Name: "Bread", Amount: 1}, Item{Name: "Apples", Amount: 6})
 	gk.Refresh(cx)
 }
@@ -56,7 +55,7 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 		})).
 		Child(gk.Div(s.Flex1).Child(name)).
 		Child(kit.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))).
-		Child(kit.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+		Child(kit.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClickDo(func(cx *gk.Cx) {
 			gk.StopPropagation(cx)
 			a.items = slices.Delete(a.items, row, row+1)
 			gk.Refresh(cx)
@@ -92,17 +91,17 @@ func (a *App) listEvent(cx *gk.Cx, e table.ListEvent) {
 }
 
 func (a *App) editView(cx *gk.Cx) overlay.DialogEl {
-	amountBy := func(by int) func(*gk.Cx, gk.ClickEvent) {
-		return func(*gk.Cx, gk.ClickEvent) { a.editAmount = max(1, a.editAmount+by) }
+	amountBy := func(by int) func(*gk.Cx) {
+		return func(*gk.Cx) { a.editAmount = max(1, a.editAmount+by) }
 	}
 	return overlay.Dialog().Title(kit.Label("Edit item")).
 		Child(gk.VFlex(s.Gap3).
 			Child(editor.Input(a.editName)).
 			Child(gk.HFlex(s.Gap2, s.ItemsCenter).
 				Child(kit.Label("Amount")).
-				Child(kit.Button("less").Small().Icon(gk.IconMinus).OnClick(amountBy(-1))).
+				Child(kit.Button("less").Small().Icon(gk.IconMinus).OnClickDo(amountBy(-1))).
 				Child(kit.Label(fmt.Sprint(a.editAmount))).
-				Child(kit.Button("more").Small().Icon(gk.IconPlus).OnClick(amountBy(1))))).
+				Child(kit.Button("more").Small().Icon(gk.IconPlus).OnClickDo(amountBy(1))))).
 		Footer(overlay.DialogFooter().
 			Child(overlay.DialogClose().Trigger(kit.Button("cancel").Label("Cancel"))).
 			Child(overlay.DialogAction().Child(kit.Button("save").Primary().Label("Save")))).
@@ -113,7 +112,7 @@ func (a *App) openEditor(cx *gk.Cx, row int) {
 	a.editing = row
 	a.editAmount = a.items[row].Amount
 	a.editName.SetValue(cx, a.items[row].Name)
-	overlay.OpenDialog(cx, a.editDialog)
+	overlay.OpenDialog(cx, a.editView)
 	a.editName.Focus(cx)
 }
 
@@ -131,7 +130,9 @@ func (a *App) saveEdit(cx *gk.Cx, _ gk.ClickEvent) bool {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

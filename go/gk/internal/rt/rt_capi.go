@@ -8,32 +8,22 @@
 // its elements; the library replays the description into real GPUI-kit elements when GPUI
 // builds that view, and not otherwise.
 //
+// How the package reaches the library (docs/GO.md section 8): by default it loads the shared
+// library at start-up through purego, with no C compiler (rt_lib_dyn.go); with the build tag
+// gkstatic it links the static library through cgo (rt_lib_static.go, capi.c). Both give this
+// file the same few functions: readInfo, lastError, call, replyBuf, libRun and postWake.
+//
 // Files: rt_*.go are the hand-written runtime; gen_bases.go, gen_use.go, gen_ops.go and the
 // gen_*.go of the generated types the runtime itself names are generated (gen/gkgen.py).
 package rt
 
-/*
-#cgo CFLAGS: -I${SRCDIR}/include
-#cgo linux,gkshared LDFLAGS: -lgpuikit
-#cgo linux,!gkshared LDFLAGS: -lgpuikit_static -lgpuikit_sys -ldl -lgcc_s -lutil -lrt -lpthread -lm -lc
-#cgo darwin,gkshared LDFLAGS: -lgpuikit
-#cgo darwin,!gkshared LDFLAGS: -lgpuikit_static -framework CoreServices -framework ApplicationServices -framework CoreFoundation -framework CoreVideo -framework Carbon -framework AppKit -framework Foundation -framework UserNotifications -framework Security -framework CoreText -framework CoreGraphics -framework CoreData -framework CoreImage -framework CloudKit -framework QuartzCore -framework UniformTypeIdentifiers -framework Metal -lobjc -liconv -lc -lm
-#cgo windows,gkshared LDFLAGS: -lgpuikit
-#cgo windows,!gkshared LDFLAGS: -lgpuikit_static -lgpuikit_sys -lkernel32 -lntdll -luserenv -lws2_32 -ldbghelp
-#include <stdlib.h>
-#include "gpuikit.h"
-int32_t gk_go_run(int headless, const uint8_t *script, size_t len, uint16_t major, uint16_t minor,
-                  uint64_t hash, uint32_t size_delta, int no_callback);
-*/
-import "C"
-
 import (
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
 	rdebug "runtime/debug"
 	"strings"
-	"unsafe"
 )
 
 func init() {
@@ -52,43 +42,34 @@ type Info struct {
 
 // LibraryInfo reads the library's gk_info.
 func LibraryInfo() Info {
-	i := C.gk_info_get()
-	if i == nil {
+	i, ok := readInfo()
+	if !ok {
 		return Info{}
 	}
 	return Info{
-		AbiMajor: int(i.abi_major), AbiMinor: int(i.abi_minor), APIHash: uint64(i.api_hash),
-		GpuiFast: uint32(i.features)&FeatGpuiFast != 0, Diag: uint32(i.features)&FeatDiag != 0,
-		Versions: C.GoStringN(i.versions, C.int(i.versions_len)),
+		AbiMajor: int(i.abiMajor), AbiMinor: int(i.abiMinor), APIHash: i.apiHash,
+		GpuiFast: i.features&FeatGpuiFast != 0, Diag: i.features&FeatDiag != 0,
+		Versions: i.versions,
 	}
+}
+
+// rawInfo is the library's gk_info, read by readInfo (rt_lib_dyn.go, rt_lib_static.go).
+type rawInfo struct {
+	size, magic        uint32
+	abiMajor, abiMinor uint16
+	apiHash            uint64
+	features           uint32
+	versions           string
 }
 
 // libDiag: the library is the diagnostic one (tests), where a binding fault stops loudly.
 var libDiag bool
 
-func lastError() string {
-	var n C.size_t
-	p := C.gk_last_error(&n)
-	if p == nil {
-		return ""
-	}
-	return C.GoStringN(p, C.int(n))
-}
-
-// call makes one gk_call. The request is Go memory lent for the call (it holds no Go pointers);
-// the result is the library's and valid until the next gk_call, so it is copied out at once.
-func call(req []byte) (int32, []byte) {
-	var res *C.uint8_t
-	var n C.size_t
-	rc := C.gk_call((*C.uint8_t)(unsafe.Pointer(&req[0])), C.size_t(len(req)), &res, &n)
-	if rc != 0 || n == 0 {
-		return int32(rc), nil
-	}
-	return 0, C.GoBytes(unsafe.Pointer(res), C.int(n))
-}
-
 func MustCall(req []byte) []byte {
 	rc, res := call(req)
+	if failed.Load() {
+		panic(abortTurn{}) // a turn inside this call stopped the app: unwind the app code above
+	}
 	if rc == ErrPoisoned {
 		libraryPanic(lastError())
 	}
@@ -125,7 +106,8 @@ func stopCall(rc int32) {
 
 // Error is a mistake in app code the package found (an element used after its view returned, a
 // released handle, a write in a view, ...). gk panics with it; the boundary with the library
-// prints it with the app's line and exits 2. Nothing unwinds into the library.
+// records it, the library is asked to quit, and gk.Run returns it (rt_fail.go). Nothing unwinds
+// into the library.
 type Error struct {
 	Msg  string
 	File string
@@ -170,186 +152,168 @@ func stopAt(file string, line int, format string, args ...any) {
 	panic(e)
 }
 
+// libraryPanic: a call came back ErrPoisoned. The failure is recorded with the app's call, and
+// the app code above unwinds to the boundary (rt_fail.go).
 func libraryPanic(message string) {
-	fmt.Fprintf(os.Stderr, "gk: the library panicked: %s\n", message)
-	if file, line, fn := appFrame(3); line != 0 {
-		fmt.Fprintf(os.Stderr, "    in the call at %s:%d (%s)\n", file, line, fn)
-	}
-	fmt.Fprintln(os.Stderr, "    This is a fault inside the library (GPUI-kit or the binding's runtime), not in the app's Go code: the app cannot go on. Run it again with GK_DEBUG=1, which sends every change at once so the call above is the one that failed, and report the message with that line.")
-	os.Exit(1)
+	e := &LibraryError{Msg: message}
+	e.File, e.Line, e.Func = appFrame(3)
+	panic(e)
 }
 
-// boundary runs at the end of every callback: a panic must not unwind into the library. A
-// stop prints its message and the app's line, any other panic its value and stack; exit 2.
-func boundary() {
+// boundary runs at the end of every callback: a panic must not unwind into the library. A stop
+// or a panic is recorded, the library asked to quit, and gk.Run returns it or panics again
+// (rt_fail.go); entry is the turn depth when the callback began.
+func boundary(entry int) {
 	r := recover()
 	if r == nil {
 		return
 	}
-	if e, ok := r.(*Error); ok {
-		fmt.Fprintln(os.Stderr, e.Error())
-		os.Exit(2)
-	}
-	// Any other panic is the app's own (an index out of range, a nil map, a panic call): its
-	// value, the app's line it came from, then Go's stack. Nothing unwinds into the library.
-	fmt.Fprintf(os.Stderr, "gk: panic in app code: %v\n", r)
-	if file, line, fn := appFrame(3); line != 0 {
-		fmt.Fprintf(os.Stderr, "    at %s:%d (%s)\n", file, line, fn)
-	}
-	fmt.Fprintf(os.Stderr, "    The app stops here (exit 2): a panic in a handler, a view, init or a posted function ends the app, as in any Go program. Go's stack follows.\n%s", rdebug.Stack())
-	os.Exit(2)
+	recovered(r, rdebug.Stack(), 3)
+	unwindTurns(entry)
+	askQuit()
 }
 
-//export gkGoCallback
-func gkGoCallback(user unsafe.Pointer, cb *C.gk_cb, kind C.uint32_t, req *C.uint8_t, n C.size_t, out **C.uint8_t, outN *C.size_t) C.int32_t {
-	defer boundary()
-	var in []byte
-	if n > 0 {
-		in = unsafe.Slice((*byte)(unsafe.Pointer(req)), int(n)) // the library's, valid during this call
+// onTurn is one callback from the library, whichever way the package reaches it (rt_lib_dyn.go,
+// rt_lib_static.go): it runs the turn and returns its reply, which the caller hands to gk_reply
+// (it copies) before control goes back to the library. The reply is the package's memory
+// (replyBuf), valid until the next turn's reply is written. Once the app is stopping (a failure
+// recorded, rt_fail.go) no app code runs: the library is asked to quit and gets no reply.
+func onTurn(kind uint32, in []byte) []byte {
+	defer boundary(depth)
+	if failed.Load() {
+		askQuit()
+		return nil
 	}
-	if uint32(kind) == KPanic {
-		// The library caught a panic of its own outside a gk_call. It cannot go on.
+	if kind == KPanic {
+		// The library caught a panic of its own outside a gk_call (kind 0), or found a mistake
+		// in app code where no call returns it (kind 1: a view shows a released handle). It
+		// quits the app when this returns, and gk.Run returns the failure.
 		r := Reader{B: in}
-		libraryPanic(r.Str() + "")
+		msg := r.Str()
+		if r.i < len(r.B) && r.U8() == 1 {
+			fail(&Error{Msg: msg})
+		} else {
+			fail(&LibraryError{Msg: msg})
+		}
+		return nil
 	}
-	if r := dispatch(uint32(kind), in); len(r) > 0 {
-		// The C side passes it to gk_reply when this returns (capi.c): C memory, valid until the
-		// next callback's reply is written.
-		*out, *outN = (*C.uint8_t)(unsafe.Pointer(&r[0])), C.size_t(len(r))
+	out := dispatch(kind, in)
+	if failed.Load() {
+		// A turn nested in this one failed and the app code above returned anyway: its reply
+		// is dropped.
+		endTurn()
+		askQuit()
+		return nil
 	}
 	endTurn()
-	return 0
-}
-
-// replyMem is the C memory a turn's reply is written into (see gkGoCallback); it grows as needed
-// and is never freed.
-var (
-	replyMem unsafe.Pointer
-	replyCap int
-)
-
-// replyBuf is an empty slice over C memory of at least n bytes.
-func replyBuf(n int) Tape {
-	if n > replyCap {
-		c := max(n, 2*replyCap, 4096)
-		replyMem = C.realloc(replyMem, C.size_t(c))
-		if replyMem == nil {
-			fmt.Fprintln(os.Stderr, "gk: out of memory for a turn's reply")
-			os.Exit(1)
-		}
-		replyCap = c
-	}
-	return unsafe.Slice((*byte)(replyMem), replyCap)[:0]
+	return out
 }
 
 // expectHash is the interface hash this package expects; the runtime's version test changes it.
 var expectHash = ApiHash
 
 // checkLibrary is the binding's half of the version check (the library checks the gk_app).
-func checkLibrary() {
-	i := C.gk_info_get()
-	if i == nil || uint32(i.magic) != C.GK_MAGIC || int(i.size) < int(unsafe.Sizeof(*i)) {
-		fmt.Fprintf(os.Stderr, "gk: the %s the app loaded is not a library this package can use: check %s\n", libFile, libFind)
-		os.Exit(1)
+func checkLibrary() error {
+	if err := loadLibrary(); err != nil {
+		return fmt.Errorf("gk: %v", err)
+	}
+	i, ok := readInfo()
+	if !ok || i.magic != gkMagic || int(i.size) < infoSize {
+		return fmt.Errorf("gk: the %s the app loaded is not a library this package can use: check %s", libFile, libFind)
 	}
 	info := LibraryInfo()
 	if info.AbiMajor != AbiMajor || info.AbiMinor < AbiMinor || info.APIHash != expectHash {
-		fmt.Fprintf(os.Stderr, "gk: the library and this package are from different versions: the library is ABI %d.%d with interface hash %#x (%s); this package was generated for ABI %d.%d and hash %#x\n    Build the app against the go/ folder of the download its %s came from (or point %s at the matching lib/).\n",
+		return fmt.Errorf("gk: the library and this package are from different versions: the library is ABI %d.%d with interface hash %#x (%s); this package was generated for ABI %d.%d and hash %#x\n    Build the app against the go/ folder of the download its %s came from (or point %s at the matching lib/)",
 			info.AbiMajor, info.AbiMinor, info.APIHash, info.Versions, AbiMajor, AbiMinor, expectHash, libFile, libPoint)
-		os.Exit(1)
 	}
 	libDiag = info.Diag
 	if os.Getenv("GK_INFO") != "" {
 		fmt.Printf("gk-info binding=go abi=%d.%d api_hash=%#x gpui_fast=%v diag=%v versions=%q\n",
 			info.AbiMajor, info.AbiMinor, info.APIHash, info.GpuiFast, info.Diag, info.Versions)
 	}
+	return nil
 }
 
-func runFailed(rc int32) {
+// rcNotLoaded is libRun's status when the library could not be loaded (libLoadErr says why).
+const rcNotLoaded int32 = -1
+
+var libLoadErr error
+
+// runFailed is the error for a status gk_run returned with no failure recorded.
+func runFailed(rc int32) error {
+	if rc == rcNotLoaded {
+		return fmt.Errorf("gk: %v", libLoadErr)
+	}
+	msg := lastError()
 	if rc == ErrPoisoned {
-		libraryPanic(lastError())
+		return &LibraryError{Msg: msg}
 	}
-	fmt.Fprintf(os.Stderr, "gk: the app could not start: %s\n", lastError())
-	if rc == ErrUnsupported && strings.Contains(lastError(), "diag") {
-		fmt.Fprintf(os.Stderr, "    GK_SCRIPT (or gk.RunHeadless) runs the app offscreen, which only the diagnostic library can do: put its lib/ folder %s.\n", libFirst)
+	if rc == ErrUnsupported && strings.Contains(msg, "diag") {
+		return fmt.Errorf("gk: the app could not start: %s\n    GK_SCRIPT (or gk.RunHeadless) runs the app offscreen, which only the diagnostic library can do: put its lib/ folder %s", msg, libFirst)
 	}
-	os.Exit(1)
+	return fmt.Errorf("gk: the app could not start: %s", msg)
 }
 
 func enter(headless bool, script string) int32 {
-	var p *C.uint8_t
-	if headless {
-		p = (*C.uint8_t)(C.CBytes([]byte(script + "\x00"))) // C memory: the library reads it for the whole run
-		defer C.free(unsafe.Pointer(p))
-	}
-	h := C.int(0)
-	if headless {
-		h = 1
-	}
-	return int32(C.gk_go_run(h, p, C.size_t(len(script)), AbiMajor, AbiMinor, C.uint64_t(ApiHash), 0, 0))
+	return libRun(headless, script, AbiMajor, AbiMinor, ApiHash, 0, false)
 }
 
 // Run enters the library and returns when the app quits. Call it from main; start runs in the
 // first turn (open a window there). With GK_SCRIPT=file in the environment the app runs
 // offscreen under that gk-meter script (RunHeadless; it needs the diagnostic library).
-func Run(start func(cx *Cx)) {
+// It returns the mistake that stopped the app (a *Error) or a fault of the library (a
+// *LibraryError); a panic in app code panics again here (rt_fail.go).
+func Run(start func(cx *Cx)) error {
 	if path := os.Getenv("GK_SCRIPT"); path != "" {
 		script, err := os.ReadFile(path)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "gk: GK_SCRIPT=%s: the script cannot be read (%v)\n", path, err)
-			os.Exit(1)
+			return fmt.Errorf("gk: GK_SCRIPT=%s: the script cannot be read (%w)", path, err)
 		}
-		RunHeadless(string(script), start)
-		return
+		return RunHeadless(string(script), start)
 	}
 	if runtime.GOOS == "linux" && os.Getenv("DISPLAY") == "" && os.Getenv("WAYLAND_DISPLAY") == "" {
 		// GPUI finds no X11 or Wayland server then and waits without a word; say so instead.
 		// Linux only: macOS and Windows always have their window server.
-		fmt.Fprintln(os.Stderr, "gk: the app has no display to open its window on: DISPLAY and WAYLAND_DISPLAY are unset.\n    Run it in a desktop session (or over ssh -X), or offscreen with GK_SCRIPT=file and the diagnostic library first in LD_LIBRARY_PATH.")
-		os.Exit(1)
+		return errors.New("gk: the app has no display to open its window on: DISPLAY and WAYLAND_DISPLAY are unset.\n    Run it in a desktop session (or over ssh -X), or offscreen with GK_SCRIPT=file and the diagnostic library first in LD_LIBRARY_PATH")
 	}
-	begin(start)
-	if rc := enter(false, ""); rc != 0 {
-		runFailed(rc)
+	if err := begin(start); err != nil {
+		return err
 	}
-	report()
+	return runResult(enter(false, ""))
 }
 
 // RunHeadless runs the app offscreen under a gk-meter script (the diagnostic library only).
-func RunHeadless(script string, start func(cx *Cx)) {
-	begin(start)
-	if rc := enter(true, script); rc != 0 {
-		runFailed(rc)
+func RunHeadless(script string, start func(cx *Cx)) error {
+	if err := begin(start); err != nil {
+		return err
 	}
-	report()
+	return runResult(enter(true, script))
 }
 
-func begin(start func(cx *Cx)) {
-	checkLibrary()
+func begin(start func(cx *Cx)) error {
+	if err := checkLibrary(); err != nil {
+		return err
+	}
 	if start == nil {
-		fmt.Fprintln(os.Stderr, "gk: gk.Run needs a start function (it opens the first window)")
-		os.Exit(2)
+		return errors.New("gk: gk.Run needs a start function (it opens the first window)")
 	}
 	appStart = start
 	runtimeInit()
+	return nil
 }
 
 // TestRunRaw calls gk_run with a gk_app changed as the runtime's version test asks: the
 // library must refuse each with GK_ERR_VERSION. It returns the status and the library's message.
 func TestRunRaw(hashXor uint64, majorAdd, minorAdd uint16, sizeDelta uint32, noCallback bool) (int32, string) {
-	nc := C.int(0)
-	if noCallback {
-		nc = 1
+	rc := libRun(false, "", AbiMajor+majorAdd, AbiMinor+minorAdd, ApiHash^hashXor, sizeDelta, noCallback)
+	if rc == rcNotLoaded {
+		return rc, libLoadErr.Error()
 	}
-	rc := int32(C.gk_go_run(0, nil, 0, C.uint16_t(AbiMajor+majorAdd), C.uint16_t(AbiMinor+minorAdd),
-		C.uint64_t(ApiHash^hashXor), C.uint32_t(sizeDelta), nc))
 	return rc, lastError()
 }
 
 // TestExpectHash makes the package expect another interface hash (the version test's other half).
 func TestExpectHash(h uint64) { expectHash = h }
-
-func postWake() { C.gk_post(0) }
 
 // inGk reports whether a function is the binding's own: package gk or one of its packages
 // (gk/kit, gk/internal/rt, ...), not the app's.

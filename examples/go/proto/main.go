@@ -10,6 +10,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"runtime"
 	"strconv"
@@ -594,7 +595,9 @@ func main() {
 	default:
 		script += first + "frame\nframe\nstat\n"
 	}
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("proto done mode=%s views=%d sides=%d clicks=%d events=%d frame=%d count=%d seen=%d ticks=%d sent=%d\n",
 		a.mode, a.views, a.sides, a.clicks, a.events, a.frame, a.count.Peek(), a.seen, a.ticks, sent.Load())
 	switch a.mode {

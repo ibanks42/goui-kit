@@ -385,12 +385,24 @@ func (e CheckboxEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -512,6 +524,12 @@ func (e CheckboxEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Ch
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -600,6 +618,12 @@ func (e CheckboxEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -607,6 +631,12 @@ func (e CheckboxEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, 
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -619,12 +649,24 @@ func (e CheckboxEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) C
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseExitDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseMoveDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -646,6 +688,12 @@ func (e CheckboxEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e 
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -653,6 +701,12 @@ func (e CheckboxEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e 
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) CheckboxEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) CheckboxEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -905,6 +959,12 @@ func (e CheckboxEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) CheckboxEl {
 // See `listener` to get access to a view's state from this callback.
 func (e CheckboxEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) CheckboxEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e CheckboxEl) OnAuxClickDo(listener func(cx *gk.Cx)) CheckboxEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
 }
 

@@ -8,6 +8,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"slices"
 	"strconv"
 	"strings"
@@ -199,7 +200,9 @@ func (a *App) revalidate(cx *gk.Cx) {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Expenses", 860, 560, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

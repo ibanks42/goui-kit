@@ -107,6 +107,13 @@ func (e AlertEl) OnClose(onClose func(cx *gk.Cx, e gk.ClickEvent)) AlertEl {
 	return e
 }
 
+// OnCloseDo is OnClose with a handler that takes no event (docs/GO.md section 4).
+func (e AlertEl) OnCloseDo(onClose func(cx *gk.Cx)) AlertEl {
+	o := rt.Op(rt.N(e.Core), 257)
+	o.U32(rt.Register(onClose, 1))
+	return e
+}
+
 // Set the title for the alert.
 //
 // Title is <gpui_kit::component::alert::Alert>::title.

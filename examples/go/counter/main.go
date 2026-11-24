@@ -9,6 +9,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -100,12 +101,14 @@ func main() {
 			go a.poster(rate, secs)
 		}
 	}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		a.controls = gk.NewView(nil, a.controlsView)
 		a.echo = gk.NewView(nil, a.echoView)
 		a.list = gk.NewView(nil, a.listView)
 		a.root = gk.NewView(a.init, a.rootView)
 		gk.OpenWindow(cx, "Counter", 640, 480, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("gk-app counter-go count=%d ticks=%d posts_sent=%d\n", a.count, a.ticks, sent.Load())
 }

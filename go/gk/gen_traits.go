@@ -31,8 +31,20 @@ func tInteractiveElementCaptureAnyMouseDown(n *rt.Node, listener func(cx *Cx, e 
 	o.U32(rt.Register(listener, 9))
 }
 
+// tInteractiveElementCaptureAnyMouseDownDo: gpui_kit::InteractiveElement::capture_any_mouse_down, a handler that takes no event.
+func tInteractiveElementCaptureAnyMouseDownDo(n *rt.Node, listener func(cx *Cx)) {
+	o := rt.Op(n, 16513)
+	o.U32(rt.Register(listener, 9))
+}
+
 // tInteractiveElementCaptureAnyMouseUp: gpui_kit::InteractiveElement::capture_any_mouse_up.
 func tInteractiveElementCaptureAnyMouseUp(n *rt.Node, listener func(cx *Cx, e MouseEvent)) {
+	o := rt.Op(n, 16514)
+	o.U32(rt.Register(listener, 9))
+}
+
+// tInteractiveElementCaptureAnyMouseUpDo: gpui_kit::InteractiveElement::capture_any_mouse_up, a handler that takes no event.
+func tInteractiveElementCaptureAnyMouseUpDo(n *rt.Node, listener func(cx *Cx)) {
 	o := rt.Op(n, 16514)
 	o.U32(rt.Register(listener, 9))
 }
@@ -134,6 +146,12 @@ func tInteractiveElementOnAnyMouseDown(n *rt.Node, listener func(cx *Cx, e Mouse
 	o.U32(rt.Register(listener, 9))
 }
 
+// tInteractiveElementOnAnyMouseDownDo: gpui_kit::InteractiveElement::on_any_mouse_down, a handler that takes no event.
+func tInteractiveElementOnAnyMouseDownDo(n *rt.Node, listener func(cx *Cx)) {
+	o := rt.Op(n, 16526)
+	o.U32(rt.Register(listener, 9))
+}
+
 // tInteractiveElementOnBackGesture: gpui_kit::InteractiveElement::on_back_gesture.
 func tInteractiveElementOnBackGesture(n *rt.Node, listener func(cx *Cx, e BackGestureEvent)) {
 	o := rt.Op(n, 16527)
@@ -190,8 +208,21 @@ func tInteractiveElementOnMouseDown(n *rt.Node, button MouseButton, listener fun
 	o.U32(rt.Register(listener, 9))
 }
 
+// tInteractiveElementOnMouseDownDo: gpui_kit::InteractiveElement::on_mouse_down, a handler that takes no event.
+func tInteractiveElementOnMouseDownDo(n *rt.Node, button MouseButton, listener func(cx *Cx)) {
+	o := rt.Op(n, 16532)
+	putMouseButton(o, button)
+	o.U32(rt.Register(listener, 9))
+}
+
 // tInteractiveElementOnMouseDownOut: gpui_kit::InteractiveElement::on_mouse_down_out.
 func tInteractiveElementOnMouseDownOut(n *rt.Node, listener func(cx *Cx, e MouseEvent)) {
+	o := rt.Op(n, 16533)
+	o.U32(rt.Register(listener, 9))
+}
+
+// tInteractiveElementOnMouseDownOutDo: gpui_kit::InteractiveElement::on_mouse_down_out, a handler that takes no event.
+func tInteractiveElementOnMouseDownOutDo(n *rt.Node, listener func(cx *Cx)) {
 	o := rt.Op(n, 16533)
 	o.U32(rt.Register(listener, 9))
 }
@@ -202,8 +233,20 @@ func tInteractiveElementOnMouseExit(n *rt.Node, listener func(cx *Cx, e MouseExi
 	o.U32(rt.Register(listener, 78))
 }
 
+// tInteractiveElementOnMouseExitDo: gpui_kit::InteractiveElement::on_mouse_exit, a handler that takes no event.
+func tInteractiveElementOnMouseExitDo(n *rt.Node, listener func(cx *Cx)) {
+	o := rt.Op(n, 16534)
+	o.U32(rt.Register(listener, 78))
+}
+
 // tInteractiveElementOnMouseMove: gpui_kit::InteractiveElement::on_mouse_move.
 func tInteractiveElementOnMouseMove(n *rt.Node, listener func(cx *Cx, e MouseEvent)) {
+	o := rt.Op(n, 16535)
+	o.U32(rt.Register(listener, 9))
+}
+
+// tInteractiveElementOnMouseMoveDo: gpui_kit::InteractiveElement::on_mouse_move, a handler that takes no event.
+func tInteractiveElementOnMouseMoveDo(n *rt.Node, listener func(cx *Cx)) {
 	o := rt.Op(n, 16535)
 	o.U32(rt.Register(listener, 9))
 }
@@ -221,8 +264,22 @@ func tInteractiveElementOnMouseUp(n *rt.Node, button MouseButton, listener func(
 	o.U32(rt.Register(listener, 9))
 }
 
+// tInteractiveElementOnMouseUpDo: gpui_kit::InteractiveElement::on_mouse_up, a handler that takes no event.
+func tInteractiveElementOnMouseUpDo(n *rt.Node, button MouseButton, listener func(cx *Cx)) {
+	o := rt.Op(n, 16537)
+	putMouseButton(o, button)
+	o.U32(rt.Register(listener, 9))
+}
+
 // tInteractiveElementOnMouseUpOut: gpui_kit::InteractiveElement::on_mouse_up_out.
 func tInteractiveElementOnMouseUpOut(n *rt.Node, button MouseButton, listener func(cx *Cx, e MouseEvent)) {
+	o := rt.Op(n, 16538)
+	putMouseButton(o, button)
+	o.U32(rt.Register(listener, 9))
+}
+
+// tInteractiveElementOnMouseUpOutDo: gpui_kit::InteractiveElement::on_mouse_up_out, a handler that takes no event.
+func tInteractiveElementOnMouseUpOutDo(n *rt.Node, button MouseButton, listener func(cx *Cx)) {
 	o := rt.Op(n, 16538)
 	putMouseButton(o, button)
 	o.U32(rt.Register(listener, 9))
@@ -260,7 +317,7 @@ func tInteractiveElementTabStop(n *rt.Node, tabStop bool) {
 // tInteractiveElementTrackFocus: gpui_kit::InteractiveElement::track_focus.
 func tInteractiveElementTrackFocus(n *rt.Node, focusHandle FocusHandle) {
 	o := rt.Op(n, 16544)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 }
 
 // tInteractiveElementWindowControlArea: gpui_kit::InteractiveElement::window_control_area.
@@ -587,8 +644,20 @@ func tStatefulInteractiveElementOnAuxClick(n *rt.Node, listener func(cx *Cx, e C
 	o.U32(rt.Register(listener, 1))
 }
 
+// tStatefulInteractiveElementOnAuxClickDo: gpui_kit::StatefulInteractiveElement::on_aux_click, a handler that takes no event.
+func tStatefulInteractiveElementOnAuxClickDo(n *rt.Node, listener func(cx *Cx)) {
+	o := rt.Op(n, 16792)
+	o.U32(rt.Register(listener, 1))
+}
+
 // tStatefulInteractiveElementOnClick: gpui_kit::StatefulInteractiveElement::on_click.
 func tStatefulInteractiveElementOnClick(n *rt.Node, listener func(cx *Cx, e ClickEvent)) {
+	o := rt.Op(n, 16793)
+	o.U32(rt.Register(listener, 1))
+}
+
+// tStatefulInteractiveElementOnClickDo: gpui_kit::StatefulInteractiveElement::on_click, a handler that takes no event.
+func tStatefulInteractiveElementOnClickDo(n *rt.Node, listener func(cx *Cx)) {
 	o := rt.Op(n, 16793)
 	o.U32(rt.Register(listener, 1))
 }
@@ -754,7 +823,7 @@ func tStyledExtDebugBlue(n *rt.Node) {
 // tStyledExtDebugFocused: gpui_kit::base::StyledExt::debug_focused.
 func tStyledExtDebugFocused(n *rt.Node, focusHandle FocusHandle) {
 	o := rt.Op(n, 17794)
-	o.U64(rt.H(focusHandle.HCore))
+	o.U64(rt.Held(rt.H(focusHandle.HCore)))
 }
 
 // tStyledExtDebugGreen: gpui_kit::base::StyledExt::debug_green.

@@ -28,10 +28,10 @@ GK_PROTO_BIN=overlay-go run questionnaire 0 \
 # Misuse: a dialog still open on a released view stops at its next build; a function that returns
 # another node than the one asked for stops (Go: a gk.Built made around a plain view, since the
 # compiler checks a view-built function's type); a questionnaire with two items of one name stops
-# (exit 2 each).
-GK_PROTO_BIN=overlay-go run release 2 'overlay released the open dialog.s view' 'through a handle that cannot be used'
-GK_PROTO_BIN=overlay-go run wrong-root 2 'returned a node of type [0-9]+, not a Dialog'
-GK_PROTO_BIN=overlay-go run questionnaire-dup 2 'a constructor refused its arguments: DuplicateItem'
+# (gk.Run returns each: exit 1).
+GK_PROTO_BIN=overlay-go run release 1 'overlay released the open dialog.s view' 'through a handle that cannot be used'
+GK_PROTO_BIN=overlay-go run wrong-root 1 'returned a node of type [0-9]+, not a Dialog'
+GK_PROTO_BIN=overlay-go run questionnaire-dup 1 'a constructor refused its arguments: DuplicateItem'
 # A dropdown opened, its view described again ten times while it is open (a label that changes on
 # every tick), then one item clicked: an item's own click handler (Alpha) fires exactly once, as an
 # item that runs an action (Bravo) does. The open menu holds the description that made it, so its
@@ -67,8 +67,8 @@ GK_PROTO_BIN=overlay-go run dock-ids 0 'overlay ids group=true' \
   'overlay ids dock panel found=true same=true' 'overlay ids split tree=true nodes=3 first_kept=true second_moved=true' \
   'overlay ids kind split=true children=2 walk=3' 'overlay ids first child tabs=true panels=2' \
   'overlay ids zoomed=true group=true' 'overlay ids skin style=Tab_Bar toggle=false' 'overlay done mode=dock-ids children=2 sizes=\[[0-9.]+, [0-9.]+\]'
-# A node id the dock never handed out stops the app when the write is applied (exit 2).
-GK_PROTO_BIN=overlay-go run dock-bad-node 2 'node id 987654321 was never handed out'
+# A node id the dock never handed out stops the app when the write is applied (gk.Run returns it: exit 1).
+GK_PROTO_BIN=overlay-go run dock-bad-node 1 'node id 987654321 was never handed out'
 # A saved layout: dumped (a panel's own JSON data in it), loaded back through the registry (a
 # PanelBuild request per panel, queued, answered with gk.PanelFill), dumped again the same; a pane
 # tree written out and read back (its two panels built through the registry again), and
@@ -93,9 +93,9 @@ GK_PROTO_BIN=overlay-go run render 0 'overlay render made' 'overlay render asked
   'overlay render asked Tab_Bar panels=1' 'overlay render frame=1 dock=1 tab_bar=[1-9] answers=[3-9] drawn_some=true' \
   'overlay render described chrome=true tabbar=true frame=true bodies=true' \
   'overlay done mode=render open=false dock_asks=1 chrome_open=true toggles=0 sub=true'
-# Misuse: a frame hook answered with a view whose root is not a div stops where the dock draws (exit 2).
+# Misuse: a frame hook answered with a view whose root is not a div stops where the dock draws (gk.Run returns it: exit 1).
 # Go: the message may name gk.Div().
-GK_PROTO_BIN=overlay-go run render-bad-frame 2 'a frame is a gk.([dD]iv)\(\)'
+GK_PROTO_BIN=overlay-go run render-bad-frame 1 'a frame is a gk.([dD]iv)\(\)'
 # The toast stack's bookkeeping (ToastManager<u64, u64>) on the library clock: pushed (one replaced),
 # presented after the motion, a timeout ending one, removed after its exit, dismissed.
 GK_PROTO_BIN=overlay-go run toast 0 'overlay toast len=2 replaced=200 get2=201' \

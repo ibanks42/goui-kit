@@ -89,6 +89,13 @@ func (e AttachmentEl) OnClick(handler func(cx *gk.Cx, e gk.ClickEvent)) Attachme
 	return e
 }
 
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e AttachmentEl) OnClickDo(handler func(cx *gk.Cx)) AttachmentEl {
+	o := rt.Op(rt.N(e.Core), 261)
+	o.U32(rt.Register(handler, 1))
+	return e
+}
+
 // Show a remove control riding the card's upper trailing corner.
 //
 // The control appears on hover on desktop and stays visible on touch platforms. It needs a stable
@@ -101,11 +108,25 @@ func (e AttachmentEl) OnRemove(handler func(cx *gk.Cx, e gk.ClickEvent)) Attachm
 	return e
 }
 
+// OnRemoveDo is OnRemove with a handler that takes no event (docs/GO.md section 4).
+func (e AttachmentEl) OnRemoveDo(handler func(cx *gk.Cx)) AttachmentEl {
+	o := rt.Op(rt.N(e.Core), 262)
+	o.U32(rt.Register(handler, 1))
+	return e
+}
+
 // Offer a retry control while the attachment is `Failed`: a round button over an image preview, or
 // a link after the typed description. It takes effect only together with `ID`.
 //
 // OnRetry is <gpui_kit::component::attachment::Attachment>::on_retry.
 func (e AttachmentEl) OnRetry(handler func(cx *gk.Cx, e gk.ClickEvent)) AttachmentEl {
+	o := rt.Op(rt.N(e.Core), 263)
+	o.U32(rt.Register(handler, 1))
+	return e
+}
+
+// OnRetryDo is OnRetry with a handler that takes no event (docs/GO.md section 4).
+func (e AttachmentEl) OnRetryDo(handler func(cx *gk.Cx)) AttachmentEl {
 	o := rt.Op(rt.N(e.Core), 263)
 	o.U32(rt.Register(handler, 1))
 	return e

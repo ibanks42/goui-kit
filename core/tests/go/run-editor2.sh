@@ -32,7 +32,7 @@ GK_PROTO_BIN=editor2-go run fold 0 \
 # An EntityId argument (9.24): the entity behind an editor handle; any other handle stops.
 GK_PROTO_BIN=editor2-go run owner 0 \
   'editor2 owner drawn' 'editor2 done mode=owner'
-GK_PROTO_BIN=editor2-go run bad-owner 2 \
+GK_PROTO_BIN=editor2-go run bad-owner 1 \
   'is not an input, a textarea or an editor'
 # A record with a colour in a call op, decoded in place (9.26): an editor's decoration collection.
 GK_PROTO_BIN=editor2-go run decorations 0 'editor2 decorations made ranges=\[Range\{lo = 0, hi = 5\}\]' \

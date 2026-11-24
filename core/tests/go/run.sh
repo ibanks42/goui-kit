@@ -13,7 +13,8 @@
 #   core/tests/go/run.sh                   every family
 #   core/tests/go/run.sh actions timers    those modes only
 #   GK_FAMILIES="rows input" core/tests/go/run.sh   those families only
-# GK_LIB_ROOT=the directory holding diag/libgpuikit.so (default lib); GK_BIN=where the test
+# GK_LIB_ROOT=the directory holding diag/libgpuikit.so (default lib), which the tests load
+# (LD_LIBRARY_PATH); GK_BIN=where the test
 # binaries go (default bin). Logs: gates/out/go-proto-families/MODE.log.
 here=$(cd "$(dirname "$0")" && pwd); repo=$(cd "$here/../../.." && pwd)
 . "$repo/go/env.sh"
@@ -23,14 +24,13 @@ out=$repo/gates/out/go-proto-families
 rm -rf "$out"; mkdir -p "$out" "$bin"
 export LD_LIBRARY_PATH=$lib
 unset WAYLAND_DISPLAY DISPLAY
-tags=gkshared
 
 # build NAME DIR: go build core/tests/go/DIR into bin/NAME. A family that does not build fails
 # each of its checks (they find no binary) instead of stopping the suite.
 build() {
   name=$1; dir=$2
   rm -f "$bin/$name"
-  if ! (cd "$here" && CGO_LDFLAGS="-L$lib -Wl,-rpath,\$ORIGIN/../lib/diag" go build -tags "$tags" -o "$bin/$name" "./$dir") \
+  if ! (cd "$here" && go build -o "$bin/$name" "./$dir") \
       > "$out/build-$name.log" 2>&1; then
     echo "FAIL build $name: go build ./$dir"; head -20 "$out/build-$name.log"
   fi

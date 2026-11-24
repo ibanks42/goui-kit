@@ -62,7 +62,7 @@ func BaseSankeyLayoutFrom(cx *gk.Cx, value Sankey, graph SankeyGraph) SankeyGrap
 	rt.UseBasePlot()
 	o := rt.NewReq(1660)
 	rt.PutVtape(o, rt.N(value.Core))
-	o.U64(rt.H(graph.HCore))
+	o.U64(rt.Held(rt.H(graph.HCore)))
 	r := rt.AmbientCall(cx, o, true)
 	return SankeyGraph{HCore: rt.MkH(r.U64())}
 }

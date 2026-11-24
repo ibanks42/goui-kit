@@ -59,7 +59,7 @@ func BaseParseMarkdown(cx *gk.Cx, source string, extensions MarkdownExtensionsAr
 	rt.UseBaseText()
 	o := rt.NewReq(1764)
 	o.Str(source)
-	o.U64(rt.H(extensions.HCore))
+	o.U64(rt.Held(rt.H(extensions.HCore)))
 	r := rt.AmbientCall(cx, o, true)
 	return rt.RdFallible(r, func(r *rt.Reader) []BlockNodeHeld {
 		return rt.RdList(r, func(r *rt.Reader) BlockNodeHeld { return BlockNodeHeld{HCore: rt.MkH(r.U64())} })
@@ -88,7 +88,7 @@ func BaseSetLanguageConfig(cx *gk.Cx, language string, config LanguageConfig) {
 func BaseSetLanguageProvider(cx *gk.Cx, provider gk.RowSource) {
 	rt.UseBaseInput()
 	o := rt.NewReq(1624)
-	o.U64(rt.H(provider.HCore))
+	o.U64(rt.Held(rt.H(provider.HCore)))
 	rt.AmbientCall(cx, o, false)
 }
 

@@ -2,7 +2,6 @@ package rt
 
 import (
 	"fmt"
-	"os"
 	rdebug "runtime/debug"
 	"sync"
 	"time"
@@ -344,15 +343,14 @@ func Go[T any](cx *Cx, work func() T, done func(cx *Cx, v T)) {
 	}
 	file, line, _ := appFrame(2)
 	go func() {
-		// A panic in work would end the program with Go's goroutine dump; say whose it is first.
+		// A panic in work would end the program with Go's goroutine dump: it is recorded with
+		// whose it is, the app stops, and gk.Run panics again with it (rt_fail.go).
 		defer func() {
 			if r := recover(); r != nil {
-				fmt.Fprintf(os.Stderr, "gk: panic in the work function of the gk.Go at %s:%d: %v\n", file, line, r)
-				if f, l, fn := appFrame(3); l != 0 {
-					fmt.Fprintf(os.Stderr, "    at %s:%d (%s)\n", f, l, fn)
-				}
-				fmt.Fprintf(os.Stderr, "    The app stops here (exit 2). Go's stack follows.\n%s", rdebug.Stack())
-				os.Exit(2)
+				p := &PanicError{Value: r, Where: fmt.Sprintf("the work function of the gk.Go at %s:%d", file, line), Stack: rdebug.Stack()}
+				p.File, p.Line, p.Func = appFrame(3)
+				fail(p)
+				postWake()
 			}
 		}()
 		v := work()

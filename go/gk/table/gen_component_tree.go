@@ -17,8 +17,8 @@ func KitTree(state TreeState, renderItem gk.RowSource, st ...gk.Style) TreeEl {
 	rt.UseComponentTree()
 	n := rt.NewNode(807)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
-	o.U64(rt.H(renderItem.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
+	o.U64(rt.Held(rt.H(renderItem.HCore)))
 	rt.Tokens(n, st)
 	return TreeEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -28,8 +28,8 @@ func Tree(state TreeState, renderItem gk.RowSource, st ...gk.Style) TreeEl {
 	rt.UseComponentTree()
 	n := rt.NewNode(806)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
-	o.U64(rt.H(renderItem.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
+	o.U64(rt.Held(rt.H(renderItem.HCore)))
 	rt.Tokens(n, st)
 	return TreeEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}
 }
@@ -39,7 +39,7 @@ func Tree(state TreeState, renderItem gk.RowSource, st ...gk.Style) TreeEl {
 // ContextMenu is <gpui_kit::component::tree::Tree>::context_menu.
 func (e TreeEl) ContextMenu(f gk.RowSource) TreeEl {
 	o := rt.Op(rt.N(e.Core), 257)
-	o.U64(rt.H(f.HCore))
+	o.U64(rt.Held(rt.H(f.HCore)))
 	return e
 }
 

@@ -85,6 +85,13 @@ func (e TabEl) OnClick(onClick func(cx *gk.Cx, e gk.ClickEvent)) TabEl {
 	return e
 }
 
+// OnClickDo is OnClick with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnClickDo(onClick func(cx *gk.Cx)) TabEl {
+	o := rt.Op(rt.N(e.Core), 260)
+	o.U32(rt.Register(onClick, 1))
+	return e
+}
+
 // Use outline variant.
 //
 // Outline is <gpui_kit::component::tab::Tab>::outline.
@@ -398,12 +405,24 @@ func (e TabEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Ta
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -516,6 +535,12 @@ func (e TabEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -604,6 +629,12 @@ func (e TabEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -611,6 +642,12 @@ func (e TabEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e gk.
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -623,12 +660,24 @@ func (e TabEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) TabEl 
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseExitDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseMoveDo(listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -650,6 +699,12 @@ func (e TabEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.Mo
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -657,6 +712,12 @@ func (e TabEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk.Mo
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) TabEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) TabEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -914,6 +975,12 @@ func (e TabEl) HoverableTooltip(buildTooltip gk.ViewOrTooltip) TabEl {
 // See `listener` to get access to a view's state from this callback.
 func (e TabEl) OnAuxClick(listener func(cx *gk.Cx, e gk.ClickEvent)) TabEl {
 	tStatefulInteractiveElementOnAuxClick(rt.N(e.Core), listener)
+	return e
+}
+
+// OnAuxClickDo is OnAuxClick with a handler that takes no event (docs/GO.md section 4).
+func (e TabEl) OnAuxClickDo(listener func(cx *gk.Cx)) TabEl {
+	tStatefulInteractiveElementOnAuxClickDo(rt.N(e.Core), listener)
 	return e
 }
 

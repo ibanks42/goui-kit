@@ -46,6 +46,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"gpuikit.dev/gk"
 	"gpuikit.dev/gk/editor"
@@ -62,13 +63,13 @@ type App struct {
 
 func (a *App) init(cx *gk.Cx) { a.name = editor.NewInputState(cx).Placeholder("Your name").Build() }
 
-func (a *App) add(cx *gk.Cx, _ gk.ClickEvent) { a.count++ } // marks its view for redraw
+func (a *App) add(cx *gk.Cx) { a.count++ } // marks its view for redraw
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).
 		Bg(theme.Background).TextColor(theme.Foreground).
 		Child(gk.HFlex(s.Gap2, s.ItemsCenter).
-			Child(kit.Button("add").Primary().Label("Add").OnClick(a.add)).
+			Child(kit.Button("add").Primary().Label("Add").OnClickDo(a.add)).
 			Child(kit.Label(fmt.Sprintf("clicked %d times", a.count)))).
 		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name))).
 		Child(kit.Label("hello " + a.name.Value(cx))) // a read: redrawn when it changes
@@ -76,10 +77,12 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "Hello", 480, 320, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err) // a mistake in app code: the message names the file and line
+	}
 }
 ```
 
@@ -106,7 +109,7 @@ Inside the archive:
 
 | path | what |
 |---|---|
-| `lib/` | the library, which your app links into itself: `libgpuikit_static.a`, with a small helper naming the system libraries it needs |
+| `lib/` | the library, which your app loads when it starts (`libgpuikit.so`, `libgpuikit.dylib` or `gpuikit.dll`), and the same as a static library, `libgpuikit_static.a`, for an app that links it into itself |
 | `go/` | the Go module `gpuikit.dev`: package `gk` (the core) and one package per area (`kit`, `editor`, `table`, `chart`, `overlay`, `dock`, `motion`, `base`), and `s`, `theme`, `palette` for styles and colors |
 | `include/` | the C header, if you want to bind another language |
 | `windows/` | Windows only: the manifest every program needs (see below) |
@@ -128,8 +131,8 @@ examples/go/build.sh notes && examples/go/notes.bin
 
 To build your own app, put its folder next to the unpacked download.
 
-**Go** (you need Go 1.27 or newer and a C compiler for cgo). Your `go.mod` points `gpuikit.dev` at
-the download, so nothing is fetched from the network:
+**Go** (you need Go 1.27 or newer; no C compiler). Your `go.mod` points `gpuikit.dev` at the
+download; the only module fetched from the network is purego, once:
 
 ```
 require gpuikit.dev v0.0.0
@@ -138,29 +141,37 @@ replace gpuikit.dev => ../gpuikit-0.0.2-linux-x86_64/go
 ```
 
 ```sh
-CGO_LDFLAGS="-L$PWD/../gpuikit-0.0.2-linux-x86_64/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o myapp.bin .
+go mod tidy && go build -ldflags="-s -w" -o myapp.bin .
+ln -s ../gpuikit-0.0.2-linux-x86_64/lib/libgpuikit.so .    # the app loads it from beside itself
 ```
 
-Your app links the library statically, and **only the components it uses** end up in the
-program: call `kit.Button` and the button code is linked in, never call
-`chart.LineChart` and the chart code is left out. There is nothing to list or import for it. The
-`-ldflags` part tells the linker to drop what isn't used
-(Go doesn't let a package ask for that itself), and without it the app still works, it just
-carries every component (about 100 MB instead of about 50 MB for a small app). The result is one
-file with nothing to ship next to it. [docs/GO.md](docs/GO.md) section 8 explains how it works.
+Your app loads the library when it starts, through [purego](https://github.com/ebitengine/purego),
+so `go build` needs no C compiler and cross-compiles (`GOOS=windows go build`). It finds the
+library in `GK_LIB`, beside itself, in its `lib/` or `../lib/` folder, or where the system loader
+looks; ship the two together.
+
+To ship one file instead, build with `-tags gkstatic`: the static library is linked into the
+program through cgo (this needs a C compiler), and **only the components it uses** end up in it:
+call `kit.Button` and the button code is linked in, never call `chart.LineChart` and the chart
+code is left out. There is nothing to list or import for it:
+
+```sh
+CGO_LDFLAGS="-L$PWD/../gpuikit-0.0.2-linux-x86_64/lib" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,--gc-sections" -o myapp.bin .
+```
+
+The `-ldflags` part tells the linker to drop what isn't used (Go doesn't let a package ask for
+that itself); without it the app still works, it just carries every component (about 100 MB
+instead of about 50 MB for a small app). [docs/GO.md](docs/GO.md) section 8 explains both ways.
 
 Things to know per system (the guides cover each in detail):
 
-- **macOS**: the Go flag is `-ldflags="-s -w -extldflags=-Wl,-dead_strip"` (Apple's linker spells
-  "drop what isn't used" differently). The library is universal, so you can build for either
-  kind of Mac and join the two with `lipo`.
-- **Windows**: Go uses MinGW-w64 gcc with LLVM's linker, lld (MSYS2's `mingw-w64-ucrt-x86_64-lld`,
-  llvm-mingw, or WinLibs' LLVM build), and the flag is
-  `-ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'"`. (GNU ld
-  can't drop unused code on Windows, so without lld the app works but carries every component.)
-  The `.exe` has the library and the Windows manifest inside it (without the manifest the program
-  would exit before `main`: the library uses common controls 6, which Windows only loads when a
-  manifest asks for it).
+- **macOS**: the library is `libgpuikit.dylib`, universal, so you can build for either kind of
+  Mac (`GOARCH=amd64` or `arm64`) and join the two with `lipo`; in an app bundle it goes in
+  `Contents/Frameworks`. For `-tags gkstatic` the flag is `-extldflags=-Wl,-dead_strip`.
+- **Windows**: put `gpuikit.dll` beside the `.exe`. The `.exe` has the Windows manifest inside it
+  (without it the program would exit before `main`: the library uses common controls 6, which
+  Windows only loads when a manifest asks for it). `-tags gkstatic` needs MinGW-w64 gcc with LLVM's
+  linker, lld, and the flag `-ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'"`.
 - The library and the package check each other's version at start. If you mix files from two
   downloads, the app stops with a message saying so instead of misbehaving.
 

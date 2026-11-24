@@ -20,7 +20,7 @@ func MessageScroller(id gk.ID, state MessageScrollerState, renderer gk.RowSource
 	n := rt.NewNode(849)
 	o := rt.NodeArgs(n)
 	rt.PutID(o, id)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.U64(rt.ItemsCheck(renderer, 19))
 	rt.Tokens(n, st)
 	return MessageScrollerEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}

@@ -48,8 +48,12 @@ type ValCore struct{ Core }
 
 func (e ValCore) valueNode() *Node { return e.n }
 
-// HCore is a handle's core: kit state, library objects and the runtime's handles embed it.
-type HCore struct{ h uint64 }
+// HCore is a handle's core: kit state, library objects and the runtime's handles embed it. l is
+// shared by every copy of a handle the collector may release (rt_life.go); nil for the others.
+type HCore struct {
+	h uint64
+	l *life
+}
 
 func (s HCore) handle() uint64 { return s.h }
 
@@ -60,7 +64,7 @@ func N(c Core) *Node { return c.n }
 func H(c HCore) uint64 { return c.h }
 
 // MkH makes a handle's core from its number.
-func MkH(h uint64) HCore { return HCore{h} }
+func MkH(h uint64) HCore { return HCore{h, lifeOf(h)} }
 
 // MkElCore and MkValCore make the cores of a hand-written element or value.
 func MkElCore(n *Node) ElCore { return ElCore{Core{n}} }
@@ -624,7 +628,7 @@ func PutMs(o *Tape, d time.Duration) {
 // putObj writes a library object's handle as an element's argument and pins it to the view that
 // shows it (PROTOCOLS.md 13.12).
 func PutObj(o *Tape, h uint64) {
-	o.U64(h)
+	o.U64(Held(h))
 	if Vb.Active && Vb.view != nil && h != 0 {
 		req := NewReq(CObjPin)
 		req.U64(Vb.view.h)

@@ -15,6 +15,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -78,9 +79,11 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{mode: os.Getenv("GK_NEG")}
-	gk.RunHeadless("size 400 300\nframe\nframe\n", func(cx *gk.Cx) {
+	if err := gk.RunHeadless("size 400 300\nframe\nframe\n", func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "misuse_lists", 400, 300, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("gk-neg done mode=%s drawn=%d\n", a.mode, a.drawn)
 }

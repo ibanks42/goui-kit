@@ -20,7 +20,7 @@ func ColorPicker(state base.ColorPickerState, st ...gk.Style) ColorPickerEl {
 	rt.UseComponentColorPicker()
 	n := rt.NewNode(623)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return ColorPickerEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }
@@ -774,7 +774,7 @@ func ColorSelect(state base.ColorPickerState, st ...gk.Style) ColorSelectEl {
 	rt.UseComponentColorPicker()
 	n := rt.NewNode(624)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	rt.Tokens(n, st)
 	return ColorSelectEl{ElAnimatableElementSizableNode: rt.MkElAnimatableElementSizableNode(n)}
 }

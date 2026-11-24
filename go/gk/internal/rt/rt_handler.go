@@ -392,8 +392,7 @@ func event(cx *Cx, r *Reader) {
 			// Every description the library holds keeps its table (retireTable), so an event
 			// for a live view always finds its handler: one that does not is a bug in the
 			// binding, which would otherwise drop a click without a word.
-			fmt.Fprintf(os.Stderr, "gk: an event came for handler %d of description %d of view %#x, whose handler table is gone (the view's description is %d): the library and the package disagree about which descriptions are alive. This is a bug in the binding; please report it\n", id, gen, view, v.gen)
-			os.Exit(1)
+			panic(&Error{Msg: fmt.Sprintf("an event came for handler %d of description %d of view %#x, whose handler table is gone (the view's description is %d): the library and the package disagree about which descriptions are alive. This is a bug in the binding; please report it", id, gen, view, v.gen)})
 		}
 	}
 	if !found {

@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"slices"
 	"strings"
 
@@ -48,7 +49,7 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 		})).
 		Child(gk.Div(s.Flex1).Child(name)).
 		Child(kit.TagSecondary(s.TextXs).Text(fmt.Sprintf("×%d", it.Amount))).
-		Child(kit.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClick(func(cx *gk.Cx, _ gk.ClickEvent) {
+		Child(kit.Button(gk.Key("delete", row)).Ghost().Xsmall().Icon(gk.IconDelete).OnClickDo(func(cx *gk.Cx) {
 			gk.StopPropagation(cx)
 			a.items = slices.Delete(a.items, row, row+1)
 			gk.Refresh(cx)
@@ -79,7 +80,9 @@ func (a *App) newNameEvent(cx *gk.Cx, e editor.InputEvent) {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

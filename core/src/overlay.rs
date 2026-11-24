@@ -58,11 +58,10 @@ impl ViewBuild {
         let (types, name, view) = (self.types, self.name, self.view);
         genapi::with_root(&tape, view, window, cx, |dx, ty, first| {
             if !types.is_empty() && !types.contains(&ty) {
-                eprintln!(
-                    "gk: the function given to gk.NewBuilt for a {name} returned a node of type {ty}, not a {name}: \
-                     it must return the value it describes, e.g. gk.{name}()..."
-                );
-                std::process::exit(2);
+                crate::rt::app_stop(format!(
+                    "the function given to gk.NewBuilt for a {name} returned a node of type {ty}, not a {name}: \
+                     it must return the value it describes, e.g. overlay.{name}()..."
+                ));
             }
             f(dx, v, first)
         })
@@ -101,9 +100,7 @@ pub fn outcome<E: std::fmt::Debug>(r: Result<(), E>) -> Option<String> {
 pub struct Fallible<F>(pub F);
 
 fn refused<E: std::fmt::Debug>(e: E) -> ! {
-    eprintln!("gk: a constructor refused its arguments: {e:?}");
-    eprintln!("    Run with GK_DEBUG=1 for the line that made it.");
-    std::process::exit(2);
+    crate::rt::app_stop(format!("a constructor refused its arguments: {e:?}\n    Run with GK_DEBUG=1 for the line that made it."))
 }
 
 impl<F> Fallible<F> {

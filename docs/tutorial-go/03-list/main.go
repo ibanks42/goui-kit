@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"gpuikit.dev/gk"
 	"gpuikit.dev/gk/kit"
@@ -37,19 +38,21 @@ func (a *App) itemRow(cx *gk.Cx, at gk.RowAt) table.ListItemEl {
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(kit.Label("Groceries", s.TextXl, s.FontBold)).
-		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClick(a.addMilk)).
+		Child(kit.Button("add-milk").Primary().Label("Add milk").OnClickDo(a.addMilk)).
 		Child(gk.Div(s.Flex1, s.MinH0).Child(table.List(a.list))).
 		Child(kit.Label(fmt.Sprintf("%d items", len(a.items)), s.TextSm).TextColor(theme.MutedForeground))
 }
 
-func (a *App) addMilk(cx *gk.Cx, _ gk.ClickEvent) {
+func (a *App) addMilk(cx *gk.Cx) {
 	a.items = append(a.items, Item{"Milk", 1})
 	gk.Refresh(cx) // the rows show data this handler changed: describe them again
 }
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Groceries", 520, 560, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

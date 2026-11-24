@@ -371,6 +371,10 @@ pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<
             let live = rt::with(|s| s.count(HK_OBJ));
             c.out.put_u32(n as u32);
             c.out.put_u32(live as u32);
+            // then the live kit states, views and focus handles (the Go runtime's lifetime tests)
+            for kind in [HK_STATE, HK_VIEW, HK_FOCUS] {
+                c.out.put_u32(rt::with(|s| s.count(kind)) as u32);
+            }
             Some(Ok(()))
         }
         _ => None,

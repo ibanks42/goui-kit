@@ -21,6 +21,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -360,6 +361,8 @@ func main() {
 	default:
 		script += strings.Repeat(adv, 14) + "stat\n"
 	}
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("review3 done mode=%s frames=%d final=%d\n", a.mode, a.frame, a.final)
 }

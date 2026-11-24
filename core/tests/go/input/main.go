@@ -13,6 +13,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -318,6 +319,8 @@ func main() {
 	case "otp":
 		script += otpClick + "type 1234\n" + away + "frame\nstat\n"
 	}
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("input done mode=%s events=%d steps=%d pastes=%d frame=%d asked=%d\n", a.mode, a.events, a.steps, a.pastes, a.frame, a.asked)
 }

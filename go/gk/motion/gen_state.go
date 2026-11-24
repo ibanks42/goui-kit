@@ -131,7 +131,7 @@ func (b SequenceBuilder) WithSteps(steps []SequenceStep) SequenceBuilder {
 	o := b.sb.Op(1)
 	o.U32(uint32(len(steps)))
 	for _, x0 := range steps {
-		o.U64(rt.H(x0.HCore))
+		o.U64(rt.Held(rt.H(x0.HCore)))
 	}
 	return b
 }

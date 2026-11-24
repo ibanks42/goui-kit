@@ -15,6 +15,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -145,8 +146,10 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "Files", 720, 480, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

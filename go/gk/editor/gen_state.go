@@ -237,7 +237,7 @@ func NewDiffAnnotationLine(cx *gk.Cx, id gk.ID, position DiffLinePosition) DiffA
 	rt.UseComponentDiff()
 	o := rt.NewReq(982)
 	rt.PutID(o, id)
-	o.U64(rt.H(position.HCore))
+	o.U64(rt.Held(rt.H(position.HCore)))
 	o.U16(0) // no builder ops follow
 	return DiffAnnotation{HCore: rt.MkH(rt.StateMake(cx, o))}
 }
@@ -659,7 +659,7 @@ func (s DiffState) HasLine(cx *gk.Cx, position DiffLinePosition) bool {
 	rt.UseComponentDiff()
 	o := rt.NewReq(1803)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(position.HCore))
+	o.U64(rt.Held(rt.H(position.HCore)))
 	r := rt.StateGet(rt.H(s.HCore), cx, o)
 	return r.Bool()
 }
@@ -843,7 +843,7 @@ func (s DiffState) ScrollToLine(cx *gk.Cx, position DiffLinePosition) {
 	rt.UseComponentDiff()
 	o := rt.NewReq(1006)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(position.HCore))
+	o.U64(rt.Held(rt.H(position.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -2484,7 +2484,7 @@ func (s State) EnsureHighlighterFactory(cx *gk.Cx, factory gk.RowSource) {
 	rt.UseBaseInput()
 	o := rt.NewReq(1617)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(factory.HCore))
+	o.U64(rt.Held(rt.H(factory.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -2883,7 +2883,7 @@ func (s State) SetHighlighterFactory(cx *gk.Cx, factory gk.RowSource) {
 	rt.UseBaseInput()
 	o := rt.NewReq(1618)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(factory.HCore))
+	o.U64(rt.Held(rt.H(factory.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -3105,7 +3105,7 @@ func (s State) SetSelectionFocus(cx *gk.Cx, focus gk.Option[gk.FocusHandle]) {
 	o.U64(rt.H(s.HCore))
 	if x0, ok := focus.Get(); ok {
 		o.U8(1)
-		o.U64(rt.H(x0.HCore))
+		o.U64(rt.Held(rt.H(x0.HCore)))
 	} else {
 		o.U8(0)
 	}
@@ -4732,7 +4732,7 @@ func (s InputState) SetTokens(cx *gk.Cx, content InputContent) error {
 	rt.UseBaseInput()
 	o := rt.NewReq(1769)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(content.HCore))
+	o.U64(rt.Held(rt.H(content.HCore)))
 	r := rt.StateCall(rt.H(s.HCore), cx, o)
 	return rt.RdResult(r)
 }
@@ -4830,7 +4830,7 @@ func (s InputState) EnsureHighlighterFactory(cx *gk.Cx, factory gk.RowSource) {
 	rt.UseBaseInput()
 	o := rt.NewReq(1619)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(factory.HCore))
+	o.U64(rt.Held(rt.H(factory.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -5115,7 +5115,7 @@ func (s InputState) SetHighlighterFactory(cx *gk.Cx, factory gk.RowSource) {
 	rt.UseBaseInput()
 	o := rt.NewReq(1620)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(factory.HCore))
+	o.U64(rt.Held(rt.H(factory.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -5322,7 +5322,7 @@ func (s InputState) SetSelectionFocus(cx *gk.Cx, focus gk.Option[gk.FocusHandle]
 	o.U64(rt.H(s.HCore))
 	if x0, ok := focus.Get(); ok {
 		o.U8(1)
-		o.U64(rt.H(x0.HCore))
+		o.U64(rt.Held(rt.H(x0.HCore)))
 	} else {
 		o.U8(0)
 	}
@@ -6916,7 +6916,7 @@ func (s TextViewState) SetRangeHighlights(cx *gk.Cx, highlights []RangeHighlight
 	o.U64(rt.H(s.HCore))
 	o.U32(uint32(len(highlights)))
 	for _, x0 := range highlights {
-		o.U64(rt.H(x0.HCore))
+		o.U64(rt.Held(rt.H(x0.HCore)))
 	}
 	r := rt.StateCall(rt.H(s.HCore), cx, o)
 	return rt.RdResult(r)
@@ -7778,7 +7778,7 @@ func (s TextareaState) SetTokens(cx *gk.Cx, content InputContent) error {
 	rt.UseBaseInput()
 	o := rt.NewReq(1773)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(content.HCore))
+	o.U64(rt.Held(rt.H(content.HCore)))
 	r := rt.StateCall(rt.H(s.HCore), cx, o)
 	return rt.RdResult(r)
 }
@@ -7876,7 +7876,7 @@ func (s TextareaState) EnsureHighlighterFactory(cx *gk.Cx, factory gk.RowSource)
 	rt.UseBaseInput()
 	o := rt.NewReq(1621)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(factory.HCore))
+	o.U64(rt.Held(rt.H(factory.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -8186,7 +8186,7 @@ func (s TextareaState) SetHighlighterFactory(cx *gk.Cx, factory gk.RowSource) {
 	rt.UseBaseInput()
 	o := rt.NewReq(1622)
 	o.U64(rt.H(s.HCore))
-	o.U64(rt.H(factory.HCore))
+	o.U64(rt.Held(rt.H(factory.HCore)))
 	rt.StateSet(cx, o)
 }
 
@@ -8382,7 +8382,7 @@ func (s TextareaState) SetSelectionFocus(cx *gk.Cx, focus gk.Option[gk.FocusHand
 	o.U64(rt.H(s.HCore))
 	if x0, ok := focus.Get(); ok {
 		o.U8(1)
-		o.U64(rt.H(x0.HCore))
+		o.U64(rt.Held(rt.H(x0.HCore)))
 	} else {
 		o.U8(0)
 	}

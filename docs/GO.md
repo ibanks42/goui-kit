@@ -29,7 +29,7 @@ imports. A package imports only the packages before it in this list, so there is
 | `gpuikit.dev/gk/internal/rt` | the runtime every package calls into; apps cannot import it |
 
 ```
-go/go.mod                     module gpuikit.dev (Go 1.27, cgo)
+go/go.mod                     module gpuikit.dev (Go 1.27; requires github.com/ebitengine/purego)
 go/gk/*/gen_*.go              generated (gen/gk_go.py writes one flat package, gen/gk_split.py
                               places each declaration, gen/gosplit rewrites the names)
 go/gk/rt_api.go               the runtime's names apps use, re-exported by gk (aliases and calls)
@@ -37,18 +37,20 @@ go/gk/<package>/rt_*.go       each package's hand-written pieces (dock/rt_dock.g
 go/gk/internal/rt/rt_*.go     the runtime, written by hand; rt_thread_{linux,darwin,windows}.go
                               hold what differs per system
 go/gk/internal/rt/gen_bases.go  the bases every generated element, value and handle embeds
-go/gk/internal/rt/capi.c      the C side of the one exported callback (cgo)
-go/gk/internal/rt/cgo_required.go  built only without cgo: the first build error says to install gcc
+go/gk/internal/rt/rt_lib_dyn*.go  the default way to the library: found and loaded at start-up,
+                              called through purego (no cgo)
+go/gk/internal/rt/rt_lib_static.go, capi.c  -tags gkstatic: the static library linked in through
+                              cgo, and the C side of the one exported callback
+go/gk/internal/rt/cgo_required.go  built only for -tags gkstatic without cgo: the first build
+                              error says to install gcc
 examples/go/                  module gpuikit.dev/examples: hello, counter, notes, todo, reader,
                               expenses
 docs/tutorial-go/             the tutorial's nine steps (module gpuikit.dev/tutorial)
 ```
 
-To build: `CGO_LDFLAGS="-L<lib dir>" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" ./hello`
-on Linux and Windows, and the same with `-Wl,-dead_strip` in place of `-Wl,--gc-sections` on macOS
-(section 8 explains the flag). The package names the library itself (libgpuikit_static.a, and the
-system libraries it needs), so the only other thing you need is a C compiler for cgo: gcc or clang,
-the Xcode command-line tools on macOS, or MinGW-w64 gcc on Windows.
+To build: `go build ./hello`. No C compiler is needed (cgo may be off), and `GOOS=windows` or
+`GOOS=darwin` cross-compiles: the program loads the shared library when it starts (section 8).
+For a single-file program with the library linked in, `-tags gkstatic` (section 8).
 
 ### Where an item lives
 
@@ -130,12 +132,12 @@ type App struct {
 
 func (a *App) init(cx *gk.Cx) { a.name = editor.NewInputState(cx).Placeholder("Your name").Build() }
 
-func (a *App) add(cx *gk.Cx, _ gk.ClickEvent) { a.count++ } // marks its view for redraw on return
+func (a *App) add(cx *gk.Cx) { a.count++ } // marks its view for redraw on return
 
 func (a *App) view(cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.SizeFull, s.P4, s.Gap3).Bg(theme.Background).TextColor(theme.Foreground).
 		Child(gk.HFlex(s.Gap2, s.ItemsCenter).
-			Child(kit.Button("add").Primary().Label("Add").OnClick(a.add)).
+			Child(kit.Button("add").Primary().Label("Add").OnClickDo(a.add)).
 			Child(kit.Label(fmt.Sprintf("clicked %d times", a.count)))).
 		Child(gk.Div().W(gk.Px(240)).Child(editor.Input(a.name))).
 		Child(kit.Label("hello " + a.name.Value(cx))) // a read in a view: redrawn when it changes
@@ -143,10 +145,12 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "Hello", 480, 320, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }
 ```
 
@@ -173,6 +177,30 @@ func main() {
   a method value (`a.add`) or a closure. Closures capture what they need; the collector keeps it
   alive, so Go needs no handler-data rule. The view that registered a handler is marked dirty when it returns;
   `gk.Quiet(cx)` inside the handler opts out.
+- **Handlers that ignore the event**: every builder whose one handler takes a `gk.ClickEvent`, a
+  `gk.MouseEvent` or a `gk.MouseExitEvent` and returns nothing (a click, a press or release, the
+  pointer leaving) has a twin named with `Do` whose handler takes only the cx:
+  `.OnClickDo(a.save)` with `func (a *App) save(cx *gk.Cx)`, `.OnMouseDownDo(gk.MouseButtonLeft, f)`.
+  The generator makes them uniformly (gen/gk_go.py, `DO_EVENTS`); handlers whose payload says what
+  happened (a key, a scroll, a bool, an index, a kit state's event) have the one form.
+- **Overlays**: `overlay.OpenDialog`, `OpenAlertDialog`, `OpenSheet` and `OpenSheetAt` take the
+  function that describes the overlay, given right there (`overlay.OpenDialog(cx, a.editView)`
+  or a closure), or a `gk.Built[T]` made once with `gk.NewBuilt` (both are a `gk.Builder[T]`). A
+  function gets one view per place in the code that opens it and per view whose handler opens
+  it, released with that view. A popover's content is a row source (`overlay.Items`), not a
+  built view, so it needs neither.
+- **Lifetimes**: `gk.Release(cx, h)` gives a handle back at once. A view owns what is made in its
+  turns (`init` for a window's root, its handlers, its frame handler): kit state, library
+  objects, focus handles, row sources, views, overlays opened with a function; releasing the
+  view releases them, the newest first. A dock panel owns its view, and a panel the dock removed
+  (the user closed its tab) and did not add back is released with its view and all that made
+  (`dock.KeepWhenClosed()` keeps it for the app to add again). A kit state, library object or
+  focus handle the app can no longer reach is released after the collector finds it
+  (`runtime.AddCleanup`; the release runs on the UI thread in a `WAKE` turn, never from the
+  cleanup's goroutine); one handed to the library outside a view (an argument of a call, or of a
+  value given to one, such as a panel given to a dock) is kept until it or its owner is released.
+  Releasing a handle twice stops with the library's message; releasing one its view released
+  already stops at the app's line; a stale handle stops where it is used.
 - **Typed state**: `gk.Model[T]` holds a value and the views that read it: `m.Get()` in a view
   records the view, `m.Set(cx, v)` / `m.Update(cx, func(*T))` mark exactly those views,
   `m.Observe(cx, func(*gk.Cx, T))` runs on every change.
@@ -239,31 +267,49 @@ func main() {
 
 ## 5. Errors and safety
 
+- **Nothing exits the process.** `gk.Run` (and `gk.RunHeadless`) returns an error; main decides:
+  `if err := gk.Run(start); err != nil { log.Fatal(err) }`. Deferred functions run, and an app
+  can run under `go test` (core/tests/go/runerr).
 - **Misuse stops**: an element used after its build, given twice, a `Cx` kept past the call it was given to, a
   released handle, a write in a view, a UI call from another goroutine: `gk` panics with a
-  `*gk.Error` naming the app's line; the callback boundary recovers it, prints
-  `gk: <message>\n    at file.go:line (func)` and exits 2. Nothing unwinds across C.
-- **A panic in app code** (in a handler, a view, `init` or a posted function) is recovered at the callback and printed with the app's
-  line first (`gk: panic in app code: ...` / `at main.go:86 (main.(*App).store)`), then its stack;
-  exit 2. A panic in `gk.Go`'s work function names the `gk.Go` call and the line. A UI call from
-  another goroutine, where no boundary is below to recover, prints its stop the same way and exits
-  2. A panic inside the library exits 1 with a message saying what to do.
+  `*gk.Error` naming the app's line; the callback boundary recovers it, records it, asks the
+  library to quit, and no app code runs in the turns that come before it has; `gk.Run` returns
+  the `*gk.Error` (its text: `gk: <message>\n    at file.go:line (func)`). A mistake the library
+  finds while drawing (a view showing a released handle) or when it applies a buffered write
+  comes back the same way. Nothing unwinds across C.
+- **A panic in app code** (in a handler, a view, `init`, a posted function or `gk.Go`'s work
+  function) is recovered, the app shuts down the same way, and `gk.Run` panics again with a
+  `*gk.PanicError`: `Value` is the app's panic value (`Unwrap` gives it when it is an error, so
+  `errors.As` finds a `runtime.Error`), `Stack` the stack where it panicked, and its text starts
+  `gk: panic in app code: ...` / `at main.go:86 (main.(*App).store)` (for `gk.Go`, the `gk.Go`
+  call and line). Unrecovered, Go prints it and exits 2, as for any panic. A UI call from
+  another goroutine, where no boundary is below, is recorded the same way and that goroutine
+  ends (`runtime.Goexit`; its deferred calls run). A panic inside the library is a
+  `*gk.LibraryError` from `gk.Run`, with the app's call when it came inside one.
 - **No display** (Linux): `gk.Run` with neither `DISPLAY` nor `WAYLAND_DISPLAY` set (and no
-  `GK_SCRIPT`) stops with a message instead of letting GPUI wait. macOS and Windows always have
-  their window server, so the check is skipped there. Messages the library returns name the Go
-  calls (`gk.NewBuilt`, not `gk.built`), and every stop says what to do.
+  `GK_SCRIPT`) returns an error saying so instead of letting GPUI wait. macOS and Windows always have
+  their window server, so the check is skipped there. Messages name the Go calls as an app
+  writes them, package and all (`gk.NewBuilt`, `editor.NewInputState`, `table.NewSource`; `make
+  gen` fails on a message naming a `gk.` function package gk does not have), and every stop says
+  what to do.
 - **Fallible upstream calls** return `error` (Go's way); misuse is not an error value.
-- **cgo pointer rules**: the library never keeps Go memory. Requests are Go byte slices passed
-  for the duration of one C call (`gk_call`); a turn's reply is written into C memory the package
-  keeps, and the C half of the callback (`go/gk/internal/rt/capi.c`) hands it to `gk_reply`, which copies it,
-  after the Go callback has returned, so a turn costs one crossing into Go and none back out; the
-  library's buffers are copied out at once (`gk_call`'s result is valid until the next call). The `gk_app` struct and the script are C memory. Handlers, views and states are
-  numbers on the C side (handler ids, handles); the Go side keeps the functions in its own
-  tables. `gk.Post` passes no payload through C.
+- **Memory across the C interface**: the library never keeps Go memory past a call. Requests
+  are Go byte slices passed for the duration of one C call (`gk_call`); the library's buffers
+  are copied out at once (`gk_call`'s result is valid until the next call). A turn's reply is
+  handed to `gk_reply`, which copies it: by default the Go callback calls it before returning (one
+  more call out per turn that has a reply); with `-tags gkstatic` the reply is written into C
+  memory and the C half of the callback (`go/gk/internal/rt/capi.c`) hands it over after the Go
+  callback has returned, as cgo's pointer rules require. Handlers, views and states are numbers on
+  the C side (handler ids, handles); the Go side keeps the functions in its own tables. `gk.Post`
+  passes no payload through C.
 - **Threads**: package `gk` locks the main goroutine to the main OS thread in `init`; `gk.Run`
   must be called from `main`. Every call taking a `Cx` checks the OS thread (Linux: `gettid`;
-  macOS: `pthread_threadid_np`; Windows: `GetCurrentThreadId`, both through cgo) and that the `Cx` belongs to the call in progress; only
-  `gk.Post` may be called from elsewhere.
+  macOS: `pthread_self` through purego, `pthread_threadid_np` with `-tags gkstatic`; Windows:
+  kernel32's `GetCurrentThreadId`) and that the `Cx` belongs to the call in progress; only
+  `gk.Post` may be called from elsewhere. The library calls the app back (every turn) on that same
+  thread, inside `gk_run`: under purego the callback is one `purego.NewCallback` made when the
+  library is loaded (purego allows about 2,000 per program and frees none, so one is fine), and it
+  runs on the thread that called into C, as a cgo callback does.
 - **GK_DEBUG=1**: every buffered write is sent at once (an error points at its line), each
   node records where it was made, and the dropped-event count is printed at exit.
 - **GK_FRAMES=5,30**: the app draws 30 frames (after 5 to warm up) and exits, for a CI check that
@@ -317,24 +363,48 @@ gk.OnWindowShouldClose(cx, a.win, func(cx *gk.Cx) bool {
 })
 ```
 
-## 8. Linking only the components you use
+## 8. How a program reaches the library
 
-GPUI-kit has about 130 component families: buttons, inputs, tables, charts, docks, dialogs, the
-code editor and so on. The shared library has to contain all of them, because it can't know which
-ones your program will use. A Go program links the static library instead
-(`libgpuikit_static.a`), and only the families the program calls into end up in it.
+There are two ways, chosen when the program is built.
+
+**The default: the shared library, loaded at start-up.** A plain `go build` makes a program
+that loads `libgpuikit.so` (`libgpuikit.dylib` on macOS, `gpuikit.dll` on Windows) when it starts
+the app and calls its seven functions through [purego](https://github.com/ebitengine/purego)
+(`github.com/ebitengine/purego`, pinned in `go/go.mod`), with no cgo. So the build needs no C
+compiler, works with `CGO_ENABLED=0`, and cross-compiles: `GOOS=windows go build` or
+`GOOS=darwin GOARCH=arm64 go build` on any system. The program looks for the library, in order:
+
+1. `GK_LIB`: the library file, or the folder that holds it (when it is set, nothing else is tried);
+2. the program's folder, its `lib/` folder, and `../lib/` beside it (on macOS also
+   `../Frameworks/`, so an app bundle keeps it in `Contents/Frameworks`);
+3. the system loader's own search by name (`LD_LIBRARY_PATH` and the system's folders on Linux,
+   `DYLD_LIBRARY_PATH` and `DYLD_FALLBACK_LIBRARY_PATH` on macOS; on Windows the program's folder,
+   the system folders and `PATH`).
+
+When it is in none of them, `gk.Run` stops with a message listing every place it looked. A file
+that is found but does not load (a library for another system, a missing system library) stops
+with the loader's own message. Ship the library beside the program. The shared library holds every
+component family, so the program itself is small (the counter example: 2.3 MB stripped, beside
+the 80 MB `libgpuikit.so`).
+
+**`-tags gkstatic`: the static library, linked in.** A program built with `-tags gkstatic` links
+`libgpuikit_static.a` through cgo, so it is one file with nothing to ship beside it, and only the
+component families the program calls into end up in it. It needs a C compiler for cgo (gcc or
+clang, the Xcode command-line tools on macOS, MinGW-w64 gcc on Windows) and builds for the system
+it runs on. Without cgo (`CGO_ENABLED=0`, or no C compiler) the build stops at
+`gk_static_needs_cgo__install_gcc_or_clang_and_build_with_CGO_ENABLED_1_or_drop_tag_gkstatic`.
 
 There is nothing to list. Every function of the packages (`gk`, `kit`, `editor`, ...) that makes an
 element or calls into the library also links its family, whatever package it lives in: `kit.Button` links the button family, `editor.NewInputState` the input
 family, `chart.LineChart` the chart family. Go's linker already leaves out the functions a program
 never calls, so a program that never calls `chart.LineChart` never links the chart family either.
 
-What it needs from you is one flag on `go build`:
+What it needs from you is the tag and one flag on `go build`:
 
 ```sh
-CGO_LDFLAGS="-L<lib dir>" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections" .   # Linux
-CGO_LDFLAGS="-L<lib dir>" go build -ldflags="-s -w -extldflags=-Wl,-dead_strip" .     # macOS
-CGO_LDFLAGS="-L<lib dir>" go build -ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'" .   # Windows
+CGO_LDFLAGS="-L<lib dir>" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,--gc-sections" .   # Linux
+CGO_LDFLAGS="-L<lib dir>" go build -tags gkstatic -ldflags="-s -w -extldflags=-Wl,-dead_strip" .     # macOS
+CGO_LDFLAGS="-L<lib dir>" go build -tags gkstatic -ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'" .   # Windows
 ```
 
 `-Wl,--gc-sections` (Apple's linker calls it `-dead_strip`) tells the C linker to drop the code
@@ -348,7 +418,7 @@ stack traces still work without them. For the counter example, stripped:
 
 | build | size |
 |---|---|
-| shared library (`-tags gkshared`): program plus `libgpuikit.so` | 76 MB |
+| default: the program, plus `libgpuikit.so` beside it | 2.3 MB + 80 MB |
 | static, without the flag: every family | 106 MB |
 | static, with the flag: the four families it uses (Linux) | 52 MB |
 | the same on Windows, with lld | 51 MB |
@@ -361,7 +431,7 @@ every app needs. Each family the app uses adds what it really costs, mostly a fe
 How it works, for the curious: the library's dispatch tables are split by family, and a family's
 code is reachable only through its registration function, `gk_use_<family>` (generated by
 `gen/gk_fam.py`). Each generated Go function, in whichever package it lives, calls the `rt.UseX()`
-of its family (go/gk/internal/rt/gen_use.go), which calls that registration once, through its address (`C.gk_use_<family>`, not a call), so the reference to it
+of its family (go/gk/internal/rt/gen_use.go; empty without gkstatic, gen_use_dyn.go), which calls that registration once, through its address (`C.gk_use_<family>`, not a call), so the reference to it
 lives in Go's own code. Go's linker leaves out the functions a program never calls, and with them
 the reference; the C linker then drops the families nothing refers to. On Windows the static
 library is built for Rust's MinGW target with one section per function, since cgo links with
@@ -369,11 +439,21 @@ MinGW-w64 there.
 
 Other things to know:
 
-- `gk.LinkAll()` links and registers every family, for a program that wants them all.
-- `-tags gkshared` links the shared library instead (`libgpuikit.so`, `libgpuikit.dylib` or
-  `gpuikit.dll`, which the program then loads at run time). Only a build from source has it (the
-  download ships the static library); the repository's own tests use it, so one build can run
-  against either library variant.
+- `gk.LinkAll()` links and registers every family, for a static program that wants them all (the
+  shared library registers them all when it is loaded).
+- The repository's own tests use the default build, so one program runs against either library
+  variant (`lib/ship` or `lib/diag`, chosen with `LD_LIBRARY_PATH`); `gates/go-apps.sh` with
+  `GK_STATIC=1` builds the apps the static way and checks their sizes.
+- What a turn costs: the library calls the Go callback once per turn either way, and the default
+  build makes one more call out when the turn has a reply (`gk_reply`). purego enters a callback
+  through reflection, a few microseconds a turn when the caches are cold between frames, so the
+  package calls the turn callback directly instead (go/gk/internal/rt/rt_lib_dyn_fastcb.go, on
+  Linux and macOS for amd64 and arm64, checked by a probe call when the library loads;
+  `GK_PUREGO_REFLECT=1` turns it off, to compare). Measured on 2026-11-23 with gates/fps.sh at
+  60 Hz (Linux, 10 rounds): callback time per frame, cgo against purego direct against purego
+  through reflection, was 14.6, 16.0 and 20.3 us in the counter clicked on every frame (p50 frame
+  CPU 1.05 to 1.06, 1.04 and 1.07 x Rust), and 20.4, 23.5 and 29.0 us in panels 60 64 2 (1.025 to
+  1.037, 1.039 and 1.05 x Rust): within the runs' own noise for the direct call.
 - If the library ever reports that a family is "used but not linked", a generated function is
   missing its `useX()` call. That's a bug in the bindings; `gk.LinkAll()` works around it.
 

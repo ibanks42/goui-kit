@@ -31,6 +31,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -186,6 +187,8 @@ func main() {
 		fmt.Printf("editor2: mode %q is unknown\n", a.mode)
 		os.Exit(3)
 	}
-	gk.RunHeadless("size 480 360\nframe\n"+m.script+"frame\n", a.start)
+	if err := gk.RunHeadless("size 480 360\nframe\n"+m.script+"frame\n", a.start); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("editor2 done mode=%s\n", a.mode)
 }

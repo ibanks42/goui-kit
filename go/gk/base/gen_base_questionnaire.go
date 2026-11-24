@@ -80,7 +80,7 @@ type QuestionnaireInputDefinition struct{ rt.Val }
 func NewQuestionnaireInputDefinition(state editor.InputState, accessibilityLabel string) QuestionnaireInputDefinition {
 	n := rt.NewValue(542)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.Str(accessibilityLabel)
 	return QuestionnaireInputDefinition{Val: rt.MkVal(n)}
 }

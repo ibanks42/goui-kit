@@ -29,12 +29,12 @@ GK_PROTO_BIN=values-go run val-pins 0 \
   'values pins click=1 builds=1 pinned=1 later=0' 'values pins click=2 builds=1 pinned=1 later=0' \
   'values pins click=3 builds=2 pinned=1 later=1' 'values pins click=4 builds=2 pinned=1 later=0' \
   'values done mode=val-pins clicks=4 builds=2'
-# Misuse: a value given as an argument to its own builder stops there (exit 2).
-GK_PROTO_BIN=values-go run val-self-arg 2 'values giving a value to its own builder' \
+# Misuse: a value given as an argument to its own builder stops there (gk.Run returns it: exit 1).
+GK_PROTO_BIN=values-go run val-self-arg 1 'values giving a value to its own builder' \
   'a value was given as an argument to its own builder'
-# Misuse: naming an action in a view procedure stops at its line (exit 2).
+# Misuse: naming an action in a view procedure stops at its line (gk.Run returns it: exit 1).
 # Go: "a view function", gk.ActionOf, and the app's line in values/actions.go.
-GK_PROTO_BIN=values-go run val-action-in-view 2 'values naming an action in a view' \
+GK_PROTO_BIN=values-go run val-action-in-view 1 'values naming an action in a view' \
   'gk.ActionOf in a view function' 'at .*values/actions.go:[0-9]+'
 # The clipboard's value closure: a handler that returns text, run by the copy button's click.
 GK_PROTO_BIN=values-go run val-clipboard 0 'values clipboard value asked' \
@@ -45,8 +45,8 @@ GK_PROTO_BIN=values-go run val-dates 0 \
   'values calendar date=2024-02-29 today_ok=true weeks=[56] week_len=7' \
   'values calendar range applied=(true|false) start=2026-01-05 end=9' \
   'values picker date_time=2026-11-11 09:30:15' 'values time 23:59:00'
-# Misuse: a date that does not exist stops where it is written (exit 2).
-GK_PROTO_BIN=values-go run val-bad-date 2 'values writing February 30' \
+# Misuse: a date that does not exist stops where it is written (gk.Run returns it: exit 1).
+GK_PROTO_BIN=values-go run val-bad-date 1 'values writing February 30' \
   'the date 2026-02-30 does not exist'
 # gpui's ScrollHandle as a library object: tracked by a div, its ScrollbarHandle methods.
 GK_PROTO_BIN=values-go run val-scroll 0 \

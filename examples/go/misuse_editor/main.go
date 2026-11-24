@@ -28,6 +28,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -167,9 +168,11 @@ func (a *App) view(cx *gk.Cx) gk.Element {
 
 func main() {
 	a := &App{mode: os.Getenv("GK_NEG")}
-	gk.RunHeadless("size 400 300\nframe\nadvance 100\nframe\nframe\nframe\n", func(cx *gk.Cx) {
+	if err := gk.RunHeadless("size 400 300\nframe\nadvance 100\nframe\nframe\nframe\n", func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.view)
 		gk.OpenWindow(cx, "misuse_editor", 400, 300, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("gk-neg done mode=%s drawn=%d rows=%d leaves=%d\n", a.mode, a.drawn, a.rowed, a.leaves)
 }

@@ -80,7 +80,7 @@ One callback, `gk_callback(user, cb, kind, req, len)`, on the UI thread.
 | `VIEWS 4` | u64 window, u32 n, u64 view each, u32 n, (u64 view, u32 generation) each: the descriptions dropped since the last `VIEWS` turn (section 4) | pre-frame hook, only if a mounted view is dirty |
 | `EVENT 5` | u64 view, u32 generation, u32 handler, u16 shape, payload | a listener, a subscription, a queued event |
 | `WAKE 7` | empty | after `gk_post`, at most one per turn of the main loop |
-| `PANIC 10` | str message | the library caught a Rust panic; the binding prints it and exits 1 |
+| `PANIC 10` | str message, u8 kind (0 a Rust panic the library caught, 1 a mistake in app code found outside any call; absent: 0) | the binding records it and returns; the library quits the app (section 3) |
 
 `ROWS 6` is section 9's and `DONE 8` section 11.30's. `QUIT 9` keeps its number and is not sent.
 
@@ -175,7 +175,7 @@ newest, until the library says nothing holds that description any more. Each acc
 every handler closure made from it (`Dx::pin`); when the last one is dropped, `rt::retire` lists
 (view, generation), and the next `VIEWS` turn carries the list. The binding then frees that table; a retired generation that is still the view's newest is
 only marked, and dropped when the view is next described anew. An event for a live view whose
-table is gone cannot happen this way: with the diagnostic library the binding stops (exit 1,
+table is gone cannot happen this way: with the diagnostic library the binding stops the app (gk.Run's error,
 "whose handler table is gone") rather than drop the event in silence. Until 17 Nov 2026 the
 binding kept two tables (the newest and the one before), and a menu item's `on_click` clicked
 after its view had been described twice more was dropped (`core/tests/go/run-overlay.sh
@@ -249,9 +249,17 @@ These need nothing from the generator; they are listed so the API is in one plac
   pre-frame hook.
 - A Rust panic never unwinds into the app: every export and every closure the library
   hands to GPUI catches it, the library is poisoned (`GK_ERR_POISONED` from every later
-  export), and the binding prints the message and exits 1 (through the `PANIC` turn when
-  the panic was not inside a `gk_call`). A panic or failed assertion in app code prints the
-  message and the source line and exits 2.
+  export but `QUIT`), and the binding is told: inside a `gk_call` by its status, outside one
+  by the `PANIC` turn (kind 0). A mistake in app code the library finds where no call can
+  return it (a view's tape names a released handle, a buffered write fails after its handler
+  returned) is the `PANIC` turn of kind 1, and the drawing unwinds to the nearest guard
+  (`rt::app_stop`, `rt::AppStop`; the library is not poisoned). Either way the app ends as
+  `QUIT` ends it (`quit_soon`: the wake task quits it; offscreen, `QUIT` also ends the
+  script), and `gk_run` returns. The Go package records the first failure, asks for `QUIT`,
+  runs no app code in the turns that still come, and `gk.Run` returns it (a mistake as a
+  `*gk.Error` with the app's line, a library fault as a `*gk.LibraryError`) or, for a panic in
+  app code, panics again with a `*gk.PanicError` (docs/GO.md section 5). Nothing calls
+  `exit`; with no binding to tell (no session), the library prints the message and exits 2.
 - Versions: `gk_info_get()` is checked by the binding before `gk_run` (struct size, magic,
   `abi_major` equal, the library's `abi_minor` at least the binding's, `api_hash` equal;
   the `feat` bits say which backend the library was built on, gpui-fast or upstream gpui,
@@ -337,14 +345,14 @@ checks an exit code and the lines the app printed.
 | protocol | test mode | what it shows |
 |---|---|---|
 | handlers of every shape | `handlers` | click (`Click_Event`), toggle (bool, a Switch), hover (bool, `quiet`), click with owned data, mouse down (`Mouse_Event`), key down (`Key_Event`, twice, one with shift), bool returns, `(str, u32) -> str` with and without data, default return |
-| registration checks | `shape`, `state-type` | a handler whose event or state type does not fit stops at the `gk.on` line, exit 2 |
+| registration checks | `shape`, `state-type` | a handler whose event or state type does not fit stops at the `gk.on` line (a stop) |
 | kit state behind handles | `state` | constructor chain, a read in a view as a dependency (described again per keystroke), a subscription (`Input_Event`), read-your-writes, unsubscribe |
 | handle checks | `stale`, `stale-write`, `wrong-type` | a read through a released handle or one of another kind stops at its line; a buffered write to a released handle stops when it is applied, after its handler, with the hint to run with `GK_DEBUG=1` for the line; exit 2 each |
 | leases and queued events | `lease` | inside the state's own update a read is busy and a write lands after; a queued event runs after the update |
 | the write rule | `write-rule`, `frames`, `view-write` | a per-frame write is described in the same frame; a frame handler alone runs every frame; a view procedure that writes stops |
 | app state | `model` | `gk.Model`: only the view that read it is described again; observers run |
 | background posts | `post` | 20,001 posts from another thread: all delivered, 5 `WAKE` turns, 7 descriptions over 11 frames |
-| panics | `panic-go`, `panic-call`, `panic-later`, `thread` | app panic exit 2 with its line; library panic exit 1 inside a call and outside one (the `PANIC` turn); a UI call from another thread stops |
+| panics | `panic-go`, `panic-call`, `panic-later`, `thread` | app panic: gk.Run panics again with it and its line (exit 2 unrecovered); library panic: gk.Run returns it (the test exits 1), inside a call and outside one (the `PANIC` turn); a UI call from another thread stops |
 | versions | `version`, `version-lib` | the library refuses five wrong `gk_app`s; the binding refuses a library with another hash |
 | every handler shape, generated (`core/tests/go/gen`, `run-gen.sh`) | `shapes` | each of the 45 shapes the package registers fired once through the library (call op `TEST_FIRE_SHAPE 26`) with a payload `gen/gk_tests.py` writes from the wire model: 36 decoded into the Rust payload types and fired through their own `Wire` impls (typed), 9 fired as bytes (raw: a `ClickEvent`, `KeyDownEvent` or `MouseDownEvent` in the payload, or no payload); the handler, registered with `gk.on` for the registered type, gets back exactly the bytes sent, and its return value arrives |
 | every generated state type | `states` | 25 of 27 state types made through their builder chains, every read, write and call once with fixed arguments, every event subscribed (13), read again after the writes were applied, released; `List_State` and `Table_State` take a row source and are the rows tests' |
@@ -473,7 +481,7 @@ pub fn event<P: Wire + ?Sized>(src: u64, shape: u16, payload: &P, cx: &mut App);
 pub fn request<P: Wire + ?Sized>(src: u64, shape: u16, payload: &P, cx: &mut App)
     -> GkResult<oneshot::Receiver<Vec<u8>>>;
 pub fn scroll_handle(src: u64) -> GkResult<UniformListScrollHandle>;     // the core list's
-// genapi: released_shown(msg, what) -> !    a released source a view still draws stops (exit 2)
+// genapi: released_shown(msg, what) -> !    a released source a view still draws stops the app (rt::app_stop)
 ```
 
 Go (`go/gk/internal/rt/rt_source.go`): `gk.RowAt{Section, Row int}`, `gk.RowSource`,
@@ -597,7 +605,7 @@ sides.
 - Protocol tests: the first frame is complete; a far jump shows one placeholder frame
   (`placeholder_frames` in the meter's `stat`); every delegate event is delivered after the
   kit's update; a request is answered and its menu drawn; a released source or provider
-  that a view still draws stops the program (exit 2).
+  that a view still draws stops the app (rt::app_stop).
 - A frame-cost scene: a large table scrolled every frame, measured against the same table on
   a Rust delegate, within 1.03 of Rust plus the Rust-to-Rust noise of the run (DESIGN.md
   section 0, decision 8), with 0 crossings per frame while the rows are bound.
@@ -765,7 +773,7 @@ synthetic functions (`gk_lists.list_ctor`, hooked before "a static function that
 constructor"): `gk.diff_file_parse_count(cx, patch) -> gk.Fallible(int)` (an ambient call, 11.5:
 how many values it made, or the error's text) and the constructor `gk.diff_file_parse_at(patch,
 index)`, whose value is the static's value at that index (the library runs the static where the
-value is decoded; an index past the count, or a failed static, stops the app, exit 2). The static
+value is decoded; an index past the count, or a failed static, stops the app). The static
 itself is also bound as an ambient call whose values come back as read-only `X_Read` objects (13.15: `gk.parse(cx, patch)` gives `[]gk.Diff_File_Read`); only the `_at` values can
 be given to the kit (`gk.diff_state(cx, files)`). When no other rule binds it, the upstream
 function counts as bridged by this one.
@@ -801,7 +809,7 @@ an element closure that gets the window, the app and one to three values the app
   (13): `InlineTokenContext` (7), `EditorScrollbarContext` (2), `InputToken::new(&InlineTokenContext)`.
 - Wire: call `CTX_GET 182` (`u64 source, u32 section, u32 row` -> the values; immediate, allowed in
   a view procedure). A row no closure drew stops: "row N of this row source was never drawn by an
-  element closure over a context (gk.row_context)", exit 2.
+  element closure over a context (gk.row_context)" (a stop).
 
 ### 9.17 Objects lent by kit state
 
@@ -813,7 +821,7 @@ handle to a copy of the object, of T's own Go type, so every generated method of
 The app writes to it with the turn's buffered writes; the library gives the copy back to the state
 through the same method when the turn's writes have landed (`shim_editor::lend`: deferred twice,
 after `rt::process_reply`'s deferral of the writes), notifies the state (its views redraw), and
-releases the handle. Using it after its turn stops ("was released", exit 2). The copy is taken when
+releases the handle. Using it after its turn stops ("was released"). The copy is taken when
 the call runs, after the writes buffered before it, so they are in it. Call `LEND_TEST 183` (tests:
 objects lent, given back). Not lent: `lsp_mut` (`Lsp` is a builder value, not an object the app can
 hold) and `display_map` (`&DisplayMap`, which is neither Clone nor lent through `&mut`).
@@ -865,7 +873,7 @@ closure without an item is (DESIGN.md 12), whose root is decoded as that type: d
 the library replays the fragment whenever upstream calls the closure and decodes its root with the
 type's generated `make_` function. The fragment holds the view's tape in an `Rc`, so the closure is
 wrapped in `editor_text::MainThread`, which refuses any thread but the main one (upstream calls it
-while it draws). A root of another type (only a hand-written tape can make one) stops (exit 2).
+while it draws). A root of another type (only a hand-written tape can make one) stops the app.
 
 ### 9.21 Predicates as key sets, tables by index
 
@@ -929,7 +937,7 @@ with typed data, `InlineElement`), skipped as `rust-only-extension`.
 - An `ElementId` read back is its text (`DiffAnnotation::id`; `Wire for ElementId` in
   `core/src/editor_text.rs`).
 - A `gpui::EntityId` argument (`InputBase::semantic_owner`) is the entity behind an input, textarea or
-  editor handle: `gk.EntityIDOf(a.editor)` (a `gk.EntityID`). Any other handle stops (exit 2: "is not an
+  editor handle: `gk.EntityIDOf(a.editor)` (a `gk.EntityID`). Any other handle stops the app ("is not an
   input, a textarea or an editor"); a released one stops with the release's own message.
 
 ### 9.25 Objects a read-back value hands out
@@ -1249,7 +1257,7 @@ upstream's closure (`items::row`: the source is a decoded one, `source::row_tape
 as a delegate shim decodes its rows; the drawing view watches the source), with the handed values in a
 thread-local slot that the `handed` constructors take from (`items::handed::<T>(i)`); placing one twice,
 or outside its row, stops: "the .. an item procedure is handed was placed twice, or outside its own row"
-(exit 2). Rows without a handed value are the row's view, as 9.16 (`source::ctx_row`).
+(a stop). Rows without a handed value are the row's view, as 9.16 (`source::ctx_row`).
 
 **Typed results.** A closure that returns one element type (`Notification::action -> Button`, the base
 `HoverCard::content -> Stateful<Div>`) takes a procedure returning that type; the row's root is decoded
@@ -1433,10 +1441,10 @@ same closure stays a `build` over a fragment of the view's own tape, section 12 
   tape. `vb.apply(v, window, cx, apply_<node>)` reads the view entity's current tape (so the drawing
   view, the kit's dialog layer, depends on it and draws again when it is described again), checks
   the root's node type (another type stops: "the function given for a Dialog returned a
-  node of type N, not a Dialog", exit 2) and applies the root's ops to the value upstream hands in
+  node of type N, not a Dialog", a stop) and applies the root's ops to the value upstream hands in
   with the generated `apply_<node>` (`genapi::with_root`). Before the first description it returns
   upstream's value unchanged (one frame at most). A released view stops at the next build with
-  `genapi::released_shown` (exit 2).
+  `genapi::released_shown` (a stop).
 - The view is an ordinary view: its handlers (`on_ok`, `on_cancel`, children's `on_click`) run
   with its state between frames and mark it dirty, so the dialog's content changes while open.
 - Bound by rule: `WindowExt::open_dialog`, `open_alert_dialog`, `open_sheet`, `open_sheet_at` (the
@@ -1469,7 +1477,7 @@ mutator, `is_empty` as a builder read.
 **Fallible calls.** `Result<(), E>` as a call's result is `opt<str>` on the wire (the
 error's `Debug` text, none for Ok; `overlay::outcome`). A state
 constructor or builder that returns `Result<Self, E>` is bound like one that returns `Self`; an Err
-stops the app with the error's text (`overlay::Fallible(..).callN`, exit 2): a schema the app wrote
+stops the app with the error's text (`overlay::Fallible(..).callN`, a stop): a schema the app wrote
 wrongly. A `&self` method that takes the window is a call op run at once with the turn's window
 (`state_call`), like an update that returns a value. This binds `QuestionnaireState` (constructor,
 `with_current_item`, `choose`, `set_answer`, `go_next`, the focus calls) and the other states' calls
@@ -1561,7 +1569,7 @@ the overlays block of `core/wire/ops.txt`; tests: modes `dock-ids`, `dock-bad-no
 
 - A `NodeId` the library writes is remembered (`crate::dock::node_id`); one it never handed out is
   `GK_ERR_BAD_OP` in a call op ("node id N was never handed out by the dock"), which stops the app at
-  the buffered write as any failed write does (mode `dock-bad-node`, exit 2). Node ids come from the
+  the buffered write as any failed write does (mode `dock-bad-node`, a stop). Node ids come from the
   reads: `dock->zoomed_group`, `tree->node_ids`, `tree->find_panel_node`, `node->id`, `group->node`,
   `ctx->node`, `drag->source`. They make `split_at`, `set_split_sizes`, `set_zoomed_in`,
   `PaneTree::split`, `set_active`, `set_sizes` and `InsertTarget` (`move_panel`, `insert_panel`) usable.
@@ -1663,7 +1671,7 @@ answers each hook from an app view the app gave for that hook and a key, between
   drawn where the app's view put `gk.dock_slot()` (node `DOCK_SLOT 37`; nothing when the view has no
   slot). A frame hook (`frame`, `center_frame`, `split_frame`, the tab group's `frame` and
   `content_frame`, which return `Stateful<Div>`) takes the app view's root, which must be a `gk.div()`,
-  `gk.h_flex()` or `gk.v_flex()` (another node stops the app, exit 2), and gives it upstream's id: that div
+  `gk.h_flex()` or `gk.v_flex()` (another node stops the app), and gives it upstream's id: that div
   with its styles, handlers and children is upstream's frame. The drop indicator's view is drawn in
   the rectangle the drop would fill (`DropIndicator::to`).
 - `build_placeholder` (a panel no registered builder makes, in `hooks` as `.Placeholder`) makes an
@@ -2116,7 +2124,7 @@ What writing the reader example needed.
 - `gk.run(state, start)` reads `GK_SCRIPT` first: when it is set, the file it names is read and the
   app runs as `gk.run_headless(state, script, start)` would (the diagnostic library only; with the
   ship library the start fails with the library's message and a line saying to put the diagnostic
-  `lib/` first). An unreadable script exits 1 before the library is entered.
+  `lib/` first). An unreadable script is gk.Run's error, before the library is entered.
 - A stop inside a generated builder (an element taken, attached or changed out of turn, a negative
   `usize`, a length of the wrong kind, a kept value) has no caller location. It ends with the context
   the runtime holds: the line of the `gk.NewView` whose function was
@@ -2490,8 +2498,8 @@ object type is a struct holding the handle, like kit state, with methods.
 | a kit global's accessor (`fn global(cx) -> &Self`, `global_mut`) | one interned handle per type, reads and updates the global in place (`cx.global`, `cx.update_global`); never temporary | `gk.theme_global(cx)` |
 
 A temporary handle used after its frame stops with the library's message ("... was released
-(a library object a read, a call or an event hands out is temporary ...)") and the app's line,
-exit 2. An object does not notify: a view that shows an object's value is described again when
+(a library object a read, a call or an event hands out is temporary ...)") and the app's line
+(a stop). An object does not notify: a view that shows an object's value is described again when
 something marks it (a handler marks its own view), not when the object changes.
 
 ### 13.3 Calls
@@ -2539,7 +2547,7 @@ itself, and the handle is released.
 |---|---|
 | `hkind OBJ 8` | a library object |
 | `call OBJ_RETAIN 112` | `u64 object` (immediate): a temporary handle becomes kept |
-| `call OBJ_TEST_TEMPS 113` | tests: -> `u32` temporary handles waiting, `u32` live objects |
+| `call OBJ_TEST_TEMPS 113` | tests: -> `u32` temporary handles waiting, `u32` live objects, then `u32` live kit states, views and focus handles (the Go runtime's lifetime tests) |
 | `call TABLE_COLUMN_VALUES 114` | `u64 source, u64 table state` (0: the state about to be made over the source), `u32 n`, n values as tapes (13.6): a table's columns as the kit's own `Column` values; immediate for 0, buffered otherwise |
 | generated call ops | numbered from `api/opcodes.lock` like state call ops: `u64 handle` (none for globals and statics), the arguments; results as in section 2, an object as `u64` |
 
@@ -3001,7 +3009,7 @@ content instead. Pixels carried by value would be decoded into a new `RenderImag
 showing one would add a texture on every frame, never freed (the binding cannot keep upstream's `Arc` or call
 `drop_image`). So `gk.render_image` (`RENDER_IMAGE_NEW`) turns the pixels into one BGRA `RenderImage` once and
 hands out a kept object handle; a view names it frame after frame (one id, one texture); `gk.release` drops it from
-every window's atlas (`platform::released`); a view naming it after that exits 2
+every window's atlas (`platform::released`); a view naming it after that stops the app
 with `released_shown`'s message. Made in a view procedure, it stops. New pixels are a new image: make it, show it,
 release the old one. `core/tests/go/run-platform.sh elements` and `gates/go-proto.sh images` check it: the image
 named on every redraw is handed to gpui as one image, one id however often it is drawn (`PLATFORM_TEST` 7,
@@ -3060,7 +3068,7 @@ the name and the base type is `Base<Name>`. A name the runtime already owns gets
 upstream functions (`gates/conformance.py`) rely on it.
 
 **Stops.** A buffered write that fails with `GK_ERR_STALE_HANDLE` or `GK_ERR_BAD_OP` stops the
-program (exit 2) with the message and a hint to run with `GK_DEBUG=1`, which sends every
+app with the message and a hint to run with `GK_DEBUG=1`, which sends every
 write at once and so stops at the line that made it. Other failures of a buffered write (a
 window that has closed) are printed and the program goes on. A generated decoder that meets a
 released kit-state or focus handle reads it with `genapi::shown` / `genapi::shown_focus` and

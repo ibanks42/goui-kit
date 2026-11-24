@@ -9,6 +9,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -55,8 +56,10 @@ func arg(i, def int) int {
 
 func main() {
 	a := &App{rows: arg(1, 100_000), cols: arg(2, 6)}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		a.root = gk.NewView(a.init, a.rootView)
 		gk.OpenWindow(cx, "Table", 900, 600, a.root)
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

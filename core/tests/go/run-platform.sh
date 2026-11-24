@@ -36,13 +36,13 @@ GK_PROTO_BIN=platform-go run menus 0 'platform menus n=2' 'platform menu "File" 
   'platform item submenu "Recent" items=1' 'platform item services "Services"' \
   'platform menu "Edit" disabled=true items=1' 'platform item action "Save" same=true os=Copy checked=true disabled=true' \
   'platform urls n=1 first="https://example.com/gk"'
-# Misuse, each stopped at the app's line (exit 2): a completion released twice, a request from a
+# Misuse, each stopped at the app's line (gk.Run returns it: exit 1): a completion released twice, a request from a
 # view function, a menu item with no action. Go: the app's line is platform/main.go's; a view
 # function, not a view procedure. A wrong payload (a handler whose payload is not the
 # request's) is a compile error in Go: examples/go/misuse_compile (gates/go-misuse.sh).
-GK_PROTO_BIN=platform-go run release-twice 2 'this completion was released already' 'at .*platform/main.go:[0-9]+'
-GK_PROTO_BIN=platform-go run request-in-view 2 'a view (procedure|function) may not start a request' 'at .*platform/main.go:[0-9]+'
-GK_PROTO_BIN=platform-go run menu-no-action 2 'the item "Open" has no action' 'at .*platform/main.go:[0-9]+'
+GK_PROTO_BIN=platform-go run release-twice 1 'this completion was released already' 'at .*platform/main.go:[0-9]+'
+GK_PROTO_BIN=platform-go run request-in-view 1 'a view (procedure|function) may not start a request' 'at .*platform/main.go:[0-9]+'
+GK_PROTO_BIN=platform-go run menu-no-action 1 'the item "Open" has no action' 'at .*platform/main.go:[0-9]+'
 
 # Round 6 (docs/PROTOCOLS.md 13.31): gpui's element leftovers.
 # The decoders generated code uses, run by the library on what the package wrote (CanDrop's ids and
@@ -74,9 +74,9 @@ GK_PROTO_BIN=platform-go run drag 0 'platform drag move id=7 text=seven bounds=1
 GK_PROTO_BIN=platform-go run vlist 0 'platform vlist rows described=true of 1000 some=true'
 # Misuse: an image cache or an image made in a view function; a text selection scope the library never
 # made. Go: a view function, not a view procedure; the scope's message names the Go calls.
-GK_PROTO_BIN=platform-go run cache-in-view 2 'a view (procedure|function) may not make an image cache' 'at .*platform/modes.go:[0-9]+'
-GK_PROTO_BIN=platform-go run image-in-view 2 'a view (procedure|function) may not make an image' 'at .*platform/main.go:[0-9]+'
-GK_PROTO_BIN=platform-go run scope-zero 2 'a scope made by gk.[A-Za-z_.]+' 'platform/modes.go:[0-9]+'
+GK_PROTO_BIN=platform-go run cache-in-view 1 'a view (procedure|function) may not make an image cache' 'at .*platform/modes.go:[0-9]+'
+GK_PROTO_BIN=platform-go run image-in-view 1 'a view (procedure|function) may not make an image' 'at .*platform/main.go:[0-9]+'
+GK_PROTO_BIN=platform-go run scope-zero 1 'a scope made by (gk|motion).[A-Za-z_.]+' 'platform/modes.go:[0-9]+'
 
 # Round 7 (docs/PROTOCOLS.md 11.32): the platform asked for real, not the script. bin/platform-real-go
 # runs the same app on a real window inside gates/display.sh (a private Xvfb or compositor with its own

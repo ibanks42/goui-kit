@@ -19,6 +19,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -198,7 +199,9 @@ func main() {
 	script := "size 400 300\nframe\nadvance 10\nframe\nadvance 10\nframe\nadvance 10\nframe\nadvance 10\nframe\nadvance 10\nframe\nadvance 10\nframe\nadvance 10\nframe\nstat\n"
 	if strings.HasPrefix(a.mode, "real-") {
 		// a real window and the platform's own services (PROTOCOLS.md 11.32)
-		gk.Run(a.start)
+		if err := gk.Run(a.start); err != nil {
+			log.Fatal(err)
+		}
 		fmt.Printf("platform done mode=%s done=%d described=%d\n", a.mode, a.done, a.described)
 		return
 	}
@@ -216,6 +219,8 @@ func main() {
 		// onto the target that takes 7, then from the source onto the one that takes only 8
 		script = "size 400 300\nframe\nframe\ndrag 50 50 150 50\nframe\ndrag 50 50 250 50\nframe\nadvance 30\nframe\nadvance 40\nframe\nstat\n"
 	}
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("platform done mode=%s done=%d described=%d\n", a.mode, a.done, a.described)
 }

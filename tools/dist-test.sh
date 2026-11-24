@@ -3,11 +3,14 @@
 # (dist/gpuikit-VERSION-PLATFORM), on any of the three platforms: build the hello example with
 # the download's own examples/go/build.sh, then run that program in a real window for 30 frames
 # (GK_FRAMES=5,30: the library draws them and exits; Linux without a display runs it under
-# xvfb-run). Needs go with a C compiler on PATH. Writes DOWNLOAD/../test-PLATFORM/ and exits non-zero on the first failure.
-# macOS (the universal download): first the library's slices (lipo: exactly arm64 and x86_64);
+# xvfb-run). Both ways an app is built: the default (no C compiler, cgo off; the program loads
+# the library, which is copied beside it as an app ships it) and GK_STATIC=1 (-tags gkstatic: the
+# static library linked in, one file; needs a C compiler on PATH). Writes DOWNLOAD/../test-PLATFORM/
+# and exits non-zero on the first failure.
+# macOS (the universal download): first the libraries' slices (lipo: exactly arm64 and x86_64);
 # then hello for this Mac's architecture as above, and again for the other one (Apple silicon:
-# x86_64, GOARCH=amd64 CC='clang -arch x86_64'; Intel: arm64), each binary checked to be that
-# architecture alone. The other architecture's hello runs the same
+# x86_64, GOARCH=amd64, with CC='clang -arch x86_64' for the static build; Intel: arm64), each
+# binary checked to be that architecture alone. The other architecture's hello runs the same
 # way when this Mac can run it (x86_64 on Apple silicon with Rosetta 2); otherwise it is built
 # and linked against the universal library only, and the log says so. GK_OTHER_ARCH=0 skips the
 # other architecture.
@@ -31,11 +34,13 @@ if [ $os = linux ] && [ -z "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
   command -v xvfb-run > /dev/null || { echo "dist-test.sh: no display and no xvfb-run" >&2; exit 1; }
   xvfb=(xvfb-run -a -s "-screen 0 1280x800x24")
 fi
-run() { # NAME BINARY: runs the program as built, in a window, for 30 frames
-  local name=$1 bin=$2 dir=$out/$1 rc=0
+run() { # NAME BINARY [LIBRARY]: runs the program as built, in a window, for 30 frames
+  local name=$1 bin=$2 so=${3:-} dir=$out/$1 rc=0
   mkdir -p "$dir"
-  # From a copy in its own folder, the way it is shipped: one file.
+  # From a copy in its own folder, the way it is shipped: one file (static), or the program and
+  # the library beside it.
   cp "$bin" "$dir/"
+  [ -z "$so" ] || cp "$so" "$dir/"
   (cd "$dir" && GK_FRAMES=5,30 limit ${xvfb[@]+"${xvfb[@]}"} "./$(basename "$bin")") > "$dir/log" 2>&1 || rc=$?
   tail -5 "$dir/log"
   if [ $rc != 0 ]; then echo "dist-test: FAIL $name: exit $rc (log $dir/log)"; return 1; fi
@@ -44,7 +49,7 @@ run() { # NAME BINARY: runs the program as built, in a window, for 30 frames
 # macOS: the universal library's slices, and which architecture is the other one here.
 other=
 if [ $os = macos ]; then
-  for f in "$dl/lib/libgpuikit_static.a"; do
+  for f in "$dl/lib/libgpuikit_static.a" "$dl/lib/libgpuikit.dylib"; do
     lipo -info "$f"
     got=$(lipo -archs "$f" | awk '{for (i = 1; i <= NF; i++) print $i}' | sort | tr '\n' ' ')
     [ "$got" = "arm64 x86_64 " ] || { echo "dist-test: FAIL $f has the slices '$got', not arm64 and x86_64"; exit 1; }
@@ -72,18 +77,28 @@ arch_of() { # BINARY ARCH: the binary is that one architecture alone
 }
 for lang in "$@"; do
   case $lang in
-    go) start=$(date +%s); "$dl/examples/go/build.sh" hello
-      echo "dist-test: go hello built in $(( $(date +%s) - start )) s, $(( $(wc -c < "$dl/examples/go/hello$ext") / 1000000 )) MB, one file"
-      [ $os != macos ] || arch_of "$dl/examples/go/hello$ext" "$here"
-      run go "$dl/examples/go/hello$ext"
-      if [ -n "$other" ]; then
-        start=$(date +%s); GOARCH=$go_other CC="clang -arch $other" "$dl/examples/go/build.sh" hello
-        echo "dist-test: go hello for $other built in $(( $(date +%s) - start )) s"
-        arch_of "$dl/examples/go/hello$ext" "$other"
-        if [ -n "$other_runs" ]; then
-          run "go-$other" "$dl/examples/go/hello$ext"
-        else echo "dist-test: LINKED go-$other: hello for $other links against the universal library (not run here)"; fi
-      fi ;;
+    go)
+      case $os in windows) so=$dl/lib/gpuikit.dll ;; macos) so=$dl/lib/libgpuikit.dylib ;; *) so=$dl/lib/libgpuikit.so ;; esac
+      for mode in shared static; do
+        st=; [ $mode = static ] && st=1
+        h=$dl/examples/go/hello$ext
+        rm -f "$h"
+        start=$(date +%s); GK_STATIC=$st "$dl/examples/go/build.sh" hello
+        echo "dist-test: go hello ($mode) built in $(( $(date +%s) - start )) s, $(( $(wc -c < "$h") / 1000000 )) MB$([ $mode = static ] && echo ', one file')"
+        [ $os != macos ] || arch_of "$h" "$here"
+        if [ $mode = static ]; then run go-static "$h"; else run go "$h" "$so"; fi
+        if [ -n "$other" ]; then
+          rm -f "$h"
+          start=$(date +%s)
+          if [ $mode = static ]; then GK_STATIC=1 GOARCH=$go_other CC="clang -arch $other" "$dl/examples/go/build.sh" hello
+          else GOARCH=$go_other "$dl/examples/go/build.sh" hello; fi
+          echo "dist-test: go hello ($mode) for $other built in $(( $(date +%s) - start )) s"
+          arch_of "$h" "$other"
+          if [ -n "$other_runs" ]; then
+            if [ $mode = static ]; then run "go-static-$other" "$h"; else run "go-$other" "$h" "$so"; fi
+          else echo "dist-test: BUILT go-$mode-$other: hello for $other (not run here)"; fi
+        fi
+      done ;;
     *) echo "dist-test.sh: go is the only language" >&2; exit 2 ;;
   esac
 done

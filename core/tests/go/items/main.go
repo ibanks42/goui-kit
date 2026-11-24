@@ -24,6 +24,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"gpuikit.dev/gk"
@@ -138,7 +139,9 @@ func main() {
 		script += "move 10 10\nadvance 100\nframe\nadvance 100\nframe\nframe\n"
 	}
 	script += "frame\nframe\nframe\nstat\n"
-	gk.RunHeadless(script, a.start)
+	if err := gk.RunHeadless(script, a.start); err != nil {
+		log.Fatal(err)
+	}
 	switch a.mode {
 	case "items-calendar":
 		fmt.Printf("items calendar described=%d days=%d weekdays=%d active=%d after=%d\n", a.described,

@@ -13,6 +13,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"slices"
@@ -437,7 +438,9 @@ func (a *App) toggleStar(cx *gk.Cx, _ gk.ClickEvent) {
 
 func main() {
 	a := &App{feed: os.Getenv("READER_FEED")}
-	gk.Run(func(cx *gk.Cx) {
+	if err := gk.Run(func(cx *gk.Cx) {
 		gk.OpenWindow(cx, "Reader", 1000, 660, gk.NewView(a.init, a.view))
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
 }

@@ -57,9 +57,9 @@ run state 0 \
   'proto unsubscribed' \
   'proto echo view=[0-9]+ frame=0 value="writtenz"' \
   'proto done mode=state .*events=3 '
-run stale 2 'handle 0x[0-9a-f]+ \(state\) was released' 'at .*proto/main.go:[0-9]+'
-run stale-write 2 'proto stale-write buffered' 'a change a handler asked for could not be made: handle 0x[0-9a-f]+ \(state\) was released' 'GK_DEBUG=1'
-run wrong-type 2 'handle 0x[0-9a-f]+ is a rows, not a state' 'at .*proto/main.go:[0-9]+'
+run stale 1 'handle 0x[0-9a-f]+ \(state\) was released' 'at .*proto/main.go:[0-9]+'
+run stale-write 1 'proto stale-write buffered' 'a change a handler asked for could not be made: handle 0x[0-9a-f]+ \(state\) was released' 'GK_DEBUG=1'
+run wrong-type 1 'handle 0x[0-9a-f]+ is a rows, not a state' 'at .*proto/main.go:[0-9]+'
 run lease 0 \
   'proto lease busy=true' \
   'proto lease ret=1 value_after="abc"' \
@@ -71,7 +71,7 @@ run write-rule 0 \
   'proto echo view=[0-9]+ frame=3 value="frame 3"' \
   'frame_turns: [34],'
 run frames 0 'proto done mode=frames views=1 .*frame=4 ' 'frame_turns: 4,' 'views_turns: 1,'
-run view-write 2 'a view function may not write' 'at .*proto/main.go:[0-9]+'
+run view-write 1 'a view function may not write' 'at .*proto/main.go:[0-9]+'
 run model 0 \
   'proto side view run=1 count=0' \
   'proto model set count=1 observer_saw=1' \
@@ -87,13 +87,13 @@ run post 0 \
 run panic-go 2 "gk: panic in app code: the app.s own panic" 'proto/main.go:[0-9]+'
 run panic-call 1 'gk: the library panicked: test panic asked for by the app' 'in the call at .*proto/main.go:[0-9]+'
 run panic-later 1 'gk: the library panicked: test panic asked for by the app.*while applying buffered writes'
-run thread 2 'was called from a goroutine that is not on the UI thread'
+run thread 1 'was called from a goroutine that is not on the UI thread'
 run version 0 \
   'proto version hash rc=8 message="the binding and the library are from different versions' \
   'proto version major rc=8' 'proto version newer-minor rc=8' \
   'proto version size rc=8 message="the binding passed a gk_app of [0-9]+ bytes' \
   'proto version callback rc=8'
-run released-shown 2 'proto released-shown released' \
+run released-shown 1 'proto released-shown released' \
   'a view shows a .*InputBaseState.* through a handle that cannot be used: handle 0x[0-9a-f]+ \(state\) was released'
 # Go: posted closures are the collector's. 300,000 lines of 100 bytes queued at once, twice: once
 # delivered nothing of them is kept (the heap after a collection is under 10 MB).
@@ -124,8 +124,8 @@ run dialog 0 \
   'proto dialog closed active=false' \
   'proto dialog done active=false described=[3-9] cancels=1 count=1'
 # Go only: a *gk.Cx kept past its turn, and an element kept across builds, stop with the line.
-run stale-cx 2 'a \*gk.Cx was used after the function it was given to returned' 'at .*proto/main.go:[0-9]+'
-run stale-element 2 'an element was used after the view function that made it returned' 'at .*proto/main.go:[0-9]+'
+run stale-cx 1 'a \*gk.Cx was used after the function it was given to returned' 'at .*proto/main.go:[0-9]+'
+run stale-element 1 'an element was used after the view function that made it returned' 'at .*proto/main.go:[0-9]+'
 # The port round (PROTOCOLS.md 11.38, 12.17, and the Go ports of 11.17, 11.30, 13.20, 13.31):
 # examples/go/port, bin/port-go.
 port() { mode_name=$1; if wanted; then GK_PROTO_BIN=port-go check "$@"; fi; }
@@ -135,7 +135,7 @@ port close-veto 0 'port asked may close n=1 answer=false' 'port asked may close 
 port quit-hook 0 'port quit hook ran n=1' 'port after the run quits=1'
 port reduce-motion 0 'port reduce motion in view=' 'port reduce motion start=false set=true cleared=false'
 port window-icon 0 'port icon window opened n=2' 'port second view described'
-port bad-icon 2 'the window.s icon is not a PNG the library can read \(4 bytes\)' 'at .*port/main.go:[0-9]+'
+port bad-icon 1 'the window.s icon is not a PNG the library can read \(4 bytes\)' 'at .*port/main.go:[0-9]+'
 # A drag of value 7 (its preview a view of the app's) onto a target whose CanDrop takes 7: its drop
 # runs; onto one that takes only 8: none (drops stays 1). What a DropAccept takes, as decoded.
 port drag 0 'port drag preview described' 'port drop on seven id=7 text=seven drops=1' \
@@ -143,15 +143,15 @@ port drag 0 'port drag preview described' 'port drop on seven id=7 text=seven dr
 # The menu bar set and read back: two menus, a separator, a submenu with an OS action, checked; an
 # item without an action stops with its name.
 port menus 0 'port menus Port:4,Edit:1 edit_disabled=true sub=More copy_os=true checked=true quit_same=true'
-port menu-no-action 2 'the item "Open" has no action' 'at .*port/main.go:[0-9]+'
+port menu-no-action 1 'the item "Open" has no action' 'at .*port/main.go:[0-9]+'
 # Images from encoded bytes, from pixels and through the custom loader drawn; pixels as gpui keeps
 # them (BGRA). An image made once and named on every redraw is handed to gpui as one image (one id,
 # so one texture); released, its texture is dropped from the window (no new texture per frame,
 # PROTOCOLS.md 13.31). Pixels of the wrong size stop; so does an image made in a view function.
 port images 0 'port pixel image 2x1 first=ffff0000 custom 2x1 first=ffff0000 same=true' \
   'port image kept redrawn=true same=true new images=0' 'port image released dropped=1'
-port bad-pixels 2 'a gk.PixelImage of 2x2 pixels holds 3 bytes' 'at .*port/main.go:[0-9]+'
-port image-in-view 2 'a view function may not make an image' 'at .*port/main.go:[0-9]+'
+port bad-pixels 1 'a gk.PixelImage of 2x2 pixels holds 3 bytes' 'at .*port/main.go:[0-9]+'
+port image-in-view 1 'a view function may not make an image' 'at .*port/main.go:[0-9]+'
 # A dropdown's item clicked after its view was described again ten times while the menu was open:
 # its own OnClick fires exactly once, as an action item does (PROTOCOLS.md section 4).
 port menu-redraw 0 'port menu fired alpha=1 bravo=0 redrawn=true'
@@ -162,7 +162,7 @@ port tooltip 0 'port tooltip view described' 'gk-headless: wrote tooltip-kit.png
 # A plot of the kit's grid and the binding's own paths and quads, with a gradient and theme colours,
 # and options; a nil gk.Fill stops.
 port plot 0 'port plot described=true'
-port fill-nil 2 'a nil gk.Fill was given to a builder' 'at .*port/main.go:[0-9]+'
+port fill-nil 1 'a nil gk.Fill was given to a builder' 'at .*port/main.go:[0-9]+'
 # The generator's descriptor kinds beyond the core ones (gen/gk_go_kinds.py; examples/go/proto/kinds.go): jiff's calendar values both ways, value
 # cells, results that may fail, the expression check, a date that does not exist, item functions
 # (a calendar's days, a tree's entries; one of the wrong kind stops), asks, transformations and
@@ -175,13 +175,13 @@ run kinds-values 0 \
   'kinds background solid ok=true kind=0 l=0.50 a=1.00' 'kinds background bad ok=false has=false err=true' \
   'kinds color h=0.00 s=1.00 l=0.50 err=<nil>' 'kinds color bad err=true' 'kinds diff count=2 err=<nil>' \
   'kinds expr ok="" bad="does not parse: it ends where a number, an argument or a function was due at byte 3" args="uses y, but the closure is handed 1 argument\(s\)"'
-run kinds-bad-date 2 'kinds writing February 30' 'the date 2026-02-30 does not exist' 'at .*proto/kinds.go:[0-9]+'
-run kinds-bad-expr 2 'the expression "x \+" does not parse' 'at .*proto/kinds.go:[0-9]+'
+run kinds-bad-date 1 'kinds writing February 30' 'the date 2026-02-30 does not exist' 'at .*proto/kinds.go:[0-9]+'
+run kinds-bad-expr 1 'the expression "x \+" does not parse' 'at .*proto/kinds.go:[0-9]+'
 run kinds-items 0 'kinds calendar described=(2[89]|[3-4][0-9]) days=(2[89]|3[0-9]|4[0-2]) weekdays=7 active=[01] labels=0'
 run kinds-label 0 'kinds calendar described=[0-9]+ days=[0-9]+ weekdays=[0-9]+ active=[0-9]+ labels=([1-9][0-9]+)'
 run kinds-tree 0 'kinds tree row ix=0 label=Alpha depth=0 folder=false selected=false' \
   'kinds tree row ix=1 label=Beta depth=0 folder=false selected=false' 'kinds done mode=kinds-tree described=2 '
-run kinds-wrong-kind 2 'gk.Items was given a function of the kind func\(cx \*Cx, v0 int, v1 TreeEntryReads' 'at .*proto/kinds.go:[0-9]+'
+run kinds-wrong-kind 1 'overlay.Items was given a function of the kind func\(cx \*Cx, v0 int, v1 TreeEntryReads' 'at .*proto/kinds.go:[0-9]+'
 run kinds-elements 0 'kinds ask highlight lang=go code="func x"' 'kinds ask image uri=pic.png' \
   'kinds ask counts asked=2 answered=2 gets_more=true' 'kinds asks highlight=1 image=1'
 # The hand-written bridges (examples/go/proto/bridges.go), smoke tests beside

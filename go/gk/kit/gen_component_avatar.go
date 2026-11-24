@@ -628,12 +628,24 @@ func (e AvatarEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -755,6 +767,12 @@ func (e AvatarEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent)) Avat
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -843,6 +861,12 @@ func (e AvatarEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -850,6 +874,12 @@ func (e AvatarEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.Cx, e 
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -862,12 +892,24 @@ func (e AvatarEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)) Ava
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseExitDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -889,6 +931,12 @@ func (e AvatarEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -896,6 +944,12 @@ func (e AvatarEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx, e gk
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 
@@ -1717,12 +1771,24 @@ func (e AvatarGroupEl) CaptureAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEv
 	return e
 }
 
+// CaptureAnyMouseDownDo is CaptureAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarGroupEl) CaptureAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarGroupEl {
+	tInteractiveElementCaptureAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event for any button, during the capture phase. The
 // fluent API equivalent to `capture_any_mouse_up`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarGroupEl) CaptureAnyMouseUp(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementCaptureAnyMouseUp(rt.N(e.Core), listener)
+	return e
+}
+
+// CaptureAnyMouseUpDo is CaptureAnyMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarGroupEl) CaptureAnyMouseUpDo(listener func(cx *gk.Cx)) AvatarGroupEl {
+	tInteractiveElementCaptureAnyMouseUpDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -1844,6 +1910,12 @@ func (e AvatarGroupEl) OnAnyMouseDown(listener func(cx *gk.Cx, e gk.MouseEvent))
 	return e
 }
 
+// OnAnyMouseDownDo is OnAnyMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarGroupEl) OnAnyMouseDownDo(listener func(cx *gk.Cx)) AvatarGroupEl {
+	tInteractiveElementOnAnyMouseDownDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to back-navigation gestures that start over this element, such as the
 // iOS swipe from the leading screen edge. The innermost element with a back listener claims the
 // gesture and receives every phase. The fluent API equivalent to `on_back_gesture`.
@@ -1932,6 +2004,12 @@ func (e AvatarGroupEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 	return e
 }
 
+// OnMouseDownDo is OnMouseDown with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarGroupEl) OnMouseDownDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarGroupEl {
+	tInteractiveElementOnMouseDownDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse down event, on any button, during the capture phase, when
 // the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_down_out`.
@@ -1939,6 +2017,12 @@ func (e AvatarGroupEl) OnMouseDown(button gk.MouseButton, listener func(cx *gk.C
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarGroupEl) OnMouseDownOut(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementOnMouseDownOut(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseDownOutDo is OnMouseDownOut with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarGroupEl) OnMouseDownOutDo(listener func(cx *gk.Cx)) AvatarGroupEl {
+	tInteractiveElementOnMouseDownOutDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -1951,12 +2035,24 @@ func (e AvatarGroupEl) OnMouseExit(listener func(cx *gk.Cx, e gk.MouseExitEvent)
 	return e
 }
 
+// OnMouseExitDo is OnMouseExit with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarGroupEl) OnMouseExitDo(listener func(cx *gk.Cx)) AvatarGroupEl {
+	tInteractiveElementOnMouseExitDo(rt.N(e.Core), listener)
+	return e
+}
+
 // Bind the given callback to the mouse move event, during the bubble phase. The fluent API
 // equivalent to `on_mouse_move`.
 //
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarGroupEl) OnMouseMove(listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementOnMouseMove(rt.N(e.Core), listener)
+	return e
+}
+
+// OnMouseMoveDo is OnMouseMove with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarGroupEl) OnMouseMoveDo(listener func(cx *gk.Cx)) AvatarGroupEl {
+	tInteractiveElementOnMouseMoveDo(rt.N(e.Core), listener)
 	return e
 }
 
@@ -1978,6 +2074,12 @@ func (e AvatarGroupEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 	return e
 }
 
+// OnMouseUpDo is OnMouseUp with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarGroupEl) OnMouseUpDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarGroupEl {
+	tInteractiveElementOnMouseUpDo(rt.N(e.Core), button, listener)
+	return e
+}
+
 // Bind the given callback to the mouse up event, for the given button, during the capture phase,
 // when the mouse is outside of the bounds of this element. The fluent API equivalent to
 // `on_mouse_up_out`.
@@ -1985,6 +2087,12 @@ func (e AvatarGroupEl) OnMouseUp(button gk.MouseButton, listener func(cx *gk.Cx,
 // See `listener` to get access to a view's state from this callback.
 func (e AvatarGroupEl) OnMouseUpOut(button gk.MouseButton, listener func(cx *gk.Cx, e gk.MouseEvent)) AvatarGroupEl {
 	tInteractiveElementOnMouseUpOut(rt.N(e.Core), button, listener)
+	return e
+}
+
+// OnMouseUpOutDo is OnMouseUpOut with a handler that takes no event (docs/GO.md section 4).
+func (e AvatarGroupEl) OnMouseUpOutDo(button gk.MouseButton, listener func(cx *gk.Cx)) AvatarGroupEl {
+	tInteractiveElementOnMouseUpOutDo(rt.N(e.Core), button, listener)
 	return e
 }
 

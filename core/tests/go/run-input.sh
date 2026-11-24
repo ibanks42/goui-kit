@@ -40,12 +40,12 @@ GK_PROTO_BIN=input-go run otp 0 'otp event=Change value="1"' 'otp event=Complete
 # The handler shape (ClipboardItem) -> bool of Input::on_paste: it sees the copied text and,
 # returning false, lets the input paste.
 GK_PROTO_BIN=input-go run paste 0 'input paste n=1 entries=1 text="ab"' 'input change value="abab"'
-# A released EditorState that a view still shows stops the program (exit 2), as InputState.
-GK_PROTO_BIN=input-go run released-editor 2 'input released-editor released' \
+# A released EditorState that a view still shows stops the program (gk.Run returns it: exit 1), as InputState.
+GK_PROTO_BIN=input-go run released-editor 1 'input released-editor released' \
   'a view shows a .*InputBaseState<.*EditorMode>.* through a handle that cannot be used'
 # A view function may not run an update that returns a value.
 # Go: "a view function", and the app's line in main.go.
-GK_PROTO_BIN=input-go run call-in-view 2 'a view function may not change kit state' 'at .*input/main.go:[0-9]+'
+GK_PROTO_BIN=input-go run call-in-view 1 'a view function may not change kit state' 'at .*input/main.go:[0-9]+'
 # The editor's providers over a row source (section 9.6): a typed trigger character asks for
 # completions as a queued event with a request id; the app's answer fills the menu of the
 # styled editor (gk.CodeEditor) and enter takes its first item, which replaces the query

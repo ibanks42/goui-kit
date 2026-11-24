@@ -275,12 +275,10 @@ pub fn nth<L: Listed>(made: L, index: usize) -> L::Item {
     match made.listed() {
         Ok(mut v) if index < v.len() => v.swap_remove(index),
         Ok(v) => {
-            eprintln!("gk: value {index} of a static that made {} was asked for (ask its _count first)", v.len());
-            std::process::exit(2);
+            crate::rt::app_stop(format!("value {index} of a static that made {} was asked for (ask its _count first)", v.len()))
         }
         Err(e) => {
-            eprintln!("gk: value {index} of a static that failed was asked for: {e} (its _count says so)");
-            std::process::exit(2);
+            crate::rt::app_stop(format!("value {index} of a static that failed was asked for: {e} (its _count says so)"))
         }
     }
 }

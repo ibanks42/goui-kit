@@ -14,7 +14,7 @@ import (
 func GridDragHandle(state GridLayoutState, item string, st ...gk.Style) gk.StatefulDivEl {
 	n := rt.NewNode(260)
 	o := rt.NodeArgs(n)
-	o.U64(rt.H(state.HCore))
+	o.U64(rt.Held(rt.H(state.HCore)))
 	o.Str(item)
 	rt.Tokens(n, st)
 	return gk.StatefulDivEl{ElAnimatableElement: rt.MkElAnimatableElement(n)}

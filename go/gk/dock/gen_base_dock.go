@@ -65,7 +65,7 @@ func (e Layout) Child(child Layout, size gk.Option[float32]) Layout {
 // Panel is <gpui_kit::base::dock::DockLayout>::panel.
 func (e Layout) Panel(panel Panel) Layout {
 	o := rt.Op(rt.N(e.Core), 258)
-	o.U64(rt.H(panel.HCore))
+	o.U64(rt.Held(rt.H(panel.HCore)))
 	return e
 }
 
@@ -78,7 +78,7 @@ func (e Layout) Panel(panel Panel) Layout {
 // PanelView is <gpui_kit::base::dock::DockLayout>::panel_view.
 func (e Layout) PanelView(panel Panel) Layout {
 	o := rt.Op(rt.N(e.Core), 259)
-	o.U64(rt.H(panel.HCore))
+	o.U64(rt.Held(rt.H(panel.HCore)))
 	return e
 }
 
