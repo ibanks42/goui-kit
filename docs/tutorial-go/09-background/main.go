@@ -204,6 +204,7 @@ func (a *App) switchTheme(cx *gk.Cx) {
 	gk.Refresh(cx)
 }
 
+
 // lookUpPrice runs slow work off the UI thread via gk.Go and applies the result back
 // on the UI thread with a fresh *gk.Cx, optionally showing a toast notification.
 func (a *App) lookUpPrice(cx *gk.Cx, name string, announce bool) {

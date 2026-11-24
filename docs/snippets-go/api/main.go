@@ -165,6 +165,7 @@ func (a *App) stream() {
 	}()
 }
 
+
 var pngBytes []byte
 
 func (a *App) mainWindow(cx *gk.Cx, root gk.View) {
