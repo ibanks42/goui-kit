@@ -269,7 +269,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          hash=$(grep -m1 'const apiHash' go/gk/gen_ops.go | grep -o '0x[0-9a-f]*')
+          hash=$(grep -m1 'const ApiHash' go/gk/internal/rt/gen_ops.go | grep -o '0x[0-9a-f]*')
           {
             echo "goui-kit $VERSION: the prebuilt library, the Go module, examples and guides,"
             echo "for Linux x86-64 (glibc 2.28 or newer), macOS 11.0 or newer (universal: Apple silicon and Intel)"

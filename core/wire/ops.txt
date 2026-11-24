@@ -1,5 +1,5 @@
 # The wire tables: one line per number. Numbers are append-only.
-# core/wire/gen.py writes core/src/ops.rs, core/include/gk_ops.h and go/gk/gen_ops.go from
+# core/wire/gen.py writes core/src/ops.rs, core/include/gk_ops.h and go/gk/internal/rt/gen_ops.go from
 # this file; the hash of this file and of api/opcodes.lock (the generator's numbers) is the
 # api_hash the library and the binding compare at start. docs/PROTOCOLS.md explains every class and the ranges reserved for the generator
 # (element ops, call ops and node types from 256, shapes from 64).
